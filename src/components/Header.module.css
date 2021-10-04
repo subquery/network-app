@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 8px 0px;
+  border-bottom: 1px solid #ddd;
+}
+
+.navLink {
+  color: black;
+  text-decoration: none;
+  margin-left: 32px;
+}
+
+.navLink:hover {
+  text-decoration: underline;
+}
+
+.navLinkCurrent {
+  font-weight: 600;
+}
+
+.logo {
+  height: 48px;
+}
