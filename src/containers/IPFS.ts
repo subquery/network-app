@@ -6,7 +6,11 @@ type InitialState = {
   gateway: string;
 };
 
-function useIPFSImpl(logger: Logger, { gateway }: InitialState): IPFSHTTPClient {
+function useIPFSImpl(
+  logger: Logger,
+  initialState?: InitialState,
+): { ipfs: IPFSHTTPClient; catSingle: (cid: string) => Promise<Uint8Array> } {
+  const { gateway } = initialState ?? {};
   const ipfs = React.useRef<IPFSHTTPClient>(create({ url: gateway }));
 
   React.useEffect(() => {
@@ -14,7 +18,20 @@ function useIPFSImpl(logger: Logger, { gateway }: InitialState): IPFSHTTPClient 
     ipfs.current = create({ url: gateway });
   }, [gateway, logger]);
 
-  return ipfs.current;
+  const catSingle = async (cid: string): Promise<Uint8Array> => {
+    const results = ipfs.current.cat(cid);
+
+    for await (const result of results) {
+      return result;
+    }
+
+    throw new Error(`No content`);
+  };
+
+  return {
+    ipfs: ipfs.current,
+    catSingle,
+  };
 }
 
 export const { useContainer: useIPFS, Provider: IPFSProvider } = createContainer(useIPFSImpl, { displayName: 'IPFS' });

@@ -23,7 +23,7 @@ export class Logger {
 }
 
 export type Props<State = void> = {
-  initialState: State;
+  initialState?: State;
   children?: React.ReactNode;
 };
 
@@ -35,7 +35,7 @@ export type Container<V, State = void> = {
 const logger = new Logger();
 
 export function createContainer<V, State = void>(
-  useHook: (logger: Logger, initialState: State) => V,
+  useHook: (logger: Logger, initialState?: State) => V,
   options?: { displayName?: string },
 ): Container<V, State> {
   const Ctx = React.createContext<V | typeof EMPTY>(EMPTY);
