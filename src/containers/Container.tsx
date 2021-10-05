@@ -9,21 +9,21 @@ export class Logger {
     return new Logger(`${this.prefix}[${scope}]`);
   }
 
-  public l(message: any) {
+  public l(message: any): void {
     console.log(`${this.prefix}${message.toString()}`);
   }
 
-  public w(message: any) {
+  public w(message: any): void {
     console.warn(`${this.prefix}${message.toString()}`);
   }
 
-  public e(message: any) {
+  public e(message: any): void {
     console.error(`${this.prefix}${message.toString()}`);
   }
 }
 
 export type Props<State = void> = {
-  initialState?: State;
+  initialState: State;
   children?: React.ReactNode;
 };
 
@@ -35,7 +35,7 @@ export type Container<V, State = void> = {
 const logger = new Logger();
 
 export function createContainer<V, State = void>(
-  useHook: (logger: Logger, initialState?: State) => V,
+  useHook: (logger: Logger, initialState: State) => V,
   options?: { displayName?: string },
 ): Container<V, State> {
   const Ctx = React.createContext<V | typeof EMPTY>(EMPTY);
@@ -45,13 +45,13 @@ export function createContainer<V, State = void>(
   }
 
   function Provider(props: Props<State>) {
-    const l = options?.displayName ? logger.getLogger(options.displayName) : logger;
+    const l = React.useMemo(() => (options?.displayName ? logger.getLogger(options.displayName) : logger), []);
     const value = useHook(l, props.initialState);
 
     return <Ctx.Provider value={value}>{props.children}</Ctx.Provider>;
   }
 
-  function useContainer() {
+  function useContainer(): V {
     const value = React.useContext(Ctx);
 
     if (value === EMPTY) {

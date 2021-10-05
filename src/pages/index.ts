@@ -1,3 +1,4 @@
 import Home from './Home';
+import Studio from './studio';
 
-export { Home };
+export { Home, Studio };
