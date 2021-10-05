@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
 import { useWeb3 } from '../containers';
 import { injectedConntector } from '../containers/Web3';
@@ -8,8 +9,12 @@ import styles from './Header.module.css';
 
 const Header: React.VFC = () => {
   const { account, activate } = useWeb3();
+  const { t } = useTranslation();
 
-  const walletLabel = React.useMemo(() => (account ? truncateAddress(account) : 'Connect Wallet'), [account]);
+  const walletLabel = React.useMemo(
+    () => (account ? truncateAddress(account) : t('header.connectWallet')),
+    [account, t],
+  );
 
   const handleConnectWallet = React.useCallback(async () => {
     if (account) return;
@@ -35,8 +40,8 @@ const Header: React.VFC = () => {
         <Link to="/">
           <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
         </Link>
-        {renderLink('/explorer', 'Explorer')}
-        {renderLink('/studio', 'Studio')}
+        {renderLink('/explorer', t('header.explorer'))}
+        {renderLink('/studio', t('header.studio'))}
       </div>
       <div className={styles.right}>
         <Button type="secondary" label={walletLabel} onClick={handleConnectWallet} />

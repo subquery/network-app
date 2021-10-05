@@ -14,8 +14,11 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.1.9",
     "ethers": "^5.4.7",
+    "i18next": "^21.2.4",
+    "i18next-browser-languagedetector": "^6.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-i18next": "^11.12.0",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "typescript": "^4.1.2",
@@ -75,6 +78,7 @@
     "husky": "^7.0.2",
     "lint-staged": ">=10",
     "prettier": "^2.4.1",
+    "storybook-react-i18next": "^1.0.10",
     "storybook-react-router": "^1.0.8"
   },
   "lint-staged": {

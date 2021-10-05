@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import './i18n';
 
 import { Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
