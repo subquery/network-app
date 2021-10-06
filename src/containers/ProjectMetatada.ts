@@ -1,15 +1,6 @@
-import * as yup from 'yup';
+import { ProjectMetadata, projectMetadataSchema } from '../models';
 import { createContainer } from './Container';
 import { useIPFS } from './IPFS';
-
-const projectMetadataSchema = yup.object({
-  name: yup.string().required(),
-  image: yup.string().optional(),
-  description: yup.string().default('').optional(),
-  websiteUrl: yup.string().optional().url(),
-});
-
-export type ProjectMetadata = yup.Asserts<typeof projectMetadataSchema>;
 
 function useProjectMetadataImpl() {
   const { ipfs, catSingle } = useIPFS();

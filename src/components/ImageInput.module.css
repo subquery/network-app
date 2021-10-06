@@ -1,0 +1,11 @@
+.label {
+  border: 1px solid;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.content {
+  width: 120px;
+  height: 120px;
+}

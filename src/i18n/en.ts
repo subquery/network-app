@@ -5,6 +5,15 @@ const en = {
       studio: 'Studio',
       connectWallet: 'Connect Wallet',
     },
+    studio: {
+      create: {
+        name: 'Name',
+        image: 'Logo',
+        subtitle: 'Subtitle',
+        description: 'Description',
+        websiteUrl: 'Website URL',
+      },
+    },
   },
 };
 
