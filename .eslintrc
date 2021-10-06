@@ -2,12 +2,21 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    'header'
   ],
   "extends": [
     "react-app",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "prettier"
-  ]
+  ],
+  "rules": {
+    "header/header": [2, "line", [
+      {
+        "pattern": " Copyright \\d{4}(-\\d{4})? OnFinality Limited authors & contributors",
+        "template": " Copyright 2020-2021 OnFinality Limited authors & contributors" },
+      " SPDX-License-Identifier: Apache-2.0"
+    ], 2]
+  }
 }

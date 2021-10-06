@@ -1,3 +1,6 @@
+// Copyright 2020-2021 OnFinality Limited authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';

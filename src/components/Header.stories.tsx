@@ -1,3 +1,6 @@
+// Copyright 2020-2021 OnFinality Limited authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Header from './Header';
