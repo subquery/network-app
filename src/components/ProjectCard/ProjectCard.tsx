@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Person } from 'react-bootstrap-icons';
+import { PersonFill } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import { truncateAddress } from '../../utils';
@@ -24,7 +24,7 @@ const ProjectCard: React.VFC<Props> = ({ project, onClick }) => {
       <h3>{project.metadata.name || project.id}</h3>
 
       <div className={styles.creator}>
-        <Person fill="black" size={24} className={styles.creatorIcon} />
+        <PersonFill fill="black" size={24} className={styles.creatorIcon} />
         <h5>{truncateAddress(project.id.split('-')[0])}</h5>
       </div>
 

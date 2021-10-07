@@ -41,3 +41,10 @@ SecondaryWithIcon.args = {
   type: 'secondary',
   leftItem: <Plus size={25} />,
 };
+
+export const SecondaryOnlyIcon = Template.bind({});
+
+SecondaryOnlyIcon.args = {
+  type: 'secondary',
+  leftItem: <Plus size={25} />,
+};
