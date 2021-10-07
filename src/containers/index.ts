@@ -4,5 +4,15 @@
 import { useWeb3, Web3Provider } from './Web3';
 import { useIPFS, IPFSProvider } from './IPFS';
 import { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetatada';
+import { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 
-export { useIPFS, useWeb3, useProjectMetadata, IPFSProvider, Web3Provider, ProjectMetadataProvider };
+export {
+  useIPFS,
+  useWeb3,
+  useProjectMetadata,
+  useQueryRegistry,
+  IPFSProvider,
+  Web3Provider,
+  ProjectMetadataProvider,
+  QueryRegistryProvider,
+};
