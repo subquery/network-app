@@ -3,6 +3,7 @@
 
 import Button from './Button';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { Plus } from 'react-bootstrap-icons';
 
 export default {
   title: 'Button',
@@ -23,4 +24,20 @@ export const Secondary = Template.bind({});
 Secondary.args = {
   label: 'Button',
   type: 'secondary',
+};
+
+export const PrimaryWithIcon = Template.bind({});
+
+PrimaryWithIcon.args = {
+  label: 'Button',
+  type: 'primary',
+  leftItem: <Plus size={25} />,
+};
+
+export const SecondaryWithIcon = Template.bind({});
+
+SecondaryWithIcon.args = {
+  label: 'Button',
+  type: 'secondary',
+  leftItem: <Plus size={25} />,
 };

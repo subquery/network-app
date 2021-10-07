@@ -12,3 +12,8 @@ export const projectMetadataSchema = yup.object({
 });
 
 export type ProjectMetadata = yup.Asserts<typeof projectMetadataSchema>;
+
+export type ProjectWithMetadata = {
+  id: string;
+  metadata: ProjectMetadata;
+};

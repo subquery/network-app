@@ -8,6 +8,13 @@ const en = {
       studio: 'Studio',
       connectWallet: 'Connect Wallet',
     },
+    newProjectCard: {
+      title: 'Create a SubQuery project',
+      button: 'Create Project',
+    },
+    projectCard: {
+      noDescription: 'No description',
+    },
     studio: {
       create: {
         name: 'Name',

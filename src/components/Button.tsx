@@ -7,6 +7,7 @@ import styles from './Button.module.css';
 type Props = {
   type?: 'primary' | 'secondary';
   label: string;
+  leftItem?: React.ReactNode;
   onClick?: () => void;
 };
 
@@ -17,6 +18,7 @@ const Button: React.VFC<Props> = (props) => {
       className={[styles.button, props.type && styles[props.type]].join(' ')}
       onClick={props.onClick}
     >
+      {props.leftItem}
       {props.label}
     </button>
   );
