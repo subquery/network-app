@@ -4,7 +4,7 @@
 import { Field } from 'formik';
 import * as React from 'react';
 import styles from './ImageInput.module.css';
-import IPFSImage from './IPFSImage';
+import IPFSImage from '../IPFSImage';
 
 type Props = {
   label: string;

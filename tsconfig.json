@@ -23,7 +23,7 @@
     "noEmit": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
   },
   "include": [
     "src"

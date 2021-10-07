@@ -3,17 +3,12 @@
 
 import NewProjectCard from './NewProjectCard';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { IPFSProvider } from '../containers';
 
 export default {
   title: 'NewProjectCard',
   component: NewProjectCard,
 } as ComponentMeta<typeof NewProjectCard>;
 
-const Template: ComponentStory<typeof NewProjectCard> = (args) => (
-  <IPFSProvider initialState={{ gateway: 'http://localhost:5001/api/v0' }}>
-    <NewProjectCard {...args} />
-  </IPFSProvider>
-);
+const Template: ComponentStory<typeof NewProjectCard> = (args) => <NewProjectCard {...args} />;
 
 export const Default = Template.bind({});

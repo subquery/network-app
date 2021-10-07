@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from './Button';
+import Button from '../Button';
 import styles from './ProjectCard.module.css';
 import { Plus } from 'react-bootstrap-icons';
 

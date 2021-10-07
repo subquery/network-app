@@ -3,7 +3,7 @@
 
 import ProjectCard from './ProjectCard';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { IPFSProvider } from '../containers';
+import { IPFSProvider } from '../../containers';
 
 export default {
   title: 'ProjectCard',

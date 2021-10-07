@@ -4,9 +4,9 @@
 import * as React from 'react';
 import { Person } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
-import { ProjectWithMetadata } from '../models';
-import { truncateAddress } from '../utils';
-import IPFSImage from './IPFSImage';
+import { ProjectWithMetadata } from '../../models';
+import { truncateAddress } from '../../utils';
+import IPFSImage from '../IPFSImage';
 import styles from './ProjectCard.module.css';
 
 type Props = {

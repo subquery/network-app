@@ -3,7 +3,7 @@
 
 import IPFSImage from './IPFSImage';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { IPFSProvider } from '../containers';
+import { IPFSProvider } from '../../containers';
 
 export default {
   title: 'IPFSImage',
