@@ -30,7 +30,13 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   };
 
   const getQuery = async (id: string): Promise<QueryDetails> => {
-    // Get
+    // Just for testing purposes
+    return {
+      id,
+      metadata: 'QmbDYfuaQAptXNkAcJA8EfFrYauG8BoYWwUZRwE9Eg3Zif',
+      deployment: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
+    };
+
     throw new Error('Not implemented');
   };
 

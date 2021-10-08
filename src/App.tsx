@@ -10,22 +10,24 @@ import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import * as pages from './pages';
 import { Header } from './components';
-import { Web3Provider, IPFSProvider, ProjectMetadataProvider } from './containers';
+import { Web3Provider, IPFSProvider, ProjectMetadataProvider, QueryRegistryProvider } from './containers';
 
 const App: React.VFC = () => {
   return (
     <IPFSProvider initialState={{ gateway: 'http://localhost:5001/api/v0' }}>
       <ProjectMetadataProvider>
         <Web3Provider>
-          <div className="App">
-            <Router>
-              <Header />
-              <Switch>
-                <Route component={pages.Studio} path="/studio" />
-                <Route component={pages.Home} />
-              </Switch>
-            </Router>
-          </div>
+          <QueryRegistryProvider>
+            <div className="App">
+              <Router>
+                <Header />
+                <Switch>
+                  <Route component={pages.Studio} path="/studio" />
+                  <Route component={pages.Home} />
+                </Switch>
+              </Router>
+            </div>
+          </QueryRegistryProvider>
         </Web3Provider>
       </ProjectMetadataProvider>
     </IPFSProvider>
