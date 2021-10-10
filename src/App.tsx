@@ -14,7 +14,7 @@ import { Web3Provider, IPFSProvider, ProjectMetadataProvider, QueryRegistryProvi
 
 const App: React.VFC = () => {
   return (
-    <IPFSProvider initialState={{ gateway: 'http://localhost:5001/api/v0' }}>
+    <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
       <ProjectMetadataProvider>
         <Web3Provider>
           <QueryRegistryProvider>

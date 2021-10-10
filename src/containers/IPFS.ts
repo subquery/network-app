@@ -6,7 +6,7 @@ import React from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 
 type InitialState = {
-  gateway: string;
+  gateway?: string;
 };
 
 function useIPFSImpl(
@@ -14,6 +14,10 @@ function useIPFSImpl(
   initialState?: InitialState,
 ): { ipfs: IPFSHTTPClient; catSingle: (cid: string) => Promise<Uint8Array> } {
   const { gateway } = initialState ?? {};
+
+  if (!gateway) {
+    throw new Error('No IPFS gateway provided');
+  }
   const ipfs = React.useRef<IPFSHTTPClient>(create({ url: gateway }));
 
   React.useEffect(() => {

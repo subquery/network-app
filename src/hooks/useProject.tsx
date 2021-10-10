@@ -48,7 +48,7 @@ export function useProject(id: string): { id: string; project: ProjectDetails | 
       metadata,
       manifest,
     });
-  }, [id]);
+  }, [id, catSingle, getMetadataFromCid, getQuery]);
 
   React.useEffect(() => {
     loadProject();
