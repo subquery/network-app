@@ -12,16 +12,16 @@ export class Logger {
     return new Logger(`${this.prefix}[${scope}]`);
   }
 
-  public l(message: any): void {
-    console.log(`${this.prefix}${message.toString()}`);
+  public l(message: any, ...rest: any[]): void {
+    console.log(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
-  public w(message: any): void {
-    console.warn(`${this.prefix}${message.toString()}`);
+  public w(message: any, ...rest: any[]): void {
+    console.warn(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
-  public e(message: any): void {
-    console.error(`${this.prefix}${message.toString()}`);
+  public e(message: any, ...rest: any[]): void {
+    console.error(`${this.prefix}${message?.toString()}`, ...rest);
   }
 }
 
