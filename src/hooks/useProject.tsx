@@ -5,14 +5,9 @@ import React from 'react';
 import yaml from 'js-yaml';
 import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
-import { ProjectMetadata } from '../models';
+import { ProjectDetails } from '../models';
 
-type ProjectDetails = {
-  metadata: ProjectMetadata;
-  manifest: ProjectManifestVersioned;
-};
-
-export function useProject(id: string): { id: string; project: ProjectDetails | undefined } {
+export function useProject(id: string): ProjectDetails | undefined {
   const { getQuery } = useQueryRegistry();
   const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
@@ -45,6 +40,8 @@ export function useProject(id: string): { id: string; project: ProjectDetails | 
     // TODO load more info like project status
 
     setProject({
+      id,
+      deployment: query.deployment,
       metadata,
       manifest,
     });
@@ -54,8 +51,5 @@ export function useProject(id: string): { id: string; project: ProjectDetails | 
     loadProject();
   }, [loadProject]);
 
-  return {
-    id,
-    project,
-  };
+  return project;
 }

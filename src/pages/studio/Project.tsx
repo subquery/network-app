@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useParams } from 'react-router';
+import { ProjectDetail, ProjectHeader } from '../../components';
 import { useProject } from '../../hooks';
 
 const Project: React.VFC = () => {
@@ -12,7 +13,9 @@ const Project: React.VFC = () => {
 
   return (
     <div>
-      <h3>Studio project</h3>
+      {project ? <ProjectHeader project={project} /> : <span>Loading...</span>}
+      {project && <ProjectDetail project={project} />}
+
       <p>{JSON.stringify(project)}</p>
     </div>
   );

@@ -1,0 +1,49 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  margin: 32px;
+}
+
+.inner {
+  flex-grow: 1;
+  padding-left: 32px;
+}
+
+.upper {
+  border-bottom: 1px solid var(--weak);
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.lower {
+  padding-top: 15px;
+  display: flex;
+  flex-direction: row;
+}
+
+.image {
+  width: 180px;
+  height: 180px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: white;
+}
+
+.name {
+  font-size: 25px;
+  line-height: 37.5px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.owner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.lowerDetail {
+  display: flex;
+  flex-grow: 1;
+}

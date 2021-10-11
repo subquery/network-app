@@ -1,0 +1,34 @@
+.container {
+  display: flex;
+  flex: row;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 32px;
+  margin: 32px;
+  flex-wrap: wrap;
+}
+
+.column {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.left {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-self: normal;
+}
+
+.description {
+  color: var(--primary-secondary);
+  text-align: left;
+}
+
+.leftDetail {
+  display: flex;
+  flex-grow: 1;
+}
