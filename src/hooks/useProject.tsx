@@ -6,6 +6,7 @@ import yaml from 'js-yaml';
 import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { ProjectDetails } from '../models';
+import { buildSchema } from '../utils';
 
 export function useProject(id: string): ProjectDetails | undefined {
   const { getQuery } = useQueryRegistry();
@@ -39,11 +40,16 @@ export function useProject(id: string): ProjectDetails | undefined {
 
     // TODO load more info like project status
 
+    const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
+      .then((data) => Buffer.from(data).toString())
+      .then((str) => buildSchema(str));
+
     setProject({
       id,
       deployment: query.deployment,
       metadata,
       manifest,
+      schema,
     });
   }, [id, catSingle, getMetadataFromCid, getQuery]);
 

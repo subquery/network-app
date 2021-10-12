@@ -7,5 +7,6 @@ import ImageInput from './ImageInput';
 import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
+import Playground from './Playground';
 
-export { Button, Header, ImageInput, IPFSImage, ProjectHeader, ProjectDetail };
+export { Button, Header, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground };

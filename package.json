@@ -27,6 +27,8 @@
     "@web3-react/network-connector": "^6.1.9",
     "ethers": "^5.4.7",
     "formik": "^2.2.9",
+    "graphiql": "^1.4.2",
+    "graphql": "^15.6.1",
     "i18next": "^21.2.4",
     "i18next-browser-languagedetector": "^6.1.2",
     "ipfs-http-client": "^53.0.1",

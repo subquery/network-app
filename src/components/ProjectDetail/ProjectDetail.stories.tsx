@@ -36,5 +36,6 @@ Default.args = {
         },
       },
     } as any,
+    schema: {} as any,
   },
 };

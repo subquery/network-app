@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useParams } from 'react-router';
-import { ProjectDetail, ProjectHeader } from '../../components';
+import { ProjectDetail, ProjectHeader, Playground } from '../../components';
 import { useProject } from '../../hooks';
 
 const Project: React.VFC = () => {
@@ -15,6 +15,8 @@ const Project: React.VFC = () => {
     <div>
       {project ? <ProjectHeader project={project} /> : <span>Loading...</span>}
       {project && <ProjectDetail project={project} />}
+
+      {project && <Playground endpoint="" schema={project.schema} />}
 
       <p>{JSON.stringify(project)}</p>
     </div>

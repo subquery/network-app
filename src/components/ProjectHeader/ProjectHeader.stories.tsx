@@ -30,5 +30,6 @@ Default.args = {
       websiteUrl: 'https://example.com',
     },
     manifest: {} as any,
+    schema: {} as any,
   },
 };
