@@ -45,6 +45,12 @@ const Header: React.VFC = () => {
         </Link>
         {renderLink('/explorer', t('header.explorer'))}
         {renderLink('/studio', t('header.studio'))}
+        <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
+          {t('header.documentation')}
+        </a>
+        <a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
+          {t('header.github')}
+        </a>
       </div>
       <div className={styles.right}>
         <Button type="secondary" label={walletLabel} onClick={handleConnectWallet} />

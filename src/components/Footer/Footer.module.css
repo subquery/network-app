@@ -1,0 +1,56 @@
+.container {
+  background: #4388dd;
+  padding: 0px 50px;
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 32px 0px;
+}
+
+.bottom {
+  display: flex;
+  height: 64px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.slogan {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.copyright {
+  line-height: 64px;
+}
+
+.iconsContainer {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.iconButton {
+  background: white;
+  margin-right: 32px;
+}
+
+@media only screen and (max-width: 600px) {
+  .container {
+    padding: 0 15px;
+  }
+  .iconsContainer {
+    justify-content: flex-start;
+  }
+
+  .iconButton {
+    margin-right: 24px;
+  }
+}
+
+.container span {
+  color: white;
+}

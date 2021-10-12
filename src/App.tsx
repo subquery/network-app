@@ -9,7 +9,7 @@ import { Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import * as pages from './pages';
-import { Header } from './components';
+import { Header, Footer } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -38,6 +38,7 @@ const App: React.VFC = () => {
                     <Route component={pages.Studio} path="/studio" />
                     <Route component={pages.Home} />
                   </Switch>
+                  <Footer />
                 </Router>
               </div>
             </QueryRegistryProvider>

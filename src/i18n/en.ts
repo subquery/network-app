@@ -6,6 +6,8 @@ const en = {
     header: {
       explorer: 'Explorer',
       studio: 'Studio',
+      documentation: 'Docs',
+      github: 'Github',
       connectWallet: 'Connect Wallet',
     },
     newProjectCard: {

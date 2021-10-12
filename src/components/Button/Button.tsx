@@ -9,18 +9,21 @@ type Props = {
   label: string;
   leftItem?: React.ReactNode;
   onClick?: () => void;
+  href?: string;
+  className?: string;
 };
 
 const Button: React.VFC<Props> = (props) => {
   return (
-    <button
-      type="button"
-      className={[styles.button, props.type && styles[props.type]].join(' ')}
+    <a
+      // type="button"
+      className={[styles.button, props.type && styles[props.type], props.className].join(' ')}
       onClick={props.onClick}
+      href={props.href}
     >
       {props.leftItem}
-      {props.label}
-    </button>
+      <span>{props.label}</span>
+    </a>
   );
 };
 

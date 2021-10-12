@@ -3,7 +3,6 @@
 
 import Button from './Button';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Plus } from 'react-bootstrap-icons';
 
 export default {
   title: 'Button',
@@ -31,7 +30,7 @@ export const PrimaryWithIcon = Template.bind({});
 PrimaryWithIcon.args = {
   label: 'Button',
   type: 'primary',
-  leftItem: <Plus size={25} />,
+  leftItem: <i className="bi-plus" role="img" aria-label="Plus"></i>,
 };
 
 export const SecondaryWithIcon = Template.bind({});
@@ -39,12 +38,12 @@ export const SecondaryWithIcon = Template.bind({});
 SecondaryWithIcon.args = {
   label: 'Button',
   type: 'secondary',
-  leftItem: <Plus size={25} />,
+  leftItem: <i className="bi-plus" role="img" aria-label="Plus"></i>,
 };
 
 export const SecondaryOnlyIcon = Template.bind({});
 
 SecondaryOnlyIcon.args = {
   type: 'secondary',
-  leftItem: <Plus size={25} />,
+  leftItem: <i className="bi-github" role="img" aria-label="GitHub"></i>,
 };

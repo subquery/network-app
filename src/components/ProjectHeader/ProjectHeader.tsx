@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { PersonFill } from 'react-bootstrap-icons';
 import { ProjectDetails } from '../../models';
 import Detail from '../Detail';
 import IPFSImage from '../IPFSImage';
@@ -22,7 +21,7 @@ const ProjectHeader: React.VFC<Props> = ({ project }) => {
         <div className={styles.upper}>
           <span className={styles.name}>{project.metadata.name}</span>
           <div className={styles.owner}>
-            <PersonFill size={20} />
+            <i className={['bi-person-fill', styles.ownerIcon].join(' ')} role="img" aria-label="PersonFill" />
             <p>{project.id}</p>
           </div>
         </div>

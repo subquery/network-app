@@ -3,10 +3,11 @@
 
 import Button from './Button';
 import Header from './Header';
+import Footer from './Footer';
 import ImageInput from './ImageInput';
 import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
 import Playground from './Playground';
 
-export { Button, Header, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground };
+export { Button, Header, Footer, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground };

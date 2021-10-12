@@ -1,5 +1,7 @@
 :root {
-  --sq-gradient: linear-gradient(293.04deg, #ff4581 4.09%, #4388dd 70.16%);
+  --gradient-from: #ff4581;
+  --gradient-to: #4388dd;
+  --sq-gradient: linear-gradient(293.04deg, var(--gradient-from) 4.09%, var(--gradient-to) 70.16%);
   --primary: #007bff;
   --primary-secondary: #6c757d;
   --error: #dc3545;
@@ -9,6 +11,8 @@
   --weak: #ccc;
   --weak-opac: #cccccc1f;
 }
+
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');
 
 html,
 body,
