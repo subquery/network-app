@@ -11,7 +11,7 @@ import Button from '../Button';
 import styles from './Header.module.css';
 
 const Header: React.VFC = () => {
-  const { account, activate } = useWeb3();
+  const { account, activate, deactivate } = useWeb3();
   const { t } = useTranslation();
 
   const walletLabel = React.useMemo(
@@ -20,14 +20,17 @@ const Header: React.VFC = () => {
   );
 
   const handleConnectWallet = React.useCallback(async () => {
-    if (account) return;
+    if (account) {
+      deactivate();
+      return;
+    }
 
     try {
       await activate(injectedConntector);
     } catch (e) {
       console.log('Failed to activate wallet', e);
     }
-  }, [activate, account]);
+  }, [activate, account, deactivate]);
 
   const renderLink = (to: string, text: string) => {
     return (

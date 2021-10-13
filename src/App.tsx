@@ -34,10 +34,12 @@ const App: React.VFC = () => {
               <div className="App">
                 <Router>
                   <Header />
-                  <Switch>
-                    <Route component={pages.Studio} path="/studio" />
-                    <Route component={pages.Home} />
-                  </Switch>
+                  <div className="Main">
+                    <Switch>
+                      <Route component={pages.Studio} path="/studio" />
+                      <Route component={pages.Home} />
+                    </Switch>
+                  </div>
                   <Footer />
                 </Router>
               </div>

@@ -1,6 +1,7 @@
 .button {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
+  flex-shrink: 1;
   align-items: flex-start;
   justify-content: center;
   padding: 12px 12px;
@@ -28,49 +29,6 @@
   color: white;
   background: var(--sq-gradient);
 }
-
-/*.secondary {
-  background: var(--sq-gradient);
-  position: relative;
-  border-radius: 48px;
-  text-decoration: none;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.secondary:before {
-  background: var(--sq-gradient);
-  color: var(--sq-gradient);
-
-  content: '';
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: -1;
-  border-radius: 50px;
-}
-.secondary:after {
-  background: white;
-  content: '';
-  display: block;
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  bottom: 2px;
-  right: 2px;
-  z-index: -1;
-  border-radius: 50px;
-}
-
-.secondary:hover:after {
-  left: 100%;
-  top: 100%;
-  bottom: 100%;
-  right: 100%;
-}*/
 
 .secondary {
   position: relative;

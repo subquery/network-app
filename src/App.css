@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.Main {
+  min-height: calc(100vh - 246px);
+}
