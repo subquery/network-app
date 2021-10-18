@@ -1,7 +1,6 @@
 .button {
   display: inline-flex;
   flex-direction: row;
-  flex-shrink: 1;
   align-items: flex-start;
   justify-content: center;
   padding: 12px 12px;
@@ -14,10 +13,10 @@
   border-width: 0;
   cursor: pointer;
   text-decoration: none;
+  transition: 0.5s;
 }
 
 .button:hover {
-  text-shadow: 0px 0px 0px rgba(255, 255, 255, 0.75);
   text-decoration: none;
 }
 
@@ -28,6 +27,12 @@
 .primary {
   color: white;
   background: var(--sq-gradient);
+  background-size: 200% 100%;
+  background-position: 50% 0;
+}
+
+.primary:hover {
+  background-position: 80% 0;
 }
 
 .secondary {

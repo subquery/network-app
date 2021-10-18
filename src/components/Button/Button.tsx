@@ -11,18 +11,18 @@ type Props = {
   onClick?: () => void;
   href?: string;
   className?: string;
-};
+  disabled?: boolean;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-const Button: React.VFC<Props> = (props) => {
+const Button: React.VFC<Props> = ({ type, className, leftItem, label, onClick, disabled, ...rest }) => {
   return (
     <a
-      // type="button"
-      className={[styles.button, props.type && styles[props.type], props.className].join(' ')}
-      onClick={props.onClick}
-      href={props.href}
+      className={[styles.button, type && styles[type], disabled && styles.disabled, className].join(' ')}
+      onClick={disabled ? undefined : onClick}
+      {...rest}
     >
-      {props.leftItem}
-      <span>{props.label}</span>
+      {leftItem}
+      <span>{label}</span>
     </a>
   );
 };

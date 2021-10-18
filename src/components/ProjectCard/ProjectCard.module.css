@@ -2,6 +2,7 @@
   border: 1px solid var(--weak);
   border-radius: 10px;
   padding: 10px;
+  margin: 10px;
   height: 480px;
   /*white-space: nowrap;*/
   display: inline-block;

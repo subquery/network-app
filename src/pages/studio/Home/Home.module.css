@@ -27,3 +27,14 @@
 .connect a {
   font-size: 32px;
 }
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.list::after {
+  content: '';
+  flex: auto;
+}

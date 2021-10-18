@@ -1,14 +1,19 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { BigNumber } from 'ethers';
 import * as React from 'react';
-import { Button } from '../../../components';
-import { useWeb3 } from '../../../containers';
+import { useHistory } from 'react-router';
+import { Button, NewProjectCard } from '../../../components';
+import { useQueryRegistry, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
+import { useAsyncMemo } from '../../../hooks';
 import styles from './Home.module.css';
 
 const Home: React.VFC = () => {
   const { account, activate } = useWeb3();
+  const queryRegistry = useQueryRegistry();
+  const history = useHistory();
 
   const handleConnectWallet = React.useCallback(async () => {
     if (account) return;
@@ -20,6 +25,16 @@ const Home: React.VFC = () => {
     }
   }, [activate, account]);
 
+  const projects = useAsyncMemo<BigNumber[]>(async () => {
+    if (!account) return [];
+
+    return queryRegistry.getUserQueries(account);
+  }, [account]);
+
+  const handleCreateProjcet = () => {
+    history.push('/studio/create');
+  };
+
   if (!account) {
     return (
       <div className={styles.container}>
@@ -30,7 +45,18 @@ const Home: React.VFC = () => {
       </div>
     );
   }
-  return <h3>Studio home</h3>;
+  return (
+    <div>
+      <h3>Studio home</h3>
+
+      <div className={styles.list}>
+        {projects?.map((id) => {
+          return <span>{id.toString()}</span>;
+        })}
+        <NewProjectCard onClick={handleCreateProjcet} />
+      </div>
+    </div>
+  );
 };
 
 export default Home;

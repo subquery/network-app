@@ -9,5 +9,6 @@ import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
 import Playground from './Playground';
+import NewProjectCard from './NewProjectCard';
 
-export { Button, Header, Footer, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground };
+export { Button, Header, Footer, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground, NewProjectCard };

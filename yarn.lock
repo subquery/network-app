@@ -12,7 +12,7 @@
     "@open-web3/orml-types" "^0.9.4-19"
     "@polkadot/api-derive" "^5.2.1"
 
-"@acala-network/api@2.0.2-2", "@acala-network/api@^2.0.2-2":
+"@acala-network/api@2.0.2-2":
   version "2.0.2-2"
   resolved "https://registry.yarnpkg.com/@acala-network/api/-/api-2.0.2-2.tgz#dd9b7bfb5b82678d7444386d9db23a177113cf2f"
   integrity sha512-JSaJJylJkvK7oPvukaT/VXEyZykLlK1JyHCkFOTI4tpIwWf407NaZUR/FLYJ6aXYviitIAetTcdA5UGWRjht1Q==
@@ -24,7 +24,7 @@
     "@polkadot/api" "^5.2.1"
     "@polkadot/rpc-core" "^5.2.1"
 
-"@acala-network/bodhi@1.0.2-0", "@acala-network/bodhi@^1.0.2-0":
+"@acala-network/bodhi@1.0.2-0":
   version "1.0.2-0"
   resolved "https://registry.yarnpkg.com/@acala-network/bodhi/-/bodhi-1.0.2-0.tgz#5ae1c3eb9bcb397517f8c5279bcf5df189b4d2d3"
   integrity sha512-4q/bzDlGE0LQJLgEVgMvgIEBF3Q27OKkMkKej4bUVKgFtUUjyyRUZ9lUJ85+EoRHT0grbCykZG9NVUqN89C44A==
@@ -34,7 +34,7 @@
     ethers "^5.0.21"
     typescript "^4.2.4"
 
-"@acala-network/contracts@1.0.22", "@acala-network/contracts@^1.0.22":
+"@acala-network/contracts@1.0.22":
   version "1.0.22"
   resolved "https://registry.yarnpkg.com/@acala-network/contracts/-/contracts-1.0.22.tgz#1481d00a8a3f4a6a4d8ad578d5423fc5722bd7ba"
   integrity sha512-qWcFa8rBGWyveg4wLp0i3xVQ1uTiJU9NkWWSH2XMmabSIMk03emc2mJ7Hnn5tmDpSM/agLLvKwq5F98u72+GEw==
@@ -3378,14 +3378,22 @@
     pino "^6.13.1"
     reflect-metadata "^0.1.13"
 
-"@subql/contract-sdk@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.0.tgz#e770435905c1ac8986e909781dc69538c5a7e51b"
-  integrity sha512-Tk7gz4T8zD29aK+PfW1YQwd60xXIUNGTr5GpIxPEZFPhIHZ6dpO4NXbU5MwsnFS98RRJstBmKSsMOVj8Yb5pKg==
+"@subql/contract-sdk@../contracts/build/build":
+  version "0.1.1-0"
   dependencies:
-    "@acala-network/api" "^2.0.2-2"
-    "@acala-network/bodhi" "^1.0.2-0"
-    "@acala-network/contracts" "^1.0.22"
+    "@acala-network/api" "2.0.2-2"
+    "@acala-network/bodhi" "1.0.2-0"
+    "@acala-network/contracts" "1.0.22"
+    dotenv "^10.0.0"
+    fs "^0.0.1-security"
+
+"@subql/contract-sdk@file:../contracts/build/build/subql-contract-sdk-0.1.1-0.tgz":
+  version "0.1.1-0"
+  resolved "file:../contracts/build/build/subql-contract-sdk-0.1.1-0.tgz#d807866cc0c4e93aa8fb06bbde8449965a1d33b3"
+  dependencies:
+    "@acala-network/api" "2.0.2-2"
+    "@acala-network/bodhi" "1.0.2-0"
+    "@acala-network/contracts" "1.0.22"
     dotenv "^10.0.0"
     fs "^0.0.1-security"
 

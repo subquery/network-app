@@ -17,6 +17,8 @@ const LinkButton: React.VFC<{
       href={props.link}
       className={styles.iconButton}
       leftItem={props.icon && <i className={`bi-${props.icon}`} role="img" aria-label={props.icon} />}
+      target="_blank"
+      rel="noreferrer"
     />
   );
 };

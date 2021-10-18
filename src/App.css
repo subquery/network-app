@@ -39,4 +39,6 @@
 
 .Main {
   min-height: calc(100vh - 246px);
+  max-width: 1200px;
+  margin: auto;
 }
