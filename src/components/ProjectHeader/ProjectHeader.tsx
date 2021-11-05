@@ -27,12 +27,14 @@ const ProjectHeader: React.VFC<Props> = ({ project }) => {
         </div>
         <div className={styles.lower}>
           <Detail className={styles.lowerDetail} label="id" value={project.id} />
-          <Detail
-            className={styles.lowerDetail}
-            label="deployment"
-            value={project.deployment}
-            href={`https://ipfs.io/ipfs/${project.deployment}`}
-          />
+          {project.deployment && (
+            <Detail
+              className={styles.lowerDetail}
+              label="deployment"
+              value={project.deployment.id}
+              href={`https://ipfs.io/ipfs/${project.deployment}`}
+            />
+          )}
         </div>
       </div>
     </div>

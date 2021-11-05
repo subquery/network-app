@@ -3,6 +3,7 @@
 
 import { buildASTSchema, extendSchema, GraphQLSchema, parse } from 'graphql';
 import gql from 'graphql-tag';
+import { utils } from 'ethers';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -17,13 +18,17 @@ export function genesisHashToName(genesisHash: string): string {
       return 'Polkadot';
     case '0x3fd7b9eb6a00376e5be61f01abb429ffb0b104be05eaff4d458da48fcd425baf':
       return 'Kusama';
+    case '0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b':
+      return 'Moonriver';
+    case '0x956876d5b80e47e523a6629b3c3ac3e42f2850ad12e236d87a0aaac87c9f6bc9':
+      return 'Moonbeam DEV';
     /* TODO add more network names */
     default:
       return genesisHash;
   }
 }
 
-export const CIDv0 = new RegExp(/Qm[1-9A-Za-z]{44}[^OIl]/i);
+export const CIDv0 = new RegExp(/Qm[1-9A-HJ-NP-Za-km-z]{44}/i);
 export const CIDv1 = new RegExp(
   /Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}/i,
 );
@@ -45,4 +50,17 @@ const directives = gql`
 export function buildSchema(raw: string): GraphQLSchema {
   const base = extendSchema(buildASTSchema(scalas), directives);
   return extendSchema(base, parse(raw));
+}
+
+export function cidToBytes32(cid: string): string {
+  return '0x' + Buffer.from(utils.base58.decode(cid)).slice(2).toString('hex');
+}
+
+export function bytes32ToCid(bytes: string): string {
+  // Add our default ipfs values for first 2 bytes:
+  // function:0x12=sha2, size:0x20=256 bits
+  // and cut off leading "0x"
+  const hashHex = '1220' + bytes.slice(2);
+  const hashBytes = Buffer.from(hashHex, 'hex');
+  return utils.base58.encode(hashBytes);
 }

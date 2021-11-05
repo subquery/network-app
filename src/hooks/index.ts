@@ -3,3 +3,4 @@
 
 export { useProject } from './useProject';
 export { useAsyncMemo } from './useAsyncMemo';
+export { useCreateDeployment } from './useCreateDeployment';

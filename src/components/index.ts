@@ -10,5 +10,17 @@ import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
 import Playground from './Playground';
 import NewProjectCard from './NewProjectCard';
+import NewDeployment from './NewDeployment';
 
-export { Button, Header, Footer, ImageInput, IPFSImage, ProjectHeader, ProjectDetail, Playground, NewProjectCard };
+export {
+  Button,
+  Header,
+  Footer,
+  ImageInput,
+  IPFSImage,
+  ProjectHeader,
+  ProjectDetail,
+  Playground,
+  NewProjectCard,
+  NewDeployment,
+};

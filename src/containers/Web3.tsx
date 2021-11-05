@@ -11,15 +11,16 @@ import React from 'react';
 const RPC_URLS: Record<number, string> = {
   1285: 'wss://moonriver.api.onfinality.io/public-ws',
   1287: 'wss://moonbeam-alpha.api.onfinality.io/public-ws',
+  1281: 'http://127.0.0.1:9933',
 };
 
 export const injectedConntector = new InjectedConnector({
-  supportedChainIds: [1, 1285, 1287],
+  supportedChainIds: [1, 1281, 1285, 1287],
 });
 
 const networkConnector = new NetworkConnector({
   urls: RPC_URLS,
-  defaultChainId: 1285,
+  defaultChainId: 1281,
 });
 
 function getLibrary(provider: any): providers.Web3Provider {
@@ -39,7 +40,7 @@ const InitProvider: React.VFC = () => {
       return;
     }
 
-    activate(networkConnector);
+    // activate(networkConnector);
   }, [activate]);
 
   React.useEffect(() => {

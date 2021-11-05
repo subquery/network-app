@@ -16,7 +16,7 @@ const Project: React.VFC = () => {
       {project ? <ProjectHeader project={project} /> : <span>Loading...</span>}
       {project && <ProjectDetail project={project} />}
 
-      {project && <Playground endpoint="" schema={project.schema} />}
+      {project?.deployment && <Playground endpoint="" schema={project.deployment.schema} />}
 
       <p>{JSON.stringify(project)}</p>
     </div>

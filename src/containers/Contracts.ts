@@ -4,45 +4,40 @@
 import { createContainer, Logger } from './Container';
 import React from 'react';
 import { ContractSDK } from '@subql/contract-sdk';
+import { useWeb3 } from './Web3';
+import deploymentDetails from '../local.json';
 
-// TODO remove once https://github.com/subquery/contracts/pull/13 released
-export type SubqueryNetwork = 'mainnet' | 'testnet' | 'local';
-type InitialState = {
-  network?: SubqueryNetwork;
-  endpoint?: string;
-};
-
-function useContractsImpl(logger: Logger, initialState?: InitialState): ContractSDK | undefined {
-  // const contracts = React.useRef<ContractSDK | undefined>(undefined);
+function useContractsImpl(logger: Logger): ContractSDK | undefined {
   const [contracts, setContracts] = React.useState<ContractSDK>();
+  const web3 = useWeb3();
+
+  const signerOrProvider = React.useMemo(() => {
+    return web3.account ? web3.library?.getSigner(web3.account) : web3.library;
+  }, [web3]);
 
   const initSdk = React.useCallback(async () => {
-    if (!initialState || !initialState.network || !initialState.endpoint) {
-      // contracts.current = undefined;
+    if (!signerOrProvider) {
       setContracts(undefined);
-      throw new Error('Invalid initial state, contracts provider requires network and endpoint');
+      return;
     }
 
     try {
-      const instance = await ContractSDK.create(initialState.network, initialState.endpoint);
+      const instance = await ContractSDK.create(signerOrProvider, { deploymentDetails });
 
       logger.l('Created ContractSDK instance');
 
-      // contracts.current = instance;
       setContracts(instance);
     } catch (e) {
       logger.e('Failed to create ContractSDK instance', e);
-      // contracts.current = undefined;
       setContracts(undefined);
       throw e;
     }
-  }, [logger, initialState]);
+  }, [logger, signerOrProvider]);
 
   React.useEffect(() => {
     initSdk();
   }, [initSdk]);
 
-  // return contracts.current;
   return contracts;
 }
 

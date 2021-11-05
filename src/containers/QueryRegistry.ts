@@ -1,9 +1,11 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+import { BigNumber, BigNumberish, ContractTransaction, constants } from 'ethers';
 import { createContainer, Logger } from './Container';
 import { useContracts } from './Contracts';
+import * as React from 'react';
+import { bytes32ToCid, cidToBytes32 } from '../utils';
 
 type InitialState = {
   contractAddress: string;
@@ -20,26 +22,37 @@ type QueryDetails = {
 function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   const contracts = useContracts();
 
-  const registerQuery = async (metadataCid: string): Promise<ContractTransaction> => {
+  const registerQuery = async (
+    metadataCid: string,
+    deploymentId: string,
+    versionCid: string,
+  ): Promise<ContractTransaction> => {
     // Call contract function to register a new project, should emit an event with an id
     if (!contracts) {
       throw new Error('QueryRegistry contract not available');
     }
 
-    return contracts?.queryRegistry.createQueryProject(metadataCid);
+    return contracts?.queryRegistry.createQueryProject(
+      cidToBytes32(metadataCid),
+      cidToBytes32(versionCid),
+      cidToBytes32(deploymentId),
+    );
   };
 
-  const updateMetadata = async (metadataCid: string) => {
-    // Sets the metadata IPFS cid for a Project Metadata object
-    throw new Error('Not implemented');
+  const updateQuery = (id: BigNumberish, deploymentId: string, version: string, metadata: string) => {
+    if (!contracts) {
+      throw new Error('QueryRegistry contract not available');
+    }
+
+    return contracts.queryRegistry.updateQueryProject(
+      id,
+      cidToBytes32(version),
+      cidToBytes32(deploymentId),
+      cidToBytes32(metadata),
+    );
   };
 
-  const releaseVersion = async (deploymentCid: string) => {
-    // Deployment CID comes from the cli publish command
-    throw new Error('Not implemented');
-  };
-
-  const getQuery = async (id: BigNumberish): Promise<QueryDetails> => {
+  const getQuery = async (id: BigNumberish): Promise<QueryDetails | undefined> => {
     // Just for testing purposes
     // return {
     //   queryId: BigNumber.from(id),
@@ -50,7 +63,8 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     // };
 
     if (!contracts) {
-      throw new Error('QueryRegistry contract not available');
+      logger.w('contracts not available');
+      return undefined;
     }
 
     const result = await contracts.queryRegistry.queryInfos(id);
@@ -58,30 +72,33 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     return {
       queryId: result.queryId,
       owner: result.owner,
-      metadata: result.metadata,
-      deployment: result.latestDeploymentId,
-      version: result.latestVersion,
+      metadata: bytes32ToCid(result.metadata),
+      deployment: bytes32ToCid(result.latestDeploymentId),
+      version: bytes32ToCid(result.latestVersion),
     };
   };
 
-  const getUserQueries = async (address: string): Promise<BigNumber[]> => {
-    if (!contracts) {
-      throw new Error('QueryRegistry contract not available');
-    }
+  const getUserQueries = React.useCallback(
+    async (address: string): Promise<BigNumber[]> => {
+      if (!contracts) {
+        // throw new Error('QueryRegistry contract not available');
+        return [];
+      }
 
-    const count = await contracts.queryRegistry.queryInfoCountByOwner(address);
+      const count = await contracts.queryRegistry.queryInfoCountByOwner(address);
 
-    return Promise.all(
-      Array.from(new Array(count).keys()).map((_, index) =>
-        contracts.queryRegistry.queryInfoIdsByOwner(address, index),
-      ),
-    );
-  };
+      return Promise.all(
+        Array.from(new Array(count.toNumber()).keys()).map((_, index) =>
+          contracts.queryRegistry.queryInfoIdsByOwner(address, index),
+        ),
+      );
+    },
+    [contracts],
+  );
 
   return {
     registerQuery,
-    updateMetadata,
-    releaseVersion,
+    updateQuery,
     getQuery,
     getUserQueries,
   };

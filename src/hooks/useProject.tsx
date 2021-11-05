@@ -15,6 +15,28 @@ export function useProject(id: string): ProjectDetails | undefined {
 
   const [project, setProject] = React.useState<ProjectDetails>();
 
+  const getDeployment = async (deploymentId: string): Promise<ProjectDetails['deployment']> => {
+    const manifest = await catSingle(deploymentId)
+      .then((data) => Buffer.from(data).toString())
+      .then((str) => yaml.load(str))
+      .then((obj) => {
+        const manifest = new ProjectManifestVersioned(obj as VersionedProjectManifest);
+        manifest.validate();
+
+        return manifest;
+      });
+
+    const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
+      .then((data) => Buffer.from(data).toString())
+      .then((str) => buildSchema(str));
+
+    return {
+      id: deploymentId,
+      manifest,
+      schema,
+    };
+  };
+
   const loadProject = React.useCallback(async () => {
     if (!id) {
       setProject(undefined);
@@ -22,34 +44,19 @@ export function useProject(id: string): ProjectDetails | undefined {
     }
 
     const query = await getQuery(id);
+    if (!query) {
+      setProject(undefined);
+      return;
+    }
 
-    const [metadata, manifest] = await Promise.all([
-      getMetadataFromCid(query.metadata),
+    const metadata = await getMetadataFromCid(query.metadata);
 
-      // TODO use reader once https://github.com/subquery/subql/pull/511 is released
-      catSingle(query.deployment)
-        .then((data) => Buffer.from(data).toString())
-        .then((str) => yaml.load(str))
-        .then((obj) => {
-          const manifest = new ProjectManifestVersioned(obj as VersionedProjectManifest);
-          manifest.validate();
-
-          return manifest;
-        }),
-    ]);
-
-    // TODO load more info like project status
-
-    const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
-      .then((data) => Buffer.from(data).toString())
-      .then((str) => buildSchema(str));
+    const deployment = await getDeployment(query.deployment);
 
     setProject({
       id,
-      deployment: query.deployment,
       metadata,
-      manifest,
-      schema,
+      deployment,
     });
   }, [id, catSingle, getMetadataFromCid, getQuery]);
 

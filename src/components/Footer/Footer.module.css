@@ -54,3 +54,9 @@
 .container span {
   color: white;
 }
+
+.image {
+  align-self: center;
+  width: 35px;
+  margin: -5px;
+}

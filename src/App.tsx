@@ -17,18 +17,12 @@ import {
   QueryRegistryProvider,
   ContractsProvider,
 } from './containers';
-import { SubqueryNetwork } from '@subql/contract-sdk/types';
 
 const App: React.VFC = () => {
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
       <Web3Provider>
-        <ContractsProvider
-          initialState={{
-            network: process.env.REACT_APP_BLOCKCHAIN_ENV as SubqueryNetwork | undefined,
-            endpoint: process.env.REACT_APP_BLOCKCHAIN_GATEWAY,
-          }}
-        >
+        <ContractsProvider>
           <ProjectMetadataProvider>
             <QueryRegistryProvider>
               <div className="App">

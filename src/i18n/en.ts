@@ -26,6 +26,16 @@ const en = {
         websiteUrl: 'Website URL',
       },
     },
+    deployment: {
+      create: {
+        title: 'Create New Deployment',
+        version: 'Version',
+        description: 'Description',
+        deploymentId: 'Deployment ID',
+        explainer: 'You can get a deployment id by running `subqul publish` from the command line',
+        submit: 'Deploy',
+      },
+    },
   },
 };
 

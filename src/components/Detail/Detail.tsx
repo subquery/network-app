@@ -6,7 +6,7 @@ import styles from './Details.module.css';
 
 type Props = {
   label: string;
-  value: string;
+  value?: string;
   href?: string;
   className?: string;
 };
@@ -17,7 +17,7 @@ const Detail: React.VFC<Props> = ({ label, value, href, className }) => {
       <span className={styles.label}>{label}</span>
       {href ? (
         <a href={href} className={styles.value} target="_blank" rel="noreferrer">
-          {value}
+          {value ?? '-'}
         </a>
       ) : (
         <span className={styles.value}>{value}</span>

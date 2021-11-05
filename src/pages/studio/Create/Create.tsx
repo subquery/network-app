@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../../../containers';
 import { useTranslation } from 'react-i18next';
-import { ProjectMetadata, projectMetadataSchema } from '../../../models';
+import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSchema } from '../../../models';
 import { Button, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
@@ -19,7 +19,7 @@ const Create: React.VFC = () => {
   const history = useHistory();
 
   const createProject = React.useCallback(
-    async (project: ProjectMetadata & { image: File | undefined | string }) => {
+    async (project: ProjectMetadata & { image: File | undefined | string } & NewDeployment) => {
       // Form can give us a File type that doesn't match the schema
       if ((project.image as unknown) instanceof File) {
         console.log('Uploading icon...');
@@ -28,18 +28,16 @@ const Create: React.VFC = () => {
         console.log('Uploading icon...DONE');
       }
 
-      const cid = await uploadMetadata(project);
+      const version = await ipfs.add(
+        JSON.stringify({
+          version: project.version,
+          description: (project as any).versionDescription,
+        }),
+      );
 
-      console.log('Uploaded metadata to IPFS', cid);
-
-      const tx = await registerQuery(cid);
-
-      console.log('TX submitted, awaiting confirmation');
-
+      const metadata = await uploadMetadata(project);
+      const tx = await registerQuery(metadata, project.deploymentId, version.cid.toV0().toString());
       const receipt = await tx.wait(1);
-
-      console.log('TX confirmed');
-
       const event = receipt.events?.[0];
 
       if (event) {
@@ -61,13 +59,17 @@ const Create: React.VFC = () => {
           description: '',
           websiteUrl: undefined,
           image: undefined,
+          version: '1.0.0',
+          versionDescription: '',
+          deploymentId: '',
         }}
-        validationSchema={projectMetadataSchema.shape({})}
+        validationSchema={projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))}
         onSubmit={createProject}
       >
         {({ errors, touched, setFieldValue, values, isSubmitting, submitForm }) => (
           <Form>
             <div className={styles.form}>
+              <h4>Project Details</h4>
               <label htmlFor="name">{t('studio.create.name')}</label>
               <Field name="name" />
               {errors.name && touched.name && <div>{errors.name}</div>}
@@ -82,6 +84,16 @@ const Create: React.VFC = () => {
               <Field name="description" as="textarea" />
               <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
               <Field name="websiteUrl" />
+              {errors.websiteUrl && touched.websiteUrl && <div>{errors.websiteUrl}</div>}
+
+              <h4>Deployment Details</h4>
+              <label htmlFor="version">{t('deployment.create.version')}</label>
+              <Field name="version" />
+              <label htmlFor="versionDescription">{t('deployment.create.description')}</label>
+              <Field name="versionDescription" />
+              <label htmlFor="deploymentId">{t('deployment.create.deploymentId')}</label>
+              <Field name="deploymentId" />
+              {<p>{JSON.stringify(errors)}</p>}
               <div className={styles.submit}>
                 <Button onClick={submitForm} type="primary" label="Save" disabled={isSubmitting} />
               </div>

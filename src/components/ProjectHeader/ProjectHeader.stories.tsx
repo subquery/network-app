@@ -21,7 +21,11 @@ export const Default = Template.bind({});
 Default.args = {
   project: {
     id: '0x0000000000000000000000000000000000000000-1',
-    deployment: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
+    deployment: {
+      id: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
+      manifest: {} as any,
+      schema: {} as any,
+    },
     metadata: {
       name: 'Test Query Project',
       subtitle: 'A project that provides a simple example',
@@ -29,7 +33,5 @@ Default.args = {
       image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
       websiteUrl: 'https://example.com',
     },
-    manifest: {} as any,
-    schema: {} as any,
   },
 };

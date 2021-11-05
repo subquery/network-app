@@ -4,6 +4,7 @@
 import { ProjectManifestVersioned } from '@subql/common';
 import { GraphQLSchema } from 'graphql';
 import * as yup from 'yup';
+import { CIDv0 } from './utils';
 
 export const projectMetadataSchema = yup.object({
   name: yup.string().defined(),
@@ -22,8 +23,18 @@ export type ProjectWithMetadata = {
 
 export type ProjectDetails = {
   id: string;
-  deployment: string;
   metadata: ProjectMetadata;
-  manifest: ProjectManifestVersioned;
-  schema: GraphQLSchema;
+  deployment: {
+    id: string;
+    manifest: ProjectManifestVersioned;
+    schema: GraphQLSchema;
+  };
 };
+
+export const newDeploymentSchema = yup.object({
+  version: yup.string().defined(), // TODO lock to semver
+  description: yup.string().optional(),
+  deploymentId: yup.string().matches(CIDv0, `Doesn't match deployment id format`).defined(),
+});
+
+export type NewDeployment = yup.Asserts<typeof newDeploymentSchema>;

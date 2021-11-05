@@ -5,14 +5,25 @@ import { BigNumber } from 'ethers';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import { Button, NewProjectCard } from '../../../components';
+import ProjectCard from '../../../components/ProjectCard';
 import { useQueryRegistry, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
-import { useAsyncMemo } from '../../../hooks';
+import { useAsyncMemo, useProject } from '../../../hooks';
 import styles from './Home.module.css';
+
+const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
+  const project = useProject(projectId);
+
+  if (!project) {
+    return null;
+  }
+
+  return <ProjectCard project={project} onClick={onClick} />;
+};
 
 const Home: React.VFC = () => {
   const { account, activate } = useWeb3();
-  const queryRegistry = useQueryRegistry();
+  const { getUserQueries } = useQueryRegistry();
   const history = useHistory();
 
   const handleConnectWallet = React.useCallback(async () => {
@@ -28,8 +39,8 @@ const Home: React.VFC = () => {
   const projects = useAsyncMemo<BigNumber[]>(async () => {
     if (!account) return [];
 
-    return queryRegistry.getUserQueries(account);
-  }, [account]);
+    return getUserQueries(account);
+  }, [account, getUserQueries]);
 
   const handleCreateProjcet = () => {
     history.push('/studio/create');
@@ -50,9 +61,9 @@ const Home: React.VFC = () => {
       <h3>Studio home</h3>
 
       <div className={styles.list}>
-        {projects?.map((id) => {
-          return <span>{id.toString()}</span>;
-        })}
+        {projects?.map((id) => (
+          <Project projectId={id.toString()} onClick={() => history.push(`/studio/project/${id.toString()}`)} />
+        ))}
         <NewProjectCard onClick={handleCreateProjcet} />
       </div>
     </div>

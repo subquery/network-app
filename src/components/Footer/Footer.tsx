@@ -7,7 +7,7 @@ import styles from './Footer.module.css';
 
 const LinkButton: React.VFC<{
   link: string;
-  icon?: 'twitter' | 'telegram' | 'github' | 'discord' | 'linkedin';
+  icon?: 'twitter' | 'telegram' | 'github' | 'discord' | 'linkedin' | 'matrix';
   label?: string;
 }> = (props) => {
   return (
@@ -16,7 +16,14 @@ const LinkButton: React.VFC<{
       label={props.label || ''}
       href={props.link}
       className={styles.iconButton}
-      leftItem={props.icon && <i className={`bi-${props.icon}`} role="img" aria-label={props.icon} />}
+      leftItem={
+        props.icon &&
+        (props.icon === 'matrix' ? (
+          <img src="/static/matrix-logo.svg" className={styles.image} />
+        ) : (
+          <i className={`bi-${props.icon}`} role="img" aria-label={props.icon} />
+        ))
+      }
       target="_blank"
       rel="noreferrer"
     />
@@ -29,9 +36,9 @@ const links: React.ComponentProps<typeof LinkButton>[] = [
   { link: 'https://github.com/subquery', icon: 'github' },
   { link: 'https://discord.com/invite/78zg8aBSMG', icon: 'discord' },
   { link: 'https://www.linkedin.com/company/subquery', icon: 'linkedin' },
+  { link: 'https://matrix.to/#/#subquery:matrix.org', icon: 'matrix' },
   /* TODO replace with icons, bootstrap icons doesn't have support for below*/
   { link: 'https://medium.com/@subquery', label: 'Medium' },
-  { link: 'https://matrix.to/#/#subquery:matrix.org', label: 'Matrix' },
 ];
 
 const Footer: React.VFC = () => {

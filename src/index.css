@@ -50,6 +50,7 @@ input,
 textarea {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
+  box-sizing: border-box;
   line-height: 1.5;
   font-size: 1rem;
   font-weight: 400;
