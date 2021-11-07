@@ -1,7 +1,7 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProjectMetadata, projectMetadataSchema } from '../models';
+import { NewDeployment, ProjectMetadata, projectMetadataSchema } from '../models';
 import { createContainer } from './Container';
 import { useIPFS } from './IPFS';
 
@@ -28,13 +28,20 @@ function useProjectMetadataImpl() {
 
     const result = await ipfs.add(Buffer.from(JSON.stringify(meta)), { pin: true });
 
-    return result.cid.toString();
+    return result.cid.toV0().toString();
+  };
+
+  const uploadVersionMetadata = async (version: Omit<NewDeployment, 'deploymentId'>): Promise<string> => {
+    const result = await ipfs.add(JSON.stringify(version), { pin: true });
+
+    return result.cid.toV0().toString();
   };
 
   return {
     getMetadataForProject,
     getMetadataFromCid,
     uploadMetadata,
+    uploadVersionMetadata,
   };
 }
 

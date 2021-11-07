@@ -9,6 +9,7 @@ import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSch
 import { Button, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
+import { useCreateProject } from '../../../hooks/useCreateProject';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
@@ -17,35 +18,15 @@ const Create: React.VFC = () => {
   const { ipfs } = useIPFS();
   const { registerQuery } = useQueryRegistry();
   const history = useHistory();
+  const createProject = useCreateProject();
 
-  const createProject = React.useCallback(
+  const handleSubmit = React.useCallback(
     async (project: ProjectMetadata & { image: File | undefined | string } & NewDeployment) => {
       // Form can give us a File type that doesn't match the schema
-      if ((project.image as unknown) instanceof File) {
-        console.log('Uploading icon...');
-        const res = await ipfs.add(project.image as unknown as File);
-        project.image = res.cid.toString();
-        console.log('Uploading icon...DONE');
-      }
+      const queryId = await createProject(project);
 
-      const version = await ipfs.add(
-        JSON.stringify({
-          version: project.version,
-          description: (project as any).versionDescription,
-        }),
-      );
-
-      const metadata = await uploadMetadata(project);
-      const tx = await registerQuery(metadata, project.deploymentId, version.cid.toV0().toString());
-      const receipt = await tx.wait(1);
-      const event = receipt.events?.[0];
-
-      if (event) {
-        const { queryId, creator } = event.args as any;
-
-        console.log(`Query created. queryId=${queryId.toString()} creator=${creator}`);
-        history.push(`/studio/project/${queryId.toString()}`);
-      }
+      console.log(`Query created. queryId=${queryId.toString()}`);
+      history.push(`/studio/project/${queryId.toString()}`);
     },
     [ipfs, uploadMetadata, registerQuery, history],
   );
@@ -64,7 +45,7 @@ const Create: React.VFC = () => {
           deploymentId: '',
         }}
         validationSchema={projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))}
-        onSubmit={createProject}
+        onSubmit={handleSubmit}
       >
         {({ errors, touched, setFieldValue, values, isSubmitting, submitForm }) => (
           <Form>
