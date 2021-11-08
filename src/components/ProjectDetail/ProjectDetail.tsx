@@ -2,46 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import Modal from 'react-modal';
-import { useCreateDeployment } from '../../hooks';
-import { ProjectDetails, NewDeployment as NewDeploymentParams } from '../../models';
+import { ProjectDetails } from '../../models';
 import { genesisHashToName } from '../../utils';
 import Button from '../Button';
 import Detail from '../Detail';
-import NewDeployment from '../NewDeployment';
+
 import styles from './ProjectDetail.module.css';
 
 type Props = {
   project: ProjectDetails;
+  onNewDeployment?: () => void;
 };
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    borderRadius: '10px',
-  },
-};
-
-const ProjectDetail: React.VFC<Props> = ({ project }) => {
+const ProjectDetail: React.VFC<Props> = ({ project, onNewDeployment }) => {
   const network = React.useMemo(
     () => project.deployment && genesisHashToName(project.deployment.manifest.asV0_2_0.network.genesisHash),
     [project.deployment?.manifest],
   );
-
-  const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
-
-  const createDeployment = useCreateDeployment(project.id);
-
-  const handleSubmitCreate = async (details: NewDeploymentParams) => {
-    await createDeployment(details);
-
-    setDeploymentModal(false);
-  };
 
   const renderNoDeployments = () => {
     return (
@@ -50,16 +27,13 @@ const ProjectDetail: React.VFC<Props> = ({ project }) => {
           <span>Deploy to SubQuery Network</span>
           <span>Something something something</span>
         </div>
-        <Button label="Deploy" onClick={() => setDeploymentModal(true)} type="primary" />
+        <Button label="Deploy" onClick={onNewDeployment} type="primary" />
       </div>
     );
   };
 
   return (
     <div className={styles.container}>
-      <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
-        <NewDeployment onSubmit={handleSubmitCreate} />
-      </Modal>
       <div className={styles.column}>
         <div className={styles.left}>
           {/* TODO map*/}

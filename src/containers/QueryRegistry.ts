@@ -39,17 +39,20 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     );
   };
 
-  const updateQuery = (id: BigNumberish, deploymentId: string, version: string, metadata: string) => {
+  const updateQueryMetadata = (id: BigNumberish, metadata: string) => {
     if (!contracts) {
       throw new Error('QueryRegistry contract not available');
     }
 
-    return contracts.queryRegistry.updateQueryProject(
-      id,
-      cidToBytes32(version),
-      cidToBytes32(deploymentId),
-      cidToBytes32(metadata),
-    );
+    return contracts.queryRegistry.updateQueryProjectMetadata(id, cidToBytes32(metadata));
+  };
+
+  const updateDeployment = (id: BigNumberish, deploymentId: string, version: string) => {
+    if (!contracts) {
+      throw new Error('QueryRegistry contract not available');
+    }
+
+    return contracts.queryRegistry.updateDeployment(id, cidToBytes32(deploymentId), cidToBytes32(version));
   };
 
   const getQuery = async (id: BigNumberish): Promise<QueryDetails | undefined> => {
@@ -98,9 +101,10 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
 
   return {
     registerQuery,
-    updateQuery,
     getQuery,
     getUserQueries,
+    updateQueryMetadata,
+    updateDeployment,
   };
 }
 

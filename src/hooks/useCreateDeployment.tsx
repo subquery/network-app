@@ -19,12 +19,7 @@ export function useCreateDeployment(projectId: string) {
 
     console.log('Uploaded version details', versionCid);
 
-    const tx = await queryRegistry.updateQuery(
-      projectId,
-      deploymentDetails.deploymentId,
-      versionCid,
-      'QmSTxccgiZQFiPtSUe11DZnyxb9zmTu3DgPRUKspiD6Nux' /* TODO get existing metadata*/,
-    );
+    const tx = await queryRegistry.updateDeployment(projectId, deploymentDetails.deploymentId, versionCid);
 
     await tx.wait(1);
   };
