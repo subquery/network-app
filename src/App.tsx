@@ -16,31 +16,35 @@ import {
   ProjectMetadataProvider,
   QueryRegistryProvider,
   ContractsProvider,
+  QueryRegistryProjectProvider,
 } from './containers';
 
 const App: React.VFC = () => {
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
-      <Web3Provider>
-        <ContractsProvider>
-          <ProjectMetadataProvider>
-            <QueryRegistryProvider>
-              <div className="App">
-                <Router>
-                  <Header />
-                  <div className="Main">
-                    <Switch>
-                      <Route component={pages.Studio} path="/studio" />
-                      <Route component={pages.Home} />
-                    </Switch>
-                  </div>
-                  <Footer />
-                </Router>
-              </div>
-            </QueryRegistryProvider>
-          </ProjectMetadataProvider>
-        </ContractsProvider>
-      </Web3Provider>
+      <QueryRegistryProjectProvider endpoint="http://localhost:3000">
+        <Web3Provider>
+          <ContractsProvider>
+            <ProjectMetadataProvider>
+              <QueryRegistryProvider>
+                <div className="App">
+                  <Router>
+                    <Header />
+                    <div className="Main">
+                      <Switch>
+                        <Route component={pages.Studio} path="/studio" />
+                        <Route component={pages.Explorer} path="/explorer" />
+                        <Route component={pages.Home} />
+                      </Switch>
+                    </div>
+                    <Footer />
+                  </Router>
+                </div>
+              </QueryRegistryProvider>
+            </ProjectMetadataProvider>
+          </ContractsProvider>
+        </Web3Provider>
+      </QueryRegistryProjectProvider>
     </IPFSProvider>
   );
 };

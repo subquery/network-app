@@ -56,13 +56,18 @@ const Home: React.VFC = () => {
       </div>
     );
   }
+
   return (
     <div>
       <h3>Studio home</h3>
 
       <div className={styles.list}>
         {projects?.map((id) => (
-          <Project projectId={id.toString()} onClick={() => history.push(`/studio/project/${id.toString()}`)} />
+          <Project
+            projectId={id.toHexString()}
+            key={id.toHexString()}
+            onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
+          />
         ))}
         <NewProjectCard onClick={handleCreateProjcet} />
       </div>
