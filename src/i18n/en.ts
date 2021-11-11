@@ -24,6 +24,7 @@ const en = {
         subtitle: 'Subtitle',
         description: 'Description',
         websiteUrl: 'Website URL',
+        codeUrl: 'Code URL',
       },
     },
     deployment: {

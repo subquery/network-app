@@ -21,12 +21,13 @@ export const Default = Template.bind({});
 Default.args = {
   project: {
     id: '0x0000000000000000000000000000000000000000-1',
+    owner: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     metadata: {
       name: 'Test Query Project',
-      subtitle: 'A project that provides a simple example',
       description: 'This is a test project for testing purposes',
       image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
       websiteUrl: 'https://example.com',
+      codeUrl: 'https://example.com',
     },
   },
 };
@@ -36,12 +37,23 @@ export const Minimal = Template.bind({});
 Minimal.args = {
   project: {
     id: '0x0000000000000000000000000000000000000000-1',
+    owner: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     metadata: {
       name: '',
-      subtitle: 'A project that provides a simple example',
       description: '',
       image: '',
       websiteUrl: '',
+      codeUrl: '',
     },
+  },
+};
+
+export const NoMeta = Template.bind({});
+
+NoMeta.args = {
+  project: {
+    id: '0x0000000000000000000000000000000000000000-1',
+    owner: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
+    metadata: undefined,
   },
 };

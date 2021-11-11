@@ -4,7 +4,7 @@
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import * as React from 'react';
 
-interface Project {
+export interface Project {
   id: string;
   owner: string;
   metadata: string;
@@ -15,18 +15,18 @@ interface Project {
   createdAt: Date;
 }
 
-interface Deployment {
+export interface Deployment {
   id: string;
   version: string;
 
   createdAt: Date;
 }
 
-interface DeploymentIndexer {
+export interface DeploymentIndexer {
   id: string;
   indexer: string;
   deploymentId: string;
-  blockHeight: BigInt;
+  blockHeight: BigInt | string;
   status: 'indexing' | 'ready' | 'terminated';
   createdAt: Date;
   updatedAt: Date;

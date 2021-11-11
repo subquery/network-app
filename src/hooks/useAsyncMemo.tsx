@@ -7,23 +7,39 @@ export function useAsyncMemo<T>(
   factory: () => Promise<T> | undefined | null,
   deps: DependencyList,
   initial: T | undefined = undefined,
-): T | undefined {
-  const [val, setVal] = useState<T | undefined>(initial);
+): { data: T | undefined; loading: boolean; error?: Error } {
+  const [data, setData] = useState<T | undefined>(initial);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error>();
 
   useEffect(() => {
     let cancel = false;
     const promise = factory();
     if (promise === undefined || promise === null) return;
+    setLoading(true);
 
-    promise.then((val) => {
-      if (!cancel) {
-        setVal(val);
-      }
-    });
+    promise.then(
+      (val) => {
+        if (!cancel) {
+          setData(val);
+          setLoading(false);
+        }
+      },
+      (error) => {
+        setError(error);
+        setLoading(false);
+      },
+    );
 
     return () => {
       cancel = true;
+      setLoading(false);
     };
   }, deps);
-  return val;
+
+  return {
+    data,
+    loading,
+    error,
+  };
 }

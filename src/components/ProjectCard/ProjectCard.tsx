@@ -18,19 +18,19 @@ const ProjectCard: React.VFC<Props> = ({ project, onClick }) => {
 
   return (
     <div className={styles.card} onClick={onClick}>
-      <IPFSImage src={project.metadata.image || '/static/default.project.png'} className={styles.image} />
+      <IPFSImage src={project.metadata?.image || '/static/default.project.png'} className={styles.image} />
 
-      <h3>{project.metadata.name || project.id}</h3>
+      <h3>{project.metadata?.name || project.id}</h3>
 
       <div className={styles.creator}>
         <i className={['bi-person-fill', styles.creatorIcon].join(' ')} role="img" aria-label="PersonFill" />
-        <h5>{truncateAddress(project.id.split('-')[0])}</h5>
+        <h5>{truncateAddress(project.owner.split('-')[0])}</h5>
       </div>
 
       {/* TODO subtitle */}
 
-      {project.metadata.description ? (
-        <p className={styles.description}>{project.metadata.description}</p>
+      {project.metadata?.description ? (
+        <p className={styles.description}>{project.metadata?.description}</p>
       ) : (
         <p className={styles.noDescription}>{t('projectCard.noDescription')}</p>
       )}

@@ -47,11 +47,7 @@ const ProjectDetail: React.VFC<Props> = ({ project, onNewDeployment }) => {
         <Detail label="Website" value={project.metadata.websiteUrl || 'N/A'} href={project.metadata.websiteUrl} />
         {project.deployment ? (
           <>
-            <Detail
-              label="Source"
-              value={project.deployment?.manifest.repository || 'N/A'}
-              href={project.deployment?.manifest.repository}
-            />
+            <Detail label="Source" value={project.metadata.codeUrl || 'N/A'} href={project.metadata.codeUrl} />
             <Detail
               label="Deployment"
               value={project.deployment.id}

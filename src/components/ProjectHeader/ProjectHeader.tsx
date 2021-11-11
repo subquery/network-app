@@ -26,7 +26,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, onNewDeployment, onEdit }) =
             <span className={styles.name}>{project.metadata.name}</span>
             <div className={styles.owner}>
               <i className={['bi-person-fill', styles.ownerIcon].join(' ')} role="img" aria-label="PersonFill" />
-              <p>{project.id}</p>
+              <p>{project.owner}</p>
             </div>
           </div>
           <div className={styles.action}>

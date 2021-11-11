@@ -8,5 +8,13 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/preset-create-react-app",
     'storybook-react-i18next'
-  ]
+  ],
+  webpackFinal: (config) => {
+    config.node = {
+      ...config.node,
+      fs: false,
+    }
+
+    return config;
+  }
 }

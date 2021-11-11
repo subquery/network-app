@@ -8,6 +8,7 @@ import ImageInput from './ImageInput';
 import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
+import ProjectEdit from './ProjectEdit';
 import Playground from './Playground';
 import NewProjectCard from './NewProjectCard';
 import NewDeployment from './NewDeployment';
@@ -20,6 +21,7 @@ export {
   IPFSImage,
   ProjectHeader,
   ProjectDetail,
+  ProjectEdit,
   Playground,
   NewProjectCard,
   NewDeployment,

@@ -36,9 +36,9 @@ const Create: React.VFC = () => {
       <Formik
         initialValues={{
           name: '',
-          subtitle: '',
           description: '',
           websiteUrl: undefined,
+          codeUrl: undefined,
           image: undefined,
           version: '1.0.0',
           versionDescription: '',
@@ -59,14 +59,15 @@ const Create: React.VFC = () => {
                 value={values.image}
                 onChange={(value) => setFieldValue('image', value)}
               />
-              <label htmlFor="subtitle">{t('studio.create.subtitle')}</label>
-              <Field name="subtitle" />
+
               <label htmlFor="description">{t('studio.create.description')}</label>
               <Field name="description" as="textarea" />
               <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
               <Field name="websiteUrl" />
               {errors.websiteUrl && touched.websiteUrl && <div>{errors.websiteUrl}</div>}
-
+              <label htmlFor="codeUrl">{t('studio.create.codeUrl')}</label>
+              <Field name="codeUrl" />
+              {errors.codeUrl && touched.codeUrl && <div>{errors.codeUrl}</div>}
               <h4>Deployment Details</h4>
               <label htmlFor="version">{t('deployment.create.version')}</label>
               <Field name="version" />

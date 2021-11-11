@@ -9,20 +9,22 @@ import { CIDv0 } from './utils';
 export const projectMetadataSchema = yup.object({
   name: yup.string().defined(),
   image: yup.string().optional(),
-  subtitle: yup.string().optional(),
   description: yup.string().default('').optional(),
   websiteUrl: yup.string().optional().url(),
+  codeUrl: yup.string().optional().url(),
 });
 
 export type ProjectMetadata = yup.Asserts<typeof projectMetadataSchema>;
 
 export type ProjectWithMetadata = {
   id: string;
-  metadata: ProjectMetadata;
+  owner: string;
+  metadata?: ProjectMetadata;
 };
 
 export type ProjectDetails = {
   id: string;
+  owner: string;
   metadata: ProjectMetadata;
   deployment: {
     id: string;

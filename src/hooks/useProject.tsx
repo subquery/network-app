@@ -15,6 +15,7 @@ export function useProject(id: string): ProjectDetails | undefined {
 
   const [project, setProject] = React.useState<ProjectDetails>();
 
+  // TODO remove and use useDeployment
   const getDeployment = async (deploymentId: string): Promise<ProjectDetails['deployment']> => {
     const manifest = await catSingle(deploymentId)
       .then((data) => Buffer.from(data).toString())
@@ -55,6 +56,7 @@ export function useProject(id: string): ProjectDetails | undefined {
 
     setProject({
       id,
+      owner: query.owner,
       metadata,
       deployment,
     });

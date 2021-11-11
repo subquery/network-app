@@ -36,7 +36,11 @@ const Home: React.VFC = () => {
     }
   }, [activate, account]);
 
-  const projects = useAsyncMemo<BigNumber[]>(async () => {
+  const {
+    data: projects,
+    loading,
+    error,
+  } = useAsyncMemo<BigNumber[]>(async () => {
     if (!account) return [];
 
     return getUserQueries(account);
@@ -61,6 +65,8 @@ const Home: React.VFC = () => {
     <div>
       <h3>Studio home</h3>
 
+      {loading && <p>Loading projects</p>}
+      {error && <p>{`Failed to load projects: ${error.message}`}</p>}
       <div className={styles.list}>
         {projects?.map((id) => (
           <Project

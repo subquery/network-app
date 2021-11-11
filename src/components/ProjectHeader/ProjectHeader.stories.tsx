@@ -20,7 +20,8 @@ export const Default = Template.bind({});
 
 Default.args = {
   project: {
-    id: '0x0000000000000000000000000000000000000000-1',
+    id: '0x0000000000000000000000000000000000000001',
+    owner: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     deployment: {
       id: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
       manifest: {} as any,
@@ -28,10 +29,10 @@ Default.args = {
     },
     metadata: {
       name: 'Test Query Project',
-      subtitle: 'A project that provides a simple example',
       description: 'This is a test project for testing purposes',
       image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
       websiteUrl: 'https://example.com',
+      codeUrl: 'https://example.com',
     },
   },
 };
