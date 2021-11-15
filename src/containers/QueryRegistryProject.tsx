@@ -93,7 +93,7 @@ export function useDeploymentsQuery(params: DeploymentsQueryVars) {
   return useQuery<DeploymentsQueryData, DeploymentsQueryVars>(GET_PROJECT_DEPLOYMENTS, { variables: params });
 }
 
-type IndexersQueryVars = { deploymentId: string };
+type IndexersQueryVars = { deploymentId?: string };
 type IndexersQueryData = { indexers: { nodes: DeploymentIndexer[] } };
 export function useIndexersQuery(params: IndexersQueryVars) {
   return useQuery<IndexersQueryData, IndexersQueryVars>(GET_DEPLOYMENT_INDEXERS, { variables: params });

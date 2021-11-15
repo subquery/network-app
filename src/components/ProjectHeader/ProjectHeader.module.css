@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: row;
-  margin: 32px;
+  margin: 32px 0px;
 }
 
 .inner {
@@ -13,7 +13,7 @@
   border-bottom: 1px solid var(--weak);
   display: flex;
   align-items: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
 }
 
@@ -36,6 +36,7 @@
   line-height: 37.5px;
   font-weight: 700;
   text-align: right;
+  align-self: flex-start;
 }
 
 .owner {

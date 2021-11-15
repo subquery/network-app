@@ -27,6 +27,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers }) => {
     );
   };
 
+  // TODO extract to common table to share with deployments
   return (
     <TableContainer>
       <Table aria-label="simple table">

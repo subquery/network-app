@@ -8,10 +8,13 @@ import { useAsyncMemo } from './useAsyncMemo';
 import { buildSchema } from '../utils';
 import { ProjectDetails } from '../models';
 
-export function useDeployment(deploymentId: string) {
+export function useDeployment(deploymentId: string | undefined) {
   const { catSingle } = useIPFS();
 
-  return useAsyncMemo<ProjectDetails['deployment']>(async () => {
+  return useAsyncMemo<ProjectDetails['deployment'] | undefined>(async () => {
+    if (!deploymentId) {
+      return undefined;
+    }
     const manifest = await catSingle(deploymentId)
       .then((data) => Buffer.from(data).toString())
       .then((str) => yaml.load(str))

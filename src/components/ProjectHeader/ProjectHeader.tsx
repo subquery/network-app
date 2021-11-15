@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import Button from '../Button';
 import { ProjectDetails } from '../../models';
 import Detail from '../Detail';
 import IPFSImage from '../IPFSImage';
@@ -10,11 +9,9 @@ import styles from './ProjectHeader.module.css';
 
 type Props = {
   project: ProjectDetails;
-  onNewDeployment?: () => void;
-  onEdit?: () => void;
 };
 
-const ProjectHeader: React.VFC<Props> = ({ project, onNewDeployment, onEdit }) => {
+const ProjectHeader: React.VFC<Props> = ({ project }) => {
   return (
     <div className={styles.container}>
       <div>
@@ -22,16 +19,10 @@ const ProjectHeader: React.VFC<Props> = ({ project, onNewDeployment, onEdit }) =
       </div>
       <div className={styles.inner}>
         <div className={styles.upper}>
-          <div>
-            <span className={styles.name}>{project.metadata.name}</span>
-            <div className={styles.owner}>
-              <i className={['bi-person-fill', styles.ownerIcon].join(' ')} role="img" aria-label="PersonFill" />
-              <p>{project.owner}</p>
-            </div>
-          </div>
-          <div className={styles.action}>
-            {onNewDeployment && <Button type="primary" label="Deploy new version" onClick={onNewDeployment} />}
-            {onEdit && <Button type="secondary" label="Edit" className={styles.edit} onClick={onEdit} />}
+          <span className={styles.name}>{project.metadata.name}</span>
+          <div className={styles.owner}>
+            <i className={['bi-person-fill', styles.ownerIcon].join(' ')} role="img" aria-label="PersonFill" />
+            <p>{project.owner}</p>
           </div>
         </div>
         <div className={styles.lower}>

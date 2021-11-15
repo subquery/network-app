@@ -9,9 +9,11 @@ import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
+import ProjectDeployments from './ProjectDeployments';
 import Playground from './Playground';
 import NewProjectCard from './NewProjectCard';
 import NewDeployment from './NewDeployment';
+import ProjectOverview from './ProjectOverview';
 
 export {
   Button,
@@ -22,6 +24,8 @@ export {
   ProjectHeader,
   ProjectDetail,
   ProjectEdit,
+  ProjectDeployments,
+  ProjectOverview,
   Playground,
   NewProjectCard,
   NewDeployment,

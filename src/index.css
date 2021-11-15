@@ -65,3 +65,25 @@ label {
   line-height: 1.5;
   color: #212529;
 }
+
+.tab {
+  text-decoration: none;
+  color: var(--primary-secondary);
+  margin-right: 20px;
+  padding-bottom: 10px;
+}
+
+.tab:hover {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.tabContainer {
+  display: flex;
+  border-bottom: 1px solid var(--primary-secondary);
+}
+
+.tabSelected {
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+}

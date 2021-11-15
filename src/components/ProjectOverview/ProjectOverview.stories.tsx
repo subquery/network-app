@@ -1,20 +1,15 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import ProjectDetail from './ProjectDetail';
+import ProjectOverview from './ProjectOverview';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { IPFSProvider } from '../../containers';
 
 export default {
-  title: 'ProjectDetail',
-  component: ProjectDetail,
-} as ComponentMeta<typeof ProjectDetail>;
+  title: 'ProjectOverview',
+  component: ProjectOverview,
+} as ComponentMeta<typeof ProjectOverview>;
 
-const Template: ComponentStory<typeof ProjectDetail> = (args) => (
-  <IPFSProvider initialState={{ gateway: 'http://localhost:5001/api/v0' }}>
-    <ProjectDetail {...args} />
-  </IPFSProvider>
-);
+const Template: ComponentStory<typeof ProjectOverview> = (args) => <ProjectOverview {...args} />;
 
 export const Default = Template.bind({});
 
@@ -27,7 +22,7 @@ Default.args = {
     websiteUrl: 'https://subquery.network',
     codeUrl: 'https://github.com/subquery',
   },
-  onEdit: () => {
-    /* Do nothing */
-  },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deploymentId: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
 };

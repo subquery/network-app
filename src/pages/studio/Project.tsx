@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useParams } from 'react-router';
+import { Redirect, Route, Switch, useParams } from 'react-router';
 import Modal from 'react-modal';
-import { ProjectDetail, ProjectHeader, Playground, NewDeployment } from '../../components';
-import { useCreateDeployment, useProject } from '../../hooks';
+import { ProjectDetail, ProjectHeader, NewDeployment, ProjectDeployments, Button } from '../../components';
+import { useAsyncMemo, useCreateDeployment, useProject } from '../../hooks';
 import { NewDeployment as NewDeploymentParams } from '../../models';
+import { NavLink } from 'react-router-dom';
+import { useDeploymentsQuery, useIPFS } from '../../containers';
 
 const customStyles = {
   content: {
@@ -21,6 +23,50 @@ const customStyles = {
   overlay: {
     zIndex: 50,
   },
+};
+
+const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
+  const { data, loading, error } = useDeploymentsQuery({ projectId });
+  const ipfs = useIPFS();
+
+  const {
+    data: deployments,
+    loading: loadingVersion,
+    error: errorVersion,
+  } = useAsyncMemo(async () => {
+    if (!data?.projectDeployments.nodes) {
+      return [];
+    }
+
+    return Promise.all(
+      data.projectDeployments.nodes.map(async (deployment) => {
+        const raw = await ipfs.catSingle(deployment.version);
+
+        const { version, description } = JSON.parse(raw.toString());
+
+        return {
+          deploymentId: deployment.id,
+          createdAt: deployment.createdAt,
+          version,
+          description,
+        };
+      }),
+    );
+  }, [data]);
+
+  if (loading || loadingVersion) {
+    return <div>Loading.....</div>;
+  }
+
+  if (error || errorVersion) {
+    return <div>{`Error: ${error}`}</div>;
+  }
+
+  if (!deployments?.length) {
+    return <div>Unable to find deployments for this project</div>;
+  }
+
+  return <ProjectDeployments deployments={deployments} />;
 };
 
 const Project: React.VFC = () => {
@@ -39,17 +85,38 @@ const Project: React.VFC = () => {
 
   const handleNewDeployment = () => setDeploymentModal(true);
 
+  const handleEditMetadata = () => {
+    /* TODO*/
+  };
+
+  if (!project) {
+    return <span>Loading....</span>;
+  }
+
   return (
     <div>
       <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
         <NewDeployment onSubmit={handleSubmitCreate} />
       </Modal>
-      {project ? <ProjectHeader project={project} onNewDeployment={handleNewDeployment} /> : <span>Loading...</span>}
-      {project && <ProjectDetail project={project} onNewDeployment={handleNewDeployment} />}
-
-      {project?.deployment && <Playground endpoint="" schema={project.deployment.schema} />}
-
-      <p>{JSON.stringify(project)}</p>
+      <ProjectHeader project={project} />
+      <div className="tabContainer">
+        <NavLink to={`/studio/project/${id}/details`} className="tab" activeClassName="tabSelected">
+          Details
+        </NavLink>
+        <NavLink to={`/studio/project/${id}/deployments`} className="tab" activeClassName="tabSelected">
+          Deployment
+        </NavLink>
+      </div>
+      <Switch>
+        <Route exact path={`/studio/project/:id/details`}>
+          {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
+        </Route>
+        <Route exact path={`/studio/project/:id/deployments`}>
+          <DeploymentsTab projectId={id} />
+          <Button type="primary" label="Create new deployment" onClick={handleNewDeployment} />
+        </Route>
+        <Redirect from="/:id" to={`${id}/details`} />
+      </Switch>
     </div>
   );
 };

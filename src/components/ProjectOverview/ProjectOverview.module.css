@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   /*background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;*/
@@ -11,9 +11,10 @@
 
 .column {
   display: flex;
-  flex-grow: 1;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
+  padding-right: 30px;
 }
 
 .left {
@@ -21,14 +22,4 @@
   flex-direction: row;
   justify-content: space-around;
   align-self: normal;
-}
-
-.editContainer {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.edit {
-  min-width: 70px;
-  margin-top: 50px;
 }
