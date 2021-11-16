@@ -1,0 +1,30 @@
+.container {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.progress {
+  border-radius: 10px;
+  height: 8px;
+}
+
+.progressBack {
+  flex: 1;
+  width: 100%;
+  background-color: var(--weak);
+  overflow: hidden;
+}
+
+.progressFront {
+  background-color: var(--primary);
+}
+
+.percent {
+  padding-left: 5px;
+}

@@ -4,11 +4,12 @@
 import * as React from 'react';
 import { Redirect, Route, Switch, useParams } from 'react-router';
 import Modal from 'react-modal';
-import { ProjectDetail, ProjectHeader, NewDeployment, ProjectDeployments, Button } from '../../components';
-import { useAsyncMemo, useCreateDeployment, useProject } from '../../hooks';
-import { NewDeployment as NewDeploymentParams } from '../../models';
 import { NavLink } from 'react-router-dom';
-import { useDeploymentsQuery, useIPFS } from '../../containers';
+import { ProjectDetail, ProjectHeader, NewDeployment, ProjectDeployments, Button } from '../../../components';
+import { useAsyncMemo, useCreateDeployment, useProject } from '../../../hooks';
+import { NewDeployment as NewDeploymentParams } from '../../../models';
+import { useDeploymentsQuery, useIPFS } from '../../../containers';
+import styles from './Project.module.css';
 
 const customStyles = {
   content: {
@@ -39,10 +40,10 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
     }
 
     return Promise.all(
-      data.projectDeployments.nodes.map(async (deployment) => {
+      data.projectDeployments.nodes.map(async ({ deployment }) => {
         const raw = await ipfs.catSingle(deployment.version);
 
-        const { version, description } = JSON.parse(raw.toString());
+        const { version, description } = JSON.parse(Buffer.from(raw).toString('utf8'));
 
         return {
           deploymentId: deployment.id,
@@ -59,7 +60,7 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
   }
 
   if (error || errorVersion) {
-    return <div>{`Error: ${error}`}</div>;
+    return <div>{`Error: ${error || errorVersion}`}</div>;
   }
 
   if (!deployments?.length) {
@@ -100,11 +101,16 @@ const Project: React.VFC = () => {
       </Modal>
       <ProjectHeader project={project} />
       <div className="tabContainer">
-        <NavLink to={`/studio/project/${id}/details`} className="tab" activeClassName="tabSelected">
+        <NavLink to={`/studio/project/${id}/details`} className="tab" activeClassName="tabSelected" title="Details">
           Details
         </NavLink>
-        <NavLink to={`/studio/project/${id}/deployments`} className="tab" activeClassName="tabSelected">
-          Deployment
+        <NavLink
+          to={`/studio/project/${id}/deployments`}
+          className="tab"
+          activeClassName="tabSelected"
+          title="Deployments"
+        >
+          Deployments
         </NavLink>
       </div>
       <Switch>
@@ -112,8 +118,15 @@ const Project: React.VFC = () => {
           {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
         </Route>
         <Route exact path={`/studio/project/:id/deployments`}>
-          <DeploymentsTab projectId={id} />
-          <Button type="primary" label="Create new deployment" onClick={handleNewDeployment} />
+          <div className={styles.deployments}>
+            <DeploymentsTab projectId={id} />
+            <Button
+              type="primary"
+              label="Create new deployment"
+              className={styles.deployButton}
+              onClick={handleNewDeployment}
+            />
+          </div>
         </Route>
         <Redirect from="/:id" to={`${id}/details`} />
       </Switch>

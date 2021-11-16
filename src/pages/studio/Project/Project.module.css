@@ -1,0 +1,9 @@
+.deployments {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.deployButton {
+  margin-top: 10px;
+}

@@ -71,11 +71,20 @@ label {
   color: var(--primary-secondary);
   margin-right: 20px;
   padding-bottom: 10px;
+  display: inline-block;
 }
 
 .tab:hover {
   text-decoration: none;
   font-weight: bold;
+}
+
+.tab::before {
+  display: block;
+  height: 0;
+  font-weight: bold;
+  visibility: hidden;
+  content: attr(title);
 }
 
 .tabContainer {

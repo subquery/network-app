@@ -12,6 +12,7 @@ import {
   useIndexersQuery,
   QueryRegistryProjectProvider,
 } from './QueryRegistryProject';
+import { useUserProjects, UserProjectsProvider } from './UserProjects';
 
 export {
   useIPFS,
@@ -22,10 +23,12 @@ export {
   useDeploymentsQuery,
   useIndexersQuery,
   useContracts,
+  useUserProjects,
   IPFSProvider,
   Web3Provider,
   ProjectMetadataProvider,
   QueryRegistryProvider,
   ContractsProvider,
   QueryRegistryProjectProvider,
+  UserProjectsProvider,
 };

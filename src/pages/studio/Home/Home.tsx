@@ -1,14 +1,13 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber } from 'ethers';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import { Button, NewProjectCard } from '../../../components';
 import ProjectCard from '../../../components/ProjectCard';
-import { useQueryRegistry, useWeb3 } from '../../../containers';
+import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
-import { useAsyncMemo, useProject } from '../../../hooks';
+import { useProject } from '../../../hooks';
 import styles from './Home.module.css';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
@@ -23,7 +22,6 @@ const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ proje
 
 const Home: React.VFC = () => {
   const { account, activate } = useWeb3();
-  const { getUserQueries } = useQueryRegistry();
   const history = useHistory();
 
   const handleConnectWallet = React.useCallback(async () => {
@@ -36,15 +34,7 @@ const Home: React.VFC = () => {
     }
   }, [activate, account]);
 
-  const {
-    data: projects,
-    loading,
-    error,
-  } = useAsyncMemo<BigNumber[]>(async () => {
-    if (!account) return [];
-
-    return getUserQueries(account);
-  }, [account, getUserQueries]);
+  const { projects, error, loading } = useUserProjects();
 
   const handleCreateProjcet = () => {
     history.push('/studio/create');

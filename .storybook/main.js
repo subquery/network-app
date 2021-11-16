@@ -12,7 +12,7 @@ module.exports = {
   webpackFinal: (config) => {
     config.node = {
       ...config.node,
-      fs: false,
+      fs: 'empty',
     }
 
     return config;

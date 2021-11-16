@@ -32,10 +32,12 @@ const IndexerDetails: React.FC<Props> = ({ indexers }) => {
     <TableContainer>
       <Table aria-label="simple table">
         <TableHead>
-          <TableCell>Address</TableCell>
-          <TableCell>Block Height</TableCell>
-          <TableCell>Status</TableCell>
-          <TableCell>Updated</TableCell>
+          <TableRow>
+            <TableCell>Address</TableCell>
+            <TableCell>Block Height</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Updated</TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>{indexers.map((indexer, index) => row(indexer, index))}</TableBody>
       </Table>

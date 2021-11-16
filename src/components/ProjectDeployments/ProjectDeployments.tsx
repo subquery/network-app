@@ -34,10 +34,12 @@ const ProjectDeployments: React.FC<Props> = ({ deployments }) => {
     <TableContainer>
       <Table aria-label="simple table">
         <TableHead>
-          <TableCell>Version</TableCell>
-          <TableCell>Deployment ID</TableCell>
-          <TableCell>Description</TableCell>
-          <TableCell>Created Date</TableCell>
+          <TableRow>
+            <TableCell>Version</TableCell>
+            <TableCell>Deployment ID</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Created Date</TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>{deployments.map((indexer, index) => row(indexer, index))}</TableBody>
       </Table>

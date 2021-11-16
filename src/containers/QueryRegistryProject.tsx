@@ -15,6 +15,10 @@ export interface Project {
   createdAt: Date;
 }
 
+export interface ProjectDeployment {
+  deployment: Deployment;
+}
+
 export interface Deployment {
   id: string;
   version: string;
@@ -88,7 +92,7 @@ export function useProjectsQuery(params: ProjectsQueryVars) {
 }
 
 type DeploymentsQueryVars = { projectId: string };
-type DeploymentsQueryData = { projectDeployments: { nodes: Deployment[] } };
+type DeploymentsQueryData = { projectDeployments: { nodes: ProjectDeployment[] } };
 export function useDeploymentsQuery(params: DeploymentsQueryVars) {
   return useQuery<DeploymentsQueryData, DeploymentsQueryVars>(GET_PROJECT_DEPLOYMENTS, { variables: params });
 }

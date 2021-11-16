@@ -5,7 +5,7 @@ import { createContainer, Logger } from './Container';
 import React from 'react';
 import { ContractSDK } from '@subql/contract-sdk';
 import { useWeb3 } from './Web3';
-import deploymentDetails from '../local.json';
+import deploymentDetails from '../testnet.json';
 
 function useContractsImpl(logger: Logger): ContractSDK | undefined {
   const [contracts, setContracts] = React.useState<ContractSDK>();

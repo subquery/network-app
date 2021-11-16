@@ -14,6 +14,7 @@ import Playground from './Playground';
 import NewProjectCard from './NewProjectCard';
 import NewDeployment from './NewDeployment';
 import ProjectOverview from './ProjectOverview';
+import IndexerProgress from './IndexerProgress';
 
 export {
   Button,
@@ -29,4 +30,5 @@ export {
   Playground,
   NewProjectCard,
   NewDeployment,
+  IndexerProgress,
 };

@@ -17,6 +17,7 @@ import {
   QueryRegistryProvider,
   ContractsProvider,
   QueryRegistryProjectProvider,
+  UserProjectsProvider,
 } from './containers';
 
 const App: React.VFC = () => {
@@ -27,19 +28,21 @@ const App: React.VFC = () => {
           <ContractsProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
-                <div className="App">
-                  <Router>
-                    <Header />
-                    <div className="Main">
-                      <Switch>
-                        <Route component={pages.Studio} path="/studio" />
-                        <Route component={pages.Explorer} path="/explorer" />
-                        <Route component={pages.Home} />
-                      </Switch>
-                    </div>
-                    <Footer />
-                  </Router>
-                </div>
+                <UserProjectsProvider>
+                  <div className="App">
+                    <Router>
+                      <Header />
+                      <div className="Main">
+                        <Switch>
+                          <Route component={pages.Studio} path="/studio" />
+                          <Route component={pages.Explorer} path="/explorer" />
+                          <Route component={pages.Home} />
+                        </Switch>
+                      </div>
+                      <Footer />
+                    </Router>
+                  </div>
+                </UserProjectsProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
           </ContractsProvider>
