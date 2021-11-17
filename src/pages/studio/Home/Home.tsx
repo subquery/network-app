@@ -11,11 +11,13 @@ import { useProject } from '../../../hooks';
 import styles from './Home.module.css';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
-  const project = useProject(projectId);
+  const { data: project, loading, error } = useProject(projectId);
 
   if (!project) {
     return null;
   }
+
+  // TODO have loading UI
 
   return <ProjectCard project={project} onClick={onClick} />;
 };

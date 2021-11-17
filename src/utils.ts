@@ -66,3 +66,5 @@ export function bytes32ToCid(bytes: string): string {
   const hashBytes = Buffer.from(hashHex, 'hex');
   return utils.base58.encode(hashBytes);
 }
+
+export type AsyncData<T> = { data?: T; loading: boolean; error?: Error };

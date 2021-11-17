@@ -37,9 +37,16 @@ function useProjectMetadataImpl() {
     return result.cid.toV0().toString();
   };
 
+  const getVersionMetadata = async (cid: string): Promise<Omit<NewDeployment, 'deploymentId'>> => {
+    const raw = await catSingle(cid);
+
+    return JSON.parse(Buffer.from(raw).toString('utf8'));
+  };
+
   return {
     getMetadataForProject,
     getMetadataFromCid,
+    getVersionMetadata,
     uploadMetadata,
     uploadVersionMetadata,
   };

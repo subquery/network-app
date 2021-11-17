@@ -73,7 +73,7 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const project = useProject(id);
+  const { data: project, loading, error } = useProject(id);
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const createDeployment = useCreateDeployment(id);
@@ -90,8 +90,17 @@ const Project: React.VFC = () => {
     /* TODO*/
   };
 
-  if (!project) {
+  if (loading) {
     return <span>Loading....</span>;
+  }
+
+  if (error) {
+    return <span>{`Failed to load project: ${error.message}`}</span>;
+  }
+
+  if (!project) {
+    // Should never happen
+    return <span>Project doesn't exist</span>;
   }
 
   return (

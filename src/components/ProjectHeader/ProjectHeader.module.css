@@ -4,13 +4,21 @@
   margin: 32px 0px;
 }
 
+.left {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 .inner {
-  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   padding-left: 32px;
 }
 
 .upper {
-  border-bottom: 1px solid var(--weak);
+  /*border-bottom: 1px solid var(--weak);*/
   display: flex;
   align-items: flex-start;
   flex-direction: column;
@@ -24,9 +32,9 @@
 }
 
 .image {
-  width: 180px;
-  height: 180px;
-  border-radius: 10px;
+  width: 172px;
+  height: 172px;
+  border-radius: 100px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   background-color: white;
 }
@@ -45,11 +53,6 @@
   align-items: center;
 }
 
-.lowerDetail {
-  display: flex;
-  flex-grow: 1;
-}
-
 .ownerIcon {
   font-size: 20px;
 }
@@ -61,4 +64,11 @@
 
 .edit {
   margin: 10px 0;
+}
+
+.vertBar {
+  height: 100%;
+  width: 1px;
+  background-color: var(--weak);
+  margin: 0 25px;
 }

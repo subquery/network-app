@@ -11,17 +11,27 @@ type Props = {
   className?: string;
 };
 
-const Detail: React.VFC<Props> = ({ label, value, href, className }) => {
-  return (
-    <div className={[styles.detail, className].join(' ')}>
-      <span className={styles.label}>{label}</span>
-      {href ? (
+const Detail: React.FC<Props> = ({ label, value, href, className, children }) => {
+  const renderValue = () => {
+    if (href) {
+      return (
         <a href={href} className={styles.value} target="_blank" rel="noreferrer">
           {value ?? '-'}
         </a>
-      ) : (
-        <span className={styles.value}>{value}</span>
-      )}
+      );
+    }
+
+    if (value) {
+      return <span className={styles.value}>{value}</span>;
+    }
+
+    return children;
+  };
+
+  return (
+    <div className={[styles.detail, className].join(' ')}>
+      <span className={styles.label}>{label}</span>
+      {renderValue()}
     </div>
   );
 };

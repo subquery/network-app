@@ -36,6 +36,20 @@ export interface DeploymentIndexer {
   updatedAt: Date;
 }
 
+const GET_PROJECT = gql`
+  query GetProject($id: String!) {
+    project(id: $id) {
+      id
+      owner
+      metadata
+      currentVersion
+      currentDeployment
+      updatedAt
+      createdAt
+    }
+  }
+`;
+
 const GET_PROJECTS = gql`
   query GetProjects($offset: Int) {
     projects(first: 10, offset: $offset) {
@@ -82,6 +96,12 @@ const GET_DEPLOYMENT_INDEXERS = gql`
     }
   }
 `;
+
+type ProjectQueryVars = { id: string };
+type ProjectQueryData = { project: Project };
+export function useProjectQuery(params: ProjectQueryVars) {
+  return useQuery<ProjectQueryData, ProjectQueryVars>(GET_PROJECT, { variables: params });
+}
 
 type ProjectsQueryVars = { offset?: number };
 type ProjectsQueryData = { projects: { nodes: Project[] } };

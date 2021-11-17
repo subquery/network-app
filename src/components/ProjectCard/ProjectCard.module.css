@@ -3,10 +3,16 @@
   border-radius: 10px;
   padding: 10px;
   margin: 10px;
-  height: 480px;
-  /*white-space: nowrap;*/
-  display: inline-block;
-  width: 245px;
+  padding-bottom: 56px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 216px;
+  cursor: pointer;
+}
+
+.card:hover {
+  background-color: var(--weak-opac);
 }
 
 .newCard {
@@ -17,20 +23,17 @@
   text-align: center;
 }
 
-.newCard:hover {
-  background-color: var(--weak-opac);
-}
-
 .newCard h2 {
   padding-bottom: 50px;
 }
 
 .image {
-  height: 240px;
-  width: 240px;
+  height: 172px;
+  width: 172px;
   border: 1px solid var(--weak);
-  border-radius: 10px;
+  border-radius: 100px;
   background-color: white;
+  margin-bottom: 23px;
 }
 
 .creator {
@@ -44,28 +47,8 @@
   padding-right: 8px;
 }
 
-.description {
-  overflow-wrap: break-word;
-}
-
-.noDescription {
-  color: var(--weak);
-}
-
-.footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: var(--primary);
-}
-
-.status {
-  border: 1px solid var(--primary);
-  padding: 4px 8px;
-  text-transform: capitalize;
-}
-
-h3 {
+.name {
   text-overflow: ellipsis;
   overflow: hidden;
+  padding: 14px 0;
 }

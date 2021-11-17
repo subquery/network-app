@@ -3,18 +3,25 @@
 
 import { BigNumber } from '@ethersproject/bignumber';
 import * as React from 'react';
-import { Redirect, Route, Switch, useParams } from 'react-router';
+import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { IndexerProgress, ProjectHeader, ProjectOverview } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { useIndexersQuery } from '../../../containers';
-import { useProject } from '../../../hooks';
+import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
+import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
+
+export const ROUTE = '/explorer/project';
 
 const Project: React.VFC = () => {
-  const { id, deployment: deploymentId } = useParams<{ id: string; deployment?: string }>();
+  const { id } = useParams<{ id: string }>();
+  const query = useRouteQuery();
+  const history = useHistory();
+  const { getVersionMetadata } = useProjectMetadata();
 
-  // TODO use a different version that relies on project rather than contracts
-  const project = useProject(id);
+  const deploymentId = query.get('deploymentId') || undefined;
+
+  const { data: project, loading, error } = useProjectFromQuery(id);
+  const { data: deployments } = useDeploymentsQuery({ projectId: id });
 
   const {
     data: indexersQuery,
@@ -34,8 +41,34 @@ const Project: React.VFC = () => {
     );
   }, [indexersQuery]);
 
-  if (!project) {
+  const { data: deploymentVersions } = useAsyncMemo(async () => {
+    const deploymentsWithSemver = await Promise.all(
+      (deployments?.projectDeployments.nodes ?? [])
+        .map((v) => v.deployment)
+        .map((d) => getVersionMetadata(d.version).then((versionMeta) => ({ id: d.id, version: versionMeta.version }))),
+    );
+
+    return deploymentsWithSemver.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.version }), {});
+
+    // TODO resolve ipfs version
+  }, [deployments]);
+
+  const handleChangeVersion = (value: string) => {
+    // TODO retain current
+    history.push(`${history.location.pathname}?deploymentId=${value}`);
+  };
+
+  if (loading) {
     return <span>Loading....</span>;
+  }
+
+  if (error) {
+    return <span>{`Failed to load project: ${error.message}`}</span>;
+  }
+
+  if (!project) {
+    // Should never happen
+    return <span>Project doesn't exist</span>;
   }
 
   const renderIndexers = () => {
@@ -65,7 +98,12 @@ const Project: React.VFC = () => {
 
   return (
     <div>
-      <ProjectHeader project={project} />
+      <ProjectHeader
+        project={project}
+        versions={deploymentVersions}
+        currentVersion={deploymentId}
+        onChangeVersion={handleChangeVersion}
+      />
 
       <IndexerProgress
         startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
@@ -74,15 +112,25 @@ const Project: React.VFC = () => {
       />
 
       <div className="tabContainer">
-        <NavLink to={`/explorer/project/${id}/overview`} className="tab" activeClassName="tabSelected" title="Overview">
+        <NavLink
+          to={`${ROUTE}/${id}/overview${history.location.search}`}
+          className="tab"
+          activeClassName="tabSelected"
+          title="Overview"
+        >
           Overview
         </NavLink>
-        <NavLink to={`/explorer/project/${id}/indexers`} className="tab" activeClassName="tabSelected" title="Indexers">
+        <NavLink
+          to={`${ROUTE}/${id}/indexers${history.location.search}`}
+          className="tab"
+          activeClassName="tabSelected"
+          title="Indexers"
+        >
           Indexers
         </NavLink>
         {!!indexersQuery?.indexers.nodes.length && (
           <NavLink
-            to={`/explorer/project/${id}/playground`}
+            to={`${ROUTE}/${id}/playground${history.location.search}`}
             className="tab"
             activeClassName="tabSelected"
             title="Playground"
@@ -92,22 +140,22 @@ const Project: React.VFC = () => {
         )}
       </div>
       <Switch>
-        <Route exact path={`/explorer/project/:id/:deployment?/overview`}>
+        <Route exact path={`${ROUTE}/:id/overview`}>
           <ProjectOverview
             metadata={project.metadata}
             deploymentId={deploymentId ?? project.deployment.id}
             // TODO load correct date, probably need to switch to using query project rather than contract
-            createdAt={new Date()}
-            updatedAt={new Date()}
+            createdAt={project.createdAt}
+            updatedAt={project.updatedAt}
           />
         </Route>
-        <Route exact path={`/explorer/project/:id/:deployment?/indexers`}>
+        <Route exact path={`${ROUTE}/:id/indexers`}>
           {renderIndexers()}
         </Route>
-        <Route exact path={`/explorer/project/:id/:deployment?/playground`}>
+        <Route exact path={`${ROUTE}/:id/playground`}>
           {renderPlayground()}
         </Route>
-        <Redirect from="/:id" to={`${id}/overview`} />
+        <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
       </Switch>
     </div>
   );

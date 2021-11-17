@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DependencyList, useEffect, useState } from 'react';
+import { AsyncData } from '../utils';
 
 export function useAsyncMemo<T>(
   factory: () => Promise<T> | undefined | null,
   deps: DependencyList,
   initial: T | undefined = undefined,
-): { data: T | undefined; loading: boolean; error?: Error } {
+): AsyncData<T> {
   const [data, setData] = useState<T | undefined>(initial);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error>();

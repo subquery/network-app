@@ -8,6 +8,31 @@ import { useAsyncMemo } from './useAsyncMemo';
 import { buildSchema } from '../utils';
 import { ProjectDetails } from '../models';
 
+export async function getDeployment(
+  catSingle: (cid: string) => Promise<Uint8Array>,
+  deploymentId: string,
+): Promise<ProjectDetails['deployment']> {
+  const manifest = await catSingle(deploymentId)
+    .then((data) => Buffer.from(data).toString())
+    .then((str) => yaml.load(str))
+    .then((obj) => {
+      const manifest = new ProjectManifestVersioned(obj as VersionedProjectManifest);
+      manifest.validate();
+
+      return manifest;
+    });
+
+  const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
+    .then((data) => Buffer.from(data).toString())
+    .then((str) => buildSchema(str));
+
+  return {
+    id: deploymentId,
+    manifest,
+    schema,
+  };
+}
+
 export function useDeployment(deploymentId: string | undefined) {
   const { catSingle } = useIPFS();
 
@@ -15,24 +40,6 @@ export function useDeployment(deploymentId: string | undefined) {
     if (!deploymentId) {
       return undefined;
     }
-    const manifest = await catSingle(deploymentId)
-      .then((data) => Buffer.from(data).toString())
-      .then((str) => yaml.load(str))
-      .then((obj) => {
-        const manifest = new ProjectManifestVersioned(obj as VersionedProjectManifest);
-        manifest.validate();
-
-        return manifest;
-      });
-
-    const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
-      .then((data) => Buffer.from(data).toString())
-      .then((str) => buildSchema(str));
-
-    return {
-      id: deploymentId,
-      manifest,
-      schema,
-    };
+    return getDeployment(catSingle, deploymentId);
   }, [deploymentId]);
 }

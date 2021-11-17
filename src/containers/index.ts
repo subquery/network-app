@@ -7,6 +7,7 @@ import { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetatada';
 import { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 import { useContracts, ContractsProvider } from './Contracts';
 import {
+  useProjectQuery,
   useProjectsQuery,
   useDeploymentsQuery,
   useIndexersQuery,
@@ -24,6 +25,7 @@ export {
   useIndexersQuery,
   useContracts,
   useUserProjects,
+  useProjectQuery,
   IPFSProvider,
   Web3Provider,
   ProjectMetadataProvider,
