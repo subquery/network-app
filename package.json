@@ -16,7 +16,8 @@
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@material-ui/core": "^4.12.3",
-    "@subql/common": "latest",
+    "@polkadot/util": "^7.8.2",
+    "@subql/common": "../subql/packages/common",
     "@subql/contract-sdk": "../contracts/build/build",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -42,6 +43,7 @@
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.9"

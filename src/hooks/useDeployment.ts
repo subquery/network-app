@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import yaml from 'js-yaml';
-import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common';
+import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common/dist/project';
 import { useIPFS } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
 // import { buildSchema } from '../utils';
 import { ProjectDetails } from '../models';
+import { AsyncData } from '../utils';
 
 export async function getDeployment(
   catSingle: (cid: string) => Promise<Uint8Array>,
@@ -33,7 +34,7 @@ export async function getDeployment(
   };
 }
 
-export function useDeployment(deploymentId: string | undefined) {
+export function useDeployment(deploymentId: string | undefined): AsyncData<ProjectDetails['deployment'] | undefined> {
   const { catSingle } = useIPFS();
 
   return useAsyncMemo<ProjectDetails['deployment'] | undefined>(async () => {

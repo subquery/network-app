@@ -46,10 +46,41 @@ export function bytes32ToCid(bytes: string): string {
   return utils.base58.encode(hashBytes);
 }
 
-export type AsyncData<T> = { data?: T; loading: boolean; error?: Error };
-
 export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
   if (value === null || value === undefined) return false;
-  const testDummy: TValue = value;
+
+  // Extra typecheck
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _: TValue = value;
   return true;
+}
+
+export type AsyncData<T> = { data?: T; loading: boolean; error?: Error };
+
+export function mergeAsync<T1, T2>(v1: AsyncData<T1>, v2: AsyncData<T2>): AsyncData<[T1 | undefined, T2 | undefined]> {
+  return {
+    loading: v1.loading || v2.loading,
+    error: v1.error || v2.error,
+    data: [v1.data, v2.data],
+  };
+}
+
+type RenderResult = React.ReactElement | null;
+
+export function renderAsync<T>(
+  data: AsyncData<T>,
+  handlers: { loading: () => RenderResult; error: (error: Error) => RenderResult; data: (data?: T) => RenderResult },
+): RenderResult {
+  if (data.error) {
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading();
+  } else {
+    try {
+      return handlers.data(data.data);
+    } catch (e) {
+      // TODO not sure this is desired behaviour
+      return handlers.error(e as Error);
+    }
+  }
 }

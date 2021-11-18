@@ -1,7 +1,7 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber, BigNumberish, ContractTransaction, constants } from 'ethers';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { createContainer, Logger } from './Container';
 import { useContracts } from './Contracts';
 import * as React from 'react';
@@ -22,6 +22,8 @@ type QueryDetails = {
 function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   const contracts = useContracts();
 
+  const projectCache = React.useRef<Record<string, QueryDetails>>({});
+
   const registerQuery = async (
     metadataCid: string,
     deploymentId: string,
@@ -39,20 +41,51 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     );
   };
 
-  const updateQueryMetadata = (id: BigNumberish, metadata: string) => {
+  const updateQueryMetadata = async (id: BigNumberish, metadata: string): Promise<ContractTransaction> => {
     if (!contracts) {
       throw new Error('QueryRegistry contract not available');
     }
 
-    return contracts.queryRegistry.updateQueryProjectMetadata(id, cidToBytes32(metadata));
+    const tx = await contracts.queryRegistry.updateQueryProjectMetadata(id, cidToBytes32(metadata));
+
+    tx.wait().then((receipt) => {
+      if (!receipt.status) {
+        return;
+      }
+
+      projectCache.current[BigNumber.from(id).toString()] = {
+        ...projectCache.current[BigNumber.from(id).toString()],
+        metadata,
+      };
+    });
+
+    return tx;
   };
 
-  const updateDeployment = (id: BigNumberish, deploymentId: string, version: string) => {
+  const updateDeployment = async (
+    id: BigNumberish,
+    deploymentId: string,
+    version: string,
+  ): Promise<ContractTransaction> => {
     if (!contracts) {
       throw new Error('QueryRegistry contract not available');
     }
 
-    return contracts.queryRegistry.updateDeployment(id, cidToBytes32(deploymentId), cidToBytes32(version));
+    const tx = await contracts.queryRegistry.updateDeployment(id, cidToBytes32(deploymentId), cidToBytes32(version));
+
+    tx.wait().then((receipt) => {
+      if (!receipt.status) {
+        return;
+      }
+
+      projectCache.current[BigNumber.from(id).toString()] = {
+        ...projectCache.current[BigNumber.from(id).toString()],
+        deployment: deploymentId,
+        version,
+      };
+    });
+
+    return tx;
   };
 
   const getQuery = async (id: BigNumberish): Promise<QueryDetails | undefined> => {
@@ -61,15 +94,19 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
       return undefined;
     }
 
-    const result = await contracts.queryRegistry.queryInfos(id);
+    if (!projectCache.current[BigNumber.from(id).toString()]) {
+      const result = await contracts.queryRegistry.queryInfos(id);
 
-    return {
-      queryId: result.queryId,
-      owner: result.owner,
-      metadata: bytes32ToCid(result.metadata),
-      deployment: bytes32ToCid(result.latestDeploymentId),
-      version: bytes32ToCid(result.latestVersion),
-    };
+      projectCache.current[BigNumber.from(id).toString()] = {
+        queryId: result.queryId,
+        owner: result.owner,
+        metadata: bytes32ToCid(result.metadata),
+        deployment: bytes32ToCid(result.latestDeploymentId),
+        version: bytes32ToCid(result.latestVersion),
+      };
+    }
+
+    return projectCache.current[BigNumber.from(id).toString()];
   };
 
   const getUserQueries = React.useCallback(

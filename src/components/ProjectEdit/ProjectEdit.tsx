@@ -4,18 +4,20 @@
 import { Field, Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
+import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
 import Button from '../Button';
+import ImageInput from '../ImageInput';
+import styles from './ProjectEdit.module.css';
 
 type Props = {
   project: Required<ProjectWithMetadata>;
-  onSubmit: (metadata: ProjectMetadata & { image: File | undefined | string }) => void | Promise<void>;
+  onSubmit: (metadata: FormProjectMetadata) => void | Promise<void>;
 };
 
 const ProjectEdit: React.VFC<Props> = (props) => {
   const { t } = useTranslation('translation');
 
-  const handleSubmit = async (metadata: ProjectMetadata & { image: File | undefined | string }) => {
+  const handleSubmit = async (metadata: FormProjectMetadata) => {
     await props.onSubmit(metadata);
   };
 
@@ -26,9 +28,17 @@ const ProjectEdit: React.VFC<Props> = (props) => {
         validationSchema={projectMetadataSchema.shape({})}
         onSubmit={handleSubmit}
       >
-        {({ errors, isSubmitting, submitForm }) => (
+        {({ errors, isSubmitting, submitForm, setFieldValue, touched, values }) => (
           <Form>
-            <div>
+            <div className={styles.form}>
+              <label htmlFor="name">{t('studio.create.name')}</label>
+              <Field name="name" />
+              {errors.name && touched.name && <div>{errors.name}</div>}
+              <ImageInput
+                label={t('studio.create.image')}
+                value={values.image}
+                onChange={(value) => setFieldValue('image', value)}
+              />
               <label htmlFor="description">{t('studio.create.description')}</label>
               <Field name="description" as="textarea" />
               <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>

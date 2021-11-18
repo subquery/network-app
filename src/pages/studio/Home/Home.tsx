@@ -8,26 +8,23 @@ import ProjectCard from '../../../components/ProjectCard';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
+import { renderAsync } from '../../../utils';
 import styles from './Home.module.css';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
-  const { data: project, loading, error } = useProject(projectId);
+  const asyncProject = useProject(projectId);
 
-  if (error) {
-    console.log('ERROR loading project', error);
-  }
-
-  if (loading) {
-    return <span>{`Loading project id: ${projectId}`}</span>;
-  }
-
-  if (!project) {
-    return null;
-  }
-
-  // TODO have loading UI
-
-  return <ProjectCard project={project} onClick={onClick} />;
+  return renderAsync(asyncProject, {
+    error: (e) => {
+      console.log('ERROR loading project', e);
+      return null;
+    },
+    loading: () => <span>{`Loading project id: ${projectId}`}</span>,
+    data: (project) => {
+      if (!project) return null;
+      return <ProjectCard project={project} onClick={onClick} />;
+    },
+  });
 };
 
 const Home: React.VFC = () => {
@@ -44,7 +41,7 @@ const Home: React.VFC = () => {
     }
   }, [activate, account]);
 
-  const { projects, error, loading } = useUserProjects();
+  const { data: projects, error, loading } = useUserProjects();
 
   const handleCreateProjcet = () => {
     history.push('/studio/create');

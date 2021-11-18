@@ -6,12 +6,6 @@
   padding: 10px 10px 10px 0px;
 }
 
-.label {
-  text-transform: capitalize;
-  font-weight: 700;
-  line-height: 24px;
-}
-
 .value {
   text-decoration: none;
   color: black;

@@ -1,7 +1,7 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProjectManifestVersioned } from '@subql/common';
+import type { ProjectManifestVersioned } from '@subql/common/dist/project';
 import { GraphQLSchema } from 'graphql';
 import * as yup from 'yup';
 import { CIDv0 } from './utils';
@@ -15,6 +15,10 @@ export const projectMetadataSchema = yup.object({
 });
 
 export type ProjectMetadata = yup.Asserts<typeof projectMetadataSchema>;
+
+export type FormProjectMetadata = Omit<ProjectMetadata, 'image'> & { image: File | undefined | string };
+
+export type FormCreateProjectMetadata = FormProjectMetadata & NewDeployment;
 
 export type ProjectWithMetadata = {
   id: string;

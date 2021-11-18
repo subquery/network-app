@@ -1,7 +1,7 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, QueryResult } from '@apollo/client';
 import * as React from 'react';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
@@ -71,23 +71,23 @@ const GET_DEPLOYMENT_INDEXERS = gql`
   }
 `;
 
-export function useProjectQuery(params: GetProjectVariables) {
+export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject> {
   return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
 
-export function useProjectsQuery(params: GetProjectsVariables) {
+export function useProjectsQuery(params: GetProjectsVariables): QueryResult<GetProjects> {
   // Set defaults
   params = { offset: 0, ...params };
   return useQuery<GetProjects, GetProjectsVariables>(GET_PROJECTS, { variables: params });
 }
 
-export function useDeploymentsQuery(params: GetProjectDeploymentsVariables) {
+export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): QueryResult<GetProjectDeployments> {
   return useQuery<GetProjectDeployments, GetProjectDeploymentsVariables>(GET_PROJECT_DEPLOYMENTS, {
     variables: params,
   });
 }
 
-export function useIndexersQuery(params?: GetDeploymentIndexersVariables) {
+export function useIndexersQuery(params?: GetDeploymentIndexersVariables): QueryResult<GetDeploymentIndexers> {
   return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
     variables: params,
   });

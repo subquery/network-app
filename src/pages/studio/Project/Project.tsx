@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch, useParams } from 'react-router';
+import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import Modal from 'react-modal';
 import { NavLink } from 'react-router-dom';
-import { ProjectDetail, ProjectHeader, NewDeployment, ProjectDeployments, Button } from '../../../components';
-import { useAsyncMemo, useCreateDeployment, useProject } from '../../../hooks';
+import { ProjectDetail, ProjectHeader, NewDeployment, Button } from '../../../components';
+import { useCreateDeployment, useProject } from '../../../hooks';
 import { NewDeployment as NewDeploymentParams } from '../../../models';
-import { useDeploymentsQuery, useIPFS } from '../../../containers';
+import { useWeb3 } from '../../../containers';
 import styles from './Project.module.css';
-import { notEmpty } from '../../../utils';
+import { renderAsync } from '../../../utils';
+import DeploymentsTab from './Deployments';
 
 const customStyles = {
   content: {
@@ -27,58 +28,11 @@ const customStyles = {
   },
 };
 
-const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
-  const { data, loading, error } = useDeploymentsQuery({ projectId });
-  const ipfs = useIPFS();
-
-  const {
-    data: deployments,
-    loading: loadingVersion,
-    error: errorVersion,
-  } = useAsyncMemo(async () => {
-    const projectDeployments = data?.projectDeployments?.nodes
-      .filter(notEmpty)
-      .map((v) => v.deployment)
-      .filter(notEmpty);
-    if (!projectDeployments) {
-      return [];
-    }
-
-    return Promise.all(
-      projectDeployments.map(async (deployment) => {
-        const raw = await ipfs.catSingle(deployment.version);
-
-        const { version, description } = JSON.parse(Buffer.from(raw).toString('utf8'));
-
-        return {
-          deploymentId: deployment.id,
-          createdAt: deployment.createdAt,
-          version,
-          description,
-        };
-      }),
-    );
-  }, [data]);
-
-  if (loading || loadingVersion) {
-    return <div>Loading.....</div>;
-  }
-
-  if (error || errorVersion) {
-    return <div>{`Error: ${error || errorVersion}`}</div>;
-  }
-
-  if (!deployments?.length) {
-    return <div>Unable to find deployments for this project</div>;
-  }
-
-  return <ProjectDeployments deployments={deployments} />;
-};
-
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
-
-  const { data: project, loading, error } = useProject(id);
+  const history = useHistory();
+  const { account } = useWeb3();
+  const asyncProject = useProject(id);
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const createDeployment = useCreateDeployment(id);
@@ -91,61 +45,61 @@ const Project: React.VFC = () => {
 
   const handleNewDeployment = () => setDeploymentModal(true);
 
-  const handleEditMetadata = () => {
-    /* TODO*/
-  };
+  const handleEditMetadata = () => history.push(`/studio/project/edit/${id}`);
 
-  if (loading) {
-    return <span>Loading....</span>;
-  }
+  return renderAsync(asyncProject, {
+    loading: () => <span>Loading....</span>,
+    error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
+    data: (project) => {
+      if (!project) {
+        // Should never happen
+        return <span>Project doesn't exist</span>;
+      }
 
-  if (error) {
-    return <span>{`Failed to load project: ${error.message}`}</span>;
-  }
+      if (project.owner !== account) {
+        return <Redirect to="/studio" />;
+      }
 
-  if (!project) {
-    // Should never happen
-    return <span>Project doesn't exist</span>;
-  }
-
-  return (
-    <div>
-      <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
-        <NewDeployment onSubmit={handleSubmitCreate} />
-      </Modal>
-      <ProjectHeader project={project} />
-      <div className="tabContainer">
-        <NavLink to={`/studio/project/${id}/details`} className="tab" activeClassName="tabSelected" title="Details">
-          Details
-        </NavLink>
-        <NavLink
-          to={`/studio/project/${id}/deployments`}
-          className="tab"
-          activeClassName="tabSelected"
-          title="Deployments"
-        >
-          Deployments
-        </NavLink>
-      </div>
-      <Switch>
-        <Route exact path={`/studio/project/:id/details`}>
-          {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
-        </Route>
-        <Route exact path={`/studio/project/:id/deployments`}>
-          <div className={styles.deployments}>
-            <DeploymentsTab projectId={id} />
-            <Button
-              type="primary"
-              label="Create new deployment"
-              className={styles.deployButton}
-              onClick={handleNewDeployment}
-            />
+      return (
+        <div>
+          <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
+            <NewDeployment onSubmit={handleSubmitCreate} />
+          </Modal>
+          <ProjectHeader project={project} />
+          <div className="tabContainer">
+            <NavLink to={`/studio/project/${id}/details`} className="tab" activeClassName="tabSelected" title="Details">
+              Details
+            </NavLink>
+            <NavLink
+              to={`/studio/project/${id}/deployments`}
+              className="tab"
+              activeClassName="tabSelected"
+              title="Deployments"
+            >
+              Deployments
+            </NavLink>
           </div>
-        </Route>
-        <Redirect from="/:id" to={`${id}/details`} />
-      </Switch>
-    </div>
-  );
+          <Switch>
+            <Route exact path={`/studio/project/:id/details`}>
+              {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
+            </Route>
+            <Route exact path={`/studio/project/:id/deployments`}>
+              <div className={styles.deployments}>
+                <DeploymentsTab projectId={id} />
+                <Button
+                  type="primary"
+                  label="Create new deployment"
+                  className={styles.deployButton}
+                  onClick={handleNewDeployment}
+                />
+              </div>
+            </Route>
+            <Redirect from="/:id" to={`${id}/details`} />
+          </Switch>
+        </div>
+      );
+    },
+  });
 };
 
 export default Project;

@@ -22,7 +22,7 @@
 }
 
 .progressFront {
-  background-color: var(--primary);
+  background: var(--sq-gradient);
 }
 
 .percent {

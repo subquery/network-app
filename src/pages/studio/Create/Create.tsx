@@ -3,21 +3,17 @@
 
 import * as React from 'react';
 import { Formik, Form, Field } from 'formik';
-import { useIPFS, useProjectMetadata, useQueryRegistry } from '../../../containers';
 import { useTranslation } from 'react-i18next';
 import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSchema } from '../../../models';
 import { Button, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
-import { useCreateProject } from '../../../hooks/useCreateProject';
+import { useCreateProject } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
 
-  const { uploadMetadata } = useProjectMetadata();
-  const { ipfs } = useIPFS();
-  const { registerQuery } = useQueryRegistry();
   const history = useHistory();
   const createProject = useCreateProject();
 
@@ -31,7 +27,7 @@ const Create: React.VFC = () => {
       console.log(`Query created. queryId=${idHex}`);
       history.push(`/studio/project/${idHex}`);
     },
-    [ipfs, uploadMetadata, registerQuery, history],
+    [history, createProject],
   );
 
   return (

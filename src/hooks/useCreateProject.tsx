@@ -4,17 +4,15 @@
 import { BigNumberish } from '@ethersproject/bignumber';
 import * as React from 'react';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
-import { NewDeployment, ProjectMetadata } from '../models';
+import { FormCreateProjectMetadata, ProjectMetadata } from '../models';
 
-type CreateParams = ProjectMetadata & { image: File | undefined | string } & NewDeployment;
-
-export function useCreateProject(): (params: CreateParams) => Promise<BigNumberish> {
+export function useCreateProject(): (params: FormCreateProjectMetadata) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
   const { registerQuery } = useQueryRegistry();
 
   const createProject = React.useCallback(
-    async function (project: CreateParams): Promise<BigNumberish> {
+    async function (project: FormCreateProjectMetadata): Promise<BigNumberish> {
       // Form can give us a File type that doesn't match the schema
       if ((project.image as unknown) instanceof File) {
         console.log('Uploading icon...');
@@ -28,7 +26,7 @@ export function useCreateProject(): (params: CreateParams) => Promise<BigNumberi
         description: (project as any).versionDescription,
       });
 
-      const metadata = await uploadMetadata(project);
+      const metadata = await uploadMetadata(project as ProjectMetadata);
       const tx = await registerQuery(metadata, project.deploymentId, versionCid);
       const receipt = await tx.wait(1);
       const event = receipt.events?.[0];
@@ -45,7 +43,7 @@ export function useCreateProject(): (params: CreateParams) => Promise<BigNumberi
 
       return queryId;
     },
-    [ipfs, uploadMetadata, registerQuery],
+    [ipfs, uploadMetadata, registerQuery, uploadVersionMetadata],
   );
 
   return createProject;

@@ -20,7 +20,7 @@ const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, st
     const greatestBlock = Math.max(0, ...indexerStatus.map((status) => status.latestBlock));
 
     return Math.max(0, greatestBlock - startBlock) / (chainBlockHeight - startBlock);
-  }, [indexerStatus, chainBlockHeight]);
+  }, [startBlock, indexerStatus, chainBlockHeight]);
 
   const status = React.useMemo(() => {
     if (!indexerStatus.length) {

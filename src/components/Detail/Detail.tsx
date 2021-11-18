@@ -30,7 +30,7 @@ const Detail: React.FC<Props> = ({ label, value, href, className, children }) =>
 
   return (
     <div className={[styles.detail, className].join(' ')}>
-      <span className={styles.label}>{label}</span>
+      <span className="label">{label}</span>
       {renderValue()}
     </div>
   );

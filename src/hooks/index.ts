@@ -8,3 +8,4 @@ export { useCreateProject } from './useCreateProject';
 export { useDeployment } from './useDeployment';
 export { useProjectFromQuery } from './useProjectFromQuery';
 export { useRouteQuery } from './useRouteQuery';
+export { useUpdateProjectMetadata } from './useUpdateProjectMetadata';

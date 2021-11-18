@@ -96,3 +96,10 @@ label {
   color: var(--primary);
   border-bottom: 2px solid var(--primary);
 }
+
+label,
+.label {
+  text-transform: capitalize;
+  font-weight: 700;
+  line-height: 24px;
+}

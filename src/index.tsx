@@ -1,6 +1,9 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// Required because we import @subql/common/dist/project rather than @subql/common
+import 'reflect-metadata';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';

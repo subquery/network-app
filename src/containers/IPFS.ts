@@ -30,6 +30,7 @@ function useIPFSImpl(
     const results = ipfs.current.cat(cid);
 
     for await (const result of results) {
+      logger.l(`Getting: ${cid} ...DONE`);
       return result;
     }
 

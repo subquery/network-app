@@ -12,14 +12,17 @@ export class Logger {
     return new Logger(`${this.prefix}[${scope}]`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public l(message: any, ...rest: any[]): void {
     console.log(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public w(message: any, ...rest: any[]): void {
     console.warn(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public e(message: any, ...rest: any[]): void {
     console.error(`${this.prefix}${message?.toString()}`, ...rest);
   }
