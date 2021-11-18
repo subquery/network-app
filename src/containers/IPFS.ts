@@ -26,6 +26,7 @@ function useIPFSImpl(
   }, [gateway, logger]);
 
   const catSingle = async (cid: string): Promise<Uint8Array> => {
+    logger.l(`Getting: ${cid}`);
     const results = ipfs.current.cat(cid);
 
     for await (const result of results) {

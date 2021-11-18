@@ -3,7 +3,7 @@
 
 import Playground from './Playground';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { buildSchema } from '../../utils';
+// import { buildSchema } from '../../utils';
 
 export default {
   title: 'Playground',
@@ -12,22 +12,22 @@ export default {
 
 const Template: ComponentStory<typeof Playground> = (args) => <Playground {...args} />;
 
-export const Default = Template.bind({});
+// export const Default = Template.bind({});
 
-Default.args = {
-  endpoint: '',
-  schema: buildSchema(`type StarterEntity @entity {
+// Default.args = {
+//   endpoint: '',
+//   schema: buildSchema(`type StarterEntity @entity {
 
-  id: ID! #id is a required field
+//   id: ID! #id is a required field
 
-  field1: Int!
+//   field1: Int!
 
-  field2: String #filed2 is an optional field
+//   field2: String #filed2 is an optional field
 
-  field3: BigInt
+//   field3: BigInt
 
-  field4: Date
+//   field4: Date
 
-  field5: Boolean
-}`),
-};
+//   field5: Boolean
+// }`),
+// };

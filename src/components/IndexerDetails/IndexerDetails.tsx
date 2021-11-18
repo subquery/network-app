@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { DeploymentIndexer } from '../../containers/QueryRegistryProject';
 import styles from './IndexerDetails.module.css';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,9 +9,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { GetDeploymentIndexers_indexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 
 type Props = {
-  indexers: DeploymentIndexer[];
+  indexers: readonly DeploymentIndexer[];
 };
 
 const IndexerDetails: React.FC<Props> = ({ indexers }) => {

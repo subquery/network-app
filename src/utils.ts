@@ -1,8 +1,6 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { buildASTSchema, extendSchema, GraphQLSchema, parse } from 'graphql';
-import gql from 'graphql-tag';
 import { utils } from 'ethers';
 
 export function truncateAddress(address: string): string {
@@ -35,25 +33,6 @@ export const CIDv1 = new RegExp(
   /Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,}/i,
 );
 
-const scalas = gql`
-  scalar BigInt
-  scalar BigDecimal
-  scalar Date
-  scalar Bytes
-`;
-
-const directives = gql`
-  directive @derivedFrom(field: String!) on FIELD_DEFINITION
-  directive @entity on OBJECT
-  directive @jsonField on OBJECT
-  directive @index(unique: Boolean) on FIELD_DEFINITION
-`;
-
-export function buildSchema(raw: string): GraphQLSchema {
-  const base = extendSchema(buildASTSchema(scalas), directives);
-  return extendSchema(base, parse(raw));
-}
-
 export function cidToBytes32(cid: string): string {
   return '0x' + Buffer.from(utils.base58.decode(cid)).slice(2).toString('hex');
 }
@@ -68,3 +47,9 @@ export function bytes32ToCid(bytes: string): string {
 }
 
 export type AsyncData<T> = { data?: T; loading: boolean; error?: Error };
+
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  if (value === null || value === undefined) return false;
+  const testDummy: TValue = value;
+  return true;
+}

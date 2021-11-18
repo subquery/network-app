@@ -56,15 +56,6 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   };
 
   const getQuery = async (id: BigNumberish): Promise<QueryDetails | undefined> => {
-    // Just for testing purposes
-    // return {
-    //   queryId: BigNumber.from(id),
-    //   metadata: 'QmbDYfuaQAptXNkAcJA8EfFrYauG8BoYWwUZRwE9Eg3Zif',
-    //   deployment: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
-    //   version: '',
-    //   owner: 'asdf'
-    // };
-
     if (!contracts) {
       logger.w('contracts not available');
       return undefined;
@@ -90,7 +81,7 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
 
       const count = await contracts.queryRegistry.queryInfoCountByOwner(address);
 
-      return Promise.all(
+      return await Promise.all(
         Array.from(new Array(count.toNumber()).keys()).map((_, index) =>
           contracts.queryRegistry.queryInfoIdsByOwner(address, index),
         ),

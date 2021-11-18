@@ -10,6 +10,7 @@ import { Button, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
 import { useCreateProject } from '../../../hooks/useCreateProject';
+import { BigNumber } from '@ethersproject/bignumber';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
@@ -25,8 +26,10 @@ const Create: React.VFC = () => {
       // Form can give us a File type that doesn't match the schema
       const queryId = await createProject(project);
 
-      console.log(`Query created. queryId=${queryId.toString()}`);
-      history.push(`/studio/project/${queryId.toString()}`);
+      const idHex = BigNumber.from(queryId).toHexString();
+
+      console.log(`Query created. queryId=${idHex}`);
+      history.push(`/studio/project/${idHex}`);
     },
     [ipfs, uploadMetadata, registerQuery, history],
   );

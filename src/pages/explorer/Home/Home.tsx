@@ -5,8 +5,9 @@ import * as React from 'react';
 import { useHistory } from 'react-router';
 import ProjectCard from '../../../components/ProjectCard';
 import { useProjectMetadata, useProjectsQuery } from '../../../containers';
-import { Project } from '../../../containers/QueryRegistryProject';
+import { GetProject_project as Project } from '../../../__generated__/GetProject';
 import { useAsyncMemo } from '../../../hooks';
+import { notEmpty } from '../../../utils';
 import styles from './Home.module.css';
 
 const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ project, onClick }) => {
@@ -35,14 +36,16 @@ const Home: React.VFC = () => {
       {error && <span>{`We have an error: ${error.message}`}</span>}
       {loading && <span>...loading</span>}
       <div className={styles.list}>
-        {data?.projects.nodes.length ? (
-          data.projects.nodes.map((project) => (
-            <ProjectItem
-              project={project}
-              key={project.id}
-              onClick={() => history.push(`/explorer/project/${project.id}`)}
-            />
-          ))
+        {data?.projects?.nodes.length ? (
+          data.projects.nodes
+            .filter(notEmpty)
+            .map((project) => (
+              <ProjectItem
+                project={project}
+                key={project.id}
+                onClick={() => history.push(`/explorer/project/${project.id}`)}
+              />
+            ))
         ) : (
           <span>No projects</span>
         )}

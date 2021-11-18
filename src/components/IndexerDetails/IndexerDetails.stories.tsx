@@ -3,6 +3,7 @@
 
 import IndexerDetails from './IndexerDetails';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { Status } from '../../globalTypes';
 
 export default {
   title: 'IndexerDetails',
@@ -16,20 +17,24 @@ export const Default = Template.bind({});
 Default.args = {
   indexers: [
     {
+      __typename: 'Indexer',
       id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
       deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
       indexer: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
       blockHeight: '1000',
-      status: 'indexing',
+      timestamp: new Date(),
+      status: Status.INDEXING,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
+      __typename: 'Indexer',
       id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
       deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
       indexer: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
       blockHeight: '1000',
-      status: 'indexing',
+      timestamp: new Date(),
+      status: Status.INDEXING,
       createdAt: new Date(),
       updatedAt: new Date(),
     },

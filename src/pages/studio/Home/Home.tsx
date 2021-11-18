@@ -13,6 +13,14 @@ import styles from './Home.module.css';
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
   const { data: project, loading, error } = useProject(projectId);
 
+  if (error) {
+    console.log('ERROR loading project', error);
+  }
+
+  if (loading) {
+    return <span>{`Loading project id: ${projectId}`}</span>;
+  }
+
   if (!project) {
     return null;
   }

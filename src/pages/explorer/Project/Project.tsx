@@ -9,6 +9,7 @@ import { IndexerProgress, ProjectHeader, ProjectOverview } from '../../../compon
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
+import { notEmpty } from '../../../utils';
 
 export const ROUTE = '/explorer/project';
 
@@ -18,33 +19,36 @@ const Project: React.VFC = () => {
   const history = useHistory();
   const { getVersionMetadata } = useProjectMetadata();
 
-  const deploymentId = query.get('deploymentId') || undefined;
-
   const { data: project, loading, error } = useProjectFromQuery(id);
   const { data: deployments } = useDeploymentsQuery({ projectId: id });
+
+  const deploymentId = query.get('deploymentId') || project?.deployment.id;
 
   const {
     data: indexersQuery,
     loading: loadingIndexers,
     error: errorIndexers,
-  } = useIndexersQuery({ deploymentId: deploymentId ?? project?.deployment.id });
+  } = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
   // TODO expand this to check status of indexers
-  const hasIndexers = React.useMemo(() => indexersQuery?.indexers.nodes.length, [indexersQuery]);
+  const indexers = React.useMemo(() => indexersQuery?.indexers?.nodes.filter(notEmpty), [indexersQuery]);
+  const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
   const indexersStatus = React.useMemo(() => {
     return (
-      indexersQuery?.indexers.nodes.map((i) => ({
+      indexers?.map((i) => ({
         indexer: i.indexer,
         latestBlock: BigNumber.from(i.blockHeight).toNumber(),
       })) ?? []
     );
-  }, [indexersQuery]);
+  }, [indexers]);
 
   const { data: deploymentVersions } = useAsyncMemo(async () => {
     const deploymentsWithSemver = await Promise.all(
-      (deployments?.projectDeployments.nodes ?? [])
+      (deployments?.projectDeployments?.nodes ?? [])
+        .filter(notEmpty)
         .map((v) => v.deployment)
+        .filter(notEmpty)
         .map((d) => getVersionMetadata(d.version).then((versionMeta) => ({ id: d.id, version: versionMeta.version }))),
     );
 
@@ -80,11 +84,11 @@ const Project: React.VFC = () => {
       return <div>{`Failed to load indexers: ${errorIndexers}`}</div>;
     }
 
-    if (!indexersQuery?.indexers.nodes.length) {
+    if (!indexers?.length) {
       return <div>No indexers</div>;
     }
 
-    return <IndexerDetails indexers={indexersQuery?.indexers.nodes} />;
+    return <IndexerDetails indexers={indexers} />;
   };
 
   const renderPlayground = () => {
@@ -128,7 +132,7 @@ const Project: React.VFC = () => {
         >
           Indexers
         </NavLink>
-        {!!indexersQuery?.indexers.nodes.length && (
+        {hasIndexers && (
           <NavLink
             to={`${ROUTE}/${id}/playground${history.location.search}`}
             className="tab"
@@ -144,7 +148,6 @@ const Project: React.VFC = () => {
           <ProjectOverview
             metadata={project.metadata}
             deploymentId={deploymentId ?? project.deployment.id}
-            // TODO load correct date, probably need to switch to using query project rather than contract
             createdAt={project.createdAt}
             updatedAt={project.updatedAt}
           />

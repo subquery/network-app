@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "PORT=3006 react-scripts start",
-    "build": "react-scripts build",
+    "start": "yarn codegen-gql && PORT=3006 react-scripts start",
+    "build": "yarn codegen-gql && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "lint": "eslint src/**/*.{ts,tsx}"
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "codegen-gql": "npx apollo client:codegen --endpoint='http://localhost:3000' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
@@ -57,6 +58,7 @@
     "@types/react-modal": "^3.13.1",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.3.0",
+    "apollo": "^2.33.9",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-header": "^3.1.1",

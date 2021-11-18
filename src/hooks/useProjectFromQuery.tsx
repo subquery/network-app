@@ -6,9 +6,9 @@ import { ProjectDetails, ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 import { getDeployment } from './useDeployment';
-import { Project } from '../containers/QueryRegistryProject';
+import { GetProject_project as Project } from '../__generated__/GetProject';
 
-type ProjectDetailsQuery = Omit<Project, 'metadata'> & {
+type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;
   deployment: ProjectDetails['deployment'];
 };
@@ -24,7 +24,7 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
     loading: loadingData,
     error: errorData,
   } = useAsyncMemo<ProjectDetailsQuery | undefined>(async () => {
-    if (!data) {
+    if (!data?.project) {
       return undefined;
     }
 

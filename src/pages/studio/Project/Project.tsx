@@ -10,6 +10,7 @@ import { useAsyncMemo, useCreateDeployment, useProject } from '../../../hooks';
 import { NewDeployment as NewDeploymentParams } from '../../../models';
 import { useDeploymentsQuery, useIPFS } from '../../../containers';
 import styles from './Project.module.css';
+import { notEmpty } from '../../../utils';
 
 const customStyles = {
   content: {
@@ -35,12 +36,16 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
     loading: loadingVersion,
     error: errorVersion,
   } = useAsyncMemo(async () => {
-    if (!data?.projectDeployments.nodes) {
+    const projectDeployments = data?.projectDeployments?.nodes
+      .filter(notEmpty)
+      .map((v) => v.deployment)
+      .filter(notEmpty);
+    if (!projectDeployments) {
       return [];
     }
 
     return Promise.all(
-      data.projectDeployments.nodes.map(async ({ deployment }) => {
+      projectDeployments.map(async (deployment) => {
         const raw = await ipfs.catSingle(deployment.version);
 
         const { version, description } = JSON.parse(Buffer.from(raw).toString('utf8'));

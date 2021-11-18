@@ -5,7 +5,7 @@ import yaml from 'js-yaml';
 import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common';
 import { useIPFS } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
-import { buildSchema } from '../utils';
+// import { buildSchema } from '../utils';
 import { ProjectDetails } from '../models';
 
 export async function getDeployment(
@@ -22,14 +22,14 @@ export async function getDeployment(
       return manifest;
     });
 
-  const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
-    .then((data) => Buffer.from(data).toString())
-    .then((str) => buildSchema(str));
+  // const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
+  //   .then((data) => Buffer.from(data).toString())
+  //   .then((str) => buildSchema(str));
 
   return {
     id: deploymentId,
     manifest,
-    schema,
+    // schema,
   };
 }
 

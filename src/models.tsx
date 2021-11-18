@@ -29,7 +29,7 @@ export type ProjectDetails = {
   deployment: {
     id: string;
     manifest: ProjectManifestVersioned;
-    schema: GraphQLSchema;
+    // schema: GraphQLSchema;
   };
 };
 

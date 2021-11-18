@@ -1,17 +1,20 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { BigNumberish } from '@ethersproject/bignumber';
 import * as React from 'react';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { NewDeployment, ProjectMetadata } from '../models';
 
-export function useCreateProject() {
+type CreateParams = ProjectMetadata & { image: File | undefined | string } & NewDeployment;
+
+export function useCreateProject(): (params: CreateParams) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
   const { registerQuery } = useQueryRegistry();
 
   const createProject = React.useCallback(
-    async function (project: ProjectMetadata & { image: File | undefined | string } & NewDeployment): Promise<string> {
+    async function (project: CreateParams): Promise<BigNumberish> {
       // Form can give us a File type that doesn't match the schema
       if ((project.image as unknown) instanceof File) {
         console.log('Uploading icon...');

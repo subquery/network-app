@@ -3,64 +3,38 @@
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import * as React from 'react';
+import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
+import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
+import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
+import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
 
-export interface Project {
-  id: string;
-  owner: string;
-  metadata: string;
-  currentDeployment: string;
-  currentVersion: string;
-
-  updatedAt: Date;
-  createdAt: Date;
-}
-
-export interface ProjectDeployment {
-  deployment: Deployment;
-}
-
-export interface Deployment {
-  id: string;
-  version: string;
-
-  createdAt: Date;
-}
-
-export interface DeploymentIndexer {
-  id: string;
-  indexer: string;
-  deploymentId: string;
-  blockHeight: BigInt | string;
-  status: 'indexing' | 'ready' | 'terminated';
-  createdAt: Date;
-  updatedAt: Date;
-}
+const PROJECT_FIELDS = gql`
+  fragment ProjectFields on Project {
+    id
+    owner
+    metadata
+    currentVersion
+    currentDeployment
+    updatedAt
+    createdAt
+  }
+`;
 
 const GET_PROJECT = gql`
+  ${PROJECT_FIELDS}
   query GetProject($id: String!) {
     project(id: $id) {
-      id
-      owner
-      metadata
-      currentVersion
-      currentDeployment
-      updatedAt
-      createdAt
+      ...ProjectFields
     }
   }
 `;
 
 const GET_PROJECTS = gql`
+  ${PROJECT_FIELDS}
   query GetProjects($offset: Int) {
     projects(first: 10, offset: $offset) {
       nodes {
-        id
-        owner
-        metadata
-        currentVersion
-        currentDeployment
-        updatedAt
-        createdAt
+        ...ProjectFields
       }
     }
   }
@@ -97,30 +71,26 @@ const GET_DEPLOYMENT_INDEXERS = gql`
   }
 `;
 
-type ProjectQueryVars = { id: string };
-type ProjectQueryData = { project: Project };
-export function useProjectQuery(params: ProjectQueryVars) {
-  return useQuery<ProjectQueryData, ProjectQueryVars>(GET_PROJECT, { variables: params });
+export function useProjectQuery(params: GetProjectVariables) {
+  return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
 
-type ProjectsQueryVars = { offset?: number };
-type ProjectsQueryData = { projects: { nodes: Project[] } };
-export function useProjectsQuery(params: ProjectsQueryVars) {
+export function useProjectsQuery(params: GetProjectsVariables) {
   // Set defaults
   params = { offset: 0, ...params };
-  return useQuery<ProjectsQueryData, ProjectsQueryVars>(GET_PROJECTS, { variables: params });
+  return useQuery<GetProjects, GetProjectsVariables>(GET_PROJECTS, { variables: params });
 }
 
-type DeploymentsQueryVars = { projectId: string };
-type DeploymentsQueryData = { projectDeployments: { nodes: ProjectDeployment[] } };
-export function useDeploymentsQuery(params: DeploymentsQueryVars) {
-  return useQuery<DeploymentsQueryData, DeploymentsQueryVars>(GET_PROJECT_DEPLOYMENTS, { variables: params });
+export function useDeploymentsQuery(params: GetProjectDeploymentsVariables) {
+  return useQuery<GetProjectDeployments, GetProjectDeploymentsVariables>(GET_PROJECT_DEPLOYMENTS, {
+    variables: params,
+  });
 }
 
-type IndexersQueryVars = { deploymentId?: string };
-type IndexersQueryData = { indexers: { nodes: DeploymentIndexer[] } };
-export function useIndexersQuery(params: IndexersQueryVars) {
-  return useQuery<IndexersQueryData, IndexersQueryVars>(GET_DEPLOYMENT_INDEXERS, { variables: params });
+export function useIndexersQuery(params?: GetDeploymentIndexersVariables) {
+  return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
+    variables: params,
+  });
 }
 
 export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (props) => {

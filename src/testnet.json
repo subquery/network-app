@@ -1,38 +1,38 @@
 {
     "Settings": {
-        "address": "0x4d2C1b495a652E1Bc1e05472cfbdB2c75C7a8409",
+        "address": "0x1f52496FEF8045d3988Cf3d35511F496aE85a2fF",
         "bytecodeHash": "d29045326fc0be7d9c9f34fdab667880275b398b16dbd356c3e1664209578734",
-        "txHash": "0x1e4d8e88b5044e6876db3c4f89f57f829419337761d73e6290116c975afd35fb",
-        "lastUpdate": "Mon, 15 Nov 2021 21:11:16 GMT"
+        "txHash": "0x9277ccb94d7076016e212acbecaf96c525e0a6664e051495d6eb66e950af8f88",
+        "lastUpdate": "Wed, 17 Nov 2021 03:08:55 GMT"
     },
     "InflationController": {
-        "address": "0xED8f079e89717A94ff9E72F04A8e2775161024FF",
+        "address": "0xD85888D978e014ad9dA7cf011E726B04FBf0c63c",
         "bytecodeHash": "910f964b54e2df4d1c136742ae4b45b12b04289b338d42b7ddd6cf2083ab1f74",
-        "txHash": "0x8d8b291437fab322a1b8be016ff22cc4fe4e09a0d254595a2152faca2990693a",
-        "lastUpdate": "Mon, 15 Nov 2021 21:11:39 GMT"
+        "txHash": "0x5bc93d0df65ef4e109cb4386fc4a3d684dd7ae9f4ec919357cf2519a2ce03bd0",
+        "lastUpdate": "Wed, 17 Nov 2021 03:09:24 GMT"
     },
     "SQToken": {
-        "address": "0x09eda5f3D448A02bF21B51223bB3aD5c5c8DA151",
+        "address": "0xF7212a9D6468709a954A34125A3A9d14D6db083e",
         "bytecodeHash": "9efa42ea053fd6886f6bef569c9562e926f2ea276ca7a77ed9a04599c1e0a897",
-        "txHash": "0x72e6768bfdb246cfaade0f686e9243ea61fb24c10099c21ce3cc569537aeff42",
-        "lastUpdate": "Mon, 15 Nov 2021 21:12:03 GMT"
+        "txHash": "0x4f43186fbc5b8da5130cb004641de1193c54886c079f684040dee2b6aa89be0b",
+        "lastUpdate": "Wed, 17 Nov 2021 03:09:55 GMT"
     },
     "Staking": {
-        "address": "0x6B30bf34254ca3dD79cACC425feddf376199e586",
+        "address": "0xb9bEBb2C610AC88148c0011b0623F4E9C175698b",
         "bytecodeHash": "7ff5178c907c65f5472c47db6a6212473761f64443a23d74b18b10c1473d4c90",
-        "txHash": "0x2637384e523960f8778b4a852422cfec8a1e752c47f58aef0dc5ae2ba85ad391",
-        "lastUpdate": "Mon, 15 Nov 2021 21:12:40 GMT"
+        "txHash": "0x45572d02814983833779122f50357c385e98e85601f3537796f5b6bb844e0978",
+        "lastUpdate": "Wed, 17 Nov 2021 03:10:34 GMT"
     },
     "IndexerRegistry": {
-        "address": "0x4Eaa5cAAC431f39AA748C4739d632a01774d9635",
+        "address": "0xA913e483B6B6f9607CcC1E083928342b2d5d36aF",
         "bytecodeHash": "df9230d9cf1d468daa72b156eedc83e0a6253cce690a88ca523beca6f006e59b",
-        "txHash": "0x3c4b8811a923f9715318becf85b433417f731f8a34ca3fd7ad7c3e114cb0ecc4",
-        "lastUpdate": "Mon, 15 Nov 2021 21:13:04 GMT"
+        "txHash": "0xb94b6bd93033798bda369c60b2ec6ff83ed0323a988d9b01ce7dcb0d3d73bb33",
+        "lastUpdate": "Wed, 17 Nov 2021 03:11:13 GMT"
     },
     "QueryRegistry": {
-        "address": "0xe5B4EA276e1030F55790bB8695bC1f8362241bb9",
-        "bytecodeHash": "0febb0335d9ef71a7c059b824903ce78a18c93c9219367b729b7d2b6af1db620",
-        "txHash": "0x24ca4922ef1bb1a5f69e986e415e07b7892c0d0efbfe727c5286401be610f47e",
-        "lastUpdate": "Mon, 15 Nov 2021 21:13:53 GMT"
+        "address": "0x1EBbb7E88b2f939E7D5CBf409189A721dF8C7792",
+        "bytecodeHash": "59619aa39ac4ef7e53e1dd5aed262e7136564b282d0a605eb4cba98e26cf9303",
+        "txHash": "0xded6abc0f069795d408a387eae798bf11c0ee5efc20bf1c7776c2850b38cc070",
+        "lastUpdate": "Wed, 17 Nov 2021 03:11:44 GMT"
     }
 }
