@@ -17,7 +17,7 @@ const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ proje
   return renderAsync(asyncProject, {
     error: (e) => {
       console.log('ERROR loading project', e);
-      return null;
+      return <span>{`Failed to load project: ${e.message}`}</span>;
     },
     loading: () => <span>{`Loading project id: ${projectId}`}</span>,
     data: (project) => {
