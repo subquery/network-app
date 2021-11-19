@@ -10,23 +10,25 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { GetDeploymentIndexers_indexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
+import moment from 'moment';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
 };
 
-const IndexerDetails: React.FC<Props> = ({ indexers }) => {
-  const row = (indexer: DeploymentIndexer, key: string | number) => {
-    return (
-      <TableRow key={key}>
-        <TableCell>{indexer.indexer}</TableCell>
-        <TableCell>{indexer.blockHeight.toString()}</TableCell>
-        <TableCell>{indexer.status}</TableCell>
-        <TableCell>{indexer.updatedAt.toLocaleString()}</TableCell>
-      </TableRow>
-    );
-  };
+const Row: React.VFC<{ indexer: DeploymentIndexer }> = ({ indexer }) => {
+  const updatedAt = React.useMemo(() => moment(indexer.updatedAt).fromNow(), [indexer.updatedAt]);
+  return (
+    <TableRow>
+      <TableCell>{indexer.indexer}</TableCell>
+      <TableCell>{indexer.blockHeight.toString()}</TableCell>
+      <TableCell>{indexer.status}</TableCell>
+      <TableCell>{updatedAt}</TableCell>
+    </TableRow>
+  );
+};
 
+const IndexerDetails: React.FC<Props> = ({ indexers }) => {
   // TODO extract to common table to share with deployments
   return (
     <TableContainer>
@@ -39,7 +41,11 @@ const IndexerDetails: React.FC<Props> = ({ indexers }) => {
             <TableCell>Updated</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{indexers.map((indexer, index) => row(indexer, index))}</TableBody>
+        <TableBody>
+          {indexers.map((indexer, index) => (
+            <Row indexer={indexer} key={index} />
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   );

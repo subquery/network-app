@@ -15,6 +15,8 @@ import NewProjectCard from './NewProjectCard';
 import NewDeployment from './NewDeployment';
 import ProjectOverview from './ProjectOverview';
 import IndexerProgress from './IndexerProgress';
+import Spinner from './Spinner';
+import ProjectCard from './ProjectCard';
 
 export {
   Button,
@@ -23,6 +25,7 @@ export {
   ImageInput,
   IPFSImage,
   ProjectHeader,
+  ProjectCard,
   ProjectDetail,
   ProjectEdit,
   ProjectDeployments,
@@ -31,4 +34,5 @@ export {
   NewProjectCard,
   NewDeployment,
   IndexerProgress,
+  Spinner,
 };

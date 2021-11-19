@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import Modal from 'react-modal';
 import { NavLink } from 'react-router-dom';
-import { ProjectDetail, ProjectHeader, NewDeployment, Button } from '../../../components';
+import { ProjectDetail, ProjectHeader, NewDeployment, Button, Spinner } from '../../../components';
 import { useCreateDeployment, useProject } from '../../../hooks';
 import { NewDeployment as NewDeploymentParams } from '../../../models';
 import { useWeb3 } from '../../../containers';
@@ -48,7 +48,7 @@ const Project: React.VFC = () => {
   const handleEditMetadata = () => history.push(`/studio/project/edit/${id}`);
 
   return renderAsync(asyncProject, {
-    loading: () => <span>Loading....</span>,
+    loading: () => <Spinner />,
     error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
     data: (project) => {
       if (!project) {

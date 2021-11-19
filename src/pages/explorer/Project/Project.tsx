@@ -5,11 +5,11 @@ import { BigNumber } from '@ethersproject/bignumber';
 import * as React from 'react';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
-import { IndexerProgress, ProjectHeader, ProjectOverview } from '../../../components';
+import { IndexerProgress, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { notEmpty } from '../../../utils';
+import { notEmpty, renderAsync } from '../../../utils';
 
 export const ROUTE = '/explorer/project';
 
@@ -19,19 +19,15 @@ const Project: React.VFC = () => {
   const history = useHistory();
   const { getVersionMetadata } = useProjectMetadata();
 
-  const { data: project, loading, error } = useProjectFromQuery(id);
+  const asyncProject = useProjectFromQuery(id);
   const { data: deployments } = useDeploymentsQuery({ projectId: id });
 
-  const deploymentId = query.get('deploymentId') || project?.deployment.id;
+  const deploymentId = query.get('deploymentId') || asyncProject.data?.deployment.id;
 
-  const {
-    data: indexersQuery,
-    loading: loadingIndexers,
-    error: errorIndexers,
-  } = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
+  const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
   // TODO expand this to check status of indexers
-  const indexers = React.useMemo(() => indexersQuery?.indexers?.nodes.filter(notEmpty), [indexersQuery]);
+  const indexers = React.useMemo(() => asyncIndexers.data?.indexers?.nodes.filter(notEmpty), [asyncIndexers.data]);
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
   const indexersStatus = React.useMemo(() => {
@@ -53,42 +49,24 @@ const Project: React.VFC = () => {
     );
 
     return deploymentsWithSemver.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.version }), {});
-
-    // TODO resolve ipfs version
   }, [deployments]);
 
   const handleChangeVersion = (value: string) => {
-    // TODO retain current
     history.push(`${history.location.pathname}?deploymentId=${value}`);
   };
 
-  if (loading) {
-    return <span>Loading....</span>;
-  }
-
-  if (error) {
-    return <span>{`Failed to load project: ${error.message}`}</span>;
-  }
-
-  if (!project) {
-    // Should never happen
-    return <span>Project doesn't exist</span>;
-  }
-
   const renderIndexers = () => {
-    if (loadingIndexers) {
-      return <div>Loading....</div>;
-    }
+    return renderAsync(asyncIndexers, {
+      loading: () => <Spinner />,
+      error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
+      data: () => {
+        if (!indexers?.length) {
+          return <div>No indexers</div>;
+        }
 
-    if (errorIndexers) {
-      return <div>{`Failed to load indexers: ${errorIndexers}`}</div>;
-    }
-
-    if (!indexers?.length) {
-      return <div>No indexers</div>;
-    }
-
-    return <IndexerDetails indexers={indexers} />;
+        return <IndexerDetails indexers={indexers} />;
+      },
+    });
   };
 
   const renderPlayground = () => {
@@ -100,68 +78,79 @@ const Project: React.VFC = () => {
     // return <Playground/>
   };
 
-  return (
-    <div>
-      <ProjectHeader
-        project={project}
-        versions={deploymentVersions}
-        currentVersion={deploymentId}
-        onChangeVersion={handleChangeVersion}
-      />
+  return renderAsync(asyncProject, {
+    loading: () => <Spinner />,
+    error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
+    data: (project) => {
+      if (!project) {
+        // Should never happen
+        return <span>Project doesn't exist</span>;
+      }
 
-      <IndexerProgress
-        startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
-        chainBlockHeight={10000000000} // TODO get actual chain height
-        indexerStatus={indexersStatus}
-      />
-
-      <div className="tabContainer">
-        <NavLink
-          to={`${ROUTE}/${id}/overview${history.location.search}`}
-          className="tab"
-          activeClassName="tabSelected"
-          title="Overview"
-        >
-          Overview
-        </NavLink>
-        <NavLink
-          to={`${ROUTE}/${id}/indexers${history.location.search}`}
-          className="tab"
-          activeClassName="tabSelected"
-          title="Indexers"
-        >
-          Indexers
-        </NavLink>
-        {hasIndexers && (
-          <NavLink
-            to={`${ROUTE}/${id}/playground${history.location.search}`}
-            className="tab"
-            activeClassName="tabSelected"
-            title="Playground"
-          >
-            Playground
-          </NavLink>
-        )}
-      </div>
-      <Switch>
-        <Route exact path={`${ROUTE}/:id/overview`}>
-          <ProjectOverview
-            metadata={project.metadata}
-            deploymentId={deploymentId ?? project.deployment.id}
-            createdAt={project.createdAt}
-            updatedAt={project.updatedAt}
+      return (
+        <div>
+          <ProjectHeader
+            project={project}
+            versions={deploymentVersions}
+            currentVersion={deploymentId}
+            onChangeVersion={handleChangeVersion}
           />
-        </Route>
-        <Route exact path={`${ROUTE}/:id/indexers`}>
-          {renderIndexers()}
-        </Route>
-        <Route exact path={`${ROUTE}/:id/playground`}>
-          {renderPlayground()}
-        </Route>
-        <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
-      </Switch>
-    </div>
-  );
+
+          <IndexerProgress
+            startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
+            chainBlockHeight={10000000000} // TODO get actual chain height
+            indexerStatus={indexersStatus}
+          />
+
+          <div className="tabContainer">
+            <NavLink
+              to={`${ROUTE}/${id}/overview${history.location.search}`}
+              className="tab"
+              activeClassName="tabSelected"
+              title="Overview"
+            >
+              Overview
+            </NavLink>
+            <NavLink
+              to={`${ROUTE}/${id}/indexers${history.location.search}`}
+              className="tab"
+              activeClassName="tabSelected"
+              title="Indexers"
+            >
+              Indexers
+            </NavLink>
+            {hasIndexers && (
+              <NavLink
+                to={`${ROUTE}/${id}/playground${history.location.search}`}
+                className="tab"
+                activeClassName="tabSelected"
+                title="Playground"
+              >
+                Playground
+              </NavLink>
+            )}
+          </div>
+          <Switch>
+            <Route exact path={`${ROUTE}/:id/overview`}>
+              <ProjectOverview
+                metadata={project.metadata}
+                deploymentId={deploymentId ?? project.deployment.id}
+                createdAt={project.createdAt}
+                updatedAt={project.updatedAt}
+              />
+            </Route>
+            <Route exact path={`${ROUTE}/:id/indexers`}>
+              {renderIndexers()}
+            </Route>
+            <Route exact path={`${ROUTE}/:id/playground`}>
+              {renderPlayground()}
+            </Route>
+            <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
+          </Switch>
+        </div>
+      );
+    },
+  });
 };
 
 export default Project;

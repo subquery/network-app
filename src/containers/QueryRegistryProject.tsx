@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, QueryResult } from '@apollo/client';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 import * as React from 'react';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
@@ -100,7 +101,15 @@ export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (pr
     }
     return new ApolloClient({
       uri: props.endpoint,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          Query: {
+            fields: {
+              project: offsetLimitPagination(),
+            },
+          },
+        },
+      }),
     });
   }, [props?.endpoint]);
 

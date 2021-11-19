@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useHistory, useParams } from 'react-router';
-import { ProjectEdit } from '../../../components';
+import { ProjectEdit, Spinner } from '../../../components';
 import { useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata } from '../../../models';
 import { renderAsync } from '../../../utils';
@@ -23,7 +23,7 @@ const Edit: React.VFC = () => {
 
   return renderAsync(asyncProject, {
     error: (e) => <span>{`Error: ${e.message}`}</span>,
-    loading: () => <span>Loading....</span>,
+    loading: () => <Spinner />,
     data: (project) => {
       if (!project) return null;
 
