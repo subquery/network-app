@@ -1,7 +1,9 @@
 name: Dev
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - dev-pipeline
 
 jobs:
   build:
@@ -15,7 +17,7 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
         with:
-          node-version: 14
+          node-version: 16
 
       - run: yarn
 
@@ -26,7 +28,7 @@ jobs:
       - name: Deploy
         uses: reggionick/s3-deploy@v3
         with:
-          folder: public
+          folder: build
           bucket: ${{ secrets.DEV_BUCKET }}
           bucket-region: ${{ secrets.S3_DEV_BUCKET_REGION }}
           invalidation: /*
