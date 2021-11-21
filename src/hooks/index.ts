@@ -9,3 +9,4 @@ export { useDeployment } from './useDeployment';
 export { useProjectFromQuery } from './useProjectFromQuery';
 export { useRouteQuery } from './useRouteQuery';
 export { useUpdateProjectMetadata } from './useUpdateProjectMetadata';
+export { useOnScreen } from './useOnScreen';
