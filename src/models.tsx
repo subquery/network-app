@@ -44,3 +44,9 @@ export const newDeploymentSchema = yup.object({
 });
 
 export type NewDeployment = yup.Asserts<typeof newDeploymentSchema>;
+
+export type IndexerDetails = {
+  name: string;
+  image?: string;
+  endpoint: string;
+};

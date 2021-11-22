@@ -7,10 +7,6 @@ import { useContracts } from './Contracts';
 import * as React from 'react';
 import { bytes32ToCid, cidToBytes32 } from '../utils';
 
-type InitialState = {
-  contractAddress: string;
-};
-
 type QueryDetails = {
   queryId: BigNumber;
   owner: string;
@@ -19,8 +15,8 @@ type QueryDetails = {
   version: string; // IPFS Cid
 };
 
-function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
-  const contracts = useContracts();
+function useQueryRegistryImpl(logger: Logger) {
+  const pendingContracts = useContracts();
 
   const projectCache = React.useRef<Record<string, QueryDetails>>({});
 
@@ -30,9 +26,10 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     versionCid: string,
   ): Promise<ContractTransaction> => {
     // Call contract function to register a new project, should emit an event with an id
-    if (!contracts) {
+    if (!pendingContracts) {
       throw new Error('QueryRegistry contract not available');
     }
+    const contracts = await pendingContracts;
 
     return contracts?.queryRegistry.createQueryProject(
       cidToBytes32(metadataCid),
@@ -42,9 +39,11 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   };
 
   const updateQueryMetadata = async (id: BigNumberish, metadata: string): Promise<ContractTransaction> => {
-    if (!contracts) {
+    if (!pendingContracts) {
       throw new Error('QueryRegistry contract not available');
     }
+
+    const contracts = await pendingContracts;
 
     const tx = await contracts.queryRegistry.updateQueryProjectMetadata(id, cidToBytes32(metadata));
 
@@ -67,9 +66,11 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
     deploymentId: string,
     version: string,
   ): Promise<ContractTransaction> => {
-    if (!contracts) {
+    if (!pendingContracts) {
       throw new Error('QueryRegistry contract not available');
     }
+
+    const contracts = await pendingContracts;
 
     const tx = await contracts.queryRegistry.updateDeployment(id, cidToBytes32(deploymentId), cidToBytes32(version));
 
@@ -89,10 +90,12 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
   };
 
   const getQuery = async (id: BigNumberish): Promise<QueryDetails | undefined> => {
-    if (!contracts) {
+    if (!pendingContracts) {
       logger.w('contracts not available');
       return undefined;
     }
+
+    const contracts = await pendingContracts;
 
     if (!projectCache.current[BigNumber.from(id).toString()]) {
       const result = await contracts.queryRegistry.queryInfos(id);
@@ -111,10 +114,12 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
 
   const getUserQueries = React.useCallback(
     async (address: string): Promise<BigNumber[]> => {
-      if (!contracts) {
-        // throw new Error('QueryRegistry contract not available');
-        return [];
+      if (!pendingContracts) {
+        throw new Error('QueryRegistry contract not available');
+        // return [];
       }
+
+      const contracts = await pendingContracts;
 
       const count = await contracts.queryRegistry.queryInfoCountByOwner(address);
 
@@ -124,7 +129,7 @@ function useQueryRegistryImpl(logger: Logger, initialState?: InitialState) {
         ),
       );
     },
-    [contracts],
+    [pendingContracts],
   );
 
   return {

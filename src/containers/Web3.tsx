@@ -15,7 +15,7 @@ const RPC_URLS: Record<number, string> = {
 };
 
 export const injectedConntector = new InjectedConnector({
-  supportedChainIds: [1, 1281, 1285, 1287],
+  supportedChainIds: [/*1, 1281, 1285, */ 1287],
 });
 
 const networkConnector = new NetworkConnector({
@@ -40,7 +40,7 @@ const InitProvider: React.VFC = () => {
       return;
     }
 
-    // activate(networkConnector);
+    activate(networkConnector);
   }, [activate]);
 
   React.useEffect(() => {

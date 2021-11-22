@@ -105,7 +105,7 @@ export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (pr
         typePolicies: {
           Query: {
             fields: {
-              project: offsetLimitPagination(),
+              nodes: offsetLimitPagination(), // XXX untested
             },
           },
         },

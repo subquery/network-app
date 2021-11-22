@@ -18,9 +18,11 @@ import {
   ContractsProvider,
   QueryRegistryProjectProvider,
   UserProjectsProvider,
+  useWeb3,
 } from './containers';
+import { UnsupportedChainIdError } from '@web3-react/core';
 
-const App: React.VFC = () => {
+const Providers: React.FC = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
       <QueryRegistryProjectProvider endpoint={process.env.REACT_APP_QUERY_REGISTRY_PROJECT}>
@@ -28,27 +30,45 @@ const App: React.VFC = () => {
           <ContractsProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
-                <UserProjectsProvider>
-                  <div className="App">
-                    <Router>
-                      <Header />
-                      <div className="Main">
-                        <Switch>
-                          <Route component={pages.Studio} path="/studio" />
-                          <Route component={pages.Explorer} path="/explorer" />
-                          <Route component={pages.Home} />
-                        </Switch>
-                      </div>
-                      <Footer />
-                    </Router>
-                  </div>
-                </UserProjectsProvider>
+                <UserProjectsProvider>{children}</UserProjectsProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
           </ContractsProvider>
         </Web3Provider>
       </QueryRegistryProjectProvider>
     </IPFSProvider>
+  );
+};
+
+const BlockchainStatus: React.FC = ({ children }) => {
+  const { error } = useWeb3();
+
+  if (error instanceof UnsupportedChainIdError) {
+    return <span>Unsupported network</span>;
+  }
+
+  return <>{children}</>;
+};
+
+const App: React.VFC = () => {
+  return (
+    <Providers>
+      <div className="App">
+        <Router>
+          <Header />
+          <div className="Main">
+            <BlockchainStatus>
+              <Switch>
+                <Route component={pages.Studio} path="/studio" />
+                <Route component={pages.Explorer} path="/explorer" />
+                <Route component={pages.Home} />
+              </Switch>
+            </BlockchainStatus>
+          </div>
+          <Footer />
+        </Router>
+      </div>
+    </Providers>
   );
 };
 

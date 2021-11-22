@@ -7,8 +7,8 @@ import { ContractSDK } from '@subql/contract-sdk';
 import { useWeb3 } from './Web3';
 import deploymentDetails from '../testnet.json';
 
-function useContractsImpl(logger: Logger): ContractSDK | undefined {
-  const [contracts, setContracts] = React.useState<ContractSDK>();
+function useContractsImpl(logger: Logger): Promise<ContractSDK> | undefined {
+  const [contracts, setContracts] = React.useState<Promise<ContractSDK>>();
   const web3 = useWeb3();
 
   const signerOrProvider = React.useMemo(() => {
@@ -21,17 +21,14 @@ function useContractsImpl(logger: Logger): ContractSDK | undefined {
       return;
     }
 
-    try {
-      const instance = await ContractSDK.create(signerOrProvider, { deploymentDetails });
+    const pendingContracts = ContractSDK.create(signerOrProvider, { deploymentDetails });
 
-      logger.l('Created ContractSDK instance');
+    setContracts(pendingContracts);
 
-      setContracts(instance);
-    } catch (e) {
-      logger.e('Failed to create ContractSDK instance', e);
-      setContracts(undefined);
-      throw e;
-    }
+    pendingContracts.then(
+      () => logger.l('Contracts init'),
+      (err) => logger.e('Failed to init contracts', err),
+    );
   }, [logger, signerOrProvider]);
 
   React.useEffect(() => {
