@@ -1,0 +1,31 @@
+.container {
+  display: inline-block;
+}
+
+.dropdown {
+  background: white;
+  border-radius: 5px;
+  padding: 8px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.chevron {
+  padding-left: 10px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 5px;
+  padding: 16px;
+  position: absolute;
+  padding: 0 10px;
+  z-index: 1000;
+}
+
+.listItem {
+  padding: 5px 0;
+  cursor: pointer;
+}

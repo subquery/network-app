@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ProjectWithMetadata } from '../../models';
 import { truncateAddress } from '../../utils';
 import Detail from '../Detail';
+import Dropdown from '../Dropdown';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
 
@@ -40,13 +41,17 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
             <>
               <div className={styles.vertBar} />
               <Detail label="Versions">
-                <select id="versions" name="versions" onChange={handleVersionChange} value={currentVersion}>
-                  {Object.entries(versions).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
+                <Dropdown
+                  items={Object.entries(versions).map(([key, value]) => ({ key, label: value }))}
+                  onSelected={(key) => onChangeVersion?.(key)}
+                />
+                {/*<select id="versions" name="versions" onChange={handleVersionChange} value={currentVersion}>
+                                  {Object.entries(versions).map(([key, value]) => (
+                                    <option key={key} value={key}>
+                                      {value}
+                                    </option>
+                                  ))}
+                                </select>*/}
               </Detail>
             </>
           )}

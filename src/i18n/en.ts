@@ -8,7 +8,7 @@ const en = {
       studio: 'Studio',
       documentation: 'Docs',
       github: 'Github',
-      connectWallet: 'Connect Wallet',
+      connectWallet: 'Connect',
     },
     newProjectCard: {
       title: 'Create a SubQuery project',

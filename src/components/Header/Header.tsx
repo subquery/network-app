@@ -4,20 +4,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
+import { Dropdown } from '..';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { truncateAddress } from '../../utils';
 import Button from '../Button';
 import styles from './Header.module.css';
+import buttonStyles from '../Button/Button.module.css';
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
   const { t } = useTranslation();
-
-  const walletLabel = React.useMemo(
-    () => (account ? truncateAddress(account) : t('header.connectWallet')),
-    [account, t],
-  );
 
   const handleConnectWallet = React.useCallback(async () => {
     if (account) {
@@ -40,6 +37,12 @@ const Header: React.VFC = () => {
     );
   };
 
+  const handleSelected = (key: string) => {
+    if (key === 'disconnect') {
+      deactivate();
+    }
+  };
+
   return (
     <div className={styles.header}>
       <div className={styles.left}>
@@ -56,7 +59,22 @@ const Header: React.VFC = () => {
         </a>
       </div>
       <div className={styles.right}>
-        <Button type="secondary" label={walletLabel} onClick={handleConnectWallet} />
+        {account ? (
+          <Dropdown
+            items={[{ key: 'disconnect', label: 'Disconnect' }]}
+            onSelected={handleSelected}
+            dropdownClass={[buttonStyles.secondary, styles.dropdown].join(' ')}
+          >
+            <span>{truncateAddress(account)}</span>
+          </Dropdown>
+        ) : (
+          <Button
+            type="secondary"
+            label={t('header.connectWallet')}
+            onClick={handleConnectWallet}
+            leftItem={<i className={`bi-link-45deg`} role="img" aria-label="link" />}
+          />
+        )}
       </div>
     </div>
   );

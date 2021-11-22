@@ -37,3 +37,8 @@
 .logo {
   height: 48px;
 }
+
+.dropdown {
+  background: unset;
+  padding: 12px;
+}

@@ -18,6 +18,7 @@ import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
 import Banner from './Banner';
+import Dropdown from './Dropdown';
 
 export {
   Button,
@@ -37,4 +38,5 @@ export {
   IndexerProgress,
   Spinner,
   Banner,
+  Dropdown,
 };
