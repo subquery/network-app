@@ -1,0 +1,10 @@
+.container {
+  background: var(--sq-background-gradient);
+  height: 50px;
+  border-radius: 16px;
+  width: 844px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+}

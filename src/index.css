@@ -2,6 +2,7 @@
   --gradient-from: #ff4581;
   --gradient-to: #4388dd;
   --sq-gradient: linear-gradient(293.04deg, var(--gradient-from) 4.09%, var(--gradient-to) 70.16%);
+  --sq-background-gradient: linear-gradient(293.04deg, rgba(255, 69, 129, 0.1) 4.09%, rgba(67, 136, 221, 0.1) 70.16%);
   --primary: #007bff;
   --primary-secondary: #6c757d;
   --error: #dc3545;
@@ -33,7 +34,7 @@ h5 {
 html,
 body {
   background-color: #fff;
-  background: linear-gradient(293.04deg, rgba(255, 69, 129, 0.1) 4.09%, rgba(67, 136, 221, 0.1) 70.16%);
+  background: var(--sq-background-gradient);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

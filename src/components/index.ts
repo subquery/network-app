@@ -17,6 +17,7 @@ import ProjectOverview from './ProjectOverview';
 import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
+import Banner from './Banner';
 
 export {
   Button,
@@ -35,4 +36,5 @@ export {
   NewDeployment,
   IndexerProgress,
   Spinner,
+  Banner,
 };
