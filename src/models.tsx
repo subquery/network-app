@@ -45,8 +45,10 @@ export const newDeploymentSchema = yup.object({
 
 export type NewDeployment = yup.Asserts<typeof newDeploymentSchema>;
 
-export type IndexerDetails = {
-  name: string;
-  image?: string;
-  endpoint: string;
-};
+export const indexerMetadataSchema = yup.object({
+  name: yup.string(),
+  image: yup.string(),
+  endpoint: yup.string().required(),
+});
+
+export type IndexerDetails = yup.Asserts<typeof indexerMetadataSchema>;
