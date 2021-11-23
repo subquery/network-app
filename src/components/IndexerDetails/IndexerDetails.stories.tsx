@@ -3,7 +3,7 @@
 
 import IndexerDetails from './IndexerDetails';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Status } from '../../globalTypes';
+import { Status } from '../../__generated__/globalTypes';
 
 export default {
   title: 'IndexerDetails',
