@@ -24,8 +24,6 @@ Default.args = {
       blockHeight: '1000',
       timestamp: new Date(),
       status: Status.INDEXING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
     {
       __typename: 'Indexer',
@@ -35,8 +33,6 @@ Default.args = {
       blockHeight: '1000',
       timestamp: new Date(),
       status: Status.INDEXING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   ],
 };

@@ -16,8 +16,8 @@ const PROJECT_FIELDS = gql`
     metadata
     currentVersion
     currentDeployment
-    updatedAt
-    createdAt
+    # updatedAt
+    # createdAt
   }
 `;
 
@@ -48,7 +48,7 @@ const GET_PROJECT_DEPLOYMENTS = gql`
         deployment {
           id
           version
-          createdAt
+          # createdAt
         }
       }
     }
@@ -65,8 +65,8 @@ const GET_DEPLOYMENT_INDEXERS = gql`
         blockHeight
         timestamp
         status
-        createdAt
-        updatedAt
+        # createdAt
+        # updatedAt
       }
     }
   }

@@ -27,7 +27,7 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
 
         return {
           deploymentId: deployment.id,
-          createdAt: deployment.createdAt,
+          // createdAt: deployment.createdAt, // TODO doesn't seem to be available on hosted service
           version,
           description,
         };
