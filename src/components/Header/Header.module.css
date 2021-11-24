@@ -39,6 +39,6 @@
 }
 
 .dropdown {
-  background: unset;
+  background: unset !important;
   padding: 12px;
 }
