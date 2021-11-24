@@ -49,7 +49,12 @@ const Dropdown: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={[styles.dropdown, props.dropdownClass].filter(Boolean).join(' ')} onClick={toggleOpen}>
+      <div
+        className={[styles.dropdown, props.dropdownClass].filter(Boolean).join(' ')}
+        tabIndex={0}
+        onClick={toggleOpen}
+        onBlur={toggleOpen}
+      >
         {props.children ?? <DropdownItem item={props.items[props.selected ?? 0]} />}
         <i
           className={[`bi-chevron-${isOpen ? 'up' : 'down'}`, styles.chevron].join(' ')}

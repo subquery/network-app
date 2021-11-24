@@ -30,6 +30,7 @@ export type ProjectDetails = {
   id: string;
   owner: string;
   metadata: ProjectMetadata;
+  version: string;
   deployment: {
     id: string;
     manifest: ProjectManifestVersioned;

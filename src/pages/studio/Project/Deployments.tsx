@@ -5,18 +5,42 @@ import { ProjectDeployments, Spinner } from '../../../components';
 import { useDeploymentsQuery, useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { mergeAsync, notEmpty, renderAsync } from '../../../utils';
+import { uniqBy } from 'ramda';
 
-const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
+type Props = {
+  projectId: string;
+  currentDeployment?: {
+    deployment: string;
+    version: string;
+  };
+};
+
+const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
   const query = useDeploymentsQuery({ projectId });
   const { catSingle } = useIPFS();
 
   const asyncDeployments = useAsyncMemo(async () => {
-    const projectDeployments = query.data?.projectDeployments?.nodes
+    let projectDeployments = query.data?.projectDeployments?.nodes
       .filter(notEmpty)
       .map((v) => v.deployment)
       .filter(notEmpty);
     if (!projectDeployments) {
       return [];
+    }
+
+    if (currentDeployment) {
+      projectDeployments = uniqBy(
+        (d) => d.id + d.version,
+        [
+          {
+            __typename: 'Deployment',
+            id: currentDeployment.deployment,
+            version: currentDeployment.version,
+            createdAt: new Date(), // TODO come up with a timestamp
+          },
+          ...projectDeployments,
+        ],
+      );
     }
 
     return Promise.all(
@@ -33,7 +57,7 @@ const DeploymentsTab: React.VFC<{ projectId: string }> = ({ projectId }) => {
         };
       }),
     );
-  }, [query]);
+  }, [query, currentDeployment]);
 
   return renderAsync(mergeAsync(query, asyncDeployments), {
     loading: () => <Spinner />,

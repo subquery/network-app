@@ -85,7 +85,10 @@ const Project: React.VFC = () => {
             </Route>
             <Route exact path={`/studio/project/:id/deployments`}>
               <div className={styles.deployments}>
-                <DeploymentsTab projectId={id} />
+                <DeploymentsTab
+                  projectId={id}
+                  currentDeployment={project && { deployment: project.deployment.id, version: project.version }}
+                />
                 <Button
                   type="primary"
                   label="Create new deployment"

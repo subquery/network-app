@@ -28,10 +28,10 @@
 }
 
 .image {
-  height: 172px;
-  width: 172px;
+  height: 195px;
+  width: 195px;
   border: 1px solid var(--weak);
-  border-radius: 100px;
+  border-radius: 8px;
   background-color: white;
   margin-bottom: 23px;
 }
