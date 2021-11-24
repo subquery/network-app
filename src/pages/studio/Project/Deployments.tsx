@@ -36,7 +36,7 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
             __typename: 'Deployment',
             id: currentDeployment.deployment,
             version: currentDeployment.version,
-            createdAt: new Date(), // TODO come up with a timestamp
+            createdTimestamp: new Date(), // TODO come up with a timestamp
           },
           ...projectDeployments,
         ],
