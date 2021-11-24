@@ -11,7 +11,7 @@
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint src/**/*.{ts,tsx}",
-    "codegen-gql": "npx apollo client:codegen --endpoint='http://localhost:3000' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__"
+    "codegen-gql": "npx apollo client:codegen --endpoint='https://api.subquery.network/sq/subquery/subquery-network-query-registry' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",

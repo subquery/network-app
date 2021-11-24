@@ -12,14 +12,17 @@ import TableRow from '@material-ui/core/TableRow';
 import { NewDeployment } from '../../models';
 import moment from 'moment';
 
-type Deployment = NewDeployment & { createdAt: Date };
+type Deployment = NewDeployment & { createdAt?: Date };
 
 type Props = {
   deployments: Deployment[];
 };
 
 const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
-  const createdAt = React.useMemo(() => moment(deployment.createdAt).fromNow(), [deployment]);
+  const createdAt = React.useMemo(
+    () => (deployment.createdAt ? moment(deployment.createdAt).fromNow() : 'N/A'),
+    [deployment],
+  );
   return (
     <TableRow>
       <TableCell>{deployment.version}</TableCell>

@@ -11,13 +11,13 @@ import styles from './ProjectOverview.module.css';
 type Props = {
   metadata: ProjectMetadata;
   deploymentId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 const ProjectOverview: React.VFC<Props> = ({ metadata, deploymentId, createdAt, updatedAt }) => {
-  const createdAtStr = React.useMemo(() => moment(createdAt).fromNow(), [createdAt]);
-  const updatedAtStr = React.useMemo(() => moment(updatedAt).fromNow(), [updatedAt]);
+  const createdAtStr = React.useMemo(() => (createdAt ? moment(createdAt).fromNow() : 'N/A'), [createdAt]);
+  const updatedAtStr = React.useMemo(() => (updatedAt ? moment(updatedAt).fromNow() : 'N/A'), [updatedAt]);
   return (
     <div className={styles.container}>
       <div className={styles.column}>

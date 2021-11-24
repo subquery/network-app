@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Row: React.VFC<{ indexer: DeploymentIndexer }> = ({ indexer }) => {
-  const updatedAt = React.useMemo(() => moment(indexer.updatedAt).fromNow(), [indexer.updatedAt]);
+  const updatedAt = React.useMemo(() => moment(indexer.timestamp).fromNow(), [indexer.timestamp]);
   return (
     <TableRow>
       <TableCell>{indexer.indexer}</TableCell>

@@ -135,8 +135,9 @@ const Project: React.VFC = () => {
               <ProjectOverview
                 metadata={project.metadata}
                 deploymentId={deploymentId ?? project.deployment.id}
-                createdAt={project.createdAt}
-                updatedAt={project.updatedAt}
+                // TODO don't seem to be available on hosted service
+                // createdAt={project.createdAt}
+                // updatedAt={project.updatedAt}
               />
             </Route>
             <Route exact path={`${ROUTE}/:id/indexers`}>

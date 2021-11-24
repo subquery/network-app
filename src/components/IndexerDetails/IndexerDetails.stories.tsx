@@ -3,7 +3,7 @@
 
 import IndexerDetails from './IndexerDetails';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Status } from '../../globalTypes';
+import { Status } from '../../__generated__/globalTypes';
 
 export default {
   title: 'IndexerDetails',
@@ -24,8 +24,6 @@ Default.args = {
       blockHeight: '1000',
       timestamp: new Date(),
       status: Status.INDEXING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
     {
       __typename: 'Indexer',
@@ -35,8 +33,6 @@ Default.args = {
       blockHeight: '1000',
       timestamp: new Date(),
       status: Status.INDEXING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
   ],
 };
