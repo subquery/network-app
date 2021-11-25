@@ -51,7 +51,7 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
 
         return {
           deploymentId: deployment.id,
-          // createdAt: deployment.createdAt, // TODO doesn't seem to be available on hosted service
+          createdAt: deployment.createdTimestamp,
           version,
           description,
         };
@@ -64,7 +64,7 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
     error: (e) => <div>{`Error: ${e.message}`}</div>,
     data: (data) => {
       if (!data) return null;
-      const [_, deployments] = data;
+      const [, deployments] = data;
       if (!deployments?.length) {
         return <div>Unable to find deployments for this project</div>;
       }
