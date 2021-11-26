@@ -109,16 +109,16 @@ const Project: React.VFC = () => {
               <div className="tabContainer">
                 <NavLink
                   to={`${ROUTE}/${id}/overview${history.location.search}`}
-                  className={styles.tab}
-                  activeClassName={styles.tabSelected}
+                  className="tab"
+                  activeClassName="tabSelected"
                   title="Overview"
                 >
                   Overview
                 </NavLink>
                 <NavLink
                   to={`${ROUTE}/${id}/indexers${history.location.search}`}
-                  className={styles.tab}
-                  activeClassName={styles.tabSelected}
+                  className="tab"
+                  activeClassName="tabSelected"
                   title="Indexers"
                 >
                   Indexers
@@ -126,8 +126,8 @@ const Project: React.VFC = () => {
                 {hasIndexers && (
                   <NavLink
                     to={`${ROUTE}/${id}/playground${history.location.search}`}
-                    className={styles.tab}
-                    activeClassName={styles.tabSelected}
+                    className="tab"
+                    activeClassName="tabSelected"
                     title="Playground"
                   >
                     Playground

@@ -2,23 +2,6 @@
   padding: 40px 0;
 }
 
-.tab {
-  font-size: 18px;
-  line-height: 28px;
-  margin-right: 32px;
-  text-decoration: none;
-  color: var(--text);
-}
-
-.tab:hover {
-  text-decoration: none;
-}
-
-.tabSelected {
-  border-bottom: 2px solid;
-  border-image: var(--sq-gradient) 1;
-}
-
 .upper {
   padding-top: 33px;
   background: var(--sq-background-gradient);

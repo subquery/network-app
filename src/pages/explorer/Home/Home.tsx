@@ -26,6 +26,19 @@ const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ pr
   );
 };
 
+// TODO move to components
+export const Header: React.VFC<{ renderRightItem?: () => React.ReactNode }> = ({ renderRightItem }) => {
+  return (
+    <div className={styles.header}>
+      <div>
+        <p className={styles.headerTitle}>SubQuery Projects</p>
+        <div className={styles.line} />
+      </div>
+      <div>{renderRightItem?.()}</div>
+    </div>
+  );
+};
+
 const Home: React.VFC = () => {
   const { data, loading, error, fetchMore } = useProjectsQuery({ offset: 0 });
   const history = useHistory();
@@ -51,8 +64,8 @@ const Home: React.VFC = () => {
   }, [isBottomVisible, loading, error, fetchMore, data, endReached]);
 
   return (
-    <div>
-      <p>Explorer Home</p>
+    <div className="content-width">
+      <Header />
       {error && <span>{`We have an error: ${error.message}`}</span>}
       <div className={styles.list}>
         {projects?.length ? (

@@ -3,3 +3,22 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
+.header {
+  display: flex;
+  padding: 60px 0;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 38px;
+}
+
+.line {
+  background: var(--sq-gradient);
+  width: 48px;
+  height: 10px;
+}

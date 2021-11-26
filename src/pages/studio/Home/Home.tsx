@@ -3,12 +3,13 @@
 
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { Button, NewProjectCard } from '../../../components';
+import { Button, Spinner } from '../../../components';
 import ProjectCard from '../../../components/ProjectCard';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
 import { renderAsync } from '../../../utils';
+import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
@@ -59,10 +60,12 @@ const Home: React.VFC = () => {
   }
 
   return (
-    <div>
-      <h3>Studio home</h3>
+    <div className="content-width">
+      <Header
+        renderRightItem={() => <Button type="primary" label="Create a project" onClick={handleCreateProjcet} />}
+      />
 
-      {loading && <p>Loading projects</p>}
+      {loading && <Spinner />}
       {error && <p>{`Failed to load projects: ${error.message}`}</p>}
       <div className={styles.list}>
         {projects?.map((id) => (
@@ -72,7 +75,6 @@ const Home: React.VFC = () => {
             onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
           />
         ))}
-        <NewProjectCard onClick={handleCreateProjcet} />
       </div>
     </div>
   );

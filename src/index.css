@@ -71,33 +71,24 @@ label {
 }
 
 .tab {
+  font-size: 18px;
+  line-height: 28px;
+  margin-right: 32px;
   text-decoration: none;
-  color: var(--primary-secondary);
-  margin-right: 20px;
-  padding-bottom: 10px;
-  display: inline-block;
+  color: var(--text);
 }
 
 .tab:hover {
   text-decoration: none;
-  font-weight: bold;
 }
 
-.tab::before {
-  display: block;
-  height: 0;
-  font-weight: bold;
-  visibility: hidden;
-  content: attr(title);
+.tabSelected {
+  border-bottom: 2px solid;
+  border-image: var(--sq-gradient) 1;
 }
 
 .tabContainer {
   display: flex;
-}
-
-.tabSelected {
-  color: var(--primary);
-  border-bottom: 2px solid var(--primary);
 }
 
 label,
