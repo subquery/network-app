@@ -1,11 +1,19 @@
 .header {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
+}
+
+.inner {
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 
-  padding: 8px 16px;
-  border-bottom: 1px solid #ddd;
+  width: 1200px;
 }
 
 .left {
@@ -23,7 +31,9 @@
 .navLink {
   color: black;
   text-decoration: none;
-  margin-left: 32px;
+  margin-left: 24px;
+  font-size: 16px;
+  line-height: 24px;
 }
 
 .navLink:hover {
@@ -31,7 +41,8 @@
 }
 
 .navLinkCurrent {
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--primary);
 }
 
 .logo {
@@ -39,6 +50,6 @@
 }
 
 .dropdown {
-  background: unset !important;
+  border: unset !important;
   padding: 12px;
 }

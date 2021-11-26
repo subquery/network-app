@@ -13,9 +13,10 @@ type Props = {
   indexerStatus: Status[];
   chainBlockHeight: number;
   startBlock: number;
+  containerClassName?: string;
 };
 
-const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, startBlock }) => {
+const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, startBlock, containerClassName }) => {
   const maxProgress = React.useMemo(() => {
     const greatestBlock = Math.max(0, ...indexerStatus.map((status) => status.latestBlock));
 
@@ -35,8 +36,8 @@ const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, st
   }, [indexerStatus, maxProgress]);
 
   return (
-    <div className={styles.container}>
-      <span>{status}</span>
+    <div className={[styles.container, containerClassName].join(' ')}>
+      <span className={styles.status}>{status}</span>
       <div className={styles.progressContainer}>
         <div className={[styles.progress, styles.progressBack].join(' ')}>
           <div

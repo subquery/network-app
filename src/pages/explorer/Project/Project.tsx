@@ -10,6 +10,7 @@ import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { notEmpty, renderAsync } from '../../../utils';
+import styles from './Project.module.css';
 
 export const ROUTE = '/explorer/project';
 
@@ -89,64 +90,71 @@ const Project: React.VFC = () => {
 
       return (
         <div>
-          <ProjectHeader
-            project={project}
-            versions={deploymentVersions}
-            currentVersion={deploymentId}
-            onChangeVersion={handleChangeVersion}
-          />
-
-          <IndexerProgress
-            startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
-            chainBlockHeight={10000000000} // TODO get actual chain height
-            indexerStatus={indexersStatus}
-          />
-
-          <div className="tabContainer">
-            <NavLink
-              to={`${ROUTE}/${id}/overview${history.location.search}`}
-              className="tab"
-              activeClassName="tabSelected"
-              title="Overview"
-            >
-              Overview
-            </NavLink>
-            <NavLink
-              to={`${ROUTE}/${id}/indexers${history.location.search}`}
-              className="tab"
-              activeClassName="tabSelected"
-              title="Indexers"
-            >
-              Indexers
-            </NavLink>
-            {hasIndexers && (
-              <NavLink
-                to={`${ROUTE}/${id}/playground${history.location.search}`}
-                className="tab"
-                activeClassName="tabSelected"
-                title="Playground"
-              >
-                Playground
-              </NavLink>
-            )}
-          </div>
-          <Switch>
-            <Route exact path={`${ROUTE}/:id/overview`}>
-              <ProjectOverview
-                metadata={project.metadata}
-                deploymentId={deploymentId ?? project.deployment.id}
-                createdAt={project.createdTimestamp}
-                updatedAt={project.updatedTimestamp}
+          <div className={styles.upper}>
+            <div className="content-width">
+              <ProjectHeader
+                project={project}
+                versions={deploymentVersions}
+                currentVersion={deploymentId}
+                onChangeVersion={handleChangeVersion}
               />
-            </Route>
-            <Route exact path={`${ROUTE}/:id/indexers`}>
-              {renderIndexers()}
-            </Route>
-            <Route exact path={`${ROUTE}/:id/playground`}>
-              {renderPlayground()}
-            </Route>
-            <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
-          </Switch>
+
+              <IndexerProgress
+                startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
+                chainBlockHeight={10000000000} // TODO get actual chain height
+                indexerStatus={indexersStatus}
+                containerClassName={styles.progress}
+              />
+
+              <div className="tabContainer">
+                <NavLink
+                  to={`${ROUTE}/${id}/overview${history.location.search}`}
+                  className={styles.tab}
+                  activeClassName={styles.tabSelected}
+                  title="Overview"
+                >
+                  Overview
+                </NavLink>
+                <NavLink
+                  to={`${ROUTE}/${id}/indexers${history.location.search}`}
+                  className={styles.tab}
+                  activeClassName={styles.tabSelected}
+                  title="Indexers"
+                >
+                  Indexers
+                </NavLink>
+                {hasIndexers && (
+                  <NavLink
+                    to={`${ROUTE}/${id}/playground${history.location.search}`}
+                    className={styles.tab}
+                    activeClassName={styles.tabSelected}
+                    title="Playground"
+                  >
+                    Playground
+                  </NavLink>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="content-width">
+            <Switch>
+              <Route exact path={`${ROUTE}/:id/overview`}>
+                <ProjectOverview
+                  metadata={project.metadata}
+                  deploymentId={deploymentId ?? project.deployment.id}
+                  createdAt={project.createdTimestamp}
+                  updatedAt={project.updatedTimestamp}
+                />
+              </Route>
+              <Route exact path={`${ROUTE}/:id/indexers`}>
+                {renderIndexers()}
+              </Route>
+              <Route exact path={`${ROUTE}/:id/playground`}>
+                {renderPlayground()}
+              </Route>
+              <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
+            </Switch>
+          </div>
         </div>
       );
     },

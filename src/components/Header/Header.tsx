@@ -45,36 +45,38 @@ const Header: React.VFC = () => {
 
   return (
     <div className={styles.header}>
-      <div className={styles.left}>
-        <Link to="/">
-          <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
-        </Link>
-        {renderLink('/explorer', t('header.explorer'))}
-        {renderLink('/studio', t('header.studio'))}
-        <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
-          {t('header.documentation')}
-        </a>
-        <a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
-          {t('header.github')}
-        </a>
-      </div>
-      <div className={styles.right}>
-        {account ? (
-          <Dropdown
-            items={[{ key: 'disconnect', label: 'Disconnect' }]}
-            onSelected={handleSelected}
-            dropdownClass={[buttonStyles.secondary, styles.dropdown].join(' ')}
-          >
-            <span>{truncateAddress(account)}</span>
-          </Dropdown>
-        ) : (
-          <Button
-            type="secondary"
-            label={t('header.connectWallet')}
-            onClick={handleConnectWallet}
-            leftItem={<i className={`bi-link-45deg`} role="img" aria-label="link" />}
-          />
-        )}
+      <div className={styles.inner}>
+        <div className={styles.left}>
+          <Link to="/">
+            <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
+          </Link>
+          {renderLink('/explorer', t('header.explorer'))}
+          {renderLink('/studio', t('header.studio'))}
+          <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
+            {t('header.documentation')}
+          </a>
+          <a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
+            {t('header.github')}
+          </a>
+        </div>
+        <div className={styles.right}>
+          {account ? (
+            <Dropdown
+              items={[{ key: 'disconnect', label: 'Disconnect' }]}
+              onSelected={handleSelected}
+              dropdownClass={[buttonStyles.secondary, styles.dropdown].join(' ')}
+            >
+              <span>{truncateAddress(account)}</span>
+            </Dropdown>
+          ) : (
+            <Button
+              type="secondary"
+              label={t('header.connectWallet')}
+              onClick={handleConnectWallet}
+              leftItem={<i className={`bi-link-45deg`} role="img" aria-label="link" />}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

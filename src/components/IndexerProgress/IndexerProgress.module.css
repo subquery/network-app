@@ -9,6 +9,14 @@
   flex: 1;
 }
 
+.status {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
 .progress {
   border-radius: 10px;
   height: 8px;
@@ -26,5 +34,7 @@
 }
 
 .percent {
-  padding-left: 5px;
+  padding-left: 7.5px;
+  font-size: 14px;
+  line-height: 21px;
 }

@@ -1,13 +1,13 @@
 .card {
   border: 1px solid var(--weak);
-  border-radius: 10px;
-  padding: 10px;
-  margin: 10px;
-  padding-bottom: 56px;
+  border-radius: 8px;
+  /*padding: 10px;
+  margin: 10px;*/
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 216px;
+  width: 227px;
+  height: 317px;
   cursor: pointer;
 }
 
@@ -23,23 +23,26 @@
   text-align: center;
 }
 
-.newCard h2 {
-  padding-bottom: 50px;
-}
-
 .image {
-  height: 195px;
-  width: 195px;
+  height: 178px;
+  width: 178px;
   border: 1px solid var(--weak);
   border-radius: 8px;
   background-color: white;
-  margin-bottom: 23px;
+  margin: 24px;
 }
 
 .creator {
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding-bottom: 8px;
+}
+
+.creatorText {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
 }
 
 .creatorIcon {
@@ -50,5 +53,7 @@
 .name {
   text-overflow: ellipsis;
   overflow: hidden;
-  padding: 14px 0;
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: 500;
 }

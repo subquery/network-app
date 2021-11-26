@@ -18,10 +18,10 @@ const ProjectCard: React.VFC<Props> = ({ project, onClick }) => {
       <IPFSImage src={project.metadata?.image || '/static/default.project.png'} className={styles.image} />
       <div className={styles.creator}>
         <i className={['bi-person-fill', styles.creatorIcon].join(' ')} role="img" aria-label="PersonFill" />
-        <h5>{truncateAddress(project.owner.split('-')[0])}</h5>
+        <span className={styles.creatorText}>{truncateAddress(project.owner.split('-')[0])}</span>
       </div>
 
-      <h3 className={styles.name}>{project.metadata?.name || project.id}</h3>
+      <span className={styles.name}>{project.metadata?.name || project.id}</span>
     </div>
   );
 };
