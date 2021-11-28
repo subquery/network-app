@@ -5,6 +5,7 @@ import { createContainer, Logger } from './Container';
 import React from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import LRUCache from 'lru-cache';
+import { concatU8A } from '../utils';
 
 type InitialState = {
   gateway?: string;
@@ -38,10 +39,20 @@ function useIPFSImpl(
 
     const results = ipfs.current.cat(cid);
 
+    let res: Uint8Array | undefined = undefined;
+
     for await (const result of results) {
       logger.l(`Getting: ${cid}...DONE`);
-      cache.current.set(cid, result);
-      return result;
+      if (!res) {
+        res = result;
+      } else {
+        res = concatU8A(res, result);
+      }
+    }
+
+    if (res) {
+      cache.current.set(cid, res);
+      return res;
     }
 
     throw new Error(`No content`);
