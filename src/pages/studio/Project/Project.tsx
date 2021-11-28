@@ -47,28 +47,28 @@ const Project: React.VFC = () => {
 
   const handleEditMetadata = () => history.push(`/studio/project/edit/${id}`);
 
-  return (
-    <div className="content-width">
-      {renderAsync(asyncProject, {
-        loading: () => <Spinner />,
-        error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
-        data: (project) => {
-          if (!project) {
-            // Should never happen
-            return <span>Project doesn't exist</span>;
-          }
+  return renderAsync(asyncProject, {
+    loading: () => <Spinner />,
+    error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
+    data: (project) => {
+      if (!project) {
+        // Should never happen
+        return <span>Project doesn't exist</span>;
+      }
 
-          if (project.owner !== account) {
-            return <Redirect to="/studio" />;
-          }
+      if (project.owner !== account) {
+        return <Redirect to="/studio" />;
+      }
 
-          return (
-            <div>
-              <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
-                <NewDeployment onSubmit={handleSubmitCreate} />
-              </Modal>
+      return (
+        <div>
+          <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
+            <NewDeployment onSubmit={handleSubmitCreate} />
+          </Modal>
+          <div className={styles.upper}>
+            <div className="content-width">
               <ProjectHeader project={project} />
-              <div className="tabContainer">
+              <div className={['tabContainer', styles.tabContainer].join(' ')}>
                 <NavLink
                   to={`/studio/project/${id}/details`}
                   className="tab"
@@ -86,32 +86,34 @@ const Project: React.VFC = () => {
                   Deployments
                 </NavLink>
               </div>
-              <Switch>
-                <Route exact path={`/studio/project/:id/details`}>
-                  {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
-                </Route>
-                <Route exact path={`/studio/project/:id/deployments`}>
-                  <div className={styles.deployments}>
-                    <DeploymentsTab
-                      projectId={id}
-                      currentDeployment={project && { deployment: project.deployment.id, version: project.version }}
-                    />
-                    <Button
-                      type="primary"
-                      label="Create new deployment"
-                      className={styles.deployButton}
-                      onClick={handleNewDeployment}
-                    />
-                  </div>
-                </Route>
-                <Redirect from="/:id" to={`${id}/details`} />
-              </Switch>
             </div>
-          );
-        },
-      })}
-    </div>
-  );
+          </div>
+          <div className="content-width">
+            <Switch>
+              <Route exact path={`/studio/project/:id/details`}>
+                {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
+              </Route>
+              <Route exact path={`/studio/project/:id/deployments`}>
+                <div className={styles.deployments}>
+                  <DeploymentsTab
+                    projectId={id}
+                    currentDeployment={project && { deployment: project.deployment.id, version: project.version }}
+                  />
+                  <Button
+                    type="primary"
+                    label="Create new deployment"
+                    className={styles.deployButton}
+                    onClick={handleNewDeployment}
+                  />
+                </div>
+              </Route>
+              <Redirect from="/:id" to={`${id}/details`} />
+            </Switch>
+          </div>
+        </div>
+      );
+    },
+  });
 };
 
 export default Project;

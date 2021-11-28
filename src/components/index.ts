@@ -19,6 +19,7 @@ import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
 import Banner from './Banner';
 import Dropdown from './Dropdown';
+import NoIndexers from './NoIndexers';
 
 export {
   Button,
@@ -39,4 +40,5 @@ export {
   Spinner,
   Banner,
   Dropdown,
+  NoIndexers,
 };

@@ -14,6 +14,9 @@
 
   /*New colors*/
   --text: #1a202c;
+  --gray300: #dfe3e8;
+  --gray500: #919eab;
+  --gray700: #454f58;
 }
 
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');
@@ -97,4 +100,25 @@ label,
   font-size: 14px;
   line-height: 21px;
   color: #637381;
+}
+
+.MuiTableHead-root {
+  background: #f4f6f8;
+}
+
+.MuiTableCell-root {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.MuiTableHead-root .MuiTableCell-head {
+  /*font-family: Assistant;*/
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 150%;
+
+  /* identical to box height, or 18px */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray700);
 }

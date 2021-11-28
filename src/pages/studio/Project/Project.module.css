@@ -1,9 +1,23 @@
 .deployments {
+  padding-top: 32px;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
 }
 
 .deployButton {
-  margin-top: 10px;
+  margin-top: 32px;
+}
+
+.upper {
+  padding-top: 80px;
+  background: var(--sq-background-gradient);
+}
+
+.content {
+  padding-top: 47px;
+}
+
+.tabContainer {
+  padding-top: 80px;
 }

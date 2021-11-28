@@ -17,11 +17,6 @@ type Props = {
 };
 
 const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
-  const handleVersionChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
-    evt.preventDefault();
-    onChangeVersion?.(evt.target.value);
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -35,6 +30,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
               <Dropdown
                 items={Object.entries(versions).map(([key, value]) => ({ key, label: value }))}
                 onSelected={(key) => onChangeVersion?.(key)}
+                selected={currentVersion ? Object.keys(versions).indexOf(currentVersion) : 0}
               />
             )}
           </div>

@@ -37,6 +37,11 @@ const en = {
         submit: 'Deploy',
       },
     },
+    noIndexers: {
+      preTitle: 'no indexers available',
+      title: 'Start indexing this project',
+      subtitle: 'Learn how to index a SubQuery <1>here</1>',
+    },
   },
 };
 

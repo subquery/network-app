@@ -17,9 +17,13 @@ type Props = {
   listClassName?: string;
 };
 
-const DropdownItem: React.FC<{ item: Item; onClick?: () => void }> = ({ item, onClick }) => {
+const DropdownItem: React.FC<{ item: Item; className?: string; onClick?: () => void }> = ({
+  item,
+  className,
+  onClick,
+}) => {
   return (
-    <span key={item.key} className={styles.listItem} onClick={onClick}>
+    <span key={item.key} className={[styles.listItem, className].join(' ')} onClick={onClick}>
       {item.label ?? item.key}
     </span>
   );
@@ -27,6 +31,7 @@ const DropdownItem: React.FC<{ item: Item; onClick?: () => void }> = ({ item, on
 
 const Dropdown: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const selected = props.selected;
 
   const toggleOpen = () => setIsOpen((open) => !open);
 
@@ -41,7 +46,12 @@ const Dropdown: React.FC<Props> = (props) => {
     return (
       <div className={[styles.list, props.listClassName].filter(Boolean).join(' ')}>
         {props.items.map((item, idx) => (
-          <DropdownItem key={item.key} item={item} onClick={() => handleSelected(item.key, idx)} />
+          <DropdownItem
+            key={item.key}
+            item={item}
+            onClick={() => handleSelected(item.key, idx)}
+            className={selected === idx ? styles.selected : undefined}
+          />
         ))}
       </div>
     );
@@ -53,9 +63,9 @@ const Dropdown: React.FC<Props> = (props) => {
         className={[styles.dropdown, props.dropdownClass].filter(Boolean).join(' ')}
         tabIndex={0}
         onClick={toggleOpen}
-        onBlur={toggleOpen}
+        // onBlur={() => setIsOpen(false)}
       >
-        {props.children ?? <DropdownItem item={props.items[props.selected ?? 0]} />}
+        {props.children ?? <DropdownItem item={props.items[selected ?? 0]} className={styles.itemClosed} />}
         <i
           className={[`bi-chevron-${isOpen ? 'up' : 'down'}`, styles.chevron].join(' ')}
           role="img"

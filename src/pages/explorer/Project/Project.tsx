@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import * as React from 'react';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
-import { IndexerProgress, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
+import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
@@ -62,7 +62,7 @@ const Project: React.VFC = () => {
       error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
       data: () => {
         if (!indexers?.length) {
-          return <div>No indexers</div>;
+          return <NoIndexers />;
         }
 
         return <IndexerDetails indexers={indexers} />;
