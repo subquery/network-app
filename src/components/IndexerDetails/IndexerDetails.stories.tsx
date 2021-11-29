@@ -81,10 +81,17 @@ WithMetadata.args = {
     id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
     indexer: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
-    blockHeight: '999999',
+    blockHeight: '1000',
     timestamp: new Date(),
     status: Status.INDEXING,
   },
-  metadata: { loading: false, data: { name: 'Joe Blogs', image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh' } },
+  metadata: {
+    loading: false,
+    data: {
+      name: 'Joe Blogs',
+      image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
+      endpoint: 'https://subquery.network',
+    },
+  },
   targetBlock: 1000000,
 };
