@@ -7,9 +7,10 @@ import { CIDv0, CIDv1 } from '../../utils';
 
 type Props = {
   src: string | File | undefined;
+  renderPlaceholder?: () => React.ReactNode;
 } & Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'>;
 
-const IPFSImage: React.FC<Props> = ({ src, ...rest }) => {
+const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, ...rest }) => {
   const [source, setSource] = React.useState<string>();
   const { catSingle } = useIPFS();
 
@@ -29,6 +30,10 @@ const IPFSImage: React.FC<Props> = ({ src, ...rest }) => {
       setSource(undefined);
     }
   }, [src, catSingle]);
+
+  if (!source && renderPlaceholder) {
+    return <>{renderPlaceholder()}</>;
+  }
 
   return <img src={source} {...rest} />;
 };

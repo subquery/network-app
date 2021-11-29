@@ -36,7 +36,6 @@ const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
 };
 
 const ProjectDeployments: React.FC<Props> = ({ deployments }) => {
-  // TODO extract to common table to share with indexer details
   return (
     <TableContainer>
       <Table aria-label="simple table">

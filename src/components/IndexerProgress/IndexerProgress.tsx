@@ -20,7 +20,7 @@ const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, st
   const maxProgress = React.useMemo(() => {
     const greatestBlock = Math.max(0, ...indexerStatus.map((status) => status.latestBlock));
 
-    return Math.max(0, greatestBlock - startBlock) / (chainBlockHeight - startBlock);
+    return Math.min(Math.max(0, greatestBlock - startBlock) / (chainBlockHeight - startBlock), 1);
   }, [startBlock, indexerStatus, chainBlockHeight]);
 
   const status = React.useMemo(() => {
@@ -45,7 +45,7 @@ const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, st
             style={{ width: `${maxProgress * 100}%` }}
           />
         </div>
-        <span className={styles.percent}>{`${maxProgress * 100}%`}</span>
+        <span className={styles.percent}>{`${(maxProgress * 100).toFixed(2)}%`}</span>
       </div>
     </div>
   );

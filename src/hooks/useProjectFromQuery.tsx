@@ -10,7 +10,7 @@ import { GetProject_project as Project } from '../__generated__/GetProject';
 
 type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;
-  deployment: ProjectDetails['deployment'];
+  deployment?: ProjectDetails['deployment'];
 };
 
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
@@ -30,12 +30,13 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
 
     const query = data.project;
     const metadata = await getMetadataFromCid(query.metadata);
-    const deployment = await getDeployment(catSingle, query.currentDeployment);
+    console.log('DEPLOYMENT', query.currentDeployment);
+    // const deployment = await getDeployment(catSingle, query.currentDeployment);
 
     return {
       ...query,
       metadata,
-      deployment,
+      deployment: undefined,
     };
   }, [data, catSingle, getMetadataFromCid]);
 

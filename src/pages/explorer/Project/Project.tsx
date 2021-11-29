@@ -23,13 +23,16 @@ const Project: React.VFC = () => {
   const asyncProject = useProjectFromQuery(id);
   const { data: deployments } = useDeploymentsQuery({ projectId: id });
 
-  const deploymentId = query.get('deploymentId') || asyncProject.data?.deployment.id;
+  const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
   const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
   // TODO expand this to check status of indexers
   const indexers = React.useMemo(() => asyncIndexers.data?.indexers?.nodes.filter(notEmpty), [asyncIndexers.data]);
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
+
+  // TODO get from an indexer
+  const chainBlockHeight = 10000000000;
 
   const indexersStatus = React.useMemo(() => {
     return (
@@ -65,7 +68,7 @@ const Project: React.VFC = () => {
           return <NoIndexers />;
         }
 
-        return <IndexerDetails indexers={indexers} />;
+        return <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} />;
       },
     });
   };
@@ -100,8 +103,8 @@ const Project: React.VFC = () => {
               />
 
               <IndexerProgress
-                startBlock={Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))}
-                chainBlockHeight={10000000000} // TODO get actual chain height
+                startBlock={/*Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))*/ 1}
+                chainBlockHeight={chainBlockHeight}
                 indexerStatus={indexersStatus}
                 containerClassName={styles.progress}
               />
@@ -141,7 +144,7 @@ const Project: React.VFC = () => {
               <Route exact path={`${ROUTE}/:id/overview`}>
                 <ProjectOverview
                   metadata={project.metadata}
-                  deploymentId={deploymentId ?? project.deployment.id}
+                  deploymentId={deploymentId ?? project.currentDeployment}
                   createdAt={project.createdTimestamp}
                   updatedAt={project.updatedTimestamp}
                 />

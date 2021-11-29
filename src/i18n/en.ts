@@ -42,6 +42,14 @@ const en = {
       title: 'Start indexing this project',
       subtitle: 'Learn how to index a SubQuery <1>here</1>',
     },
+    indexers: {
+      head: {
+        indexers: 'Indexers',
+        progress: 'Progress',
+        status: 'Status',
+        url: 'Query URL',
+      },
+    },
   },
 };
 
