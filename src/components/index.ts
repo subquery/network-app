@@ -11,7 +11,6 @@ import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
 import ProjectDeployments from './ProjectDeployments';
 import Playground from './Playground';
-import NewProjectCard from './NewProjectCard';
 import NewDeployment from './NewDeployment';
 import ProjectOverview from './ProjectOverview';
 import IndexerProgress from './IndexerProgress';
@@ -34,7 +33,6 @@ export {
   ProjectDeployments,
   ProjectOverview,
   Playground,
-  NewProjectCard,
   NewDeployment,
   IndexerProgress,
   Spinner,

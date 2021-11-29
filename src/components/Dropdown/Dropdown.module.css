@@ -6,8 +6,10 @@
 .dropdown {
   border-radius: 100px;
   border: 1px solid var(--weak);
-  padding: 8px 16px;
+  padding: 5px 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .chevron {

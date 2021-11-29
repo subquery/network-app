@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { ProjectWithMetadata } from '../../models';
-import { truncateAddress } from '../../utils';
+import Address from '../Address';
 import Detail from '../Detail';
 import Dropdown from '../Dropdown';
 import IPFSImage from '../IPFSImage';
@@ -34,15 +34,16 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
               />
             )}
           </div>
-          <div className={styles.owner}>
-            <i className={['bi-person-fill', styles.ownerIcon].join(' ')} role="img" aria-label="PersonFill" />
-            <p>{truncateAddress(project.owner)}</p>
-          </div>
+          <Address address={project.owner} size="small" />
         </div>
         <div className={styles.lower}>
           <Detail label="id" value={project.id} />
-          <div className={styles.vertBar} />
-          <Detail label="Deployment ID" value={currentVersion} />
+          {currentVersion && (
+            <>
+              <div className={styles.vertBar} />
+              <Detail label="Deployment ID" value={currentVersion} />
+            </>
+          )}
         </div>
       </div>
     </div>

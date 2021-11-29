@@ -3,9 +3,9 @@
 
 import * as React from 'react';
 import { ProjectWithMetadata } from '../../models';
-import { truncateAddress } from '../../utils';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectCard.module.css';
+import Address from '../Address';
 
 type Props = {
   project: ProjectWithMetadata;
@@ -16,11 +16,7 @@ const ProjectCard: React.VFC<Props> = ({ project, onClick }) => {
   return (
     <div className={styles.card} onClick={onClick}>
       <IPFSImage src={project.metadata?.image || '/static/default.project.png'} className={styles.image} />
-      <div className={styles.creator}>
-        <i className={['bi-person-fill', styles.creatorIcon].join(' ')} role="img" aria-label="PersonFill" />
-        <span className={styles.creatorText}>{truncateAddress(project.owner.split('-')[0])}</span>
-      </div>
-
+      <Address address={project.owner} size="small" />
       <span className={styles.name}>{project.metadata?.name || project.id}</span>
     </div>
   );

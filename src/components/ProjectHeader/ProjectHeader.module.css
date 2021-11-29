@@ -20,6 +20,7 @@
 .upper {
   display: flex;
   flex-direction: column;
+  padding-bottom: 14px;
 }
 
 .lower {
@@ -50,18 +51,6 @@
   padding-right: 16px;
 }
 
-.owner {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.owner p {
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 21px;
-}
-
 .ownerIcon {
   font-size: 20px;
 }
@@ -79,5 +68,5 @@
   height: 50%;
   width: 1px;
   background-color: var(--weak);
-  margin: 18px 24px;
+  margin: 18px 24px 18px 14px;
 }

@@ -19,6 +19,7 @@
 
 .line {
   background: var(--sq-gradient);
+  margin-top: 24px;
   width: 48px;
   height: 10px;
 }

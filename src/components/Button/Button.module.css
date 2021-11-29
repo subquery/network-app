@@ -39,7 +39,7 @@
   position: relative;
 }
 
-.secondary span {
+.secondary :is(span, p) {
   background: var(--sq-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
