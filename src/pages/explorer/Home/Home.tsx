@@ -16,13 +16,15 @@ const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ pr
   const { data: metadata } = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project]);
 
   return (
-    <ProjectCard
-      onClick={onClick}
-      project={{
-        ...project,
-        metadata,
-      }}
-    />
+    <div className={styles.card}>
+      <ProjectCard
+        onClick={onClick}
+        project={{
+          ...project,
+          metadata,
+        }}
+      />
+    </div>
   );
 };
 

@@ -4,6 +4,11 @@
   justify-content: space-between;
 }
 
+.list::after {
+  content: '';
+  flex: auto;
+}
+
 .header {
   display: flex;
   padding: 60px 0;
@@ -22,4 +27,13 @@
   margin-top: 24px;
   width: 48px;
   height: 10px;
+}
+
+.card {
+  padding-bottom: 24px;
+  padding-right: 24px;
+}
+
+.card:nth-child(4n) {
+  padding-right: 0px;
 }

@@ -91,3 +91,18 @@ export function concatU8A(a: Uint8Array, b: Uint8Array): Uint8Array {
   res.set(b, a.length);
   return res;
 }
+
+export const modalStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '10px',
+  },
+  overlay: {
+    zIndex: 50,
+  },
+};

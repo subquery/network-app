@@ -3,34 +3,51 @@
 
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { Button, CreateInstructions, Spinner } from '../../../components';
-import ProjectCard from '../../../components/ProjectCard';
+import Modal from 'react-modal';
+import { Button, CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
-import { renderAsync } from '../../../utils';
+import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
   const asyncProject = useProject(projectId);
+  const { account } = useWeb3();
 
-  return renderAsync(asyncProject, {
-    error: (e) => {
-      console.log('ERROR loading project', e);
-      return <span>{`Failed to load project: ${e.message}`}</span>;
-    },
-    loading: () => <span>{`Loading project id: ${projectId}`}</span>,
-    data: (project) => {
-      if (!project) return null;
-      return <ProjectCard project={project} onClick={onClick} />;
-    },
-  });
+  return (
+    <div className={styles.card}>
+      {renderAsync(asyncProject, {
+        error: (e) => {
+          console.log('ERROR loading project', e);
+          return <span>{`Failed to load project: ${e.message}`}</span>;
+        },
+        loading: () => {
+          return (
+            <ProjectCard
+              onClick={onClick}
+              project={{
+                id: projectId,
+                owner: account!,
+              }}
+            />
+          );
+          // return <span>{`Loading project id: ${projectId}`}</span>
+        },
+        data: (project) => {
+          if (!project) return null;
+          return <ProjectCard project={project} onClick={onClick} />;
+        },
+      })}
+    </div>
+  );
 };
 
 const Home: React.VFC = () => {
   const { account, activate } = useWeb3();
   const history = useHistory();
+  const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
 
   const handleConnectWallet = React.useCallback(async () => {
     if (account) return;
@@ -44,9 +61,11 @@ const Home: React.VFC = () => {
 
   const asyncProjects = useUserProjects();
 
-  const handleCreateProject = () => {
-    history.push('/studio/create');
+  const handleCreateProject = (name: string) => {
+    history.push(`/studio/create?name=${encodeURI(name)}`);
   };
+
+  const enableCreateModal = () => setShowCreateModal(true);
 
   if (!account) {
     return (
@@ -61,16 +80,18 @@ const Home: React.VFC = () => {
 
   return (
     <div className="content-width">
-      <Header
-        renderRightItem={() => <Button type="primary" label="Create a project" onClick={handleCreateProject} />}
-      />
+      <Header renderRightItem={() => <Button type="primary" label="Create a project" onClick={enableCreateModal} />} />
+
+      <Modal isOpen={showCreateModal} style={modalStyles} onRequestClose={() => setShowCreateModal(false)}>
+        <NewProject onSubmit={handleCreateProject} onClose={() => setShowCreateModal(false)} />
+      </Modal>
 
       {renderAsync(asyncProjects, {
         loading: () => <Spinner />,
         error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
         data: (projects) => {
           if (!projects?.length) {
-            return <CreateInstructions onClick={handleCreateProject} />;
+            return <CreateInstructions onClick={enableCreateModal} />;
           }
 
           return (

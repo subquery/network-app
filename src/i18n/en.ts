@@ -10,10 +10,6 @@ const en = {
       github: 'Github',
       connectWallet: 'Connect',
     },
-    newProjectCard: {
-      title: 'Create a SubQuery project',
-      button: 'Create Project',
-    },
     projectCard: {
       noDescription: 'No description',
     },
@@ -75,6 +71,12 @@ const en = {
         subtitle:
           'Fill out metadata and deployment details, then when you are ready, publish your SubQuery project to the Explorer.',
       },
+    },
+    newProjectModal: {
+      title: 'Create a SubQuery project',
+      subtitle: `Project name doesn't need to be unique and you can change the project name later.`,
+      button: 'Continue',
+      placeholder: 'Project Name',
     },
   },
 };

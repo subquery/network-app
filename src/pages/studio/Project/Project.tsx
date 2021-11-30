@@ -10,23 +10,8 @@ import { useCreateDeployment, useProject } from '../../../hooks';
 import { NewDeployment as NewDeploymentParams } from '../../../models';
 import { useWeb3 } from '../../../containers';
 import styles from './Project.module.css';
-import { renderAsync } from '../../../utils';
+import { modalStyles, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
-
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    borderRadius: '10px',
-  },
-  overlay: {
-    zIndex: 50,
-  },
-};
 
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
@@ -62,7 +47,7 @@ const Project: React.VFC = () => {
 
       return (
         <div>
-          <Modal isOpen={deploymentModal} style={customStyles} onRequestClose={() => setDeploymentModal(false)}>
+          <Modal isOpen={deploymentModal} style={modalStyles} onRequestClose={() => setDeploymentModal(false)}>
             <NewDeployment onSubmit={handleSubmitCreate} />
           </Modal>
           <div className={styles.upper}>

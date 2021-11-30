@@ -1,0 +1,35 @@
+.container {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  margin: 12px;
+}
+
+.title {
+  font-family: Futura;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+
+  color: var(--gray900);
+}
+
+.subtitle {
+  /*font-family: Assistant;*/
+  font-size: 16px;
+  line-height: 24px;
+
+  letter-spacing: 0.3px;
+  color: var(--gray700);
+
+  padding-top: 16px;
+  padding-bottom: 32px;
+}
+
+.close {
+  font-size: 30px;
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  cursor: pointer;
+}

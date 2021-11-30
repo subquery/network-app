@@ -1,11 +1,7 @@
 .card {
   border: 1px solid var(--weak);
   border-radius: 8px;
-  /*padding: 10px;
-  margin: 10px;*/
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+  padding: 16px;
   width: 227px;
   height: 317px;
   cursor: pointer;
@@ -18,39 +14,25 @@
   background-color: var(--weak-opac);
 }
 
-.newCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .image {
-  height: 178px;
-  width: 178px;
+  width: 100%;
+  height: 193px;
   border: 1px solid var(--weak);
   border-radius: 8px;
   background-color: white;
-  margin: 24px;
 }
 
-.creator {
+.details {
+  padding-top: 24px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-bottom: 8px;
+  flex-direction: column;
+  overflow: auto;
+  white-space: nowrap;
+  text-align: center;
 }
 
-.creatorText {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 21px;
-}
-
-.creatorIcon {
-  font-size: 25px;
-  padding-right: 8px;
+.address {
+  margin: auto;
 }
 
 .name {

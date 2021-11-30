@@ -8,11 +8,13 @@ import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSch
 import { Button, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
-import { useCreateProject } from '../../../hooks';
+import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
+
+  const query = useRouteQuery();
 
   const history = useHistory();
   const createProject = useCreateProject();
@@ -34,7 +36,7 @@ const Create: React.VFC = () => {
     <div>
       <Formik
         initialValues={{
-          name: '',
+          name: query.get('name') ?? '',
           description: '',
           websiteUrl: undefined,
           codeUrl: undefined,

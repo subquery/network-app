@@ -20,6 +20,7 @@ import Banner from './Banner';
 import Dropdown from './Dropdown';
 import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
+import NewProject from './NewProject';
 
 export {
   Button,
@@ -41,4 +42,5 @@ export {
   Dropdown,
   NoIndexers,
   CreateInstructions,
+  NewProject,
 };

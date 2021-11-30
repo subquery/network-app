@@ -58,8 +58,8 @@ input[type='file'] {
 
 input,
 textarea {
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+  border: 1px solid #c2c9d1;
+  border-radius: 8px;
   box-sizing: border-box;
   line-height: 1.5;
   font-size: 1rem;
