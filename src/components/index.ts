@@ -19,6 +19,7 @@ import ProjectCard from './ProjectCard';
 import Banner from './Banner';
 import Dropdown from './Dropdown';
 import NoIndexers from './NoIndexers';
+import CreateInstructions from './CreateInstructions';
 
 export {
   Button,
@@ -39,4 +40,5 @@ export {
   Banner,
   Dropdown,
   NoIndexers,
+  CreateInstructions,
 };

@@ -97,7 +97,7 @@ const Project: React.VFC = () => {
                 <div className={styles.deployments}>
                   <DeploymentsTab
                     projectId={id}
-                    currentDeployment={project && { deployment: project.deployment.id, version: project.version }}
+                    currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
                   />
                   <Button
                     type="primary"

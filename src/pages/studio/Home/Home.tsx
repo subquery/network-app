@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { Button, Spinner } from '../../../components';
+import { Button, CreateInstructions, Spinner } from '../../../components';
 import ProjectCard from '../../../components/ProjectCard';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
@@ -42,9 +42,9 @@ const Home: React.VFC = () => {
     }
   }, [activate, account]);
 
-  const { data: projects, error, loading } = useUserProjects();
+  const asyncProjects = useUserProjects();
 
-  const handleCreateProjcet = () => {
+  const handleCreateProject = () => {
     history.push('/studio/create');
   };
 
@@ -62,20 +62,30 @@ const Home: React.VFC = () => {
   return (
     <div className="content-width">
       <Header
-        renderRightItem={() => <Button type="primary" label="Create a project" onClick={handleCreateProjcet} />}
+        renderRightItem={() => <Button type="primary" label="Create a project" onClick={handleCreateProject} />}
       />
 
-      {loading && <Spinner />}
-      {error && <p>{`Failed to load projects: ${error.message}`}</p>}
-      <div className={styles.list}>
-        {projects?.map((id) => (
-          <Project
-            projectId={id.toHexString()}
-            key={id.toHexString()}
-            onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
-          />
-        ))}
-      </div>
+      {renderAsync(asyncProjects, {
+        loading: () => <Spinner />,
+        error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
+        data: (projects) => {
+          if (!projects?.length) {
+            return <CreateInstructions onClick={handleCreateProject} />;
+          }
+
+          return (
+            <div className={styles.list}>
+              {projects.map((id) => (
+                <Project
+                  projectId={id.toHexString()}
+                  key={id.toHexString()}
+                  onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
+                />
+              ))}
+            </div>
+          );
+        },
+      })}
     </div>
   );
 };

@@ -50,6 +50,32 @@ const en = {
         url: 'Query URL',
       },
     },
+    create: {
+      title: 'Create your first SubQuery project',
+      subtitle: 'Learn how to create a SubQuery project <1>here</1>.',
+      button: 'Create a project',
+      step1: {
+        name: 'Step 1',
+        title: 'Create',
+        subtitle: 'Give your SubQuery project a name.',
+      },
+      step2: {
+        name: 'Step 2',
+        title: 'Install',
+        subtitle: 'Install the SubQuery CLI.',
+      },
+      step3: {
+        name: 'Step 3',
+        title: 'Define & Deploy',
+        subtitle: 'Define and deploy your SubQuery project in the CLI.',
+      },
+      step4: {
+        name: 'Step 4',
+        title: 'Publish',
+        subtitle:
+          'Fill out metadata and deployment details, then when you are ready, publish your SubQuery project to the Explorer.',
+      },
+    },
   },
 };
 

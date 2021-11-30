@@ -5,14 +5,13 @@ import yaml from 'js-yaml';
 import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common/dist/project';
 import { useIPFS } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
-// import { buildSchema } from '../utils';
-import { ProjectDetails } from '../models';
+import { ProjectDeployment } from '../models';
 import { AsyncData } from '../utils';
 
 export async function getDeployment(
   catSingle: (cid: string) => Promise<Uint8Array>,
   deploymentId: string,
-): Promise<ProjectDetails['deployment']> {
+): Promise<ProjectDeployment> {
   const manifest = await catSingle(deploymentId)
     .then((data) => Buffer.from(data).toString())
     .then((str) => yaml.load(str))
@@ -34,10 +33,10 @@ export async function getDeployment(
   };
 }
 
-export function useDeployment(deploymentId: string | undefined): AsyncData<ProjectDetails['deployment'] | undefined> {
+export function useDeployment(deploymentId: string | undefined): AsyncData<ProjectDeployment | undefined> {
   const { catSingle } = useIPFS();
 
-  return useAsyncMemo<ProjectDetails['deployment'] | undefined>(async () => {
+  return useAsyncMemo<ProjectDeployment | undefined>(async () => {
     if (!deploymentId) {
       return undefined;
     }

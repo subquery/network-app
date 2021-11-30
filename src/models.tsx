@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProjectManifestVersioned } from '@subql/common/dist/project';
-import { GraphQLSchema } from 'graphql';
 import * as yup from 'yup';
 import { CIDv0 } from './utils';
 
@@ -31,11 +30,12 @@ export type ProjectDetails = {
   owner: string;
   metadata: ProjectMetadata;
   version: string;
-  deployment: {
-    id: string;
-    manifest: ProjectManifestVersioned;
-    // schema: GraphQLSchema;
-  };
+  deploymentId: string;
+};
+
+export type ProjectDeployment = {
+  id: string;
+  manifest: ProjectManifestVersioned;
 };
 
 export const newDeploymentSchema = yup.object({

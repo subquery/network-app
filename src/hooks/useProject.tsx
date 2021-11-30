@@ -4,7 +4,6 @@
 import { useContracts, useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { ProjectDetails } from '../models';
 import { AsyncData } from '../utils';
-import { getDeployment } from './useDeployment';
 import { useAsyncMemo } from '.';
 import { useCallback, useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
@@ -62,14 +61,14 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     }
 
     const metadata = await getMetadataFromCid(query.metadata);
-    const deployment = await getDeployment(catSingle, query.deployment);
+    // const deployment = await getDeployment(catSingle, query.deployment);
 
     return {
       id,
       owner: query.owner,
       version: query.version,
       metadata,
-      deployment,
+      deploymentId: query.deployment,
     };
   }, [id, catSingle, getMetadataFromCid, getQuery, cacheBreak]);
 }
