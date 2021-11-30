@@ -4,6 +4,7 @@
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, QueryResult } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
 import * as React from 'react';
+import { GetDeployment, GetDeploymentVariables } from '../__generated__/GetDeployment';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
 import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
@@ -37,6 +38,15 @@ const GET_PROJECTS = gql`
       nodes {
         ...ProjectFields
       }
+    }
+  }
+`;
+
+const GET_DEPLOYMENT = gql`
+  query GetDeployment($deploymentId: String!) {
+    deployment(id: $deploymentId) {
+      version
+      id
     }
   }
 `;
@@ -78,6 +88,12 @@ export function useProjectsQuery(params: GetProjectsVariables): QueryResult<GetP
   // Set defaults
   params = { offset: 0, ...params };
   return useQuery<GetProjects, GetProjectsVariables>(GET_PROJECTS, { variables: params });
+}
+
+export function useDeploymentQuery(params: GetDeploymentVariables): QueryResult<GetDeployment> {
+  return useQuery<GetDeployment, GetDeploymentVariables>(GET_DEPLOYMENT, {
+    variables: params,
+  });
 }
 
 export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): QueryResult<GetProjectDeployments> {

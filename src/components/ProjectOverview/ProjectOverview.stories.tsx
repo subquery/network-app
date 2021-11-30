@@ -24,5 +24,5 @@ Default.args = {
   },
   createdAt: new Date(),
   updatedAt: new Date(),
-  deploymentId: 'QmZf1wBc26x9jCuxWmzpMtqX799DqQnvGuT16Xu7JtAHo2',
+  deploymentDescription: 'Fix various bugs',
 };

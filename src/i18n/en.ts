@@ -78,6 +78,11 @@ const en = {
       button: 'Continue',
       placeholder: 'Project Name',
     },
+    projectOverview: {
+      createdAt: 'Created',
+      updatedAt: 'Last Updated',
+      deploymentDescription: 'Deployment Description',
+    },
   },
 };
 

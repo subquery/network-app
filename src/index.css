@@ -13,7 +13,6 @@
   --weak-opac: #cccccc1f;
 
   /*New colors*/
-  --text: #1a202c;
   --gray300: #dfe3e8;
   --gray400: #c4cdd5;
   --gray500: #919eab;
@@ -76,12 +75,16 @@ label {
   color: #212529;
 }
 
+a {
+  text-decoration: none;
+}
+
 .tab {
   font-size: 18px;
   line-height: 28px;
   margin-right: 32px;
   text-decoration: none;
-  color: var(--text);
+  color: var(--gray900);
 }
 
 .tab:hover {

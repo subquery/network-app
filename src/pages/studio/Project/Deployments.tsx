@@ -6,6 +6,7 @@ import { useDeploymentsQuery, useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { uniqBy } from 'ramda';
+import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 
 type Props = {
   projectId: string;
@@ -45,15 +46,13 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
 
     return Promise.all(
       projectDeployments.map(async (deployment) => {
-        const raw = await catSingle(deployment.version);
-
-        const { version, description } = JSON.parse(Buffer.from(raw).toString('utf8'));
+        const result = await getDeploymentMetadata(catSingle, deployment.version);
 
         return {
           deploymentId: deployment.id,
           createdAt: deployment.createdTimestamp,
-          version,
-          description,
+          version: result?.version ?? '',
+          description: result?.description ?? '',
         };
       }),
     );

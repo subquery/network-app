@@ -65,6 +65,14 @@ export function mergeAsync<T1, T2>(v1: AsyncData<T1>, v2: AsyncData<T2>): AsyncD
   };
 }
 
+export function mergeAsyncLast<T>(v1: AsyncData<unknown>, v2: AsyncData<T>): AsyncData<T> {
+  return {
+    loading: v1.loading || v2.loading,
+    error: v1.error || v2.error,
+    data: v2.data,
+  };
+}
+
 type RenderResult = React.ReactElement | null;
 
 export function renderAsync<T>(

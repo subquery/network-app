@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
-import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '../../../hooks';
+import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { notEmpty, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 
@@ -54,6 +54,8 @@ const Project: React.VFC = () => {
 
     return deploymentsWithSemver.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.version }), {});
   }, [deployments]);
+
+  const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
 
   const handleChangeVersion = (value: string) => {
     history.push(`${history.location.pathname}?deploymentId=${value}`);
@@ -144,7 +146,7 @@ const Project: React.VFC = () => {
               <Route exact path={`${ROUTE}/:id/overview`}>
                 <ProjectOverview
                   metadata={project.metadata}
-                  deploymentId={deploymentId ?? project.currentDeployment}
+                  deploymentDescription={asyncDeploymentMetadata?.data?.description}
                   createdAt={project.createdTimestamp}
                   updatedAt={project.updatedTimestamp}
                 />
