@@ -22,6 +22,8 @@ const DropdownItem: React.FC<{ item: Item; className?: string; onClick?: () => v
   className,
   onClick,
 }) => {
+  if (!item) return null;
+
   return (
     <span key={item.key} className={[styles.listItem, className].join(' ')} onClick={onClick}>
       {item.label ?? item.key}
