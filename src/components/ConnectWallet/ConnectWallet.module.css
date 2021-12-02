@@ -1,0 +1,95 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-family: Futura;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 48px;
+  color: var(--gray900);
+  padding-bottom: 8px;
+}
+
+.subtitle {
+  /*font-family: Assistant;*/
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.3px;
+  color: var(--gray700);
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.connectWith {
+  font-family: Futura;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 30px;
+
+  /* identical to box height, or 150% */
+  color: var(--gray900);
+  padding-bottom: 8px;
+}
+
+.walletContainer {
+  border-radius: 8px !important;
+}
+
+.walletContainer::before {
+  border-radius: 8px !important;
+}
+
+.walletContainer :is(p, i) {
+  background: unset;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+}
+
+.wallet {
+  display: flex;
+  padding: 24px;
+  align-items: center;
+  justify-content: space-between;
+  width: 400px;
+  cursor: pointer;
+}
+
+.walletUpper {
+  display: flex;
+  align-items: center;
+}
+
+.walletTitle {
+  font-family: Futura;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+
+  /* identical to box height, or 150% */
+  text-align: center;
+  color: var(--gray900);
+}
+
+.walletIcon {
+  height: 50px;
+  width: 50px;
+  padding-right: 12px;
+}
+
+.walletSubtitle {
+  /*font-family: Assistant;*/
+  font-size: 16px;
+  line-height: 24px;
+
+  /* identical to box height, or 150% */
+  letter-spacing: 0.3px;
+  color: var(--gray700);
+}
+
+.arrow {
+  font-size: 30px;
+  color: var(--gray900);
+}

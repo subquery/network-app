@@ -83,6 +83,13 @@ const en = {
       updatedAt: 'Last Updated',
       deploymentDescription: 'Deployment Description',
     },
+    connectWallet: {
+      title: 'Connect wallet to use the studio',
+      subtitle:
+        'Use the studio to create and manage your SubQuery projects.<br/>Learn how to create a SubQuery project <1>here</1>.',
+      connectWith: 'Connect With:',
+      metamaskDesc: 'Connect with Metamask browser extension',
+    },
   },
 };
 

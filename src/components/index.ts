@@ -21,6 +21,7 @@ import Dropdown from './Dropdown';
 import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
+import ConnectWallet from './ConnectWallet';
 
 export {
   Button,
@@ -43,4 +44,5 @@ export {
   NoIndexers,
   CreateInstructions,
   NewProject,
+  ConnectWallet,
 };

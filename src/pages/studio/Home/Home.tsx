@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import Modal from 'react-modal';
-import { Button, CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
+import { Button, CreateInstructions, Spinner, ProjectCard, NewProject, ConnectWallet } from '../../../components';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
@@ -70,10 +70,7 @@ const Home: React.VFC = () => {
   if (!account) {
     return (
       <div className={styles.container}>
-        <div className={styles.connectWallet}>
-          <span className={styles.mainText}>Connect Wallet to use Studio</span>
-          <Button type="secondary" label="Connect Wallet" onClick={handleConnectWallet} />
-        </div>
+        <ConnectWallet onConnect={handleConnectWallet} />
       </div>
     );
   }

@@ -53,6 +53,10 @@
   -webkit-text-fill-color: transparent;
 }
 
+.secondary:hover {
+  background: var(--sq-background-gradient);
+}
+
 .secondary i:before {
   display: inline;
 }
