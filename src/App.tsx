@@ -18,9 +18,7 @@ import {
   ContractsProvider,
   QueryRegistryProjectProvider,
   UserProjectsProvider,
-  useWeb3,
 } from './containers';
-import { UnsupportedChainIdError } from '@web3-react/core';
 
 const Providers: React.FC = ({ children }) => {
   return (
@@ -40,16 +38,6 @@ const Providers: React.FC = ({ children }) => {
   );
 };
 
-const BlockchainStatus: React.FC = ({ children }) => {
-  const { error } = useWeb3();
-
-  if (error instanceof UnsupportedChainIdError) {
-    return <span>Unsupported network</span>;
-  }
-
-  return <>{children}</>;
-};
-
 const App: React.VFC = () => {
   return (
     <Providers>
@@ -57,13 +45,11 @@ const App: React.VFC = () => {
         <Router>
           <Header />
           <div className="Main">
-            <BlockchainStatus>
-              <Switch>
-                <Route component={pages.Studio} path="/studio" />
-                <Route component={pages.Explorer} path="/explorer" />
-                <Route component={pages.Home} />
-              </Switch>
-            </BlockchainStatus>
+            <Switch>
+              <Route component={pages.Studio} path="/studio" />
+              <Route component={pages.Explorer} path="/explorer" />
+              <Route component={pages.Home} />
+            </Switch>
           </div>
           <Footer />
         </Router>
