@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 8px 16px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   background-color: white;
 }
 
@@ -29,9 +29,10 @@
 }
 
 .navLink {
-  color: black;
+  color: var(--gray900);
   text-decoration: none;
   margin-left: 24px;
+  font-family: Futura;
   font-size: 16px;
   line-height: 24px;
 }
@@ -52,4 +53,21 @@
 .dropdown {
   border: unset !important;
   padding: 12px;
+}
+
+.hosted {
+  padding-left: 25px;
+}
+
+.hostedBorder {
+  border: unset;
+  border-radius: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.hostedText {
+  font-family: Futura;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--gray900);
 }

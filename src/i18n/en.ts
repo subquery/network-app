@@ -6,7 +6,7 @@ const en = {
     header: {
       explorer: 'Explorer',
       studio: 'Studio',
-      documentation: 'Docs',
+      documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
     },

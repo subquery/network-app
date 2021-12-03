@@ -37,7 +37,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
           <Address address={project.owner} size="small" />
         </div>
         <div className={styles.lower}>
-          <Detail label="id" value={project.id} />
+          <Detail label="Project ID" value={project.id} />
           {currentVersion && (
             <>
               <div className={styles.vertBar} />

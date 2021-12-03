@@ -13,6 +13,7 @@ type Props = {
   items: Item[];
   selected?: number;
   onSelected?: (key: string, index: number) => void;
+  className?: string;
   dropdownClass?: string;
   listClassName?: string;
 };
@@ -60,7 +61,7 @@ const Dropdown: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={[styles.container, props.className].join(' ')}>
       <div
         className={[styles.dropdown, props.dropdownClass].filter(Boolean).join(' ')}
         tabIndex={0}

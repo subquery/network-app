@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
-import { Dropdown } from '..';
+import Dropdown from '../Dropdown';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import Button from '../Button';
@@ -50,14 +50,26 @@ const Header: React.VFC = () => {
           <Link to="/">
             <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
           </Link>
+          <Dropdown
+            items={[
+              { key: 'https://explorer.subquery.network', label: 'Explorer' },
+              { key: 'https://project.subquery.network', label: 'Projects' },
+              { key: 'https://github.com/subquery/subql', label: 'Github' },
+            ]}
+            onSelected={(key) => (window.location.href = key)}
+            className={styles.hosted}
+            dropdownClass={styles.hostedBorder}
+          >
+            <p className={styles.hostedText}>Hosted Service</p>
+          </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
           <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
             {t('header.documentation')}
           </a>
-          <a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
+          {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
             {t('header.github')}
-          </a>
+          </a>*/}
         </div>
         <div className={styles.right}>
           {account ? (
