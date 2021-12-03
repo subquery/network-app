@@ -1,0 +1,57 @@
+.container {
+  min-width: 395px;
+  width: 395px;
+}
+
+.title {
+  padding-top: 32px;
+  padding-bottom: 8px;
+  font-family: Futura;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--gray900);
+}
+
+.subtitle {
+  padding-top: 32px;
+  padding-bottom: 8px;
+  font-family: Futura;
+  font-size: 16px;
+  line-height: 28px;
+  color: var(--gray900);
+}
+
+.content {
+  font-family: Assistant;
+  font-size: 16px;
+  line-height: 24px;
+
+  /* or 150% */
+  letter-spacing: 0.3px;
+  color: var(--gray700);
+}
+
+.code {
+  background: var(--gray200);
+  border: 1px solid var(--gray300);
+  box-sizing: border-box;
+  margin-top: 32px;
+  padding: 16px 24px;
+  width: 100%;
+
+  font-family: Futura;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--gray900);
+}
+
+.codeInline {
+  background: var(--gray200);
+  border: 1px solid var(--gray300);
+  padding: 0 6px;
+  font-family: Futura;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--gray900);
+}

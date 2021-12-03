@@ -8,11 +8,13 @@ import IPFSImage from '../IPFSImage';
 
 type Props = {
   label: string;
+  emptyView?: React.ReactNode;
   value: string | File | undefined;
   onChange: (file: File) => void;
+  imageClassName?: string;
 };
 
-const ImageInput: React.FC<Props> = ({ label, value, onChange }) => {
+const ImageInput: React.FC<Props> = ({ label, value, children, imageClassName, onChange }) => {
   const alt = React.useMemo(() => (value ? (typeof value === 'string' ? value : value.name) : undefined), [value]);
 
   return (
@@ -28,7 +30,11 @@ const ImageInput: React.FC<Props> = ({ label, value, onChange }) => {
           }
         }}
       />
-      {value ? <IPFSImage src={value} className={styles.content} alt={alt} /> : label}
+      {value ? (
+        <IPFSImage src={value} className={[styles.content, imageClassName].join(' ')} alt={alt} />
+      ) : (
+        children ?? <p className={styles.text}>label</p>
+      )}
     </label>
   );
 };

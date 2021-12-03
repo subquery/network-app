@@ -72,6 +72,17 @@ const en = {
           'Fill out metadata and deployment details, then when you are ready, publish your SubQuery project to the Explorer.',
       },
     },
+    createInsturctions: {
+      button: 'View Documentation',
+      title1: 'Install Subql CLI',
+      content1_1: 'The @subql/cli (opens new window)tool helps to create define and deploy a subquery project.',
+      content1_2: 'Install SubQuery CLI globally on your terminal by using NPM:',
+      title2: 'Deployment Version',
+      content2: 'A semver for the deployment. e.g. 1.0.0',
+      title3: 'Deployment ID',
+      content3: 'The deployment id, this can be acquired by running <1>subql publish</1> with the CLI',
+      installCommand: 'npm i -g @subql/cli',
+    },
     newProjectModal: {
       title: 'Create a SubQuery project',
       subtitle: `Project name doesn't need to be unique and you can change the project name later.`,

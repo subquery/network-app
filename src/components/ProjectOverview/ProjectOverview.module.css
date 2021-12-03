@@ -26,7 +26,7 @@
 }
 
 .description {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0.3px;
@@ -41,7 +41,7 @@
 
 .link {
   padding-left: 6px;
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-size: 16px;
   line-height: 24px;
 

@@ -10,7 +10,7 @@
 }
 
 .name {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -22,7 +22,7 @@
 }
 
 .address {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -45,7 +45,7 @@
 }
 
 .behind {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;

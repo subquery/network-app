@@ -70,17 +70,15 @@ const Home: React.VFC = () => {
       <Header />
       {error && <span>{`We have an error: ${error.message}`}</span>}
       <div className={styles.list}>
-        {projects?.length ? (
-          projects.map((project) => (
-            <ProjectItem
-              project={project}
-              key={project.id}
-              onClick={() => history.push(`/explorer/project/${project.id}`)}
-            />
-          ))
-        ) : (
-          <span>No projects</span>
-        )}
+        {projects?.length
+          ? projects.map((project) => (
+              <ProjectItem
+                project={project}
+                key={project.id}
+                onClick={() => history.push(`/explorer/project/${project.id}`)}
+              />
+            ))
+          : !loading && <span>No projects</span>}
       </div>
       {loading && <Spinner />}
       <div style={{ height: 1 }} ref={bottom} />

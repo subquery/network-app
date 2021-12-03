@@ -5,7 +5,7 @@
 }
 
 .text {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
 
   /* identical to box height, or 150% */
   letter-spacing: 0.3px;

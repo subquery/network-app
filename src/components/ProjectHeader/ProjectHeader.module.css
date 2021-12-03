@@ -30,8 +30,8 @@
 }
 
 .image {
-  height: 178px;
-  width: 178px;
+  height: var(--icon-size);
+  width: var(--icon-size);
   border: 1px solid var(--weak);
   border-radius: 8px;
   background-color: white;

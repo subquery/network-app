@@ -17,7 +17,7 @@
 }
 
 .preTitle {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -40,7 +40,7 @@
 }
 
 .subtitle {
-  /*font-family: Assistant;*/
+  font-family: Assistant;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
