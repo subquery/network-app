@@ -6,9 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Button } from '../../../components';
 import styles from './Instructions.module.css';
 
-type Props = {};
-
-const Instructions: React.FC<Props> = (props) => {
+const Instructions: React.VFC = () => {
   const { t } = useTranslation();
 
   return (
