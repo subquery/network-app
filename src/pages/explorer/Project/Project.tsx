@@ -27,8 +27,10 @@ const Project: React.VFC = () => {
 
   const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
-  // TODO expand this to check status of indexers
-  const indexers = React.useMemo(() => asyncIndexers.data?.indexers?.nodes.filter(notEmpty), [asyncIndexers.data]);
+  const indexers = React.useMemo(
+    () => asyncIndexers.data?.indexers?.nodes.filter(notEmpty).filter((i) => i.status !== 'TERMINATED'),
+    [asyncIndexers.data],
+  );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
   // TODO get from an indexer
@@ -70,7 +72,11 @@ const Project: React.VFC = () => {
           return <NoIndexers />;
         }
 
-        return <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} />;
+        return (
+          <div className={styles.indexers}>
+            <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} />
+          </div>
+        );
       },
     });
   };

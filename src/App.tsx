@@ -18,6 +18,7 @@ import {
   ContractsProvider,
   QueryRegistryProjectProvider,
   UserProjectsProvider,
+  IndexerRegistryProvider,
 } from './containers';
 
 const Providers: React.FC = ({ children }) => {
@@ -28,7 +29,9 @@ const Providers: React.FC = ({ children }) => {
           <ContractsProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
-                <UserProjectsProvider>{children}</UserProjectsProvider>
+                <IndexerRegistryProvider>
+                  <UserProjectsProvider>{children}</UserProjectsProvider>
+                </IndexerRegistryProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
           </ContractsProvider>
