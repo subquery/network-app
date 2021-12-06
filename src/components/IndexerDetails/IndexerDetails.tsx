@@ -15,10 +15,11 @@ import { useTranslation } from 'react-i18next';
 type Props = {
   indexers: readonly DeploymentIndexer[];
   targetBlock: number;
+  deploymentId?: string;
   startBlock?: number;
 };
 
-const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock }) => {
+const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock, deploymentId }) => {
   const { t } = useTranslation();
 
   return (
@@ -39,7 +40,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock }) 
               key={index}
               startBlock={startBlock}
               targetBlock={targetBlock}
-              // metadata={{ data: undefined, loading: true}}
+              deploymentId={deploymentId}
             />
           ))}
         </TableBody>

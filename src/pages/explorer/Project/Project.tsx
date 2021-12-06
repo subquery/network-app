@@ -74,7 +74,7 @@ const Project: React.VFC = () => {
 
         return (
           <div className={styles.indexers}>
-            <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} />
+            <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} deploymentId={deploymentId} />
           </div>
         );
       },

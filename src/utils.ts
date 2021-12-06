@@ -55,7 +55,7 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
   return true;
 }
 
-export type AsyncData<T> = { data?: T; loading: boolean; error?: Error };
+export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
 
 export function mergeAsync<T1, T2>(v1: AsyncData<T1>, v2: AsyncData<T2>): AsyncData<[T1 | undefined, T2 | undefined]> {
   return {
@@ -71,6 +71,10 @@ export function mergeAsyncLast<T>(v1: AsyncData<unknown>, v2: AsyncData<T>): Asy
     error: v1.error || v2.error,
     data: v2.data,
   };
+}
+
+export function mapAsync<O, T = any>(scope: (t: T) => O, data: AsyncData<T>): AsyncData<O> {
+  return { ...data, data: data.data ? scope(data.data) : undefined };
 }
 
 type RenderResult = React.ReactElement | null;

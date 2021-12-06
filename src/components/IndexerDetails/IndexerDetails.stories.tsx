@@ -90,7 +90,7 @@ WithMetadata.args = {
     data: {
       name: 'Joe Blogs',
       image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
-      endpoint: 'https://subquery.network',
+      url: 'https://subquery.network',
     },
   },
   targetBlock: 1000000,

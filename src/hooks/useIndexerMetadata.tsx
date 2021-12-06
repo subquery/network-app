@@ -4,7 +4,7 @@
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerRegistry, useIPFS } from '../containers';
 import { IndexerDetails, indexerMetadataSchema } from '../models';
-import { AsyncData } from '../utils';
+import { AsyncData, bytes32ToCid } from '../utils';
 
 export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | undefined> {
   const { getIndexer } = useIndexerRegistry();
@@ -17,8 +17,7 @@ export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | 
 
     if (!metadataHash) return undefined;
 
-    const data = await catSingle(metadataHash);
-
+    const data = await catSingle(bytes32ToCid(metadataHash));
     const obj = JSON.parse(Buffer.from(data).toString());
 
     return await indexerMetadataSchema.validate(obj);

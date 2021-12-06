@@ -14,3 +14,9 @@ const Template: ComponentStory<typeof Spinner> = (args) => <Spinner {...args} />
 export const Default = Template.bind({});
 
 Default.args = {};
+
+export const Small = Template.bind({});
+
+Small.args = {
+  size: 10,
+};

@@ -30,7 +30,6 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
 
     const query = data.project;
     const metadata = await getMetadataFromCid(query.metadata);
-    console.log('DEPLOYMENT', query.currentDeployment);
     // const deployment = await getDeployment(catSingle, query.currentDeployment);
 
     return {

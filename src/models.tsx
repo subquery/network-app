@@ -48,8 +48,8 @@ export type NewDeployment = yup.Asserts<typeof newDeploymentSchema>;
 
 export const indexerMetadataSchema = yup.object({
   name: yup.string(),
-  image: yup.string(),
-  endpoint: yup.string().required(),
+  image: yup.string().optional(),
+  url: yup.string() /*.required()*/,
 });
 
 export type IndexerDetails = yup.Asserts<typeof indexerMetadataSchema>;
