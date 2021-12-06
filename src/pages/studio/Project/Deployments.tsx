@@ -29,7 +29,7 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
       return [];
     }
 
-    if (currentDeployment) {
+    if (currentDeployment && !projectDeployments.find((d) => d.id === currentDeployment.deployment)) {
       projectDeployments = uniqBy(
         (d) => d.id + d.version,
         [
