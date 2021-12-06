@@ -23,6 +23,7 @@ import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
 import ConnectWallet from './ConnectWallet';
 import Copy from './Copy';
+import Status from './Status';
 
 export {
   Button,
@@ -47,4 +48,5 @@ export {
   NewProject,
   ConnectWallet,
   Copy,
+  Status,
 };

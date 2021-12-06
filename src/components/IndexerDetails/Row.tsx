@@ -14,6 +14,7 @@ import Copy from '../Copy';
 import styles from './Row.module.css';
 import Spinner from '../Spinner';
 import { useApiEndpoint } from '../../hooks/useApiEndpoint';
+import Status from '../Status';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -35,7 +36,9 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
           startBlock={startBlock}
         />
       </TableCell>
-      <TableCell>{indexer.status}</TableCell>
+      <TableCell>
+        <Status text={indexer.status} color={indexer.status === 'READY' ? 'green' : undefined} />
+      </TableCell>
       <TableCell>
         {renderAsync(
           mapAsync((d) => d.url, metadata),

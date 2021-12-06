@@ -5,8 +5,10 @@
   --sq-background-gradient: linear-gradient(293.04deg, rgba(255, 69, 129, 0.1) 4.09%, rgba(67, 136, 221, 0.1) 70.16%);
   --primary: #007bff;
   --primary-secondary: #6c757d;
-  --error: #dc3545;
-  --success: #28a745;
+  --error: #f1585b;
+  --error-opac: #f1585b1f;
+  --success: #65cd45;
+  --success-opac: #65cd451f;
   --warning: #ffc107;
   --info: #17a2b8;
   --weak: #ccc;

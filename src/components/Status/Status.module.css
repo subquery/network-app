@@ -1,0 +1,40 @@
+.container {
+  border-radius: 2px;
+  border: 1px solid;
+  padding: 0 8px;
+  display: inline-flex;
+}
+
+.container-gray {
+  border-color: var(--weak);
+  background: var(--weak-opac);
+}
+
+.container-red {
+  border-color: var(--error);
+  background: var(--error-opac);
+}
+
+.container-green {
+  border-color: var(--success);
+  background: var(--success-opac);
+}
+
+.text {
+  font-family: Futura;
+  font-size: 12px;
+  line-height: 20px;
+  text-transform: uppercase;
+}
+
+.text-gray {
+  color: var(--weak);
+}
+
+.text-red {
+  color: var(--error);
+}
+
+.text-green {
+  color: var(--success);
+}
