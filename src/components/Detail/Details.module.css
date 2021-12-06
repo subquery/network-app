@@ -7,7 +7,6 @@
 }
 
 .value {
-  margin-top: 8px;
   text-decoration: none;
   font-family: Assistant;
   color: var(--gray900);
@@ -18,4 +17,14 @@
 
 a:hover {
   text-decoration: underline;
+}
+
+.valueCont {
+  display: flex;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.copy {
+  margin-left: 6px;
 }

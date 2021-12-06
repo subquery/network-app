@@ -11,6 +11,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { NewDeployment } from '../../models';
 import moment from 'moment';
+import { Copy } from '..';
 
 type Deployment = NewDeployment & { createdAt?: Date };
 
@@ -25,11 +26,20 @@ const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
   );
   return (
     <TableRow>
-      <TableCell>{deployment.version}</TableCell>
-      <TableCell>{deployment.deploymentId}</TableCell>
-      <TableCell>{deployment.description}</TableCell>
       <TableCell>
-        <span className={styles.createdAt}>{createdAt}</span>
+        <p className={styles.value}>{deployment.version}</p>
+      </TableCell>
+      <TableCell>
+        <div className={styles.deploymentId}>
+          <p className={styles.value}>{deployment.deploymentId}</p>
+          <Copy value={deployment.deploymentId} className={styles.copy} />
+        </div>
+      </TableCell>
+      <TableCell>
+        <p className={styles.value}>{deployment.description}</p>
+      </TableCell>
+      <TableCell>
+        <p className={[styles.value, styles.createdAt].join(' ')}>{createdAt}</p>
       </TableCell>
     </TableRow>
   );

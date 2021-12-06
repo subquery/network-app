@@ -41,7 +41,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
           {currentVersion && (
             <>
               <div className={styles.vertBar} />
-              <Detail label="Deployment ID" value={currentVersion} />
+              <Detail label="Deployment ID" value={currentVersion} canCopy={true} />
             </>
           )}
         </div>

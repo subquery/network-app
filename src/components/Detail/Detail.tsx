@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import Copy from '../Copy';
 import styles from './Details.module.css';
 
 type Props = {
@@ -9,9 +10,10 @@ type Props = {
   value?: string;
   href?: string;
   className?: string;
+  canCopy?: boolean;
 };
 
-const Detail: React.FC<Props> = ({ label, value, href, className, children }) => {
+const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, children }) => {
   const renderValue = () => {
     if (href) {
       return (
@@ -22,7 +24,7 @@ const Detail: React.FC<Props> = ({ label, value, href, className, children }) =>
     }
 
     if (value) {
-      return <span className={styles.value}>{value}</span>;
+      return <p className={styles.value}>{value}</p>;
     }
 
     return children;
@@ -31,7 +33,10 @@ const Detail: React.FC<Props> = ({ label, value, href, className, children }) =>
   return (
     <div className={[styles.detail, className].join(' ')}>
       <span className="label">{label}</span>
-      {renderValue()}
+      <div className={styles.valueCont}>
+        {renderValue()}
+        {canCopy && <Copy value={href ?? value} className={styles.copy} />}
+      </div>
     </div>
   );
 };

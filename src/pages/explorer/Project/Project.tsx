@@ -28,7 +28,7 @@ const Project: React.VFC = () => {
   const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
   const indexers = React.useMemo(
-    () => asyncIndexers.data?.indexers?.nodes.filter(notEmpty).filter((i) => i.status !== 'TERMINATED'),
+    () => asyncIndexers.data?.indexers?.nodes.filter(notEmpty) /*.filter((i) => i.status !== 'TERMINATED')*/,
     [asyncIndexers.data],
   );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);

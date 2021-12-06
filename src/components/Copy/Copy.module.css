@@ -1,0 +1,17 @@
+.container {
+  height: 24px;
+  width: 24px;
+  /*font-size: 24px;*/
+
+  border-radius: 100px;
+  background: rgba(67, 136, 221, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.copy {
+  color: var(--primary);
+  font-size: 12px;
+}

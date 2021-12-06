@@ -22,6 +22,7 @@ import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
 import ConnectWallet from './ConnectWallet';
+import Copy from './Copy';
 
 export {
   Button,
@@ -45,4 +46,5 @@ export {
   CreateInstructions,
   NewProject,
   ConnectWallet,
+  Copy,
 };

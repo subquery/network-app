@@ -1,3 +1,18 @@
 .createdDate {
   text-transform: capitalize;
 }
+
+.value {
+  font-family: Assistant;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--gray900);
+}
+
+.deploymentId {
+  display: flex;
+}
+
+.copy {
+  margin-left: 6px;
+}
