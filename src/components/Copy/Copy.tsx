@@ -7,9 +7,10 @@ import styles from './Copy.module.css';
 type Props = {
   value?: string;
   className?: string;
+  iconClassName?: string;
 };
 
-const Copy: React.FC<Props> = ({ value, className }) => {
+const Copy: React.FC<Props> = ({ value, className, iconClassName }) => {
   const [icon, setIcon] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -23,7 +24,7 @@ const Copy: React.FC<Props> = ({ value, className }) => {
   return (
     <div className={[styles.container, className].join(' ')} onClick={handleClick}>
       <i
-        className={[icon ? 'bi-clipboard-check' : 'bi-clipboard', styles.copy].join(' ')}
+        className={[icon ? 'bi-clipboard-check' : 'bi-clipboard', styles.copy, iconClassName].join(' ')}
         role="img"
         aria-label="copy"
       />

@@ -34,6 +34,23 @@
   color: var(--gray700);
 }
 
+.addressCont {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.copy {
+  height: 16px;
+  width: 16px;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.copyIcon {
+  font-size: 8px;
+}
+
 .progress {
   display: flex;
   align-items: center;
