@@ -3,6 +3,7 @@
 
 import { BigNumber } from '@ethersproject/bignumber';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
@@ -18,6 +19,7 @@ const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
   const query = useRouteQuery();
   const history = useHistory();
+  const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
 
   const asyncProject = useProjectFromQuery(id);
@@ -122,7 +124,7 @@ const Project: React.VFC = () => {
                   to={`${ROUTE}/${id}/overview${history.location.search}`}
                   className="tab"
                   activeClassName="tabSelected"
-                  title="Overview"
+                  title={t('explorer.project.tab1')}
                 >
                   Overview
                 </NavLink>
@@ -130,7 +132,7 @@ const Project: React.VFC = () => {
                   to={`${ROUTE}/${id}/indexers${history.location.search}`}
                   className="tab"
                   activeClassName="tabSelected"
-                  title="Indexers"
+                  title={t('explorer.project.tab2')}
                 >
                   Indexers
                 </NavLink>
@@ -139,7 +141,7 @@ const Project: React.VFC = () => {
                     to={`${ROUTE}/${id}/playground${history.location.search}`}
                     className="tab"
                     activeClassName="tabSelected"
-                    title="Playground"
+                    title={t('explorer.project.tab3')}
                   >
                     Playground
                   </NavLink>

@@ -4,12 +4,15 @@
 import * as React from 'react';
 import styles from './IndexerDetails.module.css';
 import progressStyles from '../IndexerProgress/IndexerProgress.module.css';
+import { useTranslation } from 'react-i18next';
 
 const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBlock: number }> = ({
   startBlock = 0,
   currentBlock,
   targetBlock,
 }) => {
+  const { t } = useTranslation();
+
   const maxProgress = React.useMemo(
     () => Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1),
     [startBlock, currentBlock, targetBlock],
@@ -24,7 +27,7 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
         />
       </div>
       <span className={progressStyles.percent}>{`${(maxProgress * 100).toFixed(2)}%`}</span>
-      <span className={styles.behind}>{`${targetBlock - currentBlock} blocks behind`}</span>
+      <span className={styles.behind}>{t('indexerProgress.blocks', { count: targetBlock - currentBlock })}</span>
     </div>
   );
 };

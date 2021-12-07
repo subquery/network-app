@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useHistory } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useProjectMetadata, useProjectsQuery } from '../../../containers';
 import { GetProject_project as Project } from '../../../__generated__/GetProject';
 import { useAsyncMemo, useOnScreen } from '../../../hooks';
@@ -30,10 +31,11 @@ const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ pr
 
 // TODO move to components
 export const Header: React.VFC<{ renderRightItem?: () => React.ReactNode }> = ({ renderRightItem }) => {
+  const { t } = useTranslation();
   return (
     <div className={styles.header}>
       <div>
-        <p className={styles.headerTitle}>SubQuery Projects</p>
+        <p className={styles.headerTitle}>{t('explorer.home.header')}</p>
         <div className={styles.line} />
       </div>
       <div>{renderRightItem?.()}</div>

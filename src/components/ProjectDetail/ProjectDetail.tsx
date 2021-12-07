@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProjectMetadata } from '../../models';
 import Button from '../Button';
 import Detail from '../Detail';
-
 import styles from './ProjectDetail.module.css';
 
 type Props = {
@@ -14,21 +14,26 @@ type Props = {
 };
 
 const ProjectDetail: React.VFC<Props> = ({ metadata, onEdit }) => {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <div className={styles.column}>
-        <Detail label="Description" value={metadata.description} />
+        <Detail label={t('projectDetail.description')} value={metadata.description} />
         <div className={styles.left}>
           <div className={styles.column}>
-            <Detail label="Website URL" value={metadata.websiteUrl || 'N/A'} href={metadata.websiteUrl} />
+            <Detail
+              label={t('projectDetail.websiteUrl')}
+              value={metadata.websiteUrl || 'N/A'}
+              href={metadata.websiteUrl}
+            />
           </div>
           <div className={styles.column}>
-            <Detail label="Source code URL" value={metadata.codeUrl || 'N/A'} href={metadata.codeUrl} />
+            <Detail label={t('projectDetail.sourceUrl')} value={metadata.codeUrl || 'N/A'} href={metadata.codeUrl} />
           </div>
         </div>
       </div>
       <div className={styles.editContainer}>
-        {onEdit && <Button type="primary" label="Edit" onClick={onEdit} className={styles.edit} />}
+        {onEdit && <Button type="primary" label={t('projectDetail.button')} onClick={onEdit} className={styles.edit} />}
       </div>
     </div>
   );

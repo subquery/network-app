@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { NewDeployment } from '../../models';
 import moment from 'moment';
 import { Copy } from '..';
+import { useTranslation } from 'react-i18next';
 
 type Deployment = NewDeployment & { createdAt?: Date };
 
@@ -46,15 +47,16 @@ const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
 };
 
 const ProjectDeployments: React.FC<Props> = ({ deployments }) => {
+  const { t } = useTranslation();
   return (
     <TableContainer>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Version</TableCell>
-            <TableCell>Deployment ID</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Created Date</TableCell>
+            <TableCell>{t('deployments.header1')}</TableCell>
+            <TableCell>{t('deployments.header2')}</TableCell>
+            <TableCell>{t('deployments.header3')}</TableCell>
+            <TableCell>{t('deployments.header4')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

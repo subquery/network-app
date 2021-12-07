@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import Address from '../Address';
 import Detail from '../Detail';
@@ -17,6 +18,8 @@ type Props = {
 };
 
 const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -37,11 +40,11 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
           <Address address={project.owner} size="small" />
         </div>
         <div className={styles.lower}>
-          <Detail label="Project ID" value={project.id} />
+          <Detail label={t('projectHeader.id')} value={project.id} />
           {currentVersion && (
             <>
               <div className={styles.vertBar} />
-              <Detail label="Deployment ID" value={currentVersion} canCopy={true} />
+              <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />
             </>
           )}
         </div>

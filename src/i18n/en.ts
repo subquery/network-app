@@ -10,6 +10,10 @@ const en = {
       github: 'Github',
       connectWallet: 'Connect',
     },
+    footer: {
+      title: 'Join The Future',
+      copyright: 'SubQuery © ',
+    },
     projectCard: {
       noDescription: 'No description',
     },
@@ -25,6 +29,16 @@ const en = {
       project: {
         tab1: 'Details',
         tab2: 'Deployments',
+      },
+    },
+    explorer: {
+      project: {
+        tab1: 'Overview',
+        tab2: 'Indexers',
+        tab3: 'Playground',
+      },
+      home: {
+        header: 'SubQuery projects',
       },
     },
     deployment: {
@@ -102,6 +116,16 @@ const en = {
       updatedAt: 'Last Updated',
       deploymentDescription: 'Deployment Description',
     },
+    projectDetail: {
+      description: 'Description',
+      websiteUrl: 'Website URL',
+      sourceUrl: 'Source Code URL',
+      button: 'Edit',
+    },
+    projectHeader: {
+      id: 'Project ID',
+      deploymentId: 'Deployment ID',
+    },
     connectWallet: {
       title: 'Connect wallet to use the studio',
       subtitle:
@@ -113,6 +137,16 @@ const en = {
       title: 'Unsupported network',
       subtitle: 'Please switch networks to use the Studio',
       button: 'Switch Network',
+    },
+    indexerProgress: {
+      blocks_one: '1 block behind',
+      blocks_other: '{{count}} blocks behind',
+    },
+    deployments: {
+      header1: 'Version',
+      header2: 'Deployment ID',
+      header3: 'Description',
+      header4: 'Created',
     },
   },
 };

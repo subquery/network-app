@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '../Button';
 import styles from './Footer.module.css';
 
@@ -42,11 +43,13 @@ const links: React.ComponentProps<typeof LinkButton>[] = [
 ];
 
 const Footer: React.VFC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>
         <div style={{ display: 'flex', flexGrow: 1 }}>
-          <span className={styles.slogan}>Join The Future</span>
+          <span className={styles.slogan}>{t('footer.title')}</span>
         </div>
         <div className={styles.iconsContainer}>
           {links.map((l, i) => (
@@ -55,7 +58,7 @@ const Footer: React.VFC = () => {
         </div>
       </div>
       <div className={styles.bottom}>
-        <span className={styles.copyright}>{`SubQuery © ${new Date().getFullYear()}`}</span>
+        <span className={styles.copyright}>{`${t('footer.copyright')}${new Date().getFullYear()}`}</span>
       </div>
     </div>
   );
