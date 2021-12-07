@@ -1,9 +1,3 @@
-.card {
-  padding: 10px;
-  margin: 10px;
-  max-width: 480px;
-}
-
 .form {
   display: flex;
   flex-direction: column;
@@ -11,5 +5,7 @@
 }
 
 .submit {
-  align-self: flex-end;
+  /*align-self: center;*/
+  width: 95%;
+  margin-top: 24px;
 }

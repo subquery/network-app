@@ -23,6 +23,20 @@ const networkConnector = new NetworkConnector({
   defaultChainId: 1287,
 });
 
+export const NETWORK_CONFIGS = {
+  'moonbase-alpha': {
+    chainId: `0x${Number(1287).toString(16)}`,
+    chainName: 'Moonbase Alpha',
+    nativeCurrency: {
+      name: 'DEV',
+      symbol: 'DEV',
+      decimals: 18,
+    },
+    rpcUrls: ['https://rpc.testnet.moonbeam.network'],
+    blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
+  },
+};
+
 function getLibrary(provider: any): providers.Web3Provider {
   // Acala would use https://github.com/AcalaNetwork/bodhi.js here
   return new providers.Web3Provider(provider);

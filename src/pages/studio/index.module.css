@@ -1,34 +1,26 @@
-.container {
-  width: 520px;
+.networkContainer {
   display: flex;
   flex-direction: column;
-  margin: 12px;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
 }
 
-.title {
+.networkTitle {
   font-family: Futura;
   font-weight: 500;
   font-size: 24px;
   line-height: 36px;
-
   color: var(--gray900);
-  padding-bottom: 32px;
+  padding-bottom: 8px;
 }
 
-.subtitle {
+.networkSubtitle {
   font-family: Assistant;
   font-size: 16px;
   line-height: 24px;
 
+  /* identical to box height, or 150% */
   letter-spacing: 0.3px;
-  color: var(--gray700);
-  padding-bottom: 32px;
-}
-
-.close {
-  font-size: 30px;
-  position: absolute;
-  top: 20px;
-  right: 22px;
-  cursor: pointer;
+  padding-bottom: 8px;
 }

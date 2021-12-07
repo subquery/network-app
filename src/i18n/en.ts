@@ -22,6 +22,10 @@ const en = {
         websiteUrl: 'Website URL',
         codeUrl: 'Code URL',
       },
+      project: {
+        tab1: 'Details',
+        tab2: 'Deployments',
+      },
     },
     deployment: {
       create: {
@@ -30,7 +34,7 @@ const en = {
         description: 'Description',
         deploymentId: 'Deployment ID',
         explainer: 'You can get a deployment id by running `subqul publish` from the command line',
-        submit: 'Deploy',
+        submit: 'Deploy New Version',
       },
     },
     noIndexers: {
@@ -104,6 +108,11 @@ const en = {
         'Use the studio to create and manage your SubQuery projects.<br/>Learn how to create a SubQuery project <1>here</1>.',
       connectWith: 'Connect With:',
       metamaskDesc: 'Connect with Metamask browser extension',
+    },
+    unsupportedNetwork: {
+      title: 'Unsupported network',
+      subtitle: 'Please switch networks to use the Studio',
+      button: 'Switch Network',
     },
   },
 };

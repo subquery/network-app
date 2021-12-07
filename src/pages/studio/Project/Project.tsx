@@ -12,11 +12,13 @@ import { useWeb3 } from '../../../containers';
 import styles from './Project.module.css';
 import { modalStyles, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
+import { useTranslation } from 'react-i18next';
 
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
   const { account } = useWeb3();
   const asyncProject = useProject(id);
+  const { t } = useTranslation();
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [editing, setEditing] = React.useState<boolean>(false);
@@ -53,7 +55,7 @@ const Project: React.VFC = () => {
       return (
         <div>
           <Modal isOpen={deploymentModal} style={modalStyles} onRequestClose={() => setDeploymentModal(false)}>
-            <NewDeployment onSubmit={handleSubmitCreate} />
+            <NewDeployment onSubmit={handleSubmitCreate} onClose={() => setDeploymentModal(false)} />
           </Modal>
           <div className={styles.upper}>
             <div className="content-width">
@@ -63,7 +65,7 @@ const Project: React.VFC = () => {
                   to={`/studio/project/${id}/details`}
                   className="tab"
                   activeClassName="tabSelected"
-                  title="Details"
+                  title={t('studio.project.tab1')}
                 >
                   Details
                 </NavLink>
@@ -71,7 +73,7 @@ const Project: React.VFC = () => {
                   to={`/studio/project/${id}/deployments`}
                   className="tab"
                   activeClassName="tabSelected"
-                  title="Deployments"
+                  title={t('studio.project.tab2')}
                 >
                   Deployments
                 </NavLink>
@@ -95,7 +97,7 @@ const Project: React.VFC = () => {
                   />
                   <Button
                     type="primary"
-                    label="Create new deployment"
+                    label={t('deployment.create.title')}
                     className={styles.deployButton}
                     onClick={handleNewDeployment}
                   />

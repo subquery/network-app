@@ -7,13 +7,12 @@ import * as React from 'react';
 import { GetDeploymentIndexers_indexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import { AsyncData, renderAsync, mapAsync, mergeAsync } from '../../utils';
+import { AsyncData, renderAsync, mapAsync } from '../../utils';
 import { useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Copy from '../Copy';
 import styles from './Row.module.css';
 import Spinner from '../Spinner';
-import { useApiEndpoint } from '../../hooks/useApiEndpoint';
 import Status from '../Status';
 
 type Props = {
@@ -67,14 +66,9 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata'> & { deploymentId?: string 
   ...rest
 }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexer);
-
-  const asyncUrl = React.useMemo(() => mapAsync((d) => d.url, asyncMetadata), [asyncMetadata]);
-
-  const asyncQueryUrl = useApiEndpoint(asyncUrl.data, deploymentId);
-
   const asyncMetadataComplete = mapAsync<IndexerDetails>(
-    ([metadata, queryUrl]) => ({ ...metadata, url: queryUrl }),
-    mergeAsync(asyncMetadata, asyncQueryUrl),
+    (metadata) => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
+    asyncMetadata,
   );
 
   return <Row metadata={asyncMetadataComplete} indexer={indexer} {...rest} />;
