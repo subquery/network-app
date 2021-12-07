@@ -16,7 +16,7 @@ const en = {
     studio: {
       create: {
         name: 'Name',
-        image: 'Logo',
+        image: 'Upload Logo',
         subtitle: 'Subtitle',
         description: 'Description',
         websiteUrl: 'Website URL',
@@ -71,6 +71,10 @@ const en = {
         subtitle:
           'Fill out metadata and deployment details, then when you are ready, publish your SubQuery project to the Explorer.',
       },
+    },
+    edit: {
+      submitButton: 'Save',
+      cancelButton: 'Cancel',
     },
     createInsturctions: {
       button: 'View Documentation',

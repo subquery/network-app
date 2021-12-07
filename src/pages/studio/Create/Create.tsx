@@ -54,22 +54,12 @@ const Create: React.VFC = () => {
             <div className={styles.upper}>
               <div className={['content-width', styles.header].join(' ')}>
                 <div className={styles.details}>
-                  <div className={styles.imageContainer}>
-                    <ImageInput
-                      label={t('studio.create.image')}
-                      value={values.image}
-                      onChange={(value) => setFieldValue('image', value)}
-                      imageClassName={styles.image}
-                    >
-                      <div className={styles.imagePlaceholder}>
-                        <img src="/static/default.project.png" alt="placeholder" className={styles.image} />
-                        <div className={styles.imageOverlay}>
-                          <i className="bi-camera" role="img" aria-label="camera" />
-                          <p>Upload Logo</p>
-                        </div>
-                      </div>
-                    </ImageInput>
-                  </div>
+                  <ImageInput
+                    label={t('studio.create.image')}
+                    value={values.image}
+                    onChange={(value) => setFieldValue('image', value)}
+                    placeholder="/static/default.project.png"
+                  />
                   <p className={styles.name}>{values.name}</p>
                 </div>
                 <div>

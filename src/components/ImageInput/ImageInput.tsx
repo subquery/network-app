@@ -8,13 +8,14 @@ import IPFSImage from '../IPFSImage';
 
 type Props = {
   label: string;
-  emptyView?: React.ReactNode;
   value: string | File | undefined;
   onChange: (file: File) => void;
   imageClassName?: string;
+  placeholder: string;
+  editText?: string;
 };
 
-const ImageInput: React.FC<Props> = ({ label, value, children, imageClassName, onChange }) => {
+const ImageInput: React.VFC<Props> = ({ label, value, placeholder, editText, imageClassName, onChange }) => {
   const alt = React.useMemo(() => (value ? (typeof value === 'string' ? value : value.name) : undefined), [value]);
 
   return (
@@ -30,11 +31,17 @@ const ImageInput: React.FC<Props> = ({ label, value, children, imageClassName, o
           }
         }}
       />
-      {value ? (
-        <IPFSImage src={value} className={[styles.content, imageClassName].join(' ')} alt={alt} />
-      ) : (
-        children ?? <p className={styles.text}>label</p>
-      )}
+      <div className={[styles.imagePlaceholder, imageClassName].join(' ')}>
+        {value ? (
+          <IPFSImage src={value} className={[styles.content, imageClassName].join(' ')} alt={alt} />
+        ) : (
+          <img src={placeholder} alt="placeholder" className={styles.content} />
+        )}
+        <div className={styles.imageOverlay}>
+          <i className="bi-camera" role="img" aria-label="camera" />
+          <p>{editText ?? label}</p>
+        </div>
+      </div>
     </label>
   );
 };

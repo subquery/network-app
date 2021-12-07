@@ -12,6 +12,7 @@ import styles from './ProjectEdit.module.css';
 type Props = {
   project: Required<ProjectWithMetadata>;
   onSubmit: (metadata: FormProjectMetadata) => void | Promise<void>;
+  onCancel?: () => void;
 };
 
 const ProjectEdit: React.VFC<Props> = (props) => {
@@ -31,24 +32,45 @@ const ProjectEdit: React.VFC<Props> = (props) => {
         {({ errors, isSubmitting, submitForm, setFieldValue, touched, values }) => (
           <Form>
             <div className={styles.form}>
-              <label htmlFor="name">{t('studio.create.name')}</label>
-              <Field name="name" />
-              {errors.name && touched.name && <div>{errors.name}</div>}
-              <ImageInput
-                label={t('studio.create.image')}
-                value={values.image}
-                onChange={(value) => setFieldValue('image', value)}
-              />
-              <label htmlFor="description">{t('studio.create.description')}</label>
-              <Field name="description" as="textarea" />
-              <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
-              <Field name="websiteUrl" />
-              <label htmlFor="codeUrl">{t('studio.create.codeUrl')}</label>
-              <Field name="codeUrl" />
-              {<p>{JSON.stringify(errors)}</p>}
-              <div /*className={styles.submit}*/>
-                <Button onClick={submitForm} type="primary" label="Save" disabled={isSubmitting} />
+              <div>
+                <label htmlFor="name">{t('studio.create.name')}</label>
+                <Field name="name" />
+                {errors.name && touched.name && <div>{errors.name}</div>}
+
+                <label htmlFor="description">{t('studio.create.description')}</label>
+                <Field name="description" as="textarea" />
+                <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
+                <Field name="websiteUrl" />
+                <label htmlFor="codeUrl">{t('studio.create.codeUrl')}</label>
+                <Field name="codeUrl" />
+                {/*<p>{JSON.stringify(errors)}</p>*/}
               </div>
+              <div className={styles.image}>
+                <ImageInput
+                  label={t('studio.create.image')}
+                  value={values.image}
+                  onChange={(value) => setFieldValue('image', value)}
+                  placeholder="/static/default.project.png"
+                />
+              </div>
+            </div>
+            <div /*className={styles.submit}*/>
+              <Button
+                onClick={submitForm}
+                type="primary"
+                label={t('edit.submitButton')}
+                disabled={isSubmitting}
+                className={styles.submit}
+              />
+              {props.onCancel && (
+                <Button
+                  onClick={props.onCancel}
+                  type="secondary"
+                  label={t('edit.cancelButton')}
+                  disabled={isSubmitting}
+                  className={styles.cancel}
+                />
+              )}
             </div>
           </Form>
         )}

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
+import { Redirect, Route, Switch, useParams } from 'react-router';
 import Modal from 'react-modal';
 import { NavLink } from 'react-router-dom';
-import { ProjectDetail, ProjectHeader, NewDeployment, Button, Spinner } from '../../../components';
-import { useCreateDeployment, useProject } from '../../../hooks';
-import { NewDeployment as NewDeploymentParams } from '../../../models';
+import { ProjectDetail, ProjectHeader, NewDeployment, Button, Spinner, ProjectEdit } from '../../../components';
+import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
+import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
 import { useWeb3 } from '../../../containers';
 import styles from './Project.module.css';
 import { modalStyles, renderAsync } from '../../../utils';
@@ -15,22 +15,27 @@ import DeploymentsTab from './Deployments';
 
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
-  const history = useHistory();
   const { account } = useWeb3();
   const asyncProject = useProject(id);
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
+  const [editing, setEditing] = React.useState<boolean>(false);
   const createDeployment = useCreateDeployment(id);
+  const updateMetadata = useUpdateProjectMetadata(id);
 
   const handleSubmitCreate = async (details: NewDeploymentParams) => {
     await createDeployment(details);
-
     setDeploymentModal(false);
   };
 
   const handleNewDeployment = () => setDeploymentModal(true);
+  const handleEditMetadata = () => setEditing(true);
+  const handleSubmitEdit = async (metadata: FormProjectMetadata) => {
+    await updateMetadata(metadata);
 
-  const handleEditMetadata = () => history.push(`/studio/project/edit/${id}`);
+    // TODO call this once tx submitted, but not confirmed
+    setEditing(false);
+  };
 
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
@@ -76,7 +81,11 @@ const Project: React.VFC = () => {
           <div className="content-width">
             <Switch>
               <Route exact path={`/studio/project/:id/details`}>
-                {project.metadata && <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />}
+                {editing ? (
+                  <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
+                ) : (
+                  <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
+                )}
               </Route>
               <Route exact path={`/studio/project/:id/deployments`}>
                 <div className={styles.deployments}>

@@ -19,55 +19,6 @@
   background: var(--sq-background-gradient);
 }
 
-.imageContainer {
-  border: 1px solid var(--weak);
-  border-radius: 8px;
-  overflow: hidden;
-  height: var(--icon-size);
-  width: var(--icon-size);
-}
-
-.image {
-  height: var(--icon-size);
-  width: var(--icon-size);
-}
-
-.imagePlaceholder {
-  height: var(--icon-size);
-  width: var(--icon-size);
-  position: relative;
-}
-
-.imageOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.imageOverlay:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.imageOverlay :is(i, p) {
-  font-family: Assistant;
-  font-size: 16px;
-  line-height: 24px;
-
-  /* identical to box height, or 150% */
-  letter-spacing: 0.3px;
-  color: var(--gray300);
-}
-
-.imageOverlay i {
-  padding-right: 5px;
-}
-
 .header {
   display: flex;
   flex-direction: row;

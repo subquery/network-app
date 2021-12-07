@@ -1,5 +1,19 @@
 .form {
+  padding-top: 50px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: space-between;
+}
+
+.image {
+  padding-left: 48px;
+}
+
+.submit {
+  min-width: 100px;
+}
+
+.cancel {
+  margin-left: 12px;
+  min-width: 100px;
 }
