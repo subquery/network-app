@@ -7,21 +7,10 @@
 }
 
 .list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.list::after {
-  content: '';
-  flex: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(227px, 1fr));
 }
 
 .card {
   padding-bottom: 24px;
-  padding-right: 24px;
-}
-
-.card:nth-child(4n) {
-  padding-right: 0px;
 }
