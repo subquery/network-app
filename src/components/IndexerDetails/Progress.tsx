@@ -5,6 +5,7 @@ import * as React from 'react';
 import styles from './IndexerDetails.module.css';
 import progressStyles from '../IndexerProgress/IndexerProgress.module.css';
 import { useTranslation } from 'react-i18next';
+import { Typography } from '@subql/react-ui';
 
 const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBlock: number }> = ({
   startBlock = 0,
@@ -27,7 +28,9 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
         />
       </div>
       <span className={progressStyles.percent}>{`${(maxProgress * 100).toFixed(2)}%`}</span>
-      <span className={styles.behind}>{t('indexerProgress.blocks', { count: targetBlock - currentBlock })}</span>
+      <Typography variant="medium" className={styles.behind}>
+        {t('indexerProgress.blocks', { count: targetBlock - currentBlock })}
+      </Typography>
     </div>
   );
 };

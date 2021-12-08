@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import Address from '../Address';
 import Detail from '../Detail';
-import Dropdown from '../Dropdown';
+import { Dropdown } from '@subql/react-ui';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
 

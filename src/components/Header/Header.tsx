@@ -4,12 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
-import Dropdown from '../Dropdown';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import { Button } from '@subql/react-ui';
+import { Button, Dropdown } from '@subql/react-ui';
 import styles from './Header.module.css';
-import buttonStyles from '../Button/Button.module.css';
+import buttonStyles from '@subql/react-ui/dist/components/Button/Button.module.css';
 import Address from '../Address';
 
 const Header: React.VFC = () => {
@@ -60,7 +59,7 @@ const Header: React.VFC = () => {
             className={styles.hosted}
             dropdownClass={styles.hostedBorder}
           >
-            <p className={styles.hostedText}>Hosted Service</p>
+            <p className={styles.hostedText}>{t('header.hosted')}</p>
           </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}

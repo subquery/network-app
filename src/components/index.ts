@@ -17,7 +17,6 @@ import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
 import Banner from './Banner';
-import Dropdown from './Dropdown';
 import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
@@ -42,7 +41,6 @@ export {
   IndexerProgress,
   Spinner,
   Banner,
-  Dropdown,
   NoIndexers,
   CreateInstructions,
   NewProject,
