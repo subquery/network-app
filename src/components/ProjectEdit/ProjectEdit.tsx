@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FTextInput } from '..';
 import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
-import Button from '../Button';
+import { Button } from '@subql/react-ui';
 import ImageInput from '../ImageInput';
 import styles from './ProjectEdit.module.css';
 

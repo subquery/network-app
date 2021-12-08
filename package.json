@@ -78,7 +78,8 @@
     "lint-staged": ">=10",
     "prettier": "^2.4.1",
     "storybook-react-i18next": "1.0.13",
-    "storybook-react-router": "1.0.8"
+    "storybook-react-router": "1.0.8",
+    "typescript-plugin-css-modules": "^3.4.0"
   },
   "eslintConfig": {
     "extends": [

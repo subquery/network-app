@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button } from '..';
+import { Button } from '@subql/react-ui';
 import styles from './ConnectWallet.module.css';
 
 type Props = {

@@ -7,7 +7,7 @@ import { NavLink, Link } from 'react-router-dom';
 import Dropdown from '../Dropdown';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import Button from '../Button';
+import { Button } from '@subql/react-ui';
 import styles from './Header.module.css';
 import buttonStyles from '../Button/Button.module.css';
 import Address from '../Address';

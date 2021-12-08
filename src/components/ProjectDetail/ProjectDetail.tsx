@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectMetadata } from '../../models';
-import Button from '../Button';
+import { Button } from '@subql/react-ui';
 import Detail from '../Detail';
 import styles from './ProjectDetail.module.css';
 
