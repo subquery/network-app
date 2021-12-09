@@ -1,11 +1,11 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Address } from '@subql/react-ui';
 import * as React from 'react';
 import { ProjectWithMetadata } from '../../models';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectCard.module.css';
-import Address from '../Address';
 
 type Props = {
   project: Pick<ProjectWithMetadata, 'id' | 'metadata' | 'owner'>;

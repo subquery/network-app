@@ -45,7 +45,7 @@ const ConnectWallet: React.VFC<Props> = ({ onConnect }) => {
       <Typography variant="h4">{t('connectWallet.title')}</Typography>
       <Typography variant="body" className={styles.subtitle2}>
         <Trans i18nKey="connectWallet.subtitle">
-          Use the studio to create and manage your SubQuery projects.\nLearn how to create a SubQuery project{' '}
+          Use the studio to create and manage your SubQuery projects.\nLearn how to create a SubQuery project
           <a href="/" target="_blank">
             here
           </a>

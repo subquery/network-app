@@ -6,10 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import { Button, Dropdown } from '@subql/react-ui';
+import { Address, Button, Dropdown } from '@subql/react-ui';
 import styles from './Header.module.css';
 import buttonStyles from '@subql/react-ui/dist/components/Button/Button.module.css';
-import Address from '../Address';
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();

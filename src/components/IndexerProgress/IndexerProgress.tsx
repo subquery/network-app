@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { ProgressBar } from '@subql/react-ui';
 import styles from './IndexerProgress.module.css';
 
 type Status = {
@@ -38,15 +39,7 @@ const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, st
   return (
     <div className={[styles.container, containerClassName].join(' ')}>
       <span className={styles.status}>{status}</span>
-      <div className={styles.progressContainer}>
-        <div className={[styles.progress, styles.progressBack].join(' ')}>
-          <div
-            className={[styles.progress, styles.progressFront].join(' ')}
-            style={{ width: `${maxProgress * 100}%` }}
-          />
-        </div>
-        <span className={styles.percent}>{`${(maxProgress * 100).toFixed(2)}%`}</span>
-      </div>
+      <ProgressBar progress={maxProgress} />
     </div>
   );
 };

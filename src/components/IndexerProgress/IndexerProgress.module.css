@@ -3,38 +3,10 @@
   margin-bottom: 15px;
 }
 
-.progressContainer {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
 .status {
   font-weight: 600;
   font-size: 12px;
   line-height: 18px;
-  color: var(--gray900);
+  color: var(--sq-gray900);
   text-transform: uppercase;
-}
-
-.progress {
-  border-radius: 10px;
-  height: 8px;
-}
-
-.progressBack {
-  flex: 1;
-  width: 100%;
-  background-color: var(--weak);
-  overflow: hidden;
-}
-
-.progressFront {
-  background: var(--sq-gradient);
-}
-
-.percent {
-  padding-left: 7.5px;
-  font-size: 14px;
-  line-height: 21px;
 }
