@@ -109,30 +109,10 @@ label,
 .label {
   text-transform: capitalize;
   font-family: Futura;
+  font-weight: normal;
   font-size: 16px;
   line-height: 24px;
   color: var(--gray900);
-}
-
-.MuiTableHead-root {
-  background: #f4f6f8;
-}
-
-.MuiTableCell-root {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
-}
-
-.MuiTableHead-root .MuiTableCell-head {
-  font-family: Assistant;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 150%;
-
-  /* identical to box height, or 18px */
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--gray700);
 }
 
 textarea {

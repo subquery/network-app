@@ -1,17 +1,12 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Status } from '../../__generated__/globalTypes';
 import { Row } from './Row';
 import { useTranslation } from 'react-i18next';
 import { IPFSProvider } from '../../containers';
+import { Table, TableHead, TableBody, TableRow, TableCell } from '../Table';
 
 export default {
   title: 'IndexerDetailsRow',
@@ -22,21 +17,19 @@ const Template: ComponentStory<typeof Row> = (args) => {
   const { t } = useTranslation();
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
-      <TableContainer>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>{t('indexers.head.indexers')}</TableCell>
-              <TableCell>{t('indexers.head.progress')}</TableCell>
-              <TableCell>{t('indexers.head.status')}</TableCell>
-              <TableCell>{t('indexers.head.url')}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <Row {...args} />
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>{t('indexers.head.indexers')}</TableCell>
+            <TableCell>{t('indexers.head.progress')}</TableCell>
+            <TableCell>{t('indexers.head.status')}</TableCell>
+            <TableCell>{t('indexers.head.url')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <Row {...args} />
+        </TableBody>
+      </Table>
     </IPFSProvider>
   );
 };
