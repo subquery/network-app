@@ -13,6 +13,7 @@ import styles from './Project.module.css';
 import { modalStyles, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const Project: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,7 +61,7 @@ const Project: React.VFC = () => {
           <div className={styles.upper}>
             <div className="content-width">
               <ProjectHeader project={project} />
-              <div className={['tabContainer', styles.tabContainer].join(' ')}>
+              <div className={clsx('tabContainer', styles.tabContainer)}>
                 <NavLink
                   to={`/studio/project/${id}/details`}
                   className="tab"
@@ -80,7 +81,7 @@ const Project: React.VFC = () => {
               </div>
             </div>
           </div>
-          <div className="content-width">
+          <div className={clsx('content-width', styles.content)}>
             <Switch>
               <Route exact path={`/studio/project/:id/details`}>
                 {editing ? (

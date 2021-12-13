@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber } from '@ethersproject/bignumber';
+import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
@@ -149,7 +150,7 @@ const Project: React.VFC = () => {
               </div>
             </div>
           </div>
-          <div className="content-width">
+          <div className={clsx('content-width', styles.content)}>
             <Switch>
               <Route exact path={`${ROUTE}/:id/overview`}>
                 <ProjectOverview
