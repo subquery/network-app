@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSchema } from '../../../models';
-import { Button, ImageInput } from '../../../components';
+import { Button, FTextInput, ImageInput } from '../../../components';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
 import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
 import Instructions from './Instructions';
+import clsx from 'clsx';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
@@ -49,10 +50,10 @@ const Create: React.VFC = () => {
         validationSchema={projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))}
         onSubmit={handleSubmit}
       >
-        {({ errors, touched, setFieldValue, values, isSubmitting, submitForm }) => (
+        {({ errors, touched, setFieldValue, values, isSubmitting, submitForm, handleChange }) => (
           <Form>
             <div className={styles.upper}>
-              <div className={['content-width', styles.header].join(' ')}>
+              <div className={clsx('content-width', styles.header)}>
                 <div className={styles.details}>
                   <ImageInput
                     label={t('studio.create.image')}
@@ -67,29 +68,16 @@ const Create: React.VFC = () => {
                 </div>
               </div>
             </div>
-
-            <div className={[styles.form, 'content-width'].join(' ')}>
+            <div className={clsx(styles.form, 'content-width')}>
               <div className={styles.fields}>
-                <label htmlFor="name">{t('studio.create.name')}</label>
-                <Field name="name" />
-                {errors.name && touched.name && <div>{errors.name}</div>}
-
-                <label htmlFor="description">{t('studio.create.description')}</label>
-                <Field name="description" as="textarea" />
-                <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
-                <Field name="websiteUrl" />
-                {errors.websiteUrl && touched.websiteUrl && <div>{errors.websiteUrl}</div>}
-                <label htmlFor="codeUrl">{t('studio.create.codeUrl')}</label>
-                <Field name="codeUrl" />
-                {errors.codeUrl && touched.codeUrl && <div>{errors.codeUrl}</div>}
+                <FTextInput label={t('studio.create.name')} id="name" />
+                <FTextInput label={t('studio.create.description')} id="description" base="textarea" />
+                <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
+                <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
                 <p className={styles.deployment}>Deployment Details</p>
-                <label htmlFor="version">{t('deployment.create.version')}</label>
-                <Field name="version" />
-                <label htmlFor="deploymentId">{t('deployment.create.deploymentId')}</label>
-                <Field name="deploymentId" />
-                <label htmlFor="versionDescription">{t('deployment.create.description')}</label>
-                <Field name="versionDescription" as="textarea" />
-                {<p>{JSON.stringify(errors)}</p>}
+                <FTextInput label={t('deployment.create.version')} id="version" />
+                <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
+                <FTextInput label={t('deployment.create.description')} id="versionDescription" base="textarea" />
               </div>
               <Instructions />
             </div>

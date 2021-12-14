@@ -1,9 +1,10 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { FTextInput } from '..';
 import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
 import Button from '../Button';
 import ImageInput from '../ImageInput';
@@ -29,21 +30,14 @@ const ProjectEdit: React.VFC<Props> = (props) => {
         validationSchema={projectMetadataSchema.shape({})}
         onSubmit={handleSubmit}
       >
-        {({ errors, isSubmitting, submitForm, setFieldValue, touched, values }) => (
+        {({ isSubmitting, submitForm, setFieldValue, values }) => (
           <Form>
             <div className={styles.form}>
-              <div>
-                <label htmlFor="name">{t('studio.create.name')}</label>
-                <Field name="name" />
-                {errors.name && touched.name && <div>{errors.name}</div>}
-
-                <label htmlFor="description">{t('studio.create.description')}</label>
-                <Field name="description" as="textarea" />
-                <label htmlFor="websiteUrl">{t('studio.create.websiteUrl')}</label>
-                <Field name="websiteUrl" />
-                <label htmlFor="codeUrl">{t('studio.create.codeUrl')}</label>
-                <Field name="codeUrl" />
-                {/*<p>{JSON.stringify(errors)}</p>*/}
+              <div className={styles.fields}>
+                <FTextInput label={t('studio.create.name')} id="name" />
+                <FTextInput label={t('studio.create.description')} id="description" base="textarea" />
+                <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
+                <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
               </div>
               <div className={styles.image}>
                 <ImageInput

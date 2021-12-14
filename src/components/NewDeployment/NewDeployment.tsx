@@ -1,9 +1,10 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { FTextInput } from '..';
 import { NewDeployment as NewDeploymentParams, newDeploymentSchema } from '../../models';
 import Button from '../Button';
 import { ModalContainer } from '../NewProject/NewProject';
@@ -28,17 +29,12 @@ const NewDeployment: React.FC<Props> = (props) => {
         validationSchema={newDeploymentSchema.shape({})}
         onSubmit={props.onSubmit}
       >
-        {({ isSubmitting, submitForm, errors }) => (
+        {({ isSubmitting, submitForm }) => (
           <Form>
-            <div className={styles.form}>
-              <label htmlFor="version">{t('deployment.create.version')}</label>
-              <Field name="version" />
-              <label htmlFor="deploymentId">{t('deployment.create.deploymentId')}</label>
-              <Field name="deploymentId" />
-              <label htmlFor="description">{t('deployment.create.description')}</label>
-              <Field name="description" as="textarea" />
-              {/*<p>{t('deployment.create.explainer')}</p>*/}
-              {/*<p>{JSON.stringify(errors)}</p>*/}
+            <div>
+              <FTextInput label={t('deployment.create.version')} id="version" />
+              <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
+              <FTextInput label={t('deployment.create.description')} id="description" base="textarea" />
             </div>
             <Button
               onClick={submitForm}

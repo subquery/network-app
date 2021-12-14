@@ -19,6 +19,7 @@
     "@polkadot/util": "^7.8.2",
     "@subql/common": "0.13.1-6",
     "@subql/contract-sdk": "0.1.1-1",
+    "@subql/react-ui": "^1.0.1-14",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

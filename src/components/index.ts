@@ -5,6 +5,7 @@ import Button from './Button';
 import Header from './Header';
 import Footer from './Footer';
 import ImageInput from './ImageInput';
+import FTextInput from './FTextInput';
 import IPFSImage from './IPFSImage';
 import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
@@ -30,6 +31,7 @@ export {
   Header,
   Footer,
   ImageInput,
+  FTextInput,
   IPFSImage,
   ProjectHeader,
   ProjectCard,

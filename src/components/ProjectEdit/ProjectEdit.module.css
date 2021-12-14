@@ -5,6 +5,11 @@
   align-items: space-between;
 }
 
+.fields {
+  flex-grow: 100;
+  padding-bottom: 32px;
+}
+
 .image {
   padding-left: 48px;
 }
