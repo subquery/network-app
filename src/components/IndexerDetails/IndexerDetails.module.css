@@ -9,27 +9,7 @@
   flex-direction: column;
 }
 
-.name {
-  font-family: Assistant;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 24px;
-
-  /* identical to box height, or 150% */
-  letter-spacing: 0.3px;
-  color: var(--gray900);
-}
-
 .address {
-  font-family: Assistant;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 150%;
-
-  /* identical to box height, or 18px */
-  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--gray700);
 }
@@ -62,16 +42,5 @@
 }
 
 .behind {
-  font-family: Assistant;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 150%;
-
-  /* identical to box height, or 21px */
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.3px;
-  color: var(--gray900);
   padding-left: 12px;
 }

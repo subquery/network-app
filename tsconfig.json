@@ -24,6 +24,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "jsx": "react-jsx",
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": [
     "src",

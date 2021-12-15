@@ -4,13 +4,14 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import Modal from 'react-modal';
-import { Button, CreateInstructions, Spinner, ProjectCard, NewProject, ConnectWallet } from '../../../components';
+import { CreateInstructions, Spinner, ProjectCard, NewProject, ConnectWallet } from '../../../components';
 import { useUserProjects, useWeb3 } from '../../../containers';
 import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
 import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
+import { Button } from '@subql/react-ui';
 
 const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
   const asyncProject = useProject(projectId);

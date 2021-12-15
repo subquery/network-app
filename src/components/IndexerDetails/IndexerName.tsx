@@ -6,6 +6,7 @@ import styles from './IndexerDetails.module.css';
 import { truncateAddress } from '../../utils';
 import IPFSImage from '../IPFSImage';
 import Copy from '../Copy';
+import { Typography } from '@subql/react-ui';
 
 type Props = {
   name?: string;
@@ -18,9 +19,11 @@ const IndexerName: React.FC<Props> = ({ name, image, address }) => {
     <div className={styles.indexer}>
       <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
       <div className={styles.indexerText}>
-        <span className={styles.name}>{name}</span>
+        <Typography>{name}</Typography>
         <div className={styles.addressCont}>
-          <span className={styles.address}>{truncateAddress(address)}</span>
+          <Typography variant="small" className={styles.address}>
+            {truncateAddress(address)}
+          </Typography>
           <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon} />
         </div>
       </div>

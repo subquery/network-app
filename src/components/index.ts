@@ -1,7 +1,6 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Button from './Button';
 import Header from './Header';
 import Footer from './Footer';
 import ImageInput from './ImageInput';
@@ -18,7 +17,6 @@ import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
 import Banner from './Banner';
-import Dropdown from './Dropdown';
 import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
@@ -27,7 +25,6 @@ import Copy from './Copy';
 import Status from './Status';
 
 export {
-  Button,
   Header,
   Footer,
   ImageInput,
@@ -44,7 +41,6 @@ export {
   IndexerProgress,
   Spinner,
   Banner,
-  Dropdown,
   NoIndexers,
   CreateInstructions,
   NewProject,

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button } from '..';
+import { Button, Typography } from '@subql/react-ui';
 import styles from './ConnectWallet.module.css';
 
 type Props = {
@@ -24,9 +24,11 @@ const Wallet: React.VFC<{ name: string; icon: string; onClick?: () => void }> = 
           <div>
             <div className={styles.walletUpper}>
               <img src={icon} alt="wallet logo" className={styles.walletIcon} />
-              <p className={styles.walletTitle}>{name}</p>
+              <Typography variant="h5">{name}</Typography>
             </div>
-            <p className={styles.walletSubtitle}>{t('connectWallet.metamaskDesc')}</p>
+            <Typography variant="body" className={styles.walletSubtitle}>
+              {t('connectWallet.metamaskDesc')}
+            </Typography>
           </div>
           <i className={['bi-arrow-right', styles.arrow].join(' ')} role="img" aria-label="arrow right" />
         </div>
@@ -40,16 +42,18 @@ const ConnectWallet: React.VFC<Props> = ({ onConnect }) => {
 
   return (
     <div className={styles.container}>
-      <p className={styles.title}>{t('connectWallet.title')}</p>
-      <p className={styles.subtitle}>
+      <Typography variant="h4">{t('connectWallet.title')}</Typography>
+      <Typography variant="body" className={styles.subtitle2}>
         <Trans i18nKey="connectWallet.subtitle">
-          Use the studio to create and manage your SubQuery projects.\nLearn how to create a SubQuery project{' '}
+          Use the studio to create and manage your SubQuery projects.\nLearn how to create a SubQuery project
           <a href="/" target="_blank">
             here
           </a>
         </Trans>
-      </p>
-      <p className={styles.connectWith}>{t('connectWallet.connectWith')}</p>
+      </Typography>
+      <Typography variant="h6" className={styles.connectWith}>
+        {t('connectWallet.connectWith')}
+      </Typography>
       <Wallet name="Metamask" icon="/static/metamask.png" onClick={onConnect} />
     </div>
   );

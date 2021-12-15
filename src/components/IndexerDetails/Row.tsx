@@ -13,6 +13,7 @@ import Copy from '../Copy';
 import styles from './Row.module.css';
 import Spinner from '../Spinner';
 import Status from '../Status';
+import { Typography } from '@subql/react-ui';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -44,11 +45,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
             loading: () => <Spinner size={15} />,
             error: (e) => {
               console.log('Failed to get indexer url', e);
-              return <p className={styles.url}>N/A</p>;
+              return <Typography className={styles.url}>N/A</Typography>;
             },
             data: (url) => (
               <div className={styles.urlCont}>
-                <p className={styles.url}>{url ?? 'N/A'}</p>
+                <Typography className={styles.url}>{url ?? 'N/A'}</Typography>
                 {url && <Copy value={url} className={styles.copy} />}
               </div>
             ),

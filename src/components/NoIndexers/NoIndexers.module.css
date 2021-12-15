@@ -7,8 +7,8 @@
 
 .preContainer {
   padding-bottom: 24px;
+  display: flex;
 }
-
 .search {
   color: var(--gray500);
   height: 10.5px;
@@ -17,32 +17,10 @@
 }
 
 .preTitle {
-  font-family: Assistant;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 150%;
-
-  /* identical to box height, or 21px */
-  letter-spacing: 0.3px;
   text-transform: uppercase;
   color: var(--gray500);
 }
 
 .title {
-  font-family: Futura;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
-  color: var(--gray900);
   padding-bottom: 8px;
-}
-
-.subtitle {
-  font-family: Assistant;
-  font-size: 16px;
-  line-height: 24px;
-
-  /* identical to box height, or 150% */
-  letter-spacing: 0.3px;
 }

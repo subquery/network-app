@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Route } from 'react-router';
 import { Switch } from 'react-router-dom';
-import { Button } from '../../components';
+import { Button } from '@subql/react-ui';
 import { useWeb3 } from '../../containers';
 import { NETWORK_CONFIGS } from '../../containers/Web3';
 import Create from './Create';

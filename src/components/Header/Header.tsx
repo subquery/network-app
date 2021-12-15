@@ -4,13 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
-import Dropdown from '../Dropdown';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import Button from '../Button';
+import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
-import buttonStyles from '../Button/Button.module.css';
-import Address from '../Address';
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
@@ -31,9 +28,11 @@ const Header: React.VFC = () => {
 
   const renderLink = (to: string, text: string) => {
     return (
-      <NavLink to={to} className={styles.navLink} activeClassName={styles.navLinkCurrent}>
-        {text}
-      </NavLink>
+      <Typography>
+        <NavLink to={to} className={styles.navLink} activeClassName={styles.navLinkCurrent}>
+          {text}
+        </NavLink>
+      </Typography>
     );
   };
 
@@ -56,17 +55,24 @@ const Header: React.VFC = () => {
               { key: 'https://project.subquery.network', label: 'Projects' },
               { key: 'https://github.com/subquery/subql', label: 'Github' },
             ]}
+            colorScheme="standard"
             onSelected={(key) => (window.location.href = key)}
             className={styles.hosted}
             dropdownClass={styles.hostedBorder}
           >
-            <p className={styles.hostedText}>Hosted Service</p>
+            <Typography /*className={styles.hostedText}*/>{t('header.hosted')}</Typography>
           </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
-          <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
-            {t('header.documentation')}
-          </a>
+          <Button
+            href="https://doc.subquery.network"
+            target="_blank"
+            className={styles.navLink}
+            rel="noreferrer"
+            type="link"
+            label={t('header.documentation')}
+            colorScheme="standard"
+          />
           {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
             {t('header.github')}
           </a>*/}
@@ -76,7 +82,7 @@ const Header: React.VFC = () => {
             <Dropdown
               items={[{ key: 'disconnect', label: 'Disconnect' }]}
               onSelected={handleSelected}
-              dropdownClass={[buttonStyles.secondary, styles.dropdown].join(' ')}
+              colorScheme="gradient"
             >
               <Address address={account} size="large" />
             </Dropdown>

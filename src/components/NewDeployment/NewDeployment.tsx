@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FTextInput } from '..';
 import { NewDeployment as NewDeploymentParams, newDeploymentSchema } from '../../models';
-import Button from '../Button';
+import { Button } from '@subql/react-ui';
 import { ModalContainer } from '../NewProject/NewProject';
 import styles from './NewDeployment.module.css';
 

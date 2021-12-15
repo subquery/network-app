@@ -19,7 +19,7 @@
     "@polkadot/util": "^7.8.2",
     "@subql/common": "0.13.1-6",
     "@subql/contract-sdk": "0.1.1-1",
-    "@subql/react-ui": "^1.0.1-14",
+    "@subql/react-ui": "^1.0.1-16",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -78,7 +78,8 @@
     "lint-staged": ">=10",
     "prettier": "^2.4.1",
     "storybook-react-i18next": "1.0.13",
-    "storybook-react-router": "1.0.8"
+    "storybook-react-router": "1.0.8",
+    "typescript-plugin-css-modules": "^3.4.0"
   },
   "eslintConfig": {
     "extends": [

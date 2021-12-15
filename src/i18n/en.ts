@@ -9,6 +9,7 @@ const en = {
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
+      hosted: 'Hosted Service',
     },
     footer: {
       title: 'Join The Future',
