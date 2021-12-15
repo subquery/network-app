@@ -8,7 +8,6 @@ import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
-import buttonStyles from '@subql/react-ui/dist/components/Button/Button.module.css';
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
@@ -65,9 +64,15 @@ const Header: React.VFC = () => {
           </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
-          <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
-            <Typography>{t('header.documentation')}</Typography>
-          </a>
+          <Button
+            href="https://doc.subquery.network"
+            target="_blank"
+            className={styles.navLink}
+            rel="noreferrer"
+            type="link"
+            label={t('header.documentation')}
+            colorScheme="standard"
+          />
           {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
             {t('header.github')}
           </a>*/}
@@ -77,7 +82,7 @@ const Header: React.VFC = () => {
             <Dropdown
               items={[{ key: 'disconnect', label: 'Disconnect' }]}
               onSelected={handleSelected}
-              dropdownClass={[buttonStyles.secondary, styles.dropdown].join(' ')}
+              colorScheme="gradient"
             >
               <Address address={account} size="large" />
             </Dropdown>

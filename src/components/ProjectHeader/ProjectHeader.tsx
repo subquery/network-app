@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import Detail from '../Detail';
-import { Address, Dropdown } from '@subql/react-ui';
+import { Address, Dropdown, Typography } from '@subql/react-ui';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
 
@@ -27,7 +27,9 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
       <div className={styles.inner}>
         <div className={styles.upper}>
           <div className={styles.titleVersion}>
-            <span className={styles.name}>{project.metadata.name}</span>
+            <Typography variant="h4" className={styles.name}>
+              {project.metadata.name}
+            </Typography>
             {versions && (
               <Dropdown
                 items={Object.entries(versions).map(([key, value]) => ({ key, label: value }))}

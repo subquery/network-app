@@ -3863,10 +3863,10 @@
     dotenv "^10.0.0"
     fs "^0.0.1-security"
 
-"@subql/react-ui@^1.0.1-15":
-  version "1.0.1-15"
-  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-15.tgz#d921a3838efa92dee61c3997c443699b7d322f45"
-  integrity sha512-MlXIesz1g1+ZN6qX5EkWLQ2L89IgTX0Fs69qe5nA5FpCRqcXWdMn7ZEOy6IBcHUmfJOig1qQIQqRecwuMtY1lg==
+"@subql/react-ui@^1.0.1-16":
+  version "1.0.1-16"
+  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-16.tgz#b0e91b1e240e4fc9e7d22cb5e0d761dccf9cf343"
+  integrity sha512-IqOFOZN+0KQDMBc8GOzGz6BXNK/MpZhdht/faE7neM3VCWWP1lgtH5dzs2ZuAK7NCvqzzmMQuFVdzPoGvraRxA==
   dependencies:
     clsx "^1.1.1"
     eslint-plugin-react "^7.27.1"

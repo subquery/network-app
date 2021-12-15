@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: row;
-  /*margin-top: 32px;*/
 }
 
 .left {
@@ -24,7 +23,6 @@
 }
 
 .lower {
-  /*padding-top: 15px;*/
   display: flex;
   flex-direction: row;
 }
@@ -42,10 +40,6 @@
 }
 
 .name {
-  font-size: 32px;
-  line-height: 48px;
-  font-weight: 500;
-  text-align: right;
   align-self: flex-start;
   padding-right: 16px;
 }
@@ -66,6 +60,6 @@
 .vertBar {
   height: 50%;
   width: 1px;
-  background-color: var(--weak);
+  background-color: var(--sq-gray300);
   margin: 18px 24px 18px 14px;
 }

@@ -43,16 +43,11 @@
 
 .navLinkCurrent {
   font-weight: 500;
-  color: var(--primary);
+  color: var(--sq-info) !important;
 }
 
 .logo {
   height: 48px;
-}
-
-.dropdown {
-  border: unset !important;
-  padding: 12px;
 }
 
 .hosted {
