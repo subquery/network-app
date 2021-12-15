@@ -29,16 +29,16 @@
 }
 
 .navLink {
-  color: var(--gray900);
   text-decoration: none;
   margin-left: 24px;
-  font-family: Futura;
-  font-size: 16px;
-  line-height: 24px;
 }
 
 .navLink:hover {
   text-decoration: underline;
+}
+
+.navLink:visited {
+  color: inherit;
 }
 
 .navLinkCurrent {

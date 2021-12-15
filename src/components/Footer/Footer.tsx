@@ -14,7 +14,7 @@ const LinkButton: React.VFC<{
   return (
     <Button
       type="secondary"
-      label={props.label || ''}
+      label={props.label}
       href={props.link}
       className={styles.iconButton}
       leftItem={

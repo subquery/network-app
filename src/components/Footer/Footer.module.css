@@ -27,6 +27,7 @@
 .iconButton {
   background: white;
   margin-right: 32px;
+  padding: 16px;
 }
 
 @media only screen and (max-width: 600px) {

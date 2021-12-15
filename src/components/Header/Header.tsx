@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import { Address, Button, Dropdown } from '@subql/react-ui';
+import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
 import buttonStyles from '@subql/react-ui/dist/components/Button/Button.module.css';
 
@@ -29,9 +29,11 @@ const Header: React.VFC = () => {
 
   const renderLink = (to: string, text: string) => {
     return (
-      <NavLink to={to} className={styles.navLink} activeClassName={styles.navLinkCurrent}>
-        {text}
-      </NavLink>
+      <Typography>
+        <NavLink to={to} className={styles.navLink} activeClassName={styles.navLinkCurrent}>
+          {text}
+        </NavLink>
+      </Typography>
     );
   };
 
@@ -54,16 +56,17 @@ const Header: React.VFC = () => {
               { key: 'https://project.subquery.network', label: 'Projects' },
               { key: 'https://github.com/subquery/subql', label: 'Github' },
             ]}
+            colorScheme="standard"
             onSelected={(key) => (window.location.href = key)}
             className={styles.hosted}
             dropdownClass={styles.hostedBorder}
           >
-            <p className={styles.hostedText}>{t('header.hosted')}</p>
+            <Typography /*className={styles.hostedText}*/>{t('header.hosted')}</Typography>
           </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
           <a href="https://doc.subquery.network" target="_blank" className={styles.navLink} rel="noreferrer">
-            {t('header.documentation')}
+            <Typography>{t('header.documentation')}</Typography>
           </a>
           {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
             {t('header.github')}
