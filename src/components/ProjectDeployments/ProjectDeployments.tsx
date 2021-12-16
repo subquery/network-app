@@ -17,7 +17,7 @@ type Props = {
 
 const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
   const createdAt = React.useMemo(
-    () => (deployment.createdAt ? moment(deployment.createdAt).fromNow() : 'N/A'),
+    () => (deployment.createdAt ? moment(deployment.createdAt).utc(true).fromNow() : 'N/A'),
     [deployment],
   );
   return (

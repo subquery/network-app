@@ -29,8 +29,8 @@ const ExternalLink: React.VFC<{ link?: string; icon: 'globe' | 'github' }> = ({ 
 
 const ProjectOverview: React.VFC<Props> = ({ metadata, deploymentDescription, createdAt, updatedAt }) => {
   const { t } = useTranslation();
-  const createdAtStr = React.useMemo(() => moment(createdAt).fromNow(), [createdAt]);
-  const updatedAtStr = React.useMemo(() => moment(updatedAt).fromNow(), [updatedAt]);
+  const createdAtStr = React.useMemo(() => moment(createdAt).utc(true).fromNow(), [createdAt]);
+  const updatedAtStr = React.useMemo(() => moment(updatedAt).utc(true).fromNow(), [updatedAt]);
 
   return (
     <div className={styles.container}>
