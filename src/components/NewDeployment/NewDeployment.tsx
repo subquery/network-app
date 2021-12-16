@@ -40,7 +40,7 @@ const NewDeployment: React.FC<Props> = (props) => {
               onClick={submitForm}
               type="secondary"
               label={t('deployment.create.submit')}
-              disabled={isSubmitting}
+              loading={isSubmitting}
               className={styles.submit}
             />
           </Form>

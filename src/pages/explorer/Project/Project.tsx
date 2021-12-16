@@ -37,7 +37,7 @@ const Project: React.VFC = () => {
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
   // TODO get from an indexer
-  const chainBlockHeight = 10000000000;
+  const chainBlockHeight = 10000000;
 
   const indexersStatus = React.useMemo(() => {
     return (

@@ -6,13 +6,14 @@ import { Formik, Form } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { FTextInput, ImageInput } from '../../../components';
-import { Button } from '@subql/react-ui';
+import { Button, Typography } from '@subql/react-ui';
 import { useHistory } from 'react-router';
 import styles from './Create.module.css';
 import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
 import Instructions from './Instructions';
 import clsx from 'clsx';
+import { isEthError } from '../../../utils';
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
@@ -22,17 +23,27 @@ const Create: React.VFC = () => {
   const history = useHistory();
   const createProject = useCreateProject();
 
+  const [submitError, setSubmitError] = React.useState<string>();
+
   const handleSubmit = React.useCallback(
     async (project: FormCreateProjectMetadata & { versionDescription: string }) => {
-      // Form can give us a File type that doesn't match the schema
-      const queryId = await createProject(project);
+      try {
+        // Form can give us a File type that doesn't match the schema
+        const queryId = await createProject(project);
 
-      const idHex = BigNumber.from(queryId).toHexString();
+        const idHex = BigNumber.from(queryId).toHexString();
 
-      console.log(`Query created. queryId=${idHex}`);
-      history.push(`/studio/project/${idHex}`);
+        console.log(`Query created. queryId=${idHex}`);
+        history.push(`/studio/project/${idHex}`);
+      } catch (e) {
+        if (isEthError(e) && e.code === 4001) {
+          setSubmitError(t('errors.transactionRejected'));
+          return;
+        }
+        setSubmitError((e as Error).message);
+      }
     },
-    [history, createProject],
+    [history, createProject, t],
   );
 
   return (
@@ -65,7 +76,7 @@ const Create: React.VFC = () => {
                   <p className={styles.name}>{values.name}</p>
                 </div>
                 <div>
-                  <Button onClick={submitForm} type="primary" label="Publish" disabled={isSubmitting} />
+                  <Button onClick={submitForm} type="primary" label="Publish" loading={isSubmitting} />
                 </div>
               </div>
             </div>
@@ -79,6 +90,7 @@ const Create: React.VFC = () => {
                 <FTextInput label={t('deployment.create.version')} id="version" />
                 <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
                 <FTextInput label={t('deployment.create.description')} id="versionDescription" base="textarea" />
+                {submitError && <Typography className={styles.error}>{submitError}</Typography>}
               </div>
               <Instructions />
             </div>

@@ -6,9 +6,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FTextInput } from '..';
 import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
-import { Button } from '@subql/react-ui';
+import { Button, Typography } from '@subql/react-ui';
 import ImageInput from '../ImageInput';
 import styles from './ProjectEdit.module.css';
+import { isEthError } from '../../utils';
 
 type Props = {
   project: Required<ProjectWithMetadata>;
@@ -18,9 +19,18 @@ type Props = {
 
 const ProjectEdit: React.VFC<Props> = (props) => {
   const { t } = useTranslation('translation');
+  const [submitError, setSubmitError] = React.useState<string>();
 
   const handleSubmit = async (metadata: FormProjectMetadata) => {
-    await props.onSubmit(metadata);
+    try {
+      await props.onSubmit(metadata);
+    } catch (e) {
+      if (isEthError(e) && e.code === 4001) {
+        setSubmitError(t('errors.transactionRejected'));
+        return;
+      }
+      setSubmitError((e as Error).message);
+    }
   };
 
   return (
@@ -38,6 +48,7 @@ const ProjectEdit: React.VFC<Props> = (props) => {
                 <FTextInput label={t('studio.create.description')} id="description" base="textarea" />
                 <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
                 <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
+                {submitError && <Typography className={styles.error}>{submitError}</Typography>}
               </div>
               <div className={styles.image}>
                 <ImageInput
@@ -49,22 +60,22 @@ const ProjectEdit: React.VFC<Props> = (props) => {
               </div>
             </div>
             <div /*className={styles.submit}*/>
-              <Button
-                onClick={submitForm}
-                type="primary"
-                label={t('edit.submitButton')}
-                disabled={isSubmitting}
-                className={styles.submit}
-              />
               {props.onCancel && (
                 <Button
                   onClick={props.onCancel}
                   type="secondary"
                   label={t('edit.cancelButton')}
                   disabled={isSubmitting}
-                  className={styles.cancel}
+                  className={styles.submit}
                 />
               )}
+              <Button
+                onClick={submitForm}
+                type="primary"
+                label={t('edit.submitButton')}
+                loading={isSubmitting}
+                className={styles.cancel}
+              />
             </div>
           </Form>
         )}

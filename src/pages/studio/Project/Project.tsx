@@ -56,7 +56,12 @@ const Project: React.VFC = () => {
 
       return (
         <div>
-          <Modal isOpen={deploymentModal} style={modalStyles} onRequestClose={() => setDeploymentModal(false)}>
+          <Modal
+            isOpen={deploymentModal}
+            style={modalStyles}
+            onRequestClose={() => setDeploymentModal(false)}
+            closeTimeoutMS={200}
+          >
             <NewDeployment onSubmit={handleSubmitCreate} onClose={() => setDeploymentModal(false)} />
           </Modal>
           <div className={styles.upper}>

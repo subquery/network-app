@@ -83,7 +83,12 @@ const Home: React.VFC = () => {
     <div className="content-width">
       <Header renderRightItem={() => <Button type="primary" label="Create a project" onClick={enableCreateModal} />} />
 
-      <Modal isOpen={showCreateModal} style={modalStyles} onRequestClose={() => setShowCreateModal(false)}>
+      <Modal
+        isOpen={showCreateModal}
+        style={modalStyles}
+        onRequestClose={() => setShowCreateModal(false)}
+        closeTimeoutMS={200}
+      >
         <NewProject onSubmit={handleCreateProject} onClose={() => setShowCreateModal(false)} />
       </Modal>
 

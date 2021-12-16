@@ -22,3 +22,8 @@
   margin-left: 12px;
   min-width: 100px;
 }
+
+.error {
+  color: var(--sq-error);
+  padding-top: 8px;
+}

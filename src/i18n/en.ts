@@ -149,6 +149,9 @@ const en = {
       header3: 'Description',
       header4: 'Created',
     },
+    errors: {
+      transactionRejected: 'User rejected the request',
+    },
   },
 };
 

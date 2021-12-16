@@ -6,7 +6,11 @@
 }
 
 .submit {
-  /*align-self: center;*/
   width: 95%;
   margin-top: 24px;
+}
+
+.error {
+  color: var(--sq-error);
+  padding-top: 8px;
 }

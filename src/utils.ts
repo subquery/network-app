@@ -118,3 +118,13 @@ export const modalStyles = {
     zIndex: 50,
   },
 };
+
+export interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
+
+export function isEthError(e: unknown): e is ProviderRpcError {
+  return !!(e as ProviderRpcError).code && !!(e as ProviderRpcError).message;
+}
