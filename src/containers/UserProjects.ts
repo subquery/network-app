@@ -21,13 +21,9 @@ function useUserProjectsImpl(logger: Logger) {
 
     const contracts = await pendingContracts;
 
-    const filter = contracts?.queryRegistry.filters.CreateQuery(/*null, account*/);
+    const filter = contracts?.queryRegistry.filters.CreateQuery(null, account);
 
-    const listener = (id: BigNumber, owner: string) => {
-      /* TODO need updated query with indexed params*/
-      if (owner !== account) return;
-      setCacheBreak((val) => val + 1);
-    };
+    const listener = (id: BigNumber, owner: string) => setCacheBreak((val) => val + 1);
 
     contracts?.queryRegistry.on(filter, listener as any);
     return () => contracts.queryRegistry.off(filter, listener as any);

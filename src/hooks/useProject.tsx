@@ -6,7 +6,6 @@ import { ProjectDetails } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 import { useCallback, useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
 
 export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
   const { getQuery } = useQueryRegistry();
@@ -24,14 +23,10 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
 
     const contracts = await pendingContracts;
     const listener = (owner: string, queryId: unknown) => {
-      /* TODO need updated query with indexed params*/
-      if ((queryId as BigNumber).toHexString() !== id) {
-        return;
-      }
       setCacheBreak((val) => val + 1);
     };
-    const deploymentFilter = contracts?.queryRegistry.filters.UpdateQueryDeployment(/*null, id*/);
-    const metadataFilter = contracts?.queryRegistry.filters.UpdateQueryMetadata(/*null, id*/);
+    const deploymentFilter = contracts?.queryRegistry.filters.UpdateQueryDeployment(null, id);
+    const metadataFilter = contracts?.queryRegistry.filters.UpdateQueryMetadata(null, id);
 
     contracts.queryRegistry.on(deploymentFilter, listener);
     contracts.queryRegistry.on(metadataFilter, listener);
