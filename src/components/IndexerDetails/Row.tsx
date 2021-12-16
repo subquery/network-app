@@ -66,8 +66,8 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata'> & { deploymentId?: string 
   ...rest
 }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexer);
-  const asyncMetadataComplete = mapAsync<IndexerDetails>(
-    (metadata) => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
+  const asyncMetadataComplete = mapAsync(
+    (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
     asyncMetadata,
   );
 

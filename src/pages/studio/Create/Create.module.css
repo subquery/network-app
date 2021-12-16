@@ -45,4 +45,5 @@
   border-right: 1px solid var(--gray300);
   margin-right: 24px;
   padding-right: 24px;
+  flex-grow: 100;
 }

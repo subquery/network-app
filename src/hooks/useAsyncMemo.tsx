@@ -32,6 +32,7 @@ export function useAsyncMemo<T>(
       cancel = true;
       setResult((res) => ({ ...res, loading: false }));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return result;

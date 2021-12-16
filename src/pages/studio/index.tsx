@@ -18,10 +18,10 @@ const BlockchainStatus: React.FC = ({ children }) => {
   const { error } = useWeb3();
   const { t } = useTranslation();
 
-  const isMetaMask = React.useMemo(() => !!(window as any).ethereum?.isMetaMask, []);
+  const isMetaMask = React.useMemo(() => !!window.ethereum?.isMetaMask, []);
 
   const handleSwitchNetwork = () => {
-    (window as any).ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['moonbase-alpha']]);
+    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['moonbase-alpha']]);
   };
 
   if (error instanceof UnsupportedChainIdError) {

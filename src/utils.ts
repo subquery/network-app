@@ -73,7 +73,7 @@ export function mergeAsyncLast<T>(v1: AsyncData<unknown>, v2: AsyncData<T>): Asy
   };
 }
 
-export function mapAsync<O, T = any>(scope: (t: T) => O, data: AsyncData<T>): AsyncData<O> {
+export function mapAsync<O, T>(scope: (t: T) => O, data: AsyncData<T>): AsyncData<O> {
   return { ...data, data: data.data ? scope(data.data) : undefined };
 }
 

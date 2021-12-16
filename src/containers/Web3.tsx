@@ -37,7 +37,7 @@ export const NETWORK_CONFIGS = {
   },
 };
 
-function getLibrary(provider: any): providers.Web3Provider {
+function getLibrary(provider: providers.ExternalProvider): providers.Web3Provider {
   // Acala would use https://github.com/AcalaNetwork/bodhi.js here
   return new providers.Web3Provider(provider);
 }

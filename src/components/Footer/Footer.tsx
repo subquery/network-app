@@ -20,7 +20,7 @@ const LinkButton: React.VFC<{
       leftItem={
         props.icon &&
         (props.icon === 'matrix' ? (
-          <img src="/static/matrix-logo.svg" className={styles.image} />
+          <img src="/static/matrix-logo.svg" className={styles.image} alt="matrix logo" />
         ) : (
           <i className={`bi-${props.icon}`} role="img" aria-label={props.icon} />
         ))

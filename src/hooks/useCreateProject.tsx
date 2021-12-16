@@ -6,13 +6,15 @@ import * as React from 'react';
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { FormCreateProjectMetadata, ProjectMetadata } from '../models';
 
-export function useCreateProject(): (params: FormCreateProjectMetadata) => Promise<BigNumberish> {
+type P = FormCreateProjectMetadata & { versionDescription: string };
+
+export function useCreateProject(): (params: P) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
   const { registerQuery } = useQueryRegistry();
 
   const createProject = React.useCallback(
-    async function (project: FormCreateProjectMetadata): Promise<BigNumberish> {
+    async function (project: P): Promise<BigNumberish> {
       // Form can give us a File type that doesn't match the schema
       if ((project.image as unknown) instanceof File) {
         console.log('Uploading icon...');
@@ -23,7 +25,7 @@ export function useCreateProject(): (params: FormCreateProjectMetadata) => Promi
 
       const versionCid = await uploadVersionMetadata({
         version: project.version,
-        description: (project as any).versionDescription,
+        description: project.versionDescription,
       });
 
       const metadata = await uploadMetadata(project as ProjectMetadata);
@@ -39,9 +41,7 @@ export function useCreateProject(): (params: FormCreateProjectMetadata) => Promi
         throw new Error('No successful events');
       }
 
-      const { queryId /*, creator*/ } = event.args as any;
-
-      return queryId;
+      return event.args?.['queryId'];
     },
     [ipfs, uploadMetadata, registerQuery, uploadVersionMetadata],
   );

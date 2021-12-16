@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Formik, Form } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { NewDeployment, newDeploymentSchema, ProjectMetadata, projectMetadataSchema } from '../../../models';
+import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { FTextInput, ImageInput } from '../../../components';
 import { Button } from '@subql/react-ui';
 import { useHistory } from 'react-router';
@@ -23,7 +23,7 @@ const Create: React.VFC = () => {
   const createProject = useCreateProject();
 
   const handleSubmit = React.useCallback(
-    async (project: ProjectMetadata & { image: File | undefined | string } & NewDeployment) => {
+    async (project: FormCreateProjectMetadata & { versionDescription: string }) => {
       // Form can give us a File type that doesn't match the schema
       const queryId = await createProject(project);
 
@@ -51,7 +51,7 @@ const Create: React.VFC = () => {
         validationSchema={projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))}
         onSubmit={handleSubmit}
       >
-        {({ errors, touched, setFieldValue, values, isSubmitting, submitForm, handleChange }) => (
+        {({ setFieldValue, values, isSubmitting, submitForm }) => (
           <Form>
             <div className={styles.upper}>
               <div className={clsx('content-width', styles.header)}>

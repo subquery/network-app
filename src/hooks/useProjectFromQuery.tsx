@@ -5,7 +5,6 @@ import { useIPFS, useProjectMetadata, useProjectQuery } from '../containers';
 import { ProjectDeployment, ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
-import { getDeployment } from './useDeployment';
 import { GetProject_project as Project } from '../__generated__/GetProject';
 
 type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
@@ -30,7 +29,6 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
 
     const query = data.project;
     const metadata = await getMetadataFromCid(query.metadata);
-    // const deployment = await getDeployment(catSingle, query.currentDeployment);
 
     return {
       ...query,

@@ -1,6 +1,7 @@
 // Copyright 2020-2021 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
 
 const EMPTY: unique symbol = Symbol();

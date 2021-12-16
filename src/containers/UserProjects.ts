@@ -23,10 +23,10 @@ function useUserProjectsImpl(logger: Logger) {
 
     const filter = contracts?.queryRegistry.filters.CreateQuery(null, account);
 
-    const listener = (id: BigNumber, owner: string) => setCacheBreak((val) => val + 1);
+    const listener = () => setCacheBreak((val) => val + 1);
 
-    contracts?.queryRegistry.on(filter, listener as any);
-    return () => contracts.queryRegistry.off(filter, listener as any);
+    contracts?.queryRegistry.on(filter, listener);
+    return () => contracts.queryRegistry.off(filter, listener);
   }, [account, pendingContracts]);
 
   React.useEffect(() => {

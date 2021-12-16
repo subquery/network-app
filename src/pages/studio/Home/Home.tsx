@@ -13,9 +13,12 @@ import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 import { Button } from '@subql/react-ui';
 
-const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ projectId, onClick }) => {
+const Project: React.VFC<{ projectId: string; account: string; onClick?: () => void }> = ({
+  projectId,
+  account,
+  onClick,
+}) => {
   const asyncProject = useProject(projectId);
-  const { account } = useWeb3();
 
   return (
     <div className={styles.card}>
@@ -30,7 +33,7 @@ const Project: React.VFC<{ projectId: string; onClick?: () => void }> = ({ proje
               onClick={onClick}
               project={{
                 id: projectId,
-                owner: account!,
+                owner: account,
               }}
             />
           );
@@ -99,6 +102,7 @@ const Home: React.VFC = () => {
                   projectId={id.toHexString()}
                   key={id.toHexString()}
                   onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
+                  account={account}
                 />
               ))}
             </div>
