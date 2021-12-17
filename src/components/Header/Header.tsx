@@ -8,6 +8,7 @@ import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
+import clsx from 'clsx';
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
@@ -29,7 +30,7 @@ const Header: React.VFC = () => {
   const renderLink = (to: string, text: string) => {
     return (
       <Typography>
-        <NavLink to={to} className={styles.navLink} activeClassName={styles.navLinkCurrent}>
+        <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
           {text}
         </NavLink>
       </Typography>

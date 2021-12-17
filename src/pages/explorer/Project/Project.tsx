@@ -123,28 +123,26 @@ const Project: React.VFC = () => {
               <div className="tabContainer">
                 <NavLink
                   to={`${ROUTE}/${id}/overview${history.location.search}`}
-                  className="tab"
-                  activeClassName="tabSelected"
-                  title={t('explorer.project.tab1')}
+                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
+                  replace
                 >
-                  Overview
+                  {t('explorer.project.tab1')}
                 </NavLink>
                 <NavLink
                   to={`${ROUTE}/${id}/indexers${history.location.search}`}
-                  className="tab"
-                  activeClassName="tabSelected"
-                  title={t('explorer.project.tab2')}
+                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
+                  replace
                 >
-                  Indexers
+                  {t('explorer.project.tab2')}
                 </NavLink>
                 {hasIndexers && (
                   <NavLink
                     to={`${ROUTE}/${id}/playground${history.location.search}`}
-                    className="tab"
-                    activeClassName="tabSelected"
+                    className={(isActive) => clsx('tab', isActive && 'tabSelected')}
                     title={t('explorer.project.tab3')}
+                    replace
                   >
-                    Playground
+                    {t('explorer.project.tab3')}
                   </NavLink>
                 )}
               </div>

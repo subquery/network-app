@@ -70,19 +70,17 @@ const Project: React.VFC = () => {
               <div className={clsx('tabContainer', styles.tabContainer)}>
                 <NavLink
                   to={`/studio/project/${id}/details`}
-                  className="tab"
-                  activeClassName="tabSelected"
-                  title={t('studio.project.tab1')}
+                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
+                  replace
                 >
-                  Details
+                  {t('studio.project.tab1')}
                 </NavLink>
                 <NavLink
                   to={`/studio/project/${id}/deployments`}
-                  className="tab"
-                  activeClassName="tabSelected"
-                  title={t('studio.project.tab2')}
+                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
+                  replace
                 >
-                  Deployments
+                  {t('studio.project.tab2')}
                 </NavLink>
               </div>
             </div>
