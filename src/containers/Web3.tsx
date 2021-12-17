@@ -4,13 +4,14 @@
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { NetworkConnector } from '@web3-react/network-connector';
+// import { NetworkConnector } from '@web3-react/network-connector';
 import { providers } from 'ethers';
 import React from 'react';
+import { NetworkConnector } from '../NetworkConnector';
 
 const RPC_URLS: Record<number, string> = {
   1285: 'wss://moonriver.api.onfinality.io/public-ws',
-  1287: 'https://rpc.testnet.moonbeam.network',
+  1287: 'https://moonbeam-alpha.api.onfinality.io/public',
   1281: 'http://127.0.0.1:9933',
 };
 
@@ -32,7 +33,7 @@ export const NETWORK_CONFIGS = {
       symbol: 'DEV',
       decimals: 18,
     },
-    rpcUrls: ['https://rpc.testnet.moonbeam.network'],
+    rpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
   },
 };
