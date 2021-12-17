@@ -35,6 +35,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
                 items={Object.entries(versions).map(([key, value]) => ({ key, label: value }))}
                 onSelected={(key) => onChangeVersion?.(key)}
                 selected={currentVersion ? Object.keys(versions).indexOf(currentVersion) : 0}
+                colorScheme="neutral"
               />
             )}
           </div>
