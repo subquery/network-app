@@ -3860,10 +3860,10 @@
     reflect-metadata "^0.1.13"
     sequelize "^6.6.2"
 
-"@subql/contract-sdk@^0.1.1-6":
-  version "0.1.1-6"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.1-6.tgz#98f0af4036d0272f8a7524d3dbcdc5c981dd972a"
-  integrity sha512-cbwQvgYZvBq7AoiLe3RwGaNINl9e31qdC5sqsY5wYCPZclQ2Dt3o1T0sWFcIP6ow0Rw3fWVQJcXdb9D6XWuxVA==
+"@subql/contract-sdk@^0.1.1-27":
+  version "0.1.1-27"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.1-27.tgz#b6029b999b2c0c9c6678f45829229922c5e7d6c3"
+  integrity sha512-wD6mSO9MJusiUL7zRR8J0XAncLtjiNVuiSUF7H/BSsU2hismVHuThgE/QKhcdEeltwF0lzE9aCTxyIxaGoSVHw==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.3.3"
     dotenv "^10.0.0"

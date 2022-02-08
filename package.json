@@ -11,14 +11,14 @@
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint src/**/*.{ts,tsx}",
-    "codegen-gql": "npx apollo client:codegen --endpoint='https://api.subquery.network/sq/subquery/subquery-network-query-registry' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__ --excludes src/hooks/useApiEndpoint.ts"
+    "codegen-gql": "npx apollo client:codegen --endpoint='https://api.subquery.network/sq/subquery/subquery-network-query-registry?stage=true' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__ --excludes src/hooks/useApiEndpoint.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@material-ui/core": "^4.12.3",
     "@polkadot/util": "^7.8.2",
     "@subql/common": "0.13.1-6",
-    "@subql/contract-sdk": "^0.1.1-6",
+    "@subql/contract-sdk": "^0.1.1-27",
     "@subql/react-ui": "^1.0.1-19",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

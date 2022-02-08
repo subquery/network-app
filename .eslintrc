@@ -15,7 +15,7 @@
     "header/header": [2, "line", [
       {
         "pattern": " Copyright \\d{4}(-\\d{4})? OnFinality Limited authors & contributors",
-        "template": " Copyright 2020-2021 OnFinality Limited authors & contributors" },
+        "template": " Copyright 2020-2022 OnFinality Limited authors & contributors" },
       " SPDX-License-Identifier: Apache-2.0"
     ], 2],
   }
