@@ -67,10 +67,10 @@ const GET_PROJECT_DEPLOYMENTS = gql`
 
 const GET_DEPLOYMENT_INDEXERS = gql`
   query GetDeploymentIndexers($deploymentId: String!) {
-    indexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
+    deploymentIndexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
       nodes {
         id
-        indexer
+        indexerAddress
         deploymentId
         blockHeight
         timestamp

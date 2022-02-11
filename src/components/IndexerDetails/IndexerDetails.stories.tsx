@@ -38,10 +38,10 @@ export const NoMetadata = Template.bind({});
 
 NoMetadata.args = {
   indexer: {
-    __typename: 'Indexer',
+    __typename: 'DeploymentIndexer',
     id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
-    indexer: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
+    indexerAddress: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     blockHeight: '999999',
     timestamp: new Date(),
     status: Status.INDEXING,
@@ -54,10 +54,10 @@ export const LoadingMetadata = Template.bind({});
 
 LoadingMetadata.args = {
   indexer: {
-    __typename: 'Indexer',
+    __typename: 'DeploymentIndexer',
     id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
-    indexer: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
+    indexerAddress: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
     blockHeight: '654321',
     timestamp: new Date(),
     status: Status.INDEXING,
@@ -70,10 +70,10 @@ export const WithMetadata = Template.bind({});
 
 WithMetadata.args = {
   indexer: {
-    __typename: 'Indexer',
+    __typename: 'DeploymentIndexer',
     id: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw-0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     deploymentId: 'QmSUKKDUYFCs7AURoUEu4heYoJCZwqDoPkMZGLDerFoWqw',
-    indexer: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
+    indexerAddress: '0xFf64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB',
     blockHeight: '1000',
     timestamp: new Date(),
     status: Status.INDEXING,

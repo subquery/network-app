@@ -1,7 +1,7 @@
 // Copyright 2020-2022 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { utils } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -79,16 +79,44 @@ export function mapAsync<O, T>(scope: (t: T) => O, data: AsyncData<T>): AsyncDat
 
 type RenderResult = React.ReactElement | null;
 
-export function renderAsync<T>(
-  data: AsyncData<T>,
-  handlers: { loading: () => RenderResult; error: (error: Error) => RenderResult; data: (data?: T) => RenderResult },
-): RenderResult {
+type Handlers<T> = {
+  loading: () => RenderResult;
+  error: (error: Error) => RenderResult;
+  data: (data?: T) => RenderResult;
+};
+
+type HandlersArray<T extends any[]> = {
+  loading: () => RenderResult;
+  error: (error: Error) => RenderResult;
+  data: (data: T) => RenderResult;
+  empty: () => RenderResult;
+};
+
+export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): RenderResult {
   if (data.error) {
     return handlers.error(data.error);
   } else if (data.loading) {
     return handlers.loading();
   } else {
     try {
+      return handlers.data(data.data);
+    } catch (e) {
+      // TODO not sure this is desired behaviour
+      return handlers.error(e as Error);
+    }
+  }
+}
+
+export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
+  if (data.error) {
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading();
+  } else {
+    try {
+      if (!data.data || Array.isArray(data.data)) {
+        return handlers.empty();
+      }
       return handlers.data(data.data);
     } catch (e) {
       // TODO not sure this is desired behaviour
@@ -119,6 +147,21 @@ export const modalStyles = {
   },
 };
 
+export const newModalStyles = {
+  content: {
+    top: '40%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    border: '0px',
+  },
+  overlay: {
+    zIndex: 50,
+  },
+};
+
 export interface ProviderRpcError extends Error {
   message: string;
   code: number;
@@ -127,4 +170,10 @@ export interface ProviderRpcError extends Error {
 
 export function isEthError(e: unknown): e is ProviderRpcError {
   return !!(e as ProviderRpcError).code && !!(e as ProviderRpcError).message;
+}
+
+export function bnToDate(value: BigNumberish): Date {
+  const valueBN = BigNumber.from(value);
+
+  return new Date(valueBN.toNumber() * 1000);
 }

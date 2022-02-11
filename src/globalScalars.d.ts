@@ -4,3 +4,4 @@
 // Remaps types not resolved by graphql codegen
 type GraphQL_Datetime = Date;
 type GraphQL_BigFloat = BigInt | string;
+type GraphQL_JSON = unknown;

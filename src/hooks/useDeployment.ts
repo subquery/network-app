@@ -1,26 +1,21 @@
 // Copyright 2020-2022 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import yaml from 'js-yaml';
 import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common/dist/project';
 import { useIPFS } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
 import { ProjectDeployment } from '../models';
 import { AsyncData } from '../utils';
+import { fetchIpfsMetadata } from './useIPFSMetadata';
 
 export async function getDeployment(
   catSingle: (cid: string) => Promise<Uint8Array>,
   deploymentId: string,
 ): Promise<ProjectDeployment> {
-  const manifest = await catSingle(deploymentId)
-    .then((data) => Buffer.from(data).toString())
-    .then((str) => yaml.load(str))
-    .then((obj) => {
-      const manifest = new ProjectManifestVersioned(obj as VersionedProjectManifest);
-      manifest.validate();
+  const obj = await fetchIpfsMetadata<VersionedProjectManifest>(catSingle, deploymentId);
 
-      return manifest;
-    });
+  const manifest = new ProjectManifestVersioned(obj);
+  manifest.validate();
 
   // const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
   //   .then((data) => Buffer.from(data).toString())

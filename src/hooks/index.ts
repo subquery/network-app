@@ -12,3 +12,5 @@ export { useUpdateProjectMetadata } from './useUpdateProjectMetadata';
 export { useOnScreen } from './useOnScreen';
 export { useIndexerMetadata } from './useIndexerMetadata';
 export { useDeploymentMetadata } from './useDeploymentMetadata';
+export { useEraValue } from './useEraValue';
+export { useIPFSMetadata } from './useIPFSMetadata';

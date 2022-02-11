@@ -23,6 +23,8 @@ import NewProject from './NewProject';
 import ConnectWallet from './ConnectWallet';
 import Copy from './Copy';
 import Status from './Status';
+export { default as IndexerList } from './IndexerList';
+export { default as DelegatorsList } from './DelegatorsList';
 
 export {
   Header,

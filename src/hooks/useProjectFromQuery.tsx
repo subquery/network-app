@@ -1,7 +1,7 @@
 // Copyright 2020-2022 OnFinality Limited authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useIPFS, useProjectMetadata, useProjectQuery } from '../containers';
+import { useProjectMetadata, useProjectQuery } from '../containers';
 import { ProjectDeployment, ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
@@ -13,7 +13,6 @@ type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
 };
 
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
-  const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
 
   const { data, loading, error } = useProjectQuery({ id });
@@ -35,7 +34,7 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
       metadata,
       deployment: undefined,
     };
-  }, [data, catSingle, getMetadataFromCid]);
+  }, [data, getMetadataFromCid]);
 
   return {
     data: project,
