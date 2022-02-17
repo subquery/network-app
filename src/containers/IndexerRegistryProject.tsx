@@ -6,6 +6,7 @@ import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDel
 import { GetIndexer, GetIndexerVariables } from '../__generated__/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/GetIndexerDelegators';
 import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers';
+import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -58,6 +59,29 @@ const GET_DELEGATIONS = gql`
         delegatorAddress
         indexerAddress
         amount
+        indexer {
+          metadata
+        }
+      }
+    }
+  }
+`;
+
+const GET_WITHDRAWLS = gql`
+  query GetWithdrawls($delegator: String!, $offset: Int) {
+    withdrawls(
+      filter: { delegator: { equalTo: $delegator }, and: { claimed: { isNull: false } } }
+      first: 10
+      offset: $offset
+    ) {
+      nodes {
+        id
+        index
+        delegator
+        indexer
+        startTime
+        amount
+        claimed
       }
     }
   }
@@ -77,4 +101,8 @@ export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): Que
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
   return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params });
+}
+
+export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
+  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params });
 }

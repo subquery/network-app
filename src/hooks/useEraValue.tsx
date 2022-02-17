@@ -13,7 +13,13 @@ export interface EraValue {
 }
 
 export function isEraValue(value: GraphQL_JSON): value is EraValue {
-  return !!value && !!(value as EraValue).era && !!(value as EraValue).value && !!(value as EraValue).valueAfter;
+  return (
+    !!value &&
+    (value as EraValue).era !== undefined &&
+    (value as EraValue).era !== null &&
+    !!(value as EraValue).value &&
+    !!(value as EraValue).valueAfter
+  );
 }
 
 export type CurrentEraValue = { current: BigNumberish; after?: BigNumberish };
@@ -34,7 +40,7 @@ export function useEraValue(value: GraphQL_JSON): CurrentEraValue | undefined {
       return undefined;
     }
 
-    assert(isEraValue(value), 'Value is not of type EraValue');
+    assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
     if (currentEra?.index && currentEra.index > value.era) {
       return { current: value.valueAfter };
     }
