@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // Remaps types not resolved by graphql codegen
