@@ -13,7 +13,7 @@ const RPC_URLS: Record<number, string> = {
   1285: 'wss://moonriver.api.onfinality.io/public-ws',
   1287: 'https://moonbeam-alpha.api.onfinality.io/public',
   1281: 'http://127.0.0.1:9933',
-  1280: 'https://node-6899466758367993856.lh.onfinality.io/rpc?apikey=4de1316d-df00-439a-a51b-2b59346b2789',
+  1280: 'https://sqtn.api.onfinality.io/public',
 };
 
 const defaultChainId = 1280;

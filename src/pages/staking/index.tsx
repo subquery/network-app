@@ -5,12 +5,11 @@ import * as React from 'react';
 import { Button, Spinner, Typography } from '@subql/react-ui';
 import { EraProvider, useEra, useIndexers } from '../../containers';
 import { canStartNewEra } from '../../containers/Era';
-import { bytes32ToCid, mapAsync, notEmpty, renderAsyncArray } from '../../utils';
+import { mapAsync, notEmpty, renderAsyncArray } from '../../utils';
 import { Route, Switch, useHistory } from 'react-router';
 import Indexer from './Indexer';
 import Delegator from './Delegator';
 import { IndexerList } from '../../components';
-import { BigNumber } from '@ethersproject/bignumber';
 
 const Staking: React.VFC = () => {
   const { currentEra, initEra } = useEra();
@@ -36,29 +35,6 @@ const Staking: React.VFC = () => {
 
       <Typography variant="h3">Indexers</Typography>
 
-      {
-        <IndexerList
-          onClick={handleClick}
-          indexers={[
-            {
-              __typename: 'Indexer',
-              id: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
-              metadata: bytes32ToCid('0x2dc3357aab66608c90e276670994503108ddc2ba965b7cfe116897b493160761'),
-              controller: null,
-              commission: {
-                era: 2,
-                value: BigNumber.from(0),
-                valueAfter: BigNumber.from(100),
-              },
-              totalStake: {
-                era: 2,
-                value: BigNumber.from(0),
-                valueAfter: BigNumber.from('1001000000000000000000'),
-              },
-            },
-          ]}
-        />
-      }
       {renderAsyncArray(
         mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers),
         {

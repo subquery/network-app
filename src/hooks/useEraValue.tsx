@@ -5,14 +5,25 @@ import assert from 'assert';
 import { useEra } from '../containers';
 import { useMemo } from 'react';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber';
 
-export interface EraValue {
+type JSONBigInt = {
+  type: 'bigint';
+  value: string; // Hex encoded string
+};
+
+export interface EraValue<T = BigNumberish> {
   era: number;
-  value: BigNumberish;
-  valueAfter: BigNumberish;
+  value: T;
+  valueAfter: T;
 }
 
-export function isEraValue(value: GraphQL_JSON): value is EraValue {
+// What we get from the subquery project
+export type RawEraValue = EraValue<JSONBigInt>;
+
+export type CurrentEraValue = { current: BigNumber; after?: BigNumber };
+
+export function isEraValue<T = BigNumberish>(value: GraphQL_JSON): value is EraValue<T> {
   return (
     !!value &&
     (value as EraValue).era !== undefined &&
@@ -22,7 +33,22 @@ export function isEraValue(value: GraphQL_JSON): value is EraValue {
   );
 }
 
-export type CurrentEraValue = { current: BigNumberish; after?: BigNumberish };
+function jsonBigIntToBigInt(value: JSONBigInt | BigNumberish): BigNumber {
+  if (isBigNumberish(value)) {
+    return BigNumber.from(value);
+  }
+  assert(value.type === 'bigint', 'Value is not a JSONBigInt');
+
+  return BigNumber.from(value.value);
+}
+
+export function convertRawEraValue(raw: RawEraValue | EraValue): EraValue<BigNumber> {
+  return {
+    ...raw,
+    value: jsonBigIntToBigInt(raw.value),
+    valueAfter: jsonBigIntToBigInt(raw.valueAfter),
+  };
+}
 
 export function currentEraValueToString(
   value: CurrentEraValue,
@@ -41,12 +67,14 @@ export function useEraValue(value: GraphQL_JSON): CurrentEraValue | undefined {
     }
 
     assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
-    if (currentEra?.index && currentEra.index > value.era) {
-      return { current: value.valueAfter };
+    const eraValue = convertRawEraValue(value);
+
+    if (currentEra?.index && currentEra.index > eraValue.era) {
+      return { current: eraValue.valueAfter };
     }
 
-    const after = BigNumber.from(value.value).eq(BigNumber.from(value.valueAfter)) ? undefined : value.valueAfter;
+    const after = eraValue.value.eq(eraValue.valueAfter) ? undefined : eraValue.valueAfter;
 
-    return { current: value.value, after };
+    return { current: eraValue.value, after };
   }, [currentEra, value]);
 }

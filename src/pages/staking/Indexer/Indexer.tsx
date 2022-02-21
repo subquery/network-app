@@ -42,20 +42,20 @@ const IndexerDetails: React.VFC = () => {
 
               <Typography variant="h5">Delegators</Typography>
               {/* Placeholder data */}
-              <DelegatorsList
-                onClick={handleDelegatorClick}
-                delegators={[
-                  {
-                    __typename: 'Delegation',
-                    delegatorAddress: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
-                    amount: {
-                      era: 2,
-                      value: BigNumber.from(0),
-                      valueAfter: BigNumber.from('1001000000000000000000'),
-                    },
-                  },
-                ]}
-              />
+              {/*<DelegatorsList
+                              onClick={handleDelegatorClick}
+                              delegators={[
+                                {
+                                  __typename: 'Delegation',
+                                  delegatorAddress: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
+                                  amount: {
+                                    era: 2,
+                                    value: BigNumber.from(0),
+                                    valueAfter: BigNumber.from('1001000000000000000000'),
+                                  },
+                                },
+                              ]}
+                            />*/}
               {renderAsyncArray(
                 mapAsync((data) => data.indexer?.delegations.nodes.filter(notEmpty), delegators),
                 {

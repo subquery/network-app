@@ -64,6 +64,8 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
     const tx = await contracts.sqToken.increaseAllowance(contracts.staking.address, utils.parseEther('1000'));
 
     await tx.wait();
+
+    hasAllowance.refetch();
   };
 
   const title = `${type} ${action} SQT to this Indexer`;
@@ -126,6 +128,12 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
 
   const eraValue = useEraValue(currentStake.data);
 
+  const handleCloseModal = () => {
+    setShowDelegationModal(undefined);
+    // Reload because they probably have updated stake
+    currentStake.refetch();
+  };
+
   return (
     <>
       <ReactModal
@@ -136,7 +144,7 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
       >
         <ChangeDelegationModal
           indexerAddress={indexerAddress}
-          onClose={() => setShowDelegationModal(undefined)}
+          onClose={handleCloseModal}
           type={showDelegationModal ?? 'add'}
         />
       </ReactModal>

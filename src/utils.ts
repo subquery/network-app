@@ -114,7 +114,7 @@ export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: 
     return handlers.loading();
   } else {
     try {
-      if (!data.data || Array.isArray(data.data)) {
+      if (!data.data || (Array.isArray(data.data) && !data.data.length)) {
         return handlers.empty();
       }
       return handlers.data(data.data);
@@ -176,4 +176,45 @@ export function bnToDate(value: BigNumberish): Date {
   const valueBN = BigNumber.from(value);
 
   return new Date(valueBN.toNumber() * 1000);
+}
+
+class Cancelled extends Error {
+  constructor(reason = '') {
+    super(reason);
+    Object.setPrototypeOf(this, Cancelled.prototype);
+  }
+}
+
+export class CancellablePromise<T> extends Promise<T> {
+  private _isCancelled: false | string = false;
+
+  constructor(promise: Promise<T>) {
+    super((resolve, reject) => {
+      promise.then(
+        (v) => {
+          if (this._isCancelled) {
+            reject(new Cancelled(this._isCancelled));
+            return;
+          }
+          resolve(v);
+        },
+        (e) => {
+          if (this._isCancelled) {
+            reject(new Cancelled(this._isCancelled));
+            return;
+          }
+          reject(e);
+        },
+      );
+    });
+  }
+
+  public cancel(reason?: string): CancellablePromise<T> {
+    this._isCancelled = reason ?? '';
+    return this;
+  }
+
+  public get isCancelled(): boolean {
+    return this._isCancelled !== false;
+  }
 }

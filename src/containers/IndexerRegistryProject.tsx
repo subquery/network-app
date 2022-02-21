@@ -70,7 +70,7 @@ const GET_DELEGATIONS = gql`
 const GET_WITHDRAWLS = gql`
   query GetWithdrawls($delegator: String!, $offset: Int) {
     withdrawls(
-      filter: { delegator: { equalTo: $delegator }, and: { claimed: { isNull: false } } }
+      filter: { delegator: { equalTo: $delegator }, and: { claimed: { equalTo: false } } }
       first: 10
       offset: $offset
     ) {
