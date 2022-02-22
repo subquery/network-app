@@ -29,8 +29,8 @@ const GET_INDEXER = gql`
 
 const GET_INDEXERS = gql`
   ${INDEXER_FIELDS}
-  query GetIndexers($offset: Int) {
-    indexers(first: 10, offset: $offset) {
+  query GetIndexers($offset: Int, $order: IndexersOrderBy = ID_ASC) {
+    indexers(first: 10, offset: $offset, orderBy: [$order]) {
       nodes {
         ...IndexerFields
       }
