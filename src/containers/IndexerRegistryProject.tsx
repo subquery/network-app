@@ -6,6 +6,8 @@ import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDel
 import { GetIndexer, GetIndexerVariables } from '../__generated__/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/GetIndexerDelegators';
 import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers';
+import { GetPlans, GetPlansVariables } from '../__generated__/GetPlans';
+import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/GetPlanTemplates';
 import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
 
 const INDEXER_FIELDS = gql`
@@ -15,6 +17,17 @@ const INDEXER_FIELDS = gql`
     controller
     commission
     totalStake
+  }
+`;
+
+const PLAN_TEMPLATE_FIELDS = gql`
+  fragment PlanTemplateFields on PlanTemplate {
+    id
+    period
+    dailyReqCap
+    rateLimit
+    metadata
+    active
   }
 `;
 
@@ -87,6 +100,35 @@ const GET_WITHDRAWLS = gql`
   }
 `;
 
+const GET_PLAN_TEMPLATES = gql`
+  ${PLAN_TEMPLATE_FIELDS}
+  query GetPlanTemplates($offset: Int) {
+    planTemplates(first: 10, offset: $offset, filter: { active: { equalTo: true } }) {
+      nodes {
+        ...PlanTemplateFields
+      }
+    }
+  }
+`;
+
+const GET_PLANS = gql`
+  ${PLAN_TEMPLATE_FIELDS}
+  query GetPlans($address: String!) {
+    plans(filter: { creator: { equalTo: $address } }) {
+      nodes {
+        id
+        active
+        creator
+        deploymentId
+        price
+        planTemplate {
+          ...PlanTemplateFields
+        }
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
 }
@@ -105,4 +147,12 @@ export function useDelegations(params: GetDelegationsVariables): QueryResult<Get
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
   return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params });
+}
+
+export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult<GetPlanTemplates> {
+  return useQuery<GetPlanTemplates, GetPlanTemplatesVariables>(GET_PLAN_TEMPLATES, { variables: params });
+}
+
+export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
+  return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params });
 }

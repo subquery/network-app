@@ -5,5 +5,6 @@ import Home from './Home';
 import Explorer from './explorer';
 import Studio from './studio';
 import Staking from './staking';
+import Plans from './plans';
 
-export { Home, Explorer, Studio, Staking };
+export { Home, Explorer, Studio, Staking, Plans };

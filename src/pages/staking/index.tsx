@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Button, Spinner, Typography } from '@subql/react-ui';
 import { EraProvider, useEra, useIndexers } from '../../containers';
 import { canStartNewEra } from '../../containers/Era';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../utils';
+import { mapAsync, notEmpty, renderAsync, renderAsyncArray } from '../../utils';
 import { Route, Switch, useHistory } from 'react-router';
 import Indexer from './Indexer';
 import Delegator from './Delegator';
@@ -22,16 +22,23 @@ const Staking: React.VFC = () => {
   return (
     <div className="content-width">
       <Typography variant="h3">Era</Typography>
-      {currentEra && (
-        <>
-          <Typography variant="h6"> Current Era</Typography>
-          <Typography>{`Number: ${currentEra.index}`}</Typography>
-          <Typography>{`Start time: ${currentEra.startTime.toLocaleString()}`}</Typography>
-          <Typography>{`Period: ${currentEra.period}`}</Typography>
+      {renderAsync(currentEra, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load era: ${e.message}`}</Typography>,
+        data: (era) => {
+          if (!era) return null;
+          return (
+            <>
+              <Typography variant="h6"> Current Era</Typography>
+              <Typography>{`Number: ${era.index}`}</Typography>
+              <Typography>{`Start time: ${era.startTime.toLocaleString()}`}</Typography>
+              <Typography>{`Period: ${era.period}`}</Typography>
 
-          <Button label="Start New Era" disabled={!canStartNewEra(currentEra)} onClick={initEra} />
-        </>
-      )}
+              <Button label="Start New Era" disabled={!canStartNewEra(era)} onClick={initEra} />
+            </>
+          );
+        },
+      })}
 
       <Typography variant="h3">Indexers</Typography>
 

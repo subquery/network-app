@@ -52,6 +52,7 @@ const App: React.VFC = () => {
               <Route component={pages.Studio} path="/studio" />
               <Route component={pages.Explorer} path="/explorer" />
               <Route component={pages.Staking} path="/staking" />
+              <Route component={pages.Plans} path="/plans" />
               <Route component={pages.Home} />
             </Switch>
           </div>

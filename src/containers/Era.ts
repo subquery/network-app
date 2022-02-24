@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useState } from 'react';
+import { useAsyncMemo } from '../hooks';
 import { bnToDate } from '../utils';
 import { createContainer, Logger } from './Container';
 import { useContracts } from './Contracts';
@@ -19,9 +20,7 @@ export function canStartNewEra(era: Era): boolean {
 function useEraImpl(logger: Logger) {
   const pendingContracts = useContracts();
 
-  const [currentEra, setCurrentEra] = useState<Era>();
-
-  const getCurrentEra = useCallback(async () => {
+  const { refetch, ...currentEra } = useAsyncMemo(async () => {
     if (!pendingContracts) {
       logger.w('contracts not available');
       return;
@@ -41,8 +40,6 @@ function useEraImpl(logger: Logger) {
       index: index.toNumber(),
     };
 
-    setCurrentEra(era);
-
     return era;
   }, [pendingContracts, logger]);
 
@@ -58,18 +55,39 @@ function useEraImpl(logger: Logger) {
 
     await tx.wait();
 
-    getCurrentEra();
+    refetch();
   };
 
-  useEffect(() => {
-    getCurrentEra();
-  }, [getCurrentEra]);
+  const subNewEra = useCallback(async () => {
+    const contracts = await pendingContracts;
 
-  // TODO subscribe to new era events
+    if (!contracts) return () => undefined;
+
+    const filter = contracts.eraManager.filters.NewEraStart();
+
+    const handler = () => refetch();
+
+    contracts.eraManager.on(filter, handler);
+
+    return () => {
+      return contracts.eraManager.off(filter, handler);
+    };
+  }, [pendingContracts, refetch]);
+
+  useEffect(() => {
+    let unsub: () => void;
+
+    subNewEra().then((_unsub) => {
+      unsub = _unsub;
+    });
+
+    return () => {
+      unsub?.();
+    };
+  }, [subNewEra]);
 
   return {
     initEra,
-    getCurrentEra,
     currentEra,
   };
 }

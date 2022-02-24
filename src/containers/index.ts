@@ -16,4 +16,4 @@ export {
 export { useUserProjects, UserProjectsProvider } from './UserProjects';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
 export { useEra, EraProvider } from './Era';
-export { useIndexer, useIndexers, useIndexerDelegators, useDelegations, useWithdrawls } from './IndexerRegistryProject';
+export * from './IndexerRegistryProject';

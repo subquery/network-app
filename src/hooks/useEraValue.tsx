@@ -69,7 +69,7 @@ export function useEraValue(value: GraphQL_JSON): CurrentEraValue | undefined {
     assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
     const eraValue = convertRawEraValue(value);
 
-    if (currentEra?.index && currentEra.index > eraValue.era) {
+    if (currentEra.data?.index && currentEra.data.index > eraValue.era) {
       return { current: eraValue.valueAfter };
     }
 
