@@ -63,9 +63,9 @@ const Header: React.VFC = () => {
           >
             <Typography /*className={styles.hostedText}*/>{t('header.hosted')}</Typography>
           </Dropdown>
+          {renderLink('/staking', t('header.staking'))}
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
-          {renderLink('/staking', t('header.staking'))}
           <Button
             href="https://doc.subquery.network"
             target="_blank"
