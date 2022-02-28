@@ -48,7 +48,7 @@ export const NETWORK_CONFIGS = {
       decimals: 18,
     },
     rpcUrls: [RPC_URLS[1280]],
-    blockExplorerUrls: [],
+    blockExplorerUrls: null,
   },
 };
 

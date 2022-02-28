@@ -19,7 +19,14 @@ import {
   QueryRegistryProjectProvider,
   UserProjectsProvider,
   IndexerRegistryProvider,
+  useWeb3,
 } from './containers';
+import { useTranslation } from 'react-i18next';
+import { NETWORK_CONFIGS } from './containers/Web3';
+import { UnsupportedChainIdError } from '@web3-react/core';
+// TODO move styles
+import studioStyles from './pages/studio/index.module.css';
+import { Button } from '@subql/react-ui';
 
 const Providers: React.FC = ({ children }) => {
   return (
@@ -41,6 +48,29 @@ const Providers: React.FC = ({ children }) => {
   );
 };
 
+const BlockchainStatus: React.FC = ({ children }) => {
+  const { error } = useWeb3();
+  const { t } = useTranslation();
+
+  const isMetaMask = React.useMemo(() => !!window.ethereum?.isMetaMask, []);
+
+  const handleSwitchNetwork = () => {
+    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['sqn-testnet']]);
+  };
+
+  if (error instanceof UnsupportedChainIdError) {
+    return (
+      <div className={['content-width', studioStyles.networkContainer].join(' ')}>
+        <p className={studioStyles.networkTitle}>{t('unsupportedNetwork.title')}</p>
+        <p className={studioStyles.networkSubtitle}>{t('unsupportedNetwork.subtitle')}</p>
+        {isMetaMask && <Button label={t('unsupportedNetwork.button')} type="primary" onClick={handleSwitchNetwork} />}
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
 const App: React.VFC = () => {
   return (
     <Providers>
@@ -48,13 +78,15 @@ const App: React.VFC = () => {
         <Router>
           <Header />
           <div className="Main">
-            <Switch>
-              <Route component={pages.Studio} path="/studio" />
-              <Route component={pages.Explorer} path="/explorer" />
-              <Route component={pages.Staking} path="/staking" />
-              <Route component={pages.Plans} path="/plans" />
-              <Route component={pages.Home} />
-            </Switch>
+            <BlockchainStatus>
+              <Switch>
+                <Route component={pages.Studio} path="/studio" />
+                <Route component={pages.Explorer} path="/explorer" />
+                <Route component={pages.Staking} path="/staking" />
+                <Route component={pages.Plans} path="/plans" />
+                <Route component={pages.Home} />
+              </Switch>
+            </BlockchainStatus>
           </div>
           <Footer />
         </Router>
