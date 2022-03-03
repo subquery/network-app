@@ -3,6 +3,11 @@
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
 import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDelegations';
+import { GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
+import {
+  GetDeploymentServiceAgreements,
+  GetDeploymentServiceAgreementsVariables,
+} from '../__generated__/GetDeploymentServiceAgreements';
 import { GetIndexer, GetIndexerVariables } from '../__generated__/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/GetIndexerDelegators';
 import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers';
@@ -28,6 +33,15 @@ const PLAN_TEMPLATE_FIELDS = gql`
     rateLimit
     metadata
     active
+  }
+`;
+
+const SERVICE_AGREEMENT_FIELDS = gql`
+  fragment ServiceAgreementFields on ServiceAgreement {
+    id
+    deploymentId
+    indexerAddress
+    consumerAddress
   }
 `;
 
@@ -129,6 +143,17 @@ const GET_PLANS = gql`
   }
 `;
 
+const GET_DEPLOYMENT_SERVICE_AGREEMENTS = gql`
+  ${SERVICE_AGREEMENT_FIELDS}
+  query GetDeploymentServiceAgreements($deploymentId: String!) {
+    serviceAgreements(filter: { deploymentId: { equalTo: $deploymentId } }) {
+      nodes {
+        ...ServiceAgreementFields
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
 }
@@ -155,4 +180,13 @@ export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult
 
 export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
   return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params });
+}
+
+export function useDeploymentServiceAgreements(
+  params: GetDeploymentServiceAgreementsVariables,
+): QueryResult<GetDeploymentServiceAgreements> {
+  return useQuery<GetDeploymentServiceAgreements, GetDeploymentServiceAgreementsVariables>(
+    GET_DEPLOYMENT_SERVICE_AGREEMENTS,
+    { variables: params },
+  );
 }
