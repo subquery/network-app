@@ -12,6 +12,8 @@ import { GetIndexer_indexer as Indexer } from '../../../__generated__/GetIndexer
 import { DelegatorsList } from '../../../components';
 import Commission from './Commission';
 import OwnDelegation from './OwnDelegation';
+import { useIndexerCapacity } from '../../../hooks';
+import { formatEther } from '@ethersproject/units';
 
 const Header: React.FC<{ indexer: Indexer }> = (props) => {
   return null;
@@ -23,6 +25,7 @@ const IndexerDetails: React.VFC = () => {
 
   const asyncIndexer = useIndexer({ address });
   const delegators = useIndexerDelegators({ id: address });
+  const capacity = useIndexerCapacity(address);
 
   const handleDelegatorClick = (delegatorAddress: string) => history.push(`/staking/delegator/${delegatorAddress}`);
 
@@ -39,6 +42,12 @@ const IndexerDetails: React.VFC = () => {
           return (
             <div>
               {/*<Header indexer={data.indexer}/>*/}
+              <Typography variant="h5">Capacity</Typography>
+              {renderAsync(capacity, {
+                error: (e) => <Typography>{`Failed to load capacity`}</Typography>,
+                loading: () => <Spinner />,
+                data: (data) => <Typography>{`${data && formatEther(data)} SQT`}</Typography>,
+              })}
 
               <Typography variant="h5">Delegators</Typography>
               {/* Placeholder data */}

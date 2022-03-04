@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
+import { GetDelegation, GetDelegationVariables } from '../__generated__/GetDelegation';
 import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDelegations';
-import { GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
 import {
   GetDeploymentServiceAgreements,
   GetDeploymentServiceAgreementsVariables,
@@ -74,6 +74,14 @@ const GET_INDEXER_DELEGATORS = gql`
           amount
         }
       }
+    }
+  }
+`;
+
+const GET_DELEGATION = gql`
+  query GetDelegation($id: String!) {
+    delegation(id: $id) {
+      amount
     }
   }
 `;
@@ -164,6 +172,12 @@ export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexe
 
 export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): QueryResult<GetIndexerDelegators> {
   return useQuery<GetIndexerDelegators, GetIndexerDelegatorsVariables>(GET_INDEXER_DELEGATORS, { variables: params });
+}
+
+export function useDelegation(indexer: string, delegator: string): QueryResult<GetDelegation> {
+  return useQuery<GetDelegation, GetDelegationVariables>(GET_DELEGATION, {
+    variables: { id: `${indexer}:${delegator}` },
+  });
 }
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
