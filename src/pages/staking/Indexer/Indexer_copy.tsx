@@ -10,7 +10,7 @@ import { useIndexer, useIndexerDelegators } from '../../../containers';
 import { mapAsync, notEmpty, renderAsyncArray, renderAsync } from '../../../utils';
 import { GetIndexer_indexer as Indexer } from '../../../__generated__/GetIndexer';
 import { DelegatorsList } from '../../../components';
-import Commission from './Commission';
+// import Commission from './SetCommission/SetCommission';
 import OwnDelegation from './OwnDelegation';
 import { useIndexerCapacity } from '../../../hooks';
 import { formatEther } from '@ethersproject/units';
@@ -74,7 +74,7 @@ const IndexerDetails: React.VFC = () => {
                   empty: () => <Typography>No Delegators</Typography>,
                 },
               )}
-              <Commission indexerAddress={address} />
+              {/* <Commission indexerAddress={address} /> */}
               <OwnDelegation indexerAddress={address} />
             </div>
           );

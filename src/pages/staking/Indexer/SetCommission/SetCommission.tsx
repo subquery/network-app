@@ -8,11 +8,11 @@ import { Form, Formik } from 'formik';
 import React from 'react';
 import ReactModal from 'react-modal';
 import * as yup from 'yup';
-import { FTextInput } from '../../../components';
-import { useContracts, useWeb3 } from '../../../containers';
-import { useAsyncMemo, useEraValue } from '../../../hooks';
-import { currentEraValueToString, EraValue } from '../../../hooks/useEraValue';
-import { newModalStyles, renderAsync } from '../../../utils';
+import { FTextInput } from '../../../../components';
+import { useContracts, useWeb3 } from '../../../../containers';
+import { useAsyncMemo, useEraValue } from '../../../../hooks';
+import { currentEraValueToString, EraValue } from '../../../../hooks/useEraValue';
+import { newModalStyles, renderAsync } from '../../../../utils';
 
 const CommissionSchema = yup.object({
   amount: yup
@@ -32,12 +32,13 @@ const CommissionModal: React.VFC<{ currentAmount: number; onClose: () => void }>
   const pendingContracts = useContracts();
 
   const updateCommission = async (data: CommissionFormProps) => {
+    console.log('data', data);
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-
+    console.log('contracts', contracts);
     // TODO validation
     const tx = await contracts.indexerRegistry.setCommissionRate(Math.floor(data.amount * 10));
-
+    console.log('tx', tx);
     await tx.wait();
 
     onClose();
@@ -50,7 +51,7 @@ const CommissionModal: React.VFC<{ currentAmount: number; onClose: () => void }>
       onSubmit={updateCommission}
     >
       {({ submitForm }) => (
-        <Modal title={`Update your commission rate`} submitText="Update" onSubmit={submitForm}>
+        <Modal title={`Update your commission rate`} submitText="Update" cancelText="Cancel" onSubmit={submitForm}>
           <Form>
             <FTextInput label="Percent" id="amount" />
           </Form>
@@ -60,7 +61,7 @@ const CommissionModal: React.VFC<{ currentAmount: number; onClose: () => void }>
   );
 };
 
-const Commission: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }) => {
+export const SetCommission: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }) => {
   const { account } = useWeb3();
 
   const pendingContracts = useContracts();
@@ -78,7 +79,7 @@ const Commission: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }) =
     }));
   }, [indexerAddress, pendingContracts]);
 
-  const commissionValue = useEraValue(commission?.data);
+  const commissionValue = 0;
 
   return (
     <div>
@@ -115,5 +116,3 @@ const Commission: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }) =
     </div>
   );
 };
-
-export default Commission;

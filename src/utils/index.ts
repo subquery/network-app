@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber, BigNumberish, utils } from 'ethers';
+export * from './numberFormatters';
 
 export function truncateAddress(address: string): string {
   if (!address) {

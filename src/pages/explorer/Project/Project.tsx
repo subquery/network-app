@@ -103,7 +103,7 @@ const Project: React.VFC = () => {
       }
 
       return (
-        <div>
+        <div className={styles.container}>
           <div className={styles.upper}>
             <div className="content-width">
               <ProjectHeader

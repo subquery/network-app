@@ -133,6 +133,7 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
     // Reload because they probably have updated stake
     currentStake.refetch();
   };
+  console.log('currentStake', currentStake);
 
   return (
     <>

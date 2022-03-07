@@ -153,6 +153,27 @@ const en = {
     errors: {
       transactionRejected: 'User rejected the request',
     },
+    indexer: {
+      profile: 'My profile',
+      currentEra: 'Current Era',
+      indexing: 'Indexing',
+      totalStakeAmount: 'Total Stake amount',
+      rewards: 'Rewards',
+      locked: 'Locked',
+      totalStake: 'total stake',
+      commission: 'commission',
+      delegated: 'delegated',
+      capacity: 'capacity',
+    },
+
+    delegate: {
+      title: 'Delegate',
+      delegating: 'Delegating',
+      totalDelegation: 'Total Delegation to indexer(s)',
+      delegator: 'Delegator',
+      currentEra: 'Current Era',
+      nextEra: 'Next Era',
+    },
   },
 };
 

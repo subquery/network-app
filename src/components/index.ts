@@ -25,6 +25,9 @@ import Copy from './Copy';
 import Status from './Status';
 export { default as IndexerList } from './IndexerList';
 export { default as DelegatorsList } from './DelegatorsList';
+export * from './Sidebar';
+export * from './Card';
+export * from './CurEra';
 
 export {
   Header,

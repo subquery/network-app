@@ -19,7 +19,6 @@ export function canStartNewEra(era: Era): boolean {
 
 function useEraImpl(logger: Logger) {
   const pendingContracts = useContracts();
-  console.log('pendingContracts', pendingContracts);
 
   const { refetch, ...currentEra } = useAsyncMemo(async () => {
     if (!pendingContracts) {
@@ -28,7 +27,6 @@ function useEraImpl(logger: Logger) {
     }
 
     const { eraManager } = await pendingContracts;
-    console.log('eraManager', eraManager);
 
     const [period, index, startTime] = await Promise.all([
       eraManager.eraPeriod(),

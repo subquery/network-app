@@ -3,6 +3,7 @@
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/GetDelegation';
+import { GetAllDelegations, GetAllDelegationsVariables } from '../__generated__/GetAllDelegations';
 import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDelegations';
 import {
   GetDeploymentServiceAgreements,
@@ -50,6 +51,13 @@ const GET_INDEXER = gql`
   query GetIndexer($address: String!) {
     indexer(id: $address) {
       ...IndexerFields
+      delegations {
+        nodes {
+          delegatorAddress
+          indexerAddress
+          amount
+        }
+      }
     }
   }
 `;
@@ -82,6 +90,22 @@ const GET_DELEGATION = gql`
   query GetDelegation($id: String!) {
     delegation(id: $id) {
       amount
+    }
+  }
+`;
+
+const GET_ALL_DELEGATIONS = gql`
+  query GetAllDelegations($offset: Int) {
+    delegations(offset: $offset) {
+      nodes {
+        id
+        delegatorAddress
+        indexerAddress
+        amount
+        indexer {
+          metadata
+        }
+      }
     }
   }
 `;
@@ -178,6 +202,9 @@ export function useDelegation(indexer: string, delegator: string): QueryResult<G
   return useQuery<GetDelegation, GetDelegationVariables>(GET_DELEGATION, {
     variables: { id: `${indexer}:${delegator}` },
   });
+}
+export function useAllDelegations(params: GetAllDelegationsVariables): QueryResult<GetAllDelegations> {
+  return useQuery<GetAllDelegations, GetAllDelegationsVariables>(GET_ALL_DELEGATIONS, { variables: params });
 }
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
