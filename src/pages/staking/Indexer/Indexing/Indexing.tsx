@@ -6,10 +6,10 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-u
 import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
-import Delegator from '../Delegator';
+import { OwnDelegator } from '../OwnDelegator';
 // import { SetCommission } from '../SetCommission';
 import { useWeb3 } from '../../../../containers';
-// import OwnDelegation from '../OwnDelegation';
+import OwnDelegation from '../OwnDelegation';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -78,6 +78,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
         />
         {/* <SetCommission indexerAddress={account || ''} />
         <OwnDelegation indexerAddress={account || ''} /> */}
+        <OwnDelegation indexerAddress={account || ''} />
       </div>
 
       <div>
@@ -142,7 +143,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
         </div>
 
         {curTab === SectionTabs.Projects && <div>Projects</div>}
-        {curTab === SectionTabs.Delegator && <Delegator delegations={delegations} />}
+        {curTab === SectionTabs.Delegator && <OwnDelegator delegations={delegations} />}
       </div>
     </div>
   );

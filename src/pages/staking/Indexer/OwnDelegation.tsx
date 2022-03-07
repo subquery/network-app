@@ -40,11 +40,12 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
   const addDelegation = async (props: DelegationFormProps) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-
+    console.log('props', props);
+    console.log('contracts', contracts);
     // TODO check allowance
 
     const ether = parseEther(props.amount.toString());
-
+    console.log('ether', ether);
     const tx = await (account === indexerAddress
       ? type === 'add'
         ? contracts.indexerRegistry.stake(ether)
@@ -52,8 +53,9 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
       : type === 'add'
       ? contracts.staking.delegate(indexerAddress, ether)
       : contracts.staking.undelegate(indexerAddress, ether));
-
-    await tx.wait();
+    console.log('tx', tx);
+    const test = await tx.wait();
+    console.log('test', test);
     onClose();
   };
 
@@ -88,14 +90,21 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
   if (type === 'add') {
     return renderAsync(hasAllowance, {
       loading: () => (
-        <Modal title={title} submitText={submitText} onSubmit={() => null}>
+        <Modal title={title} submitText={submitText} onSubmit={() => null} cancelText="Cancel">
           <Spinner />
         </Modal>
       ),
       error: () => null,
       data: (allowance) => {
         if (allowance?.isZero()) {
-          return <Modal title="Approve SQT for staking" submitText="Approve" onSubmit={increaseAllowance} />;
+          return (
+            <Modal
+              title="Approve SQT for staking"
+              submitText="Approve"
+              onSubmit={increaseAllowance}
+              cancelText="Cancel"
+            />
+          );
         } else {
           return renderDefault();
         }

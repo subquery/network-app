@@ -6,13 +6,13 @@ import * as React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
 import { EraValue } from '../Indexing/Indexing';
-import styles from './index.module.css';
+import styles from './OwnDelegator.module.css';
 
 interface Props {
   delegations: EraValue[];
 }
 
-export const Delegator: React.VFC<Props> = ({ delegations }) => {
+export const OwnDelegator: React.VFC<Props> = ({ delegations }) => {
   const { t } = useTranslation();
   const tableHeaders = [
     '#',
@@ -57,5 +57,3 @@ export const Delegator: React.VFC<Props> = ({ delegations }) => {
     </div>
   );
 };
-
-export default Delegator;
