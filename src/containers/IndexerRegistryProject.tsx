@@ -16,6 +16,7 @@ import { GetPlans, GetPlansVariables } from '../__generated__/GetPlans';
 import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/GetPlanTemplates';
 import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
 import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
+import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -203,6 +204,25 @@ const GET_REWARDS = gql`
   }
 `;
 
+const GET_INDEXER_REWARDS = gql`
+  query GetIndexerRewards($address: String!, $era1: String!, $era2: String!) {
+    indexerRewards(
+      filter: {
+        indexerAddress: { equalTo: $address }
+        and: { eraIdx: { equalTo: $era1 } }
+        or: { eraIdx: { equalTo: $era2 } }
+      }
+    ) {
+      nodes {
+        id
+        indexerAddress
+        eraIdx
+        amount
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
 }
@@ -251,4 +271,8 @@ export function useDeploymentServiceAgreements(
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
   return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params });
+}
+
+export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
+  return useQuery<GetIndexerRewards, GetIndexerRewardsVariables>(GET_INDEXER_REWARDS, { variables: params });
 }
