@@ -189,6 +189,15 @@ const GET_REWARDS = gql`
         delegatorAddress
         indexerAddress
         amount
+        claimedTime
+      }
+    }
+    unclaimedRewards(filter: { delegatorAddress: { equalTo: $address } }) {
+      nodes {
+        id
+        delegatorAddress
+        indexerAddress
+        amount
       }
     }
   }
