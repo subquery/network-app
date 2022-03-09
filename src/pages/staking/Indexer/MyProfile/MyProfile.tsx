@@ -25,9 +25,6 @@ export const MyProfile: React.VFC = () => {
   const { account } = useWeb3();
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account || '' });
-  const delegationData = useDelegations({ delegator: account || '' });
-
-  console.log('delegationData', delegationData);
 
   const { t } = useTranslation();
 

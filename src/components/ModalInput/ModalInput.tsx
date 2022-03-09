@@ -19,19 +19,27 @@ import styles from './ModalInput.module.css';
 interface Props {
   inputTitle?: string;
   submitText?: string;
-  maxBalance?: number;
+  curAmount?: number;
+  showMaxButton?: boolean;
+  inputBottomText?: string;
   unit?: string;
   isLoading?: boolean;
+  max?: number;
+  min?: number;
   onSubmit: (value: any) => void;
 }
 
 export const ModalInput: React.FC<Props> = ({
   inputTitle,
   submitText,
-  maxBalance,
   onSubmit,
   unit = 'SQT',
   isLoading,
+  curAmount,
+  showMaxButton,
+  inputBottomText,
+  min,
+  max,
 }) => {
   const formik = useFormik({
     initialValues: {
@@ -48,15 +56,17 @@ export const ModalInput: React.FC<Props> = ({
   const Prefix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
-      <Button
-        shape="round"
-        size="large"
-        onClick={() => {
-          formik.setFieldValue('input', maxBalance);
-        }}
-      >
-        Max
-      </Button>
+      {showMaxButton && (
+        <Button
+          shape="round"
+          size="large"
+          onClick={() => {
+            formik.setFieldValue('input', curAmount);
+          }}
+        >
+          Max
+        </Button>
+      )}
     </div>
   );
 
@@ -72,12 +82,16 @@ export const ModalInput: React.FC<Props> = ({
             formik.setFieldValue('input', value);
           }}
           value={formik.values.input}
-          addonAfter={maxBalance && <Prefix />}
+          addonAfter={<Prefix />}
           disabled={isLoading}
+          max={max}
+          min={min}
         />
       </div>
-      {maxBalance && (
-        <Typography className={styles.balance} variant="medium">{`Balance: ${maxBalance} ${unit}`}</Typography>
+      {(inputBottomText || curAmount) && (
+        <Typography className={styles.balance} variant="medium">
+          {inputBottomText || `Current: ${curAmount} ${unit}`}
+        </Typography>
       )}
       <div className={styles.btnContainer}>
         <Button

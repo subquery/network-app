@@ -1,16 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/react-ui';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
 import { OwnDelegator } from '../OwnDelegator';
-// import { SetCommission } from '../SetCommission';
 import { useWeb3 } from '../../../../containers';
-import OwnDelegation from '../OwnDelegation';
 import { DoStake } from '../DoStake';
+import { SetCommissionRate } from '../SetCommissionRate';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -57,16 +56,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
       </div>
       <div className={styles.btns}>
         <DoStake />
-        <Button
-          label="Change commission rate"
-          onClick={() => console.log('Change commission rate')}
-          className={styles.btn}
-          size="medium"
-          type="secondary"
-        />
-        {/* <SetCommission indexerAddress={account || ''} />
-        <OwnDelegation indexerAddress={account || ''} /> */}
-        {/* <OwnDelegation indexerAddress={account || ''} /> */}
+        <SetCommissionRate />
       </div>
 
       <div>

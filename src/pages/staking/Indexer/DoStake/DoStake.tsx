@@ -13,35 +13,43 @@ import { parseEther } from '@ethersproject/units';
 
 enum StakeAction {
   Stake = 'stake',
-  UNStake = 'unstake',
+  UnStake = 'unstake',
 }
 
-const getStakeText = (t: (s: any) => any) => ({
-  title: t('indexer.stake'),
-  steps: [t('indexer.enterStakeAmount'), t('indexer.confirmOnMetamask')],
-  description: t('indexer.stakeValidNextEra'),
-  inputTitle: t('indexer.stakeInputTitle'),
-  submitText: t('indexer.confirmStake'),
-});
+const getContentText = (actionType: StakeAction | undefined, t: any) => {
+  if (!actionType) return {};
+  if (actionType === StakeAction.Stake) {
+    return {
+      title: t('indexer.stake'),
+      steps: [t('indexer.enterStakeAmount'), t('indexer.confirmOnMetamask')],
+      description: t('indexer.stakeValidNextEra'),
+      inputTitle: t('indexer.stakeInputTitle'),
+      submitText: t('indexer.confirmStake'),
+    };
+  }
 
-const getUnstakeText = (t: (s: any) => any) => ({
-  title: t('indexer.unstake'),
-  steps: [t('indexer.enterUnstakeAmount'), t('indexer.confirmOnMetamask')],
-  description: t('indexer.unstakeValidNextEra'),
-  inputTitle: t('indexer.unstakeInputTitle'),
-  submitText: t('indexer.confirmUnstake'),
-});
+  if (actionType === StakeAction.UnStake) {
+    return {
+      title: t('indexer.unstake'),
+      steps: [t('indexer.enterUnstakeAmount'), t('indexer.confirmOnMetamask')],
+      description: t('indexer.unstakeValidNextEra'),
+      inputTitle: t('indexer.unstakeInputTitle'),
+      submitText: t('indexer.confirmUnstake'),
+    };
+  }
+};
 
 export const DoStake: React.VFC = () => {
-  const [stakeAction, setStakeAction] = React.useState<StakeAction | null>();
+  const [stakeAction, setStakeAction] = React.useState<StakeAction | undefined>();
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { account, balance } = useBalance();
   const pendingContracts = useContracts();
   const { t } = useTranslation();
 
-  const maxBalance = stakeAction === StakeAction.Stake ? balance : undefined;
-  const modalText = stakeAction === StakeAction.Stake ? getStakeText(t) : getUnstakeText(t);
+  const curAmount = stakeAction === StakeAction.Stake ? balance : undefined;
+  const showMaxButton = stakeAction === StakeAction.Stake;
+  const modalText = getContentText(stakeAction, t);
   const handleBtnClick = (stakeAction: StakeAction) => {
     setStakeAction(stakeAction);
     setShowModal(true);
@@ -75,17 +83,19 @@ export const DoStake: React.VFC = () => {
   return (
     <div className={styles.btns}>
       <Modal
-        title={modalText.title}
-        description={modalText.description}
+        title={modalText?.title}
+        description={modalText?.description}
         visible={showModal}
         onCancel={() => setShowModal(false)}
-        steps={modalText.steps}
+        steps={modalText?.steps}
         amountInput={
           <ModalInput
-            inputTitle={modalText.inputTitle}
+            inputTitle={modalText?.inputTitle}
+            submitText={modalText?.submitText}
             onSubmit={(amount: number) => onSubmit(amount)}
-            maxBalance={maxBalance}
+            curAmount={curAmount}
             isLoading={isLoading}
+            showMaxButton={showMaxButton}
           />
         }
       />
@@ -97,7 +107,7 @@ export const DoStake: React.VFC = () => {
       />
       <Button
         label={t('indexer.unstake')}
-        onClick={() => handleBtnClick(StakeAction.UNStake)}
+        onClick={() => handleBtnClick(StakeAction.UnStake)}
         className={styles.btn}
         size="medium"
       />
