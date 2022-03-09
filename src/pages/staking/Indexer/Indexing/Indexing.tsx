@@ -10,6 +10,7 @@ import { OwnDelegator } from '../OwnDelegator';
 // import { SetCommission } from '../SetCommission';
 import { useWeb3 } from '../../../../containers';
 import OwnDelegation from '../OwnDelegation';
+import { DoStake } from '../DoStake';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -55,20 +56,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
         <Typography>Data displayed after means the data that will take into effect from next era.</Typography>
       </div>
       <div className={styles.btns}>
-        <Button
-          label="Stake"
-          onClick={() => console.log('Stake')}
-          className={styles.btn}
-          size="medium"
-          type="secondary"
-        />
-        <Button
-          label="UnStake"
-          onClick={() => console.log('UnStake')}
-          className={styles.btn}
-          size="medium"
-          type="secondary"
-        />
+        <DoStake />
         <Button
           label="Change commission rate"
           onClick={() => console.log('Change commission rate')}
@@ -78,7 +66,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
         />
         {/* <SetCommission indexerAddress={account || ''} />
         <OwnDelegation indexerAddress={account || ''} /> */}
-        <OwnDelegation indexerAddress={account || ''} />
+        {/* <OwnDelegation indexerAddress={account || ''} /> */}
       </div>
 
       <div>

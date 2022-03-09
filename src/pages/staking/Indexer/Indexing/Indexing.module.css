@@ -8,6 +8,7 @@
 }
 
 .btns {
+  display: flex;
   margin: 1rem 0;
 }
 

@@ -164,6 +164,19 @@ const en = {
       commission: 'commission',
       delegated: 'delegated',
       capacity: 'capacity',
+      stake: 'Stake',
+      unstake: 'Unstake',
+      updateCommissionRate: 'Change commission rate',
+      enterStakeAmount: 'Enter Staking Amount',
+      confirmOnMetamask: 'Confirm On MetaMask',
+      stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
+      stakeInputTitle: 'Enter the amount of SQT you want to stake',
+      confirmStake: 'Confirm Stake',
+      enterUnstakeAmount: 'Enter Unstake Amount',
+      unstakeValidNextEra:
+        'Tokens will be unstaked from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards.',
+      unstakeInputTitle: 'Enter the amount of SQT you want to unstake',
+      confirmUnstake: 'Confirm Unstake',
     },
 
     delegate: {

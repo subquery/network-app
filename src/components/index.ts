@@ -28,6 +28,8 @@ export { default as DelegatorsList } from './DelegatorsList';
 export * from './Sidebar';
 export * from './Card';
 export * from './CurEra';
+export * from './Modal';
+export * from './ModalInput';
 
 export {
   Header,

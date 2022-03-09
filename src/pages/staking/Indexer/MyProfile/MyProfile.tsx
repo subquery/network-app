@@ -24,15 +24,11 @@ export const MyProfile: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
   const { account } = useWeb3();
   const { currentEra } = useEra();
-  const location = useLocation();
-  console.log('location', location);
-
   const indexerData = useIndexer({ address: account || '' });
 
   const { t } = useTranslation();
 
   const { loading: loadingIndexer, data: indexer } = indexerData;
-  console.log('indexerInfo', indexer?.indexer);
 
   const commission = useEraValue(indexer?.indexer?.commission ?? null);
   const sortedCurCommission = convertBigNumberToNumber(commission?.current ?? 0);
