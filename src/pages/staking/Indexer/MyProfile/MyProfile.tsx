@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useEra, useIndexer, useWeb3 } from '../../../../containers';
+import { useDelegation, useDelegations, useEra, useIndexer, useWeb3 } from '../../../../containers';
 import { convertBigNumberToNumber, convertStringToNumber, formatEther } from '../../../../utils';
 import { useLocation } from 'react-router';
 import { Card, CurEra, Sidebar } from '../../../../components';
@@ -25,6 +25,9 @@ export const MyProfile: React.VFC = () => {
   const { account } = useWeb3();
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account || '' });
+  const delegationData = useDelegations({ delegator: account || '' });
+
+  console.log('delegationData', delegationData);
 
   const { t } = useTranslation();
 

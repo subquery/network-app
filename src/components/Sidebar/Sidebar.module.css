@@ -27,7 +27,7 @@
 }
 
 .activeNav {
-  color: var(--gray900);
+  color: inherit;
 }
 
 .stakingDetails {

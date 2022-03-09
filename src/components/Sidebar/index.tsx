@@ -8,6 +8,7 @@ import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineBarChart } from 'react-icons/ai';
+import clsx from 'clsx';
 
 export const Sidebar: React.VFC = () => {
   const location = useLocation();
@@ -39,7 +40,7 @@ export const Sidebar: React.VFC = () => {
     <div className={styles.sidebar}>
       {sidebarList.map((sidebarItem) => (
         <NavLink
-          className={`${styles.navLink} ${sidebarItem.activeStyle}`}
+          className={(isActive) => clsx(styles.navLink, isActive && styles.activeNav)}
           to={sidebarItem.link}
           key={sidebarItem.link}
         >
