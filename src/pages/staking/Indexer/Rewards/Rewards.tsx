@@ -7,13 +7,16 @@ import { Button, Spinner, Typography } from '@subql/react-ui';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@subql/react-ui/dist/components/Table';
 import assert from 'assert';
 import * as React from 'react';
-import { useWeb3, useRewards, useContracts } from '../../../containers';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
-import { GetRewards_rewards_nodes as Reward } from '../../../__generated__/GetRewards';
+import { useWeb3, useRewards, useContracts } from '../../../../containers';
+import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
+import {
+  GetRewards_rewards_nodes as Reward,
+  GetRewards_unclaimedRewards_nodes as UnclaimedReward,
+} from '../../../../__generated__/GetRewards';
 
-const RewardsItem: React.VFC<{
+const UnclaimedRewardItem: React.VFC<{
   key: string;
-  reward: Reward;
+  reward: UnclaimedReward;
   onCollectRewards?: () => void;
 }> = ({ key, reward, onCollectRewards }) => {
   return (
@@ -27,6 +30,23 @@ const RewardsItem: React.VFC<{
     </TableRow>
   );
 };
+
+const ClaimedReward: React.VFC<{
+  key: string;
+  reward: Reward;
+}> = ({ key, reward }) => {
+  return (
+    <TableRow>
+      <TableCell>{key}</TableCell>
+      <TableCell>{reward.indexerAddress}</TableCell>
+      <TableCell>{`${formatEther(BigNumber.from(reward.amount))} SQT`}</TableCell>
+    </TableRow>
+  );
+};
+
+function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
+  return !!(reward as Reward).claimedTime;
+}
 
 const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) => {
   const { account } = useWeb3();
@@ -46,11 +66,17 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
   };
 
   return renderAsyncArray(
-    mapAsync((data) => data.rewards?.nodes.filter(notEmpty), rewards),
+    mapAsync(
+      (data) =>
+        ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
+          data.rewards?.nodes.filter(notEmpty) ?? [],
+        ),
+      rewards,
+    ),
     {
       error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
       loading: () => <Spinner />,
-      empty: () => <Typography>You have no rewards, you can earn rewards by delegating to an indexer</Typography>,
+      empty: () => <Typography>You have no rewards</Typography>,
       data: (data) => (
         <>
           <Table>
@@ -58,18 +84,22 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>Indexer</TableCell>
-                <TableCell>Unclaimed</TableCell>
+                <TableCell>Amount</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {/* TODO render unclaimed rewards*/}
-              {data.map((reward, index) => (
-                <RewardsItem
-                  reward={reward}
-                  key={index.toString()}
-                  onCollectRewards={account ? () => handleCollectRewards(reward.indexerAddress) : undefined}
-                />
-              ))}
+              {data.map((reward, index) =>
+                isClaimedReward(reward) ? (
+                  <ClaimedReward reward={reward} key={index.toString()} />
+                ) : (
+                  <UnclaimedRewardItem
+                    reward={reward}
+                    key={index.toString()}
+                    onCollectRewards={account ? () => handleCollectRewards(reward.indexerAddress) : undefined}
+                  />
+                ),
+              )}
             </TableBody>
           </Table>
         </>

@@ -3906,7 +3906,7 @@
     reflect-metadata "^0.1.13"
     sequelize "^6.6.2"
 
-"@subql/contract-sdk@^0.1.1-41":
+"@subql/contract-sdk@0.1.1-41":
   version "0.1.1-41"
   resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.1-41.tgz#2e53271d9c598fa4a3dc49d10aad798e198c997e"
   integrity sha512-tjYhzOGqFHl4Kk7BG+vwFP1BCxz0U1OA/QLGOTdTt5ZAtrSE/9xsGls22UC3j3D80gf0XtRst2rdzEfwF1zEfQ==

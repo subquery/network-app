@@ -10,9 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer } from '../../../../hooks';
-import { Locked } from '../../Locked/Home/Locked';
 import { AsyncData, mergeAsync, renderAsync } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
+import Rewards from '../Rewards/Rewards';
+import { Locked } from '../../Locked/Home/Locked';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -93,6 +94,7 @@ export const MyProfile: React.VFC = () => {
           </div>
           {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
           {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
+          {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
           {curTab === SectionTabs.Locked && <Locked />}
         </div>
       </div>

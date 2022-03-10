@@ -8,7 +8,6 @@ import styles from './SetCommissionRate.module.css';
 import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import { ModalInput, Modal } from '../../../../components';
-import { useBalance } from '../../../../hooks/useBalance';
 import { ModalStatus } from '../../../../components/ModalStatus';
 
 export const SetCommissionRate: React.VFC = () => {
@@ -17,7 +16,6 @@ export const SetCommissionRate: React.VFC = () => {
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
 
-  // const { account, balance } = useBalance();
   const pendingContracts = useContracts();
   const { t } = useTranslation();
   // TODO:useCommission
@@ -47,7 +45,7 @@ export const SetCommissionRate: React.VFC = () => {
   const onSubmit = async (amount: number) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    const tx = await contracts.indexerRegistry.setCommissionRate(Math.floor(amount * 10));
+    const tx = await contracts.staking.setCommissionRate(Math.floor(amount * 10));
     setIsLoading(true);
 
     const txResult = await tx.wait();
