@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
 import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
-import { convertRawEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
@@ -24,15 +24,8 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
     const convertedTotalStake = parseRawEraValue(indexer.totalStake as RawEraValue, currentEra.data?.index);
 
-    const sortedCommission = {
-      current: convertBigNumberToNumber(convertedCommission?.current ?? 0),
-      after: convertBigNumberToNumber(convertedCommission?.after ?? 0),
-    };
-
-    const sortedTotalStake = {
-      current: formatEther(convertedTotalStake?.current ?? 0),
-      after: formatEther(convertedTotalStake?.after ?? 0),
-    };
+    const sortedCommission = mapEraValue(convertedCommission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0)));
+    const sortedTotalStake = mapEraValue(convertedTotalStake, (v) => formatEther(v ?? 0));
 
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
