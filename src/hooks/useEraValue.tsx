@@ -58,10 +58,10 @@ export function currentEraValueToString(
   return `${formatValue(value.current)}${after}`;
 }
 
-export function parseRawEraValue(
-  eraValue: EraValue<BigNumber>,
-  curEra: number | undefined,
-): CurrentEraValue | undefined {
+export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined): CurrentEraValue | undefined {
+  assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
+  const eraValue = convertRawEraValue(value);
+
   if (curEra && curEra > eraValue.era) {
     return { current: eraValue.valueAfter };
   }
@@ -79,9 +79,6 @@ export function useEraValue(value: GraphQL_JSON): CurrentEraValue | undefined {
       return undefined;
     }
 
-    assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
-    const eraValue = convertRawEraValue(value);
-
-    return parseRawEraValue(eraValue, currentEra.data?.index);
+    return parseRawEraValue(value, currentEra.data?.index);
   }, [currentEra, value]);
 }

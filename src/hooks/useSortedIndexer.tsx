@@ -1,8 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
-import { useEra, useIndexer, useWeb3 } from '../containers';
+import { useEra, useIndexer } from '../containers';
 import { convertBigNumberToNumber, convertStringToNumber, formatEther, toPercentage } from '../utils';
 import { convertRawEraValue, parseRawEraValue, RawEraValue, useEraValue } from './useEraValue';
 
@@ -44,8 +43,7 @@ export function useSortedIndexer(account: string): UseSortedIndexerReturn {
 
   const delegations = indexer?.indexer?.delegations?.nodes ?? [];
   const sortedDelegationList = delegations.map((delegation) => {
-    const sortedDelegation = convertRawEraValue(delegation?.amount as RawEraValue);
-    const parsedEraValue = parseRawEraValue(sortedDelegation, currentEra.data?.index);
+    const parsedEraValue = parseRawEraValue(delegation?.amount as RawEraValue, currentEra.data?.index);
     const current = convertStringToNumber(formatEther(parsedEraValue?.current));
     const after = convertStringToNumber(formatEther(parsedEraValue?.after));
     return { current, after, delegator: delegation?.delegatorAddress, indexer: delegation?.indexerAddress };

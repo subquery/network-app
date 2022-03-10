@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
 import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
-import { convertRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { convertRawEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
@@ -21,22 +21,18 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   const { t } = useTranslation();
 
   const sortedIndexerList = indexers.map((indexer) => {
-    const convertedCommission = convertRawEraValue(indexer.commission as RawEraValue);
-    const convertedTotalStake = convertRawEraValue(indexer.totalStake as RawEraValue);
+    const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
+    const convertedTotalStake = parseRawEraValue(indexer.totalStake as RawEraValue, currentEra.data?.index);
 
-    const formattedCurCommission = convertBigNumberToNumber(convertedCommission.value);
-    const formattedAfterCommission = convertBigNumberToNumber(convertedCommission.valueAfter);
-    const sortedCommission =
-      convertedCommission.era < (currentEra.data?.index || 0)
-        ? { value: formattedAfterCommission, valueAfter: 0 }
-        : { value: formattedCurCommission, valueAfter: formattedAfterCommission };
+    const sortedCommission = {
+      current: convertBigNumberToNumber(convertedCommission?.current ?? 0),
+      after: convertBigNumberToNumber(convertedCommission?.after ?? 0),
+    };
 
-    const formattedCurTotalStake = formatEther(convertedTotalStake.value);
-    const formattedAfterTotalStake = formatEther(convertedTotalStake.valueAfter);
-    const sortedTotalStake =
-      convertedTotalStake.era < (currentEra.data?.index || 0)
-        ? { value: formattedAfterTotalStake, valueAfter: 0 }
-        : { value: formattedCurTotalStake, valueAfter: formattedAfterTotalStake };
+    const sortedTotalStake = {
+      current: formatEther(convertedTotalStake?.current ?? 0),
+      after: formatEther(convertedTotalStake?.after ?? 0),
+    };
 
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
@@ -77,16 +73,16 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
                   <Typography>{`${indexer.id === account ? 'You' : indexer.id}`}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{indexer.totalStake.value || 0}</Typography>
+                  <Typography>{indexer.totalStake.current || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{indexer.totalStake.value || 0}</Typography>
+                  <Typography>{indexer.totalStake.after || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{toPercentage(indexer.commission.value || 0)}</Typography>
+                  <Typography>{indexer.commission.current || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{toPercentage(indexer.commission.value || 0)}</Typography>
+                  <Typography>{indexer.commission.after || 0}</Typography>
                 </TableCell>
               </TableRow>
             ))}
