@@ -7,34 +7,23 @@ import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
 import { OwnDelegator } from '../OwnDelegator';
-import { useWeb3 } from '../../../../containers';
 import { DoStake } from '../DoStake';
 import { SetCommissionRate } from '../SetCommissionRate';
+import { CurrentEraValue } from '../../../../hooks/useEraValue';
+import { AsyncData, renderAsync } from '../../../../utils';
+import { useSortedIndexer } from '../../../../hooks';
 
 enum SectionTabs {
   Projects = 'Projects',
   Delegator = 'Delegator',
 }
 
-export interface EraValue {
-  current?: string | number | undefined;
-  after?: string | number | undefined;
-  delegator?: string | undefined;
-  indexer?: string | undefined;
-}
-
 interface Props {
-  tableData: {
-    totalStake: EraValue;
-    ownStake: EraValue;
-    commission: EraValue;
-    totalDelegations: EraValue;
-  };
-  delegations: EraValue[];
+  tableData: ReturnType<typeof useSortedIndexer>;
+  delegations: AsyncData<{ value: CurrentEraValue<number>; indexer: string; delegator: string }[]>;
 }
 
 export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
-  const { account } = useWeb3();
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
   const { t } = useTranslation();
 
@@ -70,41 +59,47 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
           </TableHead>
 
           <TableBody>
-            {!tableData && <Spinner />}
-            {tableData && (
-              <TableRow>
-                <TableCell>
-                  <div>
-                    <Typography>{tableData.totalStake?.current || 0}</Typography>
-                    <Typography>{tableData.totalStake?.after || 0}</Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <Typography>{tableData.ownStake?.current || 0}</Typography>
-                    <Typography>{tableData.ownStake?.after || 0}</Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <Typography>{tableData.commission?.current || 0}</Typography>
-                    <Typography>{tableData.commission?.after || 0}</Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <Typography>{tableData.totalDelegations?.current || 0}</Typography>
-                    <Typography>{tableData.totalDelegations?.after || 0}</Typography>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <Typography>-</Typography>
-                    <Typography>-</Typography>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
+            {renderAsync(tableData, {
+              loading: () => <Spinner />,
+              error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
+              data: (data) => {
+                if (!data) return null;
+                return (
+                  <TableRow>
+                    <TableCell>
+                      <div>
+                        <Typography>{data.totalStake?.current || 0}</Typography>
+                        <Typography>{data.totalStake?.after || 0}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <Typography>{data.ownStake?.current || 0}</Typography>
+                        <Typography>{data.ownStake?.after || 0}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <Typography>{data.commission?.current || 0}</Typography>
+                        <Typography>{data.commission?.after || 0}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <Typography>{data.totalDelegations?.current || 0}</Typography>
+                        <Typography>{data.totalDelegations?.after || 0}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <Typography>-</Typography>
+                        <Typography>-</Typography>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              },
+            })}
           </TableBody>
         </Table>
       </div>
@@ -121,7 +116,12 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
         </div>
 
         {curTab === SectionTabs.Projects && <div>Projects</div>}
-        {curTab === SectionTabs.Delegator && <OwnDelegator delegations={delegations} />}
+        {curTab === SectionTabs.Delegator &&
+          renderAsync(delegations, {
+            loading: () => <Spinner />,
+            error: (e) => <Typography>{`Failed to load delegations: ${e}`}</Typography>,
+            data: (data) => (data ? <OwnDelegator delegations={data} /> : null),
+          })}
       </div>
     </div>
   );

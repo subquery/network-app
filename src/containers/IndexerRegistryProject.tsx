@@ -51,13 +51,6 @@ const GET_INDEXER = gql`
   query GetIndexer($address: String!) {
     indexer(id: $address) {
       ...IndexerFields
-      delegations {
-        nodes {
-          delegatorAddress
-          indexerAddress
-          amount
-        }
-      }
     }
   }
 `;

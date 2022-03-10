@@ -21,7 +21,7 @@ export interface EraValue<T = BigNumberish> {
 // What we get from the subquery project
 export type RawEraValue = EraValue<JSONBigInt>;
 
-export type CurrentEraValue = { current: BigNumber; after?: BigNumber };
+export type CurrentEraValue<T = BigNumber> = { current: T; after?: T };
 
 export function isEraValue<T = BigNumberish>(value: GraphQL_JSON): value is EraValue<T> {
   return (
@@ -58,7 +58,7 @@ export function currentEraValueToString(
   return `${formatValue(value.current)}${after}`;
 }
 
-export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined): CurrentEraValue | undefined {
+export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined): CurrentEraValue {
   assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
   const eraValue = convertRawEraValue(value);
 
@@ -69,6 +69,14 @@ export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined
   const after = eraValue.value.eq(eraValue.valueAfter) ? undefined : eraValue.valueAfter;
 
   return { current: eraValue.value, after };
+}
+
+export function mapEraValue<T>(eraValue: CurrentEraValue, fn: (value?: BigNumber) => T): CurrentEraValue<T> {
+  return {
+    ...eraValue,
+    current: fn(eraValue.current),
+    after: eraValue.after && fn(eraValue.after),
+  };
 }
 
 export function useEraValue(value: GraphQL_JSON): CurrentEraValue | undefined {

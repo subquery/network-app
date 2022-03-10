@@ -1,66 +1,74 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEra, useIndexer } from '../containers';
-import { convertBigNumberToNumber, convertStringToNumber, formatEther, toPercentage } from '../utils';
-import { convertRawEraValue, parseRawEraValue, RawEraValue, useEraValue } from './useEraValue';
-
-type SortedValue = {
-  current: number | string | undefined;
-  after: number | string | undefined;
-  delegator?: string;
-  indexer?: string;
-};
+import { BigNumber } from '@ethersproject/bignumber';
+import { useDelegation, useEra, useIndexer } from '../containers';
+import {
+  AsyncData,
+  convertBigNumberToNumber,
+  convertStringToNumber,
+  formatEther,
+  mergeAsync,
+  toPercentage,
+} from '../utils';
+import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
 
 interface UseSortedIndexerReturn {
-  loading: boolean;
-  commission: SortedValue;
-  totalStake: SortedValue;
-  ownStake: SortedValue;
-  totalDelegations: SortedValue;
-  delegationList: SortedValue[];
+  commission: CurrentEraValue<string>;
+  totalStake: CurrentEraValue<number>;
+  ownStake: CurrentEraValue<number>;
+  totalDelegations: CurrentEraValue<number>;
 }
 
-export function useSortedIndexer(account: string): UseSortedIndexerReturn {
+export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
+  const indexerDelegation = useDelegation(account, account);
   console.log('indexerData', indexerData);
 
-  const { loading, data: indexer } = indexerData;
+  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 
-  const commission = useEraValue(indexer?.indexer?.commission ?? null);
-  const sortedCurCommission = convertBigNumberToNumber(commission?.current ?? 0);
-  const sortedNextCommission = convertBigNumberToNumber(commission?.after ?? 0);
-  const sortedCommission = { current: toPercentage(sortedCurCommission), after: toPercentage(sortedNextCommission) };
+  if (loading) {
+    return { loading: true, data: undefined };
+  } else if (error) {
+    return { loading: false, error: indexerData.error };
+  } else if (!data) {
+    return { loading: false, error: new Error('No data') };
+  }
 
-  const totalStake = useEraValue(indexer?.indexer?.totalStake ?? null);
-  const sortedCurTotalStake = formatEther(totalStake?.current ?? 0);
-  const sortedAfterTotalStake = formatEther(totalStake?.after ?? 0);
-  const sortedTotalStake = {
-    current: convertStringToNumber(sortedCurTotalStake),
-    after: convertStringToNumber(sortedAfterTotalStake),
-  };
+  const [currentEraValue, indexer, delegation] = data;
 
-  const delegations = indexer?.indexer?.delegations?.nodes ?? [];
-  const sortedDelegationList = delegations.map((delegation) => {
-    const parsedEraValue = parseRawEraValue(delegation?.amount as RawEraValue, currentEra.data?.index);
-    const current = convertStringToNumber(formatEther(parsedEraValue?.current));
-    const after = convertStringToNumber(formatEther(parsedEraValue?.after));
-    return { current, after, delegator: delegation?.delegatorAddress, indexer: delegation?.indexerAddress };
-  });
+  if (!currentEraValue || !indexer || !delegation) {
+    return { loading: false, error: new Error('Missing expected async data') };
+  }
 
-  const sortedOwnStake = sortedDelegationList.filter((delegation) => delegation.delegator === account)[0];
+  try {
+    const commission = parseRawEraValue(indexer.indexer?.commission, currentEraValue?.index);
+    const totalStake = parseRawEraValue(indexer.indexer?.totalStake, currentEraValue?.index);
+    const ownStake = parseRawEraValue(delegation.delegation?.amount, currentEraValue?.index);
 
-  const sortedTotalCurDelegation = sortedTotalStake?.current - sortedOwnStake?.current;
-  const sortedTotalAfterDelegation = sortedTotalStake?.after - sortedOwnStake?.after;
-  const sortedTotalDelegations = { current: sortedTotalCurDelegation, after: sortedTotalAfterDelegation };
+    const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0)));
+    const sortedTotalStake = mapEraValue(totalStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
+    const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
 
-  return {
-    loading,
-    commission: sortedCommission,
-    totalStake: sortedTotalStake,
-    ownStake: sortedOwnStake,
-    totalDelegations: sortedTotalDelegations,
-    delegationList: sortedDelegationList,
-  };
+    const totalDelegations = mapEraValue(
+      {
+        current: totalStake?.current.sub(ownStake?.current ?? 0) ?? BigNumber.from(0),
+        after: totalStake?.after?.sub(ownStake?.after ?? 0) ?? BigNumber.from(0),
+      },
+      (v) => convertStringToNumber(formatEther(v ?? 0)),
+    );
+
+    return {
+      loading: false,
+      data: {
+        commission: sortedCommission,
+        totalStake: sortedTotalStake,
+        ownStake: sortedOwnStake,
+        totalDelegations,
+      },
+    };
+  } catch (e) {
+    return { loading: false, error: e as Error };
+  }
 }

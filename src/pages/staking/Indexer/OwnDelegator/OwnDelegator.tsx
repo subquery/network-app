@@ -5,11 +5,11 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
-import { EraValue } from '../Indexing/Indexing';
 import styles from './OwnDelegator.module.css';
+import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 interface Props {
-  delegations: EraValue[];
+  delegations: { value: CurrentEraValue<number>; indexer: string; delegator: string }[];
 }
 
 export const OwnDelegator: React.VFC<Props> = ({ delegations }) => {
@@ -45,10 +45,10 @@ export const OwnDelegator: React.VFC<Props> = ({ delegations }) => {
                   <Typography>{delegation.delegator}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegation.current || 0}</Typography>
+                  <Typography>{delegation.value.current || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegation.after || 0}</Typography>
+                  <Typography>{delegation.value.after || 0}</Typography>
                 </TableCell>
               </TableRow>
             ))}
