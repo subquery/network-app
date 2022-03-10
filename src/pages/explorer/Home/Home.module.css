@@ -5,7 +5,7 @@
 
 .header {
   display: flex;
-  padding: 60px 0;
+  margin: 1rem 0;
   justify-content: space-between;
   align-items: center;
 }

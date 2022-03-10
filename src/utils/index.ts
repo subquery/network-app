@@ -1,7 +1,8 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { utils } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
+export * from './numberFormatters';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -57,11 +58,15 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
 
-export function mergeAsync<T1, T2>(v1: AsyncData<T1>, v2: AsyncData<T2>): AsyncData<[T1 | undefined, T2 | undefined]> {
+export function mergeAsync<T1, T2, T3>(
+  v1: AsyncData<T1>,
+  v2: AsyncData<T2>,
+  v3?: AsyncData<T3>,
+): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined]> {
   return {
-    loading: v1.loading || v2.loading,
-    error: v1.error || v2.error,
-    data: [v1.data, v2.data],
+    loading: v1.loading || v2.loading || !!v3?.loading,
+    error: v1.error || v2.error || v3?.error,
+    data: [v1.data, v2.data, v3?.data],
   };
 }
 
@@ -79,16 +84,44 @@ export function mapAsync<O, T>(scope: (t: T) => O, data: AsyncData<T>): AsyncDat
 
 type RenderResult = React.ReactElement | null;
 
-export function renderAsync<T>(
-  data: AsyncData<T>,
-  handlers: { loading: () => RenderResult; error: (error: Error) => RenderResult; data: (data?: T) => RenderResult },
-): RenderResult {
+type Handlers<T> = {
+  loading: () => RenderResult;
+  error: (error: Error) => RenderResult;
+  data: (data?: T) => RenderResult;
+};
+
+type HandlersArray<T extends any[]> = {
+  loading: () => RenderResult;
+  error: (error: Error) => RenderResult;
+  data: (data: T) => RenderResult;
+  empty: () => RenderResult;
+};
+
+export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): RenderResult {
   if (data.error) {
     return handlers.error(data.error);
   } else if (data.loading) {
     return handlers.loading();
   } else {
     try {
+      return handlers.data(data.data);
+    } catch (e) {
+      // TODO not sure this is desired behaviour
+      return handlers.error(e as Error);
+    }
+  }
+}
+
+export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
+  if (data.error) {
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading();
+  } else {
+    try {
+      if (!data.data || (Array.isArray(data.data) && !data.data.length)) {
+        return handlers.empty();
+      }
       return handlers.data(data.data);
     } catch (e) {
       // TODO not sure this is desired behaviour
@@ -119,6 +152,21 @@ export const modalStyles = {
   },
 };
 
+export const newModalStyles = {
+  content: {
+    top: '40%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    border: '0px',
+  },
+  overlay: {
+    zIndex: 50,
+  },
+};
+
 export interface ProviderRpcError extends Error {
   message: string;
   code: number;
@@ -127,4 +175,51 @@ export interface ProviderRpcError extends Error {
 
 export function isEthError(e: unknown): e is ProviderRpcError {
   return !!(e as ProviderRpcError).code && !!(e as ProviderRpcError).message;
+}
+
+export function bnToDate(value: BigNumberish): Date {
+  const valueBN = BigNumber.from(value);
+
+  return new Date(valueBN.toNumber() * 1000);
+}
+
+class Cancelled extends Error {
+  constructor(reason = '') {
+    super(reason);
+    Object.setPrototypeOf(this, Cancelled.prototype);
+  }
+}
+
+export class CancellablePromise<T> extends Promise<T> {
+  private _isCancelled: false | string = false;
+
+  constructor(promise: Promise<T>) {
+    super((resolve, reject) => {
+      promise.then(
+        (v) => {
+          if (this._isCancelled) {
+            reject(new Cancelled(this._isCancelled));
+            return;
+          }
+          resolve(v);
+        },
+        (e) => {
+          if (this._isCancelled) {
+            reject(new Cancelled(this._isCancelled));
+            return;
+          }
+          reject(e);
+        },
+      );
+    });
+  }
+
+  public cancel(reason?: string): CancellablePromise<T> {
+    this._isCancelled = reason ?? '';
+    return this;
+  }
+
+  public get isCancelled(): boolean {
+    return this._isCancelled !== false;
+  }
 }

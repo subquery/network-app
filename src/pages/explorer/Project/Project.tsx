@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber } from '@ethersproject/bignumber';
@@ -31,7 +31,7 @@ const Project: React.VFC = () => {
   const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
 
   const indexers = React.useMemo(
-    () => asyncIndexers.data?.indexers?.nodes.filter(notEmpty) /*.filter((i) => i.status !== 'TERMINATED')*/,
+    () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty) /*.filter((i) => i.status !== 'TERMINATED')*/,
     [asyncIndexers.data],
   );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
@@ -42,7 +42,7 @@ const Project: React.VFC = () => {
   const indexersStatus = React.useMemo(() => {
     return (
       indexers?.map((i) => ({
-        indexer: i.indexer,
+        indexer: i.indexerAddress,
         latestBlock: BigNumber.from(i.blockHeight).toNumber(),
       })) ?? []
     );
@@ -103,7 +103,7 @@ const Project: React.VFC = () => {
       }
 
       return (
-        <div>
+        <div className={styles.container}>
           <div className={styles.upper}>
             <div className="content-width">
               <ProjectHeader

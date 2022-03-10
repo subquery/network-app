@@ -1,8 +1,10 @@
 .Main {
   min-height: calc(100vh - 246px);
+  display: flex;
+  /* overflow-x: hidden; */
 }
 
 .content-width {
-  max-width: 1200px;
-  margin: auto;
+  width: 100%;
+  padding: 2rem;
 }

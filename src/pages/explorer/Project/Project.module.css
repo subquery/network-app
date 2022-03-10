@@ -1,5 +1,10 @@
+.container {
+  width: 100%;
+}
+
 .progress {
-  padding: 40px 0;
+  margin: 40px 0;
+  width: 90%;
 }
 
 .upper {

@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import Header from './Header';
@@ -23,6 +23,13 @@ import NewProject from './NewProject';
 import ConnectWallet from './ConnectWallet';
 import Copy from './Copy';
 import Status from './Status';
+export { default as IndexerList } from './IndexerList';
+export { default as DelegatorsList } from './DelegatorsList';
+export * from './Sidebar';
+export * from './Card';
+export * from './CurEra';
+export * from './Modal';
+export * from './ModalInput';
 
 export {
   Header,

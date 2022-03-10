@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
@@ -65,6 +65,7 @@ const Header: React.VFC = () => {
           </Dropdown>
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
+          {renderLink('/staking', t('header.staking'))}
           <Button
             href="https://doc.subquery.network"
             target="_blank"

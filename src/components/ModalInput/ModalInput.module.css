@@ -1,0 +1,35 @@
+.input {
+  margin-top: 0.4rem;
+}
+
+.inputNumber {
+  width: 100% !important;
+}
+
+.prefix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unit {
+  color: var(--gray500);
+  margin: 0 0.5rem;
+}
+
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.balance {
+  color: var(--gray500);
+}
+
+.submitBtn {
+  background: var(--gradient-to) !important;
+  color: white !important;
+  min-width: 30%;
+}

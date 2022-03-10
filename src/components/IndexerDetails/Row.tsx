@@ -1,9 +1,9 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { TableRow, TableCell } from '../Table';
 import * as React from 'react';
-import { GetDeploymentIndexers_indexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
+import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
 import { AsyncData, renderAsync, mapAsync } from '../../utils';
@@ -26,7 +26,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
   return (
     <TableRow>
       <TableCell>
-        <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexer} />
+        <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerAddress} />
       </TableCell>
       <TableCell>
         <Progress
@@ -65,7 +65,7 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata'> & { deploymentId?: string 
   deploymentId,
   ...rest
 }) => {
-  const asyncMetadata = useIndexerMetadata(indexer.indexer);
+  const asyncMetadata = useIndexerMetadata(indexer.indexerAddress);
   const asyncMetadataComplete = mapAsync(
     (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
     asyncMetadata,

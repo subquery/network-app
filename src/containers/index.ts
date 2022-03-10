@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { useWeb3, Web3Provider } from './Web3';
@@ -15,3 +15,5 @@ export {
 } from './QueryRegistryProject';
 export { useUserProjects, UserProjectsProvider } from './UserProjects';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
+export { useEra, EraProvider } from './Era';
+export * from './IndexerRegistryProject';

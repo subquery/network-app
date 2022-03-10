@@ -1,0 +1,33 @@
+.card {
+  width: 100%;
+  background: white;
+  margin-left: 1rem;
+  border-radius: 4px;
+  padding: 1.2rem 1rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.category {
+  color: var(--sq-gray500);
+  line-height: 18px;
+}
+
+.title {
+  margin: 0.2rem 0 1rem 0;
+  color: var(--sq-gray900);
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.value {
+  font-weight: 600;
+  color: var(--sq-gray700);
+  margin: 0;
+}
+
+.grayText {
+  color: var(--gray500);
+}

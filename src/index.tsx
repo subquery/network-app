@@ -1,14 +1,14 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // Required because we import @subql/common/dist/project rather than @subql/common
 import 'reflect-metadata';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'antd/dist/antd.css';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>

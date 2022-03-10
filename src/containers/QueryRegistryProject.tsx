@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, QueryResult } from '@apollo/client';
@@ -67,10 +67,10 @@ const GET_PROJECT_DEPLOYMENTS = gql`
 
 const GET_DEPLOYMENT_INDEXERS = gql`
   query GetDeploymentIndexers($deploymentId: String!) {
-    indexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
+    deploymentIndexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
       nodes {
         id
-        indexer
+        indexerAddress
         deploymentId
         blockHeight
         timestamp

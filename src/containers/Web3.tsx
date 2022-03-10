@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
@@ -13,15 +13,18 @@ const RPC_URLS: Record<number, string> = {
   1285: 'wss://moonriver.api.onfinality.io/public-ws',
   1287: 'https://moonbeam-alpha.api.onfinality.io/public',
   1281: 'http://127.0.0.1:9933',
+  1280: 'https://sqtn.api.onfinality.io/public',
 };
 
+const defaultChainId = 1280;
+
 export const injectedConntector = new InjectedConnector({
-  supportedChainIds: [/*1, 1281, 1285, */ 1287],
+  supportedChainIds: [/*1, 1281, 1285, */ defaultChainId],
 });
 
 const networkConnector = new NetworkConnector({
   urls: RPC_URLS,
-  defaultChainId: 1287,
+  defaultChainId,
 });
 
 export const NETWORK_CONFIGS = {
@@ -33,8 +36,19 @@ export const NETWORK_CONFIGS = {
       symbol: 'DEV',
       decimals: 18,
     },
-    rpcUrls: ['https://moonbeam-alpha.api.onfinality.io/public'],
+    rpcUrls: [RPC_URLS[1287]],
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
+  },
+  'sqn-testnet': {
+    chainId: `0x${Number(1280).toString(16)}`,
+    chainName: 'SQN Testnet',
+    nativeCurrency: {
+      name: 'DEV',
+      symbol: 'DEV',
+      decimals: 18,
+    },
+    rpcUrls: [RPC_URLS[1280]],
+    blockExplorerUrls: null,
   },
 };
 

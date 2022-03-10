@@ -1,4 +1,4 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { useProject } from './useProject';
@@ -12,3 +12,7 @@ export { useUpdateProjectMetadata } from './useUpdateProjectMetadata';
 export { useOnScreen } from './useOnScreen';
 export { useIndexerMetadata } from './useIndexerMetadata';
 export { useDeploymentMetadata } from './useDeploymentMetadata';
+export { useEraValue } from './useEraValue';
+export { useIPFSMetadata } from './useIPFSMetadata';
+export { useIndexerCapacity } from './useIndexerCapacity';
+export { useSortedIndexer } from './useSortedIndexer';

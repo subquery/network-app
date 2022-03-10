@@ -1,7 +1,8 @@
-// Copyright 2020-2022 OnFinality Limited authors & contributors
+// Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
+import clsx from 'clsx';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styles from './NoIndexers.module.css';
@@ -12,7 +13,7 @@ const NoIndexers: React.VFC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.preContainer}>
-        <i className={['bi-search', styles.search].join(' ')} role="img" aria-label="search" />
+        <i className={clsx('bi-search', styles.search)} role="img" aria-label="search" />
         <Typography variant="medium" className={styles.preTitle}>
           {t('noIndexers.preTitle')}
         </Typography>
