@@ -17,10 +17,10 @@ enum SectionTabs {
 }
 
 export interface EraValue {
-  value?: string | number;
-  valueAfter?: string | number;
-  delegator?: string;
-  indexer?: string;
+  current?: string | number | undefined;
+  after?: string | number | undefined;
+  delegator?: string | undefined;
+  indexer?: string | undefined;
 }
 
 interface Props {
@@ -35,12 +35,12 @@ interface Props {
 
 export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
   const { account } = useWeb3();
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Projects);
+  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
   const { t } = useTranslation();
 
   const tableHeaders = [
     t('indexer.totalStake').toLocaleUpperCase(),
-    'own stake',
+    t('indexer.ownStake').toLocaleUpperCase(),
     t('indexer.commission').toUpperCase(),
     t('indexer.delegated').toUpperCase(),
     t('indexer.capacity').toUpperCase(),
@@ -75,26 +75,26 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
               <TableRow>
                 <TableCell>
                   <div>
-                    <Typography>{tableData.totalStake?.value || 0}</Typography>
-                    <Typography>{tableData.totalStake?.valueAfter || 0}</Typography>
+                    <Typography>{tableData.totalStake?.current || 0}</Typography>
+                    <Typography>{tableData.totalStake?.after || 0}</Typography>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <Typography>{tableData.ownStake?.value || 0}</Typography>
-                    <Typography>{tableData.ownStake?.valueAfter || 0}</Typography>
+                    <Typography>{tableData.ownStake?.current || 0}</Typography>
+                    <Typography>{tableData.ownStake?.after || 0}</Typography>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <Typography>{tableData.commission?.value || 0}</Typography>
-                    <Typography>{tableData.commission?.valueAfter || 0}</Typography>
+                    <Typography>{tableData.commission?.current || 0}</Typography>
+                    <Typography>{tableData.commission?.after || 0}</Typography>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <Typography>{tableData.totalDelegations?.value || 0}</Typography>
-                    <Typography>{tableData.totalDelegations?.valueAfter || 0}</Typography>
+                    <Typography>{tableData.totalDelegations?.current || 0}</Typography>
+                    <Typography>{tableData.totalDelegations?.after || 0}</Typography>
                   </div>
                 </TableCell>
                 <TableCell>

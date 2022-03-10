@@ -45,10 +45,10 @@ export const OwnDelegator: React.VFC<Props> = ({ delegations }) => {
                   <Typography>{delegation.delegator}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegation.value || 0}</Typography>
+                  <Typography>{delegation.current || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegation.valueAfter || 0}</Typography>
+                  <Typography>{delegation.after || 0}</Typography>
                 </TableCell>
               </TableRow>
             ))}

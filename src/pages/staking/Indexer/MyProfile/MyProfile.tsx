@@ -3,15 +3,14 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useDelegation, useDelegations, useEra, useIndexer, useWeb3 } from '../../../../containers';
-import { convertBigNumberToNumber, convertStringToNumber, formatEther } from '../../../../utils';
+import { useWeb3 } from '../../../../containers';
 import { useLocation } from 'react-router';
 import { Card, CurEra, Sidebar } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
-import { convertRawEraValue, RawEraValue, useEraValue } from '../../../../hooks/useEraValue';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
+import { useSortedIndexer } from '../../../../hooks';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -22,69 +21,30 @@ enum SectionTabs {
 
 export const MyProfile: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
-  const { account } = useWeb3();
-  const { currentEra } = useEra();
-  const indexerData = useIndexer({ address: account || '' });
-
   const { t } = useTranslation();
+  const { account } = useWeb3();
+  const { loading, commission, totalStake, ownStake, totalDelegations, delegationList } = useSortedIndexer(
+    account || '',
+  );
 
-  const { loading: loadingIndexer, data: indexer } = indexerData;
-
-  const commission = useEraValue(indexer?.indexer?.commission ?? null);
-  const sortedCurCommission = convertBigNumberToNumber(commission?.current ?? 0);
-  const sortedNextCommission = convertBigNumberToNumber(commission?.after ?? 0);
-  const sortedCommission = { value: sortedCurCommission, valueAfter: sortedNextCommission };
-
-  const totalStake = useEraValue(indexer?.indexer?.totalStake ?? null);
-  const sortedCurTotalStake = formatEther(totalStake?.current ?? 0);
-  const sortedAfterTotalStake = formatEther(totalStake?.after ?? 0);
-  const sortedTotalStake = { value: sortedCurTotalStake, valueAfter: sortedAfterTotalStake };
-
-  // TODO: refactor
-  // TODO: confirm with design, whether show own delegate
-  const delegations = indexer?.indexer?.delegations?.nodes ?? [];
-  const sortedDelegationList = delegations.map((delegation) => {
-    const delegator = delegation?.delegatorAddress;
-    const indexer = delegation?.indexerAddress;
-    const sortedDelegation = convertRawEraValue(delegation?.amount as RawEraValue);
-    const value = formatEther(sortedDelegation.value);
-    const valueAfter = formatEther(sortedDelegation.valueAfter);
-    const era = sortedDelegation.era;
-    if (currentEra.data?.index && currentEra.data?.index > era) {
-      return { value: valueAfter, delegator, indexer };
-    } else {
-      return { value, valueAfter, delegator, indexer };
-    }
-  });
-
-  const sortedTotalCurDelegation = sortedDelegationList.reduce((a, b) => {
-    return a + convertStringToNumber(b.value);
-  }, 0);
-
-  const sortedTotalAfterDelegation = sortedDelegationList.reduce((a, b) => {
-    return a + convertStringToNumber(b?.valueAfter ?? '0');
-  }, 0);
-
-  const sortedOwnStake = sortedDelegationList.filter((delegation) => delegation.delegator === account)[0];
-
-  const sortedTotalDelegations = { value: sortedTotalCurDelegation, after: sortedTotalAfterDelegation };
+  // TODO: Table component
   const tableData = {
-    totalStake: sortedTotalStake,
-    ownStake: sortedOwnStake,
-    commission: sortedCommission,
-    totalDelegations: sortedTotalDelegations,
+    totalStake: totalStake,
+    ownStake: ownStake,
+    commission: commission,
+    totalDelegations: totalDelegations,
   };
 
   const cards = [
     {
       category: t('indexer.indexing'),
       title: t('indexer.totalStakeAmount'),
-      value: `${sortedCurTotalStake} SQT`,
+      value: `${totalStake.current} SQT`,
     },
     {
       category: t('delegate.delegating'),
       title: t('delegate.totalDelegation'),
-      value: `${sortedTotalCurDelegation} SQT`,
+      value: `${totalStake.current} SQT`,
     },
   ];
 
@@ -106,8 +66,8 @@ export const MyProfile: React.VFC = () => {
 
         <div className={styles.profile}>
           {/* TODO CONNECT WALLET HINT */}
-          {loadingIndexer && <Spinner />}
-          {!loadingIndexer && indexer?.indexer && (
+          {loading && <Spinner />}
+          {!loading && totalStake && (
             <>
               <div>{<Address address={account ?? ''} size="large" />}</div>
               <div className={styles.stakingSummary}>
@@ -129,9 +89,9 @@ export const MyProfile: React.VFC = () => {
               </div>
             ))}
           </div>
-          {curTab === SectionTabs.Indexing && <Indexing tableData={tableData} delegations={sortedDelegationList} />}
+          {curTab === SectionTabs.Indexing && <Indexing tableData={tableData} delegations={delegationList} />}
           {curTab === SectionTabs.Delegating && (
-            <Delegating delegating={sortedDelegationList.filter((delegation) => delegation.indexer !== account)} />
+            <Delegating delegating={delegationList.filter((delegation) => delegation.indexer !== account)} />
           )}
         </div>
       </div>

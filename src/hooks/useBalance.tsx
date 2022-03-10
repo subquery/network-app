@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState, useRef, RefObject } from 'react';
+import { useEffect, useState } from 'react';
 import { useWeb3 } from '../containers';
 import { convertStringToNumber, formatEther } from '../utils';
 

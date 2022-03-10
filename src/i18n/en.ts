@@ -161,6 +161,7 @@ const en = {
       rewards: 'Rewards',
       locked: 'Locked',
       totalStake: 'total stake',
+      ownStake: 'own stake',
       commission: 'commission',
       delegated: 'delegated',
       capacity: 'capacity',

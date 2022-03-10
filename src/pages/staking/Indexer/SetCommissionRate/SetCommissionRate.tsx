@@ -4,7 +4,6 @@
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import assert from 'assert';
-import { parseEther } from '@ethersproject/units';
 import styles from './SetCommissionRate.module.css';
 import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
@@ -17,8 +16,8 @@ export const SetCommissionRate: React.VFC = () => {
   const { account, balance } = useBalance();
   const pendingContracts = useContracts();
   const { t } = useTranslation();
-
-  const curAmount = 10;
+  // TODO:useCommission
+  // const curAmount = 10;
   const unit = '%';
   const modalText = {
     title: t('indexer.updateCommissionRate'),
@@ -41,7 +40,7 @@ export const SetCommissionRate: React.VFC = () => {
     assert(contracts, 'Contracts not available');
     const tx = await contracts.indexerRegistry.setCommissionRate(Math.floor(amount * 10));
     setIsLoading(true);
-    console.log('tx', tx);
+
     const txResult = await tx.wait();
     // TODO: error/success handler - need design confirm
     console.log('txResult', txResult?.status);
@@ -62,7 +61,7 @@ export const SetCommissionRate: React.VFC = () => {
             inputTitle={modalText?.inputTitle}
             submitText={modalText?.submitText}
             onSubmit={(amount: number) => onSubmit(amount)}
-            curAmount={curAmount}
+            // curAmount={curAmount}
             isLoading={isLoading}
             unit={unit}
             max={100}

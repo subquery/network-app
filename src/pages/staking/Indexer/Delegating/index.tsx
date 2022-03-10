@@ -48,10 +48,10 @@ export const Delegator: React.VFC<Props> = ({ delegating }) => {
                   <Typography>{delegating.indexer}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegating.value || 0}</Typography>
+                  <Typography>{delegating.current || 0}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{delegating.valueAfter || 0}</Typography>
+                  <Typography>{delegating.after || 0}</Typography>
                 </TableCell>
               </TableRow>
             ))}
