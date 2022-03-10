@@ -15,3 +15,4 @@ export { useDeploymentMetadata } from './useDeploymentMetadata';
 export { useEraValue } from './useEraValue';
 export { useIPFSMetadata } from './useIPFSMetadata';
 export { useIndexerCapacity } from './useIndexerCapacity';
+export { useSortedIndexer } from './useSortedIndexer';

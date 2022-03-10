@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber, BigNumberish, utils } from 'ethers';
+export * from './numberFormatters';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -57,11 +58,15 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
 
-export function mergeAsync<T1, T2>(v1: AsyncData<T1>, v2: AsyncData<T2>): AsyncData<[T1 | undefined, T2 | undefined]> {
+export function mergeAsync<T1, T2, T3>(
+  v1: AsyncData<T1>,
+  v2: AsyncData<T2>,
+  v3?: AsyncData<T3>,
+): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined]> {
   return {
-    loading: v1.loading || v2.loading,
-    error: v1.error || v2.error,
-    data: [v1.data, v2.data],
+    loading: v1.loading || v2.loading || !!v3?.loading,
+    error: v1.error || v2.error || v3?.error,
+    data: [v1.data, v2.data, v3?.data],
   };
 }
 

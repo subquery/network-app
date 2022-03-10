@@ -1,0 +1,45 @@
+.text {
+  color: var(--gray500);
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: scroll;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray500);
+}
+
+.stepNoIcon {
+  align-self: center;
+  margin-right: 6px;
+  font-size: 20px;
+}
+
+.activeStepIcon {
+  color: var(--gradient-to);
+}
+
+.line {
+  width: 3px;
+  border: 1px solid red;
+}
+
+.divider {
+  width: 100px;
+  min-width: 100px;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.description {
+  margin: 1rem 0;
+}

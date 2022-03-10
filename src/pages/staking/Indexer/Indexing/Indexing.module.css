@@ -1,0 +1,39 @@
+.grayText {
+  color: var(--gray500);
+}
+
+.indexing {
+  background: white;
+  padding: 2rem 1rem;
+}
+
+.btns {
+  display: flex;
+  margin: 1rem 0;
+}
+
+.btn {
+  margin-right: 1rem;
+}
+
+.tabList {
+  display: flex;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.tab {
+  background: white;
+  min-width: 5rem;
+  padding: 1rem 1rem 0 1rem;
+  cursor: pointer;
+}
+
+.tabText {
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  background: var(--sq-gradient);
+  height: 2px;
+}
