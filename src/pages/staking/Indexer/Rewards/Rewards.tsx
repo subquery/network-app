@@ -61,7 +61,6 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
     const tx = await contracts.rewardsDistributor.claim(indexer);
 
     tx.wait();
-
     rewards.refetch();
   };
 
@@ -88,7 +87,6 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* TODO render unclaimed rewards*/}
               {data.map((reward, index) =>
                 isClaimedReward(reward) ? (
                   <ClaimedReward reward={reward} key={index.toString()} />
