@@ -106,6 +106,7 @@ const GET_ALL_DELEGATIONS = gql`
 const GET_DELEGATIONS = gql`
   query GetDelegations($delegator: String!, $offset: Int) {
     delegations(filter: { delegatorAddress: { equalTo: $delegator } }, first: 10, offset: $offset) {
+      totalCount
       nodes {
         id
         delegatorAddress

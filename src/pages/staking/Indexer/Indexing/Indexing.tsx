@@ -10,10 +10,10 @@ import { useHistory } from 'react-router';
 import { OwnDelegator } from '../OwnDelegator';
 import { DoStake } from '../DoStake';
 import { SetCommissionRate } from '../SetCommissionRate';
-import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { AsyncData, renderAsync } from '../../../../utils';
+import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
+import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsync } from '../../../../utils';
 import { useSortedIndexer } from '../../../../hooks';
-import { useWeb3 } from '../../../../containers';
+import { useWeb3, useEra, useIndexerDelegators } from '../../../../containers';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -22,10 +22,11 @@ enum SectionTabs {
 
 interface Props {
   tableData: ReturnType<typeof useSortedIndexer>;
-  delegations: AsyncData<{ value: CurrentEraValue<number>; indexer: string; delegator: string }[]>;
+  indexer: string;
 }
 
-export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
+
+export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
   const { t } = useTranslation();
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
   const { account } = useWeb3();
@@ -46,6 +47,20 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
   ];
 
   const tabList = [SectionTabs.Projects, SectionTabs.Delegator];
+
+  const indexerDelegations = useIndexerDelegators({ id: indexer ?? '' });
+  const { currentEra } = useEra();
+
+  const delegation = mapAsync(
+    ([indexer, era]) =>
+      indexer?.indexer?.delegations.nodes.map((delegation) => ({
+        value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
+          convertStringToNumber(formatEther(v ?? 0)),
+        ),
+        delegator: delegation?.delegatorAddress ?? '',
+      })),
+    mergeAsync(indexerDelegations, currentEra),
+  );
 
   return (
     <div className={styles.indexing}>
@@ -127,7 +142,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
 
         {curTab === SectionTabs.Projects && <div>Projects</div>}
         {curTab === SectionTabs.Delegator &&
-          renderAsync(delegations, {
+          renderAsync(delegation, {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load delegations: ${e}`}</Typography>,
             data: (data) => (data ? <OwnDelegator delegations={data} /> : null),
