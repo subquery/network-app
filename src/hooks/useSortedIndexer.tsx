@@ -36,15 +36,20 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     return { loading: false, error: new Error('No data') };
   }
 
-  const [currentEraValue, indexer, delegation] = data;
-
-  if (!currentEraValue || !indexer || !delegation) {
-    return { loading: false, error: new Error('Missing expected async data') };
-  }
-
   try {
-    const commission = parseRawEraValue(indexer.indexer?.commission, currentEraValue?.index);
-    const totalStake = parseRawEraValue(indexer.indexer?.totalStake, currentEraValue?.index);
+    const [currentEraValue, indexer, delegation] = data;
+
+    if (!currentEraValue || !indexer || !delegation) {
+      throw new Error('Missing expected async data');
+    }
+
+    if (!indexer.indexer) {
+      // User is not an indexer
+      return { loading: false };
+    }
+
+    const commission = parseRawEraValue(indexer.indexer.commission, currentEraValue?.index);
+    const totalStake = parseRawEraValue(indexer.indexer.totalStake, currentEraValue?.index);
     const ownStake = parseRawEraValue(delegation.delegation?.amount, currentEraValue?.index);
 
     const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0)));

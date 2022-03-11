@@ -63,7 +63,7 @@ export const MyProfile: React.VFC = () => {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
             data: (data) => {
-              if (!data) return null;
+              if (!data) return <Typography>User is not an indexer</Typography>;
               const { totalStake, totalDelegations } = data;
               const cards = [
                 {
