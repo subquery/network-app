@@ -10,6 +10,8 @@ import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/us
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
+import { DoDelegate } from '../DoDelegate';
+// import { Table, Switch } from 'antd';
 
 interface props {
   indexers: Indexer[];
@@ -29,6 +31,9 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
 
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
+
+  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 0));
+  console.log('orderedIndexerList', orderedIndexerList);
 
   const tableHeaders = [
     '#',
@@ -76,6 +81,9 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
                 </TableCell>
                 <TableCell>
                   <Typography>{indexer.commission.after || 0}</Typography>
+                </TableCell>
+                <TableCell>
+                  <DoDelegate indexerAddress={indexer.id} />
                 </TableCell>
               </TableRow>
             ))}

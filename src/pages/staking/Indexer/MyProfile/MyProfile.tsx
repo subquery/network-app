@@ -13,6 +13,7 @@ import { useSortedIndexer } from '../../../../hooks';
 import { convertStringToNumber, mapAsync, mergeAsync, renderAsync } from '../../../../utils';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { formatEther } from '@ethersproject/units';
+import { Locked } from '../../Locked/Home/Locked';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -42,6 +43,8 @@ export const MyProfile: React.VFC = () => {
       })),
     mergeAsync(indexerDelegations, currentEra),
   );
+
+  console.log('delegationList', delegationList);
 
   return (
     <div className={styles.container}>
@@ -110,6 +113,7 @@ export const MyProfile: React.VFC = () => {
               data: (data) =>
                 data ? <Delegating delegating={data.filter((delegation) => delegation.indexer !== account)} /> : null,
             })}
+          {curTab === SectionTabs.Locked && <Locked />}
         </div>
       </div>
     </div>

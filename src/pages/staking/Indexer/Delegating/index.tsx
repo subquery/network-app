@@ -7,6 +7,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-u
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.css';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
+import { DoUndelegate } from '../DoUndelegate';
 
 interface Props {
   delegating: { indexer: string; value: CurrentEraValue<number> }[];
@@ -16,9 +17,10 @@ export const Delegator: React.VFC<Props> = ({ delegating }) => {
   const { t } = useTranslation();
   const tableHeaders = [
     '#',
-    t('delegate.delegator').toUpperCase(),
+    t('indexer.title').toUpperCase(),
     t('delegate.currentEra').toUpperCase(),
     t('delegate.nextEra').toUpperCase(),
+    t('indexer.action').toUpperCase(),
   ];
 
   return (
@@ -52,6 +54,9 @@ export const Delegator: React.VFC<Props> = ({ delegating }) => {
                 </TableCell>
                 <TableCell>
                   <Typography>{delegating.value.after || 0}</Typography>
+                </TableCell>
+                <TableCell>
+                  <DoUndelegate indexerAddress={delegating.indexer} />
                 </TableCell>
               </TableRow>
             ))}

@@ -10,6 +10,7 @@ import assert from 'assert';
 import { ModalInput, Modal } from '../../../../components';
 import { useBalance } from '../../../../hooks/useBalance';
 import { parseEther } from '@ethersproject/units';
+import { ModalStatus } from '../../../../components/ModalStatus';
 
 enum StakeAction {
   Stake = 'stake',
@@ -43,6 +44,8 @@ export const DoStake: React.VFC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction | undefined>();
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
+  const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
   const { account, balance } = useBalance();
   const pendingContracts = useContracts();
   const { t } = useTranslation();
@@ -53,6 +56,11 @@ export const DoStake: React.VFC = () => {
   const handleBtnClick = (stakeAction: StakeAction) => {
     setStakeAction(stakeAction);
     setShowModal(true);
+  };
+
+  const resetModalStatus = () => {
+    setSuccessModalText(undefined);
+    setErrorModalText(undefined);
   };
 
   const resetModal = () => {
@@ -72,12 +80,14 @@ export const DoStake: React.VFC = () => {
       tx = await contracts.indexerRegistry.unstake(formattedAmount);
     }
     setIsLoading(true);
-    console.log('tx', tx);
     const txResult = await tx.wait();
-    // TODO: error/success handler - need design confirm
-    console.log('txResult', txResult?.status);
-
     resetModal();
+    console.log('txResult', txResult?.status);
+    if (txResult?.status === 1) {
+      setSuccessModalText('Success');
+    } else {
+      setErrorModalText('Error');
+    }
   };
 
   return (
@@ -98,6 +108,12 @@ export const DoStake: React.VFC = () => {
             showMaxButton={showMaxButton}
           />
         }
+      />
+      <ModalStatus
+        visible={!!(errorModalText || successModalText)}
+        onCancel={resetModalStatus}
+        error={!!errorModalText}
+        success={!!successModalText}
       />
       <Button
         label={t('indexer.stake')}
