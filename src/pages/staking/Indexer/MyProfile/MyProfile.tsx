@@ -3,17 +3,16 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useEra, useIndexerDelegators, useWeb3 } from '../../../../containers';
+import { useWeb3 } from '../../../../containers';
 import { Card, CurEra, Sidebar } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer } from '../../../../hooks';
-import { convertStringToNumber, mapAsync, mergeAsync, renderAsync } from '../../../../utils';
-import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
-import { formatEther } from '@ethersproject/units';
 import { Locked } from '../../Locked/Home/Locked';
+import { AsyncData, mergeAsync, renderAsync } from '../../../../utils';
+import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -29,22 +28,9 @@ export const MyProfile: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const sortedIndexer = useSortedIndexer(account || '');
-  const indexerDelegations = useIndexerDelegators({ id: account ?? '' });
-  const { currentEra } = useEra();
 
-  const delegationList = mapAsync(
-    ([indexer, era]) =>
-      indexer?.indexer?.delegations.nodes.map((delegation) => ({
-        value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
-          convertStringToNumber(formatEther(v ?? 0)),
-        ),
-        indexer: account ?? '',
-        delegator: delegation?.delegatorAddress ?? '',
-      })),
-    mergeAsync(indexerDelegations, currentEra),
-  );
-
-  console.log('delegationList', delegationList);
+  /* Placeholder for contracts update */
+  const totalDelegations: AsyncData<CurrentEraValue<number>> = { loading: false, data: { current: 0, after: 0 } }; //useUserDelegations(account);
 
   return (
     <div className={styles.container}>
@@ -62,22 +48,22 @@ export const MyProfile: React.VFC = () => {
 
         <div className={styles.profile}>
           {/* TODO CONNECT WALLET HINT */}
-          {renderAsync(sortedIndexer, {
+          {renderAsync(mergeAsync(sortedIndexer, totalDelegations), {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
             data: (data) => {
-              if (!data) return <Typography>User is not an indexer</Typography>;
-              const { totalStake, totalDelegations } = data;
+              if (!data) return null;
+              const [s, d] = data;
               const cards = [
                 {
                   category: t('indexer.indexing'),
                   title: t('indexer.totalStakeAmount'),
-                  value: `${totalStake.current} SQT`,
+                  value: `${s?.totalStake.current} SQT`,
                 },
                 {
                   category: t('delegate.delegating'),
                   title: t('delegate.totalDelegation'),
-                  value: `${totalDelegations.current} SQT`,
+                  value: `${d?.current} SQT`,
                 },
               ];
 
@@ -105,14 +91,8 @@ export const MyProfile: React.VFC = () => {
               </div>
             ))}
           </div>
-          {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} delegations={delegationList} />}
-          {curTab === SectionTabs.Delegating &&
-            renderAsync(delegationList, {
-              loading: () => <Spinner />,
-              error: (e) => <Typography>{`Failed to load delegations: ${e}`}</Typography>,
-              data: (data) =>
-                data ? <Delegating delegating={data.filter((delegation) => delegation.indexer !== account)} /> : null,
-            })}
+          {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
+          {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
           {curTab === SectionTabs.Locked && <Locked />}
         </div>
       </div>

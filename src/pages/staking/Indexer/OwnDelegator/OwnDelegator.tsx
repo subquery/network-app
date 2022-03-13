@@ -9,7 +9,7 @@ import styles from './OwnDelegator.module.css';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 interface Props {
-  delegations: { value: CurrentEraValue<number>; indexer: string; delegator: string }[];
+  delegations: { value: CurrentEraValue<number>; delegator: string }[];
 }
 
 export const OwnDelegator: React.VFC<Props> = ({ delegations }) => {
