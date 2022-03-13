@@ -13,8 +13,6 @@ import styles from './Modal.module.css';
  * Waiting for SubQuery components lib(also based on antD) release and replace
  */
 
-//  MdOutlineFilter1
-
 interface Props {
   title?: string;
   steps?: string[];
@@ -22,8 +20,6 @@ interface Props {
   header?: string;
   description?: string;
   amountInput?: React.ReactNode;
-  showBalance?: boolean;
-  percentInput?: React.ReactNode;
   visible: boolean;
   onCancel: () => void;
   onOk?: () => void;
@@ -36,10 +32,8 @@ export const Modal: React.FC<Props> = ({
   title,
   steps,
   currentStep,
-  description = 'Tokens will be unstaked from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',
+  description,
   amountInput,
-  showBalance,
-  percentInput,
 }) => {
   const Title = () => (
     <Typography variant="h6" className={styles.title}>
@@ -57,7 +51,7 @@ export const Modal: React.FC<Props> = ({
     return (
       <div className={styles.steps}>
         {steps.map((step, idx) => (
-          <>
+          <React.Fragment key={step}>
             <div className={styles.step}>
               {stepIcons[idx]}
               <Typography variant="medium" className={styles.text}>
@@ -69,7 +63,7 @@ export const Modal: React.FC<Props> = ({
                 <Divider />
               </div>
             )}
-          </>
+          </React.Fragment>
         ))}
       </div>
     );

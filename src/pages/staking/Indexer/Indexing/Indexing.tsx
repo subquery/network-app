@@ -6,12 +6,14 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-u
 import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router';
 import { OwnDelegator } from '../OwnDelegator';
 import { DoStake } from '../DoStake';
 import { SetCommissionRate } from '../SetCommissionRate';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { AsyncData, renderAsync } from '../../../../utils';
 import { useSortedIndexer } from '../../../../hooks';
+import { useWeb3 } from '../../../../containers';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -24,8 +26,16 @@ interface Props {
 }
 
 export const Indexing: React.VFC<Props> = ({ tableData, delegations }) => {
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
   const { t } = useTranslation();
+  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
+  const { account } = useWeb3();
+  const history = useHistory();
+
+  React.useEffect(() => {
+    if (!account) {
+      history.push('/staking');
+    }
+  }, [account, history]);
 
   const tableHeaders = [
     t('indexer.totalStake').toLocaleUpperCase(),

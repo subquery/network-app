@@ -4,31 +4,27 @@
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import assert from 'assert';
-import styles from './SetCommissionRate.module.css';
+import styles from './DoWithdraw.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '../../../../containers';
+import { useContracts, useWeb3, useWithdrawls } from '../../../../containers';
 import { ModalInput, Modal } from '../../../../components';
-import { useBalance } from '../../../../hooks/useBalance';
 import { ModalStatus } from '../../../../components/ModalStatus';
 
-export const SetCommissionRate: React.VFC = () => {
+export const DoWithdraw: React.VFC = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
-
-  // const { account, balance } = useBalance();
-  const pendingContracts = useContracts();
   const { t } = useTranslation();
-  // TODO:useCommission
-  // const curAmount = 10;
-  const unit = '%';
+  const { account } = useWeb3();
+  const withdrawals = useWithdrawls({ delegator: account || '' });
+  const pendingContracts = useContracts();
+
   const modalText = {
-    title: t('indexer.updateCommissionRate'),
-    steps: [t('indexer.setNewCommissionRate'), t('indexer.confirmOnMetamask')],
-    description: t('indexer.newRateValidNext2Era'),
-    inputTitle: t('indexer.enterCommissionRate'),
-    submitText: t('indexer.confirmRate'),
+    title: t('withdrawals.withdraw'),
+    steps: [t('withdrawals.enterAmount'), t('indexer.confirmOnMetamask')],
+    inputTitle: t('withdrawals.enterWithdrawAmount'),
+    submitText: t('withdrawals.confirmWithdraw'),
   };
   const handleBtnClick = () => {
     setShowModal(true);
@@ -44,13 +40,14 @@ export const SetCommissionRate: React.VFC = () => {
     setShowModal(false);
   };
 
-  const onSubmit = async (amount: number) => {
+  const onSubmit = async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    const tx = await contracts.indexerRegistry.setCommissionRate(Math.floor(amount * 10));
+    const tx = await contracts.staking.widthdraw();
     setIsLoading(true);
 
     const txResult = await tx.wait();
+    await withdrawals.refetch();
     resetModal();
     console.log('txResult', txResult?.status);
     if (txResult?.status === 1) {
@@ -61,10 +58,9 @@ export const SetCommissionRate: React.VFC = () => {
   };
 
   return (
-    <div className={styles.btns}>
+    <div>
       <Modal
         title={modalText?.title}
-        description={modalText?.description}
         visible={showModal}
         onCancel={() => setShowModal(false)}
         steps={modalText?.steps}
@@ -72,12 +68,8 @@ export const SetCommissionRate: React.VFC = () => {
           <ModalInput
             inputTitle={modalText?.inputTitle}
             submitText={modalText?.submitText}
-            onSubmit={(amount: number) => onSubmit(amount)}
-            // curAmount={curAmount}
+            onSubmit={onSubmit}
             isLoading={isLoading}
-            unit={unit}
-            max={100}
-            min={0}
           />
         }
       />
@@ -88,7 +80,7 @@ export const SetCommissionRate: React.VFC = () => {
         success={!!successModalText}
       />
       <Button
-        label={t('indexer.updateCommissionRate')}
+        label={t('withdrawals.withdrawToken')}
         onClick={() => handleBtnClick()}
         className={styles.btn}
         size="medium"

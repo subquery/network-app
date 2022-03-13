@@ -1,0 +1,19 @@
+.container {
+  margin: 2rem 0 1rem 2rem;
+}
+
+.status {
+  display: flex;
+}
+
+.successIcon {
+  color: var(--success) !important;
+}
+
+.errorIcon {
+  color: var(--error);
+}
+
+.statusText {
+  margin: 0 1rem;
+}
