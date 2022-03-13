@@ -28,7 +28,7 @@ interface props {
 
 export const LockedList: React.VFC<props> = ({ withdrawals }) => {
   const { t } = useTranslation();
-  const lock = useLockPeriod();
+  const lockPeriod = useLockPeriod();
 
   const sortedWithdrawals = withdrawals.map((withdrawal) => {
     const sortedAmount = formatEther(BigNumber.from(withdrawal.amount));
@@ -66,15 +66,14 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedWithdrawals?.length > 0 &&
-            sortedWithdrawals.map((withdrawals, idx) => (
-              <TableRow key={idx}>
-                <TableCellText>{idx + 1}</TableCellText>
-                <TableCellText>{withdrawals.amount}</TableCellText>
-                <TableCellText>{withdrawals.startAt}</TableCellText>
-                <TableCellText>{withdrawals.status}</TableCellText>
-              </TableRow>
-            ))}
+          {sortedWithdrawals.map((withdrawals, idx) => (
+            <TableRow key={idx}>
+              <TableCellText>{idx + 1}</TableCellText>
+              <TableCellText>{withdrawals.amount}</TableCellText>
+              <TableCellText>{withdrawals.startAt}</TableCellText>
+              <TableCellText>{withdrawals.status}</TableCellText>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

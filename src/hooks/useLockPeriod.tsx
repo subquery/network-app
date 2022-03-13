@@ -5,22 +5,15 @@ import { useEffect, useState } from 'react';
 import assert from 'assert';
 import { useContracts, useWeb3 } from '../containers';
 import { convertBigNumberToNumber } from '../utils';
+import { useAsyncMemo } from './useAsyncMemo';
 
-export function useLockPeriod(): number {
+export function useLockPeriod() {
   const pendingContracts = useContracts();
-  const [lockPeriod, setLockPeriod] = useState<number>();
+  return useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
+    assert(contracts, 'Contracts not available');
 
-  useEffect(() => {
-    const getLockPeriod = async () => {
-      const contracts = await pendingContracts;
-      assert(contracts, 'Contracts not available');
-
-      const lockPeriod = await contracts.staking.lockPeriod();
-      const formattedLockPeriod = convertBigNumberToNumber(lockPeriod);
-      setLockPeriod(formattedLockPeriod);
-    };
-    getLockPeriod();
+    const lockPeriod = await contracts.staking.lockPeriod();
+    return convertBigNumberToNumber(lockPeriod);
   }, []);
-
-  return lockPeriod || 0;
 }
