@@ -194,7 +194,6 @@ const en = {
       delegators: 'delegator(s)',
       totalDelegation: 'Total Delegation to indexer(s)',
       delegator: 'Delegator',
-      indexer: 'Indexer',
       currentEra: 'Current Era',
       nextEra: 'Next Era',
       undelegate: 'Undelegate',
