@@ -227,7 +227,7 @@ const en = {
       start: 'start at',
       status: 'status',
       claimed: 'Claimed',
-      unClaim: 'UnClaim',
+      unClaim: 'Unclaimed',
       noWithdrawals: 'No withdrawals available.',
       withdrawToken: 'Withdraw all unlocked assets',
       withdraw: 'Withdraw',
@@ -235,10 +235,15 @@ const en = {
       enterWithdrawAmount: 'Enter the amount of SQT you want to withdraw',
       confirmWithdraw: 'Confirm Withdraw',
     },
-
     general: {
       current: 'current',
       next: 'next',
+    },
+    rewards: {
+      none: 'You have no rewards',
+      header1: 'Indexer',
+      header2: 'Amount',
+      header3: 'Action',
     },
   },
 };
