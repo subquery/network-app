@@ -24,8 +24,13 @@
   margin-top: 1rem;
 }
 
-.balance {
+.inputBottomText {
   color: var(--gray500);
+}
+
+.inputError {
+  margin: 1rem 0;
+  color: var(--error);
 }
 
 .submitBtn {

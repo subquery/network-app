@@ -25,7 +25,6 @@ interface Props {
   indexer: string;
 }
 
-
 export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
   const { t } = useTranslation();
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);

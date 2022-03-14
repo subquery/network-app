@@ -54,7 +54,7 @@ export const SetCommissionRate: React.VFC = () => {
     if (txResult?.status === 1) {
       setSuccessModalText('Success');
     } else {
-      setErrorModalText('Error');
+      throw Error(`Sorry, the commission update operation has failed.`);
     }
   };
 

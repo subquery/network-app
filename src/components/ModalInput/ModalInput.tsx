@@ -4,8 +4,9 @@
 import * as React from 'react';
 import { InputNumber, Button } from 'antd';
 import { Typography } from '@subql/react-ui';
-import { useFormik } from 'formik';
+import { useFormik, useFormikContext } from 'formik';
 import styles from './ModalInput.module.css';
+import { parseError } from '../../utils/parseError';
 
 /**
  * NOTE:
@@ -27,12 +28,14 @@ interface Props {
   max?: number;
   min?: number;
   onSubmit: (value: any) => void;
+  onError?: () => void;
 }
 
 export const ModalInput: React.FC<Props> = ({
   inputTitle,
   submitText,
   onSubmit,
+  onError,
   unit = 'SQT',
   isLoading,
   curAmount,
@@ -46,10 +49,16 @@ export const ModalInput: React.FC<Props> = ({
       input: 0,
     },
     // TODO:validate,
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm, setErrors }) => {
       const { input } = values;
-      await onSubmit(input);
-      resetForm();
+      try {
+        await onSubmit(input);
+        resetForm();
+      } catch (error: any) {
+        console.error('Submit ModalInput', error);
+        setErrors({ input: parseError(error) });
+        onError && onError();
+      }
     },
   });
 
@@ -79,6 +88,7 @@ export const ModalInput: React.FC<Props> = ({
           id="input"
           className={styles.inputNumber}
           onChange={(value) => {
+            formik.setErrors({ input: undefined });
             formik.setFieldValue('input', value);
           }}
           value={formik.values.input}
@@ -89,10 +99,13 @@ export const ModalInput: React.FC<Props> = ({
         />
       </div>
       {(inputBottomText || curAmount) && (
-        <Typography className={styles.balance} variant="medium">
+        <Typography className={styles.inputBottomText} variant="medium">
           {inputBottomText || `Current: ${curAmount} ${unit}`}
         </Typography>
       )}
+      <Typography className={styles.inputError} variant="medium">
+        {formik.errors?.input}
+      </Typography>
       <div className={styles.btnContainer}>
         <Button
           onSubmit={formik.handleSubmit}

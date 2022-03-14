@@ -71,7 +71,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
     if (txResult?.status === 1) {
       setSuccessModalText('Success');
     } else {
-      setErrorModalText('Error');
+      throw Error('Sorry, the delegation has failed.');
     }
   };
 
@@ -92,7 +92,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
               submitText={getModalText()?.submitText}
               onSubmit={(amount: number) => onSubmit(indexerAddress, amount)}
               isLoading={isLoading}
-              curAmount={balance}
+              curAmount={account ? balance : undefined}
               showMaxButton
             />
           )
@@ -100,6 +100,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
       />
       <ModalStatus
         visible={!!(errorModalText || successModalText)}
+        errorText={errorModalText}
         onCancel={resetModalStatus}
         error={!!errorModalText}
         success={!!successModalText}

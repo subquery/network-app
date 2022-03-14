@@ -93,7 +93,7 @@ export const DoStake: React.VFC = () => {
     if (txResult?.status === 1) {
       setSuccessModalText('Success');
     } else {
-      setErrorModalText('Error');
+      throw Error(`Sorry, the ${StakeAction.Stake} operation has failed.`);
     }
   };
 
