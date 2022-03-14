@@ -17,16 +17,7 @@ interface Props {
 
 export const Delegator: React.VFC<Props> = ({ delegator }) => {
   const { t } = useTranslation();
-  const tableHeaders = [
-    '#',
-    t('indexer.title').toUpperCase(),
-    t('delegate.currentEra').toUpperCase(),
-    t('delegate.nextEra').toUpperCase(),
-    t('indexer.action').toUpperCase(),
-  ];
-
   const delegations = useDelegations({ delegator });
-
   const { currentEra } = useEra();
 
   const delegationList = mapAsync(
@@ -40,10 +31,18 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
     mergeAsync(delegations, currentEra),
   );
 
+  const tableHeaders = [
+    '#',
+    t('indexer.title').toUpperCase(),
+    t('delegate.currentEra').toUpperCase(),
+    t('delegate.nextEra').toUpperCase(),
+    t('indexer.action').toUpperCase(),
+  ];
+
   return (
     <div className={styles.container}>
       <Typography variant="h6" className={styles.header}>
-        {`You have total ${delegations.data?.delegations?.totalCount || 0} delegators`}{' '}
+        {`You have total ${delegations.data?.delegations?.totalCount || 0} delegation(s)`}
       </Typography>
       <Table>
         <TableHead>

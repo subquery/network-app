@@ -185,6 +185,9 @@ const en = {
       currentRate: 'Current rate',
       confirmRate: 'Confirm Rate',
       action: 'action',
+      approveToken: 'Approval',
+      approveTokenToStake: 'Approve your token for staking',
+      confirmApproval: 'Confirm Approval',
     },
 
     delegate: {
@@ -205,6 +208,7 @@ const en = {
         'Tokens will be undelegated from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',
       undelegateAmount: 'Enter the amount of SQT you want to undelegate',
       confirmUndelegate: 'Confirm Undelegation',
+      approveTokenToDelegate: 'Approve your token for staking',
     },
 
     withdrawals: {

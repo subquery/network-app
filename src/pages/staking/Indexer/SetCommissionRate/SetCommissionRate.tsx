@@ -66,7 +66,7 @@ export const SetCommissionRate: React.VFC = () => {
         visible={showModal}
         onCancel={() => setShowModal(false)}
         steps={modalText?.steps}
-        amountInput={
+        content={
           <ModalInput
             inputTitle={modalText?.inputTitle}
             submitText={modalText?.submitText}

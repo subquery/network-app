@@ -1,0 +1,12 @@
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.submitBtn {
+  background: var(--gradient-to) !important;
+  color: white !important;
+  min-width: 30%;
+}

@@ -8,9 +8,10 @@ import { parseEther } from 'ethers/lib/utils';
 import styles from './DoDelegate.module.css';
 import { useTranslation } from 'react-i18next';
 import { useContracts, useWeb3, useWithdrawls } from '../../../../containers';
-import { ModalInput, Modal } from '../../../../components';
+import { ModalInput, Modal, tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import { ModalStatus } from '../../../../components/ModalStatus';
 import { useBalance } from '../../../../hooks/useBalance';
+import { useHasAllowance } from '../../../../hooks';
 
 interface DoDelegateProps {
   indexerAddress: string;
@@ -22,18 +23,26 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
   const { t } = useTranslation();
+
   const { account } = useWeb3();
   const withdrawals = useWithdrawls({ delegator: account || '' });
   const pendingContracts = useContracts();
   const { balance } = useBalance();
+  const hasAllowance = useHasAllowance();
+  const requireTokenApproval = hasAllowance?.data?.isZero();
 
-  const modalText = {
-    title: t('delegate.title'),
-    steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
-    description: t('delegate.delegateValidNextEra'),
-    inputTitle: t('delegate.delegateAmount'),
-    submitText: t('delegate.confirmDelegate'),
-  };
+  //TODO: define the returnType wen tokenApproval UI confirm
+  const getModalText = (): any =>
+    requireTokenApproval
+      ? tokenApprovalModalText
+      : {
+          title: t('delegate.title'),
+          steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
+          description: t('delegate.delegateValidNextEra'),
+          inputTitle: t('delegate.delegateAmount'),
+          submitText: t('delegate.confirmDelegate'),
+        };
+
   const handleBtnClick = () => {
     setShowModal(true);
   };
@@ -53,9 +62,8 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(amount.toString());
-    const tx = await contracts.staking.delegate(indexerAddress, delegateAmount);
     setIsLoading(true);
-
+    const tx = await contracts.staking.delegate(indexerAddress, delegateAmount);
     const txResult = await tx.wait();
     await withdrawals.refetch();
     resetModal();
@@ -70,20 +78,24 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
   return (
     <div>
       <Modal
-        title={modalText?.title}
+        title={getModalText()?.title}
         visible={showModal}
-        onCancel={() => setShowModal(false)}
-        steps={modalText?.steps}
-        description={modalText?.description}
-        amountInput={
-          <ModalInput
-            inputTitle={modalText?.inputTitle}
-            submitText={modalText?.submitText}
-            onSubmit={(amount: number) => onSubmit(indexerAddress, amount)}
-            isLoading={isLoading}
-            curAmount={balance}
-            showMaxButton
-          />
+        onCancel={() => resetModal()}
+        steps={getModalText()?.steps}
+        description={getModalText()?.description}
+        content={
+          requireTokenApproval ? (
+            <ModalApproveToken onSubmit={() => hasAllowance.refetch()} />
+          ) : (
+            <ModalInput
+              inputTitle={getModalText()?.inputTitle}
+              submitText={getModalText()?.submitText}
+              onSubmit={(amount: number) => onSubmit(indexerAddress, amount)}
+              isLoading={isLoading}
+              curAmount={balance}
+              showMaxButton
+            />
+          )
         }
       />
       <ModalStatus
@@ -92,7 +104,13 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
         error={!!errorModalText}
         success={!!successModalText}
       />
-      <Button label={t('delegate.title')} onClick={() => handleBtnClick()} className={styles.btn} size="small" />
+      <Button
+        label={t('delegate.title')}
+        onClick={() => handleBtnClick()}
+        className={styles.btn}
+        size="small"
+        disabled={hasAllowance.loading}
+      />
     </div>
   );
 };
