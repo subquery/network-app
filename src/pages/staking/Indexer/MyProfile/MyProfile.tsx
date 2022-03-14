@@ -9,10 +9,10 @@ import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
-import { useSortedIndexer } from '../../../../hooks';
+import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
+import { mergeAsync, renderAsync } from '../../../../utils';
+import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
-import { AsyncData, mergeAsync, renderAsync } from '../../../../utils';
-import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -28,9 +28,7 @@ export const MyProfile: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const sortedIndexer = useSortedIndexer(account || '');
-
-  /* Placeholder for contracts update */
-  const totalDelegations: AsyncData<CurrentEraValue<number>> = { loading: false, data: { current: 0, after: 0 } }; //useUserDelegations(account);
+  const totalDelegations = useUserDelegations(account);
 
   return (
     <div className={styles.container}>
@@ -58,12 +56,12 @@ export const MyProfile: React.VFC = () => {
                 {
                   category: t('indexer.indexing'),
                   title: t('indexer.totalStakeAmount'),
-                  value: `${s?.totalStake.current} SQT`,
+                  value: `${s?.totalStake.current ?? 0} SQT`,
                 },
                 {
                   category: t('delegate.delegating'),
                   title: t('delegate.totalDelegation'),
-                  value: `${d?.current} SQT`,
+                  value: `${d?.current ?? 0} SQT`,
                 },
               ];
 
@@ -93,6 +91,7 @@ export const MyProfile: React.VFC = () => {
           </div>
           {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
           {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
+          {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
           {curTab === SectionTabs.Locked && <Locked />}
         </div>
       </div>

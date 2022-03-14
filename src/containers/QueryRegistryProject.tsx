@@ -53,9 +53,9 @@ const GET_DEPLOYMENT = gql`
 
 const GET_PROJECT_DEPLOYMENTS = gql`
   query GetProjectDeployments($projectId: String!) {
-    projectDeployments(filter: { projectId: { equalTo: $projectId } }) {
-      nodes {
-        deployment {
+    project(id: $projectId) {
+      deployments {
+        nodes {
           id
           version
           createdTimestamp

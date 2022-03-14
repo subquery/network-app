@@ -15,6 +15,9 @@ import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers'
 import { GetPlans, GetPlansVariables } from '../__generated__/GetPlans';
 import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/GetPlanTemplates';
 import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
+import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
+import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
+import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -103,6 +106,15 @@ const GET_ALL_DELEGATIONS = gql`
   }
 `;
 
+const GET_DELEGATOR = gql`
+  query GetDelegator($address: String!) {
+    delegator(id: $address) {
+      id
+      totalDelegations
+    }
+  }
+`;
+
 const GET_DELEGATIONS = gql`
   query GetDelegations($delegator: String!, $offset: Int) {
     delegations(filter: { delegatorAddress: { equalTo: $delegator } }, first: 10, offset: $offset) {
@@ -180,6 +192,47 @@ const GET_DEPLOYMENT_SERVICE_AGREEMENTS = gql`
   }
 `;
 
+const GET_REWARDS = gql`
+  query GetRewards($address: String!) {
+    rewards(filter: { delegatorAddress: { equalTo: $address } }) {
+      nodes {
+        id
+        delegatorAddress
+        indexerAddress
+        amount
+        claimedTime
+      }
+    }
+    unclaimedRewards(filter: { delegatorAddress: { equalTo: $address } }) {
+      nodes {
+        id
+        delegatorAddress
+        indexerAddress
+        amount
+      }
+    }
+  }
+`;
+
+const GET_INDEXER_REWARDS = gql`
+  query GetIndexerRewards($address: String!, $era1: String!, $era2: String!) {
+    indexerRewards(
+      filter: {
+        indexerAddress: { equalTo: $address }
+        and: { eraIdx: { equalTo: $era1 } }
+        or: { eraIdx: { equalTo: $era2 } }
+      }
+    ) {
+      nodes {
+        id
+        indexerAddress
+        eraIdx
+        amount
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
 }
@@ -224,4 +277,16 @@ export function useDeploymentServiceAgreements(
     GET_DEPLOYMENT_SERVICE_AGREEMENTS,
     { variables: params },
   );
+}
+
+export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
+  return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params });
+}
+
+export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
+  return useQuery<GetIndexerRewards, GetIndexerRewardsVariables>(GET_INDEXER_REWARDS, { variables: params });
+}
+
+export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator> {
+  return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params });
 }

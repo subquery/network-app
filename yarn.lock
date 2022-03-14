@@ -2638,7 +2638,7 @@
   resolved "https://registry.yarnpkg.com/@open-web3/scanner/-/scanner-0.9.4-38.tgz#6af5c7a95f93b9cb3209fe9e2b0d482337834e34"
   integrity sha512-DTqFtfSsLK9xbEBKTYxNHjS6jIPdSblmLUykaqORe2LpD8lDc1Rz8Ywb7dZDuxtA7LFhCBPrH/STmSoaP+QrxA==
 
-"@openzeppelin/contracts-upgradeable@^4.3.3":
+"@openzeppelin/contracts-upgradeable@^4.5.2":
   version "4.5.2"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.5.2.tgz#90d9e47bacfd8693bfad0ac8a394645575528d05"
   integrity sha512-xgWZYaPlrEOQo3cBj97Ufiuv79SPd8Brh4GcFYhPgb6WvAq4ppz8dWKL6h+jLAK01rUqMRp/TS9AdXgAeNvCLA==
@@ -3906,12 +3906,12 @@
     reflect-metadata "^0.1.13"
     sequelize "^6.6.2"
 
-"@subql/contract-sdk@0.1.1-32":
-  version "0.1.1-32"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.1-32.tgz#5fb5b3e64d84a6efabf7e7e899251f95bf819ea6"
-  integrity sha512-9wXpFFHbbzrtl659m11ZepyYwEWAZOnz78vV3F9uk+E8vlfbcOyaEQKGxxSHFBTo++gln0W8LLz6lIrqm63yrA==
+"@subql/contract-sdk@0.1.1-47":
+  version "0.1.1-47"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.1.1-47.tgz#d352999ba92edf11f30a254aa72f604de2d80890"
+  integrity sha512-dq77L0QwI5MA8aleqsRT033PslBODwh+Qi8lKmbKZkQ77NXChrlaQSXCGYsJEcgJJ2VcousPX5i9IkiU+9lH1A==
   dependencies:
-    "@openzeppelin/contracts-upgradeable" "^4.3.3"
+    "@openzeppelin/contracts-upgradeable" "^4.5.2"
     dotenv "^10.0.0"
     fs "^0.0.1-security"
 

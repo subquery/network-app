@@ -17,3 +17,4 @@ export { useIPFSMetadata } from './useIPFSMetadata';
 export { useIndexerCapacity } from './useIndexerCapacity';
 export { useSortedIndexer } from './useSortedIndexer';
 export * from './useLockPeriod';
+export * from './useUserDelegations';
