@@ -21,10 +21,7 @@ const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
   const { catSingle } = useIPFS();
 
   const asyncDeployments = useAsyncMemo(async () => {
-    let projectDeployments = query.data?.projectDeployments?.nodes
-      .filter(notEmpty)
-      .map((v) => v.deployment)
-      .filter(notEmpty);
+    let projectDeployments = query.data?.project?.deployments.nodes.filter(notEmpty);
     if (!projectDeployments) {
       return [];
     }

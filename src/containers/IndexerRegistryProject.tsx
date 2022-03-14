@@ -17,6 +17,7 @@ import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/Ge
 import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
 import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
 import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
+import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -101,6 +102,15 @@ const GET_ALL_DELEGATIONS = gql`
           metadata
         }
       }
+    }
+  }
+`;
+
+const GET_DELEGATOR = gql`
+  query GetDelegator($address: String!) {
+    delegator(id: $address) {
+      id
+      totalDelegations
     }
   }
 `;
@@ -275,4 +285,8 @@ export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards>
 
 export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
   return useQuery<GetIndexerRewards, GetIndexerRewardsVariables>(GET_INDEXER_REWARDS, { variables: params });
+}
+
+export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator> {
+  return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params });
 }

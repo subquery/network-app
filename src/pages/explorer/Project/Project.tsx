@@ -50,9 +50,7 @@ const Project: React.VFC = () => {
 
   const { data: deploymentVersions } = useAsyncMemo(async () => {
     const deploymentsWithSemver = await Promise.all(
-      (deployments?.projectDeployments?.nodes ?? [])
-        .filter(notEmpty)
-        .map((v) => v.deployment)
+      (deployments?.project?.deployments.nodes ?? [])
         .filter(notEmpty)
         .map((d) => getVersionMetadata(d.version).then((versionMeta) => ({ id: d.id, version: versionMeta.version }))),
     );
