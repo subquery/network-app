@@ -31,6 +31,8 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const history = useHistory();
+  const hasRegisteredAsIndexer = tableData?.hasOwnProperty('data');
+  console.log('hasRegisteredAsIndexer', hasRegisteredAsIndexer);
 
   React.useEffect(() => {
     if (!account) {
@@ -64,15 +66,21 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
 
   return (
     <div className={styles.indexing}>
-      {tableData?.data ? (
+      {tableData?.data?.totalStake && (
         <div>
           <Typography className={styles.grayText}>{t('indexer.topRowData')}</Typography>
           <Typography className={styles.grayText}>{t('indexer.secondRowData')}</Typography>
+        </div>
+      )}
+
+      {hasRegisteredAsIndexer ? (
+        <>
+          <Typography className={styles.grayText}>{t('indexer.doStake')}</Typography>
           <div className={styles.btns}>
             <DoStake />
             <SetCommissionRate />
           </div>
-        </div>
+        </>
       ) : (
         <div>
           <Typography>{t('indexer.notRegister')}</Typography>
