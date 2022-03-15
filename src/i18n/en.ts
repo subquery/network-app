@@ -214,6 +214,7 @@ const en = {
       undelegateAmount: 'Enter the amount of SQT you want to undelegate',
       confirmUndelegate: 'Confirm Undelegation',
       approveTokenToDelegate: 'Approve your token for staking',
+      noDelegating: 'No delegation available',
     },
 
     withdrawals: {

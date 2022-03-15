@@ -31,6 +31,8 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
     mergeAsync(delegations, currentEra),
   );
 
+  console.log('delegationList', delegationList);
+
   const tableHeaders = [
     '#',
     t('indexer.title').toUpperCase(),
@@ -41,26 +43,27 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
 
   return (
     <div className={styles.container}>
-      <Typography variant="h6" className={styles.header}>
-        {`You have total ${delegations.data?.delegations?.totalCount || 0} delegation(s)`}
-      </Typography>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {tableHeaders.map((header) => (
-              <TableCell key={header}>{header}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
+      {renderAsync(delegationList, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
+        data: (data) => {
+          console.log('data', data);
+          if (!data || data.length === 0) return <Typography variant="h5">{t('delegate.noDelegating')}</Typography>;
+          return (
+            <>
+              <Typography variant="h6" className={styles.header}>
+                {`You have total ${delegations.data?.delegations?.totalCount || 0} delegation(s)`}
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    {tableHeaders.map((header) => (
+                      <TableCell key={header}>{header}</TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
 
-        <TableBody>
-          {renderAsync(delegationList, {
-            loading: () => <Spinner />,
-            error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
-            data: (data) => {
-              if (!data) return null;
-              return (
-                <>
+                <TableBody>
                   {data.map((delegating, idx) => (
                     <TableRow key={delegating.indexer}>
                       <TableCell>
@@ -80,12 +83,12 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
                       </TableCell>
                     </TableRow>
                   ))}
-                </>
-              );
-            },
-          })}
-        </TableBody>
-      </Table>
+                </TableBody>
+              </Table>
+            </>
+          );
+        },
+      })}
 
       {/* TODO paging delegations */}
     </div>

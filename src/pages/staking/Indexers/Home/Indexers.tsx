@@ -13,6 +13,7 @@ import { IndexerList } from '../IndexerList/IndexerList';
 export const Indexers: React.VFC = () => {
   const indexers = useIndexers({});
   const { t } = useTranslation();
+  console.log('indexers', indexers);
 
   return (
     <EraProvider>
