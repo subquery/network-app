@@ -3,29 +3,37 @@
 
 import { BigNumber } from '@ethersproject/bignumber';
 import { formatEther } from '@ethersproject/units';
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/react-ui';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@subql/react-ui/dist/components/Table';
-import assert from 'assert';
 import * as React from 'react';
-import { useWeb3, useRewards, useContracts } from '../../../../containers';
+import { useTranslation } from 'react-i18next';
+import { useRewards } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
 } from '../../../../__generated__/GetRewards';
+import ClaimRewards from './ClaimRewards';
 
 const UnclaimedRewardItem: React.VFC<{
   key: string;
   reward: UnclaimedReward;
-  onCollectRewards?: () => void;
-}> = ({ key, reward, onCollectRewards }) => {
+  onRewardsClaimed?: () => void;
+}> = ({ key, reward }) => {
+  const amount = formatEther(BigNumber.from(reward.amount));
   return (
     <TableRow>
-      <TableCell>{key}</TableCell>
-      <TableCell>{reward.indexerAddress}</TableCell>
       <TableCell>
-        {`${formatEther(BigNumber.from(reward.amount))} SQT`}
-        {onCollectRewards && <Button label="Claim" onClick={onCollectRewards} />}
+        <Typography>{key}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography>{reward.indexerAddress}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography>{`${amount} SQT`}</Typography>
+      </TableCell>
+      <TableCell>
+        <ClaimRewards indexer={reward.indexerAddress} amount={amount} />
       </TableCell>
     </TableRow>
   );
@@ -37,9 +45,15 @@ const ClaimedReward: React.VFC<{
 }> = ({ key, reward }) => {
   return (
     <TableRow>
-      <TableCell>{key}</TableCell>
-      <TableCell>{reward.indexerAddress}</TableCell>
-      <TableCell>{`${formatEther(BigNumber.from(reward.amount))} SQT`}</TableCell>
+      <TableCell>
+        <Typography>{key}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography>{reward.indexerAddress}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography>{`${formatEther(BigNumber.from(reward.amount))} SQT`}</Typography>
+      </TableCell>
     </TableRow>
   );
 };
@@ -49,20 +63,8 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 }
 
 const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) => {
-  const { account } = useWeb3();
   const rewards = useRewards({ address: delegatorAddress });
-  const pendingContracts = useContracts();
-
-  const handleCollectRewards = async (indexer: string) => {
-    const contracts = await pendingContracts;
-
-    assert(contracts, 'Contracts not available');
-
-    const tx = await contracts.rewardsDistributor.claim(indexer);
-
-    tx.wait();
-    rewards.refetch();
-  };
+  const { t } = useTranslation('translation');
 
   return renderAsyncArray(
     mapAsync(
@@ -75,15 +77,24 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
     {
       error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
       loading: () => <Spinner />,
-      empty: () => <Typography>You have no rewards</Typography>,
+      empty: () => <Typography>{t('rewards.none')}</Typography>,
       data: (data) => (
         <>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Indexer</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>
+                  <Typography>#</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography>{t('rewards.header1')}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography>{t('rewards.header2')}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography>{t('rewards.header3')}</Typography>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -94,7 +105,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
                   <UnclaimedRewardItem
                     reward={reward}
                     key={index.toString()}
-                    onCollectRewards={account ? () => handleCollectRewards(reward.indexerAddress) : undefined}
+                    onRewardsClaimed={() => rewards.refetch()}
                   />
                 ),
               )}

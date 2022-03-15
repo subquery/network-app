@@ -13,6 +13,9 @@ export const tokenApprovalModalText = {
   title: i18next.t('indexer.approveToken'),
   description: i18next.t('delegate.approveTokenToDelegate'),
   submitText: i18next.t('indexer.confirmApproval'),
+  inputTitle: '',
+  steps: [],
+  failureText: `Sorry, SQT token approval has failed.`,
 };
 
 interface ModalApproveTokenProps {
@@ -27,18 +30,22 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({ submitText
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const pendingContracts = useContracts();
   const onApproveToken = async () => {
-    const contracts = await pendingContracts;
-    assert(contracts, 'Contracts not available');
+    try {
+      const contracts = await pendingContracts;
+      assert(contracts, 'Contracts not available');
 
-    const approvalTx = await contracts.sqToken.increaseAllowance(contracts.staking.address, utils.parseEther('1000'));
-    setIsLoading(true);
-    const approvalTxResult = await approvalTx.wait();
-    if (approvalTxResult?.status === 1) {
-      onSuccess && onSuccess();
-      onSubmit && onSubmit();
-    } else {
-      onFail && onFail();
-      onSubmit && onSubmit();
+      const approvalTx = await contracts.sqToken.increaseAllowance(contracts.staking.address, utils.parseEther('1000'));
+      setIsLoading(true);
+      const approvalTxResult = await approvalTx.wait();
+      if (approvalTxResult.status === 1) {
+        onSuccess && onSuccess();
+        onSubmit && onSubmit();
+      } else {
+        onFail && onFail();
+        onSubmit && onSubmit();
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
