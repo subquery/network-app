@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
+import { Table } from 'antd';
+import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
 import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
@@ -11,7 +12,6 @@ import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
-// import { Table, Switch } from 'antd';
 
 interface props {
   indexers: Indexer[];
@@ -35,14 +35,62 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 0));
   console.log('orderedIndexerList', orderedIndexerList);
 
-  const tableHeaders = [
-    '#',
-    'indexer'.toUpperCase(),
-    'current total stake'.toUpperCase(),
-    'next total stake'.toUpperCase(),
-    'current commission'.toUpperCase(),
-    'next commission'.toUpperCase(),
-    'action'.toUpperCase(),
+  const columns = [
+    {
+      title: '#',
+      key: 'idx',
+      width: 30,
+      render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
+    },
+    {
+      title: t('indexer.title').toUpperCase(),
+      dataIndex: 'id',
+      width: 150,
+    },
+    {
+      title: t('indexer.totalStake').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: ['totalStake', 'current'],
+          key: 'currentTotalStake',
+          width: 80,
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: ['totalStake', 'after'],
+          key: 'currentTotalStake',
+          width: 80,
+        },
+      ],
+    },
+    {
+      title: t('indexer.commission').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: ['totalStake', 'current'],
+          key: 'currentTotalStake',
+          width: 80,
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: ['totalStake', 'after'],
+          key: 'currentTotalStake',
+          width: 80,
+        },
+      ],
+    },
+    {
+      title: 'Action',
+      dataIndex: 'id',
+      key: 'operation',
+      fixed: 'right' as FixedType,
+      width: 60,
+      render: (id: string) => {
+        return <DoDelegate indexerAddress={id} />;
+      },
+    },
   ];
 
   return (
@@ -50,45 +98,7 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
       <Typography variant="h6" className={styles.title}>
         There are {indexers.length || 0} indexer(s)
       </Typography>
-
-      <Table>
-        <TableHead>
-          <TableRow>
-            {tableHeaders.map((header) => (
-              <TableCell key={header}>{header}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* TODO: Style match => antDesign */}
-          {sortedIndexerList?.length > 0 &&
-            sortedIndexerList.map((indexer, idx) => (
-              <TableRow key={indexer.id}>
-                <TableCell>
-                  <Typography>{idx + 1}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography>{`${indexer.id === account ? 'You' : indexer.id}`}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography>{indexer.totalStake.current || 0}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography>{indexer.totalStake.after || 0}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography>{indexer.commission.current || 0}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography>{indexer.commission.after || 0}</Typography>
-                </TableCell>
-                <TableCell>
-                  <DoDelegate indexerAddress={indexer.id} />
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+      <Table columns={columns} dataSource={orderedIndexerList} scroll={{ x: 900 }} />
     </div>
   );
 };

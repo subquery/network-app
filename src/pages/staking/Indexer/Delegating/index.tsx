@@ -3,7 +3,8 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
+import { Table } from 'antd';
+import { FixedType } from 'rc-table/lib/interface';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.css';
 import { DoUndelegate } from '../DoUndelegate';
@@ -33,12 +34,49 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
 
   console.log('delegationList', delegationList);
 
-  const tableHeaders = [
-    '#',
-    t('indexer.title').toUpperCase(),
-    t('delegate.currentEra').toUpperCase(),
-    t('delegate.nextEra').toUpperCase(),
-    t('indexer.action').toUpperCase(),
+  const columns = [
+    {
+      title: '#',
+      key: 'idx',
+      width: 30,
+      render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
+    },
+    {
+      title: t('indexer.title').toUpperCase(),
+      dataIndex: 'indexer',
+      width: 200,
+    },
+    {
+      title: t('delegate.yourDelegateAmount').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: ['value', 'current'],
+          key: 'currentValue',
+          width: 80,
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: ['value', 'after'],
+          key: 'afterValue',
+          width: 80,
+        },
+      ],
+    },
+    {
+      title: 'Action',
+      dataIndex: 'indexer',
+      key: 'operation',
+      fixed: 'right' as FixedType,
+      width: 60,
+      render: (id: string) => {
+        if (id === delegator) {
+          return <Typography>-</Typography>;
+        } else {
+          return <DoUndelegate indexerAddress={id} />;
+        }
+      },
+    },
   ];
 
   return (
@@ -54,37 +92,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
               <Typography variant="h6" className={styles.header}>
                 {`You have total ${delegations.data?.delegations?.totalCount || 0} delegation(s)`}
               </Typography>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    {tableHeaders.map((header) => (
-                      <TableCell key={header}>{header}</TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {data.map((delegating, idx) => (
-                    <TableRow key={delegating.indexer}>
-                      <TableCell>
-                        <Typography>{idx + 1}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>{delegating.indexer}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>{delegating.value.current || 0}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography>{delegating.value.after || 0}</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <DoUndelegate indexerAddress={delegating.indexer} />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} />
             </>
           );
         },

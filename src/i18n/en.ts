@@ -216,6 +216,7 @@ const en = {
       confirmUndelegate: 'Confirm Undelegation',
       approveTokenToDelegate: 'Approve your token for staking',
       noDelegating: 'No delegation available',
+      yourDelegateAmount: 'Your Delegation Amount',
     },
 
     withdrawals: {
@@ -233,6 +234,11 @@ const en = {
       enterAmount: 'Enter Amount',
       enterWithdrawAmount: 'Enter the amount of SQT you want to withdraw',
       confirmWithdraw: 'Confirm Withdraw',
+    },
+
+    general: {
+      current: 'current',
+      next: 'next',
     },
   },
 };
