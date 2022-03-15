@@ -3,23 +3,24 @@
 
 import { BigNumber } from '@ethersproject/bignumber';
 import { formatEther } from '@ethersproject/units';
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/react-ui';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@subql/react-ui/dist/components/Table';
-import assert from 'assert';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3, useRewards, useContracts } from '../../../../containers';
+import { useRewards } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
 } from '../../../../__generated__/GetRewards';
+import ClaimRewards from './ClaimRewards';
 
 const UnclaimedRewardItem: React.VFC<{
   key: string;
   reward: UnclaimedReward;
-  onCollectRewards?: () => void;
-}> = ({ key, reward, onCollectRewards }) => {
+  onRewardsClaimed?: () => void;
+}> = ({ key, reward }) => {
+  const amount = formatEther(BigNumber.from(reward.amount));
   return (
     <TableRow>
       <TableCell>
@@ -29,9 +30,11 @@ const UnclaimedRewardItem: React.VFC<{
         <Typography>{reward.indexerAddress}</Typography>
       </TableCell>
       <TableCell>
-        <Typography>{`${formatEther(BigNumber.from(reward.amount))} SQT`}</Typography>
+        <Typography>{`${amount} SQT`}</Typography>
       </TableCell>
-      <TableCell>{onCollectRewards && <Button label="Claim" onClick={onCollectRewards} />}</TableCell>
+      <TableCell>
+        <ClaimRewards indexer={reward.indexerAddress} amount={amount} />
+      </TableCell>
     </TableRow>
   );
 };
@@ -60,21 +63,8 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 }
 
 const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) => {
-  const { account } = useWeb3();
   const rewards = useRewards({ address: delegatorAddress });
-  const pendingContracts = useContracts();
   const { t } = useTranslation('translation');
-
-  const handleCollectRewards = async (indexer: string) => {
-    const contracts = await pendingContracts;
-
-    assert(contracts, 'Contracts not available');
-
-    const tx = await contracts.rewardsDistributor.claim(indexer);
-
-    tx.wait();
-    rewards.refetch();
-  };
 
   return renderAsyncArray(
     mapAsync(
@@ -115,7 +105,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
                   <UnclaimedRewardItem
                     reward={reward}
                     key={index.toString()}
-                    onCollectRewards={account ? () => handleCollectRewards(reward.indexerAddress) : undefined}
+                    onRewardsClaimed={() => rewards.refetch()}
                   />
                 ),
               )}

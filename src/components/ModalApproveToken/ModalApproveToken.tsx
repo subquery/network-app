@@ -13,6 +13,9 @@ export const tokenApprovalModalText = {
   title: i18next.t('indexer.approveToken'),
   description: i18next.t('delegate.approveTokenToDelegate'),
   submitText: i18next.t('indexer.confirmApproval'),
+  inputTitle: '',
+  steps: [],
+  failureText: `Sorry, SQT token approval has failed.`,
 };
 
 interface ModalApproveTokenProps {

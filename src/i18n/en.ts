@@ -244,6 +244,13 @@ const en = {
       header1: 'Indexer',
       header2: 'Amount',
       header3: 'Action',
+      claim: {
+        title: 'Claim Rewards',
+        step1: 'Confirm claim',
+        desription: 'You are about to claim {{amount}} SQT',
+        button: 'Claim',
+        submit: 'Confirm Claim',
+      },
     },
   },
 };
