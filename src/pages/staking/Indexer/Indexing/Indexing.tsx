@@ -14,25 +14,38 @@ import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsync } from '../../../../utils';
 import { useSortedIndexer } from '../../../../hooks';
 import { useWeb3, useEra, useIndexerDelegators } from '../../../../containers';
-import { Link } from 'react-router-dom';
 
 enum SectionTabs {
   Projects = 'Projects',
   Delegator = 'Delegator',
 }
 
+export const NotRegisteredIndexer: React.VFC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Typography>{t('indexer.notRegister')}</Typography>
+      <div className={styles.learnMoreContainer}>
+        <Typography className={styles.learnMoreText}>{t('indexer.learnMore')}</Typography>
+        <a href="https://doc.subquery.network/" target="blank" className={styles.learnMoreBtn}>
+          {t('indexer.here')}
+        </a>
+      </div>
+    </>
+  );
+};
+
 interface Props {
   tableData: ReturnType<typeof useSortedIndexer>;
   indexer: string;
+  isIndexer?: boolean;
 }
 
-export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
+export const Indexing: React.VFC<Props> = ({ tableData, indexer, isIndexer }) => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
   const { t } = useTranslation();
   const { account } = useWeb3();
   const history = useHistory();
-  const hasRegisteredAsIndexer = tableData?.hasOwnProperty('data');
-  console.log('hasRegisteredAsIndexer', hasRegisteredAsIndexer);
 
   React.useEffect(() => {
     if (!account) {
@@ -66,41 +79,28 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
 
   return (
     <div className={styles.indexing}>
-      {tableData?.data?.totalStake && (
-        <div>
-          <Typography className={styles.grayText}>{t('indexer.topRowData')}</Typography>
-          <Typography className={styles.grayText}>{t('indexer.secondRowData')}</Typography>
-        </div>
-      )}
-
-      {hasRegisteredAsIndexer ? (
-        <>
-          <Typography className={styles.grayText}>{t('indexer.doStake')}</Typography>
-          <div className={styles.btns}>
-            <DoStake />
-            <SetCommissionRate />
-          </div>
-        </>
-      ) : (
-        <div>
-          <Typography>{t('indexer.notRegister')}</Typography>
-          <div className={styles.learnMoreContainer}>
-            <Typography className={styles.learnMoreText}>{t('indexer.learnMore')}</Typography>
-            <a href="https://doc.subquery.network/" target="blank" className={styles.learnMoreBtn}>
-              {t('indexer.here')}
-            </a>
-          </div>
-        </div>
-      )}
-
       <div>
         {renderAsync(tableData, {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
           data: (data) => {
+            if (!isIndexer) return <NotRegisteredIndexer />;
             if (!data) return null;
             return (
               <>
+                {tableData?.data?.totalStake ? (
+                  <div>
+                    <Typography className={styles.grayText}>{t('indexer.topRowData')}</Typography>
+                    <Typography className={styles.grayText}>{t('indexer.secondRowData')}</Typography>
+                  </div>
+                ) : (
+                  <Typography className={styles.grayText}>{t('indexer.doStake')}</Typography>
+                )}
+
+                <div className={styles.btns}>
+                  <DoStake />
+                  <SetCommissionRate />
+                </div>
                 <Table>
                   <TableHead>
                     <TableRow>
