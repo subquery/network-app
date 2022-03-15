@@ -19,10 +19,10 @@ export const SetCommissionRate: React.VFC = () => {
 
   const { account } = useWeb3();
   const sortedIndexer = useSortedIndexer(account || '');
-  const canUpdateCommissionRate = !!sortedIndexer.data;
 
   const pendingContracts = useContracts();
   const { t } = useTranslation();
+
   // TODO:useCommission
   // const curAmount = 10;
   const unit = '%';
@@ -63,6 +63,8 @@ export const SetCommissionRate: React.VFC = () => {
     }
   };
 
+  if (!sortedIndexer.data) return null;
+
   return (
     <div className={styles.btns}>
       <Modal
@@ -95,7 +97,6 @@ export const SetCommissionRate: React.VFC = () => {
         onClick={() => handleBtnClick()}
         className={styles.btn}
         size="medium"
-        disabled={!canUpdateCommissionRate}
       />
     </div>
   );

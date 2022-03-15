@@ -5,12 +5,9 @@ import { useContracts, useWeb3 } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
 import { assert } from '@polkadot/util';
 import { BigNumber } from 'ethers';
+import { AsyncData } from '../utils';
 
-export function useHasAllowance(): Readonly<{
-  data?: BigNumber | undefined;
-  loading: boolean;
-  error?: Error | undefined;
-}> & {
+export function useHasAllowance(): AsyncData<BigNumber | undefined> & {
   refetch: (retainCurrent?: boolean | undefined) => void;
 } {
   const pendingContracts = useContracts();

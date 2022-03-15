@@ -32,16 +32,15 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
   const requireTokenApproval = hasAllowance?.data?.isZero();
 
   //TODO: define the returnType wen tokenApproval UI confirm
-  const getModalText = (): any =>
-    requireTokenApproval
-      ? tokenApprovalModalText
-      : {
-          title: t('delegate.title'),
-          steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
-          description: t('delegate.delegateValidNextEra'),
-          inputTitle: t('delegate.delegateAmount'),
-          submitText: t('delegate.confirmDelegate'),
-        };
+  const modalText: any = requireTokenApproval
+    ? tokenApprovalModalText
+    : {
+        title: t('delegate.title'),
+        steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
+        description: t('delegate.delegateValidNextEra'),
+        inputTitle: t('delegate.delegateAmount'),
+        submitText: t('delegate.confirmDelegate'),
+      };
 
   const handleBtnClick = () => {
     setShowModal(true);
@@ -78,18 +77,18 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
   return (
     <div>
       <Modal
-        title={getModalText()?.title}
+        title={modalText?.title}
         visible={showModal}
         onCancel={() => resetModal()}
-        steps={getModalText()?.steps}
-        description={getModalText()?.description}
+        steps={modalText.steps}
+        description={modalText.description}
         content={
           requireTokenApproval ? (
             <ModalApproveToken onSubmit={() => hasAllowance.refetch()} />
           ) : (
             <ModalInput
-              inputTitle={getModalText()?.inputTitle}
-              submitText={getModalText()?.submitText}
+              inputTitle={modalText.inputTitle}
+              submitText={modalText.submitText}
               onSubmit={(amount: number) => onSubmit(indexerAddress, amount)}
               isLoading={isLoading}
               curAmount={account ? balance : undefined}

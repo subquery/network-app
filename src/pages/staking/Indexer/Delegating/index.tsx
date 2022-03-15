@@ -23,16 +23,17 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
-      delegations?.delegations?.nodes.filter(notEmpty).map((delegation) => ({
-        value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
-          convertStringToNumber(formatEther(v ?? 0)),
-        ),
-        indexer: delegation.indexerAddress,
-      })),
+      delegations?.delegations?.nodes
+        .filter((delegation) => delegation?.indexerAddress !== delegator)
+        .filter(notEmpty)
+        .map((delegation) => ({
+          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
+            convertStringToNumber(formatEther(v ?? 0)),
+          ),
+          indexer: delegation.indexerAddress,
+        })),
     mergeAsync(delegations, currentEra),
   );
-
-  console.log('delegationList', delegationList);
 
   const columns = [
     {
@@ -90,7 +91,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           return (
             <>
               <Typography variant="h6" className={styles.header}>
-                {`You have total ${delegations.data?.delegations?.totalCount || 0} delegation(s)`}
+                {`You have total ${data.length || 0} delegation(s)`}
               </Typography>
               <Table columns={columns} dataSource={data} scroll={{ x: 800 }} />
             </>
