@@ -5,28 +5,31 @@ import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import styles from './DoStake.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '../../../../containers';
+import { useContracts, useWeb3 } from '../../../../containers';
 import assert from 'assert';
-import { ModalInput, Modal } from '../../../../components';
+import { ModalInput, Modal, tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import { useBalance } from '../../../../hooks/useBalance';
 import { parseEther } from '@ethersproject/units';
 import { ModalStatus } from '../../../../components/ModalStatus';
+import { useHasAllowance, useSortedIndexer } from '../../../../hooks';
 
 enum StakeAction {
   Stake = 'stake',
   UnStake = 'unstake',
 }
 
-const getContentText = (actionType: StakeAction | undefined, t: any) => {
+const getContentText = (actionType: StakeAction | undefined, requireTokenApproval = false, t: any): any => {
   if (!actionType) return {};
   if (actionType === StakeAction.Stake) {
-    return {
-      title: t('indexer.stake'),
-      steps: [t('indexer.enterStakeAmount'), t('indexer.confirmOnMetamask')],
-      description: t('indexer.stakeValidNextEra'),
-      inputTitle: t('indexer.stakeInputTitle'),
-      submitText: t('indexer.confirmStake'),
-    };
+    return requireTokenApproval
+      ? tokenApprovalModalText
+      : {
+          title: t('indexer.stake'),
+          steps: [t('indexer.enterStakeAmount'), t('indexer.confirmOnMetamask')],
+          description: t('indexer.stakeValidNextEra'),
+          inputTitle: t('indexer.stakeInputTitle'),
+          submitText: t('indexer.confirmStake'),
+        };
   }
 
   if (actionType === StakeAction.UnStake) {
@@ -46,13 +49,20 @@ export const DoStake: React.VFC = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
-  const { account, balance } = useBalance();
-  const pendingContracts = useContracts();
+
   const { t } = useTranslation();
+  const { account } = useWeb3();
+  const sortedIndexer = useSortedIndexer(account || '');
+  const canUnstake = !!sortedIndexer.data;
+
+  const { balance } = useBalance();
+  const pendingContracts = useContracts();
+  const hasAllowance = useHasAllowance();
+  const requireTokenApproval = hasAllowance?.data?.isZero();
 
   const curAmount = stakeAction === StakeAction.Stake ? balance : undefined;
   const showMaxButton = stakeAction === StakeAction.Stake;
-  const modalText = getContentText(stakeAction, t);
+  const modalText = getContentText(stakeAction, requireTokenApproval, t);
   const handleBtnClick = (stakeAction: StakeAction) => {
     setStakeAction(stakeAction);
     setShowModal(true);
@@ -86,7 +96,7 @@ export const DoStake: React.VFC = () => {
     if (txResult?.status === 1) {
       setSuccessModalText('Success');
     } else {
-      setErrorModalText('Error');
+      throw Error(`Sorry, the ${StakeAction.Stake} operation has failed.`);
     }
   };
 
@@ -98,15 +108,19 @@ export const DoStake: React.VFC = () => {
         visible={showModal}
         onCancel={() => setShowModal(false)}
         steps={modalText?.steps}
-        amountInput={
-          <ModalInput
-            inputTitle={modalText?.inputTitle}
-            submitText={modalText?.submitText}
-            onSubmit={(amount: number) => onSubmit(amount)}
-            curAmount={curAmount}
-            isLoading={isLoading}
-            showMaxButton={showMaxButton}
-          />
+        content={
+          requireTokenApproval ? (
+            <ModalApproveToken onSubmit={() => hasAllowance.refetch()} />
+          ) : (
+            <ModalInput
+              inputTitle={modalText?.inputTitle}
+              submitText={modalText?.submitText}
+              onSubmit={(amount: number) => onSubmit(amount)}
+              curAmount={curAmount}
+              isLoading={isLoading}
+              showMaxButton={showMaxButton}
+            />
+          )
         }
       />
       <ModalStatus
@@ -126,6 +140,7 @@ export const DoStake: React.VFC = () => {
         onClick={() => handleBtnClick(StakeAction.UnStake)}
         className={styles.btn}
         size="medium"
+        disabled={!canUnstake}
       />
     </div>
   );

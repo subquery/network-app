@@ -6,9 +6,10 @@ import * as React from 'react';
 import assert from 'assert';
 import styles from './SetCommissionRate.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '../../../../containers';
+import { useContracts, useWeb3 } from '../../../../containers';
 import { ModalInput, Modal } from '../../../../components';
 import { ModalStatus } from '../../../../components/ModalStatus';
+import { useSortedIndexer } from '../../../../hooks';
 
 export const SetCommissionRate: React.VFC = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
@@ -16,8 +17,12 @@ export const SetCommissionRate: React.VFC = () => {
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
 
+  const { account } = useWeb3();
+  const sortedIndexer = useSortedIndexer(account || '');
+
   const pendingContracts = useContracts();
   const { t } = useTranslation();
+
   // TODO:useCommission
   // const curAmount = 10;
   const unit = '%';
@@ -54,9 +59,11 @@ export const SetCommissionRate: React.VFC = () => {
     if (txResult?.status === 1) {
       setSuccessModalText('Success');
     } else {
-      setErrorModalText('Error');
+      throw Error(`Sorry, the commission update operation has failed.`);
     }
   };
+
+  if (!sortedIndexer.data) return null;
 
   return (
     <div className={styles.btns}>
@@ -66,7 +73,7 @@ export const SetCommissionRate: React.VFC = () => {
         visible={showModal}
         onCancel={() => setShowModal(false)}
         steps={modalText?.steps}
-        amountInput={
+        content={
           <ModalInput
             inputTitle={modalText?.inputTitle}
             submitText={modalText?.submitText}

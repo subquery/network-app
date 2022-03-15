@@ -73,7 +73,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress }) =
         visible={showModal}
         onCancel={() => setShowModal(false)}
         steps={modalText?.steps}
-        amountInput={
+        content={
           <ModalInput
             inputTitle={modalText?.inputTitle}
             submitText={modalText?.submitText}
@@ -89,7 +89,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress }) =
         error={!!errorModalText}
         success={!!successModalText}
       />
-      <Button label={t('delegate.title')} onClick={() => handleBtnClick()} className={styles.btn} size="small" />
+      <Button label={t('delegate.undelegate')} onClick={() => handleBtnClick()} className={styles.btn} size="small" />
     </div>
   );
 };

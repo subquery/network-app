@@ -24,7 +24,6 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
   const indexerDelegation = useDelegation(account, account);
-  console.log('indexerData', indexerData);
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 

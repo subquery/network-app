@@ -30,6 +30,8 @@ export * from './Card';
 export * from './CurEra';
 export * from './Modal';
 export * from './ModalInput';
+export * from './ModalApproveToken';
+export * from './ModalStatus';
 
 export {
   Header,

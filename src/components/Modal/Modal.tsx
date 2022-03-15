@@ -13,19 +13,19 @@ import styles from './Modal.module.css';
  * Waiting for SubQuery components lib(also based on antD) release and replace
  */
 
-interface Props {
+interface ModalProps {
   title?: string;
   steps?: string[];
   currentStep?: number;
   header?: string;
   description?: string;
-  amountInput?: React.ReactNode;
+  content?: React.ReactNode;
   visible: boolean;
   onCancel: () => void;
   onOk?: () => void;
 }
 
-export const Modal: React.FC<Props> = ({
+export const Modal: React.FC<ModalProps> = ({
   visible,
   onCancel,
   onOk,
@@ -33,7 +33,7 @@ export const Modal: React.FC<Props> = ({
   steps,
   currentStep,
   description,
-  amountInput,
+  content,
 }) => {
   const Title = () => (
     <Typography variant="h6" className={styles.title}>
@@ -82,7 +82,7 @@ export const Modal: React.FC<Props> = ({
     <AntDModal title={<Title />} visible={visible} onOk={onOk} onCancel={onCancel} footer={null}>
       <Steps />
       <Description />
-      {amountInput}
+      {content}
     </AntDModal>
   );
 };

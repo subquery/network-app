@@ -3,6 +3,7 @@
 
 import { BigNumber, BigNumberish, utils } from 'ethers';
 export * from './numberFormatters';
+export * from './parseError';
 
 export function truncateAddress(address: string): string {
   if (!address) {

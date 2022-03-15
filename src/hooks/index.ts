@@ -18,3 +18,5 @@ export { useIndexerCapacity } from './useIndexerCapacity';
 export { useSortedIndexer } from './useSortedIndexer';
 export * from './useLockPeriod';
 export * from './useUserDelegations';
+export * from './useHasAllowance';
+export * from './useIsIndexer';
