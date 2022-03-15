@@ -5,13 +5,13 @@ import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import styles from './DoStake.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '../../../../containers';
+import { useContracts, useWeb3 } from '../../../../containers';
 import assert from 'assert';
 import { ModalInput, Modal, tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import { useBalance } from '../../../../hooks/useBalance';
 import { parseEther } from '@ethersproject/units';
 import { ModalStatus } from '../../../../components/ModalStatus';
-import { useHasAllowance } from '../../../../hooks';
+import { useHasAllowance, useSortedIndexer } from '../../../../hooks';
 
 enum StakeAction {
   Stake = 'stake',
@@ -51,11 +51,14 @@ export const DoStake: React.VFC = () => {
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
 
   const { t } = useTranslation();
-  const { account, balance } = useBalance();
+  const { account } = useWeb3();
+  const sortedIndexer = useSortedIndexer(account || '');
+  const canUnstake = !!sortedIndexer.data;
+
+  const { balance } = useBalance();
   const pendingContracts = useContracts();
   const hasAllowance = useHasAllowance();
   const requireTokenApproval = hasAllowance?.data?.isZero();
-  console.log('requireTokenApproval', requireTokenApproval);
 
   const curAmount = stakeAction === StakeAction.Stake ? balance : undefined;
   const showMaxButton = stakeAction === StakeAction.Stake;
@@ -137,6 +140,7 @@ export const DoStake: React.VFC = () => {
         onClick={() => handleBtnClick(StakeAction.UnStake)}
         className={styles.btn}
         size="medium"
+        disabled={!canUnstake}
       />
     </div>
   );

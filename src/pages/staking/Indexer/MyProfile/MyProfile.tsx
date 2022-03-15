@@ -79,7 +79,6 @@ export const MyProfile: React.VFC = () => {
           })}
         </div>
 
-        {/* TODO Button component */}
         <div>
           <div className={styles.tabList}>
             {tabList.map((tab) => (

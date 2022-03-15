@@ -6,15 +6,20 @@ import * as React from 'react';
 import assert from 'assert';
 import styles from './SetCommissionRate.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '../../../../containers';
+import { useContracts, useWeb3 } from '../../../../containers';
 import { ModalInput, Modal } from '../../../../components';
 import { ModalStatus } from '../../../../components/ModalStatus';
+import { useSortedIndexer } from '../../../../hooks';
 
 export const SetCommissionRate: React.VFC = () => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [errorModalText, setErrorModalText] = React.useState<string | undefined>();
+
+  const { account } = useWeb3();
+  const sortedIndexer = useSortedIndexer(account || '');
+  const canUpdateCommissionRate = !!sortedIndexer.data;
 
   const pendingContracts = useContracts();
   const { t } = useTranslation();
@@ -90,6 +95,7 @@ export const SetCommissionRate: React.VFC = () => {
         onClick={() => handleBtnClick()}
         className={styles.btn}
         size="medium"
+        disabled={!canUpdateCommissionRate}
       />
     </div>
   );
