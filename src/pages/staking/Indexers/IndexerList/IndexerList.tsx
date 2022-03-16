@@ -33,20 +33,21 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   });
 
   const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? 0 : 1));
-  console.log('account', account);
-  console.log('orderedIndexerList', orderedIndexerList);
 
   const columns = [
     {
       title: '#',
       key: 'idx',
       width: 30,
-      render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
+      render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
       width: 150,
+      render: (val: string) => {
+        return <Typography variant="medium">{val === account ? 'You' : val}</Typography>;
+      },
     },
     {
       title: t('indexer.totalStake').toUpperCase(),
@@ -56,12 +57,14 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
           width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
           width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
       ],
     },
@@ -73,12 +76,14 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
           width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
           width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
       ],
     },
