@@ -9,9 +9,12 @@ import styles from './DelegateIndexer.module.css';
 import { useTranslation } from 'react-i18next';
 import { useIndexerCapacity, useSortedIndexer } from '../../../../hooks';
 import { formatEther, mergeAsync, renderAsync } from '../../../../utils';
-import { RouteParams } from '../..';
 import { IndexingContent } from '../../Indexer/Indexing';
 import { DoDelegate } from '../DoDelegate';
+
+type RouteParams = {
+  address: string;
+};
 
 export const DelegateIndexer: React.VFC = () => {
   const { t } = useTranslation();

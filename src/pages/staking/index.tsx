@@ -8,10 +8,6 @@ import { Indexer } from './Indexer';
 import { Indexers, DelegateIndexer } from './Indexers';
 import { Home } from './Home';
 
-export type RouteParams = {
-  address: string;
-};
-
 const Container: React.VFC = () => {
   return (
     <EraProvider>
