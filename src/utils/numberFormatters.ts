@@ -15,6 +15,6 @@ export function formatEther(value: BigNumber | number | string | undefined): str
   return utils.formatEther(BigNumber.from(value ?? 0).toString());
 }
 
-export function toPercentage(value: number): string {
-  return `${(value / 100).toFixed(2)} %`;
+export function toPercentage(value: number, divUnit = 100): string {
+  return `${(value / divUnit).toFixed(2)} %`;
 }

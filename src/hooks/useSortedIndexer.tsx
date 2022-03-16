@@ -12,7 +12,6 @@ import {
   toPercentage,
 } from '../utils';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
-import { useIndexerCapacity } from './useIndexerCapacity';
 
 interface UseSortedIndexerReturn {
   commission: CurrentEraValue<string>;
@@ -25,8 +24,6 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
   const indexerDelegation = useDelegation(account, account);
-  console.log('indexerData', indexerData);
-  console.log('indexerDelegation', indexerDelegation);
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 
@@ -54,7 +51,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     const totalStake = parseRawEraValue(indexer.indexer.totalStake, currentEraValue?.index);
     const ownStake = parseRawEraValue(delegation.delegation?.amount, currentEraValue?.index);
 
-    const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0)));
+    const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0), 10));
     const sortedTotalStake = mapEraValue(totalStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
     const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
 
