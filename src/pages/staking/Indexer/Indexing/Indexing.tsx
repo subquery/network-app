@@ -23,14 +23,12 @@ enum SectionTabs {
 const CurAndNextData = ({ item, unit }: any) => {
   return (
     <div>
-      <div>
-        <Typography>{item?.current !== undefined ? `${item.current} ${unit || ''}` : '-'}</Typography>
-      </div>
+      <Typography>{item?.current !== undefined ? `${item.current} ${unit || ''}` : '-'}</Typography>
       <div className={styles.nextItem}>
         <div className={styles.nextIcon}>
           <BsArrowReturnRight />
         </div>
-        <Typography className={styles.nextValue}>
+        <Typography className={styles.nextValue} variant="medium">
           {item?.after !== undefined ? `${item.after} ${unit || ''}` : '-'}
         </Typography>
       </div>
@@ -99,20 +97,6 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
 
   const tabList = [SectionTabs.Projects, SectionTabs.Delegator];
 
-  const indexerDelegations = useIndexerDelegators({ id: indexer ?? '' });
-  const { currentEra } = useEra();
-
-  const delegation = mapAsync(
-    ([indexer, era]) =>
-      indexer?.indexer?.delegations.nodes.map((delegation) => ({
-        value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
-          convertStringToNumber(formatEther(v ?? 0)),
-        ),
-        delegator: delegation?.delegatorAddress ?? '',
-      })),
-    mergeAsync(indexerDelegations, currentEra),
-  );
-
   return (
     <div className={styles.indexing}>
       <div>
@@ -120,9 +104,9 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
           data: (data) => {
-            console.log('data', data);
             if (!data) return <></>;
             const [isIndexer, sortedIndexing, curCapacity] = data;
+            console.log('sortedIndexing', sortedIndexing);
             if (!isIndexer) return <NotRegisteredIndexer />;
             if (!sortedIndexing)
               return (
@@ -169,12 +153,7 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
                   </div>
 
                   {curTab === SectionTabs.Projects && <div>Projects</div>}
-                  {curTab === SectionTabs.Delegator &&
-                    renderAsync(delegation, {
-                      loading: () => <Spinner />,
-                      error: (e) => <Typography>{`Failed to load delegations: ${e}`}</Typography>,
-                      data: (data) => (data ? <OwnDelegator delegations={data} /> : null),
-                    })}
+                  {curTab === SectionTabs.Delegator && <OwnDelegator indexer={indexer} />}
                 </div>
               </>
             );

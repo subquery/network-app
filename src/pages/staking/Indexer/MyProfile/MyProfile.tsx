@@ -36,6 +36,7 @@ export const MyProfile: React.VFC = () => {
     if (!account) {
       history.push('/staking');
     }
+    return;
   }, [account, history]);
 
   return (

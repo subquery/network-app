@@ -22,7 +22,7 @@ export const SetCommissionRate: React.VFC = () => {
     description: t('indexer.newRateValidNext2Era'),
     inputTitle: t('indexer.enterCommissionRate'),
     submitText: t('indexer.confirmRate'),
-    failureText: `Sorry, the commission update operation has failed.`
+    failureText: `Sorry, the commission update operation has failed.`,
   };
 
   const handleClick = async (amount: string) => {
