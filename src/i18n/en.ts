@@ -217,6 +217,9 @@ const en = {
       approveTokenToDelegate: 'Approve your token for staking',
       noDelegating: 'No delegation available',
       yourDelegateAmount: 'Your Delegation Amount',
+      none: 'No delegator available',
+      toIndexer: 'Delegate indexers',
+      viewProfile: 'View indexer profile',
     },
 
     withdrawals: {

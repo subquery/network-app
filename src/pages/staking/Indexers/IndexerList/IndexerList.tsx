@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/react-ui';
+import { Typography, Button } from '@subql/react-ui';
 import { Table } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
@@ -12,15 +12,17 @@ import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
+import { useHistory } from 'react-router';
 
 interface props {
   indexers: Indexer[];
 }
 
 export const IndexerList: React.VFC<props> = ({ indexers }) => {
+  const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
-  const { t } = useTranslation();
+  const history = useHistory();
 
   const sortedIndexerList = indexers.map((indexer) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
@@ -32,20 +34,22 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
 
-  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 0));
-  console.log('orderedIndexerList', orderedIndexerList);
+  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 1));
 
   const columns = [
     {
       title: '#',
       key: 'idx',
       width: 30,
-      render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
+      render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
       width: 150,
+      render: (val: string) => {
+        return <Typography variant="medium">{val === account ? 'You' : val}</Typography>;
+      },
     },
     {
       title: t('indexer.totalStake').toUpperCase(),
@@ -54,13 +58,15 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
       ],
     },
@@ -71,13 +77,15 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
+          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
         },
       ],
     },
@@ -86,9 +94,15 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 60,
+      width: 110,
       render: (id: string) => {
-        return <DoDelegate indexerAddress={id} />;
+        if (id === account) return <Typography> - </Typography>;
+        return (
+          <div className={styles.actionBtns}>
+            <Button label="View" size="medium" className={styles.btn} href={`/staking/indexers/delegate/${id}`} />
+            <DoDelegate indexerAddress={id} />
+          </div>
+        );
       },
     },
   ];

@@ -14,6 +14,7 @@ import {
 } from '../../../../__generated__/GetRewards';
 import ClaimRewards from './ClaimRewards';
 import { Table as TableD, TableProps } from 'antd';
+import styles from './Rewards.module.css';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -56,20 +57,24 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
     },
   ];
 
-  return renderAsyncArray(
-    mapAsync(
-      (data) =>
-        ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
-          data.rewards?.nodes.filter(notEmpty) ?? [],
+  return (
+    <div className={styles.container}>
+      {renderAsyncArray(
+        mapAsync(
+          (data) =>
+            ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
+              data.rewards?.nodes.filter(notEmpty) ?? [],
+            ),
+          rewards,
         ),
-      rewards,
-    ),
-    {
-      error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
-      loading: () => <Spinner />,
-      empty: () => <Typography>{t('rewards.none')}</Typography>,
-      data: (data) => <TableD columns={colums} dataSource={data} scroll={{ x: 800 }} />,
-    },
+        {
+          error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
+          loading: () => <Spinner />,
+          empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
+          data: (data) => <TableD columns={colums} dataSource={data} scroll={{ x: 800 }} />,
+        },
+      )}
+    </div>
   );
 };
 

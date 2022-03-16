@@ -1,4 +1,22 @@
+.textGroup {
+  margin-bottom: 1rem;
+}
+
 .grayText {
+  color: var(--gray500);
+}
+
+.nextItem {
+  display: flex;
+}
+
+.nextIcon {
+  height: 100%;
+  margin-right: 6px;
+  color: var(--gray500);
+}
+
+.nextValue {
   color: var(--gray500);
 }
 
