@@ -11,7 +11,7 @@ export function convertBigNumberToNumber(value: BigNumber | number): number {
   return BigNumber.from(value).toNumber();
 }
 
-export function formatEther(value: BigNumber | number | undefined): string {
+export function formatEther(value: BigNumber | number | string | undefined): string {
   return utils.formatEther(BigNumber.from(value ?? 0).toString());
 }
 

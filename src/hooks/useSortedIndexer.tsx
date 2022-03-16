@@ -12,6 +12,7 @@ import {
   toPercentage,
 } from '../utils';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
+import { useIndexerCapacity } from './useIndexerCapacity';
 
 interface UseSortedIndexerReturn {
   commission: CurrentEraValue<string>;
@@ -24,6 +25,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
   const indexerDelegation = useDelegation(account, account);
+  const curCapacity = useIndexerCapacity(account);
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 

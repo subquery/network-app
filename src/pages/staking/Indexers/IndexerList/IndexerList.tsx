@@ -32,7 +32,8 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
 
-  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 0));
+  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? 0 : 1));
+  console.log('account', account);
   console.log('orderedIndexerList', orderedIndexerList);
 
   const columns = [
@@ -54,13 +55,13 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
         },
       ],
     },
@@ -71,13 +72,13 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 80,
+          width: 70,
         },
       ],
     },
@@ -86,8 +87,9 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 60,
+      width: 70,
       render: (id: string) => {
+        if (id === account) return <Typography> - </Typography>;
         return <DoDelegate indexerAddress={id} />;
       },
     },

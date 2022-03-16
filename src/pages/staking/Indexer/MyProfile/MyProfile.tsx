@@ -3,13 +3,14 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
+import { useHistory } from 'react-router';
 import { useWeb3 } from '../../../../containers';
 import { Card, CurEra, Sidebar } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
-import { useIsIndexer, useSortedIndexer, useUserDelegations } from '../../../../hooks';
+import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
 import { mergeAsync, renderAsync } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
@@ -27,9 +28,15 @@ export const MyProfile: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const isIndexer = useIsIndexer(account);
+  const history = useHistory();
   const sortedIndexer = useSortedIndexer(account || '');
   const totalDelegations = useUserDelegations(account);
+
+  React.useEffect(() => {
+    if (!account) {
+      history.push('/staking');
+    }
+  }, [account, history]);
 
   return (
     <div className={styles.container}>
@@ -89,9 +96,7 @@ export const MyProfile: React.VFC = () => {
               </div>
             ))}
           </div>
-          {curTab === SectionTabs.Indexing && (
-            <Indexing tableData={sortedIndexer} indexer={account ?? ''} isIndexer={isIndexer?.data} />
-          )}
+          {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
           {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
           {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
           {curTab === SectionTabs.Locked && <Locked />}

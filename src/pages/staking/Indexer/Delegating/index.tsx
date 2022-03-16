@@ -69,7 +69,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 60,
+      width: 70,
       render: (id: string) => {
         if (id === delegator) {
           return <Typography>-</Typography>;
@@ -86,7 +86,6 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
         loading: () => <Spinner />,
         error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
         data: (data) => {
-          console.log('data', data);
           if (!data || data.length === 0) return <Typography variant="h5">{t('delegate.noDelegating')}</Typography>;
           return (
             <>
