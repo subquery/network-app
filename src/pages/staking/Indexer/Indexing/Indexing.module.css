@@ -1,3 +1,7 @@
+.textGroup {
+  margin-bottom: 1rem;
+}
+
 .grayText {
   color: var(--gray500);
 }

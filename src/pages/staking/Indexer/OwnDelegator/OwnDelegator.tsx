@@ -4,7 +4,6 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import { Table } from 'antd';
 import * as React from 'react';
-// import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import { useTranslation } from 'react-i18next';
 import styles from './OwnDelegator.module.css';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
@@ -41,7 +40,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       dataIndex: ['value', 'current'],
       width: 100,
       render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value} SQT`}</Typography>
+        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
       ),
     },
     {
@@ -49,7 +48,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       dataIndex: ['value', 'after'],
       width: 100,
       render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value} SQT`}</Typography>
+        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
       ),
     },
   ];

@@ -13,7 +13,7 @@ import {
 } from '../utils';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
 
-interface UseSortedIndexerReturn {
+export interface UseSortedIndexerReturn {
   commission: CurrentEraValue<string>;
   totalStake: CurrentEraValue<number>;
   ownStake: CurrentEraValue<number>;

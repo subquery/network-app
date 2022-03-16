@@ -21,7 +21,7 @@ export const Locked: React.VFC = () => {
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
           loading: () => <Spinner />,
-          empty: () => <Typography variant="h5">{t('withdrawals.noWithdrawals')}</Typography>,
+          empty: () => <Typography variant="h6">{t('withdrawals.noWithdrawals')}</Typography>,
           data: (data) => <LockedList withdrawals={data} />,
         },
       )}

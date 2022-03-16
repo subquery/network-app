@@ -218,6 +218,8 @@ const en = {
       noDelegating: 'No delegation available',
       yourDelegateAmount: 'Your Delegation Amount',
       none: 'No delegator available',
+      toIndexer: 'Delegate indexers',
+      viewProfile: 'View indexer profile',
     },
 
     withdrawals: {

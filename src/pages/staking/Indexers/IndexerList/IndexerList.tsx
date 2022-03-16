@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/react-ui';
+import { Typography, Button } from '@subql/react-ui';
 import { Table } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
@@ -12,15 +12,17 @@ import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
+import { useHistory } from 'react-router';
 
 interface props {
   indexers: Indexer[];
 }
 
 export const IndexerList: React.VFC<props> = ({ indexers }) => {
+  const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
-  const { t } = useTranslation();
+  const history = useHistory();
 
   const sortedIndexerList = indexers.map((indexer) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
@@ -32,7 +34,7 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
 
-  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? 0 : 1));
+  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 1));
 
   const columns = [
     {
@@ -92,10 +94,20 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 70,
+      width: 110,
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
-        return <DoDelegate indexerAddress={id} />;
+        return (
+          <div className={styles.actionBtns}>
+            <Button
+              label="View"
+              size="medium"
+              className={styles.btn}
+              onClick={() => history.push(`/staking/indexers/delegate/${id}`)}
+            />
+            <DoDelegate indexerAddress={id} />
+          </div>
+        );
       },
     },
   ];

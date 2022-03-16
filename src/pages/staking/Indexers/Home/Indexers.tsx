@@ -13,7 +13,6 @@ import { IndexerList } from '../IndexerList/IndexerList';
 export const Indexers: React.VFC = () => {
   const indexers = useIndexers({});
   const { t } = useTranslation();
-  console.log('indexers', indexers);
 
   return (
     <EraProvider>
@@ -31,15 +30,17 @@ export const Indexers: React.VFC = () => {
             <CurEra />
           </div>
 
-          {renderAsyncArray(
-            mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers),
-            {
-              error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
-              loading: () => <Spinner />,
-              empty: () => <Typography>No Indexers available.</Typography>,
-              data: (data) => <IndexerList indexers={data} />,
-            },
-          )}
+          <div className={styles.dataContent}>
+            {renderAsyncArray(
+              mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers),
+              {
+                error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
+                loading: () => <Spinner />,
+                empty: () => <Typography>No Indexers available.</Typography>,
+                data: (data) => <IndexerList indexers={data} />,
+              },
+            )}
+          </div>
         </div>
       </div>
     </EraProvider>

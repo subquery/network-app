@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
-import { mergeAsync, renderAsync } from '../../../../utils';
+import { convertStringToNumber, mergeAsync, renderAsync } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 
@@ -61,6 +61,7 @@ export const MyProfile: React.VFC = () => {
             data: (data) => {
               if (!data) return null;
               const [s, d] = data;
+              const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.totalStake.current ?? 0);
               const cards = [
                 {
                   category: t('indexer.indexing'),
@@ -70,7 +71,7 @@ export const MyProfile: React.VFC = () => {
                 {
                   category: t('delegate.delegating'),
                   title: t('delegate.totalDelegation'),
-                  value: `${d?.current ?? 0} SQT`,
+                  value: `${totalDelegations} SQT`,
                 },
               ];
 
