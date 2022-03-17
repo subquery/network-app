@@ -21,13 +21,17 @@
   color: var(--gray500);
 }
 
-.navLinkText {
-  margin: 1rem 0.4rem;
-  color: var(--gray500);
+.navLink > p {
+  margin: 1rem 0.4rem !important;
+  color: var(--gray500) !important;
 }
 
 .activeNav {
   color: inherit;
+}
+
+.activeNav > p {
+  color: inherit !important;
 }
 
 .stakingDetails {

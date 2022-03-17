@@ -7,6 +7,7 @@ const en = {
       explorer: 'Explorer',
       studio: 'Studio',
       staking: 'Stake & Delegate',
+      plans: 'Plan & Offer',
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
@@ -253,6 +254,25 @@ const en = {
         desription: 'You are about to claim {{amount}} SQT',
         button: 'Claim',
         submit: 'Confirm Claim',
+      },
+    },
+    plans: {
+      default: {
+        title: 'You can create maximum 5 default plans',
+      },
+      headers: {
+        id: 'Id',
+        price: 'Price',
+        period: 'Period',
+        dailyReqCap: 'Daily Request Cap',
+        rateLimit: 'Rate Limit',
+        action: 'Action',
+      },
+      remove: {
+        action: 'Remove',
+        title: 'Are you sure you want to remove this plan?',
+        description: 'Plan Details',
+        failureText: 'Failed to remove plan',
       },
     },
   },

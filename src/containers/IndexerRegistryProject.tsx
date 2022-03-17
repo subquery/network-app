@@ -165,8 +165,8 @@ const GET_PLAN_TEMPLATES = gql`
 
 const GET_PLANS = gql`
   ${PLAN_TEMPLATE_FIELDS}
-  query GetPlans($address: String!) {
-    plans(filter: { creator: { equalTo: $address } }) {
+  query GetPlans($address: String!, $default: Boolean) {
+    plans(filter: { creator: { equalTo: $address }, and: { deploymentId: { isNull: $default } } }) {
       nodes {
         id
         active
