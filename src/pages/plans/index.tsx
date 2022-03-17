@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useContracts, usePlans, usePlanTemplates, useWeb3 } from '../../containers';
+import { EraProvider, useContracts, usePlans, usePlanTemplates, useWeb3 } from '../../containers';
 import { cidToBytes32, mapAsync, newModalStyles, notEmpty, renderAsyncArray } from '../../utils';
 import { Button, Modal, Spinner, Typography } from '@subql/react-ui';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
@@ -12,9 +12,14 @@ import assert from 'assert';
 import { ethers, utils } from 'ethers';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
-import { FTextInput } from '../../components';
+import { FTextInput, Sidebar } from '../../components';
 import ReactModal from 'react-modal';
 import { GetPlans_plans_nodes as Plan } from '../../__generated__/GetPlans';
+import { Redirect, Route, Switch } from 'react-router';
+import ServiceAgreements from './ServiceAgreements';
+import Plans from './Plans';
+import styles from './index.module.css';
+import { AiOutlineBarChart } from 'react-icons/ai';
 
 const NewPlanSchema = yup.object({
   price: yup.number().required(),
@@ -89,7 +94,7 @@ const CreatePlanModal: React.VFC<{ onSubmit: (data: NewPlanFormProps) => Promise
   );
 };
 
-const Plans: React.VFC = () => {
+const PlansOld: React.VFC = () => {
   const { account } = useWeb3();
   const pendingContracts = useContracts();
 
@@ -197,4 +202,36 @@ const Plans: React.VFC = () => {
   );
 };
 
-export default Plans;
+const PlanAndOffer: React.VFC = () => {
+  const sidebarList = [
+    {
+      label: 'My Service Agreements',
+      link: '/plans/service-agreements',
+      icon: <AiOutlineBarChart />,
+    },
+    {
+      label: 'My Plans',
+      link: '/plans/plans',
+      icon: <AiOutlineBarChart />,
+    },
+  ];
+
+  return (
+    <EraProvider>
+      <div className={styles.container}>
+        <div className={styles.sidebar}>
+          <Sidebar list={sidebarList} />
+        </div>
+        <div className={styles.container}>
+          <Switch>
+            <Route path="/plans/service-agreements" component={ServiceAgreements} />
+            <Route path="/plans/plans" component={Plans} />
+            <Redirect from="/plans" to="/plans/service-agreements" />
+          </Switch>
+        </div>
+      </div>
+    </EraProvider>
+  );
+};
+
+export default PlanAndOffer;

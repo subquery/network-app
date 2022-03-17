@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  background-color: var(--gray200);
+  width: 100%;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 25%;
+}

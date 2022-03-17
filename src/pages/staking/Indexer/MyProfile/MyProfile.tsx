@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { useHistory } from 'react-router';
 import { useWeb3 } from '../../../../containers';
-import { Card, CurEra, Sidebar } from '../../../../components';
+import { Card, CurEra } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
@@ -40,70 +40,64 @@ export const MyProfile: React.VFC = () => {
   }, [account, history]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.sidebar}>
-        <Sidebar />
+    <>
+      <div className={styles.header}>
+        <Typography variant="h3" className={`${styles.title} ${styles.grayText}`}>
+          {t('indexer.profile')}
+        </Typography>
+
+        <CurEra />
       </div>
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <Typography variant="h3" className={`${styles.title} ${styles.grayText}`}>
-            {t('indexer.profile')}
-          </Typography>
 
-          <CurEra />
-        </div>
-
-        <div className={styles.profile}>
-          {/* TODO CONNECT WALLET HINT */}
-          {renderAsync(mergeAsync(sortedIndexer, totalDelegations), {
-            loading: () => <Spinner />,
-            error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
-            data: (data) => {
-              if (!data) return null;
-              const [s, d] = data;
-              const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.totalStake.current ?? 0);
-              const cards = [
-                {
-                  category: t('indexer.indexing'),
-                  title: t('indexer.totalStakeAmount'),
-                  value: `${s?.totalStake.current ?? 0} SQT`,
-                },
-                {
-                  category: t('delegate.delegating'),
-                  title: t('delegate.totalDelegation'),
-                  value: `${totalDelegations} SQT`,
-                },
-              ];
-
-              return (
-                <>
-                  <div>{<Address address={account ?? ''} size="large" />}</div>
-                  <div className={styles.stakingSummary}>
-                    {cards.map((card) => (
-                      <Card category={card.category} title={card.title} value={card.value} key={card.category} />
-                    ))}
-                  </div>
-                </>
-              );
-            },
-          })}
-        </div>
-
-        <div>
-          <div className={styles.tabList}>
-            {tabList.map((tab) => (
-              <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-                {curTab === tab && <div className={styles.line} />}
-              </div>
-            ))}
-          </div>
-          {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
-          {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
-          {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
-          {curTab === SectionTabs.Locked && <Locked />}
-        </div>
+      <div className={styles.profile}>
+        {/* TODO CONNECT WALLET HINT */}
+        {renderAsync(mergeAsync(sortedIndexer, totalDelegations), {
+          loading: () => <Spinner />,
+          error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
+          data: (data) => {
+            if (!data) return null;
+            const [s, d] = data;
+            const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.totalStake.current ?? 0);
+            const cards = [
+              {
+                category: t('indexer.indexing'),
+                title: t('indexer.totalStakeAmount'),
+                value: `${s?.totalStake.current ?? 0} SQT`,
+              },
+              {
+                category: t('delegate.delegating'),
+                title: t('delegate.totalDelegation'),
+                value: `${totalDelegations} SQT`,
+              },
+            ];
+            return (
+              <>
+                <div>{<Address address={account ?? ''} size="large" />}</div>
+                <div className={styles.stakingSummary}>
+                  {cards.map((card) => (
+                    <Card category={card.category} title={card.title} value={card.value} key={card.category} />
+                  ))}
+                </div>
+              </>
+            );
+          },
+        })}
       </div>
-    </div>
+
+      <div>
+        <div className={styles.tabList}>
+          {tabList.map((tab) => (
+            <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+              <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+              {curTab === tab && <div className={styles.line} />}
+            </div>
+          ))}
+        </div>
+        {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
+        {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
+        {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
+        {curTab === SectionTabs.Locked && <Locked />}
+      </div>
+    </>
   );
 };

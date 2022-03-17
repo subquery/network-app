@@ -66,6 +66,7 @@ const Header: React.VFC = () => {
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
           {renderLink('/staking', t('header.staking'))}
+          {renderLink('/plans', t('header.plans'))}
           <Button
             href="https://doc.subquery.network"
             target="_blank"
