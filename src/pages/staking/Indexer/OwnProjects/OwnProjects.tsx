@@ -6,18 +6,11 @@ import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPFSImage, Status } from '../../../../components';
-import { StatusColor } from '../../../../components/Status/Status';
+import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
 import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
 import { renderAsync } from '../../../../utils';
 import styles from './OwnProjects.module.css';
-
-// TODO: Should this be moved to Status component?
-const deploymentStatus: { [key: string]: StatusColor } = {
-  INDEXING: StatusColor.blue,
-  READY: StatusColor.green,
-  NOTINDEXING: StatusColor.red,
-};
 
 interface Props {
   indexer: string;
@@ -52,10 +45,10 @@ export const OwnProjects: React.VFC<Props> = ({ indexer }) => {
         <div className={styles.projectInfo}>
           <IPFSImage src={record?.projectImage || '/static/default.project.png'} className={styles.ipfsImage} />
           <div className={styles.projectTextInfo}>
-            <Typography variant="large">{`${record?.projectName}`}</Typography>
-            <Typography variant="small" className={styles.text}>{`${t(
-              'projects.deploymentId',
-            )}: ${deploymentId}`}</Typography>
+            <Typography variant="large">{`${record?.projectName ?? '-'}`}</Typography>
+            <Typography variant="small" className={styles.text}>{`${t('projects.deploymentId')}: ${
+              deploymentId ?? '-'
+            }`}</Typography>
           </div>
         </div>
       ),

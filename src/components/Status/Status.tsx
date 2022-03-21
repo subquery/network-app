@@ -11,6 +11,14 @@ export enum StatusColor {
   blue = 'blue',
 }
 
+export const deploymentStatus: { [key: string]: StatusColor } = {
+  INDEXING: StatusColor.blue,
+  STARTED: StatusColor.blue,
+  READY: StatusColor.green,
+  NOTINDEXING: StatusColor.red,
+  TERMINATED: StatusColor.red,
+};
+
 type Props = {
   text: string;
   color?: StatusColor;
