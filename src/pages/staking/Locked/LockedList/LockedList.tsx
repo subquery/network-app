@@ -28,7 +28,7 @@ interface props {
 
 export const LockedList: React.VFC<props> = ({ withdrawals }) => {
   const { t } = useTranslation();
-  const lockPeriod = useLockPeriod();
+  // const lockPeriod = useLockPeriod();
 
   const sortedWithdrawals = withdrawals.map((withdrawal) => {
     const sortedAmount = formatEther(BigNumber.from(withdrawal.amount));

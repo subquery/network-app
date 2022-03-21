@@ -19,9 +19,14 @@ enum SectionTabs {
   Delegator = 'Delegator',
 }
 
-const CurAndNextData = ({ item, unit }: any) => {
+interface CurAndAfterIProps {
+  current: number | string;
+  after?: number | string;
+}
+
+const CurAndNextData = ({ item, unit }: { item: CurAndAfterIProps; unit?: string }) => {
   return (
-    <div>
+    <div key={item.current}>
       <Typography>{item?.current !== undefined ? `${item.current} ${unit || ''}` : '-'}</Typography>
       <div className={styles.nextItem}>
         <div className={styles.nextIcon}>
@@ -56,25 +61,25 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       title: t('indexer.ownStake').toLocaleUpperCase(),
       dataIndex: 'ownStake',
       key: 'ownStake',
-      render: (item: any) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.commission').toLocaleUpperCase(),
       dataIndex: 'commission',
       key: 'commission',
-      render: (item: any) => <CurAndNextData item={item} />,
+      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} />,
     },
     {
       title: t('indexer.delegated').toLocaleUpperCase(),
       dataIndex: 'totalDelegations',
       key: 'delegated',
-      render: (item: any) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',
       key: 'capacity',
-      render: (item: any) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
     },
   ];
 
