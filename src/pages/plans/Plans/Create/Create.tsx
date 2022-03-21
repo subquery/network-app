@@ -15,8 +15,6 @@ import * as yup from 'yup';
 import { FTextInput } from '../../../../components';
 import { constants } from 'ethers';
 
-type Props = {};
-
 const planSchema = yup.object({
   price: yup.number().defined(),
   deploymentId: yup.string().optional(),
@@ -62,7 +60,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   );
 };
 
-const Create: React.FC<Props> = (props) => {
+const Create: React.FC = () => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const templates = usePlanTemplates({});
