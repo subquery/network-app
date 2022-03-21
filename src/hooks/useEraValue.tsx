@@ -63,7 +63,7 @@ export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined
   const eraValue = convertRawEraValue(value);
 
   if (curEra && curEra > eraValue.era) {
-    return { current: eraValue.valueAfter };
+    return { current: eraValue.valueAfter, after: eraValue.valueAfter };
   }
 
   const after = eraValue.value.eq(eraValue.valueAfter) ? undefined : eraValue.valueAfter;
