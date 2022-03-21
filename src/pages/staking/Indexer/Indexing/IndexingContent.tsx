@@ -13,20 +13,16 @@ import { BsArrowReturnRight } from 'react-icons/bs';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { useWeb3 } from '../../../../containers';
 import { OwnDeployments } from '../OwnDeployments';
+import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 enum SectionTabs {
   Projects = 'Projects',
   Delegator = 'Delegator',
 }
 
-interface CurAndAfterIProps {
-  current: number | string;
-  after?: number | string;
-}
-
-const CurAndNextData = ({ item, unit }: { item: CurAndAfterIProps; unit?: string }) => {
+const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }) => {
   return (
-    <div key={item.current}>
+    <div key={item.current.toString()}>
       <Typography>{item?.current !== undefined ? `${item.current} ${unit || ''}` : '-'}</Typography>
       <div className={styles.nextItem}>
         <div className={styles.nextIcon}>
@@ -55,31 +51,31 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       title: t('indexer.totalStake').toLocaleUpperCase(),
       dataIndex: 'totalStake',
       key: 'totalStake',
-      render: (item: any) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.ownStake').toLocaleUpperCase(),
       dataIndex: 'ownStake',
       key: 'ownStake',
-      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.commission').toLocaleUpperCase(),
       dataIndex: 'commission',
       key: 'commission',
-      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} />,
     },
     {
       title: t('indexer.delegated').toLocaleUpperCase(),
       dataIndex: 'totalDelegations',
       key: 'delegated',
-      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',
       key: 'capacity',
-      render: (item: CurAndAfterIProps) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
   ];
 

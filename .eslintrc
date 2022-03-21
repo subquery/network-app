@@ -15,8 +15,6 @@
         " SPDX-License-Identifier: Apache-2.0"
       ],
       2
-    ],
-    "@typescript-eslint/ban-types": "off", // For Plan/Create.tsx
-    "@typescript-eslint/no-explicit-any": "off"
+    ]
   }
 }
