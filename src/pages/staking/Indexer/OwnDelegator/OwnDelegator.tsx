@@ -67,7 +67,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
               value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
                 convertStringToNumber(formatEther(v ?? 0)),
               ),
-              delegator: delegation?.delegatorAddress ?? '',
+              delegator: delegation?.delegatorId ?? '',
             })),
           mergeAsync(indexerDelegations, currentEra),
         ),

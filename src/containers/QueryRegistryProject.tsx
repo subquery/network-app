@@ -74,7 +74,7 @@ const GET_DEPLOYMENT_INDEXERS = gql`
     deploymentIndexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
       nodes {
         id
-        indexerAddress
+        indexerId
         deploymentId
         blockHeight
         timestamp
