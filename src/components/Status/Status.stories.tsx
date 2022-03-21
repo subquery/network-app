@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Status from './Status';
+import Status, { StatusColor } from './Status';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 export default {
@@ -25,12 +25,12 @@ export const ErrorStatus = Template.bind({});
 
 ErrorStatus.args = {
   text: 'Error',
-  color: 'red',
+  color: StatusColor.red,
 };
 
 export const Success = Template.bind({});
 
 Success.args = {
   text: 'Success',
-  color: 'green',
+  color: StatusColor.green,
 };

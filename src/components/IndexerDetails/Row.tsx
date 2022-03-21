@@ -14,6 +14,7 @@ import styles from './Row.module.css';
 import Spinner from '../Spinner';
 import Status from '../Status';
 import { Typography } from '@subql/react-ui';
+import { StatusColor } from '../Status/Status';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -36,7 +37,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
         />
       </TableCell>
       <TableCell>
-        <Status text={indexer.status} color={indexer.status === 'READY' ? 'green' : undefined} />
+        <Status text={indexer.status} color={indexer.status === 'READY' ? StatusColor.green : undefined} />
       </TableCell>
       <TableCell>
         {renderAsync(

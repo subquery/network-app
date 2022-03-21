@@ -12,7 +12,6 @@ import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
-import { useHistory } from 'react-router';
 
 interface props {
   indexers: Indexer[];
@@ -22,7 +21,6 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
-  const history = useHistory();
 
   const sortedIndexerList = indexers.map((indexer) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
@@ -59,14 +57,22 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
           width: 70,
-          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
+          render: (val: string) => (
+            <Typography variant="medium" className={styles.text}>
+              {val ? `${val} SQT` : '-'}
+            </Typography>
+          ),
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
           width: 70,
-          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
+          render: (val: string) => (
+            <Typography variant="medium" className={styles.text}>
+              {val ? `${val} SQT` : '-'}
+            </Typography>
+          ),
         },
       ],
     },
@@ -78,14 +84,22 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
           width: 70,
-          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
+          render: (val: string) => (
+            <Typography variant="medium" className={styles.text}>
+              {val ? `${val} SQT` : '-'}
+            </Typography>
+          ),
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
           width: 70,
-          render: (val: string) => <Typography variant="medium">{val ?? '-'}</Typography>,
+          render: (val: string) => (
+            <Typography variant="medium" className={styles.text}>
+              {val ? `${val} SQT` : '-'}
+            </Typography>
+          ),
         },
       ],
     },

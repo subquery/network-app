@@ -1,0 +1,19 @@
+.container {
+  margin: 1rem 0;
+}
+
+.projectInfo {
+  display: flex;
+}
+
+.ipfsImage {
+  max-width: 50px;
+}
+
+.projectTextInfo {
+  margin: 0 1rem;
+}
+
+.text {
+  color: var(--gray500);
+}

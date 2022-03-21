@@ -6,6 +6,10 @@ import { offsetLimitPagination } from '@apollo/client/utilities';
 import * as React from 'react';
 import { GetDeployment, GetDeploymentVariables } from '../__generated__/GetDeployment';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
+import {
+  GetDeploymentIndexersByIndexer,
+  GetDeploymentIndexersByIndexerVariables,
+} from '../__generated__/GetDeploymentIndexersByIndexer';
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
 import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
 import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
@@ -80,6 +84,26 @@ const GET_DEPLOYMENT_INDEXERS = gql`
   }
 `;
 
+const GET_DEPLOYMENT_INDEXERS_WITH_INDEXER = gql`
+  query GetDeploymentIndexersByIndexer($indexerAddress: String!) {
+    deploymentIndexers(filter: { indexerAddress: { equalTo: $indexerAddress } }) {
+      nodes {
+        id
+        blockHeight
+        timestamp
+        status
+        deployment {
+          id
+          project {
+            id
+            metadata
+          }
+        }
+      }
+    }
+  }
+`;
+
 export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject> {
   return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
@@ -106,6 +130,17 @@ export function useIndexersQuery(params?: GetDeploymentIndexersVariables): Query
   return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
     variables: params,
   });
+}
+
+export function useIndexerDeploymentsQuery(
+  params?: GetDeploymentIndexersByIndexerVariables,
+): QueryResult<GetDeploymentIndexersByIndexer> {
+  return useQuery<GetDeploymentIndexersByIndexer, GetDeploymentIndexersByIndexerVariables>(
+    GET_DEPLOYMENT_INDEXERS_WITH_INDEXER,
+    {
+      variables: params,
+    },
+  );
 }
 
 export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (props) => {

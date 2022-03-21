@@ -5,6 +5,11 @@
   display: inline-flex;
 }
 
+.container-blue {
+  border-color: var(--info);
+  background: var(--info-opac);
+}
+
 .container-gray {
   border-color: var(--weak);
   background: var(--weak-opac);
@@ -25,6 +30,10 @@
   font-size: 12px;
   line-height: 20px;
   text-transform: uppercase;
+}
+
+.text-blue {
+  color: var(--info);
 }
 
 .text-gray {

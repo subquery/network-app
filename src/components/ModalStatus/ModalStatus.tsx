@@ -38,7 +38,7 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
     }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [onCancel]);
 
   return (
     <AntDModal title={title} visible={visible} onCancel={onCancel} footer={null}>

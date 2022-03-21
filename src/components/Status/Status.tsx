@@ -4,9 +4,24 @@
 import * as React from 'react';
 import styles from './Status.module.css';
 
+export enum StatusColor {
+  red = 'red',
+  green = 'green',
+  gray = 'gray',
+  blue = 'blue',
+}
+
+export const deploymentStatus: { [key: string]: StatusColor } = {
+  INDEXING: StatusColor.blue,
+  STARTED: StatusColor.blue,
+  READY: StatusColor.green,
+  NOTINDEXING: StatusColor.red,
+  TERMINATED: StatusColor.red,
+};
+
 type Props = {
   text: string;
-  color?: 'red' | 'green' | 'gray';
+  color?: StatusColor;
 };
 
 const Status: React.FC<Props> = ({ text, color = 'gray' }) => {

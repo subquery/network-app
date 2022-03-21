@@ -57,7 +57,7 @@ export const MyProfile: React.VFC = () => {
           data: (data) => {
             if (!data) return null;
             const [s, d] = data;
-            const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.totalStake.current ?? 0);
+            const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.ownStake.current ?? 0);
             const cards = [
               {
                 category: t('indexer.indexing'),
