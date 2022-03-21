@@ -248,7 +248,7 @@ const en = {
       nonDeployments: 'No deployed projects available.',
     },
     rewards: {
-      none: 'You have no rewards',
+      none: 'No rewards available.',
       header1: 'Indexer',
       header2: 'Amount',
       header3: 'Action',

@@ -34,6 +34,11 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       title: t('delegate.delegator').toUpperCase(),
       dataIndex: 'delegator',
       width: 100,
+      render: (delegator: string) => (
+        <Typography variant="medium" className={styles.text}>
+          {delegator === indexer ? 'You' : delegator}
+        </Typography>
+      ),
     },
     {
       title: t('delegate.currentEra').toUpperCase(),
