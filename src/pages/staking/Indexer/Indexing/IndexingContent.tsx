@@ -12,7 +12,7 @@ import { SetCommissionRate } from '../SetCommissionRate';
 import { BsArrowReturnRight } from 'react-icons/bs';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { useWeb3 } from '../../../../containers';
-import { OwnProjects } from '../OwnProjects';
+import { OwnDeployments } from '../OwnDeployments';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -114,7 +114,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
           ))}
         </div>
 
-        {curTab === SectionTabs.Projects && <OwnProjects indexer={indexer} />}
+        {curTab === SectionTabs.Projects && <OwnDeployments indexer={indexer} />}
         {curTab === SectionTabs.Delegator && <OwnDelegator indexer={indexer} />}
       </div>
     </>

@@ -5,21 +5,23 @@ import { Spinner, Typography } from '@subql/react-ui';
 import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
 import { IPFSImage, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
 import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
 import { renderAsync } from '../../../../utils';
-import styles from './OwnProjects.module.css';
+import styles from './OwnDeployments.module.css';
 
 interface Props {
   indexer: string;
 }
 
-export const OwnProjects: React.VFC<Props> = ({ indexer }) => {
+export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
   const { getMetadataFromCid } = useProjectMetadata();
   const indexerDeployments = useSortedIndexerDeployments(indexer);
+  const history = useHistory();
 
   const sortedResult = useAsyncMemo(async () => {
     if (!indexerDeployments.data) return [];
@@ -69,7 +71,21 @@ export const OwnProjects: React.VFC<Props> = ({ indexer }) => {
         data: (data) => {
           if (!data || data.length === 0) return <Typography> {t('projects.nonDeployments')} </Typography>;
 
-          return <Table columns={columns} dataSource={data} />;
+          return (
+            <Table
+              columns={columns}
+              dataSource={data}
+              onRow={(record) => {
+                return {
+                  onClick: (event) => {
+                    if (record.projectId) {
+                      history.push(`/explorer/project/${record.projectId}/overview`);
+                    }
+                  },
+                };
+              }}
+            />
+          );
         },
       })}
     </div>
