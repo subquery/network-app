@@ -268,6 +268,16 @@ const en = {
         rateLimit: 'Rate Limit',
         action: 'Action',
       },
+      create: {
+        action: 'Create',
+        title: 'Create a Plan',
+        step1: 'Set parameters',
+        description: 'Template',
+        failureText: 'Failed to create plan',
+        priceTitle: 'Set a price for this plan',
+        cancel: 'Cancel',
+        submit: 'Create',
+      },
       remove: {
         action: 'Remove',
         title: 'Are you sure you want to remove this plan?',

@@ -52,7 +52,8 @@ export const DoStake: React.VFC = () => {
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
 
-  const curAmount = stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined;
+  const curAmount =
+    stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined;
   const showMaxButton = stakeAction === StakeAction.Stake;
   const modalText = getContentText(stakeAction, requireTokenApproval, t);
 
@@ -73,16 +74,22 @@ export const DoStake: React.VFC = () => {
       text={modalText}
       actions={[
         { label: t('indexer.stake'), key: StakeAction.Stake, onClick: () => setStakeAction(StakeAction.Stake) },
-        { label: t('indexer.unstake'), key: StakeAction.UnStake, onClick: () => setStakeAction(StakeAction.UnStake), disabled: !canUnstake },
+        {
+          label: t('indexer.unstake'),
+          key: StakeAction.UnStake,
+          onClick: () => setStakeAction(StakeAction.UnStake),
+          disabled: !canUnstake,
+        },
       ]}
       inputParams={{
         showMaxButton,
         curAmount,
       }}
       onClick={handleClick}
-      renderContent={ (onSubmit, loading) => {
-        return requireTokenApproval
-          && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading}/>
+      renderContent={(onSubmit, _, loading) => {
+        return (
+          requireTokenApproval && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />
+        );
       }}
     />
   );

@@ -44,7 +44,7 @@ const ClaimRewards: React.FC<Props> = ({ indexer, onClaimed, amount }) => {
       text={text}
       actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
       onClick={handleClick}
-      renderContent={(onSubmit, isLoading) => {
+      renderContent={(onSubmit, _, isLoading) => {
         return (
           <div className={styles.btnContainer}>
             <Button

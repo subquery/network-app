@@ -9,9 +9,9 @@ import { ModalInput } from '../ModalInput';
 import { ModalStatus } from '../ModalStatus';
 import styles from './TransactionModal.module.css';
 
-type Action<T extends string> = (amount: string, actionKey: T) => Promise<ContractTransaction>;
+type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
-type Props<T extends string> = {
+type Props<P, T extends string> = {
   text: {
     title: string;
     steps: string[];
@@ -20,23 +20,29 @@ type Props<T extends string> = {
     submitText: string;
     failureText: string;
   };
-  onClick: Action<T>;
-  actions: Array<{
-    label: string;
-    key: T;
-    onClick?: () => void;
-  } & React.ComponentProps<typeof Button>>;
+  onClick: Action<P, T>;
+  actions: Array<
+    {
+      label: string;
+      key: T;
+      onClick?: () => void;
+    } & React.ComponentProps<typeof Button>
+  >;
   inputParams?: Omit<React.ComponentProps<typeof ModalInput>, 'inputTitle' | 'submitText' | 'onSubmit' | 'isLoading'>;
-  renderContent?: (onSubmit: (amount: string) => void, loading: boolean) => React.ReactNode | undefined;
+  renderContent?: (
+    onSubmit: (params: P) => void,
+    onCancel: () => void,
+    loading: boolean,
+  ) => React.ReactNode | undefined;
 };
 
-const TransactionModal = <T extends string>({
+const TransactionModal = <P, T extends string>({
   renderContent,
   text,
   actions,
   onClick,
   inputParams,
-}: Props<T>): React.ReactElement | null => {
+}: Props<P, T>): React.ReactElement | null => {
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
@@ -54,10 +60,10 @@ const TransactionModal = <T extends string>({
     setShowModal(key);
   };
 
-  const wrapTxAction = (action: typeof onClick) => async (amount: string) => {
+  const wrapTxAction = (action: typeof onClick) => async (params: P) => {
     if (!showModal) return;
 
-    const tx = await action(amount, showModal);
+    const tx = await action(params, showModal);
 
     setIsLoading(true);
     const result = await tx.wait();
@@ -78,7 +84,7 @@ const TransactionModal = <T extends string>({
         onCancel={() => setShowModal(undefined)}
         steps={text.steps}
         content={
-          renderContent?.(wrapTxAction(onClick), isLoading) || (
+          renderContent?.(wrapTxAction(onClick), resetModal, isLoading) || (
             <ModalInput
               {...inputParams}
               inputTitle={text.inputTitle}
@@ -89,11 +95,7 @@ const TransactionModal = <T extends string>({
           )
         }
       />
-      <ModalStatus
-        visible={!!(successModalText)}
-        onCancel={resetModalStatus}
-        success={!!successModalText}
-      />
+      <ModalStatus visible={!!successModalText} onCancel={resetModalStatus} success={!!successModalText} />
 
       {actions.map(({ label, key, onClick, ...rest }) => (
         <Button
