@@ -47,21 +47,19 @@ const List: React.FC<Props> = ({ data }) => {
       dataIndex: 'planTemplate',
       key: 'period',
       title: t('plans.headers.period'),
-      render: (value: PlanTemplate) => <Typography>{`${formatEther(BigNumber.from(value.period))} Days`}</Typography>,
+      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.period).toNumber()} Days`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'dailyReqCap',
       title: t('plans.headers.dailyReqCap'),
-      render: (value: PlanTemplate) => <Typography>{`${formatEther(BigNumber.from(value.dailyReqCap))}`}</Typography>,
+      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.dailyReqCap).toNumber()}`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'rateLimit',
       title: t('plans.headers.rateLimit'),
-      render: (value: PlanTemplate) => (
-        <Typography>{`${formatEther(BigNumber.from(value.rateLimit))} Days`}</Typography>
-      ),
+      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.rateLimit).toNumber()}`}</Typography>,
     },
     {
       dataIndex: 'id',

@@ -8,6 +8,7 @@ import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 import { CurEra } from '../../../components';
 import styles from './Plans.module.css';
 import Default from './Default';
+import Create from './Create';
 
 const ROUTE = '/plans/plans';
 
@@ -29,6 +30,7 @@ const Plans: React.VFC = () => {
           <Typography>{'Specific'}</Typography>
         </NavLink>
       </div>
+      <Create />
       <div className="content-width">
         <Switch>
           <Route exact path={`${ROUTE}/default`} component={Default} />
