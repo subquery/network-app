@@ -243,6 +243,10 @@ const en = {
       current: 'current',
       next: 'next',
     },
+    projects: {
+      deploymentId: 'Deployment ID',
+      nonDeployments: 'No deployed projects available.',
+    },
     rewards: {
       none: 'You have no rewards',
       header1: 'Indexer',

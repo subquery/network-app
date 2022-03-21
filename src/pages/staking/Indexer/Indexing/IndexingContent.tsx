@@ -12,6 +12,7 @@ import { SetCommissionRate } from '../SetCommissionRate';
 import { BsArrowReturnRight } from 'react-icons/bs';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { useWeb3 } from '../../../../containers';
+import { OwnProjects } from '../OwnProjects';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -40,7 +41,7 @@ interface Props {
 }
 
 export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Delegator);
+  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Projects);
   const { t } = useTranslation();
   const { account } = useWeb3();
 
@@ -108,7 +109,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
           ))}
         </div>
 
-        {curTab === SectionTabs.Projects && <div>Projects</div>}
+        {curTab === SectionTabs.Projects && <OwnProjects indexer={indexer} />}
         {curTab === SectionTabs.Delegator && <OwnDelegator indexer={indexer} />}
       </div>
     </>
