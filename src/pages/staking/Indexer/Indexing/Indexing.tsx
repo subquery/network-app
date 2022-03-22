@@ -44,8 +44,8 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
           data: (data) => {
             if (!data) return <></>;
             const [isIndexer, sortedIndexing, curCapacity] = data;
-
-            if (!isIndexer) return <NotRegisteredIndexer />;
+            if (isIndexer === undefined) return <Spinner />;
+            if (!isIndexer && !sortedIndexing) return <NotRegisteredIndexer />;
             if (!sortedIndexing)
               return (
                 <>

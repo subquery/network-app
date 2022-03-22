@@ -9,8 +9,8 @@ import styles from './DelegateIndexer.module.css';
 import { useTranslation } from 'react-i18next';
 import { useIndexerCapacity, useSortedIndexer } from '../../../../hooks';
 import { formatEther, mergeAsync, renderAsync } from '../../../../utils';
-import { IndexingContent } from '../../Indexer/Indexing';
 import { DoDelegate } from '../DoDelegate';
+import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
 
 type RouteParams = {
   address: string;
@@ -20,7 +20,6 @@ export const DelegateIndexer: React.VFC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { address } = useParams<RouteParams>();
-  console.log('param', address);
 
   React.useEffect(() => {
     if (!address) {

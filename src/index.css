@@ -131,3 +131,8 @@ textarea {
 .ReactModal__Overlay--before-close {
   opacity: 0;
 }
+
+.textBtn {
+  background: white;
+  color: var(--gradient-to);
+}

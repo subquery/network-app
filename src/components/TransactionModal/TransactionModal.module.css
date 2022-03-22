@@ -7,12 +7,12 @@
   background: var(--gradient-to);
 }
 
-.text {
+.textBtn {
   background: white;
   color: var(--gradient-to);
 }
 
-.errText {
+.errTextBtn {
   background: white;
   color: var(--error);
 }

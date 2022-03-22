@@ -34,7 +34,7 @@ type Props<P, T extends string> = {
     onCancel: () => void,
     loading: boolean,
   ) => React.ReactNode | undefined;
-  variant?: 'button' | 'text' | 'errText' | 'errButton';
+  variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
 };
 
 const TransactionModal = <P, T extends string>({
