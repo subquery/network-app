@@ -33,6 +33,11 @@ const en = {
         tab1: 'Details',
         tab2: 'Deployments',
       },
+      wallet: {
+        connect: 'Connect wallet to use the studio',
+        subTitle:
+          'Use the studio to create and manage your SubQuery projects. <br> Learn how to create a SubQuery project <1>here</1>.',
+      },
     },
     explorer: {
       project: {
@@ -131,9 +136,8 @@ const en = {
       deploymentId: 'Deployment ID',
     },
     connectWallet: {
-      title: 'Connect wallet to use the studio',
-      subtitle:
-        'Use the studio to create and manage your SubQuery projects.<br/>Learn how to create a SubQuery project <1>here</1>.',
+      title: 'Connect wallet',
+      subtitle: 'Create and manage your SubQuery projects. <br> Learn how to create a SubQuery project <1>here</1>.',
       connectWith: 'Connect With:',
       metamaskDesc: 'Connect with Metamask browser extension',
     },
