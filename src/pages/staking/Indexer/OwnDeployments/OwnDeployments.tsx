@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Spinner, Typography } from '@subql/react-ui';
-import { Table } from 'antd';
+import { Table, Progress } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
@@ -35,15 +35,17 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
           : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
 
+        const deploymentId = indexerDeployment.deployment?.id;
         const indexingProgress = await getDeploymentProgress({
           proxyEndpoint,
-          deploymentId: indexerDeployment.deployment?.id,
+          deploymentId: deploymentId,
         });
 
         return {
           ...indexerDeployment,
           indexingProgress,
-          projectId: indexerDeployment.deployment?.project?.metadata,
+          deploymentId,
+          projectId: indexerDeployment.deployment?.project?.id,
           projectMeta: {
             ...metadata,
             name: metadata.name ?? indexerDeployment.deployment?.project?.id,
@@ -53,21 +55,27 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
     );
   }, [indexerDeployments.loading]);
 
+  console.log('sortedResult', sortedResult);
+
   const columns = [
     {
       title: '',
       dataIndex: 'deploymentId',
-      key: 'deploymentId',
-      width: '80%',
+      width: '65%',
       render: (
         deploymentId: string,
         record: { projectId?: string; projectMeta: ProjectMetadata } & DeploymentIndexer,
       ) => <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />,
     },
     {
+      title: 'PROGRESS',
+      dataIndex: 'indexingProgress',
+      width: '25%',
+      render: (indexingProgress: number) => <Progress percent={+(indexingProgress * 100).toFixed(2)} size="small" />,
+    },
+    {
       title: 'STATUS',
       dataIndex: 'status',
-      key: 'status',
       render: (status: string) => <Status text={status} color={deploymentStatus[status]} />,
     },
   ];
