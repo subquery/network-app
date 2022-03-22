@@ -6,13 +6,12 @@ import { useContracts } from '../containers';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
-export function useIsIndexer(account: string | null | undefined): AsyncData<boolean> {
+export function useIsIndexer(account: string | null | undefined): AsyncData<boolean | undefined> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const isIndexed = account ? await contracts.indexerRegistry.isIndexer(account) : false;
-    return isIndexed;
+    return await contracts.indexerRegistry.isIndexer(account || '');
   }, []);
 }

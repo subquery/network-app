@@ -6,12 +6,12 @@ import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { IPFSImage, OwnDeployment, Status } from '../../../../components';
+import { OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
-import { useAsyncMemo, useIndexerDeployments } from '../../../../hooks';
+import { useAsyncMemo, useIndexerDeployments, useIndexerMetadata } from '../../../../hooks';
 import { ProjectMetadata } from '../../../../models';
-import { renderAsync } from '../../../../utils';
+import { renderAsync, getDeploymentProgress } from '../../../../utils';
 import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import styles from './OwnDeployments.module.css';
 
@@ -21,9 +21,11 @@ interface Props {
 
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const { getMetadataFromCid } = useProjectMetadata();
   const indexerDeployments = useIndexerDeployments(indexer);
-  const history = useHistory();
+  const indexerMetadata = useIndexerMetadata(indexer);
+  const proxyEndpoint = indexerMetadata?.data?.url;
 
   const sortedResult = useAsyncMemo(async () => {
     if (!indexerDeployments.data) return [];
@@ -33,8 +35,14 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
           : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
 
+        const indexingProgress = await getDeploymentProgress({
+          proxyEndpoint,
+          deploymentId: indexerDeployment.deployment?.id,
+        });
+
         return {
           ...indexerDeployment,
+          indexingProgress,
           projectId: indexerDeployment.deployment?.project?.metadata,
           projectMeta: {
             ...metadata,
