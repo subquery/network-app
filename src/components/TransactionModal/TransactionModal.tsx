@@ -34,6 +34,7 @@ type Props<P, T extends string> = {
     onCancel: () => void,
     loading: boolean,
   ) => React.ReactNode | undefined;
+  variant?: 'button' | 'text' | 'errText' | 'errButton';
 };
 
 const TransactionModal = <P, T extends string>({
@@ -42,6 +43,7 @@ const TransactionModal = <P, T extends string>({
   actions,
   onClick,
   inputParams,
+  variant = 'button',
 }: Props<P, T>): React.ReactElement | null => {
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -106,7 +108,7 @@ const TransactionModal = <P, T extends string>({
             onClick?.();
             handleBtnClick(key);
           }}
-          className={styles.btn}
+          className={`${styles[variant]}`}
           size="medium"
         />
       ))}
