@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { IPFSImage, OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
-import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
+import { useAsyncMemo, useIndexerDeployments } from '../../../../hooks';
 import { ProjectMetadata } from '../../../../models';
 import { renderAsync } from '../../../../utils';
 import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
@@ -22,7 +22,7 @@ interface Props {
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
   const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useSortedIndexerDeployments(indexer);
+  const indexerDeployments = useIndexerDeployments(indexer);
   const history = useHistory();
 
   const sortedResult = useAsyncMemo(async () => {

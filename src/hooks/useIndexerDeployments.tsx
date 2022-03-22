@@ -5,7 +5,7 @@ import { useIndexerDeploymentsQuery } from '../containers/QueryRegistryProject';
 import { AsyncData, mapAsync, notEmpty } from '../utils';
 import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../__generated__/GetDeploymentIndexersByIndexer';
 
-export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<DeploymentIndexer>> {
+export function useIndexerDeployments(indexer: string): AsyncData<Array<DeploymentIndexer>> {
   const indexerDeployments = useIndexerDeploymentsQuery({ indexerAddress: indexer });
 
   return mapAsync((data) => data.deploymentIndexers?.nodes.filter(notEmpty), indexerDeployments);
