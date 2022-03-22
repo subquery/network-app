@@ -6,11 +6,13 @@ import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { IPFSImage, Status } from '../../../../components';
+import { IPFSImage, OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
-import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
+import { useAsyncMemo, useIndexerDeployments } from '../../../../hooks';
+import { ProjectMetadata } from '../../../../models';
 import { renderAsync } from '../../../../utils';
+import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import styles from './OwnDeployments.module.css';
 
 interface Props {
@@ -20,19 +22,25 @@ interface Props {
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
   const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useSortedIndexerDeployments(indexer);
+  const indexerDeployments = useIndexerDeployments(indexer);
   const history = useHistory();
 
   const sortedResult = useAsyncMemo(async () => {
     if (!indexerDeployments.data) return [];
     return await Promise.all(
       indexerDeployments.data.map(async (indexerDeployment) => {
-        const projectInfo = indexerDeployment.projectMeta
-          ? await getMetadataFromCid(indexerDeployment.projectMeta)
-          : { name: '', image: '' };
-        const projectName = projectInfo?.name || indexerDeployment.projectId;
-        const projectImage = projectInfo?.image;
-        return { ...indexerDeployment, projectName, projectImage };
+        const metadata: ProjectMetadata = indexerDeployment.deployment?.project
+          ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
+          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
+
+        return {
+          ...indexerDeployment,
+          projectId: indexerDeployment.deployment?.project?.metadata,
+          projectMeta: {
+            ...metadata,
+            name: metadata.name ?? indexerDeployment.deployment?.project?.id,
+          },
+        };
       }),
     );
   }, [indexerDeployments.loading]);
@@ -43,17 +51,10 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       dataIndex: 'deploymentId',
       key: 'deploymentId',
       width: '80%',
-      render: (deploymentId: string, record: any) => (
-        <div className={styles.projectInfo}>
-          <IPFSImage src={record?.projectImage || '/static/default.project.png'} className={styles.ipfsImage} />
-          <div className={styles.projectTextInfo}>
-            <Typography variant="large">{`${record?.projectName ?? '-'}`}</Typography>
-            <Typography variant="small" className={styles.text}>{`${t('projects.deploymentId')}: ${
-              deploymentId ?? '-'
-            }`}</Typography>
-          </div>
-        </div>
-      ),
+      render: (
+        deploymentId: string,
+        record: { projectId?: string; projectMeta: ProjectMetadata } & DeploymentIndexer,
+      ) => <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />,
     },
     {
       title: 'STATUS',
