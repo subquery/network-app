@@ -9,6 +9,7 @@ import { CurEra } from '../../../components';
 import styles from './Plans.module.css';
 import Default from './Default';
 import Create from './Create';
+import Specific from './Specific';
 
 const ROUTE = '/plans/plans';
 
@@ -34,7 +35,7 @@ const Plans: React.VFC = () => {
       <div className="content-width">
         <Switch>
           <Route exact path={`${ROUTE}/default`} component={Default} />
-          <Route exact path={`${ROUTE}/specific`} render={() => <>SPECIFIC</>} />
+          <Route exact path={`${ROUTE}/specific`} component={Specific} />
           <Redirect from={ROUTE} to={`${ROUTE}/default`} />
         </Switch>
       </div>

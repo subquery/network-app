@@ -18,6 +18,7 @@ import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithd
 import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
 import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
 import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
+import { GetSpecificPlans, GetSpecificPlansVariables } from '../__generated__/GetSpecificPlans';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -46,6 +47,16 @@ const SERVICE_AGREEMENT_FIELDS = gql`
     deploymentId
     indexerAddress
     consumerAddress
+  }
+`;
+
+const PLAN_FIELDS = gql`
+  fragment PlanFields on Plan {
+    id
+    active
+    creator
+    deploymentId
+    price
   }
 `;
 
@@ -165,16 +176,39 @@ const GET_PLAN_TEMPLATES = gql`
 
 const GET_PLANS = gql`
   ${PLAN_TEMPLATE_FIELDS}
+  ${PLAN_FIELDS}
   query GetPlans($address: String!, $default: Boolean) {
     plans(filter: { creator: { equalTo: $address }, and: { deploymentId: { isNull: $default } } }) {
       nodes {
-        id
-        active
-        creator
-        deploymentId
-        price
+        ...PlanFields
         planTemplate {
           ...PlanTemplateFields
+        }
+      }
+    }
+  }
+`;
+
+const GET_SPECIFIC_PLANS = gql`
+  ${PLAN_TEMPLATE_FIELDS}
+  ${PLAN_FIELDS}
+  query GetSpecificPlans($address: String) {
+    deploymentIndexers(filter: { indexerId: { equalTo: $address } }) {
+      nodes {
+        deployment {
+          id
+          project {
+            id
+            metadata
+          }
+          plans(filter: { creator: { equalTo: $address } }) {
+            nodes {
+              ...PlanFields
+              planTemplate {
+                ...PlanTemplateFields
+              }
+            }
+          }
         }
       }
     }
@@ -268,6 +302,10 @@ export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult
 
 export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
   return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params });
+}
+
+export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryResult<GetSpecificPlans> {
+  return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, { variables: params });
 }
 
 export function useDeploymentServiceAgreements(

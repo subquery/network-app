@@ -264,6 +264,9 @@ const en = {
       default: {
         title: 'You can create maximum 5 default plans',
       },
+      specific: {
+        title: 'You can create maximum 5 specific plans',
+      },
       headers: {
         id: 'Id',
         price: 'Price',
