@@ -11,7 +11,7 @@ import List from '../List';
 const Default: React.VFC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
-  const plans = usePlans({ address: account ?? '', default: true });
+  const plans = usePlans({ address: account ?? '' });
 
   return (
     <>
@@ -22,7 +22,7 @@ const Default: React.VFC = () => {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
           empty: () => <Typography>No plans</Typography>,
-          data: (data) => <List data={data} />,
+          data: (data) => <List data={data} onRefresh={plans.refetch} />,
         },
       )}
     </>

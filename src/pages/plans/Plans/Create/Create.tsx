@@ -51,8 +51,20 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
             {/* TODO ability to choose deployment */}
 
-            <Button label={t('plans.create.cancel')} onClick={onCancel} />
-            <Button label={t('plans.create.submit')} onClick={submitForm} loading={isSubmitting} disabled={!isValid} />
+            <Button
+              label={t('plans.create.cancel')}
+              onClick={onCancel}
+              disabled={isSubmitting}
+              type="secondary"
+              colorScheme="neutral"
+            />
+            <Button
+              label={t('plans.create.submit')}
+              onClick={submitForm}
+              loading={isSubmitting}
+              disabled={!isValid}
+              colorScheme="standard"
+            />
           </div>
         </Form>
       )}
@@ -79,8 +91,6 @@ const Create: React.FC = () => {
     }
 
     assert(template, 'No plan templates');
-
-    console.log('CREATING PLAN WITH DETAILS', parseEther(amount), template.id, deploymentId);
 
     return contracts.planManager.createPlan(parseEther(amount), template.id, deploymentId || constants.HashZero);
   };

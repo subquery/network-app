@@ -10,16 +10,17 @@ import {
 import { useTranslation } from 'react-i18next';
 import { formatEther } from '@ethersproject/units';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Typography } from '@subql/react-ui';
+import { Button, Typography } from '@subql/react-ui';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts } from '../../../../containers';
 import assert from 'assert';
 
 type Props = {
   data: Plan[];
+  onRefresh: () => void;
 };
 
-const List: React.FC<Props> = ({ data }) => {
+const List: React.FC<Props> = ({ data, onRefresh }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
@@ -27,7 +28,11 @@ const List: React.FC<Props> = ({ data }) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    return contracts.planManager.removePlan(id);
+    const pendingTx = contracts.planManager.removePlan(id);
+
+    pendingTx.then((tx) => tx.wait()).then(() => onRefresh());
+
+    return pendingTx;
   };
 
   const columns: TableProps<Plan>['columns'] = [
@@ -65,7 +70,7 @@ const List: React.FC<Props> = ({ data }) => {
       dataIndex: 'id',
       key: 'action',
       title: t('plans.headers.action'),
-      render: (id: string) => (
+      render: (id: string, plan: Plan) => (
         <TransactionModal
           actions={[{ label: t('plans.remove.action'), key: 'remove' }]}
           text={{
@@ -77,9 +82,37 @@ const List: React.FC<Props> = ({ data }) => {
             failureText: 'Failed ',
           }}
           onClick={() => handleRemovePlan(id)}
-          renderContent={() => {
+          renderContent={(onClick, onCancel, isLoading) => {
             // TODO show plan details
-            return <></>;
+            return (
+              <>
+                <Typography>{`${t('plans.headers.price')}: ${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>
+                <Typography>{`${t('plans.headers.period')}: ${BigNumber.from(
+                  plan.planTemplate?.period,
+                ).toNumber()} days`}</Typography>
+                <Typography>{`${t('plans.headers.dailyReqCap')}: ${BigNumber.from(
+                  plan.planTemplate?.dailyReqCap,
+                ).toNumber()}`}</Typography>
+                <Typography>{`${t('plans.headers.rateLimit')}: ${BigNumber.from(
+                  plan.planTemplate?.rateLimit,
+                ).toNumber()}`}</Typography>
+                <div>
+                  <Button
+                    label={t('plans.remove.submit')}
+                    onClick={() => onClick({})}
+                    loading={isLoading}
+                    colorScheme="standard"
+                  />
+                  <Button
+                    label={t('plans.remove.cancel')}
+                    onClick={onCancel}
+                    type="secondary"
+                    colorScheme="neutral"
+                    disabled={isLoading}
+                  />
+                </div>
+              </>
+            );
           }}
         />
       ),

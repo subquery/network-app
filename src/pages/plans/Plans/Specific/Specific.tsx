@@ -64,7 +64,7 @@ const Specific: React.FC = () => {
                     <div key={deployment.id}>
                       <Header deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
                       {plans ? (
-                        <List data={plans} />
+                        <List data={plans} onRefresh={specificPlans.refetch} />
                       ) : (
                         <Typography>You have no plans specific to this deployment</Typography>
                       )}

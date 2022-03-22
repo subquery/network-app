@@ -290,6 +290,8 @@ const en = {
         title: 'Are you sure you want to remove this plan?',
         description: 'Plan Details',
         failureText: 'Failed to remove plan',
+        submit: 'Confirm Removal',
+        cancel: 'Not now',
       },
     },
   },
