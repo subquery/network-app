@@ -20,7 +20,7 @@ const DelegatorRow: React.FC<Props> = ({ onClick, delegator }) => {
   return (
     <TableRow onClick={onClick}>
       <TableCell>
-        <IndexerName address={delegator.delegatorAddress} />
+        <IndexerName address={delegator.delegatorId} />
       </TableCell>
       <TableCell>
         <Typography>{stake ? utils.formatEther(stake.after ?? stake.current) : '0'}</Typography>

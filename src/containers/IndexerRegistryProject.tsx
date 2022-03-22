@@ -85,7 +85,7 @@ const GET_INDEXER_DELEGATORS = gql`
     indexer(id: $id) {
       delegations(first: 10, offset: $offset) {
         nodes {
-          delegatorAddress
+          delegatorId
           amount
         }
       }
@@ -106,8 +106,8 @@ const GET_ALL_DELEGATIONS = gql`
     delegations(offset: $offset) {
       nodes {
         id
-        delegatorAddress
-        indexerAddress
+        delegatorId
+        indexerId
         amount
         indexer {
           metadata
@@ -128,12 +128,12 @@ const GET_DELEGATOR = gql`
 
 const GET_DELEGATIONS = gql`
   query GetDelegations($delegator: String!, $offset: Int) {
-    delegations(filter: { delegatorAddress: { equalTo: $delegator } }, first: 10, offset: $offset) {
+    delegations(filter: { delegatorId: { equalTo: $delegator } }, first: 10, offset: $offset) {
       totalCount
       nodes {
         id
-        delegatorAddress
-        indexerAddress
+        delegatorId
+        indexerId
         amount
         indexer {
           metadata
@@ -252,14 +252,14 @@ const GET_INDEXER_REWARDS = gql`
   query GetIndexerRewards($address: String!, $era1: String!, $era2: String!) {
     indexerRewards(
       filter: {
-        indexerAddress: { equalTo: $address }
+        indexerId: { equalTo: $address }
         and: { eraIdx: { equalTo: $era1 } }
         or: { eraIdx: { equalTo: $era2 } }
       }
     ) {
       nodes {
         id
-        indexerAddress
+        indexerId
         eraIdx
         amount
       }

@@ -42,7 +42,7 @@ const Project: React.VFC = () => {
   const indexersStatus = React.useMemo(() => {
     return (
       indexers?.map((i) => ({
-        indexer: i.indexerAddress,
+        indexer: i.indexerId,
         latestBlock: BigNumber.from(i.blockHeight).toNumber(),
       })) ?? []
     );

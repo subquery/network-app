@@ -29,8 +29,8 @@ const IndexerList: React.FC<Props> = (props) => {
         {props.delegators.map((delegator) => (
           <DelegatorRow
             delegator={delegator}
-            key={delegator.delegatorAddress}
-            onClick={() => props.onClick?.(delegator.delegatorAddress)}
+            key={delegator.delegatorId}
+            onClick={() => props.onClick?.(delegator.delegatorId)}
           />
         ))}
       </TableBody>

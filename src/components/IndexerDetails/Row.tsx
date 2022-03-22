@@ -27,7 +27,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
   return (
     <TableRow>
       <TableCell>
-        <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerAddress} />
+        <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />
       </TableCell>
       <TableCell>
         <Progress
@@ -66,7 +66,7 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata'> & { deploymentId?: string 
   deploymentId,
   ...rest
 }) => {
-  const asyncMetadata = useIndexerMetadata(indexer.indexerAddress);
+  const asyncMetadata = useIndexerMetadata(indexer.indexerId);
   const asyncMetadataComplete = mapAsync(
     (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
     asyncMetadata,

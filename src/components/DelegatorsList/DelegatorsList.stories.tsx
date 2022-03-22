@@ -31,7 +31,7 @@ Default.args = {
   delegators: [
     {
       __typename: 'Delegation',
-      delegatorAddress: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
+      delegatorId: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
       amount: {
         era: 2,
         value: BigNumber.from(0),

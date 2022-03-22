@@ -24,13 +24,13 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
-        .filter((delegation) => delegation?.indexerAddress !== delegator)
+        .filter((delegation) => delegation?.indexerId !== delegator)
         .filter(notEmpty)
         .map((delegation) => ({
           value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
             convertStringToNumber(formatEther(v ?? 0)),
           ),
-          indexer: delegation.indexerAddress,
+          indexer: delegation.indexerId,
         })),
     mergeAsync(delegations, currentEra),
   );
