@@ -18,14 +18,10 @@ interface DoDelegateProps {
 
 export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant }) => {
   const { t } = useTranslation();
-  const { account, library } = useWeb3();
+  const { account } = useWeb3();
   const pendingContracts = useContracts();
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
-  const accountBalance = useAsyncMemo(async () => await library?.getBalance(account || ''), [account]);
-  console.log('account available balance', formatEther(accountBalance?.data ?? 0));
-  console.log('contract balance', convertBigNumberToNumber(balance?.data ?? 0));
-  console.log('stakingAllowance', formatEther(stakingAllowance?.data ?? 0));
 
   //TODO: define the returnType wen tokenApproval UI confirm
   const modalText = requireTokenApproval
@@ -54,7 +50,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
       onClick={handleClick}
       inputParams={{
         showMaxButton: true,
-        curAmount: account ? convertStringToNumber(formatEther(accountBalance.data ?? 0)) : undefined,
+        curAmount: account ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined,
       }}
       renderContent={() => {
         return !!requireTokenApproval && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} />;
