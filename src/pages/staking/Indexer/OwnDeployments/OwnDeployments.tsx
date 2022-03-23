@@ -55,8 +55,6 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
     );
   }, [indexerDeployments.loading]);
 
-  console.log('sortedResult', sortedResult);
-
   const columns = [
     {
       title: '',

@@ -46,6 +46,7 @@ export const DoStake: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   /* TODO change to isIndexer */
+
   const isIndexer = useIsIndexer(account);
   const canUnstake = isIndexer.data;
 

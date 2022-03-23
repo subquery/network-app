@@ -66,7 +66,7 @@ export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined
     return { current: eraValue.valueAfter, after: eraValue.valueAfter };
   }
 
-  const after = eraValue.value.eq(eraValue.valueAfter) ? undefined : eraValue.valueAfter;
+  const after = eraValue.value.eq(eraValue.valueAfter) ? eraValue.value : eraValue.valueAfter;
 
   return { current: eraValue.value, after };
 }
