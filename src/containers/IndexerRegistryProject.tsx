@@ -30,7 +30,7 @@ const INDEXER_FIELDS = gql`
   }
 `;
 
-const PLAN_TEMPLATE_FIELDS = gql`
+export const PLAN_TEMPLATE_FIELDS = gql`
   fragment PlanTemplateFields on PlanTemplate {
     id
     period
@@ -41,22 +41,22 @@ const PLAN_TEMPLATE_FIELDS = gql`
   }
 `;
 
-const SERVICE_AGREEMENT_FIELDS = gql`
-  fragment ServiceAgreementFields on ServiceAgreement {
-    id
-    deploymentId
-    indexerAddress
-    consumerAddress
-  }
-`;
-
-const PLAN_FIELDS = gql`
+export const PLAN_FIELDS = gql`
   fragment PlanFields on Plan {
     id
     active
     creator
     deploymentId
     price
+  }
+`;
+
+const SERVICE_AGREEMENT_FIELDS = gql`
+  fragment ServiceAgreementFields on ServiceAgreement {
+    id
+    deploymentId
+    indexerAddress
+    consumerAddress
   }
 `;
 
