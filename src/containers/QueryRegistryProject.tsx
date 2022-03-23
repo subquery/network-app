@@ -1,15 +1,26 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql, QueryResult } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql,
+  QueryResult,
+  useLazyQuery,
+  QueryTuple,
+} from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
 import * as React from 'react';
+import { PLAN_FIELDS, PLAN_TEMPLATE_FIELDS } from './IndexerRegistryProject';
 import { GetDeployment, GetDeploymentVariables } from '../__generated__/GetDeployment';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
 import {
   GetDeploymentIndexersByIndexer,
   GetDeploymentIndexersByIndexerVariables,
 } from '../__generated__/GetDeploymentIndexersByIndexer';
+import { GetDeploymentPlans, GetDeploymentPlansVariables } from '../__generated__/GetDeploymentPlans';
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
 import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
 import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
@@ -104,6 +115,26 @@ const GET_DEPLOYMENT_INDEXERS_WITH_INDEXER = gql`
   }
 `;
 
+const GET_DEPLOYMENT_PLANS = gql`
+  ${PLAN_TEMPLATE_FIELDS}
+  ${PLAN_FIELDS}
+  query GetDeploymentPlans($address: String!, $deploymentId: String!) {
+    plans(
+      filter: {
+        creator: { equalTo: $address }
+        and: { deploymentId: { equalTo: $deploymentId }, or: { deploymentId: { isNull: true } } }
+      }
+    ) {
+      nodes {
+        ...PlanFields
+        planTemplate {
+          ...PlanTemplateFields
+        }
+      }
+    }
+  }
+`;
+
 export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject> {
   return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
@@ -141,6 +172,14 @@ export function useIndexerDeploymentsQuery(
       variables: params,
     },
   );
+}
+
+export function useDeploymentPlansLazy(
+  params?: GetDeploymentPlansVariables,
+): QueryTuple<GetDeploymentPlans, GetDeploymentPlansVariables> {
+  return useLazyQuery<GetDeploymentPlans, GetDeploymentPlansVariables>(GET_DEPLOYMENT_PLANS, {
+    variables: params,
+  });
 }
 
 export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (props) => {

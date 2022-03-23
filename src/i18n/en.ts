@@ -65,6 +65,7 @@ const en = {
         progress: 'Progress',
         status: 'Status',
         url: 'Query URL',
+        plans: 'Plans',
       },
     },
     create: {

@@ -24,7 +24,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock, de
           <TableCell>{t('indexers.head.indexers')}</TableCell>
           <TableCell>{t('indexers.head.progress')}</TableCell>
           <TableCell>{t('indexers.head.status')}</TableCell>
-          <TableCell>{t('indexers.head.url')}</TableCell>
+          <TableCell>{t('indexers.head.plans')}</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
