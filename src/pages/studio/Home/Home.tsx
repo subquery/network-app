@@ -12,6 +12,8 @@ import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 import { Button } from '@subql/react-ui';
+import { T } from 'ramda';
+import { useTranslation } from 'react-i18next';
 
 const Project: React.VFC<{ projectId: string; account: string; onClick?: () => void }> = ({
   projectId,
@@ -51,6 +53,7 @@ const Project: React.VFC<{ projectId: string; account: string; onClick?: () => v
 const Home: React.VFC = () => {
   const { account, activate } = useWeb3();
   const history = useHistory();
+  const { t } = useTranslation();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
 
   const handleConnectWallet = React.useCallback(async () => {
@@ -74,7 +77,11 @@ const Home: React.VFC = () => {
   if (!account) {
     return (
       <div className={styles.container}>
-        <ConnectWallet onConnect={handleConnectWallet} />
+        <ConnectWallet
+          onConnect={handleConnectWallet}
+          title={t('studio.wallet.connect')}
+          subTitle={t('studio.wallet.subTitle')}
+        />
       </div>
     );
   }

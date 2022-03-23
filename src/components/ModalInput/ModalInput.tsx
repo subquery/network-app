@@ -100,7 +100,7 @@ export const ModalInput: React.FC<Props> = ({
       </div>
       {(inputBottomText || curAmount) && (
         <Typography className={styles.inputBottomText} variant="medium">
-          {inputBottomText || `Current: ${curAmount} ${unit}`}
+          {inputBottomText || `Current ${unit === '%' ? 'rate' : 'balance'}: ${curAmount} ${unit}`}
         </Typography>
       )}
       <Typography className={styles.inputError} variant="medium">

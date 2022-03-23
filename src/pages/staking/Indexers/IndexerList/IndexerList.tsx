@@ -113,8 +113,8 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
         if (id === account) return <Typography> - </Typography>;
         return (
           <div className={styles.actionBtns}>
-            <Button label="View" size="medium" className={styles.btn} href={`/staking/indexers/delegate/${id}`} />
-            <DoDelegate indexerAddress={id} />
+            <Button label="View" size="medium" className={'textBtn'} href={`/staking/indexers/delegate/${id}`} />
+            <DoDelegate indexerAddress={id} variant="textBtn" />
           </div>
         );
       },

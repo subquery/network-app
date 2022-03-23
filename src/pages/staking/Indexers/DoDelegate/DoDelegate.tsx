@@ -8,13 +8,15 @@ import { useTranslation } from 'react-i18next';
 import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
 import { tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertStringToNumber } from '../../../../utils';
+import { convertBigNumberToNumber, convertStringToNumber } from '../../../../utils';
+import { useAsyncMemo } from '../../../../hooks';
 
 interface DoDelegateProps {
   indexerAddress: string;
+  variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
 }
 
-export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
+export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const pendingContracts = useContracts();
@@ -39,20 +41,21 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress }) => {
 
     const delegateAmount = parseEther(amount.toString());
     return contracts.staking.delegate(indexerAddress, delegateAmount);
-  }
+  };
 
-  return <TransactionModal
-    text={modalText}
-    actions={[
-      { label: t('delegate.title'), key: 'delegate', disabled: !stakingAllowance.data }
-    ]}
-    onClick={handleClick}
-    inputParams={{
-      showMaxButton: true,
-      curAmount: account ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined
-    }}
-    renderContent={() => {
-      return !!requireTokenApproval && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()}/>
-    }}
-  />
+  return (
+    <TransactionModal
+      text={modalText}
+      actions={[{ label: t('delegate.title'), key: 'delegate', disabled: !stakingAllowance.data }]}
+      onClick={handleClick}
+      inputParams={{
+        showMaxButton: true,
+        curAmount: account ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined,
+      }}
+      renderContent={() => {
+        return !!requireTokenApproval && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} />;
+      }}
+      variant={variant}
+    />
+  );
 };

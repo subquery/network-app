@@ -39,7 +39,6 @@ export const Home: React.VFC<any> = (children) => {
     }
   }, [activate, account]);
 
-  // TODO: Update ConnectWallet component
   if (!account) {
     return (
       <div className={styles.container}>

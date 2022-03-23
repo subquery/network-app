@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Spinner, Typography } from '@subql/react-ui';
-import { Table } from 'antd';
+import { Table, Progress } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { IPFSImage, OwnDeployment, Status } from '../../../../components';
+import { OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useProjectMetadata } from '../../../../containers';
-import { useAsyncMemo, useIndexerDeployments } from '../../../../hooks';
+import { useAsyncMemo, useIndexerDeployments, useIndexerMetadata } from '../../../../hooks';
 import { ProjectMetadata } from '../../../../models';
-import { renderAsync } from '../../../../utils';
+import { renderAsync, getDeploymentProgress } from '../../../../utils';
 import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import styles from './OwnDeployments.module.css';
 
@@ -21,9 +21,11 @@ interface Props {
 
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const { getMetadataFromCid } = useProjectMetadata();
   const indexerDeployments = useIndexerDeployments(indexer);
-  const history = useHistory();
+  const indexerMetadata = useIndexerMetadata(indexer);
+  const proxyEndpoint = indexerMetadata?.data?.url;
 
   const sortedResult = useAsyncMemo(async () => {
     if (!indexerDeployments.data) return [];
@@ -33,9 +35,17 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
           : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
 
+        const deploymentId = indexerDeployment.deployment?.id;
+        const indexingProgress = await getDeploymentProgress({
+          proxyEndpoint,
+          deploymentId: deploymentId,
+        });
+
         return {
           ...indexerDeployment,
-          projectId: indexerDeployment.deployment?.project?.metadata,
+          indexingProgress,
+          deploymentId,
+          projectId: indexerDeployment.deployment?.project?.id,
           projectMeta: {
             ...metadata,
             name: metadata.name ?? indexerDeployment.deployment?.project?.id,
@@ -49,17 +59,21 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
     {
       title: '',
       dataIndex: 'deploymentId',
-      key: 'deploymentId',
-      width: '80%',
+      width: '65%',
       render: (
         deploymentId: string,
         record: { projectId?: string; projectMeta: ProjectMetadata } & DeploymentIndexer,
       ) => <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />,
     },
     {
+      title: 'PROGRESS',
+      dataIndex: 'indexingProgress',
+      width: '25%',
+      render: (indexingProgress: number) => <Progress percent={+(indexingProgress * 100).toFixed(2)} size="small" />,
+    },
+    {
       title: 'STATUS',
       dataIndex: 'status',
-      key: 'status',
       render: (status: string) => <Status text={status} color={deploymentStatus[status]} />,
     },
   ];

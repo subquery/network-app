@@ -18,8 +18,8 @@ export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | 
 
     if (!metadataHash) return undefined;
 
-    const obj = fetchIpfsMetadata(catSingle, bytes32ToCid(metadataHash));
+    const obj = await fetchIpfsMetadata(catSingle, bytes32ToCid(metadataHash));
 
-    return await indexerMetadataSchema.validate(obj);
+    return indexerMetadataSchema.validate(obj);
   }, [address, catSingle]);
 }

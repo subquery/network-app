@@ -7,6 +7,8 @@ import { Button, Typography } from '@subql/react-ui';
 import styles from './ConnectWallet.module.css';
 
 type Props = {
+  title?: string;
+  subTitle?: string;
   onConnect?: () => void;
 };
 
@@ -37,15 +39,15 @@ const Wallet: React.VFC<{ name: string; icon: string; onClick?: () => void }> = 
   );
 };
 
-const ConnectWallet: React.VFC<Props> = ({ onConnect }) => {
+const ConnectWallet: React.VFC<Props> = ({ title, subTitle, onConnect }) => {
   const { t } = useTranslation();
 
   return (
     <div className={styles.container}>
-      <Typography variant="h4">{t('connectWallet.title')}</Typography>
+      <Typography variant="h4">{title || t('connectWallet.title')}</Typography>
       <Typography variant="body" className={styles.subtitle2}>
         <Trans i18nKey="connectWallet.subtitle">
-          Use the studio to create and manage your SubQuery projects.\nLearn how to create a SubQuery project
+          {subTitle || t('connectWallet.subtitle')}
           <a href="/" target="_blank">
             here
           </a>
