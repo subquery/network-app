@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { EraProvider, SQTokenProvider } from '../../containers';
+import { EraProvider } from '../../containers';
 import { Route, Switch } from 'react-router';
 import { Indexer } from './Indexer';
 import { Indexers, DelegateIndexer } from './Indexers';
@@ -29,16 +29,14 @@ const Container: React.VFC = () => {
 
   return (
     <EraProvider>
-      <SQTokenProvider>
-        <AppSidebar list={sidebarList}>
-          <Switch>
-            <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
-            <Route path="/staking/indexers" component={Indexers} />
-            <Route path="/staking/indexer/:address" component={Indexer} />
-            <Route path="/staking" component={Home} />
-          </Switch>
-        </AppSidebar>
-      </SQTokenProvider>
+      <AppSidebar list={sidebarList}>
+        <Switch>
+          <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
+          <Route path="/staking/indexers" component={Indexers} />
+          <Route path="/staking/indexer/:address" component={Indexer} />
+          <Route path="/staking" component={Home} />
+        </Switch>
+      </AppSidebar>
     </EraProvider>
   );
 };

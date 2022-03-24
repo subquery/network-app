@@ -285,6 +285,7 @@ const en = {
         dailyReqCap: 'Daily Request Cap',
         rateLimit: 'Rate Limit',
         action: 'Action',
+        deploymentId: 'Deployment Id',
       },
       create: {
         action: 'Create',
@@ -303,6 +304,15 @@ const en = {
         failureText: 'Failed to remove plan',
         submit: 'Confirm Removal',
         cancel: 'Not now',
+      },
+      purchase: {
+        action: 'purchase',
+        title: 'Purchase Plan',
+        step1: 'Confirm details',
+        description: 'Plan Details',
+        failureText: 'Failed to purchase plan',
+        submit: 'Purchase',
+        cancel: 'Cancel',
       },
     },
   },
