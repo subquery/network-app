@@ -39,44 +39,46 @@ const Specific: React.FC = () => {
   const specificPlans = useSpecificPlansPlans({ address: account ?? '' });
 
   return (
-    <>
+    <div className={'contentContainer'}>
       <Typography>{t('plans.specific.title')}</Typography>
-      {renderAsyncArray(
-        mapAsync(
-          (d) =>
-            d.deploymentIndexers?.nodes
-              .filter(notEmpty)
-              .map((d) => d.deployment)
-              .filter((d) => d?.plans.nodes.filter(notEmpty).length), // Filter out indexed projects that have 0 plans
-          specificPlans,
-        ),
-        {
-          loading: () => <Spinner />,
-          error: (e) => <Typography>{`Failed to load specific plans: ${e}`}</Typography>,
-          empty: () => <Typography>Are not indexing any deployments to have specific plans</Typography>,
-          data: (deployments) => {
-            return (
-              <>
-                {deployments.map((deployment) => {
-                  if (!deployment) return null;
-                  const plans = deployment?.plans.nodes.filter(notEmpty);
-                  return (
-                    <div key={deployment.id}>
-                      <Header deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
-                      {plans ? (
-                        <List data={plans} onRefresh={specificPlans.refetch} />
-                      ) : (
-                        <Typography>You have no plans specific to this deployment</Typography>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            );
+      <div className={'content'}>
+        {renderAsyncArray(
+          mapAsync(
+            (d) =>
+              d.deploymentIndexers?.nodes
+                .filter(notEmpty)
+                .map((d) => d.deployment)
+                .filter((d) => d?.plans.nodes.filter(notEmpty).length), // Filter out indexed projects that have 0 plans
+            specificPlans,
+          ),
+          {
+            loading: () => <Spinner />,
+            error: (e) => <Typography>{`Failed to load specific plans: ${e}`}</Typography>,
+            empty: () => <Typography>Are not indexing any deployments to have specific plans</Typography>,
+            data: (deployments) => {
+              return (
+                <>
+                  {deployments.map((deployment) => {
+                    if (!deployment) return null;
+                    const plans = deployment?.plans.nodes.filter(notEmpty);
+                    return (
+                      <div key={deployment.id}>
+                        <Header deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
+                        {plans ? (
+                          <List data={plans} onRefresh={specificPlans.refetch} />
+                        ) : (
+                          <Typography>You have no plans specific to this deployment</Typography>
+                        )}
+                      </div>
+                    );
+                  })}
+                </>
+              );
+            },
           },
-        },
-      )}
-    </>
+        )}
+      </div>
+    </div>
   );
 };
 

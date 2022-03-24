@@ -14,7 +14,6 @@ import {
 } from '../../../../__generated__/GetRewards';
 import ClaimRewards from './ClaimRewards';
 import { Table as TableD, TableProps } from 'antd';
-import styles from './Rewards.module.css';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -58,7 +57,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
   ];
 
   return (
-    <div className={styles.container}>
+    <div className={'contentContainer'}>
       {renderAsyncArray(
         mapAsync(
           (data) =>

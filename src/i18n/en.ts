@@ -266,8 +266,14 @@ const en = {
       },
     },
     plans: {
+      category: {
+        myServiceAgreement: 'My Service Agreements',
+        myPlan: 'My Plans',
+        manageMyPlans: 'Manage My Plans',
+      },
       default: {
         title: 'You can create maximum 5 default plans',
+        nonPlans: 'No plans available',
       },
       specific: {
         title: 'You can create maximum 5 specific plans',

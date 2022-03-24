@@ -34,6 +34,9 @@ export * from './ModalInput';
 export * from './ModalApproveToken';
 export * from './ModalStatus';
 export * from './TransactionModal';
+export * from './AppSidebar';
+export * from './AppPageHeader';
+export * from './TabButton';
 
 export {
   Header,

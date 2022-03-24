@@ -1,14 +1,9 @@
-.grayText {
-  color: var(--gray500);
-}
-
-.header {
+.tabs {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.title {
-  font-weight: 600;
-  font-size: 16px;
+.create {
+  height: 40px;
 }

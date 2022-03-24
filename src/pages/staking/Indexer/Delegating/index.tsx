@@ -81,7 +81,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   ];
 
   return (
-    <div className={styles.container}>
+    <div className={'contentContainer'}>
       {renderAsync(delegationList, {
         loading: () => <Spinner />,
         error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,

@@ -6,8 +6,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
-import { NavLink } from 'react-router-dom';
-import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner } from '../../../components';
+import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
@@ -91,6 +90,12 @@ const Project: React.VFC = () => {
     // return <Playground/>
   };
 
+  const tabList = [
+    { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
+    { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
+    { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
+  ];
+
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
@@ -118,32 +123,7 @@ const Project: React.VFC = () => {
                 containerClassName={styles.progress}
               />
 
-              <div className="tabContainer">
-                <NavLink
-                  to={`${ROUTE}/${id}/overview${history.location.search}`}
-                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
-                  replace
-                >
-                  {t('explorer.project.tab1')}
-                </NavLink>
-                <NavLink
-                  to={`${ROUTE}/${id}/indexers${history.location.search}`}
-                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
-                  replace
-                >
-                  {t('explorer.project.tab2')}
-                </NavLink>
-                {hasIndexers && (
-                  <NavLink
-                    to={`${ROUTE}/${id}/playground${history.location.search}`}
-                    className={(isActive) => clsx('tab', isActive && 'tabSelected')}
-                    title={t('explorer.project.tab3')}
-                    replace
-                  >
-                    {t('explorer.project.tab3')}
-                  </NavLink>
-                )}
-              </div>
+              <TabButtons tabs={tabList} />
             </div>
           </div>
           <div className={clsx('content-width', styles.content)}>
