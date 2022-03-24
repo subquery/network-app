@@ -9,7 +9,7 @@ import { Indexers, DelegateIndexer } from './Indexers';
 import { Home } from './Home';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineBarChart } from 'react-icons/ai';
-import { ProjectSidebar } from '../../components';
+import { AppSidebar } from '../../components';
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();
@@ -30,14 +30,14 @@ const Container: React.VFC = () => {
   return (
     <EraProvider>
       <SQTokenProvider>
-        <ProjectSidebar list={sidebarList}>
+        <AppSidebar list={sidebarList}>
           <Switch>
             <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
             <Route path="/staking/indexers" component={Indexers} />
             <Route path="/staking/indexer/:address" component={Indexer} />
             <Route path="/staking" component={Home} />
           </Switch>
-        </ProjectSidebar>
+        </AppSidebar>
       </SQTokenProvider>
     </EraProvider>
   );

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { EraProvider } from '../../containers';
-import { ProjectSidebar } from '../../components';
+import { AppSidebar } from '../../components';
 import { Redirect, Route, Switch } from 'react-router';
 import ServiceAgreements from './ServiceAgreements';
 import { Plans } from './Plans';
@@ -31,13 +31,13 @@ const PlanAndOffer: React.VFC = () => {
 
   return (
     <EraProvider>
-      <ProjectSidebar list={sidebarList}>
+      <AppSidebar list={sidebarList}>
         <Switch>
           <Route path={SERVICE_AGREEMENTS} component={ServiceAgreements} />
           <Route path={PLAN_ROUTE} component={Plans} />
           <Redirect from={ROUTE} to={SERVICE_AGREEMENTS} />
         </Switch>
-      </ProjectSidebar>
+      </AppSidebar>
     </EraProvider>
   );
 };

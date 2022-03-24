@@ -5,7 +5,7 @@ import { Typography } from '@subql/react-ui';
 import clsx from 'clsx';
 import * as React from 'react';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
-import { ProjectPageHeader } from '../../../components';
+import { AppPageHeader } from '../../../components';
 import Default from './Default';
 import Create from './Create';
 import Specific from './Specific';
@@ -19,7 +19,7 @@ export const Plans: React.VFC = () => {
   const { t } = useTranslation();
   return (
     <div>
-      <ProjectPageHeader title={t('plans.category.manageMyPlans')} />
+      <AppPageHeader title={t('plans.category.manageMyPlans')} />
 
       <div className="tabContainer">
         <NavLink to={DEFAULT_PLANS} className={(isActive) => clsx('tab', isActive && 'tabSelected')} replace>

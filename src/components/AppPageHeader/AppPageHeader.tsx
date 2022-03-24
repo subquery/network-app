@@ -4,14 +4,14 @@
 import * as React from 'react';
 import clsx from 'clsx';
 import { Typography } from '@subql/react-ui';
-import styles from './ProjectPageHeader.module.css';
+import styles from './AppPageHeader.module.css';
 import { CurEra } from '../CurEra';
 
 type Props = {
   title: string;
 };
 
-export const ProjectPageHeader: React.VFC<Props> = ({ title }) => {
+export const AppPageHeader: React.VFC<Props> = ({ title }) => {
   return (
     <div className={styles.header}>
       {title && (

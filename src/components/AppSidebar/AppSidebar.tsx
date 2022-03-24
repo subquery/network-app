@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import styles from './ProjectSidebar.module.css';
+import styles from './AppSidebar.module.css';
 import { Sidebar } from '../Sidebar';
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const ProjectSidebar: React.VFC<Props> = ({ list, children }) => {
+export const AppSidebar: React.VFC<Props> = ({ list, children }) => {
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
