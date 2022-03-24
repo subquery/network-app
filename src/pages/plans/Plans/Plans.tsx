@@ -5,42 +5,38 @@ import { Typography } from '@subql/react-ui';
 import clsx from 'clsx';
 import * as React from 'react';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
-import { CurEra } from '../../../components';
-import styles from './Plans.module.css';
+import { ProjectPageHeader } from '../../../components';
 import Default from './Default';
 import Create from './Create';
 import Specific from './Specific';
+import { useTranslation } from 'react-i18next';
 
 const ROUTE = '/plans/plans';
+const DEFAULT_PLANS = `${ROUTE}/default`;
+const SPECIFIC_PLANS = `${ROUTE}/specific`;
 
-const Plans: React.VFC = () => {
+export const Plans: React.VFC = () => {
+  const { t } = useTranslation();
   return (
     <div>
-      <div className={styles.header}>
-        <Typography variant="h4" className={clsx(styles.title, styles.grayText)}>
-          {'Manage My Plans'}
-        </Typography>
+      <ProjectPageHeader title={t('plans.category.manageMyPlans')} />
 
-        <CurEra />
-      </div>
       <div className="tabContainer">
-        <NavLink to={`${ROUTE}/default`} className={(isActive) => clsx('tab', isActive && 'tabSelected')} replace>
+        <NavLink to={DEFAULT_PLANS} className={(isActive) => clsx('tab', isActive && 'tabSelected')} replace>
           <Typography>{'Default'}</Typography>
         </NavLink>
-        <NavLink to={`${ROUTE}/specific`} className={(isActive) => clsx('tab', isActive && 'tabSelected')} replace>
+        <NavLink to={SPECIFIC_PLANS} className={(isActive) => clsx('tab', isActive && 'tabSelected')} replace>
           <Typography>{'Specific'}</Typography>
         </NavLink>
       </div>
       <Create />
       <div className="content-width">
         <Switch>
-          <Route exact path={`${ROUTE}/default`} component={Default} />
-          <Route exact path={`${ROUTE}/specific`} component={Specific} />
-          <Redirect from={ROUTE} to={`${ROUTE}/default`} />
+          <Route exact path={DEFAULT_PLANS} component={Default} />
+          <Route exact path={SPECIFIC_PLANS} component={Specific} />
+          <Redirect from={ROUTE} to={DEFAULT_PLANS} />
         </Switch>
       </div>
     </div>
   );
 };
-
-export default Plans;

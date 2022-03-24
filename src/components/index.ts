@@ -34,6 +34,8 @@ export * from './ModalInput';
 export * from './ModalApproveToken';
 export * from './ModalStatus';
 export * from './TransactionModal';
+export * from './ProjectSidebar';
+export * from './ProjectPageHeader';
 
 export {
   Header,

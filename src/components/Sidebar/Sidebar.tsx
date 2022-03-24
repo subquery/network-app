@@ -31,5 +31,3 @@ export const Sidebar: React.VFC<Props> = ({ list }) => {
     </div>
   );
 };
-
-export default Sidebar;

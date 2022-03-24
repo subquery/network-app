@@ -5,7 +5,7 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIndexers } from '../../../../containers';
-import { CurEra } from '../../../../components';
+import { ProjectPageHeader } from '../../../../components';
 import styles from './Indexers.module.css';
 import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import { IndexerList } from '../IndexerList/IndexerList';
@@ -16,13 +16,7 @@ export const Indexers: React.VFC = () => {
 
   return (
     <>
-      <div className={styles.header}>
-        <Typography variant="h3" className={`${styles.title} ${styles.grayText}`}>
-          {t('delegate.title')}
-        </Typography>
-
-        <CurEra />
-      </div>
+      <ProjectPageHeader title={t('delegate.title')} />
 
       <div className={styles.dataContent}>
         {renderAsyncArray(

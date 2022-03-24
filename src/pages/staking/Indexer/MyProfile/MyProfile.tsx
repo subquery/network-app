@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { useHistory } from 'react-router';
 import { useWeb3 } from '../../../../containers';
-import { Card, CurEra } from '../../../../components';
+import { Card, ProjectPageHeader } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
@@ -41,13 +41,7 @@ export const MyProfile: React.VFC = () => {
 
   return (
     <>
-      <div className={styles.header}>
-        <Typography variant="h3" className={`${styles.title} ${styles.grayText}`}>
-          {t('indexer.profile')}
-        </Typography>
-
-        <CurEra />
-      </div>
+      <ProjectPageHeader title={t('indexer.profile')} />
 
       <div className={styles.profile}>
         {/* TODO CONNECT WALLET HINT */}
