@@ -122,7 +122,10 @@ const GET_DEPLOYMENT_PLANS = gql`
     plans(
       filter: {
         creator: { equalTo: $address }
-        and: { deploymentId: { equalTo: $deploymentId }, or: { deploymentId: { isNull: true } } }
+        and: [
+          { active: { equalTo: true } }
+          { or: [{ deploymentId: { isNull: true } }, { deploymentId: { equalTo: $deploymentId } }] }
+        ]
       }
     ) {
       nodes {

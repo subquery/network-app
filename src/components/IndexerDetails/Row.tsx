@@ -6,16 +6,17 @@ import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import { AsyncData, mapAsync, notEmpty } from '../../utils';
+import { AsyncData, cidToBytes32, mapAsync, notEmpty } from '../../utils';
 import { useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Button } from '@subql/react-ui';
 import { StatusColor } from '../Status/Status';
-import { useDeploymentPlansLazy } from '../../containers';
+import { useContracts, useDeploymentPlansLazy, useSQToken } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import PlansTable, { PlansTableProps } from './PlansTable';
+import assert from 'assert';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -24,7 +25,7 @@ type Props = {
   startBlock?: number;
 } & PlansTableProps;
 
-export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlock, loadPlans, asyncPlans }) => {
+export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlock, ...plansTableProps }) => {
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
@@ -48,16 +49,14 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
           <Button label="show plans" onClick={toggleShowPlans} />
         </TableCell>
       </TableRow>
-      {showPlans && <PlansTable loadPlans={loadPlans} asyncPlans={asyncPlans} />}
+      {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata.data} />}
     </>
   );
 };
 
-const ConnectedRow: React.VFC<Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans'> & { deploymentId?: string }> = ({
-  indexer,
-  deploymentId,
-  ...rest
-}) => {
+const ConnectedRow: React.VFC<
+  Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance'> & { deploymentId?: string }
+> = ({ indexer, deploymentId, ...rest }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
   const asyncMetadataComplete = mapAsync(
     (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
@@ -68,6 +67,8 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans
     deploymentId: deploymentId ?? '',
     address: indexer.indexerId,
   });
+
+  const { balance } = useSQToken();
 
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync(
@@ -84,6 +85,17 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans
     deploymentPlans,
   ) as LazyQueryResult<Plan[], unknown>;
 
+  const pendingContracts = useContracts();
+
+  const purchasePlan = async (indexer: string, planId: string) => {
+    const contracts = await pendingContracts;
+
+    assert(contracts, 'Contracts not available');
+    assert(deploymentId, 'DeploymentId not provided');
+
+    return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId);
+  };
+
   return (
     <Row
       {...rest}
@@ -91,6 +103,8 @@ const ConnectedRow: React.VFC<Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans
       indexer={indexer}
       loadPlans={loadDeploymentPlans}
       asyncPlans={plans}
+      purchasePlan={purchasePlan}
+      balance={balance}
     />
   );
 };
