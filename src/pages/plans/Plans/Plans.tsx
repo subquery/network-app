@@ -8,7 +8,7 @@ import Default from './Default';
 import Create from './Create';
 import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
-// import styles from './Plans.module.css';
+import styles from './Plans.module.css';
 
 const ROUTE = '/plans/plans';
 const DEFAULT_PLANS = `${ROUTE}/default`;
@@ -25,18 +25,18 @@ export const Plans: React.VFC = () => {
     <div>
       <AppPageHeader title={t('plans.category.manageMyPlans')} />
 
-      <div>
+      <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
-        <Create />
+        <div className={styles.create}>
+          <Create />
+        </div>
       </div>
 
-      <div className="content-width">
-        <Switch>
-          <Route exact path={DEFAULT_PLANS} component={Default} />
-          <Route exact path={SPECIFIC_PLANS} component={Specific} />
-          <Redirect from={ROUTE} to={DEFAULT_PLANS} />
-        </Switch>
-      </div>
+      <Switch>
+        <Route exact path={DEFAULT_PLANS} component={Default} />
+        <Route exact path={SPECIFIC_PLANS} component={Specific} />
+        <Redirect from={ROUTE} to={DEFAULT_PLANS} />
+      </Switch>
     </div>
   );
 };

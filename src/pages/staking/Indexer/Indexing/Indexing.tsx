@@ -36,39 +36,37 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
   const curCapacity = useIndexerCapacity(indexer || '');
 
   return (
-    <div className={styles.indexing}>
-      <div>
-        {renderAsync(mergeAsync(isIndexer, tableData, curCapacity), {
-          loading: () => <Spinner />,
-          error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
-          data: (data) => {
-            if (!data) return <></>;
-            const [isIndexer, sortedIndexing, curCapacity] = data;
-            if (isIndexer === undefined) return <Spinner />;
-            if (!isIndexer && !sortedIndexing) return <NotRegisteredIndexer />;
-            if (!sortedIndexing)
-              return (
-                <>
-                  <Typography className={styles.grayText}>{t('indexer.doStake')}</Typography>
-                  <div className={styles.btns}>
-                    <DoStake />
-                  </div>
-                </>
-              );
+    <div className={'contentContainer'}>
+      {renderAsync(mergeAsync(isIndexer, tableData, curCapacity), {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
+        data: (data) => {
+          if (!data) return <></>;
+          const [isIndexer, sortedIndexing, curCapacity] = data;
+          if (isIndexer === undefined) return <Spinner />;
+          if (!isIndexer && !sortedIndexing) return <NotRegisteredIndexer />;
+          if (!sortedIndexing)
             return (
-              <IndexingContent
-                tableData={[
-                  {
-                    ...sortedIndexing,
-                    capacity: { current: formatEther(curCapacity?._hex) },
-                  },
-                ]}
-                indexer={indexer}
-              />
+              <>
+                <Typography className={styles.grayText}>{t('indexer.doStake')}</Typography>
+                <div className={styles.btns}>
+                  <DoStake />
+                </div>
+              </>
             );
-          },
-        })}
-      </div>
+          return (
+            <IndexingContent
+              tableData={[
+                {
+                  ...sortedIndexing,
+                  capacity: { current: formatEther(curCapacity?._hex) },
+                },
+              ]}
+              indexer={indexer}
+            />
+          );
+        },
+      })}
     </div>
   );
 };

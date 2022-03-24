@@ -273,6 +273,7 @@ const en = {
       },
       default: {
         title: 'You can create maximum 5 default plans',
+        nonPlans: 'No plans available',
       },
       specific: {
         title: 'You can create maximum 5 specific plans',

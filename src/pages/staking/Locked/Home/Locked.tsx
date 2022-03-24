@@ -4,7 +4,6 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './Locked.module.css';
 import { useWeb3, useWithdrawls } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import { LockedList } from '../LockedList';
@@ -15,7 +14,7 @@ export const Locked: React.VFC = () => {
   const withdrawals = useWithdrawls({ delegator: account || '' });
 
   return (
-    <div className={styles.container}>
+    <div className={'contentContainer'}>
       {renderAsyncArray(
         mapAsync((data) => data.withdrawls?.nodes.filter(notEmpty), withdrawals),
         {

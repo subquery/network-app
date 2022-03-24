@@ -14,18 +14,20 @@ const Default: React.VFC = () => {
   const plans = usePlans({ address: account ?? '' });
 
   return (
-    <>
-      <Typography>{t('plans.default.title')}</Typography>
-      {renderAsyncArray(
-        mapAsync((d) => d.plans?.nodes.filter(notEmpty), plans),
-        {
-          loading: () => <Spinner />,
-          error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
-          empty: () => <Typography>No plans</Typography>,
-          data: (data) => <List data={data} onRefresh={plans.refetch} />,
-        },
-      )}
-    </>
+    <div className={'contentContainer'}>
+      <Typography variant="h6">{t('plans.default.title')}</Typography>
+      <div className={'content'}>
+        {renderAsyncArray(
+          mapAsync((d) => d.plans?.nodes.filter(notEmpty), plans),
+          {
+            loading: () => <Spinner />,
+            error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
+            empty: () => <Typography>{t('plans.default.nonPlans')}</Typography>,
+            data: (data) => <List data={data} onRefresh={plans.refetch} />,
+          },
+        )}
+      </div>
+    </div>
   );
 };
 

@@ -38,38 +38,51 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
   const columns: TableProps<Plan>['columns'] = [
     {
       dataIndex: 'id',
-      title: t('plans.headers.id'),
+      title: '#',
       width: 30,
+      align: 'center',
+      render: (text: string, _: any, idx: number) => <Typography>{idx + 1}</Typography>,
+    },
+    {
+      dataIndex: 'id',
+      title: t('plans.headers.id'),
+      align: 'center',
       render: (text: string) => <Typography>{text}</Typography>,
     },
     {
       dataIndex: 'price',
       key: 'price',
       title: t('plans.headers.price'),
+      align: 'center',
       render: (value: BigInt) => <Typography>{`${formatEther(BigNumber.from(value))} SQT`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'period',
       title: t('plans.headers.period'),
+      align: 'center',
       render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.period).toNumber()} Days`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'dailyReqCap',
       title: t('plans.headers.dailyReqCap'),
+      align: 'center',
       render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.dailyReqCap).toNumber()}`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'rateLimit',
       title: t('plans.headers.rateLimit'),
+      align: 'center',
       render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.rateLimit).toNumber()}`}</Typography>,
     },
     {
       dataIndex: 'id',
       key: 'action',
       title: t('plans.headers.action'),
+      width: 50,
+      align: 'center',
       render: (id: string, plan: Plan) => (
         <TransactionModal
           actions={[{ label: t('plans.remove.action'), key: 'remove' }]}
@@ -81,6 +94,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
             inputTitle: '',
             failureText: 'Failed ',
           }}
+          variant="errTextBtn"
           onClick={() => handleRemovePlan(id)}
           renderContent={(onClick, onCancel, isLoading) => {
             // TODO show plan details
