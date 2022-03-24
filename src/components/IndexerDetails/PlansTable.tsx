@@ -16,29 +16,122 @@ import TransactionModal from '../TransactionModal';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { IndexerDetails } from '../../models';
 import IndexerName from './IndexerName';
+import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
 
 export type PlansTableProps = {
-  deploymentId?: string;
-  indexerDetails?: IndexerDetails;
   loadPlans: () => void;
   asyncPlans: LazyQueryResult<Plan[], unknown>;
+} & Omit<ModalProps, 'plan'>;
+
+type ModalProps = {
+  plan: Plan;
+  indexerDetails?: IndexerDetails;
   purchasePlan: (indexer: string, planId: string) => Promise<ContractTransaction>;
   balance: AsyncData<BigNumber>;
+  planManagerAllowance: AsyncData<BigNumber> & { refetch: () => void };
+  deploymentId?: string;
 };
 
-const PlansTable: React.VFC<PlansTableProps> = ({
-  loadPlans,
-  asyncPlans,
+const ModalContent: React.VFC<ModalProps> = ({
+  plan,
   purchasePlan,
-  deploymentId,
-  indexerDetails,
   balance,
+  planManagerAllowance,
+  indexerDetails,
+  deploymentId,
 }) => {
+  const { t } = useTranslation();
+
+  const requiresTokenApproval = planManagerAllowance.data?.isZero();
+
+  const modalText = requiresTokenApproval
+    ? tokenApprovalModalText
+    : {
+        title: t('plans.purchase.title'),
+        steps: [t('plans.purchase.step1'), t('indexer.confirmOnMetamask')],
+        description: t('plans.purchase.description'),
+        submitText: '',
+        inputTitle: '',
+        failureText: t('plans.purchase.failureText'),
+      };
+
+  return (
+    <TransactionModal
+      actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
+      text={modalText}
+      onClick={() => purchasePlan(plan.creator, plan.id)}
+      renderContent={(onSubmit, onCancel, isLoading) => {
+        return renderAsync(planManagerAllowance, {
+          loading: () => <Spinner />,
+          error: (e) => <Typography>{`Failed to check if token needs approval: ${e.message}`}</Typography>,
+          data: () => {
+            if (requiresTokenApproval) {
+              return (
+                <ModalApproveToken
+                  contract={ApproveContract.PlanManager}
+                  onSubmit={() => planManagerAllowance.refetch()}
+                />
+              );
+            }
+            return (
+              <div>
+                <div>
+                  <Typography>Indexer</Typography>
+                  <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />
+                </div>
+                <Typography>{`${t('plans.headers.price')}: ${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>
+                <Typography>{`${t('plans.headers.period')}: ${plan.planTemplate?.period} days`}</Typography>
+                <Typography>{`${t('plans.headers.dailyReqCap')}: ${
+                  plan.planTemplate?.dailyReqCap
+                } queries`}</Typography>
+                <Typography>{`${t('plans.headers.rateLimit')}: ${
+                  plan.planTemplate?.rateLimit
+                } queries/min`}</Typography>
+                <Typography>{`${t('plans.headers.deploymentId')}: ${deploymentId}`}</Typography>
+
+                <div>
+                  <Typography>Your balance</Typography>
+                  {renderAsync(balance, {
+                    loading: () => <Spinner />,
+                    error: () => <Typography>Failed to load balance</Typography>,
+                    data: (data) => <Typography>{`${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>,
+                  })}
+                </div>
+
+                <Button
+                  label={t('plans.purchase.cancel')}
+                  onClick={onCancel}
+                  disabled={isLoading}
+                  type="secondary"
+                  colorScheme="neutral"
+                />
+                <Button
+                  label={t('plans.purchase.submit')}
+                  onClick={() => onSubmit({})}
+                  loading={isLoading}
+                  colorScheme="standard"
+                />
+              </div>
+            );
+          },
+        });
+      }}
+    />
+  );
+};
+
+const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
 
   React.useEffect(() => {
     if (!asyncPlans.called) loadPlans();
   }, [loadPlans, asyncPlans]);
+
+  React.useEffect(() => {
+    if (planManagerAllowance.error) {
+      planManagerAllowance.refetch();
+    }
+  }, []);
 
   const columns: TableProps<Plan>['columns'] = [
     {
@@ -75,62 +168,9 @@ const PlansTable: React.VFC<PlansTableProps> = ({
       dataIndex: 'id',
       key: 'action',
       title: t('plans.headers.action'),
-      render: (id: string, plan: Plan) => (
-        <TransactionModal
-          actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
-          text={{
-            title: t('plans.purchase.title'),
-            steps: [t('plans.purchase.step1'), t('indexer.confirmOnMetamask')],
-            description: t('plans.purchase.description'),
-            submitText: '',
-            inputTitle: '',
-            failureText: t('plans.purchase.failureText'),
-          }}
-          onClick={() => purchasePlan(plan.creator, plan.id)}
-          renderContent={(onSubmit, onCancel, isLoading) => {
-            return (
-              <div>
-                <div>
-                  <Typography>Indexer</Typography>
-                  <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />
-                </div>
-                <Typography>{`${t('plans.headers.price')}: ${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>
-                <Typography>{`${t('plans.headers.period')}: ${plan.planTemplate?.period} days`}</Typography>
-                <Typography>{`${t('plans.headers.dailyReqCap')}: ${
-                  plan.planTemplate?.dailyReqCap
-                } queries`}</Typography>
-                <Typography>{`${t('plans.headers.rateLimit')}: ${
-                  plan.planTemplate?.rateLimit
-                } queries/min`}</Typography>
-                <Typography>{`${t('plans.headers.deploymentId')}: ${deploymentId}`}</Typography>
-
-                <div>
-                  <Typography>Your balance</Typography>
-                  {renderAsync(balance, {
-                    loading: () => <Spinner />,
-                    error: () => <Typography>Faile to load balance</Typography>,
-                    data: (data) => <Typography>{`${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>,
-                  })}
-                </div>
-
-                <Button
-                  label={t('plans.purchase.cancel')}
-                  onClick={onCancel}
-                  disabled={isLoading}
-                  type="secondary"
-                  colorScheme="neutral"
-                />
-                <Button
-                  label={t('plans.purchase.submit')}
-                  onClick={() => onSubmit({})}
-                  loading={isLoading}
-                  colorScheme="standard"
-                />
-              </div>
-            );
-          }}
-        />
-      ),
+      render: (id: string, plan: Plan) => {
+        return <ModalContent {...rest} plan={plan} planManagerAllowance={planManagerAllowance} />;
+      },
     },
   ];
 
