@@ -315,6 +315,16 @@ const en = {
         cancel: 'Cancel',
       },
     },
+    serviceAgreements: {
+      headers: {
+        project: 'Project',
+        deployment: 'Version - Deployment ID',
+        consumer: 'Consumer',
+        indexer: 'Indexer',
+        expiry: 'Expires In',
+        price: 'Price',
+      },
+    },
   },
 };
 

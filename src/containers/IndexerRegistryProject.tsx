@@ -5,10 +5,6 @@ import { useQuery, gql, QueryResult } from '@apollo/client';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/GetDelegation';
 import { GetAllDelegations, GetAllDelegationsVariables } from '../__generated__/GetAllDelegations';
 import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDelegations';
-import {
-  GetDeploymentServiceAgreements,
-  GetDeploymentServiceAgreementsVariables,
-} from '../__generated__/GetDeploymentServiceAgreements';
 import { GetIndexer, GetIndexerVariables } from '../__generated__/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/GetIndexerDelegators';
 import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers';
@@ -19,6 +15,7 @@ import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
 import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
 import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
 import { GetSpecificPlans, GetSpecificPlansVariables } from '../__generated__/GetSpecificPlans';
+import { GetServiceAgreements, GetServiceAgreementsVariables } from '../__generated__/GetServiceAgreements';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -57,6 +54,17 @@ const SERVICE_AGREEMENT_FIELDS = gql`
     deploymentId
     indexerAddress
     consumerAddress
+    period
+    value
+    startTime
+    deployment {
+      id
+      version
+      project {
+        id
+        metadata
+      }
+    }
   }
 `;
 
@@ -217,10 +225,12 @@ const GET_SPECIFIC_PLANS = gql`
   }
 `;
 
-const GET_DEPLOYMENT_SERVICE_AGREEMENTS = gql`
+const GET_SERVICE_AGREEMENTS = gql`
   ${SERVICE_AGREEMENT_FIELDS}
-  query GetDeploymentServiceAgreements($deploymentId: String!) {
-    serviceAgreements(filter: { deploymentId: { equalTo: $deploymentId } }) {
+  query GetServiceAgreements($address: String!) {
+    serviceAgreements(
+      filter: { indexerAddress: { equalTo: $address }, or: { consumerAddress: { equalTo: $address } } }
+    ) {
       nodes {
         ...ServiceAgreementFields
       }
@@ -310,13 +320,8 @@ export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryR
   return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, { variables: params });
 }
 
-export function useDeploymentServiceAgreements(
-  params: GetDeploymentServiceAgreementsVariables,
-): QueryResult<GetDeploymentServiceAgreements> {
-  return useQuery<GetDeploymentServiceAgreements, GetDeploymentServiceAgreementsVariables>(
-    GET_DEPLOYMENT_SERVICE_AGREEMENTS,
-    { variables: params },
-  );
+export function useServiceAgreements(params: GetServiceAgreementsVariables): QueryResult<GetServiceAgreements> {
+  return useQuery<GetServiceAgreements, GetServiceAgreementsVariables>(GET_SERVICE_AGREEMENTS, { variables: params });
 }
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
