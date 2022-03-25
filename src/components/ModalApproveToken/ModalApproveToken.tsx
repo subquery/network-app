@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import assert from 'assert';
-import { utils } from 'ethers';
+import { constants } from 'ethers';
 import i18next from '../../i18n';
 import { Button } from 'antd';
 import styles from './ModalApproveToken.module.css';
@@ -18,15 +18,27 @@ export const tokenApprovalModalText = {
   failureText: `Sorry, SQT token approval has failed.`,
 };
 
+export enum ApproveContract {
+  Staking = 'staking',
+  PlanManager = 'planManager',
+}
+
 interface ModalApproveTokenProps {
   isLoading?: boolean;
   submitText?: string;
   onSuccess?: () => void;
   onFail?: () => void;
   onSubmit?: () => void;
+  contract?: ApproveContract;
 }
 
-export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({ submitText, onFail, onSuccess, onSubmit }) => {
+export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
+  submitText,
+  onFail,
+  onSuccess,
+  onSubmit,
+  contract = ApproveContract.Staking,
+}) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const pendingContracts = useContracts();
   const onApproveToken = async () => {
@@ -34,7 +46,7 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({ submitText
       const contracts = await pendingContracts;
       assert(contracts, 'Contracts not available');
 
-      const approvalTx = await contracts.sqToken.increaseAllowance(contracts.staking.address, utils.parseEther('1000'));
+      const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
       setIsLoading(true);
       const approvalTxResult = await approvalTx.wait();
       if (approvalTxResult.status === 1) {

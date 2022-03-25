@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { formatEther } from '@ethersproject/units';
 import assert from 'assert';
 import { useContracts, useWeb3 } from '.';
 import { useAsyncMemo } from '../hooks';
@@ -26,16 +25,22 @@ function useSQTokenImpl() {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    const stakingAllowance = await contracts.sqToken.allowance(account, contracts.staking.address);
+    return contracts.sqToken.allowance(account, contracts.staking.address);
+  }, [account, pendingContracts]);
 
-    console.log(`Staking allowance is ${formatEther(stakingAllowance)} SQT for ${account}`, contracts.staking.address);
+  const planAllowance = useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
 
-    return stakingAllowance;
+    assert(contracts, 'Contracts not available');
+    assert(account, 'Account not available');
+
+    return contracts.sqToken.allowance(account, contracts.planManager.address);
   }, [account, pendingContracts]);
 
   return {
     balance,
     stakingAllowance,
+    planAllowance,
   };
 }
 

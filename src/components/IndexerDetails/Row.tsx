@@ -55,7 +55,9 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
 };
 
 const ConnectedRow: React.VFC<
-  Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance'> & { deploymentId?: string }
+  Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance' | 'planManagerAllowance'> & {
+    deploymentId?: string;
+  }
 > = ({ indexer, deploymentId, ...rest }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
   const asyncMetadataComplete = mapAsync(
@@ -68,7 +70,7 @@ const ConnectedRow: React.VFC<
     address: indexer.indexerId,
   });
 
-  const { balance } = useSQToken();
+  const { balance, planAllowance } = useSQToken();
 
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync(
@@ -105,6 +107,7 @@ const ConnectedRow: React.VFC<
       asyncPlans={plans}
       purchasePlan={purchasePlan}
       balance={balance}
+      planManagerAllowance={planAllowance}
     />
   );
 };
