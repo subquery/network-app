@@ -16,6 +16,7 @@ import { FTextInput } from '../../../../components';
 import { constants } from 'ethers';
 import { useLocation } from 'react-router';
 import { SPECIFIC_PLANS } from '../Plans';
+import { SummaryList } from '../../../../components';
 
 const planSchema = yup.object({
   price: yup.number().defined(),
@@ -33,6 +34,21 @@ type FormProps = {
 const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const { t } = useTranslation();
 
+  const summaryList = [
+    {
+      label: t('plans.headers.price'),
+      val: `${template.period} days`,
+    },
+    {
+      label: t('plans.headers.dailyReqCap'),
+      val: ` ${template.dailyReqCap} queries`,
+    },
+    {
+      label: t('plans.headers.rateLimit'),
+      val: ` ${template.rateLimit} queries/min`,
+    },
+  ];
+
   return (
     <Formik
       initialValues={{
@@ -45,9 +61,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
       {({ submitForm, isValid, isSubmitting }) => (
         <Form>
           <div>
-            <Typography>{`${t('plans.headers.price')}: ${template.period} days`}</Typography>
-            <Typography>{`${t('plans.headers.dailyReqCap')}: ${template.dailyReqCap} queries`}</Typography>
-            <Typography>{`${t('plans.headers.rateLimit')}: ${template.rateLimit} queries/min`}</Typography>
+            <SummaryList title={t('plans.create.description')} list={summaryList} />
 
             <FTextInput id="price" label={t('plans.create.priceTitle')} />
 

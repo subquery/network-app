@@ -7,11 +7,11 @@ export function convertStringToNumber(value: string): number {
   return parseFloat(value);
 }
 
-export function convertBigNumberToNumber(value: BigNumber | number): number {
+export function convertBigNumberToNumber(value: BigInt | BigNumber | number | string): number {
   return BigNumber.from(value).toNumber();
 }
 
-export function formatEther(value: BigNumber | number | string | undefined): string {
+export function formatEther(value: BigInt | BigNumber | number | string | undefined): string {
   return utils.formatEther(BigNumber.from(value ?? 0).toString());
 }
 
