@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { EraProvider } from '../../containers';
-import { Route, Switch } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router';
 import { Indexer } from './Indexer';
 import { Indexers, DelegateIndexer } from './Indexers';
-import { Home } from './Home';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineBarChart } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
+import { WalletRoute } from '../../WalletRoute';
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();
@@ -33,8 +33,8 @@ const Container: React.VFC = () => {
         <Switch>
           <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
           <Route path="/staking/indexers" component={Indexers} />
-          <Route path="/staking/indexer/:address" component={Indexer} />
-          <Route path="/staking" component={Home} />
+          <WalletRoute path="/staking/my-profile" component={Indexer} />
+          <Redirect from="/staking" to="/staking/my-profile" />
         </Switch>
       </AppSidebar>
     </EraProvider>

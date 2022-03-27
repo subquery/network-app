@@ -4,16 +4,13 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import Modal from 'react-modal';
-import { CreateInstructions, Spinner, ProjectCard, NewProject, ConnectWallet } from '../../../components';
+import { CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
 import { useUserProjects, useWeb3 } from '../../../containers';
-import { injectedConntector } from '../../../containers/Web3';
 import { useProject } from '../../../hooks';
 import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 import { Button } from '@subql/react-ui';
-import { T } from 'ramda';
-import { useTranslation } from 'react-i18next';
 
 const Project: React.VFC<{ projectId: string; account: string; onClick?: () => void }> = ({
   projectId,
@@ -51,20 +48,9 @@ const Project: React.VFC<{ projectId: string; account: string; onClick?: () => v
 };
 
 const Home: React.VFC = () => {
-  const { account, activate } = useWeb3();
+  const { account } = useWeb3();
   const history = useHistory();
-  const { t } = useTranslation();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
-
-  const handleConnectWallet = React.useCallback(async () => {
-    if (account) return;
-
-    try {
-      await activate(injectedConntector);
-    } catch (e) {
-      console.log('Failed to activate wallet', e);
-    }
-  }, [activate, account]);
 
   const asyncProjects = useUserProjects();
 
@@ -73,18 +59,6 @@ const Home: React.VFC = () => {
   };
 
   const enableCreateModal = () => setShowCreateModal(true);
-
-  if (!account) {
-    return (
-      <div className={styles.container}>
-        <ConnectWallet
-          onConnect={handleConnectWallet}
-          title={t('studio.wallet.connect')}
-          subTitle={t('studio.wallet.subTitle')}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="content-width">
@@ -114,7 +88,7 @@ const Home: React.VFC = () => {
                   projectId={id.toHexString()}
                   key={id.toHexString()}
                   onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
-                  account={account}
+                  account={account!}
                 />
               ))}
             </div>
