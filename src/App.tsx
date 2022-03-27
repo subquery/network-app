@@ -5,7 +5,7 @@ import React from 'react';
 import './App.css';
 import './i18n';
 
-import { Route } from 'react-router';
+import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import * as pages from './pages';
@@ -28,6 +28,7 @@ import { UnsupportedChainIdError } from '@web3-react/core';
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
 import { Button } from '@subql/react-ui';
+import { WalletRoute } from './WalletRoute';
 
 const Providers: React.FC = ({ children }) => {
   return (
@@ -75,6 +76,8 @@ const BlockchainStatus: React.FC = ({ children }) => {
 };
 
 const App: React.VFC = () => {
+  const { t } = useTranslation();
+
   return (
     <Providers>
       <div className="App">
@@ -83,11 +86,17 @@ const App: React.VFC = () => {
           <div className="Main">
             <BlockchainStatus>
               <Switch>
-                <Route component={pages.Studio} path="/studio" />
                 <Route component={pages.Explorer} path="/explorer" />
+                <WalletRoute
+                  component={pages.Studio}
+                  path="/studio"
+                  title={t('studio.wallet.connect')}
+                  subtitle={t('studio.wallet.subTitle')}
+                />
                 <Route component={pages.Staking} path="/staking" />
-                <Route component={pages.Plans} path="/plans" />
-                <Route component={pages.Home} />
+                <WalletRoute component={pages.Plans} path="/plans" />
+                {/*{<Route component={pages.Home} />}*/}
+                <Redirect from="/" to="/explorer" />
               </Switch>
             </BlockchainStatus>
           </div>

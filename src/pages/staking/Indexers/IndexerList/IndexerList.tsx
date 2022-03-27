@@ -12,6 +12,7 @@ import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
+import { useHistory } from 'react-router';
 
 interface props {
   indexers: Indexer[];
@@ -21,6 +22,7 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
+  const history = useHistory();
 
   const sortedIndexerList = indexers.map((indexer) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
@@ -113,7 +115,12 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
         if (id === account) return <Typography> - </Typography>;
         return (
           <div className={styles.actionBtns}>
-            <Button label="View" size="medium" className={'textBtn'} href={`/staking/indexers/delegate/${id}`} />
+            <Button
+              label="View"
+              size="medium"
+              className={'textBtn'}
+              onClick={() => history.push(`/staking/indexers/delegate/${id}`)}
+            />
             <DoDelegate indexerAddress={id} variant="textBtn" />
           </div>
         );
