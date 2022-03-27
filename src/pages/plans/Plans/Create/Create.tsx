@@ -8,15 +8,16 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlans, usePlanTemplates, useSpecificPlansPlans, useWeb3 } from '../../../../containers';
+import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
 import * as yup from 'yup';
-import { FTextInput } from '../../../../components';
 import { constants } from 'ethers';
-import { useLocation } from 'react-router';
-import { SPECIFIC_PLANS } from '../Plans';
 import { SummaryList } from '../../../../components';
+import { useIndexerDeployments } from '../../../../hooks';
+import { InputNumber } from 'antd';
+import styles from './Create.module.css';
+import clsx from 'clsx';
 
 const planSchema = yup.object({
   price: yup.number().defined(),
@@ -58,29 +59,44 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
       validationSchema={planSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, isSubmitting }) => (
+      {({ submitForm, isValid, isSubmitting, setFieldValue }) => (
         <Form>
           <div>
             <SummaryList title={t('plans.create.description')} list={summaryList} />
 
-            <FTextInput id="price" label={t('plans.create.priceTitle')} />
+            {/* TODO: InputNumber extract component */}
+            <div className={'fullWidth'}>
+              <Typography>{t('plans.create.priceTitle')} </Typography>
+              <InputNumber
+                id="price"
+                name="price"
+                addonAfter="SQT"
+                defaultValue={0}
+                min={0}
+                onChange={(value) => setFieldValue('price', value)}
+                className={'fullWidth'}
+              />
+            </div>
 
             {/* TODO ability to choose deployment */}
 
-            <Button
-              label={t('plans.create.cancel')}
-              onClick={onCancel}
-              disabled={isSubmitting}
-              type="secondary"
-              colorScheme="neutral"
-            />
-            <Button
-              label={t('plans.create.submit')}
-              onClick={submitForm}
-              loading={isSubmitting}
-              disabled={!isValid}
-              colorScheme="standard"
-            />
+            <div className={clsx('flex', 'flex-end', styles.btns)}>
+              <Button
+                label={t('plans.create.cancel')}
+                onClick={onCancel}
+                disabled={isSubmitting}
+                type="secondary"
+                colorScheme="neutral"
+                className={styles.btn}
+              />
+              <Button
+                label={t('plans.create.submit')}
+                onClick={submitForm}
+                loading={isSubmitting}
+                disabled={!isValid}
+                colorScheme="standard"
+              />
+            </div>
           </div>
         </Form>
       )}
@@ -90,18 +106,11 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
 const Create: React.FC = () => {
   const { t } = useTranslation();
-  const location = useLocation();
   const { account } = useWeb3();
-  const isSpecificPlansTab = location.pathname === SPECIFIC_PLANS;
-  console.log('location.pathname', location.pathname);
-  console.log('SPECIFIC_PLANS', SPECIFIC_PLANS);
-  console.log('isSpecificPlansTab', isSpecificPlansTab);
+  const indexerDeployments = useIndexerDeployments(account ?? '');
+  console.log('indexerDeployments', indexerDeployments);
   const pendingContracts = useContracts();
   const templates = usePlanTemplates({});
-
-  const defaultPlans = usePlans({ address: account ?? '' });
-  const specificPlans = useSpecificPlansPlans({ address: account ?? '' });
-  const plans = isSpecificPlansTab ? specificPlans : defaultPlans;
 
   // TODO get indexed projects and provide option to set one
   const indexedProjects = [];
@@ -123,7 +132,7 @@ const Create: React.FC = () => {
 
   return (
     <TransactionModal
-      actions={[{ label: t('plans.create.action'), key: 'create' }]}
+      actions={[{ label: t('plans.create.title'), key: 'create' }]}
       text={{
         title: t('plans.create.title'),
         steps: [t('plans.create.step1'), t('indexer.confirmOnMetamask')],

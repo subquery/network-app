@@ -118,7 +118,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
               <>
                 <SummaryList title={t('plans.remove.description')} list={planDetails} />
 
-                <div className={styles.btns}>
+                <div className={clsx('flex', 'flex-end', styles.btns)}>
                   <Button
                     label={t('plans.remove.submit')}
                     onClick={() => onClick({})}
