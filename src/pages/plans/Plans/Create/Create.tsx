@@ -11,11 +11,12 @@ import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
+import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import { SummaryList } from '../../../../components';
 import { useIndexerDeployments } from '../../../../hooks';
-import { InputNumber } from 'antd';
+import { InputNumber, Select } from 'antd';
 import styles from './Create.module.css';
 import clsx from 'clsx';
 
@@ -27,12 +28,13 @@ const planSchema = yup.object({
 type PlanFormData = yup.Asserts<typeof planSchema>;
 
 type FormProps = {
+  deployments: Array<DeploymentIndexer>;
   template: Template;
   onSubmit: (data: PlanFormData) => void | Promise<void>;
   onCancel: () => void;
 };
 
-const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
+const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, deployments }) => {
   const { t } = useTranslation();
 
   const summaryList = [
@@ -78,7 +80,28 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
               />
             </div>
 
-            {/* TODO ability to choose deployment */}
+            {/* TODO: renderItem style */}
+            <div className={styles.select}>
+              <Typography>{'Select specific deployment Id'} </Typography>
+              <Select
+                showSearch
+                placeholder="Select specific deployment Id"
+                optionFilterProp="children"
+                onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
+                className={'fullWidth'}
+                // TODO
+                // onSearch={onSearch}
+                // filterOption={() => {}}
+              >
+                <>
+                  {deployments.map((deployment) => (
+                    <Select.Option value={deployment.deployment?.id} key={deployment.deployment?.id}>
+                      {deployment.deployment?.id}
+                    </Select.Option>
+                  ))}
+                </>
+              </Select>
+            </div>
 
             <div className={clsx('flex', 'flex-end', styles.btns)}>
               <Button
@@ -106,15 +129,12 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
 const Create: React.FC = () => {
   const { t } = useTranslation();
+  const pendingContracts = useContracts();
+  const templates = usePlanTemplates({});
   const { account } = useWeb3();
   const indexerDeployments = useIndexerDeployments(account ?? '');
   console.log('indexerDeployments', indexerDeployments);
-  const pendingContracts = useContracts();
-  const templates = usePlanTemplates({});
-
-  // TODO get indexed projects and provide option to set one
-  const indexedProjects = [];
-
+  const indexerProjects = indexerDeployments.data;
   const template = templates.data?.planTemplates?.nodes[0];
 
   const handleCreate = async (amount: string, deploymentId?: string) => {
@@ -149,7 +169,14 @@ const Create: React.FC = () => {
               if (!template) {
                 return <Typography>No template found</Typography>;
               }
-              return <PlanForm template={template} onSubmit={onSubmit} onCancel={onCancel} />;
+              return (
+                <PlanForm
+                  template={template}
+                  deployments={indexerProjects ?? []}
+                  onSubmit={onSubmit}
+                  onCancel={onCancel}
+                />
+              );
             },
           },
         )

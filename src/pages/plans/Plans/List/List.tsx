@@ -46,12 +46,6 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
       render: (text: string, _: any, idx: number) => <Typography>{idx + 1}</Typography>,
     },
     {
-      dataIndex: 'id',
-      title: t('plans.headers.id'),
-      align: 'center',
-      render: (text: string) => <Typography>{text}</Typography>,
-    },
-    {
       dataIndex: 'price',
       key: 'price',
       title: t('plans.headers.price'),
@@ -142,7 +136,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
     },
   ];
 
-  return <Table columns={columns} dataSource={data} />;
+  return <Table columns={columns} dataSource={data} rowKey={'id'} />;
 };
 
 export default List;
