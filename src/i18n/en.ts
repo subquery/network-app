@@ -273,10 +273,13 @@ const en = {
       },
       default: {
         title: 'You can create maximum 5 default plans',
-        nonPlans: 'No plans available',
+        createPlans: `Create plans for projects you're indexing. <br> Learn how to create a plan <1>here</1>.`,
       },
       specific: {
         title: 'You can create maximum 5 specific plans',
+        nonPlans:
+          'You are not indexing any deployments to have specific plan.<br> Learn how to create a specific plan <1>here</1>.',
+        nonDeployment: 'You have no plans specific to this deployment',
       },
       headers: {
         id: 'Id',
@@ -324,6 +327,7 @@ const en = {
         expiry: 'Expires In',
         price: 'Price',
       },
+      non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
   },
 };

@@ -19,6 +19,7 @@ import { formatEther } from '@ethersproject/units';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
+import { EmptyList } from '../Plans/EmptyList';
 
 const ROUTE = '/plans/service-agreements';
 
@@ -121,7 +122,7 @@ const ServiceAgreements: React.VFC = () => {
           {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
-            empty: () => <Typography>{`No service agreements`}</Typography>,
+            empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
               return <Table columns={columns} dataSource={data} />;
             },

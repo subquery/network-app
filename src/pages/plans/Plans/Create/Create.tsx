@@ -8,12 +8,14 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlanTemplates } from '../../../../containers';
+import { useContracts, usePlans, usePlanTemplates, useSpecificPlansPlans, useWeb3 } from '../../../../containers';
 import { mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
 import * as yup from 'yup';
 import { FTextInput } from '../../../../components';
 import { constants } from 'ethers';
+import { useLocation } from 'react-router';
+import { SPECIFIC_PLANS } from '../Plans';
 
 const planSchema = yup.object({
   price: yup.number().defined(),
@@ -74,8 +76,18 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
 const Create: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const { account } = useWeb3();
+  const isSpecificPlansTab = location.pathname === SPECIFIC_PLANS;
+  console.log('location.pathname', location.pathname);
+  console.log('SPECIFIC_PLANS', SPECIFIC_PLANS);
+  console.log('isSpecificPlansTab', isSpecificPlansTab);
   const pendingContracts = useContracts();
   const templates = usePlanTemplates({});
+
+  const defaultPlans = usePlans({ address: account ?? '' });
+  const specificPlans = useSpecificPlansPlans({ address: account ?? '' });
+  const plans = isSpecificPlansTab ? specificPlans : defaultPlans;
 
   // TODO get indexed projects and provide option to set one
   const indexedProjects = [];
@@ -101,9 +113,6 @@ const Create: React.FC = () => {
       text={{
         title: t('plans.create.title'),
         steps: [t('plans.create.step1'), t('indexer.confirmOnMetamask')],
-        description: t('plans.create.description'),
-        submitText: '',
-        inputTitle: '',
         failureText: t('plans.create.failureText'),
       }}
       onClick={(params: PlanFormData) => handleCreate(params.price.toString(), params.deploymentId)}
