@@ -57,7 +57,9 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
       key: 'period',
       title: t('plans.headers.period'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{`${convertBigNumberToNumber(value.period)} Day(s)`}</Typography>,
+      render: (value: PlanTemplate) => (
+        <Typography>{t('keys.day', { count: convertBigNumberToNumber(value.period) })}</Typography>
+      ),
     },
     {
       dataIndex: 'planTemplate',

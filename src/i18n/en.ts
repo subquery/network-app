@@ -329,6 +329,11 @@ const en = {
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
+
+    keys: {
+      day: '{{count}} day',
+      day_other: '{{count}} days',
+    },
   },
 };
 

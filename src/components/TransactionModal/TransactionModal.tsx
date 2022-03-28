@@ -21,8 +21,6 @@ type Props<P, T extends string> = {
     failureText?: string;
   };
   onClick: Action<P, T>;
-  onSuccess?: () => void;
-  onFailure?: () => void;
   actions: Array<
     {
       label: string;
@@ -46,8 +44,6 @@ const TransactionModal = <P, T extends string>({
   onClick,
   inputParams,
   variant = 'button',
-  onSuccess,
-  onFailure,
 }: Props<P, T>): React.ReactElement | null => {
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -76,9 +72,7 @@ const TransactionModal = <P, T extends string>({
     resetModal();
     if (result.status) {
       setSuccessModalText('Success');
-      onSuccess && onSuccess();
     } else {
-      onFailure && onFailure();
       throw new Error(text.failureText);
     }
   };

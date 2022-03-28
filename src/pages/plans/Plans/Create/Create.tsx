@@ -28,14 +28,16 @@ const planSchema = yup.object({
 type PlanFormData = yup.Asserts<typeof planSchema>;
 
 type FormProps = {
-  deployments: Array<DeploymentIndexer>;
   template: Template;
   onSubmit: (data: PlanFormData) => void | Promise<void>;
   onCancel: () => void;
 };
 
-const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, deployments }) => {
+const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const { t } = useTranslation();
+  const { account } = useWeb3();
+  const indexerDeployments = useIndexerDeployments(account ?? '');
+  const indexerProjects = indexerDeployments.data ?? [];
 
   const summaryList = [
     {
@@ -94,7 +96,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, deployme
                 // filterOption={() => {}}
               >
                 <>
-                  {deployments.map((deployment) => (
+                  {indexerProjects.map((deployment) => (
                     <Select.Option value={deployment.deployment?.id} key={deployment.deployment?.id}>
                       {deployment.deployment?.id}
                     </Select.Option>
@@ -131,10 +133,6 @@ const Create: React.FC = () => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const templates = usePlanTemplates({});
-  const { account } = useWeb3();
-  const indexerDeployments = useIndexerDeployments(account ?? '');
-  console.log('indexerDeployments', indexerDeployments);
-  const indexerProjects = indexerDeployments.data;
   const template = templates.data?.planTemplates?.nodes[0];
 
   const handleCreate = async (amount: string, deploymentId?: string) => {
@@ -169,14 +167,7 @@ const Create: React.FC = () => {
               if (!template) {
                 return <Typography>No template found</Typography>;
               }
-              return (
-                <PlanForm
-                  template={template}
-                  deployments={indexerProjects ?? []}
-                  onSubmit={onSubmit}
-                  onCancel={onCancel}
-                />
-              );
+              return <PlanForm template={template} onSubmit={onSubmit} onCancel={onCancel} />;
             },
           },
         )
