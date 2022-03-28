@@ -15,11 +15,10 @@ export const getDeploymentProgress = async ({
   if (!proxyEndpoint || !deploymentId) {
     return progress;
   }
-  const url = `${proxyEndpoint}metadata/${deploymentId}`;
+  const url = `${proxyEndpoint}/metadata/${deploymentId}`;
 
   try {
     const response = await (await fetch(url)).json();
-
     const lastProcessedHeight = response.data._metadata.lastProcessedHeight ?? 0;
     const targetHeight = response.data._metadata.targetHeight ?? 0;
     progress = lastProcessedHeight / targetHeight;
