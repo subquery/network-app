@@ -16,6 +16,7 @@ import { convertBigNumberToNumber, formatEther } from '../../../../utils';
 import { SummaryList } from '../../../../components';
 import styles from './List.module.css';
 import clsx from 'clsx';
+import { secondsToDhms } from '../../../../utils/dateFormatters';
 
 type Props = {
   data: Plan[];
@@ -57,9 +58,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
       key: 'period',
       title: t('plans.headers.period'),
       align: 'center',
-      render: (value: PlanTemplate) => (
-        <Typography>{t('keys.day', { count: convertBigNumberToNumber(value.period) })}</Typography>
-      ),
+      render: (value: PlanTemplate) => <Typography>{secondsToDhms(convertBigNumberToNumber(value.period))}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
