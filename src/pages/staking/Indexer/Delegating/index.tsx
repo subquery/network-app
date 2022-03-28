@@ -90,7 +90,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           return (
             <>
               <Typography variant="h5" className={styles.header}>
-                {`You have total ${data.length || 0} delegation(s)`}
+                {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography>
               <Table columns={columns} dataSource={data} scroll={{ x: 800 }} />
             </>

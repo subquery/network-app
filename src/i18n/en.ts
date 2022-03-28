@@ -205,8 +205,6 @@ const en = {
     delegate: {
       title: 'Delegate',
       delegating: 'Delegating',
-      youHave: '`You have total',
-      delegators: 'delegator(s)',
       totalDelegation: 'Total Delegation to indexer(s)',
       delegator: 'Delegator',
       currentEra: 'Current Era',
@@ -226,6 +224,8 @@ const en = {
       none: 'No delegator available',
       toIndexer: 'Delegate indexers',
       viewProfile: 'View indexer profile',
+      totalAmount: 'You have total {{count}} delegation',
+      totalAmount_other: 'You have total {{count}} delegations',
     },
 
     withdrawals: {
