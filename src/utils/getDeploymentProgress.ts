@@ -6,24 +6,41 @@ interface GetDeploymentProgress {
   deploymentId?: string;
 }
 
+type Metadata = {
+  chain: string;
+  genesisHash: string;
+  indexerHealthy: boolean;
+  indexerNodeVersion: string; // Semver
+  lastProcessedHeight: number;
+  lastProcessedTimestamp: string;
+  queryNodeVersion: string; // Semver
+  specName: string;
+  targetHeight: number;
+}
+
+export async function getDeploymentMetadata({ deploymentId, proxyEndpoint}: GetDeploymentProgress): Promise<Metadata | undefined>{
+  if (!proxyEndpoint || !deploymentId) {
+    return undefined;
+  }
+
+  const url = new URL(proxyEndpoint);
+  url.pathname = `/metadata/${deploymentId}`;
+  const response = await (await fetch(url.toString())).json();
+
+  return response.data._metadata;
+}
+
 export const getDeploymentProgress = async ({
   proxyEndpoint,
   deploymentId,
 }: GetDeploymentProgress): Promise<number> => {
-  let progress = 0;
-
   if (!proxyEndpoint || !deploymentId) {
-    return progress;
+    return 0;
   }
-  const url = `${proxyEndpoint}/metadata/${deploymentId}`;
 
-  try {
-    const response = await (await fetch(url)).json();
-    const lastProcessedHeight = response.data._metadata.lastProcessedHeight ?? 0;
-    const targetHeight = response.data._metadata.targetHeight ?? 0;
-    progress = lastProcessedHeight / targetHeight;
-  } catch (e) {
-    console.error(e);
-  }
-  return progress;
+  const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId });
+
+  if (!metadata) return 0;
+
+  return metadata.lastProcessedHeight / metadata.targetHeight;
 };
