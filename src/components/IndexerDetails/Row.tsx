@@ -12,11 +12,12 @@ import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Button } from '@subql/react-ui';
 import { StatusColor } from '../Status/Status';
-import { useContracts, useDeploymentPlansLazy, useSQToken } from '../../containers';
+import { useContracts, useDeploymentPlansLazy, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import PlansTable, { PlansTableProps } from './PlansTable';
 import assert from 'assert';
+import { BsPlusSquare } from 'react-icons/bs';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -26,6 +27,7 @@ type Props = {
 } & PlansTableProps;
 
 export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlock, ...plansTableProps }) => {
+  const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
@@ -45,9 +47,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
         <TableCell>
           <Status text={indexer.status} color={indexer.status === 'READY' ? StatusColor.green : undefined} />
         </TableCell>
-        <TableCell>
-          <Button label="show plans" onClick={toggleShowPlans} />
-        </TableCell>
+        <TableCell>{account !== indexer.indexerId && <BsPlusSquare onClick={toggleShowPlans} size="20" />}</TableCell>
       </TableRow>
       {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata.data} />}
     </>

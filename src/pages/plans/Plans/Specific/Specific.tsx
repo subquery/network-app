@@ -9,6 +9,7 @@ import { useProjectMetadata, useSpecificPlansPlans, useWeb3 } from '../../../../
 import { useAsyncMemo } from '../../../../hooks';
 import { mapAsync, notEmpty, renderAsync, renderAsyncArray } from '../../../../utils';
 import List from '../List';
+import { EmptyList } from '../EmptyList';
 
 const Header: React.FC<{ deploymentId: string; projectMetadata?: string }> = ({ deploymentId, projectMetadata }) => {
   const { getMetadataFromCid } = useProjectMetadata();
@@ -40,7 +41,6 @@ const Specific: React.FC = () => {
 
   return (
     <div className={'contentContainer'}>
-      <Typography>{t('plans.specific.title')}</Typography>
       <div className={'content'}>
         {renderAsyncArray(
           mapAsync(
@@ -54,10 +54,11 @@ const Specific: React.FC = () => {
           {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load specific plans: ${e}`}</Typography>,
-            empty: () => <Typography>Are not indexing any deployments to have specific plans</Typography>,
+            empty: () => <EmptyList i18nKey={'plans.specific.nonPlans'} />,
             data: (deployments) => {
               return (
                 <>
+                  <Typography>{t('plans.specific.title')}</Typography>
                   {deployments.map((deployment) => {
                     if (!deployment) return null;
                     const plans = deployment?.plans.nodes.filter(notEmpty);
@@ -67,7 +68,7 @@ const Specific: React.FC = () => {
                         {plans ? (
                           <List data={plans} onRefresh={specificPlans.refetch} />
                         ) : (
-                          <Typography>You have no plans specific to this deployment</Typography>
+                          <Typography>{t('plans.specific.nonDeployment')}</Typography>
                         )}
                       </div>
                     );

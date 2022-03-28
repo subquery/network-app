@@ -4,15 +4,15 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AppPageHeader, TabButtons } from '../../../components';
-import Default from './Default';
+import { Default } from './Default';
 import Create from './Create';
 import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
 import styles from './Plans.module.css';
 
 const ROUTE = '/plans/plans';
-const DEFAULT_PLANS = `${ROUTE}/default`;
-const SPECIFIC_PLANS = `${ROUTE}/specific`;
+export const DEFAULT_PLANS = `${ROUTE}/default`;
+export const SPECIFIC_PLANS = `${ROUTE}/specific`;
 
 const buttonLinks = [
   { label: 'Default', link: DEFAULT_PLANS },

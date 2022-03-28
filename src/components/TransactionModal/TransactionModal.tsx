@@ -15,10 +15,10 @@ type Props<P, T extends string> = {
   text: {
     title: string;
     steps: string[];
-    description: string;
-    inputTitle: string;
-    submitText: string;
-    failureText: string;
+    description?: string;
+    inputTitle?: string;
+    submitText?: string;
+    failureText?: string;
   };
   onClick: Action<P, T>;
   actions: Array<

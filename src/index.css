@@ -111,9 +111,38 @@ textarea {
   opacity: 0;
 }
 
+/* For general container */
+.fullWidth {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-end {
+  justify-content: flex-end;
+}
+
+/* For latest design system */
 .textBtn {
   background: white;
   color: var(--gradient-to);
+}
+
+.errBtn {
+  background: var(--error);
+}
+
+.errTextBtn {
+  background: white;
+  color: var(--error);
+}
+
+.neutralBtn {
+  color: var(--gray700);
+  border: 1px solid var(--gray500);
+  background: white;
 }
 
 /* For each page container & content */

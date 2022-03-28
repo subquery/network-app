@@ -8,12 +8,14 @@ import {
   GetPlans_plans_nodes_planTemplate as PlanTemplate,
 } from '../../../../__generated__/GetPlans';
 import { useTranslation } from 'react-i18next';
-import { formatEther } from '@ethersproject/units';
-import { BigNumber } from '@ethersproject/bignumber';
 import { Button, Typography } from '@subql/react-ui';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts } from '../../../../containers';
 import assert from 'assert';
+import { convertBigNumberToNumber, formatEther } from '../../../../utils';
+import { SummaryList } from '../../../../components';
+import styles from './List.module.css';
+import clsx from 'clsx';
 
 type Props = {
   data: Plan[];
@@ -44,38 +46,34 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
       render: (text: string, _: any, idx: number) => <Typography>{idx + 1}</Typography>,
     },
     {
-      dataIndex: 'id',
-      title: t('plans.headers.id'),
-      align: 'center',
-      render: (text: string) => <Typography>{text}</Typography>,
-    },
-    {
       dataIndex: 'price',
       key: 'price',
       title: t('plans.headers.price'),
       align: 'center',
-      render: (value: BigInt) => <Typography>{`${formatEther(BigNumber.from(value))} SQT`}</Typography>,
+      render: (value: BigInt) => <Typography>{`${formatEther(value)} SQT`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'period',
       title: t('plans.headers.period'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.period).toNumber()} Days`}</Typography>,
+      render: (value: PlanTemplate) => (
+        <Typography>{t('keys.day', { count: convertBigNumberToNumber(value.period) })}</Typography>
+      ),
     },
     {
       dataIndex: 'planTemplate',
       key: 'dailyReqCap',
       title: t('plans.headers.dailyReqCap'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.dailyReqCap).toNumber()}`}</Typography>,
+      render: (value: PlanTemplate) => <Typography>{`${convertBigNumberToNumber(value.dailyReqCap)}`}</Typography>,
     },
     {
       dataIndex: 'planTemplate',
       key: 'rateLimit',
       title: t('plans.headers.rateLimit'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{`${BigNumber.from(value.rateLimit).toNumber()}`}</Typography>,
+      render: (value: PlanTemplate) => <Typography>{`${convertBigNumberToNumber(value.rateLimit)}`}</Typography>,
     },
     {
       dataIndex: 'id',
@@ -88,41 +86,48 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
           actions={[{ label: t('plans.remove.action'), key: 'remove' }]}
           text={{
             title: t('plans.remove.title'),
-            description: t('plans.remove.description'),
             steps: [], // Should ui have this?
-            submitText: '',
-            inputTitle: '',
             failureText: 'Failed ',
           }}
           variant="errTextBtn"
           onClick={() => handleRemovePlan(id)}
           renderContent={(onClick, onCancel, isLoading) => {
-            // TODO show plan details
+            const planDetails = [
+              {
+                label: t('plans.headers.price'),
+                val: `${formatEther(plan.price)} SQT`,
+              },
+              {
+                label: t('plans.headers.period'),
+                val: `${convertBigNumberToNumber(plan.planTemplate?.period ?? 0)} days`,
+              },
+              {
+                label: t('plans.headers.dailyReqCap'),
+                val: `${convertBigNumberToNumber(plan.planTemplate?.dailyReqCap ?? 0)}`,
+              },
+              {
+                label: t('plans.headers.rateLimit'),
+                val: `${convertBigNumberToNumber(plan.planTemplate?.rateLimit ?? 0)}`,
+              },
+            ];
             return (
               <>
-                <Typography>{`${t('plans.headers.price')}: ${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>
-                <Typography>{`${t('plans.headers.period')}: ${BigNumber.from(
-                  plan.planTemplate?.period,
-                ).toNumber()} days`}</Typography>
-                <Typography>{`${t('plans.headers.dailyReqCap')}: ${BigNumber.from(
-                  plan.planTemplate?.dailyReqCap,
-                ).toNumber()}`}</Typography>
-                <Typography>{`${t('plans.headers.rateLimit')}: ${BigNumber.from(
-                  plan.planTemplate?.rateLimit,
-                ).toNumber()}`}</Typography>
-                <div>
+                <SummaryList title={t('plans.remove.description')} list={planDetails} />
+
+                <div className={clsx('flex', 'flex-end', styles.btns)}>
                   <Button
                     label={t('plans.remove.submit')}
                     onClick={() => onClick({})}
                     loading={isLoading}
-                    colorScheme="standard"
+                    size="medium"
+                    className={clsx('errBtn', styles.btn)}
                   />
                   <Button
                     label={t('plans.remove.cancel')}
                     onClick={onCancel}
-                    type="secondary"
-                    colorScheme="neutral"
+                    className="neutralBtn"
                     disabled={isLoading}
+                    size="medium"
                   />
                 </div>
               </>
@@ -133,7 +138,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
     },
   ];
 
-  return <Table columns={columns} dataSource={data} />;
+  return <Table columns={columns} dataSource={data} rowKey={'id'} />;
 };
 
 export default List;

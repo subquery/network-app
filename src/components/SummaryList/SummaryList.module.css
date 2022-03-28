@@ -1,0 +1,16 @@
+.container {
+  margin: 1rem 0;
+}
+
+.list {
+  margin: 1rem 0;
+}
+
+.listItem {
+  display: flex;
+}
+
+.label {
+  color: var(--gray500);
+  width: 50%;
+}
