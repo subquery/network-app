@@ -1,21 +1,26 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber } from '@ethersproject/bignumber';
 import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
 import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { useDeploymentsQuery, useIndexersQuery, useProjectMetadata } from '../../../containers';
+import {
+  ProjectProgressProvider,
+  useDeploymentsQuery,
+  useIndexersQuery,
+  useProjectMetadata,
+  useProjectProgress,
+} from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { notEmpty, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 
 export const ROUTE = '/explorer/project';
 
-const Project: React.VFC = () => {
+const ProjectInner: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
   const query = useRouteQuery();
   const history = useHistory();
@@ -35,17 +40,7 @@ const Project: React.VFC = () => {
   );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
-  // TODO get from an indexer
-  const chainBlockHeight = 10000000;
-
-  const indexersStatus = React.useMemo(() => {
-    return (
-      indexers?.map((i) => ({
-        indexer: i.indexerId,
-        latestBlock: BigNumber.from(i.blockHeight).toNumber(),
-      })) ?? []
-    );
-  }, [indexers]);
+  const { indexersStatus, chainBlockHeight } = useProjectProgress();
 
   const { data: deploymentVersions } = useAsyncMemo(async () => {
     const deploymentsWithSemver = await Promise.all(
@@ -74,7 +69,7 @@ const Project: React.VFC = () => {
 
         return (
           <div className={styles.indexers}>
-            <IndexerDetails indexers={indexers} targetBlock={chainBlockHeight} deploymentId={deploymentId} />
+            <IndexerDetails indexers={indexers} deploymentId={deploymentId} />
           </div>
         );
       },
@@ -117,7 +112,9 @@ const Project: React.VFC = () => {
               />
 
               <IndexerProgress
-                startBlock={/*Math.min(...project.deployment.manifest.dataSources.map((ds) => ds.startBlock ?? 1))*/ 1}
+                startBlock={
+                  /*Math.min(...(project.deployment?.manifest.dataSources ?? []).map((ds) => ds.startBlock ?? 1))*/ 1
+                }
                 chainBlockHeight={chainBlockHeight}
                 indexerStatus={indexersStatus}
                 containerClassName={styles.progress}
@@ -151,4 +148,10 @@ const Project: React.VFC = () => {
   });
 };
 
-export default Project;
+export const Project: React.VFC = () => {
+  return (
+    <ProjectProgressProvider>
+      <ProjectInner />
+    </ProjectProgressProvider>
+  );
+};

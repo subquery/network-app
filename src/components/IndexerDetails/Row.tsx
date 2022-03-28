@@ -6,27 +6,39 @@ import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import { AsyncData, cidToBytes32, mapAsync, notEmpty } from '../../utils';
-import { useIndexerMetadata } from '../../hooks';
+import {
+  AsyncData,
+  cidToBytes32,
+  getDeploymentMetadata,
+  getDeploymentProgress,
+  mapAsync,
+  notEmpty,
+  renderAsync,
+} from '../../utils';
+import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
-import { Button } from '@subql/react-ui';
+import { Button, Spinner } from '@subql/react-ui';
 import { StatusColor } from '../Status/Status';
-import { useContracts, useDeploymentPlansLazy, useSQToken, useWeb3 } from '../../containers';
+import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import PlansTable, { PlansTableProps } from './PlansTable';
 import assert from 'assert';
 import { BsPlusSquare } from 'react-icons/bs';
+import { Typography } from 'antd';
 
 type Props = {
   indexer: DeploymentIndexer;
   metadata: AsyncData<IndexerDetails | undefined>;
-  targetBlock: number;
-  startBlock?: number;
+  progressInfo: AsyncData<{
+    currentBlock: number;
+    targetBlock: number;
+    startBlock?: number;
+  } | null>;
 } & PlansTableProps;
 
-export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlock, ...plansTableProps }) => {
+export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plansTableProps }) => {
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
@@ -38,11 +50,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
           <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />
         </TableCell>
         <TableCell>
-          <Progress
-            currentBlock={parseInt(indexer.blockHeight.toString(), 10)}
-            targetBlock={targetBlock}
-            startBlock={startBlock}
-          />
+          {renderAsync(progressInfo, {
+            loading: () => <Spinner />,
+            error: () => <Typography>-</Typography>,
+            data: (info) => (info ? <Progress {...info} /> : null),
+          })}
         </TableCell>
         <TableCell>
           <Status text={indexer.status} color={indexer.status === 'READY' ? StatusColor.green : undefined} />
@@ -55,10 +67,14 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, targetBlock, startBlo
 };
 
 const ConnectedRow: React.VFC<
-  Omit<Props, 'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance' | 'planManagerAllowance'> & {
+  Omit<
+    Props,
+    'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance' | 'planManagerAllowance' | 'progressInfo'
+  > & {
     deploymentId?: string;
+    startBlock?: number;
   }
-> = ({ indexer, deploymentId, ...rest }) => {
+> = ({ indexer, deploymentId, startBlock, ...rest }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
   const asyncMetadataComplete = mapAsync(
     (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
@@ -69,6 +85,8 @@ const ConnectedRow: React.VFC<
     deploymentId: deploymentId ?? '',
     address: indexer.indexerId,
   });
+
+  const { updateIndexerStatus } = useProjectProgress();
 
   const { balance, planAllowance } = useSQToken();
 
@@ -98,6 +116,25 @@ const ConnectedRow: React.VFC<
     return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId);
   };
 
+  const progressInfo = useAsyncMemo(async () => {
+    if (!deploymentId || !asyncMetadata.data?.url) {
+      return null;
+    }
+
+    const meta = await getDeploymentMetadata({ proxyEndpoint: asyncMetadata.data?.url, deploymentId });
+
+    // Update container to show total progress
+    if (meta) {
+      updateIndexerStatus(indexer.id, meta.lastProcessedHeight, meta.targetHeight);
+    }
+
+    return {
+      startBlock,
+      targetBlock: meta?.targetHeight ?? 0,
+      currentBlock: meta?.lastProcessedHeight ?? 0,
+    };
+  }, [asyncMetadata?.data, startBlock]);
+
   return (
     <Row
       {...rest}
@@ -108,6 +145,7 @@ const ConnectedRow: React.VFC<
       purchasePlan={purchasePlan}
       balance={balance}
       planManagerAllowance={planAllowance}
+      progressInfo={progressInfo}
     />
   );
 };

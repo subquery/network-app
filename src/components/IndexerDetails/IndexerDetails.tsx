@@ -9,12 +9,11 @@ import { Table, TableHead, TableBody, TableRow, TableCell } from '../Table';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
-  targetBlock: number;
   deploymentId?: string;
   startBlock?: number;
 };
 
-const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock, deploymentId }) => {
+const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId }) => {
   const { t } = useTranslation();
 
   return (
@@ -29,13 +28,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, targetBlock, de
       </TableHead>
       <TableBody>
         {indexers.map((indexer, index) => (
-          <Row
-            indexer={indexer}
-            key={index}
-            startBlock={startBlock}
-            targetBlock={targetBlock}
-            deploymentId={deploymentId}
-          />
+          <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
         ))}
       </TableBody>
     </Table>

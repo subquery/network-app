@@ -47,7 +47,14 @@ NoMetadata.args = {
     status: Status.INDEXING,
   },
   metadata: { loading: false, data: undefined },
-  targetBlock: 1000000,
+  progressInfo: {
+    data: {
+      targetBlock: 1000000,
+      startBlock: 0,
+      currentBlock: 999999,
+    },
+    loading: false,
+  },
 };
 
 export const LoadingMetadata = Template.bind({});
@@ -63,7 +70,14 @@ LoadingMetadata.args = {
     status: Status.INDEXING,
   },
   metadata: { loading: true, data: undefined },
-  targetBlock: 1000000,
+  progressInfo: {
+    data: {
+      targetBlock: 1000000,
+      startBlock: 0,
+      currentBlock: 654321,
+    },
+    loading: false,
+  },
 };
 
 export const WithMetadata = Template.bind({});
@@ -86,5 +100,12 @@ WithMetadata.args = {
       url: 'https://subquery.network',
     },
   },
-  targetBlock: 1000000,
+  progressInfo: {
+    data: {
+      targetBlock: 1000000,
+      startBlock: 0,
+      currentBlock: 1000,
+    },
+    loading: false,
+  },
 };

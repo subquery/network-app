@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router';
 import Home from './Home';
-import Project from './Project';
+import { Project } from './Project';
 
 const Explorer: React.VFC = () => {
   return (
