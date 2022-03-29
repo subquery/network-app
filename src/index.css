@@ -145,6 +145,10 @@ textarea {
   background: white;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 /* For each page container & content */
 .contentContainer {
   background: white;

@@ -7,15 +7,7 @@ import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import {
-  AsyncData,
-  cidToBytes32,
-  getDeploymentMetadata,
-  getDeploymentProgress,
-  mapAsync,
-  notEmpty,
-  renderAsync,
-} from '../../utils';
+import { AsyncData, cidToBytes32, getDeploymentMetadata, mapAsync, notEmpty, renderAsync } from '../../utils';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
@@ -26,7 +18,7 @@ import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetD
 import { LazyQueryResult } from '@apollo/client';
 import PlansTable, { PlansTableProps } from './PlansTable';
 import assert from 'assert';
-import { BsPlusSquare } from 'react-icons/bs';
+import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
 
 type Props = {
@@ -80,7 +72,13 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
     {
       width: '10%',
       align: 'center',
-      render: () => account !== indexer.indexerId && <BsPlusSquare onClick={toggleShowPlans} size="20" />,
+      render: () =>
+        account !== indexer.indexerId &&
+        (showPlans ? (
+          <BsDashSquare onClick={toggleShowPlans} size="20" className="pointer" />
+        ) : (
+          <BsPlusSquare onClick={toggleShowPlans} size="20" className="pointer" />
+        )),
     },
   ];
 

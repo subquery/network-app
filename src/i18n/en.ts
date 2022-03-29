@@ -192,7 +192,7 @@ const en = {
       confirmRate: 'Confirm Rate',
       action: 'action',
       approveToken: 'Approval',
-      approveTokenToStake: 'Approve your token for staking',
+      approveTokenToProceed: 'Approve your token for further action.',
       confirmApproval: 'Confirm Approval',
       notRegister: 'You haven’t registered as an indexer yet.',
       doStake: 'You haven’t staked yet. Stake to become an indexer.',
@@ -318,6 +318,8 @@ const en = {
         cancel: 'Cancel',
         yourBalance: 'Your balance ',
         failToLoadBalance: 'Failed to load balance.',
+        noPlansForPurchase: 'There is no plan available to purchase.',
+        failureFetchPlans: 'Failed to get plans for indexer',
       },
     },
     serviceAgreements: {
