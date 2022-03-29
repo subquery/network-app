@@ -21,9 +21,9 @@ import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../M
 export type PlansTableProps = {
   loadPlans: () => void;
   asyncPlans: LazyQueryResult<Plan[], unknown>;
-} & Omit<ModalProps, 'plan'>;
+} & Omit<DoPurchaseProps, 'plan'>;
 
-type ModalProps = {
+type DoPurchaseProps = {
   plan: Plan;
   indexerDetails?: IndexerDetails;
   purchasePlan: (indexer: string, planId: string) => Promise<ContractTransaction>;
@@ -32,7 +32,7 @@ type ModalProps = {
   deploymentId?: string;
 };
 
-const ModalContent: React.VFC<ModalProps> = ({
+const DoPurchase: React.VFC<DoPurchaseProps> = ({
   plan,
   purchasePlan,
   balance,
@@ -57,6 +57,7 @@ const ModalContent: React.VFC<ModalProps> = ({
 
   return (
     <TransactionModal
+      variant="textBtn"
       actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, plan.id)}
@@ -76,7 +77,7 @@ const ModalContent: React.VFC<ModalProps> = ({
             return (
               <div>
                 <div>
-                  <Typography>Indexer</Typography>
+                  <Typography>{t('indexer.title')}</Typography>
                   <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />
                 </div>
                 <Typography>{`${t('plans.headers.price')}: ${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>
@@ -90,10 +91,10 @@ const ModalContent: React.VFC<ModalProps> = ({
                 <Typography>{`${t('plans.headers.deploymentId')}: ${deploymentId}`}</Typography>
 
                 <div>
-                  <Typography>Your balance</Typography>
+                  <Typography>{t('plans.purchase.yourBalance')}</Typography>
                   {renderAsync(balance, {
                     loading: () => <Spinner />,
-                    error: () => <Typography>Failed to load balance</Typography>,
+                    error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,
                     data: (data) => <Typography>{`${formatEther(BigNumber.from(plan.price))} SQT`}</Typography>,
                   })}
                 </div>
@@ -168,8 +169,9 @@ const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planMan
       dataIndex: 'id',
       key: 'action',
       title: t('plans.headers.action'),
+      width: 30,
       render: (id: string, plan: Plan) => {
-        return <ModalContent {...rest} plan={plan} planManagerAllowance={planManagerAllowance} />;
+        return <DoPurchase {...rest} plan={plan} planManagerAllowance={planManagerAllowance} />;
       },
     },
   ];

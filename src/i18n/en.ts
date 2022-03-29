@@ -160,7 +160,7 @@ const en = {
       transactionRejected: 'User rejected the request',
     },
     indexer: {
-      title: 'indexer',
+      title: 'Indexer',
       profile: 'My profile',
       currentEra: 'Current Era',
       indexing: 'Indexing',
@@ -316,6 +316,8 @@ const en = {
         failureText: 'Failed to purchase plan',
         submit: 'Purchase',
         cancel: 'Cancel',
+        yourBalance: 'Your balance ',
+        failToLoadBalance: 'Failed to load balance.',
       },
     },
     serviceAgreements: {
