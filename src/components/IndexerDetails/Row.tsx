@@ -19,7 +19,7 @@ import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Button, Spinner } from '@subql/react-ui';
-import { StatusColor } from '../Status/Status';
+import { deploymentStatus, StatusColor } from '../Status/Status';
 import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
@@ -53,11 +53,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
             error: () => <Typography>-</Typography>,
-            data: (info) => (info ? <Progress {...info} /> : null),
+            data: (info) => (info ? <Progress {...info} /> : <Typography>No progress available.</Typography>),
           })}
         </TableCell>
         <TableCell>
-          <Status text={indexer.status} color={indexer.status === 'READY' ? StatusColor.green : undefined} />
+          <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />
         </TableCell>
         <TableCell>{account !== indexer.indexerId && <BsPlusSquare onClick={toggleShowPlans} size="20" />}</TableCell>
       </TableRow>
