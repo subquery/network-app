@@ -18,6 +18,8 @@ import { IndexerDetails } from '../../models';
 import IndexerName from './IndexerName';
 import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
 import { secondsToDhms } from '../../utils/dateFormatters';
+import { SummaryList } from '../SummaryList';
+import styles from './IndexerDetails.module.css';
 
 export type PlansTableProps = {
   loadPlans: () => void;
@@ -50,9 +52,43 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
     : {
         title: t('plans.purchase.title'),
         steps: [t('plans.purchase.step1'), t('indexer.confirmOnMetamask')],
-        description: t('plans.purchase.description'),
         failureText: t('plans.purchase.failureText'),
       };
+
+  const planSummary = [
+    {
+      label: t('indexer.title'),
+      value: <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />,
+    },
+    {
+      label: t('plans.headers.price'),
+      value: `${formatEther(plan.price)} SQT`,
+    },
+    {
+      label: t('plans.headers.period'),
+      value: secondsToDhms(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
+    },
+    {
+      label: t('plans.headers.dailyReqCap'),
+      value: plan.planTemplate?.dailyReqCap,
+    },
+    {
+      label: t('plans.headers.rateLimit'),
+      value: plan.planTemplate?.rateLimit,
+    },
+    {
+      label: t('plans.headers.deploymentId'),
+      value: deploymentId,
+    },
+    {
+      label: t('plans.purchase.yourBalance'),
+      value: renderAsync(balance, {
+        loading: () => <Spinner />,
+        error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,
+        data: (data) => <Typography>{`${formatEther(plan.price)} SQT`}</Typography>,
+      }),
+    },
+  ];
 
   return (
     <TransactionModal
@@ -75,44 +111,26 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
             }
             return (
               <div>
-                <div>
-                  <Typography>{t('indexer.title')}</Typography>
-                  <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />
-                </div>
-                <Typography>{`${t('plans.headers.price')}: ${convertBigNumberToNumber(plan.price)} SQT`}</Typography>
-                <Typography>{`${t('plans.headers.period')}: ${secondsToDhms(
-                  convertBigNumberToNumber(plan.planTemplate?.period ?? 0),
-                )}`}</Typography>
-                <Typography>{`${t('plans.headers.dailyReqCap')}: ${
-                  plan.planTemplate?.dailyReqCap
-                } queries`}</Typography>
-                <Typography>{`${t('plans.headers.rateLimit')}: ${
-                  plan.planTemplate?.rateLimit
-                } queries/min`}</Typography>
-                <Typography>{`${t('plans.headers.deploymentId')}: ${deploymentId}`}</Typography>
+                <SummaryList title={t('plans.purchase.description')} list={planSummary} />
 
-                <div>
-                  <Typography>{t('plans.purchase.yourBalance')}</Typography>
-                  {renderAsync(balance, {
-                    loading: () => <Spinner />,
-                    error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,
-                    data: (data) => <Typography>{`${convertBigNumberToNumber(plan.price)} SQT`}</Typography>,
-                  })}
+                <div className={'flex-end'}>
+                  <Button
+                    label={t('plans.purchase.cancel')}
+                    onClick={onCancel}
+                    disabled={isLoading}
+                    type="secondary"
+                    colorScheme="neutral"
+                    className={styles.btn}
+                  />
+                  <Button
+                    label={t('plans.purchase.submit')}
+                    onClick={() => {
+                      onSubmit({});
+                    }}
+                    loading={isLoading}
+                    colorScheme="standard"
+                  />
                 </div>
-
-                <Button
-                  label={t('plans.purchase.cancel')}
-                  onClick={onCancel}
-                  disabled={isLoading}
-                  type="secondary"
-                  colorScheme="neutral"
-                />
-                <Button
-                  label={t('plans.purchase.submit')}
-                  onClick={() => onSubmit({})}
-                  loading={isLoading}
-                  colorScheme="standard"
-                />
               </div>
             );
           },

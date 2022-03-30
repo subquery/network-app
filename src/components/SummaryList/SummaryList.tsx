@@ -7,7 +7,7 @@ import styles from './SummaryList.module.css';
 
 interface List {
   label: string;
-  val: string;
+  value: string | React.ReactNode | any;
 }
 
 interface SummaryListProps {
@@ -23,7 +23,7 @@ export const SummaryList: React.VFC<SummaryListProps> = ({ title, list }) => {
         {list.map((list) => (
           <div className={styles.listItem} key={list.label}>
             <Typography className={styles.label}>{list.label}</Typography>
-            <Typography>{list.val}</Typography>
+            {typeof list.value === 'string' ? <Typography>{list.value}</Typography> : <>{list.value}</>}
           </div>
         ))}
       </div>

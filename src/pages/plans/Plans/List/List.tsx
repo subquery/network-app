@@ -94,19 +94,19 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
             const planDetails = [
               {
                 label: t('plans.headers.price'),
-                val: `${formatEther(plan.price)} SQT`,
+                value: `${formatEther(plan.price)} SQT`,
               },
               {
                 label: t('plans.headers.period'),
-                val: `${convertBigNumberToNumber(plan.planTemplate?.period ?? 0)} days`,
+                value: `${convertBigNumberToNumber(plan.planTemplate?.period ?? 0)} days`,
               },
               {
                 label: t('plans.headers.dailyReqCap'),
-                val: `${convertBigNumberToNumber(plan.planTemplate?.dailyReqCap ?? 0)}`,
+                value: `${convertBigNumberToNumber(plan.planTemplate?.dailyReqCap ?? 0)}`,
               },
               {
                 label: t('plans.headers.rateLimit'),
-                val: `${convertBigNumberToNumber(plan.planTemplate?.rateLimit ?? 0)}`,
+                value: `${convertBigNumberToNumber(plan.planTemplate?.rateLimit ?? 0)}`,
               },
             ];
             return (

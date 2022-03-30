@@ -42,15 +42,15 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const summaryList = [
     {
       label: t('plans.headers.price'),
-      val: secondsToDhms(convertBigNumberToNumber(template.period)),
+      value: secondsToDhms(convertBigNumberToNumber(template.period)),
     },
     {
       label: t('plans.headers.dailyReqCap'),
-      val: ` ${template.dailyReqCap} queries`,
+      value: ` ${template.dailyReqCap} queries`,
     },
     {
       label: t('plans.headers.rateLimit'),
-      val: ` ${template.rateLimit} queries/min`,
+      value: ` ${template.rateLimit} queries/min`,
     },
   ];
 
