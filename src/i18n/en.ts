@@ -333,17 +333,6 @@ const en = {
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
-
-    plurals: {
-      day: '{{count}} day',
-      day_other: '{{count}} days',
-      hour: '{{count}} hour',
-      hour_other: '{{count}} hours',
-      minute: '{{count}} minute',
-      minute_other: '{{count}} minutes',
-      second: '{{count}} second',
-      second_other: '{{count}} seconds',
-    },
   },
 };
 
