@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
-import { convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
+import { cidToBytes32, convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
 import * as yup from 'yup';
 import { constants } from 'ethers';
@@ -86,6 +86,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
             <div className={styles.select}>
               <Typography>{'Select specific deployment Id'} </Typography>
               <Select
+                id="deploymentId"
                 showSearch
                 placeholder="Select specific deployment Id"
                 optionFilterProp="children"
@@ -145,7 +146,11 @@ const Create: React.FC = () => {
 
     assert(template, 'No plan templates');
 
-    return contracts.planManager.createPlan(parseEther(amount), template.id, deploymentId || constants.HashZero);
+    return contracts.planManager.createPlan(
+      parseEther(amount),
+      template.id,
+      deploymentId ? cidToBytes32(deploymentId) : constants.HashZero,
+    );
   };
 
   return (
