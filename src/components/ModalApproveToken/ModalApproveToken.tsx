@@ -11,7 +11,7 @@ import { useContracts } from '../../containers';
 
 export const tokenApprovalModalText = {
   title: i18next.t('indexer.approveToken'),
-  description: i18next.t('delegate.approveTokenToDelegate'),
+  description: i18next.t('indexer.approveTokenToProceed'),
   submitText: i18next.t('indexer.confirmApproval'),
   inputTitle: '',
   steps: [],

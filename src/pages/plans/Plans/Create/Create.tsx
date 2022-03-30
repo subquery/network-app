@@ -9,9 +9,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
-import { mapAsync, notEmpty, renderAsync } from '../../../../utils';
+import { convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
-import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import { SummaryList } from '../../../../components';
@@ -19,6 +18,7 @@ import { useIndexerDeployments } from '../../../../hooks';
 import { InputNumber, Select } from 'antd';
 import styles from './Create.module.css';
 import clsx from 'clsx';
+import { secondsToDhms } from '../../../../utils/dateFormatters';
 
 const planSchema = yup.object({
   price: yup.number().defined(),
@@ -42,15 +42,15 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const summaryList = [
     {
       label: t('plans.headers.price'),
-      val: `${template.period} days`,
+      value: secondsToDhms(convertBigNumberToNumber(template.period)),
     },
     {
       label: t('plans.headers.dailyReqCap'),
-      val: ` ${template.dailyReqCap} queries`,
+      value: ` ${template.dailyReqCap} queries`,
     },
     {
       label: t('plans.headers.rateLimit'),
-      val: ` ${template.rateLimit} queries/min`,
+      value: ` ${template.rateLimit} queries/min`,
     },
   ];
 

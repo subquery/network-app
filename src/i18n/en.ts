@@ -160,7 +160,7 @@ const en = {
       transactionRejected: 'User rejected the request',
     },
     indexer: {
-      title: 'indexer',
+      title: 'Indexer',
       profile: 'My profile',
       currentEra: 'Current Era',
       indexing: 'Indexing',
@@ -192,7 +192,7 @@ const en = {
       confirmRate: 'Confirm Rate',
       action: 'action',
       approveToken: 'Approval',
-      approveTokenToStake: 'Approve your token for staking',
+      approveTokenToProceed: 'Approve your token for further action.',
       confirmApproval: 'Confirm Approval',
       notRegister: 'You haven’t registered as an indexer yet.',
       doStake: 'You haven’t staked yet. Stake to become an indexer.',
@@ -316,6 +316,10 @@ const en = {
         failureText: 'Failed to purchase plan',
         submit: 'Purchase',
         cancel: 'Cancel',
+        yourBalance: 'Your balance ',
+        failToLoadBalance: 'Failed to load balance.',
+        noPlansForPurchase: 'There is no plan available to purchase.',
+        failureFetchPlans: 'Failed to get plans for indexer',
       },
     },
     serviceAgreements: {
@@ -328,11 +332,6 @@ const en = {
         price: 'Price',
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
-    },
-
-    keys: {
-      day: '{{count}} day',
-      day_other: '{{count}} days',
     },
   },
 };

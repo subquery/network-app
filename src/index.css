@@ -121,6 +121,7 @@ textarea {
 }
 
 .flex-end {
+  display: flex;
   justify-content: flex-end;
 }
 
@@ -143,6 +144,10 @@ textarea {
   color: var(--gray700);
   border: 1px solid var(--gray500);
   background: white;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 /* For each page container & content */

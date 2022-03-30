@@ -1,31 +1,24 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableRow, TableCell } from '../Table';
+// import { TableRow, TableCell } from '../Table';
+import { Table, TableProps } from 'antd';
 import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import {
-  AsyncData,
-  cidToBytes32,
-  getDeploymentMetadata,
-  getDeploymentProgress,
-  mapAsync,
-  notEmpty,
-  renderAsync,
-} from '../../utils';
+import { AsyncData, cidToBytes32, getDeploymentMetadata, mapAsync, notEmpty, renderAsync } from '../../utils';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
-import { Button, Spinner } from '@subql/react-ui';
-import { StatusColor } from '../Status/Status';
+import { Spinner } from '@subql/react-ui';
+import { deploymentStatus } from '../Status/Status';
 import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import PlansTable, { PlansTableProps } from './PlansTable';
 import assert from 'assert';
-import { BsPlusSquare } from 'react-icons/bs';
+import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
 
 type Props = {
@@ -39,28 +32,66 @@ type Props = {
 } & PlansTableProps;
 
 export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plansTableProps }) => {
+  // console.log('progressInfo', progressInfo);
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
-  return (
-    <>
-      <TableRow>
-        <TableCell>
-          <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />
-        </TableCell>
-        <TableCell>
+  const rowData = [
+    {
+      id: indexer.indexerId,
+      progressInfo: progressInfo,
+      status: indexer.status,
+    },
+  ];
+
+  const columns: TableProps<any>['columns'] = [
+    {
+      width: '20%',
+      align: 'center',
+      render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
+    },
+    {
+      width: '50%',
+      align: 'center',
+      render: () => (
+        <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
             error: () => <Typography>-</Typography>,
-            data: (info) => (info ? <Progress {...info} /> : null),
+            data: (info) => (info ? <Progress {...info} /> : <Typography>No progress available.</Typography>),
           })}
-        </TableCell>
-        <TableCell>
-          <Status text={indexer.status} color={indexer.status === 'READY' ? StatusColor.green : undefined} />
-        </TableCell>
-        <TableCell>{account !== indexer.indexerId && <BsPlusSquare onClick={toggleShowPlans} size="20" />}</TableCell>
-      </TableRow>
+        </>
+      ),
+    },
+    {
+      width: '20%',
+      align: 'center',
+      render: () => <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />,
+    },
+    {
+      width: '10%',
+      align: 'center',
+      render: () =>
+        account !== indexer.indexerId &&
+        (showPlans ? (
+          <BsDashSquare onClick={toggleShowPlans} size="20" className="pointer" />
+        ) : (
+          <BsPlusSquare onClick={toggleShowPlans} size="20" className="pointer" />
+        )),
+    },
+  ];
+
+  return (
+    <>
+      <Table
+        columns={columns}
+        // expandable={{ rowExpandable: () => true, expandedRowRender }}
+        dataSource={rowData}
+        showHeader={false}
+        pagination={false}
+        rowKey="id"
+      />
       {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata.data} />}
     </>
   );
