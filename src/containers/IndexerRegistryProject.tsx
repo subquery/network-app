@@ -230,7 +230,7 @@ const GET_SERVICE_AGREEMENTS = gql`
   ${SERVICE_AGREEMENT_FIELDS}
   query GetServiceAgreements($address: String!) {
     serviceAgreements(
-      filter: { indexerAddress: { equalTo: $address }, or: { consumerAddress: { equalTo: $address } } }
+      filter: { or: [{ indexerAddress: { equalTo: $address } }, { consumerAddress: { equalTo: $address } }] }
     ) {
       nodes {
         ...ServiceAgreementFields
