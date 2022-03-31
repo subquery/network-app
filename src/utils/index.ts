@@ -226,3 +226,12 @@ export class CancellablePromise<T> extends Promise<T> {
     return this._isCancelled !== false;
   }
 }
+
+export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: string): string | undefined {
+  if (!endpoint) return undefined;
+  if (endpoint.includes('https://')) {
+    return endpoint;
+  }
+
+  return `https://gql-proxy.subquery.network/${indexerAddr}?to=${encodeURIComponent(endpoint)}`;
+}
