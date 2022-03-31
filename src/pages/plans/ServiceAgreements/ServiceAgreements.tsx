@@ -79,7 +79,7 @@ const ServiceAgreements: React.VFC = () => {
       title: t('serviceAgreements.headers.deployment'),
       key: 'deployment',
       align: 'center',
-      width: 180,
+      width: 250,
       render: (deployment: ServiceAgreement['deployment']) => <Deployment deployment={deployment} />,
     },
     {
@@ -135,7 +135,7 @@ const ServiceAgreements: React.VFC = () => {
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
               return (
-                <div className={'fullWidth'}>
+                <div>
                   <Table columns={columns} dataSource={data} scroll={{ x: 500 }} />
                 </div>
               );
