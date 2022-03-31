@@ -10,8 +10,8 @@ import {
   QueryResult,
   useLazyQuery,
   QueryTuple,
+  FieldPolicy,
 } from '@apollo/client';
-import { offsetLimitPagination } from '@apollo/client/utilities';
 import * as React from 'react';
 import { PLAN_FIELDS, PLAN_TEMPLATE_FIELDS } from './IndexerRegistryProject';
 import { GetDeployment, GetDeploymentVariables } from '../__generated__/GetDeployment';
@@ -185,6 +185,24 @@ export function useDeploymentPlansLazy(
   });
 }
 
+// Same as offsetLimitPagination but uses variables to get the offset
+function subqlOffsetPagination<T>(keyArgs?: string[] | false): FieldPolicy<T[], T[], T[]> {
+  if (!keyArgs) keyArgs = false;
+
+  return {
+    keyArgs,
+    merge: (existing, incoming, args) => {
+      const merged = existing ? existing.slice(0) : [];
+
+      for (let i = 0; i < incoming.length; ++i) {
+        merged[(args.variables?.offset ?? 0) + i] = incoming[i];
+      }
+
+      return merged;
+    },
+  };
+}
+
 export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (props) => {
   const client = React.useMemo(() => {
     if (!props?.endpoint) {
@@ -194,9 +212,10 @@ export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (pr
       uri: props.endpoint,
       cache: new InMemoryCache({
         typePolicies: {
-          Query: {
+          IndexersConnection: {
+            keyFields: [],
             fields: {
-              nodes: offsetLimitPagination(), // XXX untested
+              nodes: subqlOffsetPagination(),
             },
           },
         },
