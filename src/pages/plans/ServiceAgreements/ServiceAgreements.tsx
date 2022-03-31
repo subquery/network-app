@@ -124,7 +124,11 @@ const ServiceAgreements: React.VFC = () => {
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
-              return <Table columns={columns} dataSource={data} />;
+              return (
+                <div className={'fullWidth'}>
+                  <Table columns={columns} dataSource={data} />
+                </div>
+              );
             },
           },
         )}
