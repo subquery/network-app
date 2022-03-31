@@ -7,7 +7,15 @@ import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
 import IndexerName from './IndexerName';
-import { AsyncData, cidToBytes32, getDeploymentMetadata, mapAsync, notEmpty, renderAsync } from '../../utils';
+import {
+  AsyncData,
+  cidToBytes32,
+  getDeploymentMetadata,
+  mapAsync,
+  notEmpty,
+  renderAsync,
+  wrapProxyEndpoint,
+} from '../../utils';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
@@ -108,7 +116,10 @@ const ConnectedRow: React.VFC<
 > = ({ indexer, deploymentId, startBlock, ...rest }) => {
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
   const asyncMetadataComplete = mapAsync(
-    (metadata): IndexerDetails => ({ ...metadata, url: `${metadata.url}/query/${deploymentId}` }),
+    (metadata): IndexerDetails => ({
+      ...metadata,
+      url: wrapProxyEndpoint(`${metadata.url}/query/${deploymentId}`, indexer.id),
+    }),
     asyncMetadata,
   );
 
@@ -152,7 +163,11 @@ const ConnectedRow: React.VFC<
       return null;
     }
 
-    const meta = await getDeploymentMetadata({ proxyEndpoint: asyncMetadata.data?.url, deploymentId });
+    const meta = await getDeploymentMetadata({
+      proxyEndpoint: asyncMetadata.data?.url,
+      deploymentId,
+      indexer: indexer.indexerId,
+    });
 
     // Update container to show total progress
     if (meta) {

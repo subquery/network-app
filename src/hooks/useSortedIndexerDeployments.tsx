@@ -39,7 +39,8 @@ export function useSortedIndexerDeployments(
           deploymentId &&
           (await getDeploymentProgress({
             proxyEndpoint,
-            deploymentId: deploymentId,
+            deploymentId,
+            indexer,
           }));
 
         return {
