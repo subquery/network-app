@@ -5,10 +5,10 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps } from 'antd';
-import { AppPageHeader, TabButtons } from '../../../components';
+import { Table, TableProps, Alert } from 'antd';
+import { AppPageHeader, Copy, TabButtons } from '../../../components';
 import { useIPFS, useProjectMetadata, useServiceAgreements, useWeb3 } from '../../../containers';
-import { bnToDate, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import { bnToDate, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import styles from './ServiceAgreements.module.css';
 import {
   GetServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
@@ -30,7 +30,11 @@ const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({
     [deployment?.version, catSingle],
   );
 
-  return <Typography>{`${meta.data?.version} - ${deployment?.id}`}</Typography>;
+  return (
+    <Typography>
+      {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
+    </Typography>
+  );
 };
 
 const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
@@ -60,6 +64,7 @@ const ServiceAgreements: React.VFC = () => {
       key: 'project',
       title: t('serviceAgreements.headers.project'),
       align: 'center',
+      width: '100%',
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
@@ -68,6 +73,7 @@ const ServiceAgreements: React.VFC = () => {
       title: t('serviceAgreements.headers.deployment'),
       key: 'deployment',
       align: 'center',
+      width: 100,
       render: (deployment: ServiceAgreement['deployment']) => <Deployment deployment={deployment} />,
     },
     {
@@ -124,7 +130,11 @@ const ServiceAgreements: React.VFC = () => {
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
-              return <Table columns={columns} dataSource={data} />;
+              return (
+                <div className={'fullWidth'}>
+                  <Table columns={columns} dataSource={data} />
+                </div>
+              );
             },
           },
         )}

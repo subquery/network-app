@@ -114,6 +114,7 @@ textarea {
 /* For general container */
 .fullWidth {
   width: 100%;
+  overflow: scroll;
 }
 
 .flex {

@@ -19,4 +19,4 @@ export { useSortedIndexer } from './useSortedIndexer';
 export * from './useLockPeriod';
 export * from './useUserDelegations';
 export * from './useIsIndexer';
-export * from './useIndexerDeployments';
+export * from './useSortedIndexerDeployments';

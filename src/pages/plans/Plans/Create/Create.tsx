@@ -8,13 +8,13 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
+import { useContracts, usePlanTemplates, useProjectMetadata, useWeb3 } from '../../../../containers';
 import { cidToBytes32, convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import { SummaryList } from '../../../../components';
-import { useIndexerDeployments } from '../../../../hooks';
+import { useSortedIndexerDeployments } from '../../../../hooks';
 import { InputNumber, Select } from 'antd';
 import styles from './Create.module.css';
 import clsx from 'clsx';
@@ -36,8 +36,7 @@ type FormProps = {
 const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const indexerDeployments = useIndexerDeployments(account ?? '');
-  const indexerProjects = indexerDeployments.data ?? [];
+  const indexerDeployments = useSortedIndexerDeployments(account ?? '');
 
   const summaryList = [
     {
@@ -70,7 +69,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
             {/* TODO: InputNumber extract component */}
             <div className={'fullWidth'}>
-              <Typography>{t('plans.create.priceTitle')} </Typography>
+              <Typography className={styles.inputTitle}>{t('plans.create.priceTitle')} </Typography>
               <InputNumber
                 id="price"
                 name="price"
@@ -84,7 +83,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
 
             {/* TODO: renderItem style */}
             <div className={styles.select}>
-              <Typography>{'Select specific deployment Id'} </Typography>
+              <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
               <Select
                 id="deploymentId"
                 showSearch
@@ -92,17 +91,32 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
                 optionFilterProp="children"
                 onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
                 className={'fullWidth'}
+                loading={indexerDeployments.loading}
+                size="large"
                 // TODO
                 // onSearch={onSearch}
                 // filterOption={() => {}}
               >
-                <>
-                  {indexerProjects.map((deployment) => (
-                    <Select.Option value={deployment.deployment?.id} key={deployment.deployment?.id}>
-                      {deployment.deployment?.id}
-                    </Select.Option>
-                  ))}
-                </>
+                {renderAsync(indexerDeployments, {
+                  error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
+                  loading: () => <Spinner />,
+                  data: (data) => (
+                    <>
+                      {data?.map((indexerDeployments) => (
+                        <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
+                          <div>
+                            <Typography
+                              className={styles.projectName}
+                            >{`${indexerDeployments.projectName}`}</Typography>
+                            <Typography
+                              className={styles.projectDeploymentId}
+                            >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
+                          </div>
+                        </Select.Option>
+                      ))}
+                    </>
+                  ),
+                })}
               </Select>
             </div>
 
