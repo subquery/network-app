@@ -7,27 +7,47 @@ import { useTranslation } from 'react-i18next';
 import { useIndexers } from '../../../../containers';
 import { AppPageHeader } from '../../../../components';
 import styles from './Indexers.module.css';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
+import { mapAsync, notEmpty } from '../../../../utils';
 import { IndexerList } from '../IndexerList/IndexerList';
 
 export const Indexers: React.VFC = () => {
   const indexers = useIndexers({});
   const { t } = useTranslation();
 
+  const data = mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers);
+
+  const fetchMore = (offset: number) => {
+    indexers.fetchMore({
+      variables: {
+        offset,
+      },
+    });
+  };
+
   return (
     <>
       <AppPageHeader title={t('delegate.title')} />
 
       <div className={styles.dataContent}>
-        {renderAsyncArray(
+        {data.error ? (
+          <Typography>{`Error: Fail to get Indexers ${data.error.message}`}</Typography>
+        ) : (
+          <IndexerList
+            indexers={data?.data}
+            totalCount={indexers.data?.indexers?.totalCount}
+            onLoadMore={fetchMore}
+            loading={data.loading}
+          />
+        )}
+        {/*{renderAsync(
           mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers),
           {
             error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
             loading: () => <Spinner />,
-            empty: () => <Typography>No Indexers available.</Typography>,
-            data: (data) => <IndexerList indexers={data} />,
+            // empty: () => <Typography>No Indexers available.</Typography>,
+            data: (data) => <IndexerList indexers={data} onLoadMore={setOffset}/>,
           },
-        )}
+        )}*/}
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, Button } from '@subql/react-ui';
+import { Typography, Button, Spinner } from '@subql/react-ui';
 import { Table } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
@@ -15,16 +15,19 @@ import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 
 interface props {
-  indexers: Indexer[];
+  indexers?: Indexer[];
+  totalCount?: number;
+  loading?: boolean;
+  onLoadMore?: (offset: number) => void;
 }
 
-export const IndexerList: React.VFC<props> = ({ indexers }) => {
+export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, loading }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
   const history = useHistory();
 
-  const sortedIndexerList = indexers.map((indexer) => {
+  const sortedIndexerList = (indexers ?? []).map((indexer) => {
     const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
     const convertedTotalStake = parseRawEraValue(indexer.totalStake as RawEraValue, currentEra.data?.index);
 
@@ -131,9 +134,24 @@ export const IndexerList: React.VFC<props> = ({ indexers }) => {
   return (
     <div className={styles.container}>
       <Typography variant="h6" className={styles.title}>
-        There are {indexers.length || 0} indexer(s)
+        There are {totalCount || indexers?.length || 0} indexer(s)
       </Typography>
-      <Table columns={columns} dataSource={orderedIndexerList} scroll={{ x: 900 }} />
+      <Table
+        columns={columns}
+        dataSource={orderedIndexerList}
+        scroll={{ x: 900 }}
+        loading={{
+          spinning: loading,
+          indicator: <Spinner />,
+        }}
+        pagination={{
+          total: totalCount,
+          pageSize: 10,
+          onChange: (page, pageSize) => {
+            onLoadMore?.((page - 1) * pageSize);
+          },
+        }}
+      />
     </div>
   );
 };
