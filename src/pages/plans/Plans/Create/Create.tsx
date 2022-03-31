@@ -14,12 +14,11 @@ import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import { SummaryList } from '../../../../components';
-import { useAsyncMemo, useIndexerDeployments } from '../../../../hooks';
+import { useSortedIndexerDeployments } from '../../../../hooks';
 import { InputNumber, Select } from 'antd';
 import styles from './Create.module.css';
 import clsx from 'clsx';
 import { secondsToDhms } from '../../../../utils/dateFormatters';
-import { ProjectMetadata } from '../../../../models';
 
 const planSchema = yup.object({
   price: yup.number().defined(),
@@ -37,27 +36,7 @@ type FormProps = {
 const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useIndexerDeployments(account ?? '');
-  const indexerProjects = indexerDeployments.data ?? [];
-
-  const sortedIndexerDeployments = useAsyncMemo(async () => {
-    if (!indexerDeployments.data) return [];
-    return await Promise.all(
-      indexerDeployments.data.map(async (indexerDeployment) => {
-        const metadata: ProjectMetadata = indexerDeployment.deployment?.project
-          ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
-          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
-
-        return {
-          ...indexerDeployment,
-          projectId: indexerDeployment.deployment?.project?.id,
-          projectName: metadata.name ?? indexerDeployment.deployment?.project?.id,
-        };
-      }),
-    );
-  }, [indexerDeployments.loading]);
-  console.log('sortedIndexerDeployments', sortedIndexerDeployments);
+  const indexerDeployments = useSortedIndexerDeployments(account ?? '');
 
   const summaryList = [
     {
@@ -112,24 +91,32 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
                 optionFilterProp="children"
                 onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
                 className={'fullWidth'}
-                loading={sortedIndexerDeployments.loading}
+                loading={indexerDeployments.loading}
                 size="large"
                 // TODO
                 // onSearch={onSearch}
                 // filterOption={() => {}}
               >
-                <>
-                  {sortedIndexerDeployments?.data?.map((indexerDeployments) => (
-                    <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
-                      <div>
-                        <Typography className={styles.projectName}>{`${indexerDeployments.projectName}`}</Typography>
-                        <Typography
-                          className={styles.projectDeploymentId}
-                        >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
-                      </div>
-                    </Select.Option>
-                  ))}
-                </>
+                {renderAsync(indexerDeployments, {
+                  error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
+                  loading: () => <Spinner />,
+                  data: (data) => (
+                    <>
+                      {data?.map((indexerDeployments) => (
+                        <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
+                          <div>
+                            <Typography
+                              className={styles.projectName}
+                            >{`${indexerDeployments.projectName}`}</Typography>
+                            <Typography
+                              className={styles.projectDeploymentId}
+                            >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
+                          </div>
+                        </Select.Option>
+                      ))}
+                    </>
+                  ),
+                })}
               </Select>
             </div>
 

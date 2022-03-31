@@ -8,10 +8,9 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
-import { useProjectMetadata } from '../../../../containers';
-import { useAsyncMemo, useIndexerDeployments, useIndexerMetadata } from '../../../../hooks';
+import { useSortedIndexerDeployments } from '../../../../hooks';
 import { ProjectMetadata } from '../../../../models';
-import { renderAsync, getDeploymentProgress } from '../../../../utils';
+import { renderAsync } from '../../../../utils';
 import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
 import styles from './OwnDeployments.module.css';
 
@@ -22,38 +21,7 @@ interface Props {
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useIndexerDeployments(indexer);
-  const indexerMetadata = useIndexerMetadata(indexer);
-  const proxyEndpoint = indexerMetadata?.data?.url;
-
-  const sortedResult = useAsyncMemo(async () => {
-    if (!indexerDeployments.data) return [];
-    return await Promise.all(
-      indexerDeployments.data.map(async (indexerDeployment) => {
-        const metadata: ProjectMetadata = indexerDeployment.deployment?.project
-          ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
-          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
-
-        const deploymentId = indexerDeployment.deployment?.id;
-        const indexingProgress = await getDeploymentProgress({
-          proxyEndpoint,
-          deploymentId: deploymentId,
-        });
-
-        return {
-          ...indexerDeployment,
-          indexingProgress,
-          deploymentId,
-          projectId: indexerDeployment.deployment?.project?.id,
-          projectMeta: {
-            ...metadata,
-            name: metadata.name ?? indexerDeployment.deployment?.project?.id,
-          },
-        };
-      }),
-    );
-  }, [indexerDeployments.loading]);
+  const indexerDeployments = useSortedIndexerDeployments(indexer);
 
   const columns = [
     {
@@ -62,7 +30,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       width: '65%',
       render: (
         deploymentId: string,
-        record: { projectId?: string; projectMeta: ProjectMetadata } & DeploymentIndexer,
+        record: { projectId?: string; projectMeta: ProjectMetadata } & Partial<DeploymentIndexer>,
       ) => <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />,
     },
     {
@@ -80,7 +48,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
 
   return (
     <div className={styles.container}>
-      {renderAsync(sortedResult, {
+      {renderAsync(indexerDeployments, {
         error: (error) => <Typography>{`Failed to get projects: ${error.message}`}</Typography>,
         loading: () => <Spinner />,
         data: (data) => {
