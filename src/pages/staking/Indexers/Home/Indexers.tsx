@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/react-ui';
+import { Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIndexers } from '../../../../containers';
@@ -39,15 +39,6 @@ export const Indexers: React.VFC = () => {
             loading={data.loading}
           />
         )}
-        {/*{renderAsync(
-          mapAsync((data) => data.indexers?.nodes.filter(notEmpty), indexers),
-          {
-            error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
-            loading: () => <Spinner />,
-            // empty: () => <Typography>No Indexers available.</Typography>,
-            data: (data) => <IndexerList indexers={data} onLoadMore={setOffset}/>,
-          },
-        )}*/}
       </div>
     </>
   );
