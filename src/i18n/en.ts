@@ -8,6 +8,7 @@ const en = {
       studio: 'Studio',
       staking: 'Stake & Delegate',
       plans: 'Plan & Offer',
+      missions: 'Missions',
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
@@ -278,6 +279,12 @@ const en = {
       },
       totalUnclaimReward: 'You have an unclaimed reward.',
     },
+
+    missions: {
+      missions: 'Missions',
+      leaderboard: 'Leaderboard',
+    },
+
     plans: {
       category: {
         myServiceAgreement: 'My Service Agreements',

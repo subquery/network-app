@@ -1,0 +1,17 @@
+.profile {
+  height: 130px;
+  padding: 1rem 1rem 0 1rem;
+  display: flex;
+  width: 100%;
+  background: white;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress {
+  flex: 0.7;
+}
+
+.description {
+  flex: 0.3;
+}
