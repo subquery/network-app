@@ -105,9 +105,13 @@ const ServiceAgreements: React.VFC = () => {
       title: t('serviceAgreements.headers.expiry'),
       key: 'expiry',
       align: 'center',
-      render: (_, sa: ServiceAgreement) => (
-        <Typography>{moment(sa.startTime).add(convertBigNumberToNumber(sa.period)).utc(true).fromNow()}</Typography>
-      ),
+      render: (_, sa: ServiceAgreement) => {
+        return (
+          <Typography>
+            {moment(sa.startTime).add(convertBigNumberToNumber(sa.period), 'seconds').utc(true).fromNow()}
+          </Typography>
+        );
+      },
     },
     {
       dataIndex: 'value',
