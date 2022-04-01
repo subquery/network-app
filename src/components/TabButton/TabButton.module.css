@@ -1,6 +1,10 @@
 .tabContainer {
   display: flex;
 }
+.whiteTabContainer {
+  background: white;
+  padding: 1rem 1rem 0 1rem;
+}
 
 .tab {
   font-size: 18px;
@@ -8,7 +12,7 @@
   margin-right: 32px;
   padding-bottom: 1rem;
   text-decoration: none;
-  color: var(--gray900);
+  color: var(--gray700);
 }
 
 .tab:hover {
@@ -26,8 +30,11 @@
 
 .whiteTab {
   background: white;
-  min-width: 8rem;
-  padding: 1rem;
+  min-width: 6rem;
   margin: 0;
   text-align: center;
+}
+
+.whiteTabLabel {
+  color: var(--gray500);
 }
