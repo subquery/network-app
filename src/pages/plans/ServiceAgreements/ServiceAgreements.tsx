@@ -127,7 +127,7 @@ const ServiceAgreements: React.VFC = () => {
       <AppPageHeader title={t('plans.category.myServiceAgreement')} />
 
       <div className={styles.tabs}>
-        <TabButtons tabs={[{ label: 'Ongoing', link: ROUTE }]} whiteTab />
+        <TabButtons tabs={[{ label: 'All', link: ROUTE }]} whiteTab />
       </div>
 
       <div className="contentContainer">

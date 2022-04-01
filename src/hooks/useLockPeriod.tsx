@@ -3,10 +3,10 @@
 
 import assert from 'assert';
 import { useContracts } from '../containers';
-import { convertBigNumberToNumber } from '../utils';
+import { AsyncData, convertBigNumberToNumber } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
-export function useLockPeriod() {
+export function useLockPeriod(): AsyncData<number> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     const contracts = await pendingContracts;
