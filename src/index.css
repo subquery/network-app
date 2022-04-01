@@ -114,7 +114,6 @@ textarea {
 /* For general container */
 .fullWidth {
   width: 100%;
-  overflow: scroll;
 }
 
 .flex {
@@ -124,6 +123,11 @@ textarea {
 .flex-end {
   display: flex;
   justify-content: flex-end;
+}
+
+/* For text TODO: add grey text */
+.errorText {
+  color: var(--error);
 }
 
 /* For latest design system */

@@ -36,7 +36,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       width: 100,
       render: (delegator: string) => (
         <Typography variant="medium" className={styles.text}>
-          {delegator === indexer ? 'You' : delegator}
+          {delegator}
         </Typography>
       ),
     },
@@ -62,8 +62,8 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
     <div className={styles.container}>
       {renderAsyncArray(
         mapAsync(
-          ([indexer, era]) =>
-            indexer?.indexer?.delegations.nodes.map((delegation) => ({
+          ([sortedIndexer, era]) =>
+            sortedIndexer?.indexer?.delegations.nodes.map((delegation) => ({
               value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
                 convertStringToNumber(formatEther(v ?? 0)),
               ),

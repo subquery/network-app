@@ -55,7 +55,7 @@ export function useSortedIndexerDeployments(
         };
       }),
     );
-  }, [indexerDeployments.loading]);
+  }, [indexerDeployments.loading, proxyEndpoint]);
 
   // console.log('sortedIndexerDeployments', sortedIndexerDeployments);
   return sortedIndexerDeployments;

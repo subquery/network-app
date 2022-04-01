@@ -6,7 +6,7 @@ const errorCodeMapping: Record<string, string> = {
 };
 
 export function parseError(error: any): string {
-  if (error?.data.message) {
+  if (error?.data?.message) {
     if (error?.data.message.includes('revert Not registered')) {
       return errorCodeMapping['notRegister'];
     } else {

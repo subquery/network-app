@@ -8,15 +8,21 @@ import { useTranslation } from 'react-i18next';
 import { Table, TableProps, Alert } from 'antd';
 import { AppPageHeader, Copy, TabButtons } from '../../../components';
 import { useIPFS, useProjectMetadata, useServiceAgreements, useWeb3 } from '../../../containers';
-import { bnToDate, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import {
+  bnToDate,
+  convertBigNumberToNumber,
+  formatEther,
+  getTrimmedStr,
+  mapAsync,
+  notEmpty,
+  renderAsyncArray,
+} from '../../../utils';
 import styles from './ServiceAgreements.module.css';
 import {
   GetServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/GetServiceAgreements';
 import IndexerName from '../../../components/IndexerDetails/IndexerName';
-import { formatEther } from '@ethersproject/units';
-import { BigNumber } from '@ethersproject/bignumber';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
@@ -31,7 +37,7 @@ const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({
   );
 
   return (
-    <Typography>
+    <Typography className={'flex'}>
       {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
     </Typography>
   );
@@ -64,7 +70,7 @@ const ServiceAgreements: React.VFC = () => {
       key: 'project',
       title: t('serviceAgreements.headers.project'),
       align: 'center',
-      width: '100%',
+      width: 200,
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
@@ -73,7 +79,7 @@ const ServiceAgreements: React.VFC = () => {
       title: t('serviceAgreements.headers.deployment'),
       key: 'deployment',
       align: 'center',
-      width: 100,
+      width: 250,
       render: (deployment: ServiceAgreement['deployment']) => <Deployment deployment={deployment} />,
     },
     {
@@ -100,7 +106,7 @@ const ServiceAgreements: React.VFC = () => {
       key: 'expiry',
       align: 'center',
       render: (_, sa: ServiceAgreement) => (
-        <Typography>{moment(sa.startTime).add(BigNumber.from(sa.period).toNumber()).utc(true).fromNow()}</Typography>
+        <Typography>{moment(sa.startTime).add(convertBigNumberToNumber(sa.period)).utc(true).fromNow()}</Typography>
       ),
     },
     {
@@ -108,9 +114,7 @@ const ServiceAgreements: React.VFC = () => {
       title: t('serviceAgreements.headers.price'),
       key: 'price',
       align: 'center',
-      render: (price: ServiceAgreement['value']) => (
-        <Typography>{`${formatEther(BigNumber.from(price))} SQT`}</Typography>
-      ),
+      render: (price: ServiceAgreement['value']) => <Typography>{`${formatEther(price)} SQT`}</Typography>,
     },
   ];
 
@@ -131,8 +135,8 @@ const ServiceAgreements: React.VFC = () => {
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
               return (
-                <div className={'fullWidth'}>
-                  <Table columns={columns} dataSource={data} />
+                <div>
+                  <Table columns={columns} dataSource={data} scroll={{ x: 500 }} />
                 </div>
               );
             },

@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts } from '../../../../containers';
 import styles from './ClaimRewards.module.css';
+import { Typography } from '@subql/react-ui';
 
 type Props = {
   indexer: string;
@@ -41,23 +42,27 @@ const ClaimRewards: React.FC<Props> = ({ indexer, onClaimed, amount }) => {
 
   return (
     <TransactionModal
+      variant="textBtn"
       text={text}
       actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
       onClick={handleClick}
-      renderContent={(onSubmit, _, isLoading) => {
+      renderContent={(onSubmit, _, isLoading, error) => {
         return (
-          <div className={styles.btnContainer}>
-            <Button
-              onSubmit={() => onSubmit('')}
-              htmlType="submit"
-              shape="round"
-              size="large"
-              className={styles.submitBtn}
-              loading={isLoading}
-            >
-              {text.submitText}
-            </Button>
-          </div>
+          <>
+            <Typography className={'errorText'}>{error}</Typography>
+            <div className={styles.btnContainer}>
+              <Button
+                onClick={onSubmit}
+                htmlType="submit"
+                shape="round"
+                size="large"
+                className={styles.submitBtn}
+                loading={isLoading}
+              >
+                {text.submitText}
+              </Button>
+            </div>
+          </>
         );
       }}
     />
