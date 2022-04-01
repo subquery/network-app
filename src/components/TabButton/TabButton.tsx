@@ -20,7 +20,7 @@ export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab }) 
       className={(isActive) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
       replace
     >
-      <Typography>{label}</Typography>
+      <Typography className={clsx(whiteTab && styles.whiteTabLabel)}>{label}</Typography>
     </NavLink>
   );
 };
@@ -32,7 +32,7 @@ interface TabButtonsProps {
 
 export const TabButtons: React.VFC<TabButtonsProps> = ({ tabs, whiteTab }) => {
   return (
-    <div className={styles.tabContainer}>
+    <div className={clsx(styles.tabContainer, whiteTab && styles.whiteTabContainer)}>
       {tabs.map((tab) => (
         <TabButton key={tab.link} label={tab.label} link={tab.link} whiteTab={whiteTab} />
       ))}

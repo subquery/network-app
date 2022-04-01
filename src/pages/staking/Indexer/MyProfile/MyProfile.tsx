@@ -3,9 +3,9 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useHistory } from 'react-router';
+import { Redirect, Route, Switch, useHistory } from 'react-router';
 import { useWeb3 } from '../../../../containers';
-import { Card, AppPageHeader } from '../../../../components';
+import { Card, AppPageHeader, TabButtons } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
@@ -15,17 +15,20 @@ import { convertStringToNumber, mergeAsync, renderAsync } from '../../../../util
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 
-enum SectionTabs {
-  Indexing = 'Indexing',
-  Delegating = 'Delegating',
-  Rewards = 'Rewards',
-  Locked = 'Locked',
-}
+const ROUTE = '/staking/my-profile';
+const INDEXING = `${ROUTE}/indexing`;
+const DELEGATING = `${ROUTE}/delegating`;
+const REWARDS = `${ROUTE}/rewards`;
+const LOCKED = `${ROUTE}/locked`;
 
-const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Rewards, SectionTabs.Locked];
+const buttonLinks = [
+  { label: 'Indexing', link: INDEXING },
+  { label: 'Delegating', link: DELEGATING },
+  { label: 'Rewards', link: REWARDS },
+  { label: 'Locked', link: LOCKED },
+];
 
 export const MyProfile: React.VFC = () => {
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
   const { t } = useTranslation();
   const { account } = useWeb3();
   const history = useHistory();
@@ -80,17 +83,20 @@ export const MyProfile: React.VFC = () => {
 
       <div>
         <div className={styles.tabList}>
-          {tabList.map((tab) => (
-            <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-              <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-              {curTab === tab && <div className={styles.line} />}
-            </div>
-          ))}
+          <TabButtons tabs={buttonLinks} whiteTab />
         </div>
-        {curTab === SectionTabs.Indexing && <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
-        {curTab === SectionTabs.Delegating && <Delegating delegator={account ?? ''} />}
-        {curTab === SectionTabs.Rewards && <Rewards delegatorAddress={account ?? ''} />}
-        {curTab === SectionTabs.Locked && <Locked />}
+
+        <Switch>
+          <Route
+            exact
+            path={INDEXING}
+            component={() => <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
+          />
+          <Route exact path={DELEGATING} component={() => <Delegating delegator={account ?? ''} />} />
+          <Route exact path={REWARDS} component={() => <Rewards delegatorAddress={account ?? ''} />} />
+          <Route exact path={LOCKED} component={Locked} />
+          <Redirect from={ROUTE} to={INDEXING} />
+        </Switch>
       </div>
     </>
   );
