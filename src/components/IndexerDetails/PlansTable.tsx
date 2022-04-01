@@ -20,6 +20,7 @@ import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../M
 import { secondsToDhms } from '../../utils/dateFormatters';
 import { SummaryList } from '../SummaryList';
 import styles from './IndexerDetails.module.css';
+import { last } from 'ramda';
 
 export type PlansTableProps = {
   loadPlans: () => void;
@@ -29,7 +30,7 @@ export type PlansTableProps = {
 type DoPurchaseProps = {
   plan: Plan;
   indexerDetails?: IndexerDetails;
-  purchasePlan: (indexer: string, planId: string) => Promise<ContractTransaction>;
+  purchasePlan: (indexer: string, planId?: string) => Promise<ContractTransaction>;
   balance: AsyncData<BigNumber>;
   planManagerAllowance: AsyncData<BigNumber> & { refetch: () => void };
   deploymentId?: string;
@@ -95,7 +96,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
       variant="textBtn"
       actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
       text={modalText}
-      onClick={() => purchasePlan(plan.creator, plan.id)}
+      onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
       renderContent={(onSubmit, onCancel, isLoading) => {
         return renderAsync(planManagerAllowance, {
           loading: () => <Spinner />,
