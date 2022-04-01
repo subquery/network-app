@@ -93,6 +93,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
                 className={'fullWidth'}
                 loading={indexerDeployments.loading}
                 size="large"
+                allowClear
                 // TODO
                 // onSearch={onSearch}
                 // filterOption={() => {}}
