@@ -1,19 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber } from '@ethersproject/bignumber';
-import { formatEther } from '@ethersproject/units';
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRewards } from '../../../../containers';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
+import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
 } from '../../../../__generated__/GetRewards';
 import ClaimRewards from './ClaimRewards';
-import { Table as TableD, TableProps } from 'antd';
+import { Table, TableProps } from 'antd';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -28,30 +26,34 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: '#',
       key: 'idx',
       width: 30,
+      align: 'center',
       render: (t, r, index) => <Typography>{index + 1}</Typography>,
     },
     {
       title: t('rewards.header1').toUpperCase(),
       dataIndex: 'indexerAddress',
       key: 'indexer',
-      width: 200,
+      width: 160,
+      align: 'center',
       render: (t: string) => <Typography>{t}</Typography>,
     },
     {
       title: t('rewards.header2').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
-      width: 80,
-      render: (amount: BigInt) => <Typography>{formatEther(BigNumber.from(amount))}</Typography>,
+      width: 50,
+      align: 'center',
+      render: (amount: BigInt) => <Typography>{formatEther(amount)}</Typography>,
     },
     {
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
-      width: 60,
+      width: 50,
+      align: 'center',
       render: (t, reward: Reward | UnclaimedReward) =>
         isClaimedReward(reward) ? undefined : (
-          <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(BigNumber.from(reward.amount))} />
+          <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(reward.amount)} />
         ),
     },
   ];
@@ -70,7 +72,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
-          data: (data) => <TableD columns={colums} dataSource={data} scroll={{ x: 800 }} />,
+          data: (data) => <Table columns={colums} dataSource={data} scroll={{ x: 800 }} />,
         },
       )}
     </div>

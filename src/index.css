@@ -125,6 +125,11 @@ textarea {
   justify-content: flex-end;
 }
 
+/* For text TODO: add grey text */
+.errorText {
+  color: var(--error);
+}
+
 /* For latest design system */
 .textBtn {
   background: white;

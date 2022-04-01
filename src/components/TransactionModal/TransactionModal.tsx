@@ -4,6 +4,7 @@
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
+import { parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import { ModalStatus } from '../ModalStatus';
@@ -19,6 +20,7 @@ type Props<P, T extends string> = {
     inputTitle?: string;
     submitText?: string;
     failureText?: string;
+    successText?: string;
   };
   onClick: Action<P, T>;
   actions: Array<
@@ -33,6 +35,7 @@ type Props<P, T extends string> = {
     onSubmit: (params: P) => void,
     onCancel: () => void,
     loading: boolean,
+    error?: string,
   ) => React.ReactNode | undefined;
   variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
 };
@@ -48,10 +51,12 @@ const TransactionModal = <P, T extends string>({
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
+  const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
 
   const resetModal = () => {
     setIsLoading(false);
     setShowModal(undefined);
+    setFailureModalText(undefined);
   };
 
   const resetModalStatus = () => {
@@ -63,17 +68,23 @@ const TransactionModal = <P, T extends string>({
   };
 
   const wrapTxAction = (action: typeof onClick) => async (params: P) => {
-    if (!showModal) return;
+    try {
+      if (!showModal) return;
 
-    const tx = await action(params, showModal);
+      const tx = await action(params, showModal);
 
-    setIsLoading(true);
-    const result = await tx.wait();
-    resetModal();
-    if (result.status) {
-      setSuccessModalText('Success');
-    } else {
-      throw new Error(text.failureText);
+      setIsLoading(true);
+      const result = await tx.wait();
+
+      resetModal();
+      if (result.status) {
+        setSuccessModalText(text.successText || 'Success');
+      } else {
+        throw new Error(text.failureText);
+      }
+    } catch (error) {
+      console.log('error', error);
+      setFailureModalText(parseError(error));
     }
   };
 
@@ -86,7 +97,7 @@ const TransactionModal = <P, T extends string>({
         onCancel={() => setShowModal(undefined)}
         steps={text.steps}
         content={
-          renderContent?.(wrapTxAction(onClick), resetModal, isLoading) || (
+          renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
             <ModalInput
               {...inputParams}
               inputTitle={text.inputTitle}
