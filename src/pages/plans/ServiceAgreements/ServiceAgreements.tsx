@@ -140,7 +140,7 @@ const ServiceAgreements: React.VFC = () => {
             data: (data) => {
               return (
                 <div>
-                  <Table columns={columns} dataSource={data} scroll={{ x: 500 }} />
+                  <Table columns={columns} dataSource={data} scroll={{ x: 1200 }} />
                 </div>
               );
             },
