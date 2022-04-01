@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
-import { Table, TableProps } from 'antd';
+import { Table } from 'antd';
 import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
@@ -46,40 +46,35 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
 
-  const columns: TableProps<any>['columns'] = [
+  const columns = [
     {
       title: t('indexer.totalStake').toLocaleUpperCase(),
       dataIndex: 'totalStake',
       key: 'totalStake',
-      align: 'center',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.ownStake').toLocaleUpperCase(),
       dataIndex: 'ownStake',
       key: 'ownStake',
-      align: 'center',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.commission').toLocaleUpperCase(),
       dataIndex: 'commission',
       key: 'commission',
-      align: 'center',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} />,
     },
     {
       title: t('indexer.delegated').toLocaleUpperCase(),
       dataIndex: 'totalDelegations',
       key: 'delegated',
-      align: 'center',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',
       key: 'capacity',
-      align: 'center',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
   ];
