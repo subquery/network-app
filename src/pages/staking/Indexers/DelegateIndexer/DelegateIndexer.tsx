@@ -58,7 +58,7 @@ export const DelegateIndexer: React.VFC = () => {
                 tableData={[
                   {
                     ...sortedIndexing,
-                    capacity: { current: formatEther(curCapacity?._hex) },
+                    capacity: { current: formatEther(curCapacity?.current), after: formatEther(curCapacity?.after) },
                   },
                 ]}
                 indexer={address}
