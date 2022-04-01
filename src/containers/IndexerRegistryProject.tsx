@@ -92,7 +92,7 @@ const GET_INDEXERS = gql`
 const GET_INDEXER_DELEGATORS = gql`
   query GetIndexerDelegators($id: String!, $offset: Int) {
     indexer(id: $id) {
-      delegations(first: 10, offset: $offset) {
+      delegations(first: 10, offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
         nodes {
           delegatorId
           amount

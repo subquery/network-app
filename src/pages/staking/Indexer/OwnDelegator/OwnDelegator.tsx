@@ -63,14 +63,12 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       {renderAsyncArray(
         mapAsync(
           ([sortedIndexer, era]) =>
-            sortedIndexer?.indexer?.delegations.nodes
-              .filter((delegation) => delegation?.delegatorId.toString() !== indexer)
-              .map((delegation) => ({
-                value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
-                  convertStringToNumber(formatEther(v ?? 0)),
-                ),
-                delegator: delegation?.delegatorId ?? '',
-              })),
+            sortedIndexer?.indexer?.delegations.nodes.map((delegation) => ({
+              value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
+                convertStringToNumber(formatEther(v ?? 0)),
+              ),
+              delegator: delegation?.delegatorId ?? '',
+            })),
           mergeAsync(indexerDelegations, currentEra),
         ),
         {
