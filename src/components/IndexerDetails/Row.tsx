@@ -149,11 +149,12 @@ const ConnectedRow: React.VFC<
 
   const pendingContracts = useContracts();
 
-  const purchasePlan = async (indexer: string, planId: string) => {
+  const purchasePlan = async (indexer: string, planId?: string) => {
     const contracts = await pendingContracts;
 
     assert(contracts, 'Contracts not available');
     assert(deploymentId, 'DeploymentId not provided');
+    assert(planId, 'planId not provided');
 
     return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId);
   };
