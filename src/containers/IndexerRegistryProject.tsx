@@ -57,6 +57,7 @@ const SERVICE_AGREEMENT_FIELDS = gql`
     period
     value
     startTime
+    endTime
     deployment {
       id
       version
@@ -231,6 +232,7 @@ const GET_SERVICE_AGREEMENTS = gql`
   query GetServiceAgreements($address: String!) {
     serviceAgreements(
       filter: { or: [{ indexerAddress: { equalTo: $address } }, { consumerAddress: { equalTo: $address } }] }
+      orderBy: END_TIME_ASC
     ) {
       nodes {
         ...ServiceAgreementFields
