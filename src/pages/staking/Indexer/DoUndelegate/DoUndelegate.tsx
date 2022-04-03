@@ -37,6 +37,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress }) =
 
   return (
     <TransactionModal
+      variant="textBtn"
       text={modalText}
       actions={[{ label: t('delegate.undelegate'), key: 'undelegate' }]}
       inputParams={{

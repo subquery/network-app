@@ -130,6 +130,14 @@ textarea {
   color: var(--error);
 }
 
+.grayText {
+  color: var(--gray500);
+}
+
+.blackText {
+  color: var(--gray700);
+}
+
 /* For latest design system */
 .textBtn {
   background: white;
