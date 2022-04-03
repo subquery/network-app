@@ -3,6 +3,8 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
+import { Table, TableProps } from 'antd';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useRewards } from '../../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
@@ -11,7 +13,7 @@ import {
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
 } from '../../../../__generated__/GetRewards';
 import ClaimRewards from './ClaimRewards';
-import { Table, TableProps } from 'antd';
+import styles from './Rewards.module.css';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -27,7 +29,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       key: 'idx',
       width: 30,
       align: 'center',
-      render: (t, r, index) => <Typography>{index + 1}</Typography>,
+      render: (t, r, index) => <Typography className={clsx('blackText', styles.text)}>{index + 1}</Typography>,
     },
     {
       title: t('rewards.header1').toUpperCase(),
@@ -35,24 +37,26 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       key: 'indexer',
       width: 160,
       align: 'center',
-      render: (t: string) => <Typography>{t}</Typography>,
+      render: (t: string) => <Typography className={clsx('blackText', styles.text)}>{t}</Typography>,
     },
     {
       title: t('rewards.header2').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
       width: 50,
-      align: 'center',
-      render: (amount: BigInt) => <Typography>{formatEther(amount)}</Typography>,
+      render: (amount: BigInt) => (
+        <Typography className={clsx('blackText', styles.text)}>{`${formatEther(amount)} SQT`}</Typography>
+      ),
     },
     {
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
       width: 50,
-      align: 'center',
       render: (t, reward: Reward | UnclaimedReward) =>
-        isClaimedReward(reward) ? undefined : (
+        isClaimedReward(reward) ? (
+          <Typography className={clsx('grayText', styles.text)}>{'Claimed'}</Typography>
+        ) : (
           <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(reward.amount)} />
         ),
     },

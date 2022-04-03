@@ -10,9 +10,11 @@
 .textBtn {
   background: white;
   color: var(--gradient-to);
+  padding: 0.5rem 0;
 }
 
 .errTextBtn {
   background: white;
   color: var(--error);
+  padding: 0.5rem 0;
 }

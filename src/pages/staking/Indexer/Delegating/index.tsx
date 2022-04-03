@@ -3,14 +3,15 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table } from 'antd';
+import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.css';
 import { DoUndelegate } from '../DoUndelegate';
-import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { useDelegations, useEra } from '../../../../containers';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
+import { GetDelegations_delegations_nodes as Delegations } from '../../../../__generated__/GetDelegations';
 
 interface Props {
   delegator: string;
@@ -35,17 +36,22 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
     mergeAsync(delegations, currentEra),
   );
 
-  const columns = [
+  const columns: TableProps<{
+    value: CurrentEraValue<number>;
+    indexer: string;
+  }>['columns'] = [
     {
       title: '#',
       key: 'idx',
       width: 30,
+      align: 'center',
       render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'indexer',
       width: 200,
+      align: 'center',
     },
     {
       title: t('delegate.yourDelegateAmount').toUpperCase(),
@@ -55,12 +61,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           dataIndex: ['value', 'current'],
           key: 'currentValue',
           width: 80,
+          align: 'center',
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['value', 'after'],
           key: 'afterValue',
           width: 80,
+          align: 'center',
         },
       ],
     },
@@ -70,6 +78,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       key: 'operation',
       fixed: 'right' as FixedType,
       width: 70,
+      align: 'center',
       render: (id: string) => {
         if (id === delegator) {
           return <Typography>-</Typography>;
