@@ -5,11 +5,10 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps, Alert } from 'antd';
+import { Table, TableProps } from 'antd';
 import { AppPageHeader, Copy, TabButtons } from '../../../components';
 import { useIPFS, useProjectMetadata, useServiceAgreements, useWeb3 } from '../../../containers';
 import {
-  bnToDate,
   convertBigNumberToNumber,
   formatEther,
   getTrimmedStr,
@@ -106,11 +105,7 @@ const ServiceAgreements: React.VFC = () => {
       key: 'expiry',
       align: 'center',
       render: (_, sa: ServiceAgreement) => {
-        return (
-          <Typography>
-            {moment(sa.startTime).add(convertBigNumberToNumber(sa.period), 'seconds').utc(true).fromNow()}
-          </Typography>
-        );
+        return <Typography>{moment(sa.endTime).utc(true).fromNow()}</Typography>;
       },
     },
     {

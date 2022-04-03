@@ -157,10 +157,10 @@ const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planMan
   const columns: TableProps<Plan>['columns'] = [
     {
       dataIndex: 'id',
-      title: t('plans.headers.id'),
+      title: '#',
       width: 30,
       align: 'center',
-      render: (text: string) => <Typography>{text}</Typography>,
+      render: (_: string, __: Plan, idx: number) => <Typography>{idx}</Typography>,
     },
     {
       dataIndex: 'price',
