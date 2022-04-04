@@ -58,19 +58,19 @@ const ProjectInner: React.VFC = () => {
     if (indexers.length) {
       const indexer = indexers[0];
 
-      getIndexerMetadata(catSingle, indexer.indexer?.metadata)
-        .then((metadata) => {
-          if (!metadata) return;
-          return getDeploymentMetadata({
-            proxyEndpoint: metadata.url,
-            deploymentId,
-            indexer: indexer.indexerId,
-          });
-        })
-        .then((indexerMeta) => {
-          if (!indexerMeta) return;
-          updateIndexerStatus(indexer.indexerId, indexerMeta.lastProcessedHeight, indexerMeta.targetHeight);
+      (async function fetchMeta() {
+        const metadata = await getIndexerMetadata(catSingle, indexer.indexer?.metadata);
+
+        if (!metadata) return;
+        const indexerMeta = await getDeploymentMetadata({
+          proxyEndpoint: metadata.url,
+          deploymentId,
+          indexer: indexer.indexerId,
         });
+
+        if (!indexerMeta) return;
+        updateIndexerStatus(indexer.indexerId, indexerMeta.lastProcessedHeight, indexerMeta.targetHeight);
+      })();
     }
   }, [catSingle, indexers, updateIndexerStatus, deploymentId]);
 
