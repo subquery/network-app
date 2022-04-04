@@ -10,7 +10,6 @@ import { formatEther } from '../../../../utils';
 import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '../../../../__generated__/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
-import { useLockPeriod } from '../../../../hooks';
 
 //TODO: status: locked, unlock(available to claim)
 
@@ -44,9 +43,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     t('withdrawals.status').toUpperCase(),
   ];
 
-  const headerTitle = `${t('withdrawals.youCanWithdraw')} ${t('withdrawals.from')} ${withdrawals.length} ${t(
-    'withdrawals.unlockedAssets',
-  )}`;
+  const headerTitle = `${t('withdrawals.unlockedAsset', { count: withdrawals.length || 0 })}`;
 
   return (
     <div className={styles.container}>
