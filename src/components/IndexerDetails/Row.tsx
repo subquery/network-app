@@ -133,19 +133,17 @@ const ConnectedRow: React.VFC<
   const { balance, planAllowance } = useSQToken();
 
   // Get unique plans based on plan id preferring one with a deploymentId set
-  const plans = mapAsync(
-    (d) =>
-      d.plans?.nodes.filter(notEmpty).reduce((acc, v) => {
-        const existing = acc.find((p) => p.planTemplate?.id === v.planTemplate?.id);
+  const plans = mapAsync((d) => {
+    const plans = d.plans?.nodes.filter(notEmpty) ?? [];
 
-        if (!existing?.deploymentId) {
-          acc.push(v);
-        }
+    const deploymentPlans = plans.filter((p) => p.deploymentId === deploymentId);
 
-        return acc;
-      }, [] as Plan[]),
-    deploymentPlans,
-  ) as LazyQueryResult<Plan[], unknown>;
+    if (deploymentPlans.length) {
+      return deploymentPlans;
+    }
+
+    return plans.filter((p) => !p.deploymentId);
+  }, deploymentPlans) as LazyQueryResult<Plan[], unknown>;
 
   const pendingContracts = useContracts();
 
