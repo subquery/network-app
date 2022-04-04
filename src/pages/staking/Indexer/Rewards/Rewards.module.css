@@ -1,3 +1,7 @@
 .text {
   font-size: 14px;
 }
+
+.header {
+  margin-bottom: 2rem;
+}

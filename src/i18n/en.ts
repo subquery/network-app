@@ -264,6 +264,8 @@ const en = {
         button: 'Claim',
         submit: 'Confirm Claim',
       },
+      totalUnclaimReward: 'You have total {{count}} unclaim reward',
+      totalUnclaimReward_other: 'You have total {{count}} unclaim rewards',
     },
     plans: {
       category: {

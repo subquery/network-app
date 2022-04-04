@@ -98,7 +98,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           if (!data || data.length === 0) return <Typography variant="h6">{t('delegate.noDelegating')}</Typography>;
           return (
             <>
-              <Typography variant="h5" className={styles.header}>
+              <Typography variant="h6" className={styles.header}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography>
               <Table columns={columns} dataSource={data} scroll={{ x: 800 }} />

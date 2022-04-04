@@ -15,6 +15,11 @@ import {
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 
+function getUnclaimRewardAmount(rewards: (Reward | UnclaimedReward)[]): number {
+  const unclaimedRewards = rewards.filter((reward) => !isClaimedReward(reward));
+  return unclaimedRewards.length;
+}
+
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
 }
@@ -23,7 +28,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
   const rewards = useRewards({ address: delegatorAddress });
   const { t } = useTranslation('translation');
 
-  const colums: TableProps<Reward | UnclaimedReward>['columns'] = [
+  const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
       title: '#',
       key: 'idx',
@@ -76,7 +81,14 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
-          data: (data) => <Table columns={colums} dataSource={data} scroll={{ x: 800 }} />,
+          data: (data) => (
+            <>
+              <Typography variant="h6" className={styles.header}>
+                {t('rewards.totalUnclaimReward', { count: getUnclaimRewardAmount(data) || 0 })}
+              </Typography>
+              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} rowKey="id" />
+            </>
+          ),
         },
       )}
     </div>
