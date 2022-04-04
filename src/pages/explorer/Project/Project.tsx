@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { BigNumber } from '@ethersproject/bignumber';
 import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,11 +12,13 @@ import {
   ProjectProgressProvider,
   useDeploymentsQuery,
   useIndexersQuery,
+  useIPFS,
   useProjectMetadata,
   useProjectProgress,
 } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { notEmpty, renderAsync } from '../../../utils';
+import { getIndexerMetadata } from '../../../hooks/useIndexerMetadata';
+import { getDeploymentMetadata, notEmpty, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 
 export const ROUTE = '/explorer/project';
@@ -26,6 +29,8 @@ const ProjectInner: React.VFC = () => {
   const history = useHistory();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
+  const { catSingle } = useIPFS();
+  const { indexersStatus, chainBlockHeight, updateIndexerStatus } = useProjectProgress();
 
   const asyncProject = useProjectFromQuery(id);
   const { data: deployments } = useDeploymentsQuery({ projectId: id });
@@ -40,7 +45,34 @@ const ProjectInner: React.VFC = () => {
   );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
-  const { indexersStatus, chainBlockHeight } = useProjectProgress();
+  // Populate data from gql for total progress, less accurate than when indexers tab visible
+  React.useEffect(() => {
+    if (!indexers) {
+      return;
+    }
+
+    indexers.forEach((indexer) => {
+      updateIndexerStatus(indexer.indexerId, BigNumber.from(indexer.blockHeight).toNumber());
+    });
+
+    if (indexers.length) {
+      const indexer = indexers[0];
+
+      getIndexerMetadata(catSingle, indexer.indexer?.metadata)
+        .then((metadata) => {
+          if (!metadata) return;
+          return getDeploymentMetadata({
+            proxyEndpoint: metadata.url,
+            deploymentId,
+            indexer: indexer.indexerId,
+          });
+        })
+        .then((indexerMeta) => {
+          if (!indexerMeta) return;
+          updateIndexerStatus(indexer.indexerId, indexerMeta.lastProcessedHeight, indexerMeta.targetHeight);
+        });
+    }
+  }, [catSingle, indexers, updateIndexerStatus, deploymentId]);
 
   const { data: deploymentVersions } = useAsyncMemo(async () => {
     const deploymentsWithSemver = await Promise.all(

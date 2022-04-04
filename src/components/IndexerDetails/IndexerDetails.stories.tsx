@@ -45,6 +45,10 @@ NoMetadata.args = {
     blockHeight: '999999',
     timestamp: new Date(),
     status: Status.INDEXING,
+    indexer: {
+      __typename: 'Indexer',
+      metadata: '',
+    },
   },
   metadata: { loading: false, data: undefined },
   progressInfo: {
@@ -68,6 +72,10 @@ LoadingMetadata.args = {
     blockHeight: '654321',
     timestamp: new Date(),
     status: Status.INDEXING,
+    indexer: {
+      __typename: 'Indexer',
+      metadata: '',
+    },
   },
   metadata: { loading: true, data: undefined },
   progressInfo: {
@@ -91,6 +99,10 @@ WithMetadata.args = {
     blockHeight: '1000',
     timestamp: new Date(),
     status: Status.INDEXING,
+    indexer: {
+      __typename: 'Indexer',
+      metadata: '',
+    },
   },
   metadata: {
     loading: false,
