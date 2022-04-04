@@ -5,7 +5,7 @@ export const getTrimmedStr = (string: string | undefined, maxLength = 9): string
   if (!string) return string;
   if (maxLength < 1) return string;
   if (string.length <= maxLength) return string;
-  if (maxLength == 1) return `${string.substring(0, 1)} ...`;
+  if (maxLength === 1) return `${string.substring(0, 1)} ...`;
 
   const midpoint = Math.ceil(string.length / 2);
   const toRemove = string.length - maxLength;

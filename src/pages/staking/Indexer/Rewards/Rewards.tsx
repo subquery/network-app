@@ -15,11 +15,6 @@ import {
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 
-function getUnclaimRewardAmount(rewards: (Reward | UnclaimedReward)[]): number {
-  const unclaimedRewards = rewards.filter((reward) => !isClaimedReward(reward));
-  return unclaimedRewards.length;
-}
-
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
 }
@@ -84,7 +79,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           data: (data) => (
             <>
               <Typography variant="h6" className={styles.header}>
-                {t('rewards.totalUnclaimReward', { count: getUnclaimRewardAmount(data) || 0 })}
+                {t('rewards.totalUnclaimReward', { count: rewards?.data?.unclaimedRewards?.totalCount || 0 })}
               </Typography>
               <Table columns={columns} dataSource={data} scroll={{ x: 800 }} rowKey="id" />
             </>
