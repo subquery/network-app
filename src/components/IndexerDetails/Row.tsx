@@ -112,23 +112,23 @@ const ConnectedRow: React.VFC<
     startBlock?: number;
   }
 > = ({ indexer, deploymentId, startBlock, ...rest }) => {
+  const { updateIndexerStatus } = useProjectProgress();
+  const { balance, planAllowance } = useSQToken();
+  const pendingContracts = useContracts();
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
-  const asyncMetadataComplete = mapAsync(
-    (metadata): IndexerDetails => ({
-      ...metadata,
-      url: wrapProxyEndpoint(`${metadata.url}/query/${deploymentId}`, indexer.id),
-    }),
-    asyncMetadata,
-  );
 
   const [loadDeploymentPlans, deploymentPlans] = useDeploymentPlansLazy({
     deploymentId: deploymentId ?? '',
     address: indexer.indexerId,
   });
 
-  const { updateIndexerStatus } = useProjectProgress();
-
-  const { balance, planAllowance } = useSQToken();
+  const asyncMetadataComplete = mapAsync(
+    (metadata): IndexerDetails => ({
+      ...metadata,
+      url: wrapProxyEndpoint(`${metadata.url}/query/${deploymentId}`, indexer.indexerId),
+    }),
+    asyncMetadata,
+  );
 
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync((d) => {
@@ -142,8 +142,6 @@ const ConnectedRow: React.VFC<
 
     return plans.filter((p) => !p.deploymentId);
   }, deploymentPlans) as LazyQueryResult<Plan[], unknown>;
-
-  const pendingContracts = useContracts();
 
   const purchasePlan = async (indexer: string, planId?: string) => {
     const contracts = await pendingContracts;

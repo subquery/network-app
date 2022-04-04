@@ -90,6 +90,9 @@ const GET_DEPLOYMENT_INDEXERS = gql`
         blockHeight
         timestamp
         status
+        indexer {
+          metadata
+        }
       }
     }
   }

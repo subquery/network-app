@@ -7,6 +7,17 @@ import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { AsyncData, bytes32ToCid } from '../utils';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
 
+export async function getIndexerMetadata(
+  catSingle: (cid: string) => Promise<Uint8Array>,
+  cid?: string | null,
+): Promise<IndexerDetails | undefined> {
+  if (!cid) return undefined;
+
+  const obj = await fetchIpfsMetadata(catSingle, cid);
+
+  return indexerMetadataSchema.validate(obj);
+}
+
 export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | undefined> {
   const { getIndexer } = useIndexerRegistry();
   const { catSingle } = useIPFS();
@@ -18,8 +29,6 @@ export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | 
 
     if (!metadataHash) return undefined;
 
-    const obj = await fetchIpfsMetadata(catSingle, bytes32ToCid(metadataHash));
-
-    return indexerMetadataSchema.validate(obj);
+    return getIndexerMetadata(catSingle, bytes32ToCid(metadataHash));
   }, [address, catSingle]);
 }
