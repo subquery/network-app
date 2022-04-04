@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// import { TableRow, TableCell } from '../Table';
 import { Table, TableProps } from 'antd';
 import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
@@ -40,7 +39,6 @@ type Props = {
 } & PlansTableProps;
 
 export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plansTableProps }) => {
-  // console.log('progressInfo', progressInfo);
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 

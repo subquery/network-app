@@ -7,8 +7,8 @@ import { AppSidebar } from '../../components';
 import { Redirect, Route, Switch } from 'react-router';
 import ServiceAgreements from './ServiceAgreements';
 import { Plans } from './Plans';
-import { AiOutlineBarChart } from 'react-icons/ai';
 import { useTranslation } from 'react-i18next';
+import { BsDiagram3, BsFileEarmarkText } from 'react-icons/bs';
 
 const ROUTE = '/plans';
 const PLAN_ROUTE = '/plans/plans';
@@ -20,12 +20,12 @@ const PlanAndOffer: React.VFC = () => {
     {
       label: t('plans.category.myServiceAgreement'),
       link: SERVICE_AGREEMENTS,
-      icon: <AiOutlineBarChart />,
+      icon: <BsDiagram3 />,
     },
     {
       label: t('plans.category.myPlan'),
       link: PLAN_ROUTE,
-      icon: <AiOutlineBarChart />,
+      icon: <BsFileEarmarkText />,
     },
   ];
 

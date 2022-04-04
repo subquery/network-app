@@ -253,6 +253,7 @@ const GET_REWARDS = gql`
       }
     }
     unclaimedRewards(filter: { delegatorAddress: { equalTo: $address } }) {
+      totalCount
       nodes {
         id
         delegatorAddress

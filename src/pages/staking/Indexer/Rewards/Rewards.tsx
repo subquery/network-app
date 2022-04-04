@@ -23,7 +23,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
   const rewards = useRewards({ address: delegatorAddress });
   const { t } = useTranslation('translation');
 
-  const colums: TableProps<Reward | UnclaimedReward>['columns'] = [
+  const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
       title: '#',
       key: 'idx',
@@ -76,7 +76,14 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
-          data: (data) => <Table columns={colums} dataSource={data} scroll={{ x: 800 }} />,
+          data: (data) => (
+            <>
+              <Typography variant="h6" className={styles.header}>
+                {t('rewards.totalUnclaimReward', { count: rewards?.data?.unclaimedRewards?.totalCount || 0 })}
+              </Typography>
+              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} rowKey="id" />
+            </>
+          ),
         },
       )}
     </div>

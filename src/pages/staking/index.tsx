@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { BsCashStack, BsPerson } from 'react-icons/bs';
 import { EraProvider } from '../../containers';
 import { Redirect, Route, Switch } from 'react-router';
 import { Indexer } from './Indexer';
 import { Indexers, DelegateIndexer } from './Indexers';
-import { useTranslation } from 'react-i18next';
-import { AiOutlineBarChart } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
 import { WalletRoute } from '../../WalletRoute';
 
@@ -18,12 +18,12 @@ const Container: React.VFC = () => {
     {
       label: t('indexer.profile'),
       link: '/staking',
-      icon: <AiOutlineBarChart />,
+      icon: <BsPerson />,
     },
     {
       label: t('delegate.title'),
       link: `/staking/indexers`,
-      icon: <AiOutlineBarChart />,
+      icon: <BsCashStack />,
     },
   ];
 

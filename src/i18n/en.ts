@@ -229,9 +229,8 @@ const en = {
     },
 
     withdrawals: {
-      youCanWithdraw: 'You can withdraw total of ',
-      from: 'from',
-      unlockedAssets: 'unlocked asset(s)',
+      unlockedAsset: 'You can withdraw total of {{count}} unlocked asset.',
+      unlockedAsset_other: 'You can withdraw total of {{count}} unlocked assets.',
       amount: 'amount',
       start: 'start at',
       status: 'status',
@@ -240,7 +239,7 @@ const en = {
       noWithdrawals: 'No withdrawals available.',
       withdrawToken: 'Withdraw all unlocked assets',
       withdraw: 'Withdraw',
-      enterAmount: 'Enter Amount',
+      confirm: 'Confirm the claim',
       enterWithdrawAmount: 'Enter the amount of SQT you want to withdraw',
       confirmWithdraw: 'Confirm Withdraw',
     },
@@ -264,6 +263,8 @@ const en = {
         button: 'Claim',
         submit: 'Confirm Claim',
       },
+      totalUnclaimReward: 'You have total {{count}} unclaim reward',
+      totalUnclaimReward_other: 'You have total {{count}} unclaim rewards',
     },
     plans: {
       category: {
