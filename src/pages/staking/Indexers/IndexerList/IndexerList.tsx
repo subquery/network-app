@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, Button, Spinner } from '@subql/react-ui';
-import { Table } from 'antd';
+import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
-import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
@@ -39,17 +39,26 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 1));
 
-  const columns = [
+  const columns: TableProps<{
+    commission: CurrentEraValue<string>;
+    totalStake: CurrentEraValue<string>;
+    __typename: 'Indexer';
+    id: string;
+    metadata: string | null;
+    controller: string | null;
+  }>['columns'] = [
     {
       title: '#',
       key: 'idx',
       width: 30,
+      align: 'center',
       render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
-      width: 150,
+      width: 100,
+      align: 'center',
       render: (val: string) => {
         return <Typography variant="medium">{val === account ? 'You' : val}</Typography>;
       },
@@ -61,7 +70,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 70,
+          width: 50,
+          align: 'center',
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val ? `${val} SQT` : '-'}
@@ -72,7 +82,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 70,
+          width: 50,
+          align: 'center',
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val ? `${val} SQT` : '-'}
@@ -86,23 +97,25 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       children: [
         {
           title: t('general.current').toUpperCase(),
-          dataIndex: ['totalStake', 'current'],
+          dataIndex: ['commission', 'current'],
           key: 'currentTotalStake',
-          width: 70,
+          width: 50,
+          align: 'center',
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
+              {val || '-'}
             </Typography>
           ),
         },
         {
           title: t('general.next').toUpperCase(),
-          dataIndex: ['totalStake', 'after'],
+          dataIndex: ['commission', 'after'],
           key: 'currentTotalStake',
-          width: 70,
+          width: 50,
+          align: 'center',
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
+              {val || '-'}
             </Typography>
           ),
         },
@@ -113,7 +126,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 110,
+      width: 60,
+      align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
         return (
@@ -139,7 +153,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       <Table
         columns={columns}
         dataSource={orderedIndexerList}
-        scroll={{ x: 900 }}
+        scroll={{ x: 1200 }}
         loading={{
           spinning: loading,
           indicator: <Spinner />,
