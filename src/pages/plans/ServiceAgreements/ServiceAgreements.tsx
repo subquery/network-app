@@ -8,14 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from 'antd';
 import { AppPageHeader, Copy, TabButtons } from '../../../components';
 import { useIPFS, useProjectMetadata, useServiceAgreements, useWeb3 } from '../../../containers';
-import {
-  convertBigNumberToNumber,
-  formatEther,
-  getTrimmedStr,
-  mapAsync,
-  notEmpty,
-  renderAsyncArray,
-} from '../../../utils';
+import { formatEther, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import styles from './ServiceAgreements.module.css';
 import {
   GetServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
@@ -25,8 +18,16 @@ import IndexerName from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
+import { Redirect, Route, Switch } from 'react-router';
 
-const ROUTE = '/plans/service-agreements';
+export const ROUTE = '/plans/service-agreements';
+export const ONGOING_PLANS = `${ROUTE}/ongoing`;
+export const EXPIRED_PLANS = `${ROUTE}/expired`;
+
+const buttonLinks = [
+  { label: 'Ongoing', link: ONGOING_PLANS },
+  { label: 'Expired', link: EXPIRED_PLANS },
+];
 
 const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
@@ -55,6 +56,7 @@ const ServiceAgreements: React.VFC = () => {
   const { account } = useWeb3();
 
   const serviceAgreements = useServiceAgreements({ address: account ?? '' });
+  console.log('serviceAgreements', serviceAgreements);
 
   const columns: TableProps<ServiceAgreement>['columns'] = [
     {
@@ -117,17 +119,25 @@ const ServiceAgreements: React.VFC = () => {
     },
   ];
 
-  return (
-    <div>
-      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+  const Agreements = ({ expired = false }) => {
+    const now = moment();
 
-      <div className={styles.tabs}>
-        <TabButtons tabs={[{ label: 'All', link: ROUTE }]} whiteTab />
-      </div>
-
+    return (
       <div className="contentContainer">
         {renderAsyncArray(
-          mapAsync((d) => d.serviceAgreements?.nodes.filter(notEmpty), serviceAgreements),
+          mapAsync(
+            (d) =>
+              d.serviceAgreements?.nodes
+                .filter((agreement) => {
+                  if (expired) {
+                    return moment(agreement?.endTime) < now;
+                  }
+
+                  return moment(agreement?.endTime) >= now;
+                })
+                .filter(notEmpty),
+            serviceAgreements,
+          ),
           {
             loading: () => <Spinner />,
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
@@ -142,6 +152,22 @@ const ServiceAgreements: React.VFC = () => {
           },
         )}
       </div>
+    );
+  };
+
+  return (
+    <div>
+      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+
+      <div className={styles.tabs}>
+        <TabButtons tabs={buttonLinks} whiteTab />
+      </div>
+
+      <Switch>
+        <Route exact path={ONGOING_PLANS} component={Agreements} />
+        <Route exact path={EXPIRED_PLANS} component={() => <Agreements expired />} />
+        <Redirect from={ROUTE} to={ONGOING_PLANS} />
+      </Switch>
     </div>
   );
 };
