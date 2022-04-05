@@ -11,7 +11,6 @@ import { DoUndelegate } from '../DoUndelegate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { useDelegations, useEra } from '../../../../containers';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
-import { GetDelegations_delegations_nodes as Delegations } from '../../../../__generated__/GetDelegations';
 
 interface Props {
   delegator: string;
@@ -45,13 +44,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       key: 'idx',
       width: 30,
       align: 'center',
-      render: (text: string, record: any, index: number) => <div>{index + 1}</div>,
+      render: (text: string, record: any, index: number) => <Typography>{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'indexer',
-      width: 200,
+      width: 100,
       align: 'center',
+      render: (text: string) => <Typography>{text}</Typography>,
     },
     {
       title: t('delegate.yourDelegateAmount').toUpperCase(),
@@ -60,15 +60,17 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           title: t('general.current').toUpperCase(),
           dataIndex: ['value', 'current'],
           key: 'currentValue',
-          width: 80,
+          width: 60,
           align: 'center',
+          render: (text: string) => <Typography>{`${text} SQT`}</Typography>,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['value', 'after'],
           key: 'afterValue',
-          width: 80,
+          width: 60,
           align: 'center',
+          render: (text: string) => <Typography>{`${text} SQT`}</Typography>,
         },
       ],
     },
@@ -77,7 +79,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 70,
+      width: 30,
       align: 'center',
       render: (id: string) => {
         if (id === delegator) {
