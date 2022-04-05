@@ -90,47 +90,52 @@ type RenderResult = React.ReactElement | null;
 type Handlers<T> = {
   loading: () => RenderResult;
   error: (error: Error) => RenderResult;
-  data: (data?: T) => RenderResult;
+  data: (data: T, asyncData: AsyncData<T>) => RenderResult;
 };
 
 type HandlersArray<T extends any[]> = {
   loading: () => RenderResult;
   error: (error: Error) => RenderResult;
-  data: (data: T) => RenderResult;
+  data: (data: T, asyncData: AsyncData<T>) => RenderResult;
   empty: () => RenderResult;
 };
 
 export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): RenderResult {
-  if (data.error) {
-    return handlers.error(data.error);
-  } else if (data.loading) {
-    return handlers.loading();
-  } else {
+  if (data.data !== undefined) {
     try {
-      return handlers.data(data.data);
+      return handlers.data(data.data, data);
     } catch (e) {
       // TODO not sure this is desired behaviour
       return handlers.error(e as Error);
     }
+  } else if (data.error) {
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading();
   }
+
+  return null;
 }
 
 export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
-  if (data.error) {
-    return handlers.error(data.error);
-  } else if (data.loading) {
-    return handlers.loading();
-  } else {
+  if (data.data !== undefined) {
     try {
-      if (!data.data || (Array.isArray(data.data) && !data.data.length)) {
+      if (data.data === null || (Array.isArray(data.data) && !data.data.length)) {
         return handlers.empty();
       }
-      return handlers.data(data.data);
+      return handlers.data(data.data, data);
     } catch (e) {
       // TODO not sure this is desired behaviour
       return handlers.error(e as Error);
     }
   }
+  if (data.error) {
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading();
+  }
+
+  return null;
 }
 
 export function concatU8A(a: Uint8Array, b: Uint8Array): Uint8Array {
