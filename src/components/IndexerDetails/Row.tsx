@@ -27,6 +27,8 @@ import PlansTable, { PlansTableProps } from './PlansTable';
 import assert from 'assert';
 import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
+import Copy from '../Copy';
+import styles from './IndexerDetails.module.css';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -58,7 +60,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
       render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
     },
     {
-      width: '50%',
+      width: '30%',
       align: 'center',
       render: () => (
         <>
@@ -74,6 +76,22 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
       width: '20%',
       align: 'center',
       render: () => <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />,
+    },
+    {
+      width: '20%',
+      align: 'center',
+      ellipsis: true,
+      render: () =>
+        renderAsync(metadata, {
+          error: () => <Typography>-</Typography>,
+          loading: () => <Spinner />,
+          data: (data) => (
+            <div className={styles.addressCont}>
+              <Typography.Text ellipsis={true}>{data?.url ?? '-'}</Typography.Text>
+              <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon} />
+            </div>
+          ),
+        }),
     },
     {
       width: '10%',

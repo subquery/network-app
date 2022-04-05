@@ -24,7 +24,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId })
       align: 'center',
     },
     {
-      width: '50%',
+      width: '30%',
       title: t('indexers.head.progress'),
       dataIndex: 'progress',
       align: 'center',
@@ -32,6 +32,12 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId })
     {
       width: '20%',
       title: t('indexers.head.status'),
+      dataIndex: 'status',
+      align: 'center',
+    },
+    {
+      width: '20%',
+      title: t('indexers.head.url'),
       dataIndex: 'status',
       align: 'center',
     },
