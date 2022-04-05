@@ -7,26 +7,33 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from 'antd';
 import { AppPageHeader, Copy, TabButtons } from '../../../components';
-import { useIPFS, useProjectMetadata, useServiceAgreements, useWeb3 } from '../../../containers';
 import {
-  convertBigNumberToNumber,
-  formatEther,
-  getTrimmedStr,
-  mapAsync,
-  notEmpty,
-  renderAsyncArray,
-} from '../../../utils';
+  useExpiredServiceAgreements,
+  useIPFS,
+  useProjectMetadata,
+  useServiceAgreements,
+  useWeb3,
+} from '../../../containers';
+import { formatEther, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import styles from './ServiceAgreements.module.css';
 import {
-  GetServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
-  GetServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
-} from '../../../__generated__/GetServiceAgreements';
+  GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
+  GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
+} from '../../../__generated__/GetOngoingServiceAgreements';
 import IndexerName from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
+import { Redirect, Route, Switch } from 'react-router';
 
-const ROUTE = '/plans/service-agreements';
+export const ROUTE = '/plans/service-agreements';
+export const ONGOING_PLANS = `${ROUTE}/ongoing`;
+export const EXPIRED_PLANS = `${ROUTE}/expired`;
+
+const buttonLinks = [
+  { label: 'Ongoing', link: ONGOING_PLANS },
+  { label: 'Expired', link: EXPIRED_PLANS },
+];
 
 const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
@@ -52,9 +59,6 @@ const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
 
 const ServiceAgreements: React.VFC = () => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
-
-  const serviceAgreements = useServiceAgreements({ address: account ?? '' });
 
   const columns: TableProps<ServiceAgreement>['columns'] = [
     {
@@ -117,19 +121,25 @@ const ServiceAgreements: React.VFC = () => {
     },
   ];
 
-  return (
-    <div>
-      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+  const Agreements = ({ queryFn }: { queryFn: typeof useServiceAgreements }) => {
+    const [now, setNow] = React.useState<Date>(moment().toDate());
+    const { account } = useWeb3();
 
-      <div className={styles.tabs}>
-        <TabButtons tabs={[{ label: 'All', link: ROUTE }]} whiteTab />
-      </div>
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        setNow(moment().toDate());
+      }, 60000);
+      return () => clearInterval(interval);
+    }, []);
 
+    const serviceAgreements = queryFn({ address: account ?? '', now });
+
+    return (
       <div className="contentContainer">
         {renderAsyncArray(
           mapAsync((d) => d.serviceAgreements?.nodes.filter(notEmpty), serviceAgreements),
           {
-            loading: () => <Spinner />,
+            loading: () => <Spinner />, // TODO: everytime refetch, it will reload
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
@@ -142,6 +152,22 @@ const ServiceAgreements: React.VFC = () => {
           },
         )}
       </div>
+    );
+  };
+
+  return (
+    <div>
+      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+
+      <div className={styles.tabs}>
+        <TabButtons tabs={buttonLinks} whiteTab />
+      </div>
+
+      <Switch>
+        <Route exact path={ONGOING_PLANS} component={() => <Agreements queryFn={useServiceAgreements} />} />
+        <Route exact path={EXPIRED_PLANS} component={() => <Agreements queryFn={useExpiredServiceAgreements} />} />
+        <Redirect from={ROUTE} to={ONGOING_PLANS} />
+      </Switch>
     </div>
   );
 };

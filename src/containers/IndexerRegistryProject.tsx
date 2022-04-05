@@ -15,7 +15,15 @@ import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
 import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
 import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
 import { GetSpecificPlans, GetSpecificPlansVariables } from '../__generated__/GetSpecificPlans';
-import { GetServiceAgreements, GetServiceAgreementsVariables } from '../__generated__/GetServiceAgreements';
+
+import {
+  GetOngoingServiceAgreements,
+  GetOngoingServiceAgreementsVariables,
+} from '../__generated__/GetOngoingServiceAgreements';
+import {
+  GetExpiredServiceAgreements,
+  GetExpiredServiceAgreementsVariables,
+} from '../__generated__/GetExpiredServiceAgreements';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -229,9 +237,29 @@ const GET_SPECIFIC_PLANS = gql`
 
 const GET_SERVICE_AGREEMENTS = gql`
   ${SERVICE_AGREEMENT_FIELDS}
-  query GetServiceAgreements($address: String!) {
+  query GetOngoingServiceAgreements($address: String!, $now: Datetime!) {
     serviceAgreements(
-      filter: { or: [{ indexerAddress: { equalTo: $address } }, { consumerAddress: { equalTo: $address } }] }
+      filter: {
+        or: [{ indexerAddress: { equalTo: $address } }, { consumerAddress: { equalTo: $address } }]
+        endTime: { greaterThanOrEqualTo: $now }
+      }
+      orderBy: END_TIME_ASC
+    ) {
+      nodes {
+        ...ServiceAgreementFields
+      }
+    }
+  }
+`;
+
+const GET_EXPIRED_SERVICE_AGREEMENTS = gql`
+  ${SERVICE_AGREEMENT_FIELDS}
+  query GetExpiredServiceAgreements($address: String!, $now: Datetime!) {
+    serviceAgreements(
+      filter: {
+        or: [{ indexerAddress: { equalTo: $address } }, { consumerAddress: { equalTo: $address } }]
+        endTime: { lessThan: $now }
+      }
       orderBy: END_TIME_ASC
     ) {
       nodes {
@@ -305,11 +333,11 @@ export function useAllDelegations(params: GetAllDelegationsVariables): QueryResu
 }
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
-  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params });
+  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 30000 });
 }
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
-  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params });
+  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 30000 });
 }
 
 export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult<GetPlanTemplates> {
@@ -324,12 +352,24 @@ export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryR
   return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, { variables: params });
 }
 
-export function useServiceAgreements(params: GetServiceAgreementsVariables): QueryResult<GetServiceAgreements> {
-  return useQuery<GetServiceAgreements, GetServiceAgreementsVariables>(GET_SERVICE_AGREEMENTS, { variables: params });
+export function useServiceAgreements(
+  params: GetOngoingServiceAgreementsVariables,
+): QueryResult<GetOngoingServiceAgreements> {
+  return useQuery<GetOngoingServiceAgreements, GetOngoingServiceAgreementsVariables>(GET_SERVICE_AGREEMENTS, {
+    variables: params,
+  });
+}
+
+export function useExpiredServiceAgreements(
+  params: GetExpiredServiceAgreementsVariables,
+): QueryResult<GetExpiredServiceAgreements> {
+  return useQuery<GetExpiredServiceAgreements, GetExpiredServiceAgreementsVariables>(GET_EXPIRED_SERVICE_AGREEMENTS, {
+    variables: params,
+  });
 }
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
-  return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params });
+  return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params, pollInterval: 30000 });
 }
 
 export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {

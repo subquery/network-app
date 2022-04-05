@@ -97,7 +97,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
       actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
-      renderContent={(onSubmit, onCancel, isLoading) => {
+      renderContent={(onSubmit, onCancel, isLoading, error) => {
         return renderAsync(planManagerAllowance, {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to check if token needs approval: ${e.message}`}</Typography>,
@@ -114,6 +114,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
               <div>
                 <SummaryList title={t('plans.purchase.description')} list={planSummary} />
 
+                <Typography className={'errorText'}>{error}</Typography>
                 <div className={'flex-end'}>
                   <Button
                     label={t('plans.purchase.cancel')}

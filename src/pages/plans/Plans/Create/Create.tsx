@@ -31,9 +31,10 @@ type FormProps = {
   template: Template;
   onSubmit: (data: PlanFormData) => void | Promise<void>;
   onCancel: () => void;
+  error?: string;
 };
 
-const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
+const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, error }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
@@ -121,6 +122,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel }) => {
               </Select>
             </div>
 
+            <Typography className={'errorText'}>{error}</Typography>
             <div className={clsx('flex', 'flex-end', styles.btns)}>
               <Button
                 label={t('plans.create.cancel')}
@@ -177,7 +179,7 @@ const Create: React.FC = () => {
         failureText: t('plans.create.failureText'),
       }}
       onClick={(params: PlanFormData) => handleCreate(params.price.toString(), params.deploymentId)}
-      renderContent={(onSubmit, onCancel, isLoading) =>
+      renderContent={(onSubmit, onCancel, isLoading, error) =>
         renderAsync(
           mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty)[0], templates),
           {
@@ -187,7 +189,7 @@ const Create: React.FC = () => {
               if (!template) {
                 return <Typography>No template found</Typography>;
               }
-              return <PlanForm template={template} onSubmit={onSubmit} onCancel={onCancel} />;
+              return <PlanForm template={template} onSubmit={onSubmit} onCancel={onCancel} error={error} />;
             },
           },
         )

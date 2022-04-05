@@ -7,7 +7,7 @@ import './i18n';
 
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import * as pages from './pages';
 import { Header, Footer } from './components';
 import {
@@ -27,8 +27,18 @@ import { NETWORK_CONFIGS } from './containers/Web3';
 import { UnsupportedChainIdError } from '@web3-react/core';
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
-import { Button } from '@subql/react-ui';
+import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
+
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+  return (
+    <div role="alert">
+      <Typography className="errorText">Something went wrong:</Typography>
+      <Typography className="errorText">{error.message}</Typography>
+      <Button onClick={resetErrorBoundary}>Try again</Button>
+    </div>
+  );
+};
 
 const Providers: React.FC = ({ children }) => {
   return (
@@ -79,31 +89,33 @@ const App: React.VFC = () => {
   const { t } = useTranslation();
 
   return (
-    <Providers>
-      <div className="App">
-        <Router>
-          <Header />
-          <div className="Main">
-            <BlockchainStatus>
-              <Switch>
-                <Route component={pages.Explorer} path="/explorer" />
-                <WalletRoute
-                  component={pages.Studio}
-                  path="/studio"
-                  title={t('studio.wallet.connect')}
-                  subtitle={t('studio.wallet.subTitle')}
-                />
-                <Route component={pages.Staking} path="/staking" />
-                <WalletRoute component={pages.Plans} path="/plans" />
-                {/*{<Route component={pages.Home} />}*/}
-                <Redirect from="/" to="/explorer" />
-              </Switch>
-            </BlockchainStatus>
-          </div>
-          <Footer />
-        </Router>
-      </div>
-    </Providers>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Providers>
+        <div className="App">
+          <Router>
+            <Header />
+            <div className="Main">
+              <BlockchainStatus>
+                <Switch>
+                  <Route component={pages.Explorer} path="/explorer" />
+                  <WalletRoute
+                    component={pages.Studio}
+                    path="/studio"
+                    title={t('studio.wallet.connect')}
+                    subtitle={t('studio.wallet.subTitle')}
+                  />
+                  <Route component={pages.Staking} path="/staking" />
+                  <WalletRoute component={pages.Plans} path="/plans" />
+                  {/*{<Route component={pages.Home} />}*/}
+                  <Redirect from="/" to="/explorer" />
+                </Switch>
+              </BlockchainStatus>
+            </div>
+            <Footer />
+          </Router>
+        </div>
+      </Providers>
+    </ErrorBoundary>
   );
 };
 
