@@ -90,7 +90,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
           }}
           variant="errTextBtn"
           onClick={() => handleRemovePlan(id)}
-          renderContent={(onClick, onCancel, isLoading) => {
+          renderContent={(onClick, onCancel, isLoading, error) => {
             const planDetails = [
               {
                 label: t('plans.headers.price'),
@@ -113,6 +113,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
               <>
                 <SummaryList title={t('plans.remove.description')} list={planDetails} />
 
+                <Typography className={'errorText'}>{error}</Typography>
                 <div className={clsx('flex', 'flex-end', styles.btns)}>
                   <Button
                     label={t('plans.remove.submit')}
