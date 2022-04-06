@@ -7,17 +7,13 @@ import * as React from 'react';
 import assert from 'assert';
 import styles from './DoWithdraw.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useWeb3, useWithdrawls } from '../../../../containers';
+import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import clsx from 'clsx';
 
 export const DoWithdraw: React.VFC = () => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
-  const withdrawals = useWithdrawls({ delegator: account || '' });
   const pendingContracts = useContracts();
-
-  console.log('withdrawals', withdrawals);
 
   const modalText = {
     title: t('withdrawals.withdraw'),
