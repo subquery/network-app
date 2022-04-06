@@ -21,14 +21,12 @@ export const Locked: React.VFC = () => {
       {renderAsyncArray(
         mapAsync(
           ([withdrawlsResult, lockPeriod]) =>
-            withdrawlsResult?.withdrawls?.nodes
-              .map((withdrawal, idx) => {
-                const startAt = moment(withdrawal?.startTime).format();
-                const endAt = moment(startAt).add(lockPeriod, 'second').format();
-                const status = moment().format() > endAt ? t('withdrawals.unlock') : t('withdrawals.lock');
-                return { ...withdrawal, startAt, endAt, status, idx };
-              })
-              .filter(notEmpty),
+            withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
+              const startAt = moment(withdrawal?.startTime).format();
+              const endAt = moment(startAt).add(lockPeriod, 'second').format();
+              const status = moment().format() > endAt ? t('withdrawals.unlock') : t('withdrawals.lock');
+              return { ...withdrawal, startAt, endAt, status, idx };
+            }),
           mergeAsync(withdrawals, lockPeriod),
         ),
         {

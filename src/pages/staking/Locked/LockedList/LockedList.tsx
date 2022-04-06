@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { formatEther } from '../../../../utils';
-import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '../../../../__generated__/GetWithdrawls';
+import { GetWithdrawls_withdrawls_nodes as Withdrawals } from '../../../../__generated__/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
@@ -20,7 +20,7 @@ const TableCellText = ({ children }: { children: React.ReactChild | React.ReactC
   </Typography>
 );
 
-interface SortedWithdrawals extends Partial<Withdrawls> {
+interface SortedWithdrawals extends Withdrawals {
   idx: number;
   startAt: string;
   endAt: string;
