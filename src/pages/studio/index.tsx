@@ -10,11 +10,13 @@ import Project from './Project';
 
 const Studio: React.VFC = () => {
   return (
-    <Switch>
-      <Route path="/studio/create" component={Create} />
-      <Route path="/studio/project/:id" component={Project} />
-      <Route exact path="/studio" component={Home} />
-    </Switch>
+    <div className="fullWidth">
+      <Switch>
+        <Route path="/studio/create" component={Create} />
+        <Route path="/studio/project/:id" component={Project} />
+        <Route exact path="/studio" component={Home} />
+      </Switch>
+    </div>
   );
 };
 
