@@ -6,17 +6,23 @@ import { useTranslation } from 'react-i18next';
 import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
 import assert from 'assert';
 import { tokenApprovalModalText, ModalApproveToken } from '../../../../components';
-import { useIsIndexer } from '../../../../hooks';
+import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
 import { convertStringToNumber } from '../../../../utils';
+import moment from 'moment';
 
 enum StakeAction {
   Stake = 'stake',
   UnStake = 'unstake',
 }
 
-const getContentText = (actionType: StakeAction, requireTokenApproval = false, t: any) => {
+const getContentText = (
+  actionType: StakeAction,
+  requireTokenApproval = false,
+  t: any,
+  lockPeriod: number | undefined,
+) => {
   if (actionType === StakeAction.Stake) {
     return requireTokenApproval
       ? tokenApprovalModalText
@@ -33,7 +39,9 @@ const getContentText = (actionType: StakeAction, requireTokenApproval = false, t
   return {
     title: t('indexer.unstake'),
     steps: [t('indexer.enterUnstakeAmount'), t('indexer.confirmOnMetamask')],
-    description: t('indexer.unstakeValidNextEra'),
+    description: t('indexer.unstakeValidNextEra', {
+      duration: `${moment.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
+    }),
     inputTitle: t('indexer.unstakeInputTitle'),
     submitText: t('indexer.confirmUnstake'),
     failureText: `Sorry, the ${actionType} operation has failed.`,
@@ -45,7 +53,7 @@ export const DoStake: React.VFC = () => {
   const pendingContracts = useContracts();
   const { t } = useTranslation();
   const { account } = useWeb3();
-  /* TODO change to isIndexer */
+  const lockPeriod = useLockPeriod();
 
   const isIndexer = useIsIndexer(account);
   const canUnstake = isIndexer.data;
@@ -56,7 +64,7 @@ export const DoStake: React.VFC = () => {
   const curAmount =
     stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined;
   const showMaxButton = stakeAction === StakeAction.Stake;
-  const modalText = getContentText(stakeAction, requireTokenApproval, t);
+  const modalText = getContentText(stakeAction, requireTokenApproval, t, lockPeriod.data);
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     const contracts = await pendingContracts;

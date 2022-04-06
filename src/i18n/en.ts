@@ -181,7 +181,7 @@ const en = {
       confirmStake: 'Confirm Stake',
       enterUnstakeAmount: 'Enter Unstake Amount',
       unstakeValidNextEra:
-        'Tokens will be unstaked from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards.',
+        'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
       unstakeInputTitle: 'Enter the amount of SQT you want to unstake',
       confirmUnstake: 'Confirm Unstake',
       updateCommissionRate: 'Change commission rate',
