@@ -17,6 +17,8 @@
     "@apollo/client": "^3.4.16",
     "@material-ui/core": "^4.12.3",
     "@polkadot/util": "^7.8.2",
+    "@sentry/react": "^6.19.4",
+    "@sentry/tracing": "^6.19.4",
     "@subql/common": "0.13.1-6",
     "@subql/contract-sdk": "0.4.1",
     "@subql/react-ui": "^1.0.1-19",
