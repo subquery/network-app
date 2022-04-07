@@ -98,14 +98,6 @@ const App: React.VFC = () => {
         <div className="App">
           <Router>
             <Header />
-            <Button
-              onClick={() => {
-                throw new Error('Test sentry');
-              }}
-              colorScheme="gradient"
-            >
-              Try again
-            </Button>
             <div className="Main">
               <BlockchainStatus>
                 <Switch>
