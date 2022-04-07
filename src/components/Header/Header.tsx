@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
+import testnet from '@subql/contract-sdk/publish/testnet.json';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
@@ -40,6 +41,21 @@ const Header: React.VFC = () => {
   const handleSelected = (key: string) => {
     if (key === 'disconnect') {
       deactivate();
+    }
+
+    if (key === 'addToken') {
+      window.ethereum?.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: testnet.SQToken.address,
+            symbol: 'SQT',
+            decimals: 18,
+            // image: 'https://foo.io/token-image.svg',
+          },
+        },
+      });
     }
   };
 
@@ -83,7 +99,10 @@ const Header: React.VFC = () => {
         <div className={styles.right}>
           {account ? (
             <Dropdown
-              items={[{ key: 'disconnect', label: 'Disconnect' }]}
+              items={[
+                { key: 'addToken', label: 'Import SQT to wallet' },
+                { key: 'disconnect', label: 'Disconnect' },
+              ]}
               onSelected={handleSelected}
               colorScheme="gradient"
             >
