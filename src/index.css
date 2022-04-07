@@ -120,6 +120,12 @@ textarea {
   display: flex;
 }
 
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .flex-end {
   display: flex;
   justify-content: flex-end;

@@ -7,7 +7,7 @@ import './i18n';
 
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import * as Sentry from '@sentry/react';
 import * as pages from './pages';
 import { Header, Footer } from './components';
 import {
@@ -29,13 +29,17 @@ import { UnsupportedChainIdError } from '@web3-react/core';
 import studioStyles from './pages/studio/index.module.css';
 import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
+import clsx from 'clsx';
 
-const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
-    <div role="alert">
+    <div className={clsx('fullWidth', 'flex-center')}>
       <Typography className="errorText">Something went wrong:</Typography>
-      <Typography className="errorText">{error.message}</Typography>
-      <Button onClick={resetErrorBoundary}>Try again</Button>
+      <Typography className="errorText">{error?.message || error.toString()}</Typography>
+      <Typography>{componentStack}</Typography>
+      <Button onClick={resetError} colorScheme="gradient">
+        Try again
+      </Button>
     </div>
   );
 };
@@ -89,7 +93,7 @@ const App: React.VFC = () => {
   const { t } = useTranslation();
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <Sentry.ErrorBoundary fallback={ErrorFallback} showDialog>
       <Providers>
         <div className="App">
           <Router>
@@ -115,7 +119,7 @@ const App: React.VFC = () => {
           </Router>
         </div>
       </Providers>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   );
 };
 
