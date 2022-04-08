@@ -11,7 +11,7 @@ const en = {
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
-      hosted: 'Hosted Service',
+      hosted: 'Frontier (Testnet)',
     },
     footer: {
       title: 'Join The Future',
