@@ -7,8 +7,8 @@ import { useHistory, useParams } from 'react-router';
 import { CurEra } from '../../../../components';
 import styles from './DelegateIndexer.module.css';
 import { useTranslation } from 'react-i18next';
-import { useIndexerCapacity, useSortedIndexer } from '../../../../hooks';
-import { formatEther, mergeAsync, renderAsync } from '../../../../utils';
+import { useSortedIndexer } from '../../../../hooks';
+import { renderAsync } from '../../../../utils';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
 
@@ -28,7 +28,6 @@ export const DelegateIndexer: React.VFC = () => {
   }, [address, history]);
 
   const sortedIndexer = useSortedIndexer(address);
-  const curCapacity = useIndexerCapacity(address);
 
   return (
     <>
@@ -46,19 +45,16 @@ export const DelegateIndexer: React.VFC = () => {
       </div>
 
       <div className={styles.indexing}>
-        {renderAsync(mergeAsync(sortedIndexer, curCapacity), {
+        {renderAsync(sortedIndexer, {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
           data: (data) => {
             if (!data) return <></>;
-            const [sortedIndexing, curCapacity] = data;
-            if (!sortedIndexing) return <></>;
             return (
               <IndexingContent
                 tableData={[
                   {
-                    ...sortedIndexing,
-                    capacity: { current: formatEther(curCapacity?.current), after: formatEther(curCapacity?.after) },
+                    ...data,
                   },
                 ]}
                 indexer={address}

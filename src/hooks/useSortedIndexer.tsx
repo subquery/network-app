@@ -12,20 +12,23 @@ import {
   toPercentage,
 } from '../utils';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
+import { useIndexerCapacity } from './useIndexerCapacity';
 
 export interface UseSortedIndexerReturn {
   commission: CurrentEraValue<string>;
   totalStake: CurrentEraValue<number>;
   ownStake: CurrentEraValue<number>;
   totalDelegations: CurrentEraValue<number>;
+  capacity: CurrentEraValue<number>;
 }
 
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
   const indexerDelegation = useDelegation(account, account);
+  const indexerCapacity = useIndexerCapacity(account);
 
-  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
+  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation, indexerCapacity);
 
   if (loading) {
     return { loading: true, data: undefined };
@@ -36,9 +39,9 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   }
 
   try {
-    const [currentEraValue, indexer, delegation] = data;
+    const [currentEraValue, indexer, delegation, capacity] = data;
 
-    if (!currentEraValue || !indexer || !delegation) {
+    if (!currentEraValue || !indexer || !delegation || !capacity) {
       throw new Error('Missing expected async data');
     }
 
@@ -54,6 +57,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0), 10));
     const sortedTotalStake = mapEraValue(totalStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
     const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
+    const sortedCapacity = mapEraValue(capacity, (v) => convertStringToNumber(formatEther(v ?? 0)));
 
     const totalDelegations = mapEraValue(
       {
@@ -70,6 +74,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
         totalStake: sortedTotalStake,
         ownStake: sortedOwnStake,
         totalDelegations,
+        capacity: sortedCapacity,
       },
     };
   } catch (e) {

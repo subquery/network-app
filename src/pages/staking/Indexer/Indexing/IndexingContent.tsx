@@ -37,7 +37,7 @@ const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }
 };
 
 interface Props {
-  tableData: Array<UseSortedIndexerReturn & { capacity: { current: string } }>;
+  tableData: Array<UseSortedIndexerReturn>;
   indexer: string;
 }
 
