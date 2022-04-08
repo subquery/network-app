@@ -6,3 +6,7 @@
   background: var(--gradient-to);
   color: white;
 }
+
+.unlockedAmount {
+  margin: 1rem 0;
+}
