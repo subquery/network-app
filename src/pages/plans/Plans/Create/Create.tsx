@@ -41,7 +41,7 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, error })
 
   const summaryList = [
     {
-      label: t('plans.headers.price'),
+      label: t('plans.headers.period'),
       value: secondsToDhms(convertBigNumberToNumber(template.period)),
     },
     {
