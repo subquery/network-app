@@ -6,8 +6,8 @@ import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
 import { DoStake } from '../DoStake';
-import { formatEther, mergeAsync, renderAsync } from '../../../../utils';
-import { useIndexerCapacity, useIsIndexer, useSortedIndexer } from '../../../../hooks';
+import { mergeAsync, renderAsync } from '../../../../utils';
+import { useIsIndexer, useSortedIndexer } from '../../../../hooks';
 import { IndexingContent } from './IndexingContent';
 
 export const NotRegisteredIndexer: React.VFC = () => {
@@ -33,16 +33,15 @@ interface Props {
 export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
   const { t } = useTranslation();
   const isIndexer = useIsIndexer(indexer);
-  const curCapacity = useIndexerCapacity(indexer || '');
 
   return (
     <div className={'contentContainer'}>
-      {renderAsync(mergeAsync(isIndexer, tableData, curCapacity), {
+      {renderAsync(mergeAsync(isIndexer, tableData), {
         loading: () => <Spinner />,
         error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
         data: (data) => {
           if (!data) return <></>;
-          const [isIndexer, sortedIndexing, curCapacity] = data;
+          const [isIndexer, sortedIndexing] = data;
           if (isIndexer === undefined) return <Spinner />;
           if (!isIndexer && !sortedIndexing) return <NotRegisteredIndexer />;
           if (!sortedIndexing)
@@ -59,7 +58,6 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
               tableData={[
                 {
                   ...sortedIndexing,
-                  capacity: { current: formatEther(curCapacity?.current), after: formatEther(curCapacity?.after) },
                 },
               ]}
               indexer={indexer}

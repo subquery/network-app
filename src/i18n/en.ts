@@ -11,7 +11,7 @@ const en = {
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
-      hosted: 'Hosted Service',
+      hosted: 'Frontier (Testnet)',
     },
     footer: {
       title: 'Join The Future',
@@ -240,9 +240,10 @@ const en = {
       noWithdrawals: 'No withdrawals available.',
       withdrawToken: 'Withdraw all unlocked assets',
       withdraw: 'Withdraw',
-      confirm: 'Confirm the claim',
+      confirm: 'Confirm withdrawal amount',
       enterWithdrawAmount: 'Enter the amount of SQT you want to withdraw',
       confirmWithdraw: 'Confirm Withdraw',
+      aboutToWithdraw: 'You are about to withdraw {{amount}} SQT.',
     },
     general: {
       current: 'current',

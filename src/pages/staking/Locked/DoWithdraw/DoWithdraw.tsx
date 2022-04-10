@@ -11,7 +11,11 @@ import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import clsx from 'clsx';
 
-export const DoWithdraw: React.VFC = () => {
+interface DoWithdrawProps {
+  unlockedAmount: number;
+}
+
+export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
@@ -33,11 +37,14 @@ export const DoWithdraw: React.VFC = () => {
     <div>
       <TransactionModal
         text={modalText}
-        actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
+        actions={[{ label: t('withdrawals.withdraw'), key: 'claim' }]}
         onClick={handleClick}
         renderContent={(onSubmit, _, isLoading, error) => {
           return (
             <>
+              <Typography className={styles.unlockedAmount}>
+                {t('withdrawals.aboutToWithdraw', { amount: unlockedAmount })}
+              </Typography>
               <Typography className={'errorText'}>{error}</Typography>
               <div className={clsx(styles.btnContainer, 'flex-end')}>
                 <Button

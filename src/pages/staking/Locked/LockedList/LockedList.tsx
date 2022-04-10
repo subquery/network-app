@@ -5,7 +5,7 @@ import { Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { formatEther } from '../../../../utils';
+import { convertStringToNumber, formatEther } from '../../../../utils';
 import { GetWithdrawls_withdrawls_nodes as Withdrawals } from '../../../../__generated__/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
@@ -71,8 +71,12 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     },
   ];
 
-  const availableClaimAmount = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format()).length;
-  const headerTitle = `${t('withdrawals.unlockedAsset', { count: availableClaimAmount || 0 })}`;
+  const unlockedWithdrawals = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format());
+  const availableWithdrawalsAmount = unlockedWithdrawals.reduce((sum, withdrawal) => {
+    return sum + convertStringToNumber(formatEther(withdrawal.amount));
+  }, 0);
+  const unlockedWithdrawalsTotal = unlockedWithdrawals.length;
+  const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedWithdrawalsTotal || 0 })}`;
 
   return (
     <div className={styles.container}>
@@ -80,7 +84,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        {availableClaimAmount > 0 && <DoWithdraw />}
+        {unlockedWithdrawalsTotal > 0 && <DoWithdraw unlockedAmount={availableWithdrawalsAmount} />}
       </div>
 
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
