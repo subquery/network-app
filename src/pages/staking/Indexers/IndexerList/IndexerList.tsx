@@ -7,12 +7,14 @@ import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
-import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
+import IndexerName from '../../../../components/IndexerDetails/IndexerName';
+import { useIndexerMetadata } from '../../../../hooks';
 
 interface props {
   indexers?: Indexer[];
@@ -20,6 +22,18 @@ interface props {
   loading?: boolean;
   onLoadMore?: (offset: number) => void;
 }
+
+const ConnectedIndexer: React.VFC<{ id: string; account?: string | null }> = ({ id, account }) => {
+  const asyncMetadata = useIndexerMetadata(id);
+
+  return (
+    <IndexerName
+      name={id === account ? 'You' : asyncMetadata.data?.name}
+      image={asyncMetadata.data?.image}
+      address={id}
+    />
+  );
+};
 
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, loading }) => {
   const { t } = useTranslation();
@@ -52,9 +66,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       dataIndex: 'id',
       width: 100,
       align: 'center',
-      render: (val: string) => {
-        return <Typography variant="medium">{val === account ? 'You' : val}</Typography>;
-      },
+      render: (val: string) => <ConnectedIndexer id={val} account={account} />,
     },
     {
       title: t('indexer.totalStake').toUpperCase(),
