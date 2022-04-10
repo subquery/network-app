@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, Button, Spinner } from '@subql/react-ui';
+import { Typography, Button } from '@subql/react-ui';
 import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
@@ -19,7 +19,6 @@ import { useIndexerMetadata } from '../../../../hooks';
 interface props {
   indexers?: Indexer[];
   totalCount?: number;
-  loading?: boolean;
   onLoadMore?: (offset: number) => void;
 }
 
@@ -35,7 +34,7 @@ const ConnectedIndexer: React.VFC<{ id: string; account?: string | null }> = ({ 
   );
 };
 
-export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, loading }) => {
+export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
@@ -159,10 +158,6 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         columns={columns}
         dataSource={orderedIndexerList}
         scroll={{ x: 1200 }}
-        loading={{
-          spinning: loading,
-          indicator: <Spinner />,
-        }}
         pagination={{
           total: totalCount,
           pageSize: 10,

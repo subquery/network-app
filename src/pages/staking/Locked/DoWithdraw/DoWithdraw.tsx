@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import clsx from 'clsx';
-import { T } from 'ramda';
 
 interface DoWithdrawProps {
   unlockedAmount: number;
