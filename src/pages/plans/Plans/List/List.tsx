@@ -17,6 +17,7 @@ import { SummaryList } from '../../../../components';
 import styles from './List.module.css';
 import clsx from 'clsx';
 import { secondsToDhms } from '../../../../utils/dateFormatters';
+import { last } from 'ramda';
 
 type Props = {
   data: Plan[];
@@ -31,7 +32,11 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const pendingTx = contracts.planManager.removePlan(id);
+    const planId = last(id.split(':'));
+
+    assert(planId, 'Unable to get planId');
+
+    const pendingTx = contracts.planManager.removePlan(planId);
 
     pendingTx.then((tx) => tx.wait()).then(() => onRefresh());
 
@@ -89,7 +94,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
             failureText: 'Failed ',
           }}
           variant="errTextBtn"
-          onClick={() => handleRemovePlan(id)}
+          onClick={() => handleRemovePlan(plan.id)}
           renderContent={(onClick, onCancel, isLoading, error) => {
             const planDetails = [
               {
@@ -98,7 +103,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
               },
               {
                 label: t('plans.headers.period'),
-                value: `${convertBigNumberToNumber(plan.planTemplate?.period ?? 0)} days`,
+                value: secondsToDhms(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
               },
               {
                 label: t('plans.headers.dailyReqCap'),

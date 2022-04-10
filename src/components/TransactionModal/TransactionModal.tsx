@@ -61,6 +61,7 @@ const TransactionModal = <P, T extends string>({
 
   const resetModalStatus = () => {
     setSuccessModalText(undefined);
+    setFailureModalText(undefined);
   };
 
   const handleBtnClick = (key: T) => {
@@ -94,7 +95,7 @@ const TransactionModal = <P, T extends string>({
         title={text.title}
         description={text.description}
         visible={!!showModal}
-        onCancel={() => setShowModal(undefined)}
+        onCancel={() => resetModal()}
         steps={text.steps}
         content={
           renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
