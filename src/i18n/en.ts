@@ -201,6 +201,8 @@ const en = {
       secondRowData:
         'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
       here: 'here',
+      amount: ' There are {{count}} indexer.',
+      amount_other: ' There are {{count}} indexers.',
     },
 
     delegate: {

@@ -131,7 +131,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   return (
     <div className={styles.container}>
       <Typography variant="h6" className={styles.title}>
-        There are {totalCount || indexers?.length || 0} indexer(s)
+        {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
       </Typography>
       <Table
         columns={columns}
