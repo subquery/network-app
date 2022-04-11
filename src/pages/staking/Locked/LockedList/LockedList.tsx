@@ -32,32 +32,32 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: '#',
       width: 30,
 
-      render: (t, r, index) => <TableText text={index + 1} />,
+      render: (t, r, index) => <TableText content={index + 1} />,
     },
     {
       title: t('withdrawals.amount').toUpperCase(),
       dataIndex: 'amount',
       width: 100,
-      render: (value: string) => <TableText text={`${formatEther(value)} SQT`} />,
+      render: (value: string) => <TableText content={`${formatEther(value)} SQT`} />,
     },
 
     {
       title: t('withdrawals.startAt').toUpperCase(),
       dataIndex: 'startAt',
       width: 80,
-      render: (value: string) => <TableText text={moment(value).format(dateFormat)} />,
+      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
     },
     {
       title: t('withdrawals.endAt').toUpperCase(),
       dataIndex: 'endAt',
       width: 80,
-      render: (value: string) => <TableText text={moment(value).format(dateFormat)} />,
+      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
     },
     {
       title: t('withdrawals.status').toUpperCase(),
       dataIndex: 'status',
       width: 30,
-      render: (value: string) => <TableText text={value} />,
+      render: (value: string) => <TableText content={value} />,
     },
   ];
 

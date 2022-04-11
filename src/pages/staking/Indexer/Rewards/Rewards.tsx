@@ -28,19 +28,19 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
     {
       title: '#',
       key: 'idx',
-      render: (t, r, index) => <TableText text={index + 1} />,
+      render: (t, r, index) => <TableText content={index + 1} />,
     },
     {
       title: t('rewards.header1').toUpperCase(),
       dataIndex: 'indexerAddress',
       key: 'indexer',
-      render: (text: string) => <TableText text={text} />,
+      render: (text: string) => <TableText content={text} />,
     },
     {
       title: t('rewards.header2').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: BigInt) => <TableText text={`${formatEther(amount)} SQT`} />,
+      render: (amount: BigInt) => <TableText content={`${formatEther(amount)} SQT`} />,
     },
     {
       title: t('rewards.header3').toUpperCase(),
@@ -48,7 +48,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       key: 'action',
       render: (t, reward: Reward | UnclaimedReward) =>
         isClaimedReward(reward) ? (
-          <TableText text={'Claimed'} className={'grayText'} />
+          <TableText content={'Claimed'} className={'grayText'} />
         ) : (
           <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(reward.amount)} />
         ),

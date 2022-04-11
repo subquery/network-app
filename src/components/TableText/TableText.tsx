@@ -11,14 +11,14 @@ import styles from './TableText.module.css';
  */
 
 interface TableTextprops {
-  text?: string | number;
+  content?: string | number | React.ReactNode;
   className?: string;
 }
 
-export const TableText: React.FC<TableTextprops> = ({ text, className }) => {
+export const TableText: React.FC<TableTextprops> = ({ content, className }) => {
   return (
     <Typography variant="medium" className={[styles.text, className].join(' ')}>
-      {text}
+      {content}
     </Typography>
   );
 };
