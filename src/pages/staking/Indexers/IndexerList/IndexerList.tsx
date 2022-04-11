@@ -56,15 +56,13 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     {
       title: '#',
       key: 'idx',
-      width: 30,
-      align: 'center',
+      width: 15,
       render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
-      width: 100,
-      align: 'center',
+      width: 60,
       render: (val: string) => <ConnectedIndexer id={val} account={account} />,
     },
     {
@@ -74,8 +72,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
+          width: 40,
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val ? `${val} SQT` : '-'}
@@ -86,8 +83,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
+          width: 40,
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val ? `${val} SQT` : '-'}
@@ -103,8 +99,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.current').toUpperCase(),
           dataIndex: ['commission', 'current'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
+          width: 40,
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val || '-'}
@@ -115,8 +110,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.next').toUpperCase(),
           dataIndex: ['commission', 'after'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
+          width: 40,
           render: (val: string) => (
             <Typography variant="medium" className={styles.text}>
               {val || '-'}
@@ -126,11 +120,11 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       ],
     },
     {
-      title: 'Action',
+      title: t('indexer.action').toUpperCase(),
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 60,
+      width: 40,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
