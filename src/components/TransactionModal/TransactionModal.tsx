@@ -61,7 +61,6 @@ const TransactionModal = <P, T extends string>({
 
   const resetModalStatus = () => {
     setSuccessModalText(undefined);
-    setFailureModalText(undefined);
   };
 
   const handleBtnClick = (key: T) => {
@@ -105,6 +104,7 @@ const TransactionModal = <P, T extends string>({
               submitText={text.submitText}
               onSubmit={wrapTxAction(onClick)}
               isLoading={isLoading}
+              submitError={failureModalText}
             />
           )
         }

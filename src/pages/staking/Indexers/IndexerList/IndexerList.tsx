@@ -15,6 +15,7 @@ import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import IndexerName from '../../../../components/IndexerDetails/IndexerName';
 import { useIndexerMetadata } from '../../../../hooks';
+import { TableText } from '../../../../components';
 
 interface props {
   indexers?: Indexer[];
@@ -73,22 +74,14 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
           width: 40,
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
-            </Typography>
-          ),
+          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
           width: 40,
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
-            </Typography>
-          ),
+          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
         },
       ],
     },
@@ -100,22 +93,14 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           dataIndex: ['commission', 'current'],
           key: 'currentTotalStake',
           width: 40,
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val || '-'}
-            </Typography>
-          ),
+          render: (val: string) => <TableText content={val || '-'} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['commission', 'after'],
           key: 'currentTotalStake',
           width: 40,
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val || '-'}
-            </Typography>
-          ),
+          render: (value: string) => <TableText content={value || '-'} />,
         },
       ],
     },

@@ -20,6 +20,7 @@ import { parseError } from '../../utils/parseError';
 interface Props {
   inputTitle?: string;
   submitText?: string;
+  submitError?: string;
   curAmount?: number;
   showMaxButton?: boolean;
   inputBottomText?: string;
@@ -34,6 +35,7 @@ interface Props {
 export const ModalInput: React.FC<Props> = ({
   inputTitle,
   submitText,
+  submitError,
   onSubmit,
   onError,
   unit = 'SQT',
@@ -55,7 +57,6 @@ export const ModalInput: React.FC<Props> = ({
         await onSubmit(input);
         resetForm();
       } catch (error: any) {
-        console.error('Submit ModalInput', error);
         setErrors({ input: parseError(error) });
         onError && onError();
       }
@@ -65,7 +66,7 @@ export const ModalInput: React.FC<Props> = ({
   const Prefix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
-      {showMaxButton && (
+      {showMaxButton && curAmount && (
         <Button
           shape="round"
           size="large"
@@ -104,7 +105,7 @@ export const ModalInput: React.FC<Props> = ({
         </Typography>
       )}
       <Typography className={styles.inputError} variant="medium">
-        {formik.errors?.input}
+        {submitError || formik.errors?.input}
       </Typography>
       <div className={styles.btnContainer}>
         <Button
@@ -114,6 +115,7 @@ export const ModalInput: React.FC<Props> = ({
           size="large"
           className={styles.submitBtn}
           loading={isLoading}
+          disabled={!(formik.values.input > 0)}
         >
           {submitText || 'Submit'}
         </Button>
