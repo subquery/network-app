@@ -83,8 +83,9 @@ const TransactionModal = <P, T extends string>({
         throw new Error(text.failureText);
       }
     } catch (error) {
-      console.log('error', error);
+      console.log('TxAction error', error);
       setFailureModalText(parseError(error));
+      throw new Error(failureModalText);
     }
   };
 
@@ -104,7 +105,6 @@ const TransactionModal = <P, T extends string>({
               submitText={text.submitText}
               onSubmit={wrapTxAction(onClick)}
               isLoading={isLoading}
-              submitError={failureModalText}
             />
           )
         }

@@ -20,7 +20,6 @@ import { parseError } from '../../utils/parseError';
 interface Props {
   inputTitle?: string;
   submitText?: string;
-  submitError?: string;
   curAmount?: number;
   showMaxButton?: boolean;
   inputBottomText?: string;
@@ -35,7 +34,6 @@ interface Props {
 export const ModalInput: React.FC<Props> = ({
   inputTitle,
   submitText,
-  submitError,
   onSubmit,
   onError,
   unit = 'SQT',
@@ -105,7 +103,7 @@ export const ModalInput: React.FC<Props> = ({
         </Typography>
       )}
       <Typography className={styles.inputError} variant="medium">
-        {submitError || formik.errors?.input}
+        {formik.errors?.input}
       </Typography>
       <div className={styles.btnContainer}>
         <Button
