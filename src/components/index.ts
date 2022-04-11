@@ -38,6 +38,7 @@ export * from './AppSidebar';
 export * from './AppPageHeader';
 export * from './TabButton';
 export * from './SummaryList';
+export * from './TableText';
 
 export {
   Header,

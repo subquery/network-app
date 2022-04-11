@@ -9,6 +9,7 @@ import styles from './OwnDelegator.module.css';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsyncArray } from '../../../../utils';
 import { useEra, useIndexerDelegators } from '../../../../containers';
+import { TableText } from '../../../../components';
 
 interface Props {
   indexer: string;
@@ -24,37 +25,22 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       title: '#',
       key: 'idx',
       width: 30,
-      render: (_: any, record: any, index: number) => (
-        <Typography variant="medium" className={styles.text}>
-          {index + 1}
-        </Typography>
-      ),
+      render: (_: any, record: any, index: number) => <TableText text={index + 1} />,
     },
     {
       title: t('delegate.delegator').toUpperCase(),
       dataIndex: 'delegator',
-      width: 100,
-      render: (delegator: string) => (
-        <Typography variant="medium" className={styles.text}>
-          {delegator}
-        </Typography>
-      ),
+      render: (delegator: string) => <TableText text={delegator} />,
     },
     {
       title: t('delegate.currentEra').toUpperCase(),
       dataIndex: ['value', 'current'],
-      width: 100,
-      render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
-      ),
+      render: (value: string | number) => <TableText text={`${value ?? 0} SQT`} />,
     },
     {
       title: t('delegate.nextEra').toUpperCase(),
       dataIndex: ['value', 'after'],
-      width: 100,
-      render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
-      ),
+      render: (value: string | number) => <TableText text={`${value ?? 0} SQT`} />,
     },
   ];
 

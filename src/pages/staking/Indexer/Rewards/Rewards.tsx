@@ -14,6 +14,7 @@ import {
 } from '../../../../__generated__/GetRewards';
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
+import { TableText } from '../../../../components';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -27,35 +28,27 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
     {
       title: '#',
       key: 'idx',
-      width: 30,
-      align: 'center',
-      render: (t, r, index) => <Typography className={clsx('blackText', styles.text)}>{index + 1}</Typography>,
+      render: (t, r, index) => <TableText text={index + 1} />,
     },
     {
       title: t('rewards.header1').toUpperCase(),
       dataIndex: 'indexerAddress',
       key: 'indexer',
-      width: 160,
-      align: 'center',
-      render: (t: string) => <Typography className={clsx('blackText', styles.text)}>{t}</Typography>,
+      render: (text: string) => <TableText text={text} />,
     },
     {
       title: t('rewards.header2').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
-      width: 50,
-      render: (amount: BigInt) => (
-        <Typography className={clsx('blackText', styles.text)}>{`${formatEther(amount)} SQT`}</Typography>
-      ),
+      render: (amount: BigInt) => <TableText text={`${formatEther(amount)} SQT`} />,
     },
     {
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
-      width: 50,
       render: (t, reward: Reward | UnclaimedReward) =>
         isClaimedReward(reward) ? (
-          <Typography className={clsx('grayText', styles.text)}>{'Claimed'}</Typography>
+          <TableText text={'Claimed'} className={'grayText'} />
         ) : (
           <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(reward.amount)} />
         ),
@@ -81,7 +74,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
               <Typography variant="h6" className={styles.header}>
                 {t('rewards.totalUnclaimReward', { count: rewards?.data?.unclaimedRewards?.totalCount || 0 })}
               </Typography>
-              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} rowKey="id" />
+              <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
             </>
           ),
         },

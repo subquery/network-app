@@ -11,6 +11,7 @@ import { DoUndelegate } from '../DoUndelegate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { useDelegations, useEra } from '../../../../containers';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
+import { TableText } from '../../../../components';
 
 interface Props {
   delegator: string;
@@ -43,15 +44,13 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       title: '#',
       key: 'idx',
       width: 30,
-      align: 'center',
-      render: (text: string, record: any, index: number) => <Typography>{index + 1}</Typography>,
+      render: (text: string, record: any, index: number) => <TableText text={index + 1} />,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'indexer',
       width: 100,
-      align: 'center',
-      render: (text: string) => <Typography>{text}</Typography>,
+      render: (text: string) => <TableText text={text} />,
     },
     {
       title: t('delegate.yourDelegateAmount').toUpperCase(),
@@ -61,16 +60,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           dataIndex: ['value', 'current'],
           key: 'currentValue',
           width: 60,
-          align: 'center',
-          render: (text: string) => <Typography>{`${text} SQT`}</Typography>,
+          render: (text: string) => <TableText text={`${text} SQT`} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['value', 'after'],
           key: 'afterValue',
           width: 60,
-          align: 'center',
-          render: (text: string) => <Typography>{`${text} SQT`}</Typography>,
+          render: (text: string) => <TableText text={`${text} SQT`} />,
         },
       ],
     },
@@ -79,7 +76,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 30,
+      width: 40,
       align: 'center',
       render: (id: string) => {
         if (id === delegator) {

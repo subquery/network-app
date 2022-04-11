@@ -10,15 +10,9 @@ import { GetWithdrawls_withdrawls_nodes as Withdrawals } from '../../../../__gen
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
+import { TableText } from '../../../../components';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
-
-// TODO: Wait for design confirm the finalized tableCell style
-const TableCellText = ({ children }: { children: React.ReactChild | React.ReactChildren }) => (
-  <Typography className={styles.tableCell} variant="medium">
-    {children}
-  </Typography>
-);
 
 interface SortedWithdrawals extends Withdrawals {
   idx: number;
@@ -37,37 +31,33 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     {
       title: '#',
       width: 30,
-      align: 'center',
-      render: (t, r, index) => <TableCellText>{index + 1}</TableCellText>,
+
+      render: (t, r, index) => <TableText text={index + 1} />,
     },
     {
       title: t('withdrawals.amount').toUpperCase(),
       dataIndex: 'amount',
-      width: 120,
-      align: 'center',
-      render: (val: string) => <TableCellText>{`${formatEther(val)} SQT`}</TableCellText>,
+      width: 100,
+      render: (value: string) => <TableText text={`${formatEther(value)} SQT`} />,
     },
 
     {
       title: t('withdrawals.startAt').toUpperCase(),
       dataIndex: 'startAt',
       width: 80,
-      align: 'center',
-      render: (val: string) => <TableCellText>{moment(val).format(dateFormat)}</TableCellText>,
+      render: (value: string) => <TableText text={moment(value).format(dateFormat)} />,
     },
     {
       title: t('withdrawals.endAt').toUpperCase(),
       dataIndex: 'endAt',
       width: 80,
-      align: 'center',
-      render: (val: string) => <TableCellText>{moment(val).format(dateFormat)}</TableCellText>,
+      render: (value: string) => <TableText text={moment(value).format(dateFormat)} />,
     },
     {
       title: t('withdrawals.status').toUpperCase(),
       dataIndex: 'status',
-      width: 60,
-      align: 'center',
-      render: (val: string) => <TableCellText>{val}</TableCellText>,
+      width: 30,
+      render: (value: string) => <TableText text={value} />,
     },
   ];
 
