@@ -64,7 +64,7 @@ export const ModalInput: React.FC<Props> = ({
   const Prefix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
-      {showMaxButton && curAmount && (
+      {showMaxButton && curAmount && curAmount > 0 && (
         <Button
           shape="round"
           size="large"
@@ -97,7 +97,7 @@ export const ModalInput: React.FC<Props> = ({
           min={min}
         />
       </div>
-      {(inputBottomText || curAmount) && (
+      {(inputBottomText || (curAmount && curAmount > 0)) && (
         <Typography className={styles.inputBottomText} variant="medium">
           {inputBottomText || `Current ${unit === '%' ? 'rate' : 'balance'}: ${curAmount} ${unit}`}
         </Typography>

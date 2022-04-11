@@ -333,11 +333,11 @@ export function useAllDelegations(params: GetAllDelegationsVariables): QueryResu
 }
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
-  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 30000 });
+  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 15000 });
 }
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
-  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 30000 });
+  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 15000 });
 }
 
 export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult<GetPlanTemplates> {
@@ -369,7 +369,7 @@ export function useExpiredServiceAgreements(
 }
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
-  return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params, pollInterval: 30000 });
+  return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params, pollInterval: 15000 });
 }
 
 export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {

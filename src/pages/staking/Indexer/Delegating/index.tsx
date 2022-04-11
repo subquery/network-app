@@ -4,7 +4,6 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
-import { FixedType } from 'rc-table/lib/interface';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.css';
 import { DoUndelegate } from '../DoUndelegate';
@@ -75,14 +74,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       title: 'Action',
       dataIndex: 'indexer',
       key: 'operation',
-      fixed: 'right' as FixedType,
+      fixed: 'right',
       width: 40,
       align: 'center',
-      render: (id: string) => {
+      render: (id: string, record) => {
         if (id === delegator) {
           return <Typography>-</Typography>;
         } else {
-          return <DoUndelegate indexerAddress={id} />;
+          return <DoUndelegate indexerAddress={id} availableBalance={record.value.after} />;
         }
       },
     },
