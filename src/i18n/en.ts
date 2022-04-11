@@ -198,7 +198,8 @@ const en = {
       doStake: 'You haven’t staked yet. Stake to become an indexer.',
       learnMore: 'Learn how to become an indexer',
       topRowData: 'Top row of the data represents the data in current era.',
-      secondRowData: 'Data displayed after means the data that will take into effect from next era.',
+      secondRowData:
+        'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
       here: 'here',
     },
 

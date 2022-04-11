@@ -5,7 +5,7 @@ import { Typography } from '@subql/react-ui';
 import { Table } from 'antd';
 import * as React from 'react';
 import styles from './Indexing.module.css';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { OwnDelegator } from '../OwnDelegator';
 import { DoStake } from '../DoStake';
 import { SetCommissionRate } from '../SetCommissionRate';
@@ -87,8 +87,10 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       <div className={styles.textGroup}>
         <Typography className={styles.grayText}>{t('indexer.topRowData')}</Typography>
         <Typography className={styles.grayText}>
-          <BsArrowReturnRight className={styles.nextIcon} />
-          {t('indexer.secondRowData')}
+          <Trans
+            i18nKey={'indexer.secondRowData'}
+            components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}
+          />
         </Typography>
       </div>
 
