@@ -6,7 +6,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from 'antd';
-import { AppPageHeader, Copy, TabButtons } from '../../../components';
+import { AppPageHeader, Copy, TabButtons, TableText } from '../../../components';
 import {
   useExpiredServiceAgreements,
   useIPFS,
@@ -43,9 +43,13 @@ const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({
   );
 
   return (
-    <Typography className={'flex'}>
-      {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
-    </Typography>
+    <TableText
+      content={
+        <div className={'flex'}>
+          {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
+        </div>
+      }
+    />
   );
 };
 
@@ -54,7 +58,7 @@ const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
 
   const metadata = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project.metadata, getMetadataFromCid]);
 
-  return <Typography>{metadata.data?.name ?? project.id}</Typography>;
+  return <TableText content={metadata.data?.name ?? project.id} />;
 };
 
 const ServiceAgreements: React.VFC = () => {
@@ -65,59 +69,52 @@ const ServiceAgreements: React.VFC = () => {
       dataIndex: 'id',
       title: '#',
       width: 30,
-      align: 'center',
-      render: (text: string, _: any, idx: number) => <Typography>{idx + 1}</Typography>,
+      render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: 'deployment',
       key: 'project',
-      title: t('serviceAgreements.headers.project'),
-      align: 'center',
+      title: t('serviceAgreements.headers.project').toUpperCase(),
       width: 200,
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
     {
       dataIndex: 'deployment',
-      title: t('serviceAgreements.headers.deployment'),
+      title: t('serviceAgreements.headers.deployment').toUpperCase(),
       key: 'deployment',
-      align: 'center',
       width: 250,
       render: (deployment: ServiceAgreement['deployment']) => <Deployment deployment={deployment} />,
     },
     {
       dataIndex: 'consumerAddress',
-      title: t('serviceAgreements.headers.consumer'),
+      title: t('serviceAgreements.headers.consumer').toUpperCase(),
       key: 'consumer',
-      align: 'center',
       render: (consumer: ServiceAgreement['consumerAddress']) => (
         <IndexerName /*name={consumer?.name} image={indexerDetails?.image}*/ address={consumer} />
       ),
     },
     {
       dataIndex: 'indexerAddress',
-      title: t('serviceAgreements.headers.indexer'),
+      title: t('serviceAgreements.headers.indexer').toUpperCase(),
       key: 'indexer',
-      align: 'center',
       render: (indexer: ServiceAgreement['indexerAddress']) => (
         <IndexerName /*name={consumer?.name} image={indexerDetails?.image}*/ address={indexer} />
       ), // TODO get consumer details
     },
     {
       dataIndex: 'period',
-      title: t('serviceAgreements.headers.expiry'),
+      title: t('serviceAgreements.headers.expiry').toUpperCase(),
       key: 'expiry',
-      align: 'center',
       render: (_, sa: ServiceAgreement) => {
-        return <Typography>{moment(sa.endTime).utc(true).fromNow()}</Typography>;
+        return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
       },
     },
     {
       dataIndex: 'value',
-      title: t('serviceAgreements.headers.price'),
+      title: t('serviceAgreements.headers.price').toUpperCase(),
       key: 'price',
-      align: 'center',
-      render: (price: ServiceAgreement['value']) => <Typography>{`${formatEther(price)} SQT`}</Typography>,
+      render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
     },
   ];
 
@@ -143,11 +140,7 @@ const ServiceAgreements: React.VFC = () => {
             error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
             empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
             data: (data) => {
-              return (
-                <div>
-                  <Table columns={columns} dataSource={data} scroll={{ x: 1200 }} />
-                </div>
-              );
+              return <Table columns={columns} dataSource={data} scroll={{ x: 1200 }} />;
             },
           },
         )}

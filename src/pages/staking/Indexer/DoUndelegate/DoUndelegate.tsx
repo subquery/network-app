@@ -10,9 +10,10 @@ import TransactionModal from '../../../../components/TransactionModal';
 
 interface DoUndelegateProps {
   indexerAddress: string;
+  availableBalance?: number;
 }
 
-export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress }) => {
+export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
@@ -42,6 +43,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress }) =
       actions={[{ label: t('delegate.undelegate'), key: 'undelegate' }]}
       inputParams={{
         showMaxButton: true,
+        curAmount: availableBalance,
       }}
       onClick={handleClick}
     />

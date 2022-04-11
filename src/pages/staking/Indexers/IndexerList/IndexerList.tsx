@@ -15,6 +15,7 @@ import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import IndexerName from '../../../../components/IndexerDetails/IndexerName';
 import { useIndexerMetadata } from '../../../../hooks';
+import { TableText } from '../../../../components';
 
 interface props {
   indexers?: Indexer[];
@@ -56,15 +57,13 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     {
       title: '#',
       key: 'idx',
-      width: 30,
-      align: 'center',
+      width: 15,
       render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
-      width: 100,
-      align: 'center',
+      width: 60,
       render: (val: string) => <ConnectedIndexer id={val} account={account} />,
     },
     {
@@ -74,25 +73,15 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.current').toUpperCase(),
           dataIndex: ['totalStake', 'current'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
-            </Typography>
-          ),
+          width: 40,
+          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['totalStake', 'after'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val ? `${val} SQT` : '-'}
-            </Typography>
-          ),
+          width: 40,
+          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
         },
       ],
     },
@@ -103,34 +92,24 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           title: t('general.current').toUpperCase(),
           dataIndex: ['commission', 'current'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val || '-'}
-            </Typography>
-          ),
+          width: 40,
+          render: (val: string) => <TableText content={val || '-'} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['commission', 'after'],
           key: 'currentTotalStake',
-          width: 50,
-          align: 'center',
-          render: (val: string) => (
-            <Typography variant="medium" className={styles.text}>
-              {val || '-'}
-            </Typography>
-          ),
+          width: 40,
+          render: (value: string) => <TableText content={value || '-'} />,
         },
       ],
     },
     {
-      title: 'Action',
+      title: t('indexer.action').toUpperCase(),
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 60,
+      width: 40,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
@@ -152,7 +131,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   return (
     <div className={styles.container}>
       <Typography variant="h6" className={styles.title}>
-        There are {totalCount || indexers?.length || 0} indexer(s)
+        {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
       </Typography>
       <Table
         columns={columns}

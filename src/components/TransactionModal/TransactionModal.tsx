@@ -61,7 +61,6 @@ const TransactionModal = <P, T extends string>({
 
   const resetModalStatus = () => {
     setSuccessModalText(undefined);
-    setFailureModalText(undefined);
   };
 
   const handleBtnClick = (key: T) => {
@@ -84,8 +83,9 @@ const TransactionModal = <P, T extends string>({
         throw new Error(text.failureText);
       }
     } catch (error) {
-      console.log('error', error);
+      console.log('TxAction error', error);
       setFailureModalText(parseError(error));
+      throw new Error(failureModalText);
     }
   };
 

@@ -9,6 +9,7 @@ import styles from './OwnDelegator.module.css';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsyncArray } from '../../../../utils';
 import { useEra, useIndexerDelegators } from '../../../../containers';
+import { TableText } from '../../../../components';
 
 interface Props {
   indexer: string;
@@ -24,37 +25,22 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       title: '#',
       key: 'idx',
       width: 30,
-      render: (_: any, record: any, index: number) => (
-        <Typography variant="medium" className={styles.text}>
-          {index + 1}
-        </Typography>
-      ),
+      render: (_: any, record: any, index: number) => <TableText content={index + 1} />,
     },
     {
       title: t('delegate.delegator').toUpperCase(),
       dataIndex: 'delegator',
-      width: 100,
-      render: (delegator: string) => (
-        <Typography variant="medium" className={styles.text}>
-          {delegator}
-        </Typography>
-      ),
+      render: (delegator: string) => <TableText content={delegator} />,
     },
     {
       title: t('delegate.currentEra').toUpperCase(),
       dataIndex: ['value', 'current'],
-      width: 100,
-      render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
-      ),
+      render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
     },
     {
       title: t('delegate.nextEra').toUpperCase(),
       dataIndex: ['value', 'after'],
-      width: 100,
-      render: (value: string | number) => (
-        <Typography variant="medium" className={styles.text}>{`${value ?? 0} SQT`}</Typography>
-      ),
+      render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
     },
   ];
 
@@ -75,7 +61,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography>{t('delegate.none')}</Typography>,
-          data: (data) => <Table columns={columns} dataSource={data} />,
+          data: (data) => <Table columns={columns} dataSource={data} rowKey={'delegator'} />,
         },
       )}
     </div>

@@ -55,7 +55,6 @@ export const ModalInput: React.FC<Props> = ({
         await onSubmit(input);
         resetForm();
       } catch (error: any) {
-        console.error('Submit ModalInput', error);
         setErrors({ input: parseError(error) });
         onError && onError();
       }
@@ -65,7 +64,7 @@ export const ModalInput: React.FC<Props> = ({
   const Prefix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
-      {showMaxButton && (
+      {showMaxButton && curAmount && curAmount > 0 && (
         <Button
           shape="round"
           size="large"
@@ -98,7 +97,7 @@ export const ModalInput: React.FC<Props> = ({
           min={min}
         />
       </div>
-      {(inputBottomText || curAmount) && (
+      {(inputBottomText || (curAmount && curAmount > 0)) && (
         <Typography className={styles.inputBottomText} variant="medium">
           {inputBottomText || `Current ${unit === '%' ? 'rate' : 'balance'}: ${curAmount} ${unit}`}
         </Typography>
@@ -114,6 +113,7 @@ export const ModalInput: React.FC<Props> = ({
           size="large"
           className={styles.submitBtn}
           loading={isLoading}
+          disabled={!(formik.values.input > 0)}
         >
           {submitText || 'Submit'}
         </Button>

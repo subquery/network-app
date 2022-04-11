@@ -5,7 +5,7 @@ import { Typography } from '@subql/react-ui';
 import { Table } from 'antd';
 import * as React from 'react';
 import styles from './Indexing.module.css';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { OwnDelegator } from '../OwnDelegator';
 import { DoStake } from '../DoStake';
 import { SetCommissionRate } from '../SetCommissionRate';
@@ -17,7 +17,7 @@ import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 enum SectionTabs {
   Projects = 'Projects',
-  Delegator = 'Delegator',
+  Delegator = 'Delegators',
 }
 
 const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }) => {
@@ -45,6 +45,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Projects);
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const sortedTableData = tableData.map((indexer, idx) => ({ ...indexer, idx }));
 
   const columns = [
     {
@@ -86,8 +87,10 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       <div className={styles.textGroup}>
         <Typography className={styles.grayText}>{t('indexer.topRowData')}</Typography>
         <Typography className={styles.grayText}>
-          <BsArrowReturnRight className={styles.nextIcon} />
-          {t('indexer.secondRowData')}
+          <Trans
+            i18nKey={'indexer.secondRowData'}
+            components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}
+          />
         </Typography>
       </div>
 
@@ -98,8 +101,8 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
         </div>
       )}
 
-      <Table columns={columns} dataSource={tableData} pagination={false} />
-      {/* TODO Button component */}
+      <Table columns={columns} dataSource={sortedTableData} pagination={false} rowKey={'idx'} />
+
       <div>
         <div className={styles.tabList}>
           {tabList.map((tab) => (
