@@ -45,6 +45,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Projects);
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const sortedTableData = tableData.map((indexer, idx) => ({ ...indexer, idx }));
 
   const columns = [
     {
@@ -98,8 +99,8 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
         </div>
       )}
 
-      <Table columns={columns} dataSource={tableData} pagination={false} />
-      {/* TODO Button component */}
+      <Table columns={columns} dataSource={sortedTableData} pagination={false} rowKey={'idx'} />
+
       <div>
         <div className={styles.tabList}>
           {tabList.map((tab) => (

@@ -75,7 +75,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography>{t('delegate.none')}</Typography>,
-          data: (data) => <Table columns={columns} dataSource={data} />,
+          data: (data) => <Table columns={columns} dataSource={data} rowKey={'delegator'} />,
         },
       )}
     </div>

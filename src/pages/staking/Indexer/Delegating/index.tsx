@@ -103,7 +103,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
               <Typography variant="h6" className={styles.header}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography>
-              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} />
+              <Table columns={columns} dataSource={data} scroll={{ x: 800 }} rowKey={'indexer'} />
             </>
           );
         },

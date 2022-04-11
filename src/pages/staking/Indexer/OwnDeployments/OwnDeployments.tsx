@@ -58,6 +58,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
             <Table
               columns={columns}
               dataSource={data}
+              rowKey={'deploymentId'}
               onRow={(record) => {
                 return {
                   onClick: (event) => {
