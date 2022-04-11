@@ -17,7 +17,7 @@ import { CurrentEraValue } from '../../../../hooks/useEraValue';
 
 enum SectionTabs {
   Projects = 'Projects',
-  Delegator = 'Delegator',
+  Delegator = 'Delegators',
 }
 
 const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }) => {
