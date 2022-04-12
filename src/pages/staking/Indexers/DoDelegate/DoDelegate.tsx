@@ -8,8 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
 import { tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertBigNumberToNumber, convertStringToNumber } from '../../../../utils';
-import { useAsyncMemo } from '../../../../hooks';
+import { convertStringToNumber } from '../../../../utils';
 
 interface DoDelegateProps {
   indexerAddress: string;
