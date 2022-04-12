@@ -12,6 +12,7 @@ import {
   getDeploymentMetadata,
   mapAsync,
   notEmpty,
+  parseError,
   renderAsync,
   wrapProxyEndpoint,
 } from '../../utils';
@@ -66,8 +67,8 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: () => <Typography>-</Typography>,
-            data: (info) => (info ? <Progress {...info} /> : <Typography>No progress available.</Typography>),
+            error: (error) => <Typography className="errorText">{`Error: ${parseError(error)}`}</Typography>,
+            data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>
       ),
