@@ -51,7 +51,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
   });
 
-  const orderedIndexerList = sortedIndexerList.sort((indexerA) => (indexerA.id === account ? -1 : 1));
+  const orderedIndexerList = sortedIndexerList.sort((indexerA, indexerB) =>
+    indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
+  );
 
   const columns: TableProps<typeof sortedIndexerList[number]>['columns'] = [
     {
