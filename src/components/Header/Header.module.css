@@ -30,7 +30,8 @@
 
 .navLink {
   text-decoration: none;
-  margin-left: 24px;
+  margin-left: 2vw;
+  display: flex;
   color: var(--gray700);
 }
 
