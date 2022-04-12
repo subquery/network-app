@@ -24,7 +24,7 @@ import { deploymentStatus } from '../Status/Status';
 import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
-import PlansTable, { PlansTableProps } from './PlansTable';
+import { PlansTable, PlansTableProps } from './PlansTable';
 import assert from 'assert';
 import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
