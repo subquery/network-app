@@ -4,5 +4,5 @@
 import moment from 'moment';
 
 export const secondsToDhms = (seconds: number): string => {
-  return moment.duration(seconds, 'seconds').humanize();
+  return moment.duration(seconds, 'seconds').humanize(true);
 };

@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/react-ui';
-import { Table, Progress } from 'antd';
+import { ProgressBar, Spinner, Typography } from '@subql/react-ui';
+import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
@@ -37,7 +37,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       title: 'PROGRESS',
       dataIndex: 'indexingProgress',
       width: '25%',
-      render: (indexingProgress: number) => <Progress percent={+(indexingProgress * 100).toFixed(2)} size="small" />,
+      render: (indexingProgress: number) => <ProgressBar progress={indexingProgress} />,
     },
     {
       title: 'STATUS',

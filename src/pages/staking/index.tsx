@@ -17,7 +17,7 @@ const Container: React.VFC = () => {
   const sidebarList = [
     {
       label: t('indexer.profile'),
-      link: '/staking',
+      link: '/staking/my-profile',
       icon: <BsPerson />,
     },
     {

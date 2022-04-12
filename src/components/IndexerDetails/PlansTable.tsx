@@ -142,7 +142,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
   );
 };
 
-const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
+export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -205,12 +205,18 @@ const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planMan
     },
   ];
 
-  return renderAsyncArray(asyncPlans, {
-    loading: () => <Spinner />,
-    error: () => <Typography>{t('plans.purchase.failureFetchPlans')}</Typography>,
-    empty: () => <Typography>{t('plans.purchase.noPlansForPurchase')}</Typography>,
-    data: (data) => <Table columns={columns} dataSource={data} />,
-  });
+  return (
+    <div className={styles.plansTable}>
+      {renderAsyncArray(asyncPlans, {
+        loading: () => (
+          <div className={styles.spinner}>
+            <Spinner />
+          </div>
+        ),
+        error: () => <Typography>{t('plans.purchase.failureFetchPlans')}</Typography>,
+        empty: () => <Typography>{t('plans.purchase.noPlansForPurchase')}</Typography>,
+        data: (data) => <Table pagination={false} columns={columns} dataSource={data} />,
+      })}
+    </div>
+  );
 };
-
-export default PlansTable;
