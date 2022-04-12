@@ -20,6 +20,10 @@
   color: var(--gray500);
 }
 
+.navLink:hover {
+  color: var(--gradient-to);
+}
+
 .navLink > p {
   margin: 1rem 0.4rem !important;
   color: var(--gray500) !important;
@@ -29,7 +33,8 @@
   color: var(--gray900);
 }
 
-.activeNav > p {
+.activeNav > p,
+.navLink > p:hover {
   color: inherit !important;
 }
 

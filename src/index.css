@@ -79,7 +79,8 @@ label {
   line-height: 24px;
 }
 
-a {
+a,
+a:hover {
   text-decoration: none;
 }
 
