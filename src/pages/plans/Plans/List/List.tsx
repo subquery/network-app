@@ -61,9 +61,7 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
       dataIndex: 'planTemplate',
       key: 'period',
       title: t('plans.headers.period').toUpperCase(),
-      render: (value: PlanTemplate) => (
-        <TableText content={moment.duration(convertBigNumberToNumber(value.period), 'seconds').humanize(true)} />
-      ),
+      render: (value: PlanTemplate) => <TableText content={secondsToDhms(convertBigNumberToNumber(value.period))} />,
     },
     {
       dataIndex: 'planTemplate',

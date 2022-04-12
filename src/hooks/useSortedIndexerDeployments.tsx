@@ -57,8 +57,5 @@ export function useSortedIndexerDeployments(
     );
   }, [indexerDeployments.loading, proxyEndpoint]);
 
-  // console.log('sortedIndexerDeployments', sortedIndexerDeployments);
   return sortedIndexerDeployments;
-  // return sortedIndexerDeployments;
-  // return mapAsync((data) => data.deploymentIndexers?.nodes.filter(notEmpty), indexerDeployments);
 }
