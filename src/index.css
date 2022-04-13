@@ -190,4 +190,5 @@ textarea {
 /* For antD table header */
 .ant-table-title {
   margin-bottom: 1rem;
+  padding: 0;
 }

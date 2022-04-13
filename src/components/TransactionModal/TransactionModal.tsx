@@ -109,7 +109,12 @@ const TransactionModal = <P, T extends string>({
           )
         }
       />
-      <ModalStatus visible={!!successModalText} onCancel={resetModalStatus} success={!!successModalText} />
+      <ModalStatus
+        visible={!!successModalText}
+        onCancel={resetModalStatus}
+        success={!!successModalText}
+        successText={successModalText}
+      />
 
       {actions.map(({ label, key, onClick, ...rest }) => (
         <Button
