@@ -30,6 +30,10 @@
   font-size: 16px;
 }
 
+.rightIcon {
+  margin: 0 1rem;
+}
+
 .profile {
   background: white;
   padding: 2rem;

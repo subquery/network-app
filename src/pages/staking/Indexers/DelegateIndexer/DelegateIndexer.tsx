@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { AiOutlineRight } from 'react-icons/ai';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { useHistory, useParams } from 'react-router';
 import { CurEra } from '../../../../components';
@@ -33,7 +34,7 @@ export const DelegateIndexer: React.VFC = () => {
     <>
       <div className={styles.header}>
         <Typography variant="h4" className={`${styles.title} ${styles.grayText}`}>
-          {`${t('delegate.toIndexer')}  >  ${t('delegate.viewProfile')}`}
+          {t('delegate.toIndexer')} <AiOutlineRight className={styles.rightIcon} /> {t('delegate.viewProfile')}
         </Typography>
 
         <CurEra />
