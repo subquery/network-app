@@ -33,14 +33,19 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       render: (delegator: string) => <TableText content={delegator} />,
     },
     {
-      title: t('delegate.currentEra').toUpperCase(),
-      dataIndex: ['value', 'current'],
-      render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
-    },
-    {
-      title: t('delegate.nextEra').toUpperCase(),
-      dataIndex: ['value', 'after'],
-      render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
+      title: t('delegate.amount').toUpperCase(),
+      children: [
+        {
+          title: t('delegate.currentEra').toUpperCase(),
+          dataIndex: ['value', 'current'],
+          render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
+        },
+        {
+          title: t('delegate.nextEra').toUpperCase(),
+          dataIndex: ['value', 'after'],
+          render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
+        },
+      ],
     },
   ];
 
