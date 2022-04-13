@@ -363,11 +363,14 @@ export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult
 }
 
 export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
-  return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params });
+  return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params, pollInterval: 20000 });
 }
 
 export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryResult<GetSpecificPlans> {
-  return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, { variables: params });
+  return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, {
+    variables: params,
+    pollInterval: 20000,
+  });
 }
 
 export function useServiceAgreements(

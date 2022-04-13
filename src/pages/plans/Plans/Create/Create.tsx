@@ -8,7 +8,7 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlanTemplates, useProjectMetadata, useWeb3 } from '../../../../containers';
+import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
 import { cidToBytes32, convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/GetPlanTemplates';
 import * as yup from 'yup';

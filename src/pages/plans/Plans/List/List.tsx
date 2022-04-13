@@ -18,7 +18,6 @@ import styles from './List.module.css';
 import clsx from 'clsx';
 import { secondsToDhms } from '../../../../utils/dateFormatters';
 import { last } from 'ramda';
-import moment from 'moment';
 
 type Props = {
   data: Plan[];
@@ -100,6 +99,10 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
           renderContent={(onClick, onCancel, isLoading, error) => {
             const planDetails = [
               {
+                label: t('plans.headers.deploymentId'),
+                value: plan.deploymentId || '-',
+              },
+              {
                 label: t('plans.headers.price'),
                 value: `${formatEther(plan.price)} SQT`,
               },
@@ -109,11 +112,15 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
               },
               {
                 label: t('plans.headers.dailyReqCap'),
-                value: `${convertBigNumberToNumber(plan.planTemplate?.dailyReqCap ?? 0)}`,
+                value: t('plans.default.query', {
+                  count: convertBigNumberToNumber(plan.planTemplate?.dailyReqCap ?? 0),
+                }),
               },
               {
                 label: t('plans.headers.rateLimit'),
-                value: `${convertBigNumberToNumber(plan.planTemplate?.rateLimit ?? 0)}`,
+                value: `${convertBigNumberToNumber(plan.planTemplate?.rateLimit ?? 0)} ${t(
+                  'plans.default.requestPerMin',
+                )}`,
               },
             ];
             return (
