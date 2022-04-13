@@ -21,6 +21,7 @@ import { secondsToDhms } from '../../utils/dateFormatters';
 import { SummaryList } from '../SummaryList';
 import styles from './IndexerDetails.module.css';
 import { last } from 'ramda';
+import { TableText } from '../TableText';
 
 export type PlansTableProps = {
   loadPlans: () => void;
@@ -161,14 +162,14 @@ export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, 
       title: '#',
       width: 30,
       align: 'center',
-      render: (_: string, __: Plan, idx: number) => <Typography>{idx}</Typography>,
+      render: (_: string, __: Plan, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: 'price',
       key: 'price',
       title: t('plans.headers.price'),
       align: 'center',
-      render: (value: BigInt) => <Typography>{`${formatEther(value)} SQT`}</Typography>,
+      render: (value: BigInt) => <TableText content={`${formatEther(value)} SQT`} />,
     },
     {
       dataIndex: 'planTemplate',
@@ -176,7 +177,7 @@ export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, 
       title: t('plans.headers.period'),
       align: 'center',
       render: (value: PlanTemplate) => (
-        <Typography>{secondsToDhms(convertBigNumberToNumber(value?.period ?? 0))}</Typography>
+        <TableText content={secondsToDhms(convertBigNumberToNumber(value?.period ?? 0))} />
       ),
     },
     {
@@ -184,14 +185,18 @@ export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, 
       key: 'dailyReqCap',
       title: t('plans.headers.dailyReqCap'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{convertBigNumberToNumber(value.dailyReqCap)}</Typography>,
+      render: (value: PlanTemplate) => (
+        <TableText content={t('plans.default.query', { count: convertBigNumberToNumber(value.dailyReqCap) })} />
+      ),
     },
     {
       dataIndex: 'planTemplate',
       key: 'rateLimit',
       title: t('plans.headers.rateLimit'),
       align: 'center',
-      render: (value: PlanTemplate) => <Typography>{convertBigNumberToNumber(value.rateLimit)}</Typography>,
+      render: (value: PlanTemplate) => (
+        <TableText content={`${convertBigNumberToNumber(value.rateLimit)} ${t('plans.default.requestPerMin')}`} />
+      ),
     },
     {
       dataIndex: 'id',
