@@ -209,6 +209,7 @@ const en = {
       title: 'Delegate',
       delegating: 'Delegating',
       totalDelegation: 'Total Delegation to indexer(s)',
+      amount: 'Delegation amount',
       delegator: 'Delegator',
       currentEra: 'Current Era',
       nextEra: 'Next Era',
