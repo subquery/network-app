@@ -33,13 +33,11 @@ import clsx from 'clsx';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
-    <div className={clsx('fullWidth', 'flex-center')}>
-      <Typography className="errorText">Something went wrong:</Typography>
+    <div className={clsx('fullWidth', 'col-flex', 'flex-center')}>
+      <Typography className={'errorText'}>Something went wrong:</Typography>
       <Typography className="errorText">{error?.message || error.toString()}</Typography>
       <Typography>{componentStack}</Typography>
-      <Button onClick={resetError} colorScheme="gradient">
-        Try again
-      </Button>
+      <Button size="large" onClick={resetError} colorScheme="gradient" label="Try again" />
     </div>
   );
 };
