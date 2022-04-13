@@ -15,11 +15,13 @@ import {
   useIPFS,
   useProjectMetadata,
   useProjectProgress,
+  useSpecificServiceAgreements,
 } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { getIndexerMetadata } from '../../../hooks/useIndexerMetadata';
 import { getDeploymentMetadata, notEmpty, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
+import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
 
 export const ROUTE = '/explorer/project';
 
@@ -120,6 +122,7 @@ const ProjectInner: React.VFC = () => {
   const tabList = [
     { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
     { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
+    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service agreement' },
     { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 
@@ -168,6 +171,14 @@ const ProjectInner: React.VFC = () => {
               <Route exact path={`${ROUTE}/:id/indexers`}>
                 {renderIndexers()}
               </Route>
+              <Route
+                exact
+                path={`${ROUTE}/:id/service-agreements`}
+                component={() => (
+                  <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
+                )}
+              />
+
               <Route exact path={`${ROUTE}/:id/playground`}>
                 {renderPlayground()}
               </Route>

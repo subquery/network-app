@@ -16,3 +16,7 @@
   color: var(--gray500);
   width: 50%;
 }
+
+.value {
+  width: 50%;
+}

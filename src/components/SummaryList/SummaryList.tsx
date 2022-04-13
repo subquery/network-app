@@ -23,7 +23,11 @@ export const SummaryList: React.VFC<SummaryListProps> = ({ title, list }) => {
         {list.map((list) => (
           <div className={styles.listItem} key={list.label}>
             <Typography className={styles.label}>{list.label}</Typography>
-            {typeof list.value === 'string' ? <Typography>{list.value}</Typography> : <>{list.value}</>}
+            {typeof list.value === 'string' ? (
+              <Typography className={styles.value}>{list.value}</Typography>
+            ) : (
+              <>{list.value}</>
+            )}
           </div>
         ))}
       </div>

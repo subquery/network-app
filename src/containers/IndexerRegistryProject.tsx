@@ -24,6 +24,10 @@ import {
   GetExpiredServiceAgreements,
   GetExpiredServiceAgreementsVariables,
 } from '../__generated__/GetExpiredServiceAgreements';
+import {
+  GetSpecificServiceAgreements,
+  GetSpecificServiceAgreementsVariables,
+} from '../__generated__/GetSpecificServiceAgreements';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -269,6 +273,20 @@ const GET_EXPIRED_SERVICE_AGREEMENTS = gql`
   }
 `;
 
+const GET_SPECIFIC_SERVICE_AGREEMENTS = gql`
+  ${SERVICE_AGREEMENT_FIELDS}
+  query GetSpecificServiceAgreements($deploymentId: String!, $now: Datetime!) {
+    serviceAgreements(
+      filter: { deploymentId: { equalTo: $deploymentId }, endTime: { lessThan: $now } }
+      orderBy: END_TIME_ASC
+    ) {
+      nodes {
+        ...ServiceAgreementFields
+      }
+    }
+  }
+`;
+
 const GET_REWARDS = gql`
   query GetRewards($address: String!) {
     rewards(filter: { delegatorAddress: { equalTo: $address } }) {
@@ -345,11 +363,14 @@ export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult
 }
 
 export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
-  return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params });
+  return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, { variables: params, pollInterval: 20000 });
 }
 
 export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryResult<GetSpecificPlans> {
-  return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, { variables: params });
+  return useQuery<GetSpecificPlans, GetSpecificPlansVariables>(GET_SPECIFIC_PLANS, {
+    variables: params,
+    pollInterval: 20000,
+  });
 }
 
 export function useServiceAgreements(
@@ -366,6 +387,17 @@ export function useExpiredServiceAgreements(
   return useQuery<GetExpiredServiceAgreements, GetExpiredServiceAgreementsVariables>(GET_EXPIRED_SERVICE_AGREEMENTS, {
     variables: params,
   });
+}
+
+export function useSpecificServiceAgreements(
+  params: GetSpecificServiceAgreementsVariables,
+): QueryResult<GetSpecificServiceAgreements> {
+  return useQuery<GetSpecificServiceAgreements, GetSpecificServiceAgreementsVariables>(
+    GET_SPECIFIC_SERVICE_AGREEMENTS,
+    {
+      variables: params,
+    },
+  );
 }
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {

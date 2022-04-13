@@ -30,12 +30,18 @@ export async function getDeploymentMetadata({
     return undefined;
   }
 
-  const url = new URL(proxyEndpoint);
+  let url;
+  try {
+    url = new URL(proxyEndpoint);
+  } catch (error) {
+    throw new Error('proxyEndpoint is invalid.');
+  }
+
   url.pathname = `/metadata/${deploymentId}`;
 
   const endpoint = wrapProxyEndpoint(url.toString(), indexer);
 
-  if (!endpoint) throw new Error('Endpoint not available');
+  if (!endpoint) throw new Error('Endpoint not available.');
   const response = await (await fetch(endpoint)).json();
 
   return response.data._metadata;
