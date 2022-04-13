@@ -137,7 +137,7 @@ textarea {
   justify-content: flex-end;
 }
 
-/* For text TODO: add grey text */
+/* For text */
 .errorText {
   color: var(--error);
 }
@@ -184,4 +184,10 @@ textarea {
 
 .content {
   margin: 1rem 0;
+}
+
+/* For antD UI - for future lib usage*/
+/* For antD table header */
+.ant-table-title {
+  margin-bottom: 1rem;
 }

@@ -16,22 +16,15 @@ export const Default: React.VFC = () => {
 
   return (
     <div className={'contentContainer'}>
-      <div className={'content'}>
-        {renderAsyncArray(
-          mapAsync((d) => d.plans?.nodes.filter(notEmpty), plans),
-          {
-            loading: () => <Spinner />,
-            error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
-            empty: () => <EmptyList />,
-            data: (data) => (
-              <>
-                <Typography variant="h6">{t('plans.default.title')}</Typography>
-                <List data={data} onRefresh={plans.refetch} />
-              </>
-            ),
-          },
-        )}
-      </div>
+      {renderAsyncArray(
+        mapAsync((d) => d.plans?.nodes.filter(notEmpty), plans),
+        {
+          loading: () => <Spinner />,
+          error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
+          empty: () => <EmptyList />,
+          data: (data) => <List data={data} onRefresh={plans.refetch} title={t('plans.default.title')} />,
+        },
+      )}
     </div>
   );
 };

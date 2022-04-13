@@ -22,9 +22,10 @@ import { last } from 'ramda';
 type Props = {
   data: Plan[];
   onRefresh: () => void;
+  title?: string;
 };
 
-const List: React.FC<Props> = ({ data, onRefresh }) => {
+const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
@@ -152,7 +153,14 @@ const List: React.FC<Props> = ({ data, onRefresh }) => {
     },
   ];
 
-  return <Table columns={columns} dataSource={data} rowKey={'id'} />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey={'id'}
+      title={() => <Typography variant="h6">{title}</Typography>}
+    />
+  );
 };
 
 export default List;
