@@ -4,7 +4,6 @@
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
-import { FcClock } from 'react-icons/fc';
 import { CgSandClock } from 'react-icons/cg';
 import { parseError } from '../../utils';
 import { Modal } from '../Modal';
@@ -61,7 +60,7 @@ const TransactionModal = <P, T extends string>({
     if (successModalText) {
       const timeoutId = setTimeout(() => {
         setShowClock(false);
-      }, 1000);
+      }, 20000);
 
       return () => clearTimeout(timeoutId);
     }
@@ -69,10 +68,10 @@ const TransactionModal = <P, T extends string>({
 
   const resetModal = () => {
     setIsLoading(false);
-    setShowClock(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
     setSuccessModalText(undefined);
+    !isLoading && setShowClock(false);
   };
 
   const resetModalStatus = () => {
@@ -144,6 +143,7 @@ const TransactionModal = <P, T extends string>({
             }}
             className={`${styles[variant]}`}
             size="medium"
+            disabled={showClock}
           />
         ))}
         {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}

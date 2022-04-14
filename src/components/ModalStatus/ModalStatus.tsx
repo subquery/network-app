@@ -39,7 +39,7 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       onCancel();
-    }, 1000);
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, [onCancel]);
@@ -48,9 +48,9 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
   const isErrorStatus = error || errorText;
   const StatusIcon = () =>
     isErrorStatus ? (
-      <FaCheckSquare className={styles.successIcon} size={28} />
-    ) : (
       <FaWindowClose className={styles.errorIcon} size={28} />
+    ) : (
+      <FaCheckSquare className={styles.successIcon} size={28} />
     );
   const statusText = isErrorStatus
     ? errorText || t('status.error')
