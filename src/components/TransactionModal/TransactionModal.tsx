@@ -4,11 +4,14 @@
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
+import { FcClock } from 'react-icons/fc';
+import { CgSandClock } from 'react-icons/cg';
 import { parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import { ModalStatus } from '../ModalStatus';
 import styles from './TransactionModal.module.css';
+import clsx from 'clsx';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
@@ -50,13 +53,26 @@ const TransactionModal = <P, T extends string>({
 }: Props<P, T>): React.ReactElement | null => {
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [showClock, setShowClock] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
 
+  React.useEffect(() => {
+    if (successModalText) {
+      const timeoutId = setTimeout(() => {
+        setShowClock(false);
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [successModalText]);
+
   const resetModal = () => {
     setIsLoading(false);
+    setShowClock(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
+    setSuccessModalText(undefined);
   };
 
   const resetModalStatus = () => {
@@ -64,6 +80,7 @@ const TransactionModal = <P, T extends string>({
   };
 
   const handleBtnClick = (key: T) => {
+    setShowClock(true);
     setShowModal(key);
   };
 
@@ -85,7 +102,6 @@ const TransactionModal = <P, T extends string>({
     } catch (error) {
       console.log('TxAction error', error);
       setFailureModalText(parseError(error));
-      throw new Error(failureModalText);
     }
   };
 
@@ -116,19 +132,22 @@ const TransactionModal = <P, T extends string>({
         successText={successModalText}
       />
 
-      {actions.map(({ label, key, onClick, ...rest }) => (
-        <Button
-          key={key}
-          {...rest}
-          label={label}
-          onClick={() => {
-            onClick?.();
-            handleBtnClick(key);
-          }}
-          className={`${styles[variant]}`}
-          size="medium"
-        />
-      ))}
+      <div className="flex-center">
+        {actions.map(({ label, key, onClick, ...rest }) => (
+          <Button
+            key={key}
+            {...rest}
+            label={label}
+            onClick={() => {
+              onClick?.();
+              handleBtnClick(key);
+            }}
+            className={`${styles[variant]}`}
+            size="medium"
+          />
+        ))}
+        {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
+      </div>
     </div>
   );
 };

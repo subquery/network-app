@@ -150,6 +150,10 @@ textarea {
   color: var(--gray700);
 }
 
+.primaryText {
+  color: var(--gradient-to);
+}
+
 /* For latest design system */
 .textBtn {
   background: white;
