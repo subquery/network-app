@@ -18,9 +18,10 @@ interface DropdownProps {
   menuItem?: (pair: keyPair) => React.ReactNode | string;
   dropdownContent?: React.ReactNode | string;
   handleOnClick?: (key: string) => void;
+  styleProps?: string;
 }
 
-export const Dropdown: React.VFC<DropdownProps> = ({ menu, menuItem, dropdownContent, handleOnClick }) => {
+export const Dropdown: React.VFC<DropdownProps> = ({ menu, menuItem, dropdownContent, handleOnClick, styleProps }) => {
   const menuList = (
     <Menu>
       {menu.map((menu) => (
@@ -32,10 +33,10 @@ export const Dropdown: React.VFC<DropdownProps> = ({ menu, menuItem, dropdownCon
   );
 
   return (
-    <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center')}>
+    <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center', styleProps)}>
       {typeof dropdownContent === 'string' || !dropdownContent ? (
         <Typography>
-          {dropdownContent || 'Menu'} <AiOutlineDown className={styles.downIcon} />
+          {dropdownContent || menu[0]?.label} <AiOutlineDown className={styles.downIcon} />
         </Typography>
       ) : (
         dropdownContent

@@ -5,9 +5,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import Detail from '../Detail';
-import { Address, Dropdown, Typography } from '@subql/react-ui';
+import { Address, Typography } from '@subql/react-ui';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
+import { Dropdown } from '../Dropdown';
 
 type Props = {
   project: Required<ProjectWithMetadata>;
@@ -18,6 +19,24 @@ type Props = {
 
 const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
   const { t } = useTranslation();
+
+  const VersionDropdown = () => {
+    const [dropdownValue, setDropdownValue] = React.useState<string>();
+    if (!versions) return <></>;
+    const menu = Object.entries(versions).map(([key, value]) => ({ key, label: value }));
+    const handleOnClick = (key: string) => {
+      onChangeVersion?.(key);
+      setDropdownValue(key);
+    };
+    return (
+      <Dropdown
+        menu={menu}
+        handleOnClick={handleOnClick}
+        dropdownContent={dropdownValue}
+        styleProps={styles.dropdown}
+      />
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -30,14 +49,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
             <Typography variant="h4" className={styles.name}>
               {project.metadata.name}
             </Typography>
-            {versions && (
-              <Dropdown
-                items={Object.entries(versions).map(([key, value]) => ({ key, label: value }))}
-                onSelected={(key) => onChangeVersion?.(key)}
-                selected={currentVersion ? Object.keys(versions).indexOf(currentVersion) : 0}
-                colorScheme="neutral"
-              />
-            )}
+            <VersionDropdown />
           </div>
           <Address address={project.owner} size="small" />
         </div>
