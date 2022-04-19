@@ -18,11 +18,11 @@
 .instructions {
   display: flex;
   flex-direction: row;
-  padding-bottom: 80px;
+  margin-bottom: 80px;
 }
 
 .instruction {
-  width: 290px;
+  width: 100%;
   padding: 0 16px;
 }
 

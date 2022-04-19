@@ -7,9 +7,24 @@ import { NavLink, Link } from 'react-router-dom';
 import testnet from '@subql/contract-sdk/publish/testnet.json';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
-import { Address, Button, Dropdown, Typography } from '@subql/react-ui';
+import { Address, Button, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
 import clsx from 'clsx';
+import { AiOutlineDown } from 'react-icons/ai';
+import { Dropdown } from '../Dropdown';
+
+const LinksDropdown = () => {
+  const { t } = useTranslation();
+  const menu = [
+    { key: 'https://explorer.subquery.network', label: 'Explorer' },
+    { key: 'https://project.subquery.network', label: 'Projects' },
+    { key: 'https://github.com/subquery/subql', label: 'Github' },
+  ];
+
+  const handleOnClick = (key: string) => (window.location.href = key);
+
+  return <Dropdown menu={menu} handleOnClick={handleOnClick} dropdownContent={t('header.hosted')} />;
+};
 
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
@@ -59,6 +74,27 @@ const Header: React.VFC = () => {
     }
   };
 
+  const AccountActions = ({ account }: { account: string }) => {
+    const { t } = useTranslation();
+    const menu = [
+      { key: 'addToken', label: 'Import SQT to wallet' },
+      { key: 'disconnect', label: 'Disconnect' },
+    ];
+
+    return (
+      <Dropdown
+        menu={menu}
+        handleOnClick={handleSelected}
+        dropdownContent={
+          <div className={styles.address}>
+            <Address address={account} size="large" />
+            <AiOutlineDown className={styles.downIcon} />
+          </div>
+        }
+      />
+    );
+  };
+
   return (
     <div className={styles.header}>
       <div className={styles.inner}>
@@ -66,19 +102,7 @@ const Header: React.VFC = () => {
           <Link to="/">
             <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
           </Link>
-          <Dropdown
-            items={[
-              { key: 'https://explorer.subquery.network', label: 'Explorer' },
-              { key: 'https://project.subquery.network', label: 'Projects' },
-              { key: 'https://github.com/subquery/subql', label: 'Github' },
-            ]}
-            colorScheme="standard"
-            onSelected={(key) => (window.location.href = key)}
-            className={styles.hosted}
-            dropdownClass={styles.hostedBorder}
-          >
-            <Typography /*className={styles.hostedText}*/>{t('header.hosted')}</Typography>
-          </Dropdown>
+          <LinksDropdown />
           {renderLink('/explorer', t('header.explorer'))}
           {renderLink('/studio', t('header.studio'))}
           {renderLink('/staking', t('header.staking'))}
@@ -98,16 +122,7 @@ const Header: React.VFC = () => {
         </div>
         <div className={styles.right}>
           {account ? (
-            <Dropdown
-              items={[
-                { key: 'addToken', label: 'Import SQT to wallet' },
-                { key: 'disconnect', label: 'Disconnect' },
-              ]}
-              onSelected={handleSelected}
-              colorScheme="gradient"
-            >
-              <Address address={account} size="large" />
-            </Dropdown>
+            <AccountActions account={account} />
           ) : (
             <Button
               type="secondary"

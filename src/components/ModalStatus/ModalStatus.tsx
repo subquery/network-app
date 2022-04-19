@@ -6,6 +6,7 @@ import { Modal as AntDModal } from 'antd';
 import { Typography } from '@subql/react-ui';
 import { FaCheckSquare, FaWindowClose } from 'react-icons/fa';
 import styles from './ModalStatus.module.css';
+import { useTranslation } from 'react-i18next';
 
 /**
  * NOTE:
@@ -20,6 +21,7 @@ interface ModalStatusProps {
   successText?: string;
   error?: boolean;
   errorText?: string;
+  description?: string;
   onCancel: () => void;
 }
 
@@ -28,31 +30,51 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
   successText,
   error,
   errorText,
+  description,
   title,
   visible,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       onCancel();
-    }, 1000);
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, [onCancel]);
 
+  const isSuccessStatus = success || successText;
+  const isErrorStatus = error || errorText;
+  const StatusIcon = () =>
+    isErrorStatus ? (
+      <FaWindowClose className={styles.errorIcon} size={28} />
+    ) : (
+      <FaCheckSquare className={styles.successIcon} size={28} />
+    );
+  const statusText = isErrorStatus
+    ? errorText || t('status.error')
+    : isSuccessStatus
+    ? successText || t('status.success')
+    : 'Unknown status';
+
+  const statusDescription = description || t('status.changeValidIn15s');
+
   return (
-    <AntDModal title={title} visible={visible} onCancel={onCancel} footer={null}>
+    <AntDModal title={title || 'Status Update'} visible={visible} onCancel={onCancel} footer={null}>
       <div className={styles.container}>
-        {(success || successText) && (
+        {statusText && (
           <div className={styles.status}>
-            <FaCheckSquare className={styles.successIcon} size={28} />
-            <Typography className={styles.statusText}>{successText || 'Success!'}</Typography>
-          </div>
-        )}
-        {(error || errorText) && (
-          <div className={styles.status}>
-            <FaWindowClose className={styles.errorIcon} size={28} />
-            <Typography className={styles.statusText}>{errorText || 'Error.'}</Typography>
+            <div className={styles.statusTitle}>
+              <StatusIcon />
+              <Typography className={styles.statusText} variant="h6">
+                {statusText}
+              </Typography>
+            </div>
+
+            <Typography variant="body" className={styles.statusDescription}>
+              {statusDescription}
+            </Typography>
           </div>
         )}
       </div>

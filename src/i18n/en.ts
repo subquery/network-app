@@ -343,6 +343,11 @@ const en = {
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
+    status: {
+      success: 'Success!',
+      error: 'Sorry, there is something wrong',
+      changeValidIn15s: 'Change will be reflected on dashboard in 15s.',
+    },
   },
 };
 
