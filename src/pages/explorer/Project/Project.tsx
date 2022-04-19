@@ -19,7 +19,7 @@ import {
 } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { getIndexerMetadata } from '../../../hooks/useIndexerMetadata';
-import { getDeploymentMetadata, notEmpty, renderAsync } from '../../../utils';
+import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
 
@@ -61,15 +61,19 @@ const ProjectInner: React.VFC = () => {
       const indexer = indexers[0];
 
       (async function fetchMeta() {
-        const metadata = await getIndexerMetadata(catSingle, indexer.indexer?.metadata);
+        let indexerMeta;
+        try {
+          const metadata = await getIndexerMetadata(catSingle, indexer.indexer?.metadata);
 
-        if (!metadata) return;
-        console.log(`project - proxyEndpoint ${metadata?.url} - deploymentId ${deploymentId} - indexer: ${indexer}`);
-        const indexerMeta = await getDeploymentMetadata({
-          proxyEndpoint: metadata.url,
-          deploymentId,
-          indexer: indexer.indexerId,
-        });
+          if (!metadata) return;
+          indexerMeta = await getDeploymentMetadata({
+            proxyEndpoint: metadata.url,
+            deploymentId,
+            indexer: indexer.indexerId,
+          });
+        } catch (error) {
+          console.error(parseError(error));
+        }
 
         if (!indexerMeta) return;
         updateIndexerStatus(indexer.indexerId, indexerMeta.lastProcessedHeight, indexerMeta.targetHeight);
