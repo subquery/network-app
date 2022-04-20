@@ -39,7 +39,7 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       onCancel();
-    }, 5000);
+    }, 2500);
 
     return () => clearTimeout(timeoutId);
   }, [onCancel]);
