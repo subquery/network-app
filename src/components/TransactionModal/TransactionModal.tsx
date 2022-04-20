@@ -92,7 +92,7 @@ const TransactionModal = <P, T extends string>({
       setIsLoading(true);
       const result = await tx.wait();
 
-      // resetModal();
+      resetModal();
       if (result.status) {
         setSuccessModalText(text.successText || 'Success');
       } else {
