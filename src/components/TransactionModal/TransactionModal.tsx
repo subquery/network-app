@@ -83,7 +83,7 @@ const TransactionModal = <P, T extends string>({
     setShowModal(key);
   };
 
-  const wrapTxAction = (action: typeof onClick) => async (params: P) => {
+  const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: P) => {
     try {
       if (!showModal) return;
 
@@ -92,7 +92,7 @@ const TransactionModal = <P, T extends string>({
       setIsLoading(true);
       const result = await tx.wait();
 
-      resetModal();
+      // resetModal();
       if (result.status) {
         setSuccessModalText(text.successText || 'Success');
       } else {
@@ -101,6 +101,11 @@ const TransactionModal = <P, T extends string>({
     } catch (error) {
       console.log('TxAction error', error);
       setFailureModalText(parseError(error));
+      if (rethrow) {
+        throw error;
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -118,7 +123,7 @@ const TransactionModal = <P, T extends string>({
               {...inputParams}
               inputTitle={text.inputTitle}
               submitText={text.submitText}
-              onSubmit={wrapTxAction(onClick)}
+              onSubmit={wrapTxAction(onClick, true)}
               isLoading={isLoading}
             />
           )
