@@ -21,7 +21,7 @@ const Container: React.VFC = () => {
       icon: <BsPerson />,
     },
     {
-      label: t('delegate.title'),
+      label: t('indexer.indexers'),
       link: `/staking/indexers`,
       icon: <BsCashStack />,
     },

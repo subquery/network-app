@@ -42,7 +42,12 @@ export async function getDeploymentMetadata({
   const endpoint = wrapProxyEndpoint(url.toString(), indexer);
 
   if (!endpoint) throw new Error('Endpoint not available.');
-  const response = await (await fetch(endpoint)).json();
+  let response;
+  try {
+    response = await (await fetch(endpoint)).json();
+  } catch (error) {
+    console.error(`Failed to fetch endpoint. ${JSON.stringify(error)}`);
+  }
 
   return response.data._metadata;
 }

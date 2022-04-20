@@ -4,8 +4,7 @@
 import * as React from 'react';
 import { Redirect, Route, Switch, useParams } from 'react-router';
 import Modal from 'react-modal';
-import { NavLink } from 'react-router-dom';
-import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit } from '../../../components';
+import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, TabButtons } from '../../../components';
 import { Button } from '@subql/react-ui';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
@@ -41,6 +40,11 @@ const Project: React.VFC = () => {
     setEditing(false);
   };
 
+  const tabLinks = [
+    { label: t('studio.project.tab1'), link: `/studio/project/${id}/details` },
+    { label: t('studio.project.tab2'), link: `/studio/project/${id}/deployments` },
+  ];
+
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
@@ -67,21 +71,8 @@ const Project: React.VFC = () => {
           <div className={styles.upper}>
             <div className="content-width">
               <ProjectHeader project={project} />
-              <div className={clsx('tabContainer', styles.tabContainer)}>
-                <NavLink
-                  to={`/studio/project/${id}/details`}
-                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
-                  replace
-                >
-                  {t('studio.project.tab1')}
-                </NavLink>
-                <NavLink
-                  to={`/studio/project/${id}/deployments`}
-                  className={(isActive) => clsx('tab', isActive && 'tabSelected')}
-                  replace
-                >
-                  {t('studio.project.tab2')}
-                </NavLink>
+              <div className={styles.tabContainer}>
+                <TabButtons tabs={tabLinks} />
               </div>
             </div>
           </div>

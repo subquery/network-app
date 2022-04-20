@@ -1,21 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, Button } from '@subql/react-ui';
+import { Typography, Button, Spinner } from '@subql/react-ui';
 import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { convertBigNumberToNumber, formatEther, toPercentage } from '../../../../utils';
-import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
+import { formatEther, renderAsync } from '../../../../utils';
+import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
-import { useEra, useWeb3 } from '../../../../containers';
+import { useDelegation, useEra, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import IndexerName from '../../../../components/IndexerDetails/IndexerName';
-import { useIndexerMetadata } from '../../../../hooks';
+import { useIndexerCapacity, useIndexerMetadata } from '../../../../hooks';
 import { TableText } from '../../../../components';
+import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
 
 interface props {
   indexers?: Indexer[];
@@ -35,6 +36,50 @@ const ConnectedIndexer: React.VFC<{ id: string; account?: string | null }> = ({ 
   );
 };
 
+const Capacity: React.VFC<{ indexer: string; fieldKey: 'current' | 'after' }> = ({ indexer, fieldKey }) => {
+  const indexerCapacity = useIndexerCapacity(indexer);
+  return (
+    <>
+      {renderAsync(indexerCapacity, {
+        error: (error) => (
+          <Typography className="errorText" variant="small">{`Failed to get capacity: ${error.message}`}</Typography>
+        ),
+        loading: () => <Spinner />,
+        data: (data) => {
+          return <TableText content={formatEther(data[fieldKey]) || '-'} />;
+        },
+      })}
+    </>
+  );
+};
+
+const TotalDelegated: React.VFC<{
+  indexer: string;
+  totalStake: CurrentEraValue<number>;
+  curEra: number | undefined;
+  fieldKey: 'current' | 'after';
+}> = ({ indexer, curEra, totalStake, fieldKey }) => {
+  const indexerDelegation = useDelegation(indexer, indexer);
+  return (
+    <>
+      {renderAsync(indexerDelegation, {
+        error: (error) => (
+          <Typography
+            className="errorText"
+            variant="small"
+          >{`Failed to get delegated amount: ${error.message}`}</Typography>
+        ),
+        loading: () => <Spinner />,
+        data: (data) => {
+          const ownStake = getOwnStake(data.delegation?.amount, curEra);
+          const totalDelegations = getDelegated(totalStake, ownStake);
+          return <TableText content={`${totalDelegations[fieldKey]} SQT` || '-'} />;
+        },
+      })}
+    </>
+  );
+};
+
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
@@ -42,13 +87,10 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const history = useHistory();
 
   const sortedIndexerList = (indexers ?? []).map((indexer) => {
-    const convertedCommission = parseRawEraValue(indexer.commission as RawEraValue, currentEra.data?.index);
-    const convertedTotalStake = parseRawEraValue(indexer.totalStake as RawEraValue, currentEra.data?.index);
+    const commission = getCommission(indexer.commission, currentEra.data?.index);
+    const totalStake = getTotalStake(indexer.totalStake, currentEra.data?.index);
 
-    const sortedCommission = mapEraValue(convertedCommission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0)));
-    const sortedTotalStake = mapEraValue(convertedTotalStake, (v) => formatEther(v ?? 0));
-
-    return { ...indexer, commission: sortedCommission, totalStake: sortedTotalStake };
+    return { ...indexer, commission, totalStake };
   });
 
   const orderedIndexerList = sortedIndexerList.sort((indexerA, indexerB) =>
@@ -60,7 +102,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       title: '#',
       key: 'idx',
       width: 15,
-      render: (text: string, record: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
+      render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
     },
     {
       title: t('indexer.title').toUpperCase(),
@@ -88,6 +130,29 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       ],
     },
     {
+      title: t('indexer.delegated').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: 'totalStake',
+          key: 'currentTotalStake',
+          width: 40,
+          render: (value: CurrentEraValue<number>, record: any) => (
+            <TotalDelegated indexer={record.id} totalStake={value} fieldKey="current" curEra={currentEra.data?.index} />
+          ),
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: 'totalStake',
+          key: 'currentTotalStake',
+          width: 40,
+          render: (value: CurrentEraValue<number>, record: any) => (
+            <TotalDelegated indexer={record.id} totalStake={value} fieldKey="after" curEra={currentEra.data?.index} />
+          ),
+        },
+      ],
+    },
+    {
       title: t('indexer.commission').toUpperCase(),
       children: [
         {
@@ -95,7 +160,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           dataIndex: ['commission', 'current'],
           key: 'currentTotalStake',
           width: 40,
-          render: (val: string) => <TableText content={val || '-'} />,
+          render: (value: string) => <TableText content={value || '-'} />,
         },
         {
           title: t('general.next').toUpperCase(),
@@ -103,6 +168,23 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: string) => <TableText content={value || '-'} />,
+        },
+      ],
+    },
+    {
+      title: t('indexer.capacity').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: 'id',
+          width: 40,
+          render: (value: string) => <Capacity indexer={value} fieldKey="current" />,
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: 'id',
+          width: 40,
+          render: (value: string) => <Capacity indexer={value} fieldKey="after" />,
         },
       ],
     },
@@ -137,8 +219,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       </Typography>
       <Table
         columns={columns}
+        rowKey="idx"
         dataSource={orderedIndexerList}
-        scroll={{ x: 1200 }}
+        scroll={{ x: 1600 }}
         pagination={{
           total: totalCount,
           pageSize: 10,

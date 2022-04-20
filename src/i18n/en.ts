@@ -161,6 +161,7 @@ const en = {
     },
     indexer: {
       title: 'Indexer',
+      indexers: 'Indexers',
       profile: 'My profile',
       currentEra: 'Current Era',
       indexing: 'Indexing',
