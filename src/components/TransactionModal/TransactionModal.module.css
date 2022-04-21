@@ -8,17 +8,21 @@
 }
 
 .textBtn {
-  background: white;
+  background: none;
   color: var(--gradient-to);
   padding: 0.5rem 0;
 }
 
 .errTextBtn {
-  background: white;
+  background: none;
   color: var(--error);
   padding: 0.5rem 0;
 }
 
 .clock {
   margin-left: 1rem;
+}
+
+.errorOutlineIcon {
+  color: var(--error);
 }

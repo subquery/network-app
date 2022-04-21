@@ -193,7 +193,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 40,
+      width: 50,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;

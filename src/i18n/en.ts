@@ -231,6 +231,8 @@ const en = {
       viewProfile: 'View indexer profile',
       totalAmount: 'You have total {{count}} delegation',
       totalAmount_other: 'You have total {{count}} delegations',
+      invalidDelegateBeforeRewardClaim: 'This indexer cannot be delegated until they collect all their rewards.',
+      invalidUndelegateBeforeRewardClaim: 'This indexer cannot be undelegated until they collect all their rewards.',
     },
 
     withdrawals: {

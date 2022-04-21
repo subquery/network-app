@@ -156,17 +156,27 @@ textarea {
 
 /* For latest design system */
 .textBtn {
-  background: white;
+  background: none;
   color: var(--gradient-to);
+}
+
+.errTextBtn {
+  background: none;
+  color: var(--error);
+}
+
+.disabledTextBtn {
+  color: var(--gray500);
+  background: none;
+}
+
+.button {
+  margin-right: 1rem;
+  background: var(--gradient-to);
 }
 
 .errBtn {
   background: var(--error);
-}
-
-.errTextBtn {
-  background: white;
-  color: var(--error);
 }
 
 .neutralBtn {
