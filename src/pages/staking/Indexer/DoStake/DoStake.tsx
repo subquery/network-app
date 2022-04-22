@@ -11,7 +11,7 @@ import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
 import { convertStringToNumber, mergeAsync, renderAsyncArray } from '../../../../utils';
 import moment from 'moment';
-import { useRewardClaimStatus } from '../../../../hooks/useRewardClaimStatus';
+import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
 
 enum StakeAction {
@@ -57,7 +57,7 @@ export const DoStake: React.VFC = () => {
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  const rewardClaimStatus = useRewardClaimStatus(account || '');
+  const rewardClaimStatus = useRewardCollectStatus(account || '');
   const isIndexer = useIsIndexer(account);
 
   const { balance, stakingAllowance } = useSQToken();
@@ -96,8 +96,8 @@ export const DoStake: React.VFC = () => {
               key: StakeAction.Stake,
               onClick: () => setStakeAction(StakeAction.Stake),
               disabled: !rewardClaimStatus?.hasClaimedRewards,
-              disabledTooltip: !rewardClaimStatus?.hasClaimedRewards
-                ? t('indexer.disabledStakeBeforeRewardClaim')
+              tooltip: !rewardClaimStatus?.hasClaimedRewards
+                ? t('indexer.disabledStakeBeforeRewardCollect')
                 : undefined,
             },
             {
@@ -105,8 +105,8 @@ export const DoStake: React.VFC = () => {
               key: StakeAction.UnStake,
               onClick: () => setStakeAction(StakeAction.UnStake),
               disabled: !canUnstake || !rewardClaimStatus?.hasClaimedRewards,
-              disabledTooltip: !rewardClaimStatus?.hasClaimedRewards
-                ? t('indexer.disabledUnstakeBeforeRewardClaim')
+              tooltip: !rewardClaimStatus?.hasClaimedRewards
+                ? t('indexer.disabledUnstakeBeforeRewardCollect')
                 : undefined,
             },
           ]}

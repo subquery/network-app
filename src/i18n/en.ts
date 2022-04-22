@@ -175,8 +175,8 @@ const en = {
       capacity: 'capacity',
       stake: 'Stake',
       unstake: 'Unstake',
-      disabledStakeBeforeRewardClaim: `You can't stake until you collect all early era's rewards`,
-      disabledUnstakeBeforeRewardClaim: `You can't unstake until you collect all your rewards.`,
+      disabledStakeBeforeRewardCollect: `You can't stake until you collect all early era's rewards.`,
+      disabledUnstakeBeforeRewardCollect: `You can't unstake until you collect all early era's rewards.`,
       enterStakeAmount: 'Enter Staking Amount',
       confirmOnMetamask: 'Confirm On MetaMask',
       stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
@@ -234,9 +234,8 @@ const en = {
       viewProfile: 'View indexer profile',
       totalAmount: 'You have total {{count}} delegation',
       totalAmount_other: 'You have total {{count}} delegations',
-      invalidDelegateBeforeRewardClaim: `'This indexer cannot be delegated to until they collect all the early era's rewards. Please contact to this indexer for fixing the problem'`,
-      invalidUndelegateBeforeRewardClaim:
-        'This indexer cannot be undelegated from until they collect all their rewards.',
+      invalidDelegateBeforeRewardCollect: `This indexer cannot be delegated to until they collect all the early era's rewards. Please contact to this indexer for fixing the problem`,
+      invalidUndelegateBeforeRewardCollect: `This indexer cannot be undelegated from until they collect all the early era's rewards.`,
     },
 
     withdrawals: {

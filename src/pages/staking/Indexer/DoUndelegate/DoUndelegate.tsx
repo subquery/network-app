@@ -7,7 +7,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useRewardClaimStatus } from '../../../../hooks/useRewardClaimStatus';
+import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { renderAsync } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
 
@@ -19,7 +19,7 @@ interface DoUndelegateProps {
 export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
-  const rewardClaimStatus = useRewardClaimStatus(indexerAddress);
+  const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
 
   const modalText = {
     title: t('delegate.undelegate'),
@@ -54,7 +54,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
               label: t('delegate.undelegate'),
               key: 'undelegate',
               disabled: !hasClaimedRewards,
-              disabledTooltip: !hasClaimedRewards ? t('delegate.invalidUndelegateBeforeRewardClaim') : '',
+              tooltip: !hasClaimedRewards ? t('delegate.invalidUndelegateBeforeRewardCollect') : '',
             },
           ]}
           inputParams={{

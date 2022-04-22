@@ -5,7 +5,7 @@ import { useAsyncMemo } from '.';
 import { useContracts } from '../containers';
 import { AsyncData } from '../utils';
 
-export function useRewardClaimStatus(indexer: string): AsyncData<{ hasClaimedRewards: boolean } | undefined> {
+export function useRewardCollectStatus(indexer: string): AsyncData<{ hasClaimedRewards: boolean } | undefined> {
   const pendingContracts = useContracts();
 
   return useAsyncMemo(async () => {
@@ -18,7 +18,6 @@ export function useRewardClaimStatus(indexer: string): AsyncData<{ hasClaimedRew
       contracts.rewardsDistributor.getLastClaimEra(indexer),
       contracts.rewardsDistributor.getLastSettledEra(indexer),
     ]);
-
     const rewardClaimStatus = currentEra.eq(lastClaimedEra.add(1)) && lastSettledEra.lte(lastClaimedEra);
 
     return { hasClaimedRewards: rewardClaimStatus };

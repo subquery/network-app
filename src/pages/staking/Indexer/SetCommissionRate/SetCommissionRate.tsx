@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useContracts, useWeb3 } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useIsIndexer } from '../../../../hooks';
-import { useRewardClaimStatus } from '../../../../hooks/useRewardClaimStatus';
+import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
 
@@ -16,7 +16,7 @@ export const SetCommissionRate: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const isIndexer = useIsIndexer(account);
-  const rewardClaimStatus = useRewardClaimStatus(account || '');
+  const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   // TODO:useCommission
   const modalText = {
@@ -49,7 +49,7 @@ export const SetCommissionRate: React.VFC = () => {
               label: t('indexer.updateCommissionRate'),
               key: 'commission',
               disabled: !rewardClaimStatus?.hasClaimedRewards,
-              disabledTooltip: !rewardClaimStatus?.hasClaimedRewards
+              tooltip: !rewardClaimStatus?.hasClaimedRewards
                 ? t('indexer.disabledSetCommissionBeforeRewardClaim')
                 : undefined,
             },

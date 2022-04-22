@@ -32,7 +32,7 @@ type Props<P, T extends string> = {
       label: string;
       key: T;
       onClick?: () => void;
-      disabledTooltip?: string;
+      tooltip?: string;
     } & React.ComponentProps<typeof Button>
   >;
   inputParams?: Omit<React.ComponentProps<typeof ModalInput>, 'inputTitle' | 'submitText' | 'onSubmit' | 'isLoading'>;
@@ -152,9 +152,9 @@ const TransactionModal = <P, T extends string>({
         successText={successModalText}
       />
 
-      {actions.map(({ label, key, onClick, disabled, disabledTooltip, ...rest }) => (
+      {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => (
         <div className="flex-center">
-          <Tooltip title={disabledTooltip} key={key}>
+          <Tooltip title={tooltip} key={key}>
             <Button
               {...rest}
               label={label}
@@ -166,7 +166,8 @@ const TransactionModal = <P, T extends string>({
               size="medium"
               disabled={disabled || showClock}
               rightItem={
-                disabledTooltip && (
+                tooltip &&
+                disabled && (
                   <MdErrorOutline
                     className={variant.match(/text|Text/) ? styles.errorTextIcon : styles.errorButtonIcon}
                   />

@@ -9,7 +9,7 @@ import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
 import { tokenApprovalModalText, ModalApproveToken } from '../../../../components';
 import TransactionModal from '../../../../components/TransactionModal';
 import { convertStringToNumber, renderAsync } from '../../../../utils';
-import { useRewardClaimStatus } from '../../../../hooks/useRewardClaimStatus';
+import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
 
 interface DoDelegateProps {
@@ -23,7 +23,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
   const pendingContracts = useContracts();
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
-  const rewardClaimStatus = useRewardClaimStatus(indexerAddress);
+  const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
 
   const modalText = requireTokenApproval
     ? tokenApprovalModalText
@@ -58,7 +58,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
               label: t('delegate.title'),
               key: 'delegate',
               disabled: isActionDisabled,
-              disabledTooltip: !hasClaimedRewards ? t('delegate.invalidDelegateBeforeRewardClaim') : '',
+              tooltip: !hasClaimedRewards ? t('delegate.invalidDelegateBeforeRewardCollect') : '',
             },
           ]}
           onClick={handleClick}
