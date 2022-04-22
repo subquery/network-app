@@ -330,7 +330,7 @@ const GET_INDEXER_REWARDS = gql`
 `;
 
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
-  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
+  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params, pollInterval: 20000 });
 }
 
 export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexers> {
@@ -409,5 +409,5 @@ export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryRes
 }
 
 export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator> {
-  return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params });
+  return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params, pollInterval: 20000 });
 }

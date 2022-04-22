@@ -5,12 +5,14 @@ import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import { CgSandClock } from 'react-icons/cg';
-import { parseError } from '../../utils';
+import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import { ModalStatus } from '../ModalStatus';
 import styles from './TransactionModal.module.css';
 import clsx from 'clsx';
+import { MdErrorOutline } from 'react-icons/md';
+import { Tooltip } from 'antd';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
@@ -30,6 +32,7 @@ type Props<P, T extends string> = {
       label: string;
       key: T;
       onClick?: () => void;
+      tooltip?: string;
     } & React.ComponentProps<typeof Button>
   >;
   inputParams?: Omit<React.ComponentProps<typeof ModalInput>, 'inputTitle' | 'submitText' | 'onSubmit' | 'isLoading'>;
@@ -39,7 +42,8 @@ type Props<P, T extends string> = {
     loading: boolean,
     error?: string,
   ) => React.ReactNode | undefined;
-  variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
+  variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
+  initialCheck?: AsyncData<unknown>;
 };
 
 const TransactionModal = <P, T extends string>({
@@ -49,12 +53,20 @@ const TransactionModal = <P, T extends string>({
   onClick,
   inputParams,
   variant = 'button',
+  initialCheck,
 }: Props<P, T>): React.ReactElement | null => {
   const [showModal, setShowModal] = React.useState<T | undefined>();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
   const [showClock, setShowClock] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
+
+  React.useEffect(() => {
+    if (initialCheck) {
+      const { error } = initialCheck;
+      error && setFailureModalText(parseError(error));
+    }
+  }, [initialCheck, initialCheck?.loading, showModal]);
 
   React.useEffect(() => {
     if (successModalText) {
@@ -75,6 +87,7 @@ const TransactionModal = <P, T extends string>({
   };
 
   const resetModalStatus = () => {
+    setFailureModalText(undefined);
     setSuccessModalText(undefined);
   };
 
@@ -115,7 +128,9 @@ const TransactionModal = <P, T extends string>({
         title={text.title}
         description={text.description}
         visible={!!showModal}
-        onCancel={() => resetModal()}
+        onCancel={() => {
+          resetModal();
+        }}
         steps={text.steps}
         content={
           renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
@@ -123,6 +138,7 @@ const TransactionModal = <P, T extends string>({
               {...inputParams}
               inputTitle={text.inputTitle}
               submitText={text.submitText}
+              failureModalText={failureModalText}
               onSubmit={wrapTxAction(onClick, true)}
               isLoading={isLoading}
             />
@@ -136,23 +152,32 @@ const TransactionModal = <P, T extends string>({
         successText={successModalText}
       />
 
-      <div className="flex-center">
-        {actions.map(({ label, key, onClick, ...rest }) => (
-          <Button
-            key={key}
-            {...rest}
-            label={label}
-            onClick={() => {
-              onClick?.();
-              handleBtnClick(key);
-            }}
-            className={`${styles[variant]}`}
-            size="medium"
-            disabled={showClock}
-          />
-        ))}
-        {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
-      </div>
+      {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => (
+        <div className="flex-center">
+          <Tooltip title={tooltip} key={key}>
+            <Button
+              {...rest}
+              label={label}
+              onClick={() => {
+                onClick?.();
+                handleBtnClick(key);
+              }}
+              className={variant}
+              size="medium"
+              disabled={disabled || showClock}
+              rightItem={
+                tooltip &&
+                disabled && (
+                  <MdErrorOutline
+                    className={variant.match(/text|Text/) ? styles.errorTextIcon : styles.errorButtonIcon}
+                  />
+                )
+              }
+            />
+          </Tooltip>
+          {showClock && key === showModal && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
+        </div>
+      ))}
     </div>
   );
 };

@@ -23,6 +23,7 @@ interface Props {
   curAmount?: number;
   showMaxButton?: boolean;
   inputBottomText?: string;
+  failureModalText?: string;
   unit?: string;
   isLoading?: boolean;
   max?: number;
@@ -41,6 +42,7 @@ export const ModalInput: React.FC<Props> = ({
   curAmount,
   showMaxButton,
   inputBottomText,
+  failureModalText,
   min,
   max,
 }) => {
@@ -103,7 +105,7 @@ export const ModalInput: React.FC<Props> = ({
         </Typography>
       )}
       <Typography className={styles.inputError} variant="medium">
-        {formik.errors?.input}
+        {failureModalText || formik.errors?.input}
       </Typography>
       <div className={styles.btnContainer}>
         <Button
@@ -113,7 +115,7 @@ export const ModalInput: React.FC<Props> = ({
           size="large"
           className={styles.submitBtn}
           loading={isLoading}
-          disabled={!(formik.values.input > 0)}
+          disabled={!(formik.values.input > 0) || !!failureModalText}
         >
           {submitText || 'Submit'}
         </Button>

@@ -7,6 +7,9 @@ import { parseEther } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
+import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
+import { renderAsync } from '../../../../utils';
+import { Spinner, Typography } from '@subql/react-ui';
 
 interface DoUndelegateProps {
   indexerAddress: string;
@@ -16,6 +19,7 @@ interface DoUndelegateProps {
 export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
+  const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
 
   const modalText = {
     title: t('delegate.undelegate'),
@@ -36,16 +40,31 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
     return pendingTx;
   };
 
-  return (
-    <TransactionModal
-      variant="textBtn"
-      text={modalText}
-      actions={[{ label: t('delegate.undelegate'), key: 'undelegate' }]}
-      inputParams={{
-        showMaxButton: true,
-        curAmount: availableBalance,
-      }}
-      onClick={handleClick}
-    />
-  );
+  return renderAsync(rewardClaimStatus, {
+    error: (error) => <Typography>{`Error: ${error}`}</Typography>,
+    loading: () => <Spinner />,
+    data: (data) => {
+      const { hasClaimedRewards } = data;
+      return (
+        <TransactionModal
+          variant="textBtn"
+          text={modalText}
+          actions={[
+            {
+              label: t('delegate.undelegate'),
+              key: 'undelegate',
+              disabled: !hasClaimedRewards,
+              tooltip: !hasClaimedRewards ? t('delegate.invalidUndelegateBeforeRewardCollect') : '',
+            },
+          ]}
+          inputParams={{
+            showMaxButton: true,
+            curAmount: availableBalance,
+          }}
+          onClick={handleClick}
+          initialCheck={rewardClaimStatus}
+        />
+      );
+    },
+  });
 };
