@@ -175,7 +175,7 @@ const en = {
       capacity: 'capacity',
       stake: 'Stake',
       unstake: 'Unstake',
-      disabledStakeBeforeRewardClaim: `You can't stake until you collect all your rewards`,
+      disabledStakeBeforeRewardClaim: `You can't stake until you collect all early era's rewards`,
       disabledUnstakeBeforeRewardClaim: `You can't unstake until you collect all your rewards.`,
       enterStakeAmount: 'Enter Staking Amount',
       confirmOnMetamask: 'Confirm On MetaMask',
@@ -189,7 +189,7 @@ const en = {
       confirmUnstake: 'Confirm Unstake',
       updateCommissionRate: 'Change commission rate',
       setNewCommissionRate: 'Set new commission rate',
-      disabledSetCommissionBeforeRewardClaim: `You can't change commission rate until you collect all your rewards.`,
+      disabledSetCommissionBeforeRewardClaim: `You can't change commission rate until you collect all early era's rewards. Please check indexer admin app and see if the lastClaimedEra = currentEra - 1`,
       newRateValidNext2Era: 'Once confirm, the new rate will take 2 full eras to be effective.',
       enterCommissionRate: 'Enter the commission rate',
       currentRate: 'Current rate',
@@ -234,8 +234,9 @@ const en = {
       viewProfile: 'View indexer profile',
       totalAmount: 'You have total {{count}} delegation',
       totalAmount_other: 'You have total {{count}} delegations',
-      invalidDelegateBeforeRewardClaim: 'This indexer cannot be delegated until they collect all their rewards.',
-      invalidUndelegateBeforeRewardClaim: 'This indexer cannot be undelegated until they collect all their rewards.',
+      invalidDelegateBeforeRewardClaim: `'This indexer cannot be delegated to until they collect all the early era's rewards. Please contact to this indexer for fixing the problem'`,
+      invalidUndelegateBeforeRewardClaim:
+        'This indexer cannot be undelegated from until they collect all their rewards.',
     },
 
     withdrawals: {
@@ -275,8 +276,7 @@ const en = {
         button: 'Claim',
         submit: 'Confirm Claim',
       },
-      totalUnclaimReward: 'You have total {{count}} unclaimed reward.',
-      totalUnclaimReward_other: 'You have total {{count}} unclaimed rewards.',
+      totalUnclaimReward: 'You have an unclaimed reward.',
     },
     plans: {
       category: {
