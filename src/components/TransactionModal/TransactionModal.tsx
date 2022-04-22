@@ -42,7 +42,7 @@ type Props<P, T extends string> = {
     loading: boolean,
     error?: string,
   ) => React.ReactNode | undefined;
-  variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton' | 'disabledTextBtn' | 'disabledBtn';
+  variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
   initialCheck?: AsyncData<unknown>;
 };
 
@@ -166,7 +166,11 @@ const TransactionModal = <P, T extends string>({
               className={variant}
               size="medium"
               disabled={disabled || showClock}
-              rightItem={disabledTooltip && <MdErrorOutline className={styles.errorOutlineIcon} />}
+              rightItem={
+                disabledTooltip && (
+                  <MdErrorOutline className={variant.match(/text/) ? styles.errorTextIcon : styles.errorButtonIcon} />
+                )
+              }
             />
           </Tooltip>
         ))}

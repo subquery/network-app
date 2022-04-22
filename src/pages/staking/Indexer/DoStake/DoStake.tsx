@@ -9,8 +9,10 @@ import { tokenApprovalModalText, ModalApproveToken } from '../../../../component
 import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertStringToNumber } from '../../../../utils';
+import { convertStringToNumber, mergeAsync, renderAsyncArray } from '../../../../utils';
 import moment from 'moment';
+import { useRewardClaimStatus } from '../../../../hooks/useRewardClaimStatus';
+import { Spinner, Typography } from '@subql/react-ui';
 
 enum StakeAction {
   Stake = 'stake',
@@ -55,8 +57,8 @@ export const DoStake: React.VFC = () => {
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
+  const rewardClaimStatus = useRewardClaimStatus(account || '');
   const isIndexer = useIsIndexer(account);
-  const canUnstake = isIndexer.data;
 
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
@@ -78,28 +80,50 @@ export const DoStake: React.VFC = () => {
     }
   };
 
-  return (
-    <TransactionModal
-      text={modalText}
-      actions={[
-        { label: t('indexer.stake'), key: StakeAction.Stake, onClick: () => setStakeAction(StakeAction.Stake) },
-        {
-          label: t('indexer.unstake'),
-          key: StakeAction.UnStake,
-          onClick: () => setStakeAction(StakeAction.UnStake),
-          disabled: !canUnstake,
-        },
-      ]}
-      inputParams={{
-        showMaxButton,
-        curAmount,
-      }}
-      onClick={handleClick}
-      renderContent={(onSubmit, _, loading) => {
-        return (
-          requireTokenApproval && <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />
-        );
-      }}
-    />
-  );
+  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus), {
+    error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
+    loading: () => <Spinner />,
+    empty: () => <></>,
+    data: (data) => {
+      const [canUnstake, rewardClaimStatus] = data;
+      console.log('rewardClaimStatus', rewardClaimStatus);
+      return (
+        <TransactionModal
+          text={modalText}
+          actions={[
+            {
+              label: t('indexer.stake'),
+              key: StakeAction.Stake,
+              onClick: () => setStakeAction(StakeAction.Stake),
+              disabled: !rewardClaimStatus?.hasClaimedRewards,
+              disabledTooltip: !rewardClaimStatus?.hasClaimedRewards
+                ? t('indexer.disabledStakeBeforeRewardClaim')
+                : undefined,
+            },
+            {
+              label: t('indexer.unstake'),
+              key: StakeAction.UnStake,
+              onClick: () => setStakeAction(StakeAction.UnStake),
+              disabled: !canUnstake || !rewardClaimStatus?.hasClaimedRewards,
+              disabledTooltip: !rewardClaimStatus?.hasClaimedRewards
+                ? t('indexer.disabledUnstakeBeforeRewardClaim')
+                : undefined,
+            },
+          ]}
+          inputParams={{
+            showMaxButton,
+            curAmount,
+          }}
+          onClick={handleClick}
+          renderContent={(onSubmit, _, loading) => {
+            return (
+              requireTokenApproval && (
+                <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />
+              )
+            );
+          }}
+        />
+      );
+    },
+  });
 };

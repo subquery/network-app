@@ -23,6 +23,10 @@
   margin-left: 1rem;
 }
 
-.errorOutlineIcon {
+.errorButtonIcon {
+  color: inherit;
+}
+
+.errorTextIcon {
   color: var(--error);
 }
