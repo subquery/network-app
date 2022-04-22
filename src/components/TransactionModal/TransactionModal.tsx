@@ -152,11 +152,10 @@ const TransactionModal = <P, T extends string>({
         successText={successModalText}
       />
 
-      <div className="flex-center">
-        {actions.map(({ label, key, onClick, disabled, disabledTooltip, ...rest }) => (
-          <Tooltip title={disabledTooltip}>
+      {actions.map(({ label, key, onClick, disabled, disabledTooltip, ...rest }) => (
+        <div className="flex-center">
+          <Tooltip title={disabledTooltip} key={key}>
             <Button
-              key={key}
               {...rest}
               label={label}
               onClick={() => {
@@ -168,14 +167,16 @@ const TransactionModal = <P, T extends string>({
               disabled={disabled || showClock}
               rightItem={
                 disabledTooltip && (
-                  <MdErrorOutline className={variant.match(/text/) ? styles.errorTextIcon : styles.errorButtonIcon} />
+                  <MdErrorOutline
+                    className={variant.match(/text|Text/) ? styles.errorTextIcon : styles.errorButtonIcon}
+                  />
                 )
               }
             />
           </Tooltip>
-        ))}
-        {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
-      </div>
+          {showClock && key === showModal && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
+        </div>
+      ))}
     </div>
   );
 };
