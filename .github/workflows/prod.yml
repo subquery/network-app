@@ -27,15 +27,15 @@ jobs:
         # Disable CI flag so linter warnings aren't treaded as errors
         run: CI=false yarn build
 
-      - name: Deploy Dev
+      - name: Deploy Prod
         uses: reggionick/s3-deploy@v3
         with:
           folder: build
-          bucket: ${{ secrets.DEV_BUCKET }}
-          bucket-region: ${{ secrets.S3_DEV_BUCKET_REGION }}
+          bucket: frontier.subquery.network
+          bucket-region: ap-southeast-2
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_DEV }}
+          dist-id: ${{ secrets.CLOUDFRONT_ID_PROD }}
           delete-removed: false
           no-cache: true
           private: true
-      
+
