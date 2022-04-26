@@ -15,7 +15,7 @@ export async function getDeployment(
   const obj = await fetchIpfsMetadata<VersionedProjectManifest>(catSingle, deploymentId);
 
   const manifest = new ProjectManifestVersioned(obj);
-  manifest.validate();
+  //manifest.validate();
 
   // const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
   //   .then((data) => Buffer.from(data).toString())
