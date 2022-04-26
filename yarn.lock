@@ -3981,14 +3981,12 @@
     reflect-metadata "^0.1.13"
     sequelize "^6.6.2"
 
-"@subql/contract-sdk@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.4.1.tgz#e1ef65e53d94480daa03c766460e460fbd4bc395"
-  integrity sha512-XyCvryzX2eGEAMOfRAV4PYI9dz5QOU4SkqJ+nLnqAN2fPyYaXI0kk/0hW9mAK40Z7FDtPGpm/Ib1mw6aRd4Zlg==
+"@subql/contract-sdk@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.5.0.tgz#e1dad1018bba9874e2bef1a73ca9f3dd7924236e"
+  integrity sha512-4HlTtX6KyS/iPzbq4+7bGVK/pFxETrlzAnY6cBwkrGySmgXz84NW/jFV4lgXCW4IeL/OwtKPKdyxRCSvw9Kp/A==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
-    dotenv "^10.0.0"
-    fs "^0.0.1-security"
 
 "@subql/react-ui@^1.0.1-19":
   version "1.0.1-19"
@@ -9546,11 +9544,6 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
-
-fs@^0.0.1-security:
-  version "0.0.1-security"
-  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
-  integrity sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
 
 fsevents@^1.2.7:
   version "1.2.13"
