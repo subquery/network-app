@@ -53,12 +53,13 @@ const Capacity: React.VFC<{ indexer: string; fieldKey: 'current' | 'after' }> = 
   );
 };
 
-const TotalDelegated: React.VFC<{
+const Delegation: React.VFC<{
   indexer: string;
   totalStake: CurrentEraValue<number>;
   curEra: number | undefined;
+  delegateType?: 'ownStake' | 'delegated';
   fieldKey: 'current' | 'after';
-}> = ({ indexer, curEra, totalStake, fieldKey }) => {
+}> = ({ indexer, curEra, totalStake, delegateType = 'delegated', fieldKey }) => {
   const indexerDelegation = useDelegation(indexer, indexer);
   return (
     <>
@@ -72,8 +73,9 @@ const TotalDelegated: React.VFC<{
         loading: () => <Spinner />,
         data: (data) => {
           const ownStake = getOwnStake(data.delegation?.amount, curEra);
-          const totalDelegations = getDelegated(totalStake, ownStake);
-          return <TableText content={`${totalDelegations[fieldKey]} SQT` || '-'} />;
+          const delegated = getDelegated(totalStake, ownStake);
+          const eraValue = delegateType === 'delegated' ? delegated : ownStake;
+          return <TableText content={`${eraValue[fieldKey]} SQT` || '-'} />;
         },
       })}
     </>
@@ -130,7 +132,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       ],
     },
     {
-      title: t('indexer.delegated').toUpperCase(),
+      title: t('indexer.ownStake').toUpperCase(),
       children: [
         {
           title: t('general.current').toUpperCase(),
@@ -138,7 +140,13 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: CurrentEraValue<number>, record: any) => (
-            <TotalDelegated indexer={record.id} totalStake={value} fieldKey="current" curEra={currentEra.data?.index} />
+            <Delegation
+              indexer={record.id}
+              totalStake={value}
+              fieldKey="current"
+              curEra={currentEra.data?.index}
+              delegateType={'ownStake'}
+            />
           ),
         },
         {
@@ -147,7 +155,36 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: CurrentEraValue<number>, record: any) => (
-            <TotalDelegated indexer={record.id} totalStake={value} fieldKey="after" curEra={currentEra.data?.index} />
+            <Delegation
+              indexer={record.id}
+              totalStake={value}
+              fieldKey="after"
+              curEra={currentEra.data?.index}
+              delegateType={'ownStake'}
+            />
+          ),
+        },
+      ],
+    },
+    {
+      title: t('indexer.delegated').toUpperCase(),
+      children: [
+        {
+          title: t('general.current').toUpperCase(),
+          dataIndex: 'totalStake',
+          key: 'currentTotalStake',
+          width: 40,
+          render: (value: CurrentEraValue<number>, record: any) => (
+            <Delegation indexer={record.id} totalStake={value} fieldKey="current" curEra={currentEra.data?.index} />
+          ),
+        },
+        {
+          title: t('general.next').toUpperCase(),
+          dataIndex: 'totalStake',
+          key: 'currentTotalStake',
+          width: 40,
+          render: (value: CurrentEraValue<number>, record: any) => (
+            <Delegation indexer={record.id} totalStake={value} fieldKey="after" curEra={currentEra.data?.index} />
           ),
         },
       ],

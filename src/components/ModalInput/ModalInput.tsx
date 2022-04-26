@@ -46,6 +46,7 @@ export const ModalInput: React.FC<Props> = ({
   min,
   max,
 }) => {
+  const maxInputNumber = curAmount || max;
   const formik = useFormik({
     initialValues: {
       input: 0,
@@ -95,7 +96,7 @@ export const ModalInput: React.FC<Props> = ({
           value={formik.values.input}
           addonAfter={<Prefix />}
           disabled={isLoading}
-          max={max}
+          max={maxInputNumber}
           min={min}
         />
       </div>
