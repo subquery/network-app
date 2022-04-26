@@ -1,10 +1,9 @@
-name: Dev
+name: Prod
 on:
   workflow_dispatch:
   push:
     branches:
       - master
-      - dev-pipeline
 
 jobs:
   build:
