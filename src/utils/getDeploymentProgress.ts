@@ -49,7 +49,7 @@ export async function getDeploymentMetadata({
     console.error(`Failed to fetch endpoint. ${JSON.stringify(error)}`);
   }
 
-  return response?.data._metadata;
+  return response?.data?._metadata;
 }
 
 export const getDeploymentProgress = async ({
