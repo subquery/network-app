@@ -21,18 +21,19 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
   const { t } = useTranslation();
 
   const VersionDropdown = () => {
-    const [dropdownValue, setDropdownValue] = React.useState<string>();
     if (!versions) return <></>;
+
     const menu = Object.entries(versions).map(([key, value]) => ({ key, label: value }));
+
     const handleOnClick = (key: string) => {
       onChangeVersion?.(key);
-      setDropdownValue(key);
     };
+
     return (
       <Dropdown
         menu={menu}
         handleOnClick={handleOnClick}
-        dropdownContent={dropdownValue}
+        dropdownContent={currentVersion ? versions[currentVersion] : versions[0]}
         styleProps={styles.dropdown}
       />
     );
