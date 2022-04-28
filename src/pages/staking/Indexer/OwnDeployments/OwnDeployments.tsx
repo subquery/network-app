@@ -8,10 +8,9 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { OwnDeployment, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
-import { useSortedIndexerDeployments } from '../../../../hooks';
-import { ProjectMetadata } from '../../../../models';
-import { renderAsync } from '../../../../utils';
-import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../../__generated__/GetDeploymentIndexersByIndexer';
+import { useContracts } from '../../../../containers';
+import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
+import { cidToBytes32, mapAsync, renderAsync } from '../../../../utils';
 import styles from './OwnDeployments.module.css';
 
 interface Props {
@@ -28,10 +27,9 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       title: '',
       dataIndex: 'deploymentId',
       width: '65%',
-      render: (
-        deploymentId: string,
-        record: { projectId?: string; projectMeta: ProjectMetadata } & Partial<DeploymentIndexer>,
-      ) => <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />,
+      render: (deploymentId: string, record: any) => (
+        <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />
+      ),
     },
     {
       title: 'PROGRESS',
@@ -42,36 +40,48 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
     {
       title: 'STATUS',
       dataIndex: 'status',
-      render: (status: string) => <Status text={status} color={deploymentStatus[status]} />,
+      render: (status: string, deployment: any) => {
+        let sortedStatus = status;
+        if (deployment?.isOffline) {
+          sortedStatus = 'OFFLINE' as string;
+        }
+
+        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+      },
     },
   ];
 
   return (
     <div className={styles.container}>
-      {renderAsync(indexerDeployments, {
-        error: (error) => <Typography>{`Failed to get projects: ${error.message}`}</Typography>,
-        loading: () => <Spinner />,
-        data: (data) => {
-          if (!data || data.length === 0) return <Typography> {t('projects.nonDeployments')} </Typography>;
+      {renderAsync(
+        mapAsync((d) => {
+          return d.sort((deployment) => (deployment.isOffline ? 1 : -1));
+        }, indexerDeployments),
+        {
+          error: (error) => <Typography>{`Failed to get projects: ${error.message}`}</Typography>,
+          loading: () => <Spinner />,
+          data: (data) => {
+            if (!data || data.length === 0) return <Typography> {t('projects.nonDeployments')} </Typography>;
 
-          return (
-            <Table
-              columns={columns}
-              dataSource={data}
-              rowKey={'deploymentId'}
-              onRow={(record) => {
-                return {
-                  onClick: (event) => {
-                    if (record.projectId) {
-                      history.push(`/explorer/project/${record.projectId}/overview`);
-                    }
-                  },
-                };
-              }}
-            />
-          );
+            return (
+              <Table
+                columns={columns}
+                dataSource={data}
+                rowKey={'deploymentId'}
+                onRow={(record) => {
+                  return {
+                    onClick: (event) => {
+                      if (record.projectId) {
+                        history.push(`/explorer/project/${record.projectId}/overview`);
+                      }
+                    },
+                  };
+                }}
+              />
+            );
+          },
         },
-      })}
+      )}
     </div>
   );
 };
