@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ProjectManifestVersioned } from '@subql/common/dist/project';
+import type { SubstrateProjectManifestVersioned } from '@subql/common-substrate/dist/project';
 import * as yup from 'yup';
 import { CIDv0 } from './utils';
 
@@ -35,7 +35,7 @@ export type ProjectDetails = {
 
 export type ProjectDeployment = {
   id: string;
-  manifest: ProjectManifestVersioned;
+  manifest: SubstrateProjectManifestVersioned;
 };
 
 export const newDeploymentSchema = yup.object({
