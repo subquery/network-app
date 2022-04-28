@@ -1,7 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProjectManifestVersioned, VersionedProjectManifest } from '@subql/common/dist/project';
+import {
+  SubstrateProjectManifestVersioned,
+  VersionedProjectManifest,
+} from '@subql/common-substrate/dist/project/versioned';
 import { useIPFS } from '../containers';
 import { useAsyncMemo } from './useAsyncMemo';
 import { ProjectDeployment } from '../models';
@@ -14,8 +17,8 @@ export async function getDeployment(
 ): Promise<ProjectDeployment> {
   const obj = await fetchIpfsMetadata<VersionedProjectManifest>(catSingle, deploymentId);
 
-  const manifest = new ProjectManifestVersioned(obj);
-  //manifest.validate();
+  const manifest = new SubstrateProjectManifestVersioned(obj);
+  manifest.validate();
 
   // const schema = await catSingle(manifest.schema.replace('ipfs://', ''))
   //   .then((data) => Buffer.from(data).toString())
