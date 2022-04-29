@@ -20,3 +20,4 @@ export * from './useLockPeriod';
 export * from './useUserDelegations';
 export * from './useIsIndexer';
 export * from './useSortedIndexerDeployments';
+export * from './usePendingStakeChange';

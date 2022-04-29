@@ -7,6 +7,7 @@ import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } f
 import Row from './Row';
 import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
+import { Status } from '../../__generated__/globalTypes';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -59,9 +60,12 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId })
         rowClassName={() => styles.tableHeader}
       />
       <>
-        {indexers.map((indexer, index) => (
-          <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
-        ))}
+        {indexers
+          .filter((indexer) => indexer.status !== Status.TERMINATED)
+          .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
+          .map((indexer, index) => (
+            <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
+          ))}
       </>
     </>
   );

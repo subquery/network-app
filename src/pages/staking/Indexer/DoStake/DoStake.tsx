@@ -86,7 +86,7 @@ export const DoStake: React.VFC = () => {
     empty: () => <></>,
     data: (data) => {
       const [canUnstake, rewardClaimStatus] = data;
-      console.log('rewardClaimStatus', rewardClaimStatus);
+
       return (
         <TransactionModal
           text={modalText}

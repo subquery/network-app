@@ -109,7 +109,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
-      width: 60,
+      width: 80,
       render: (val: string) => <ConnectedIndexer id={val} account={account} />,
     },
     {
@@ -230,7 +230,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 50,
+      width: 65,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;

@@ -76,7 +76,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right',
-      width: 40,
+      width: 50,
       align: 'center',
       render: (id: string, record) => {
         if (id === delegator) {

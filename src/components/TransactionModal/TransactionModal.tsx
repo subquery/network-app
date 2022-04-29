@@ -66,13 +66,13 @@ const TransactionModal = <P, T extends string>({
       const { error } = initialCheck;
       error && setFailureModalText(parseError(error));
     }
-  }, [initialCheck, initialCheck?.loading, showModal]);
+  }, [failureModalText, initialCheck, initialCheck?.loading, showModal]);
 
   React.useEffect(() => {
     if (successModalText) {
       const timeoutId = setTimeout(() => {
         setShowClock(false);
-      }, 20000);
+      }, 2500);
 
       return () => clearTimeout(timeoutId);
     }
@@ -83,7 +83,6 @@ const TransactionModal = <P, T extends string>({
     setShowModal(undefined);
     setFailureModalText(undefined);
     setSuccessModalText(undefined);
-    !isLoading && setShowClock(false);
   };
 
   const resetModalStatus = () => {
@@ -130,6 +129,7 @@ const TransactionModal = <P, T extends string>({
         visible={!!showModal}
         onCancel={() => {
           resetModal();
+          !isLoading && setShowClock(false);
         }}
         steps={text.steps}
         content={
@@ -153,8 +153,8 @@ const TransactionModal = <P, T extends string>({
       />
 
       {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => (
-        <div className="flex-center">
-          <Tooltip title={tooltip} key={key}>
+        <div className="flex-center" key={key}>
+          <Tooltip title={tooltip}>
             <Button
               {...rest}
               label={label}
@@ -175,7 +175,7 @@ const TransactionModal = <P, T extends string>({
               }
             />
           </Tooltip>
-          {showClock && key === showModal && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
+          {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
         </div>
       ))}
     </div>
