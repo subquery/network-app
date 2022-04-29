@@ -334,7 +334,7 @@ export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer>
 }
 
 export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexers> {
-  return useQuery<GetIndexers, GetIndexersVariables>(GET_INDEXERS, { variables: params });
+  return useQuery<GetIndexers, GetIndexersVariables>(GET_INDEXERS, { variables: params, pollInterval: 20000 });
 }
 
 export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): QueryResult<GetIndexerDelegators> {
