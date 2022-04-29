@@ -335,6 +335,7 @@ const en = {
         failToLoadBalance: 'Failed to load balance.',
         noPlansForPurchase: 'There is no plan available to purchase.',
         failureFetchPlans: 'Failed to get plans for indexer',
+        notReadyToBePurchased: 'The plan purchase feature is not available until READY status.',
       },
     },
     serviceAgreements: {

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table, TableProps } from 'antd';
+import { Table, TableProps, Tooltip } from 'antd';
 import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
@@ -26,10 +26,13 @@ import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetD
 import { LazyQueryResult } from '@apollo/client';
 import { PlansTable, PlansTableProps } from './PlansTable';
 import assert from 'assert';
-import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
+import { BsPlusSquare, BsDashSquare, BsInfoSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
 import Copy from '../Copy';
 import styles from './IndexerDetails.module.css';
+import { Status as DeploymentStatus } from '../../__generated__/globalTypes';
+import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -42,6 +45,7 @@ type Props = {
 } & PlansTableProps;
 
 export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plansTableProps }) => {
+  const { t } = useTranslation();
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
@@ -56,7 +60,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
 
   const columns: TableProps<any>['columns'] = [
     {
-      width: '20%',
+      width: '30%',
       align: 'center',
       render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
     },
@@ -74,7 +78,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
       ),
     },
     {
-      width: '20%',
+      width: '10%',
       align: 'center',
       render: () => <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />,
     },
@@ -97,13 +101,24 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
     {
       width: '10%',
       align: 'center',
-      render: () =>
-        account !== indexer.indexerId &&
-        (showPlans ? (
-          <BsDashSquare onClick={toggleShowPlans} size="20" className="pointer" />
-        ) : (
-          <BsPlusSquare onClick={toggleShowPlans} size="20" className="pointer" />
-        )),
+      dataIndex: 'status',
+      render: (status: string) => {
+        if (status !== DeploymentStatus.READY) {
+          return (
+            <Tooltip overlay={t('plans.purchase.notReadyToBePurchased')}>
+              <BsInfoSquare size="20" className={clsx('pointer', 'grayText')} />
+            </Tooltip>
+          );
+        }
+        return (
+          account !== indexer.indexerId &&
+          (showPlans ? (
+            <BsDashSquare onClick={toggleShowPlans} size="20" className="pointer" />
+          ) : (
+            <BsPlusSquare onClick={toggleShowPlans} size="20" className="pointer" />
+          ))
+        );
+      },
     },
   ];
 
