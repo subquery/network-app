@@ -63,10 +63,11 @@ const TransactionModal = <P, T extends string>({
 
   React.useEffect(() => {
     if (initialCheck) {
+      console.log('error', failureModalText);
       const { error } = initialCheck;
       error && setFailureModalText(parseError(error));
     }
-  }, [initialCheck, initialCheck?.loading, showModal]);
+  }, [failureModalText, initialCheck, initialCheck?.loading, showModal]);
 
   React.useEffect(() => {
     if (successModalText) {
@@ -121,6 +122,8 @@ const TransactionModal = <P, T extends string>({
       setIsLoading(false);
     }
   };
+
+  console.log('FailureModalText', failureModalText);
 
   return (
     <div className={styles.btns}>
