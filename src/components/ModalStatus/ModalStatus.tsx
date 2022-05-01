@@ -61,7 +61,13 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
   const statusDescription = description || t('status.changeValidIn15s');
 
   return (
-    <AntDModal title={title || 'Status Update'} visible={visible} onCancel={onCancel} footer={null}>
+    <AntDModal
+      title={title || 'Status Update'}
+      visible={visible}
+      onCancel={onCancel}
+      footer={null}
+      destroyOnClose={true}
+    >
       <div className={styles.container}>
         {statusText && (
           <div className={styles.status}>
