@@ -83,6 +83,7 @@ const TransactionModal = <P, T extends string>({
     setShowModal(undefined);
     setFailureModalText(undefined);
     setSuccessModalText(undefined);
+    !isLoading && setShowClock(false);
   };
 
   const resetModalStatus = () => {
