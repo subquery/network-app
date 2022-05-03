@@ -344,6 +344,7 @@ export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): Que
 export function useDelegation(indexer: string, delegator: string): QueryResult<GetDelegation> {
   return useQuery<GetDelegation, GetDelegationVariables>(GET_DELEGATION, {
     variables: { id: `${indexer}:${delegator}` },
+    pollInterval: 20000,
   });
 }
 export function useAllDelegations(params: GetAllDelegationsVariables): QueryResult<GetAllDelegations> {

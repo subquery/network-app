@@ -83,6 +83,7 @@ const TransactionModal = <P, T extends string>({
     setShowModal(undefined);
     setFailureModalText(undefined);
     setSuccessModalText(undefined);
+    !isLoading && !successModalText && setShowClock(false);
   };
 
   const resetModalStatus = () => {
@@ -121,12 +122,15 @@ const TransactionModal = <P, T extends string>({
     }
   };
 
+  const modalVisible = !!showModal;
+  const modalStatusVisible = !!successModalText;
+
   return (
     <div className={styles.btns}>
       <Modal
         title={text.title}
         description={text.description}
-        visible={!!showModal}
+        visible={modalVisible}
         onCancel={() => {
           resetModal();
           !isLoading && setShowClock(false);
@@ -145,12 +149,14 @@ const TransactionModal = <P, T extends string>({
           )
         }
       />
-      <ModalStatus
-        visible={!!successModalText}
-        onCancel={resetModalStatus}
-        success={!!successModalText}
-        successText={successModalText}
-      />
+      {modalStatusVisible && (
+        <ModalStatus
+          visible={modalStatusVisible}
+          onCancel={resetModalStatus}
+          success={!!successModalText}
+          successText={successModalText}
+        />
+      )}
 
       {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => (
         <div className="flex-center" key={key}>
