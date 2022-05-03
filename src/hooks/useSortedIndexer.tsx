@@ -26,9 +26,9 @@ export const getTotalStake = (value: unknown, curEra: number | undefined): Curre
 };
 
 export const getOwnStake = (value: unknown, curEra: number | undefined): CurrentEraValue<number> => {
-  const totalStake = parseRawEraValue(value, curEra);
-  const sortedTotalStake = mapEraValue(totalStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
-  return sortedTotalStake;
+  const ownStake = parseRawEraValue(value, curEra);
+  const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
+  return sortedOwnStake;
 };
 
 export const getDelegated = (
