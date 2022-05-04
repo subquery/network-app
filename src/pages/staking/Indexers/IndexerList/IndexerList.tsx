@@ -24,7 +24,11 @@ interface props {
   onLoadMore?: (offset: number) => void;
 }
 
-const ConnectedIndexer: React.VFC<{ id: string; account?: string | null }> = ({ id, account }) => {
+const ConnectedIndexer: React.VFC<{ id: string; account?: string | null; onAddressClick: (id: string) => void }> = ({
+  id,
+  account,
+  onAddressClick,
+}) => {
   const asyncMetadata = useIndexerMetadata(id);
 
   return (
@@ -32,6 +36,7 @@ const ConnectedIndexer: React.VFC<{ id: string; account?: string | null }> = ({ 
       name={id === account ? 'You' : asyncMetadata.data?.name}
       image={asyncMetadata.data?.image}
       address={id}
+      onAddressClick={onAddressClick}
     />
   );
 };
@@ -88,6 +93,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const { account } = useWeb3();
   const history = useHistory();
 
+  const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
+
   const sortedIndexerList = (indexers ?? []).map((indexer) => {
     const commission = getCommission(indexer.commission, currentEra.data?.index);
     const totalStake = getTotalStake(indexer.totalStake, currentEra.data?.index);
@@ -105,12 +112,15 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       key: 'idx',
       width: 15,
       render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
+      onCell: (record) => ({
+        onClick: () => viewIndexerDetail(record.id),
+      }),
     },
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'id',
       width: 80,
-      render: (val: string) => <ConnectedIndexer id={val} account={account} />,
+      render: (val: string) => <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} />,
     },
     {
       title: t('indexer.totalStake').toUpperCase(),
@@ -121,6 +131,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
         {
           title: t('general.next').toUpperCase(),
@@ -128,11 +141,15 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
       ],
     },
     {
       title: t('indexer.ownStake').toUpperCase(),
+
       children: [
         {
           title: t('general.current').toUpperCase(),
@@ -148,6 +165,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
               delegateType={'ownStake'}
             />
           ),
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
         {
           title: t('general.next').toUpperCase(),
@@ -163,6 +183,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
               delegateType={'ownStake'}
             />
           ),
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
       ],
     },
@@ -177,6 +200,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           render: (value: CurrentEraValue<number>, record: any) => (
             <Delegation indexer={record.id} totalStake={value} fieldKey="current" curEra={currentEra.data?.index} />
           ),
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
         {
           title: t('general.next').toUpperCase(),
@@ -186,6 +212,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           render: (value: CurrentEraValue<number>, record: any) => (
             <Delegation indexer={record.id} totalStake={value} fieldKey="after" curEra={currentEra.data?.index} />
           ),
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
       ],
     },
@@ -198,6 +227,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: string) => <TableText content={value || '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
         {
           title: t('general.next').toUpperCase(),
@@ -205,6 +237,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           key: 'currentTotalStake',
           width: 40,
           render: (value: string) => <TableText content={value || '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
       ],
     },
@@ -216,12 +251,18 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           dataIndex: 'id',
           width: 40,
           render: (value: string) => <Capacity indexer={value} fieldKey="current" />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: 'id',
           width: 40,
           render: (value: string) => <Capacity indexer={value} fieldKey="after" />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.id),
+          }),
         },
       ],
     },
@@ -230,18 +271,12 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       dataIndex: 'id',
       key: 'operation',
       fixed: 'right' as FixedType,
-      width: 65,
+      width: 40,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
         return (
-          <div className={styles.actionBtns}>
-            <Button
-              label="View"
-              size="medium"
-              className={'textBtn'}
-              onClick={() => history.push(`/staking/indexers/delegate/${id}`)}
-            />
+          <div className={'flex-start'}>
             <DoDelegate indexerAddress={id} variant="textBtn" />
           </div>
         );

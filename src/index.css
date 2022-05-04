@@ -129,7 +129,12 @@ textarea {
 .flex-center {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .flex-end {
@@ -208,4 +213,8 @@ textarea {
 .ant-table-title {
   margin-bottom: 1rem;
   padding: 0;
+}
+
+.ant-table-row {
+  cursor: pointer;
 }

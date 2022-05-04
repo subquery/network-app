@@ -8,16 +8,6 @@
   margin: 1rem 0;
 }
 
-.actionBtns {
-  display: flex;
-}
-
-.btn {
-  background: var(--gradient-to) !important;
-  color: white !important;
-  margin: 1px;
-}
-
 .text {
   color: var(--gray500);
 }
