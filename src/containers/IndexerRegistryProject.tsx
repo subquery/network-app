@@ -93,7 +93,7 @@ const GET_INDEXER = gql`
 const GET_INDEXERS = gql`
   ${INDEXER_FIELDS}
   query GetIndexers($offset: Int, $order: IndexersOrderBy = ID_ASC) {
-    indexers(first: 10, offset: $offset, orderBy: [$order]) {
+    indexers(offset: $offset, orderBy: [$order]) {
       totalCount
       nodes {
         ...IndexerFields
@@ -105,7 +105,7 @@ const GET_INDEXERS = gql`
 const GET_INDEXER_DELEGATORS = gql`
   query GetIndexerDelegators($id: String!, $offset: Int) {
     indexer(id: $id) {
-      delegations(first: 10, offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
+      delegations(offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
         nodes {
           delegatorId
           amount
@@ -150,7 +150,7 @@ const GET_DELEGATOR = gql`
 
 const GET_DELEGATIONS = gql`
   query GetDelegations($delegator: String!, $offset: Int) {
-    delegations(filter: { delegatorId: { equalTo: $delegator } }, first: 10, offset: $offset) {
+    delegations(filter: { delegatorId: { equalTo: $delegator } }, offset: $offset) {
       totalCount
       nodes {
         id
