@@ -110,7 +110,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     {
       title: '#',
       key: 'idx',
-      width: 15,
+      width: 20,
       render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
       onCell: (record) => ({
         onClick: () => viewIndexerDetail(record.id),
@@ -296,7 +296,10 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         scroll={{ x: 1600 }}
         pagination={{
           total: totalCount,
-          pageSize: 10,
+          pageSizeOptions: ['10', '20'],
+          onShowSizeChange: (current, pageSize) => {
+            onLoadMore?.((current - 1) * pageSize);
+          },
           onChange: (page, pageSize) => {
             onLoadMore?.((page - 1) * pageSize);
           },
