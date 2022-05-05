@@ -7,6 +7,10 @@
   margin-bottom: 1rem;
 }
 
+.option {
+  padding-top: 0.5rem;
+}
+
 .description {
   color: var(--gray700);
   margin: 1rem 0;

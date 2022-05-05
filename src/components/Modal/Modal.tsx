@@ -79,7 +79,15 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <AntDModal title={<Title />} visible={visible} onOk={onOk} onCancel={onCancel} footer={null} destroyOnClose={true}>
+    <AntDModal
+      title={<Title />}
+      visible={visible}
+      onOk={onOk}
+      onCancel={onCancel}
+      footer={null}
+      destroyOnClose={true}
+      width={'40%'}
+    >
       <Steps />
       <Description />
       {content}

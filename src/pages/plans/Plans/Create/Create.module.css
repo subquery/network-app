@@ -23,3 +23,7 @@
   font-size: 12px;
   color: var(--gray500);
 }
+
+.deploymentOption {
+  padding-top: 0.5rem;
+}

@@ -13,9 +13,17 @@ interface NumberInputProps {
   unit?: string;
   onClickMax?: (amount: number) => void;
   maxAmount?: number;
+  maxAmountText?: string;
 }
 
-export const NumberInput: React.FC<NumberInputProps> = ({ title, unit, maxAmount = 0, onClickMax, inputParams }) => {
+export const NumberInput: React.FC<NumberInputProps> = ({
+  title,
+  unit = 'SQT',
+  maxAmountText,
+  maxAmount = 0,
+  onClickMax,
+  inputParams,
+}) => {
   const Prefix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
@@ -26,17 +34,16 @@ export const NumberInput: React.FC<NumberInputProps> = ({ title, unit, maxAmount
       )}
     </div>
   );
-  console.log('maxAmount', maxAmount > 0);
 
   return (
     <>
-      {title && <Typography variant="medium">{title}</Typography>}
+      {title && <Typography>{title}</Typography>}
       <div className={styles.input}>
         <InputNumber addonAfter={<Prefix />} {...inputParams} className={styles.inputNumber} />
       </div>
       {maxAmount > 0 && (
         <Typography className={styles.inputBottomText} variant="medium">
-          {`Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
+          {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
         </Typography>
       )}
     </>

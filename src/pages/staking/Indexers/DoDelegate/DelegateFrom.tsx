@@ -23,9 +23,8 @@ export const AddressName: React.VFC<{
   const { account } = useWeb3();
 
   return (
-    <div className="col-flex flex-start">
-      <Typography>{address === account ? 'You' : asyncMetadata.data?.name}</Typography>
-      <Typography>{address}</Typography>
+    <div className={clsx('flex-start', styles.option)}>
+      <Typography>{`${address === account ? 'You' : asyncMetadata.data?.name} - ${address}`}</Typography>
     </div>
   );
 };
@@ -52,6 +51,11 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
   const delegations = useDelegations({ delegator: account ?? '' });
   const { balance } = useSQToken();
 
+  const [delegateFrom, setDelegateFrom] = React.useState(account);
+  const isYourself = delegateFrom === account;
+  const maxAmount = isYourself ? convertStringToNumber(formatEther(balance.data ?? 0)) : delegatedAmount;
+  const maxAmountText = !isYourself ? `You are delegating to this indexer: ${delegatedAmount} SQT` : undefined;
+
   const summaryList = [
     {
       label: t('indexer.title'),
@@ -74,16 +78,22 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values }) => (
         <Form>
           <div>
-            <SummaryList title={'To'} list={summaryList} />
+            <SummaryList title={t('delegate.to')} list={summaryList} />
 
             <div className={styles.select}>
-              <Typography className={styles.inputTitle}>{'From'} </Typography>
+              <Typography className={styles.inputTitle}>{t('delegate.from')} </Typography>
+              <Typography className={'grayText'} variant="medium">
+                {t('delegate.redelegate')}
+              </Typography>
               <Select
                 id="delegator"
                 showSearch
                 defaultValue={account}
                 optionFilterProp="children"
-                onChange={(delegator) => setFieldValue('delegator', delegator)}
+                onChange={(delegator) => {
+                  setDelegateFrom(delegator);
+                  setFieldValue('delegator', delegator);
+                }}
                 className={'fullWidth'}
                 loading={indexerDeployments.loading}
                 size="large"
@@ -94,7 +104,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
                 // filterOption={() => {}}
               >
                 {renderAsync(delegations, {
-                  error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
+                  error: (error) => <Typography>{`Failed to get delegation info: ${error.message}`}</Typography>,
                   loading: () => <Spinner />,
                   data: (data) => {
                     const sortedDelegations = data.delegations?.nodes
@@ -130,10 +140,11 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
                   value: values.input,
 
                   disabled: isSubmitting,
-                  max: account ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined,
+                  max: account ? maxAmount : undefined,
                   min: 0,
                 }}
-                maxAmount={account ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined}
+                maxAmount={account ? maxAmount : undefined}
+                maxAmountText={maxAmountText}
                 onClickMax={(value) => {
                   setErrors({ input: undefined });
                   setFieldValue('input', value);
@@ -148,7 +159,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
 
             <div className={clsx('flex', 'flex-end', styles.btns)}>
               <Button
-                label={t('plans.create.submit')}
+                label={t('delegate.title')}
                 onClick={submitForm}
                 loading={isSubmitting}
                 disabled={!isValid || isSubmitting}

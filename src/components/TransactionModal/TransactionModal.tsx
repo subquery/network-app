@@ -126,7 +126,7 @@ const TransactionModal = <P, T extends string>({
   const modalStatusVisible = !!successModalText;
 
   return (
-    <div className={styles.btns}>
+    <div className={styles.container}>
       {modalVisible && (
         <Modal
           title={text.title}

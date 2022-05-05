@@ -75,7 +75,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
               label: t('delegate.title'),
               key: 'delegate',
               disabled: isActionDisabled,
-              tooltip: r?.hasClaimedRewards ? t('delegate.invalidDelegateBeforeRewardCollect') : undefined,
+              tooltip: !r?.hasClaimedRewards ? t('delegate.invalidDelegateBeforeRewardCollect') : undefined,
             },
           ]}
           onClick={handleClick}

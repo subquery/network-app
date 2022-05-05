@@ -212,6 +212,9 @@ const en = {
     delegate: {
       title: 'Delegate',
       delegating: 'Delegating',
+      to: 'To',
+      from: 'From',
+      redelegate: 'You can delegate from wallet or choose an indexer to redelegate from',
       totalDelegation: 'Total Delegation to indexer(s)',
       amount: 'Delegation amount',
       delegator: 'Delegator',
