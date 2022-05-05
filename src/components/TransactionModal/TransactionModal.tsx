@@ -31,7 +31,7 @@ const openNotificationWithIcon = ({ type = NotificationType.INFO, title, descrip
     description: description,
   });
   notification.config({
-    duration: type === NotificationType.INFO ? 45 : 30,
+    duration: type === NotificationType.INFO ? 60 : 45,
   });
 };
 
