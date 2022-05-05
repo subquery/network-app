@@ -10,7 +10,7 @@ import { convertStringToNumber, formatEther, renderAsync } from '../../../../uti
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../../hooks';
-import { Select } from 'antd';
+import { Select, Divider } from 'antd';
 import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
@@ -79,6 +79,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
         <Form>
           <div>
             <SummaryList title={t('delegate.to')} list={summaryList} />
+            <Divider className={styles.divider} />
 
             <div className={styles.select}>
               <Typography className={styles.inputTitle}>{t('delegate.from')} </Typography>
