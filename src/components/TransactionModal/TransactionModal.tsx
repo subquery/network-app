@@ -8,11 +8,32 @@ import { CgSandClock } from 'react-icons/cg';
 import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
-import { ModalStatus } from '../ModalStatus';
 import styles from './TransactionModal.module.css';
 import clsx from 'clsx';
 import { MdErrorOutline } from 'react-icons/md';
-import { Tooltip } from 'antd';
+import { notification, Tooltip } from 'antd';
+import { useTranslation } from 'react-i18next';
+
+enum NotificationType {
+  INFO = 'info',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+interface NotificationProps {
+  type?: NotificationType;
+  title?: string;
+  description?: string;
+}
+
+const openNotificationWithIcon = ({ type = NotificationType.INFO, title, description }: NotificationProps) => {
+  notification[type]({
+    message: title ?? 'Notification',
+    description: description,
+  });
+  notification.config({
+    duration: type === NotificationType.INFO ? 45 : 30,
+  });
+};
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
@@ -55,6 +76,7 @@ const TransactionModal = <P, T extends string>({
   variant = 'button',
   initialCheck,
 }: Props<P, T>): React.ReactElement | null => {
+  const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
   const [showClock, setShowClock] = React.useState<boolean>(false);
@@ -86,11 +108,6 @@ const TransactionModal = <P, T extends string>({
     !isLoading && !successModalText && setShowClock(false);
   };
 
-  const resetModalStatus = () => {
-    setFailureModalText(undefined);
-    setSuccessModalText(undefined);
-  };
-
   const handleBtnClick = (key: T) => {
     setShowClock(true);
     setShowModal(key);
@@ -103,17 +120,27 @@ const TransactionModal = <P, T extends string>({
       const tx = await action(params, showModal);
 
       setIsLoading(true);
+      resetModal();
+      openNotificationWithIcon({ title: 'Your transaction has been submitted! Please wait for around 30s.' });
       const result = await tx.wait();
 
-      resetModal();
       if (result.status) {
         setSuccessModalText(text.successText || 'Success');
+        openNotificationWithIcon({
+          type: NotificationType.SUCCESS,
+          title: successModalText ?? 'Success',
+          description: t('status.changeValidIn15s'),
+        });
       } else {
         throw new Error(text.failureText);
       }
     } catch (error) {
       console.log('TxAction error', error);
       setFailureModalText(parseError(error));
+      // openNotificationWithIcon({
+      //   type: NotificationType.ERROR,
+      //   title: parseError(error),
+      // });
       if (rethrow) {
         throw error;
       }
@@ -123,7 +150,6 @@ const TransactionModal = <P, T extends string>({
   };
 
   const modalVisible = !!showModal;
-  const modalStatusVisible = !!successModalText;
 
   return (
     <div className={styles.container}>
@@ -146,18 +172,9 @@ const TransactionModal = <P, T extends string>({
                 failureModalText={failureModalText}
                 onSubmit={wrapTxAction(onClick, true)}
                 isLoading={isLoading}
-              /> //NOTE: slowly deprecate it and use balanceInput only
+              /> //NOTE: slowly deprecate it and use NumberInput only
             )
           }
-        />
-      )}
-
-      {modalStatusVisible && (
-        <ModalStatus
-          visible={modalStatusVisible}
-          onCancel={resetModalStatus}
-          success={!!successModalText}
-          successText={successModalText}
         />
       )}
 

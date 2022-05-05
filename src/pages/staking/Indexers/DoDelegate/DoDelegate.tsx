@@ -34,7 +34,6 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
     : {
         title: t('delegate.title'),
         steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
-        // description: t('delegate.delegateValidNextEra'),
         inputTitle: t('delegate.delegateAmount'),
         submitText: t('delegate.confirmDelegate'),
         failureText: 'Sorry, delegation failed',

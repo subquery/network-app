@@ -75,7 +75,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
       validationSchema={delegateSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values }) => (
+      {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => (
         <Form>
           <div>
             <SummaryList title={t('delegate.to')} list={summaryList} />
@@ -92,6 +92,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
                 defaultValue={account}
                 optionFilterProp="children"
                 onChange={(delegator) => {
+                  resetForm();
                   setDelegateFrom(delegator);
                   setFieldValue('delegator', delegator);
                 }}
@@ -111,8 +112,6 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
                     const sortedDelegations = data.delegations?.nodes
                       .filter((delegation) => delegation?.indexerId !== indexerAddress)
                       .sort((delegation) => (delegation?.delegatorId === account ? -1 : 1));
-
-                    console.log('isValid', isValid);
 
                     return (
                       <>
@@ -141,7 +140,7 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
                   value: values.input,
 
                   disabled: isSubmitting,
-                  max: account ? maxAmount : undefined,
+                  max: account && maxAmount ? maxAmount : undefined,
                   min: 0,
                 }}
                 maxAmount={account ? maxAmount : undefined}
