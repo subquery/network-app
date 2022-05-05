@@ -2,3 +2,12 @@
   margin-right: 1rem;
   background: var(--gradient-to);
 }
+
+.select {
+  margin-bottom: 1rem;
+}
+
+.description {
+  color: var(--gray700);
+  margin: 1rem 0;
+}

@@ -4,14 +4,15 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useIndexers } from '../../../../containers';
+import { useEra, useIndexers } from '../../../../containers';
 import { AppPageHeader } from '../../../../components';
 import styles from './Indexers.module.css';
-import { mapAsync, notEmpty, renderAsync } from '../../../../utils';
+import { mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { IndexerList } from '../IndexerList/IndexerList';
 
 export const Indexers: React.VFC = () => {
   const indexers = useIndexers({});
+  const { currentEra } = useEra();
   const { t } = useTranslation();
 
   const fetchMore = (offset: number) => {
@@ -29,8 +30,12 @@ export const Indexers: React.VFC = () => {
       <div className={styles.dataContent}>
         {renderAsync(
           mapAsync(
-            (data) => ({ data: data.indexers?.nodes.filter(notEmpty), totalCount: data?.indexers?.totalCount }),
-            indexers,
+            ([data, curEra]) => ({
+              data: data?.indexers?.nodes.filter(notEmpty),
+              totalCount: data?.indexers?.totalCount,
+              era: curEra?.index,
+            }),
+            mergeAsync(indexers, currentEra),
           ),
           {
             loading: () => <Spinner />,
@@ -39,7 +44,9 @@ export const Indexers: React.VFC = () => {
               if (!data || data?.totalCount === 0) {
                 return <Typography>{`No Indexer available.`}</Typography>;
               }
-              return <IndexerList indexers={data.data} totalCount={data.totalCount} onLoadMore={fetchMore} />;
+              return (
+                <IndexerList indexers={data.data} totalCount={data.totalCount} onLoadMore={fetchMore} era={data.era} />
+              );
             },
           },
         )}

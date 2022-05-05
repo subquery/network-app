@@ -8,10 +8,7 @@ import { useEraValue, useIPFSMetadata } from '../../hooks';
 import { IndexerDetails, indexerMetadataSchema } from '../../models';
 import { AsyncData, mapAsync } from '../../utils';
 import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/GetIndexers';
-import IndexerName from '../IndexerDetails/IndexerName';
-// import { TableCell } from '@subql/react-ui/dist/components/Table';
-
-// const { TableRow, TableCell} = Table;
+import { IndexerName } from '../IndexerDetails/IndexerName';
 import { BigNumber, utils } from 'ethers';
 import { currentEraValueToString } from '../../hooks/useEraValue';
 

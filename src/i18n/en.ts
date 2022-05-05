@@ -220,7 +220,7 @@ const en = {
       undelegate: 'Undelegate',
       enterAmount: 'Enter Amount',
       delegateValidNextEra: 'Once confirm, your tokens will be delegated from next era.',
-      delegateAmount: 'Enter the amount of SQT you want to delegate',
+      delegateAmount: 'Delegation amount',
       confirmDelegate: 'Confirm Delegation',
       undelegateValidNextEra:
         'Tokens will be undelegated from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',

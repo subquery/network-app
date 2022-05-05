@@ -127,28 +127,31 @@ const TransactionModal = <P, T extends string>({
 
   return (
     <div className={styles.btns}>
-      <Modal
-        title={text.title}
-        description={text.description}
-        visible={modalVisible}
-        onCancel={() => {
-          resetModal();
-          !isLoading && setShowClock(false);
-        }}
-        steps={text.steps}
-        content={
-          renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
-            <ModalInput
-              {...inputParams}
-              inputTitle={text.inputTitle}
-              submitText={text.submitText}
-              failureModalText={failureModalText}
-              onSubmit={wrapTxAction(onClick, true)}
-              isLoading={isLoading}
-            />
-          )
-        }
-      />
+      {modalVisible && (
+        <Modal
+          title={text.title}
+          description={text.description}
+          visible={modalVisible}
+          onCancel={() => {
+            resetModal();
+            !isLoading && setShowClock(false);
+          }}
+          steps={text.steps}
+          content={
+            renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
+              <ModalInput
+                {...inputParams}
+                inputTitle={text.inputTitle}
+                submitText={text.submitText}
+                failureModalText={failureModalText}
+                onSubmit={wrapTxAction(onClick, true)}
+                isLoading={isLoading}
+              /> //NOTE: slowly deprecate it and use balanceInput only
+            )
+          }
+        />
+      )}
+
       {modalStatusVisible && (
         <ModalStatus
           visible={modalStatusVisible}
