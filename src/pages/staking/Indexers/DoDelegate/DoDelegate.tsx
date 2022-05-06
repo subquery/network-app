@@ -36,7 +36,8 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
         steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
         inputTitle: t('delegate.delegateAmount'),
         submitText: t('delegate.confirmDelegate'),
-        failureText: 'Sorry, delegation failed',
+        failureText: t('delegate.delegateFailure'),
+        successText: t('delegate.delegateSuccess'),
       };
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
@@ -90,6 +91,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
                 indexerAddress={indexerAddress}
                 delegatedAmount={curDelegatedAmount}
                 error={error}
+                curEra={era?.index}
               />
             );
           }}

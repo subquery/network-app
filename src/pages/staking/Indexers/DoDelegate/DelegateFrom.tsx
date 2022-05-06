@@ -5,7 +5,7 @@ import { Button, Spinner, Typography } from '@subql/react-ui';
 import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDelegations, useSQToken, useWeb3 } from '../../../../containers';
+import { useDelegation, useDelegations, useIndexerDelegators, useSQToken, useWeb3 } from '../../../../containers';
 import { convertStringToNumber, formatEther, renderAsync } from '../../../../utils';
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
@@ -15,6 +15,7 @@ import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../../components/NumberInput';
+import { CurrentEraValue, EraValue, mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 
 export const AddressName: React.VFC<{
   address?: string;
@@ -42,9 +43,17 @@ type FormProps = {
   onSubmit: (data: DelegateFormData) => void | Promise<void>;
   onCancel?: () => void;
   error?: string;
+  curEra?: number;
 };
 
-export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, delegatedAmount, onCancel, error }) => {
+export const DelegateForm: React.VFC<FormProps> = ({
+  curEra,
+  onSubmit,
+  indexerAddress,
+  delegatedAmount,
+  onCancel,
+  error,
+}) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
@@ -52,9 +61,27 @@ export const DelegateForm: React.VFC<FormProps> = ({ onSubmit, indexerAddress, d
   const { balance } = useSQToken();
 
   const [delegateFrom, setDelegateFrom] = React.useState(account);
+
+  const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
+  console.log('indexerDelegation', indexerDelegation?.data?.delegation?.amount);
+  const getIndexerDelegation = () => {
+    if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
+
+    const rawDelegate = parseRawEraValue(indexerDelegation?.data?.delegation?.amount, curEra);
+    const currentDelegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
+    return currentDelegate;
+  };
+
   const isYourself = delegateFrom === account;
-  const maxAmount = isYourself ? convertStringToNumber(formatEther(balance.data ?? 0)) : delegatedAmount;
-  const maxAmountText = !isYourself ? `You are delegating to this indexer: ${delegatedAmount} SQT` : undefined;
+  let maxAmount: number | undefined, maxAmountText: string | undefined;
+
+  if (!isYourself) {
+    const sortedIndexrDelegation = getIndexerDelegation();
+    maxAmount = sortedIndexrDelegation?.after;
+    maxAmountText = `Your delegation: ${sortedIndexrDelegation?.after} SQT (next era).`;
+  } else {
+    maxAmount = convertStringToNumber(formatEther(balance.data ?? 0));
+  }
 
   const summaryList = [
     {

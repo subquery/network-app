@@ -229,6 +229,8 @@ const en = {
         'Tokens will be undelegated from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',
       undelegateAmount: 'Enter the amount of SQT you want to undelegate',
       confirmUndelegate: 'Confirm Undelegation',
+      delegateFailure: 'Sorry, the delegation has been failed.',
+      delegateSuccess: 'Success! Your delegation has been done.',
       approveTokenToDelegate: 'Approve your token for staking',
       noDelegating: 'No delegation available',
       yourDelegateAmount: 'Your Delegation Amount',
