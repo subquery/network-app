@@ -1,0 +1,45 @@
+.input {
+  margin-top: 0.4rem;
+}
+
+.inputNumber {
+  width: 100% !important;
+}
+
+.prefix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unit {
+  color: var(--gray500);
+  margin: 0 0.5rem;
+}
+
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.inputBottomText {
+  color: var(--gray500);
+}
+
+.inputError {
+  margin: 1rem 0;
+  color: var(--error);
+}
+
+.submitBtn {
+  background: var(--gradient-to) !important;
+  color: white !important;
+  min-width: 30%;
+}
+
+.submitBtn:disabled {
+  background: var(--gray500) !important;
+  color: var(--gray700);
+}

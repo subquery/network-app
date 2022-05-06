@@ -15,7 +15,7 @@ import { Button, Spinner, Typography } from '@subql/react-ui';
 import TransactionModal from '../TransactionModal';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { IndexerDetails } from '../../models';
-import IndexerName from './IndexerName';
+import { IndexerName } from './IndexerName';
 import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
 import { secondsToDhms } from '../../utils/dateFormatters';
 import { SummaryList } from '../SummaryList';

@@ -7,21 +7,27 @@ import { truncateAddress } from '../../utils';
 import IPFSImage from '../IPFSImage';
 import Copy from '../Copy';
 import { Typography } from '@subql/react-ui';
+import { useIndexerMetadata } from '../../hooks';
 
 type Props = {
   name?: string;
   image?: string;
   address: string;
+  onAddressClick?: (address: string) => void;
 };
 
-const IndexerName: React.FC<Props> = ({ name, image, address }) => {
+export const IndexerName: React.FC<Props> = ({ name, image, address, onAddressClick }) => {
   return (
     <div className={styles.indexer}>
       <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
       <div className={styles.indexerText}>
         <Typography>{name}</Typography>
         <div className={styles.addressCont}>
-          <Typography variant="small" className={styles.address}>
+          <Typography
+            variant="small"
+            className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
+            onClick={() => onAddressClick && onAddressClick(address)}
+          >
             {truncateAddress(address)}
           </Typography>
           <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon} />
@@ -31,4 +37,19 @@ const IndexerName: React.FC<Props> = ({ name, image, address }) => {
   );
 };
 
-export default IndexerName;
+export const ConnectedIndexer: React.VFC<{
+  id: string;
+  account?: string | null;
+  onAddressClick?: (id: string) => void;
+}> = ({ id, account, onAddressClick }) => {
+  const asyncMetadata = useIndexerMetadata(id);
+
+  return (
+    <IndexerName
+      name={id === account ? 'You' : asyncMetadata.data?.name}
+      image={asyncMetadata.data?.image}
+      address={id}
+      onAddressClick={onAddressClick}
+    />
+  );
+};

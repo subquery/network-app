@@ -13,7 +13,7 @@ import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/GetOngoingServiceAgreements';
-import IndexerName from '../../../components/IndexerDetails/IndexerName';
+import { IndexerName } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';

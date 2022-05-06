@@ -6,7 +6,7 @@ import { TableCell, TableRow } from '@subql/react-ui/dist/components/Table';
 import * as React from 'react';
 import { useEraValue } from '../../hooks';
 import { GetIndexerDelegators_indexer_delegations_nodes as Delegator } from '../../__generated__/GetIndexerDelegators';
-import IndexerName from '../IndexerDetails/IndexerName';
+import { IndexerName } from '../IndexerDetails/IndexerName';
 import { utils } from 'ethers';
 
 type Props = {

@@ -14,6 +14,10 @@
   color: var(--gray700);
 }
 
+.onHoverAddress:hover {
+  color: var(--gradient-to);
+}
+
 .addressCont {
   display: flex;
   flex-direction: row;

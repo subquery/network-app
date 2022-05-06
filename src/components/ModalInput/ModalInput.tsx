@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { InputNumber, Button } from 'antd';
+import { Button } from 'antd';
 import { Typography } from '@subql/react-ui';
 import { useFormik } from 'formik';
 import styles from './ModalInput.module.css';
 import { parseError } from '../../utils/parseError';
+import { NumberInput } from '../NumberInput';
 
 /**
  * NOTE:
@@ -64,47 +65,31 @@ export const ModalInput: React.FC<Props> = ({
     },
   });
 
-  const Prefix = () => (
-    <div className={styles.prefix}>
-      {unit && <Typography className={styles.unit}>{unit}</Typography>}
-      {showMaxButton && curAmount && curAmount > 0 && (
-        <Button
-          shape="round"
-          size="large"
-          onClick={() => {
-            formik.setFieldValue('input', curAmount);
-          }}
-        >
-          Max
-        </Button>
-      )}
-    </div>
-  );
-
   return (
     <form onSubmit={formik.handleSubmit}>
-      {inputTitle && <Typography variant="medium">{inputTitle}</Typography>}
-      <div className={styles.input}>
-        <InputNumber
-          name="input"
-          id="input"
-          className={styles.inputNumber}
-          onChange={(value) => {
+      <NumberInput
+        title={inputTitle}
+        unit={unit}
+        inputParams={{
+          name: 'input',
+          id: 'input',
+          onChange: (value) => {
             formik.setErrors({ input: undefined });
             formik.setFieldValue('input', value);
-          }}
-          value={formik.values.input}
-          addonAfter={<Prefix />}
-          disabled={isLoading}
-          max={maxInputNumber}
-          min={min}
-        />
-      </div>
-      {(inputBottomText || (curAmount && curAmount > 0)) && (
-        <Typography className={styles.inputBottomText} variant="medium">
-          {inputBottomText || `Current ${unit === '%' ? 'rate' : 'balance'}: ${curAmount} ${unit}`}
-        </Typography>
-      )}
+          },
+          value: formik.values.input,
+
+          disabled: isLoading,
+          max: maxInputNumber,
+          min: min,
+        }}
+        maxAmount={maxInputNumber}
+        onClickMax={(value) => {
+          formik.setErrors({ input: undefined });
+          formik.setFieldValue('input', value);
+        }}
+      />
+
       <Typography className={styles.inputError} variant="medium">
         {failureModalText || formik.errors?.input}
       </Typography>

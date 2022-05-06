@@ -1,22 +1,5 @@
-.btns {
+.container {
   display: flex;
-}
-
-.button {
-  margin-right: 1rem;
-  background: var(--gradient-to);
-}
-
-.textBtn {
-  background: none;
-  color: var(--gradient-to);
-  padding: 0.5rem 0;
-}
-
-.errTextBtn {
-  background: none;
-  color: var(--error);
-  padding: 0.5rem 0;
 }
 
 .clock {

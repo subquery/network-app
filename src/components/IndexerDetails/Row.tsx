@@ -5,7 +5,7 @@ import { Table, TableProps, Tooltip } from 'antd';
 import * as React from 'react';
 import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
 import Progress from './Progress';
-import IndexerName from './IndexerName';
+import { IndexerName } from './IndexerName';
 import {
   AsyncData,
   cidToBytes32,
