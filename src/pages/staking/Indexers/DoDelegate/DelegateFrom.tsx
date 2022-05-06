@@ -5,7 +5,7 @@ import { Button, Spinner, Typography } from '@subql/react-ui';
 import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDelegation, useDelegations, useIndexerDelegators, useSQToken, useWeb3 } from '../../../../containers';
+import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../../containers';
 import { convertStringToNumber, formatEther, renderAsync } from '../../../../utils';
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
@@ -15,7 +15,7 @@ import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../../components/NumberInput';
-import { CurrentEraValue, EraValue, mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
+import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 
 export const AddressName: React.VFC<{
   address?: string;
@@ -25,7 +25,7 @@ export const AddressName: React.VFC<{
 
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <Typography>{`${address === account ? 'You' : asyncMetadata.data?.name} - ${address}`}</Typography>
+      <Typography>{`${address === account ? 'Your wallet' : asyncMetadata.data?.name} - ${address}`}</Typography>
     </div>
   );
 };
@@ -63,7 +63,6 @@ export const DelegateForm: React.VFC<FormProps> = ({
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
-  console.log('indexerDelegation', indexerDelegation?.data?.delegation?.amount);
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
