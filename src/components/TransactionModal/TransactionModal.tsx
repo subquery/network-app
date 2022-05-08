@@ -31,7 +31,7 @@ const openNotificationWithIcon = ({ type = NotificationType.INFO, title, descrip
     description: description,
   });
   notification.config({
-    duration: type === NotificationType.INFO ? 60 : 45,
+    duration: 60,
   });
 };
 
@@ -93,6 +93,7 @@ const TransactionModal = <P, T extends string>({
   React.useEffect(() => {
     if (successModalText) {
       const timeoutId = setTimeout(() => {
+        setSuccessModalText(undefined);
         setShowClock(false);
       }, 2500);
 
@@ -104,7 +105,6 @@ const TransactionModal = <P, T extends string>({
     setIsLoading(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
-    setSuccessModalText(undefined);
     !isLoading && !successModalText && setShowClock(false);
   };
 
@@ -137,10 +137,6 @@ const TransactionModal = <P, T extends string>({
     } catch (error) {
       console.log('TxAction error', error);
       setFailureModalText(parseError(error));
-      // openNotificationWithIcon({
-      //   type: NotificationType.ERROR,
-      //   title: parseError(error),
-      // });
       if (rethrow) {
         throw error;
       }
