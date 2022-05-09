@@ -66,7 +66,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'deployment',
       key: 'project',
       title: t('serviceAgreements.headers.project').toUpperCase(),
-      width: 150,
+      width: 100,
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
@@ -108,22 +108,41 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     },
   ];
 
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const playgroundCol = {
+    dataIndex: 'value',
+    title: t('serviceAgreements.headers.price').toUpperCase(),
+    key: 'price',
+    render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
+  };
 
+  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
+  const serviceAgreements = queryFn(sortedParams);
+  const [data, setData] = React.useState(serviceAgreements);
+
+  // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().toDate());
-    }, 60000);
+    }, 300000);
     return () => clearInterval(interval);
   }, []);
+  console.log('serviceAgreements', serviceAgreements);
 
-  const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
-  const serviceAgreements = queryFn(sortedParams);
+  // NOTE: Every 5min to query wit a new timestamp, manual set cache data which is similar to cache-network fetch policy
+  React.useEffect(() => {
+    if (serviceAgreements.loading === true && serviceAgreements.previousData) {
+      setData({ ...serviceAgreements, data: serviceAgreements.previousData });
+      serviceAgreements.data = serviceAgreements.previousData;
+    } else {
+      setData({ ...serviceAgreements });
+    }
+  }, [serviceAgreements, serviceAgreements.loading]);
 
   return (
     <>
       {renderAsyncArray(
-        mapAsync((d) => d.serviceAgreements?.nodes.filter(notEmpty), serviceAgreements),
+        mapAsync((d) => d.serviceAgreements?.nodes.filter(notEmpty), data),
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
