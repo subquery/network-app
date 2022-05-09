@@ -135,15 +135,20 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   error: (error) => <Typography>{`Failed to get delegation info: ${error.message}`}</Typography>,
                   loading: () => <Spinner />,
                   data: (data) => {
-                    const sortedDelegations = data.delegations?.nodes
-                      .filter((delegation) => delegation?.indexerId !== indexerAddress)
-                      .sort((delegation) => (delegation?.delegatorId === account ? -1 : 1));
+                    const sortedDelegations =
+                      data.delegations?.nodes
+                        .filter((delegation) => delegation?.indexerId !== indexerAddress)
+                        .sort((delegation) => (delegation?.delegatorId === account ? -1 : 1))
+                        .map((delegation) => delegation?.indexerId) ?? [];
+
+                    const delegationList =
+                      sortedDelegations[0] !== account && account ? [account, ...sortedDelegations] : sortedDelegations;
 
                     return (
                       <>
-                        {sortedDelegations?.map((delegation) => (
-                          <Select.Option value={delegation?.indexerId} key={delegation?.indexerId}>
-                            <AddressName address={delegation?.indexerId} />
+                        {delegationList?.map((delegating) => (
+                          <Select.Option value={delegating} key={delegating}>
+                            <AddressName address={delegating} />
                           </Select.Option>
                         ))}
                       </>
