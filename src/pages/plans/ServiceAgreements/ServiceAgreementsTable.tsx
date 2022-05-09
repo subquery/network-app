@@ -13,10 +13,12 @@ import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/GetOngoingServiceAgreements';
-import { IndexerName } from '../../../components/IndexerDetails/IndexerName';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
+import { useLocation } from 'react-router';
+import { ONGOING_PLANS } from './ServiceAgreements';
 
 const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
@@ -51,6 +53,7 @@ interface ServiceAgreementsTableProps {
 
 export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({ queryFn, queryParams }) => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
 
   const columns: TableProps<ServiceAgreement>['columns'] = [
     {
@@ -63,7 +66,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'deployment',
       key: 'project',
       title: t('serviceAgreements.headers.project').toUpperCase(),
-      width: 200,
+      width: 150,
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
@@ -78,21 +81,20 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'consumerAddress',
       title: t('serviceAgreements.headers.consumer').toUpperCase(),
       key: 'consumer',
-      render: (consumer: ServiceAgreement['consumerAddress']) => (
-        <IndexerName /*name={consumer?.name} image={indexerDetails?.image}*/ address={consumer} />
-      ),
+      render: (consumer: ServiceAgreement['consumerAddress']) => <ConnectedIndexer id={consumer} />,
     },
     {
       dataIndex: 'indexerAddress',
       title: t('serviceAgreements.headers.indexer').toUpperCase(),
       key: 'indexer',
-      render: (indexer: ServiceAgreement['indexerAddress']) => (
-        <IndexerName /*name={consumer?.name} image={indexerDetails?.image}*/ address={indexer} />
-      ), // TODO get consumer details
+      render: (indexer: ServiceAgreement['indexerAddress']) => <ConnectedIndexer id={indexer} />,
     },
     {
       dataIndex: 'period',
-      title: t('serviceAgreements.headers.expiry').toUpperCase(),
+      title:
+        pathname === ONGOING_PLANS
+          ? t('serviceAgreements.headers.expiry').toUpperCase()
+          : t('serviceAgreements.headers.expired').toUpperCase(),
       key: 'expiry',
       render: (_, sa: ServiceAgreement) => {
         return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
