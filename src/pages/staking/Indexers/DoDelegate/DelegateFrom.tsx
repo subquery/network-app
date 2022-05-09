@@ -25,7 +25,9 @@ export const AddressName: React.VFC<{
 
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <Typography>{`${address === account ? 'Your wallet' : asyncMetadata.data?.name} - ${address}`}</Typography>
+      <Typography>{`${
+        address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'
+      } - ${address}`}</Typography>
     </div>
   );
 };
@@ -137,18 +139,20 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   data: (data) => {
                     const sortedDelegations =
                       data.delegations?.nodes
-                        .filter((delegation) => delegation?.indexerId !== indexerAddress)
-                        .sort((delegation) => (delegation?.delegatorId === account ? -1 : 1))
+                        .filter(
+                          (delegation) =>
+                            delegation?.indexerId !== indexerAddress &&
+                            delegation?.delegatorId !== delegation?.indexerId,
+                        )
                         .map((delegation) => delegation?.indexerId) ?? [];
 
-                    const delegationList =
-                      sortedDelegations[0] !== account && account ? [account, ...sortedDelegations] : sortedDelegations;
+                    const delegationList = [account, ...sortedDelegations];
 
                     return (
                       <>
                         {delegationList?.map((delegating) => (
                           <Select.Option value={delegating} key={delegating}>
-                            <AddressName address={delegating} />
+                            <AddressName address={delegating ?? ''} />
                           </Select.Option>
                         ))}
                       </>
