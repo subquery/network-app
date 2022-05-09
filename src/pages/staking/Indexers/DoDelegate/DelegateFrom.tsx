@@ -25,7 +25,9 @@ export const AddressName: React.VFC<{
 
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <Typography>{`${address === account ? 'Your wallet' : asyncMetadata.data?.name} - ${address}`}</Typography>
+      <Typography>{`${
+        address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'
+      } - ${address}`}</Typography>
     </div>
   );
 };
@@ -135,15 +137,22 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   error: (error) => <Typography>{`Failed to get delegation info: ${error.message}`}</Typography>,
                   loading: () => <Spinner />,
                   data: (data) => {
-                    const sortedDelegations = data.delegations?.nodes
-                      .filter((delegation) => delegation?.indexerId !== indexerAddress)
-                      .sort((delegation) => (delegation?.delegatorId === account ? -1 : 1));
+                    const sortedDelegations =
+                      data.delegations?.nodes
+                        .filter(
+                          (delegation) =>
+                            delegation?.indexerId !== indexerAddress &&
+                            delegation?.delegatorId !== delegation?.indexerId,
+                        )
+                        .map((delegation) => delegation?.indexerId) ?? [];
+
+                    const delegationList = [account, ...sortedDelegations];
 
                     return (
                       <>
-                        {sortedDelegations?.map((delegation) => (
-                          <Select.Option value={delegation?.indexerId} key={delegation?.indexerId}>
-                            <AddressName address={delegation?.indexerId} />
+                        {delegationList?.map((delegating) => (
+                          <Select.Option value={delegating} key={delegating}>
+                            <AddressName address={delegating ?? ''} />
                           </Select.Option>
                         ))}
                       </>
