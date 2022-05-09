@@ -36,8 +36,8 @@ export const DelegateIndexer: React.VFC = () => {
       <div className={styles.header}>
         <Typography variant="h4" className={`${styles.title} ${styles.grayText}`}>
           <Link to={'/staking/indexers'} className={styles.grayText}>
-            {t('delegate.toIndexer')}
-          </Link>{' '}
+            {t('indexer.indexers')}
+          </Link>
           <AiOutlineRight className={styles.rightIcon} /> {t('delegate.viewProfile')}
         </Typography>
 
