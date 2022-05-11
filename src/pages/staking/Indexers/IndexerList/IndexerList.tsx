@@ -73,7 +73,6 @@ interface props {
 
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
   const { t } = useTranslation();
-  // const { currentEra } = useEra();
   const { account } = useWeb3();
   const history = useHistory();
 

@@ -4,10 +4,18 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps } from 'antd';
+import { FixedType } from 'rc-table/lib/interface';
 import { Copy, TableText } from '../../../components';
-import { useIPFS, useProjectMetadata, useServiceAgreements, useSpecificServiceAgreements } from '../../../containers';
+import {
+  useIPFS,
+  useProjectMetadata,
+  useServiceAgreements,
+  useSpecificServiceAgreements,
+  useWeb3,
+} from '../../../containers';
 import { formatEther, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
@@ -54,19 +62,20 @@ interface ServiceAgreementsTableProps {
 export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({ queryFn, queryParams }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const { account } = useWeb3();
 
   const columns: TableProps<ServiceAgreement>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
-      width: 30,
+      width: 40,
       render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: 'deployment',
       key: 'project',
       title: t('serviceAgreements.headers.project').toUpperCase(),
-      width: 100,
+      width: 150,
       render: (deployment: ServiceAgreement['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
     },
@@ -81,12 +90,14 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'consumerAddress',
       title: t('serviceAgreements.headers.consumer').toUpperCase(),
       key: 'consumer',
+      width: 200,
       render: (consumer: ServiceAgreement['consumerAddress']) => <ConnectedIndexer id={consumer} />,
     },
     {
       dataIndex: 'indexerAddress',
       title: t('serviceAgreements.headers.indexer').toUpperCase(),
       key: 'indexer',
+      width: 200,
       render: (indexer: ServiceAgreement['indexerAddress']) => <ConnectedIndexer id={indexer} />,
     },
     {
@@ -96,6 +107,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           ? t('serviceAgreements.headers.expiry').toUpperCase()
           : t('serviceAgreements.headers.expired').toUpperCase(),
       key: 'expiry',
+      width: 120,
       render: (_, sa: ServiceAgreement) => {
         return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
       },
@@ -104,21 +116,29 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'value',
       title: t('serviceAgreements.headers.price').toUpperCase(),
       key: 'price',
+      width: 120,
       render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
     },
   ];
 
   const playgroundCol = {
-    dataIndex: 'value',
-    title: t('serviceAgreements.headers.price').toUpperCase(),
-    key: 'price',
-    render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
+    title: t('indexer.action').toUpperCase(),
+    dataIndex: 'deploymentId',
+    key: 'operation',
+    fixed: 'right' as FixedType,
+    width: 120,
+    render: (deploymentId: string, sa: ServiceAgreement) => {
+      if (sa.indexerAddress === account) return <> - </>;
+      return <Link to={`${ONGOING_PLANS}/${deploymentId}`}>Playground</Link>;
+    },
   };
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
   const serviceAgreements = queryFn(sortedParams);
   const [data, setData] = React.useState(serviceAgreements);
+
+  const sortedCols = pathname === ONGOING_PLANS ? [...columns, playgroundCol] : columns;
 
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
@@ -148,7 +168,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
           empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
           data: (data) => {
-            return <Table columns={columns} dataSource={data} scroll={{ x: 1000 }} />;
+            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1000 }} />;
           },
         },
       )}
