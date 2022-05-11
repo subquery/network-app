@@ -352,6 +352,13 @@ const en = {
         expired: 'Expired',
         price: 'Price',
       },
+      playground: {
+        title: 'Playground',
+        requireSessionToken: 'You need a session token to start querying on playground.',
+        requestToken: 'Request token',
+        ongoingAgreements: 'My Ongoing Service Agreements',
+        auctionAndCrowdloan: 'Polkadot auction & crowdloan',
+      },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
     status: {

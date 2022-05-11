@@ -12,7 +12,7 @@ import { Playground } from '../Playrgound';
 
 export const ROUTE = '/plans/service-agreements';
 export const ONGOING_PLANS = `${ROUTE}/ongoing`;
-export const PLAYGROUND = `${ONGOING_PLANS}/:id`;
+export const PLAYGROUND = `${ONGOING_PLANS}/:indexerId/:deploymentId`;
 export const EXPIRED_PLANS = `${ROUTE}/expired`;
 
 const buttonLinks = [

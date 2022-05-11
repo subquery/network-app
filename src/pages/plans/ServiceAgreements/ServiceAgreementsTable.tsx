@@ -6,7 +6,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps } from 'antd';
+import { Table, TableProps, Typography as AntDTypography, Tooltip } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import { Copy, TableText } from '../../../components';
 import {
@@ -16,17 +16,47 @@ import {
   useSpecificServiceAgreements,
   useWeb3,
 } from '../../../containers';
-import { formatEther, getTrimmedStr, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import {
+  formatEther,
+  getTrimmedStr,
+  mapAsync,
+  notEmpty,
+  renderAsync,
+  renderAsyncArray,
+  wrapProxyEndpoint,
+} from '../../../utils';
 import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/GetOngoingServiceAgreements';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { useAsyncMemo } from '../../../hooks';
+import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import { ONGOING_PLANS } from './ServiceAgreements';
+import styles from './ServiceAgreements.module.css';
+
+export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }) => {
+  const asyncMetadata = useIndexerMetadata(indexer);
+
+  return renderAsync(asyncMetadata, {
+    error: () => <Typography>-</Typography>,
+    loading: () => <Spinner />,
+    data: (data) => {
+      const rawUrl = data?.url;
+      const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexer);
+      return (
+        <div className={styles.addressCont}>
+          <Tooltip title={queryUrl}>
+            <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
+          </Tooltip>
+          <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon} />
+        </div>
+      );
+    },
+  });
+};
 
 const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
@@ -107,16 +137,25 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           ? t('serviceAgreements.headers.expiry').toUpperCase()
           : t('serviceAgreements.headers.expired').toUpperCase(),
       key: 'expiry',
-      width: 120,
+      width: 160,
       render: (_, sa: ServiceAgreement) => {
         return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
       },
     },
     {
+      dataIndex: 'indexerAddress',
+      title: t('indexers.head.url').toUpperCase(),
+      key: 'indexer',
+      width: 200,
+      render: (indexer: ServiceAgreement['indexerAddress'], sa: ServiceAgreement) => (
+        <QueryUrl indexer={indexer} deploymentId={sa.deploymentId} />
+      ),
+    },
+    {
       dataIndex: 'value',
       title: t('serviceAgreements.headers.price').toUpperCase(),
       key: 'price',
-      width: 120,
+      width: 100,
       render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
     },
   ];
@@ -129,7 +168,13 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     width: 120,
     render: (deploymentId: string, sa: ServiceAgreement) => {
       if (sa.indexerAddress === account) return <> - </>;
-      return <Link to={`${ONGOING_PLANS}/${deploymentId}`}>Playground</Link>;
+      return (
+        <Link
+          to={{ pathname: `${ONGOING_PLANS}/${sa.indexerAddress}/${deploymentId}`, state: { serviceAgreement: sa } }}
+        >
+          Playground
+        </Link>
+      );
     },
   };
 
