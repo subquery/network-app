@@ -257,7 +257,7 @@ const en = {
       withdraw: 'Withdraw',
       confirm: 'Confirm withdrawal amount',
       enterWithdrawAmount: 'Enter the amount of SQT you want to withdraw',
-      confirmWithdraw: 'Confirm Withdraw',
+      confirmWithdraw: 'Confirm Withdrawal',
       aboutToWithdraw: 'You are about to withdraw {{amount}} SQT.',
     },
     general: {

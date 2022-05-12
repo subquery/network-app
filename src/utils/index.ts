@@ -6,6 +6,7 @@ export * from './numberFormatters';
 export * from './parseError';
 export * from './getDeploymentProgress';
 export * from './getTrimmedStr';
+export * from './useDebounce';
 
 export function truncateAddress(address: string): string {
   if (!address) {

@@ -72,7 +72,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       ],
     },
     {
-      title: 'Action',
+      title: t('indexer.action').toUpperCase(),
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right',

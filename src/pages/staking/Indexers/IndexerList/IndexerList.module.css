@@ -5,9 +5,20 @@
 }
 
 .title {
-  margin: 1rem 0;
+  /* margin: 1rem 0; */
 }
 
 .text {
   color: var(--gray500);
+}
+
+.indexerListHeader {
+  margin: 1rem 0 2rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.indexerSearch {
+  width: 360px;
 }
