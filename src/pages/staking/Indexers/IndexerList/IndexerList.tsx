@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, Spinner } from '@subql/react-ui';
-import { Table, TableProps } from 'antd';
+import { Input, Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatEther, renderAsync } from '../../../../utils';
+import { formatEther, renderAsync, useDebounce } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
-import { useDelegation, useWeb3 } from '../../../../containers';
+import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
@@ -72,14 +72,22 @@ interface props {
 }
 
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
+  const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
+  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
+  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
   const { t } = useTranslation();
-  // const { currentEra } = useEra();
   const { account } = useWeb3();
   const history = useHistory();
+  const sortedIndexer = useIndexer({ address: searchIndexer ? searchIndexer : '' });
 
   const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
 
-  const sortedIndexerList = (indexers ?? []).map((indexer) => {
+  const searchedIndexer = React.useMemo(
+    () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
+    [sortedIndexer],
+  );
+  const rawIndexerList = searchedIndexer ?? indexers ?? [];
+  const sortedIndexerList = rawIndexerList.map((indexer) => {
     const commission = getCommission(indexer.commission, era);
     const totalStake = getTotalStake(indexer.totalStake, era);
 
@@ -88,6 +96,33 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   const orderedIndexerList = sortedIndexerList.sort((indexerA, indexerB) =>
     indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
+  );
+
+  React.useEffect(() => {
+    setSearchingIndexer(false);
+    if (!searchedIndexer && searchIndexer) {
+      setSearchIndexerResult('No search result.');
+    } else {
+      setSearchIndexerResult(undefined);
+    }
+  }, [searchIndexer, searchedIndexer]);
+
+  const SearchInput = () => (
+    <div className={styles.indexerSearch}>
+      <Input.Search
+        placeholder="Search by indexer address..."
+        allowClear
+        onSearch={(value) => setSearchIndexer(value)}
+        defaultValue={searchIndexer}
+        loading={searchingIndexer}
+        enterButton
+      />
+      {searchIndexerResult && (
+        <Typography variant="small" className="grayText">
+          {searchIndexerResult}
+        </Typography>
+      )}
+    </div>
   );
 
   const columns: TableProps<typeof sortedIndexerList[number]>['columns'] = [
@@ -270,16 +305,20 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   return (
     <div className={styles.container}>
-      <Typography variant="h6" className={styles.title}>
-        {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
-      </Typography>
+      <div className={styles.indexerListHeader}>
+        <Typography variant="h6" className={styles.title}>
+          {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
+        </Typography>
+        <SearchInput />
+      </div>
+
       <Table
         columns={columns}
         rowKey="id"
         dataSource={orderedIndexerList}
         scroll={{ x: 1600 }}
         pagination={{
-          total: totalCount,
+          total: searchedIndexer ? searchedIndexer.length : totalCount,
           pageSizeOptions: ['10', '20'],
           onShowSizeChange: (current, pageSize) => {
             onLoadMore?.((current - 1) * pageSize);
