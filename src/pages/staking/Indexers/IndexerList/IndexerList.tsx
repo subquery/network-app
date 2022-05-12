@@ -6,7 +6,7 @@ import { Input, Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatEther, renderAsync, useDebounce } from '../../../../utils';
+import { extractPercentage, formatEther, renderAsync } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
@@ -72,15 +72,19 @@ interface props {
 }
 
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
-  const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
-  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
   const { t } = useTranslation();
   const { account } = useWeb3();
   const history = useHistory();
-  const sortedIndexer = useIndexer({ address: searchIndexer ? searchIndexer : '' });
-
   const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
+
+  /**
+   * SearchInput logic
+   */
+  const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
+  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
+  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
+
+  const sortedIndexer = useIndexer({ address: searchIndexer ? searchIndexer : '' });
 
   const searchedIndexer = React.useMemo(
     () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
@@ -97,6 +101,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const orderedIndexerList = sortedIndexerList.sort((indexerA, indexerB) =>
     indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
   );
+
+  console.log('orderedIndexerList', orderedIndexerList);
 
   React.useEffect(() => {
     setSearchingIndexer(false);
@@ -124,6 +130,10 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       )}
     </div>
   );
+
+  /**
+   * SearchInput logic end
+   */
 
   const columns: TableProps<typeof sortedIndexerList[number]>['columns'] = [
     {
@@ -153,6 +163,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           onCell: (record) => ({
             onClick: () => viewIndexerDetail(record.id),
           }),
+          sorter: (a, b) => a.totalStake.current - b.totalStake.current,
         },
         {
           title: t('general.next').toUpperCase(),
@@ -163,6 +174,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           onCell: (record) => ({
             onClick: () => viewIndexerDetail(record.id),
           }),
+          sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
         },
       ],
     },
@@ -249,6 +261,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           onCell: (record) => ({
             onClick: () => viewIndexerDetail(record.id),
           }),
+          sorter: (a, b) => extractPercentage(a.commission.current) - extractPercentage(b.commission.current),
         },
         {
           title: t('general.next').toUpperCase(),
@@ -259,6 +272,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
           onCell: (record) => ({
             onClick: () => viewIndexerDetail(record.id),
           }),
+          sorter: (a, b) => extractPercentage(a.commission.after ?? '0') - extractPercentage(b.commission.after ?? '0'),
         },
       ],
     },
