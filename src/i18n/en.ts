@@ -263,6 +263,9 @@ const en = {
     general: {
       current: 'current',
       next: 'next',
+      status: 'Status',
+      active: 'Active',
+      inactive: 'Inactive',
     },
     projects: {
       deploymentId: 'Deployment ID',

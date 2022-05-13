@@ -159,6 +159,7 @@ const GET_DELEGATIONS = gql`
         amount
         indexer {
           metadata
+          active
         }
       }
     }
