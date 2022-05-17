@@ -61,17 +61,18 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
     {
-      title: t('indexer.commission').toLocaleUpperCase(),
-      dataIndex: 'commission',
-      key: 'commission',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} />,
-    },
-    {
       title: t('indexer.delegated').toLocaleUpperCase(),
       dataIndex: 'totalDelegations',
       key: 'delegated',
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
     },
+    {
+      title: t('indexer.commission').toLocaleUpperCase(),
+      dataIndex: 'commission',
+      key: 'commission',
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} />,
+    },
+
     {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',

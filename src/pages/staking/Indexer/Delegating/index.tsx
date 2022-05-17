@@ -31,6 +31,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
             convertStringToNumber(formatEther(v ?? 0)),
           ),
           indexer: delegation.indexerId,
+          indexerActive: delegation?.indexer?.active,
         }))
         .filter((delegation) => delegation.value.current || delegation.value.after),
     mergeAsync(delegations, currentEra),
@@ -72,7 +73,16 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       ],
     },
     {
-      title: 'Action',
+      title: t('general.status').toUpperCase(),
+      dataIndex: 'indexerActive',
+      key: 'indexerActive',
+      width: 60,
+      render: (active: string) => (
+        <TableText content={active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase()} />
+      ),
+    },
+    {
+      title: t('indexer.action').toUpperCase(),
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right',

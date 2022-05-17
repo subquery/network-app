@@ -18,3 +18,7 @@ export function formatEther(value: BigNumberish | BigInt | undefined): string {
 export function toPercentage(value: number, divUnit = 100): string {
   return `${(value / divUnit).toFixed(2)} %`;
 }
+
+export function extractPercentage(value: string): number {
+  return convertStringToNumber(value.replace('%', ''));
+}

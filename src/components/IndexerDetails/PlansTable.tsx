@@ -95,7 +95,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
   return (
     <TransactionModal
       variant="textBtn"
-      actions={[{ label: t('plans.purchase.action'), key: 'purchase' }]}
+      actions={[{ label: t('plans.purchase.submit'), key: 'purchase' }]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
       renderContent={(onSubmit, onCancel, isLoading, error) => {
