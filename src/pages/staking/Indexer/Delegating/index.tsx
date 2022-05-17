@@ -31,7 +31,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
             convertStringToNumber(formatEther(v ?? 0)),
           ),
           indexer: delegation.indexerId,
-          indexerActive: delegation?.indexer?.active,
+          indexerActive: true, // delegation?.indexer?.active,
         }))
         .filter((delegation) => delegation.value.current || delegation.value.after),
     mergeAsync(delegations, currentEra),

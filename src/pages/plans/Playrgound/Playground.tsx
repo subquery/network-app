@@ -13,6 +13,7 @@ import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement
 import { Link } from 'react-router-dom';
 import { useIndexerMetadata } from '../../../hooks';
 import { parseError, wrapProxyEndpoint } from '../../../utils';
+import { useMemo } from 'react';
 
 const RequestToken = ({
   deploymentId,
@@ -49,6 +50,9 @@ const RequestToken = ({
         await fetch(requestTokenUrl, {
           method: 'POST',
           body: JSON.stringify(tokenRequestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          },
         })
       ).json();
 
@@ -102,12 +106,21 @@ export const Playground: React.VFC = () => {
 
   const { indexerAddress, deploymentId } = serviceAgreement;
   const indexerMetadata = useIndexerMetadata(indexerAddress);
-  const rawUrl = indexerMetadata.data?.url;
-  const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexerAddress);
-  const requestTokenUrl = wrapProxyEndpoint(`${rawUrl}/token`, indexerAddress);
-  console.log('requestTokenUrl', requestTokenUrl);
-  console.log('rawUrl', rawUrl);
-  console.log('indexerMetadata', indexerMetadata);
+
+  const url = useMemo(() => {
+    const rawUrl = indexerMetadata.data?.url;
+    if (rawUrl) {
+      const url = new URL(rawUrl);
+      return url.toString();
+    }
+  }, [indexerMetadata.data?.url]);
+
+  const { queryUrl, requestTokenUrl } = useMemo(() => {
+    return {
+      queryUrl: wrapProxyEndpoint(`${url}/query/${deploymentId}`, indexerAddress),
+      requestTokenUrl: wrapProxyEndpoint(`${url}/token`, indexerAddress),
+    };
+  }, [url, deploymentId, indexerAddress]);
 
   return (
     <div>
@@ -125,7 +138,7 @@ export const Playground: React.VFC = () => {
       </div>
 
       <div className={styles.playground}>
-        <RequestToken deploymentId={deploymentId} requestTokenUrl={requestTokenUrl} />
+        {url && <RequestToken deploymentId={deploymentId} requestTokenUrl={requestTokenUrl} />}
       </div>
     </div>
   );
