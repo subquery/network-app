@@ -111,15 +111,13 @@ const ProjectInner: React.VFC = () => {
         }
 
         return (
-          <div className={styles.indexers}>
-            <IndexerDetails
-              indexers={indexers}
-              deploymentId={deploymentId}
-              totalCount={data?.deploymentIndexers?.totalCount}
-              onLoadMore={fetchMore}
-              offset={offset}
-            />
-          </div>
+          <IndexerDetails
+            indexers={indexers}
+            deploymentId={deploymentId}
+            totalCount={data?.deploymentIndexers?.totalCount}
+            onLoadMore={fetchMore}
+            offset={offset}
+          />
         );
       },
     });
@@ -173,7 +171,7 @@ const ProjectInner: React.VFC = () => {
               <TabButtons tabs={tabList} />
             </div>
           </div>
-          <div className={clsx('content-width', styles.content)}>
+          <div className={clsx('content-width')}>
             <Switch>
               <Route exact path={`${ROUTE}/:id/overview`}>
                 <ProjectOverview

@@ -24,6 +24,7 @@ import { GetDeploymentPlans, GetDeploymentPlansVariables } from '../__generated_
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
 import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
 import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
+import { GetDeploymentIndexer, GetDeploymentIndexerVariables } from '../__generated__/GetDeploymentIndexer';
 
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {
@@ -110,6 +111,17 @@ const GET_DEPLOYMENT_INDEXERS = gql`
   }
 `;
 
+const GET_DEPLOYMENT_INDEXER = gql`
+  ${DEPLOYMENT_INDEXER_FIELDS}
+  query GetDeploymentIndexer($indexerAddress: String!, $deploymentId: String!) {
+    deploymentIndexers(filter: { indexerId: { equalTo: $indexerAddress }, deploymentId: { equalTo: $deploymentId } }) {
+      nodes {
+        ...DeploymentIndexerFields
+      }
+    }
+  }
+`;
+
 const GET_DEPLOYMENT_INDEXERS_WITH_INDEXER = gql`
   ${DEPLOYMENT_INDEXER_FIELDS}
   query GetDeploymentIndexersByIndexer($indexerAddress: String!) {
@@ -175,6 +187,12 @@ export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): Que
 
 export function useIndexersQuery(params?: GetDeploymentIndexersVariables): QueryResult<GetDeploymentIndexers> {
   return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
+    variables: params,
+  });
+}
+
+export function useDeploymentIndexerQuery(params?: GetDeploymentIndexerVariables): QueryResult<GetDeploymentIndexer> {
+  return useQuery<GetDeploymentIndexer, GetDeploymentIndexerVariables>(GET_DEPLOYMENT_INDEXER, {
     variables: params,
   });
 }

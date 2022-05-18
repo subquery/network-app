@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
 import { Status } from '../../__generated__/globalTypes';
 import { notEmpty } from '../../utils';
+import { useDeploymentIndexerQuery } from '../../containers';
+import { SearchAddress } from '../SearchAddress';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -21,6 +23,46 @@ type Props = {
 
 const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, totalCount, offset, onLoadMore }) => {
   const { t } = useTranslation();
+
+  /**
+   * SearchInput logic
+   * TODO: Improve searchAddress component
+   */
+  const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
+  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
+  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
+
+  const sortedIndexer = useDeploymentIndexerQuery({
+    indexerAddress: searchIndexer ?? '',
+    deploymentId: deploymentId ?? '',
+  });
+
+  const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);
+
+  React.useEffect(() => {
+    setSearchingIndexer(sortedIndexer?.loading);
+    if (!searchedIndexer && searchIndexer && !sortedIndexer?.loading) {
+      setSearchIndexerResult('No search result.');
+    } else {
+      setSearchIndexerResult(undefined);
+    }
+  }, [searchIndexer, searchedIndexer, sortedIndexer?.loading]);
+
+  const SearchInput = () => (
+    <SearchAddress
+      onSearch={(value) => setSearchIndexer(value)}
+      defaultValue={searchIndexer}
+      loading={searchingIndexer}
+      searchResult={searchIndexerResult}
+    />
+  );
+
+  /**
+   * SearchInput logic end
+   */
+
+  const indexerList = searchedIndexer && searchedIndexer?.length > 0 ? searchedIndexer : indexers ?? [];
+
   const columns: TableProps<any>['columns'] = [
     {
       width: '20%',
@@ -51,6 +93,10 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   return (
     <>
+      <div className={styles.searchInput}>
+        <SearchInput />
+      </div>
+
       <Table
         columns={columns}
         dataSource={[{}]}
@@ -59,7 +105,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
         rowClassName={() => styles.tableHeader}
       />
       <>
-        {indexers
+        {indexerList
           .filter(notEmpty)
           .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
           .map((indexer, index) => (
@@ -70,7 +116,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
         <Pagination
           defaultCurrent={1}
           current={(offset ?? 0) / 20 + 1}
-          total={totalCount}
+          total={searchIndexer ? indexerList.length : totalCount}
           defaultPageSize={20}
           pageSizeOptions={[]}
           onChange={(page, pageSize) => {

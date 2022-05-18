@@ -73,3 +73,9 @@
   justify-content: flex-end;
   padding: 1rem;
 }
+
+.searchInput {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem 0;
+}

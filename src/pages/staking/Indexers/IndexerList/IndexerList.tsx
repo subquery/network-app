@@ -79,6 +79,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   /**
    * SearchInput logic
+   * TODO: Improve searchAddress component
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
   const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
@@ -92,13 +93,13 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   );
 
   React.useEffect(() => {
-    setSearchingIndexer(false);
-    if (!searchedIndexer && searchIndexer) {
+    setSearchingIndexer(sortedIndexer?.loading);
+    if (!searchedIndexer && searchIndexer && !sortedIndexer?.loading) {
       setSearchIndexerResult('No search result.');
     } else {
       setSearchIndexerResult(undefined);
     }
-  }, [searchIndexer, searchedIndexer]);
+  }, [searchIndexer, searchedIndexer, sortedIndexer?.loading]);
 
   const SearchInput = () => (
     <SearchAddress
