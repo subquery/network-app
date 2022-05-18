@@ -24,6 +24,7 @@ import { GetDeploymentPlans, GetDeploymentPlansVariables } from '../__generated_
 import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
 import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
 import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
+import { GetDeploymentIndexer, GetDeploymentIndexerVariables } from '../__generated__/GetDeploymentIndexer';
 
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {
@@ -80,32 +81,53 @@ const GET_PROJECT_DEPLOYMENTS = gql`
   }
 `;
 
+const DEPLOYMENT_INDEXER_FIELDS = gql`
+  fragment DeploymentIndexerFields on DeploymentIndexer {
+    id
+    indexerId
+    deploymentId
+    blockHeight
+    timestamp
+    status
+    indexer {
+      metadata
+    }
+  }
+`;
+
 const GET_DEPLOYMENT_INDEXERS = gql`
-  query GetDeploymentIndexers($deploymentId: String!) {
-    deploymentIndexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
+  ${DEPLOYMENT_INDEXER_FIELDS}
+  query GetDeploymentIndexers($offset: Int, $deploymentId: String!) {
+    deploymentIndexers(
+      first: 20
+      offset: $offset
+      filter: { deploymentId: { equalTo: $deploymentId }, status: { notEqualTo: TERMINATED } }
+    ) {
+      totalCount
       nodes {
-        id
-        indexerId
-        deploymentId
-        blockHeight
-        timestamp
-        status
-        indexer {
-          metadata
-        }
+        ...DeploymentIndexerFields
+      }
+    }
+  }
+`;
+
+const GET_DEPLOYMENT_INDEXER = gql`
+  ${DEPLOYMENT_INDEXER_FIELDS}
+  query GetDeploymentIndexer($indexerAddress: String!, $deploymentId: String!) {
+    deploymentIndexers(filter: { indexerId: { equalTo: $indexerAddress }, deploymentId: { equalTo: $deploymentId } }) {
+      nodes {
+        ...DeploymentIndexerFields
       }
     }
   }
 `;
 
 const GET_DEPLOYMENT_INDEXERS_WITH_INDEXER = gql`
+  ${DEPLOYMENT_INDEXER_FIELDS}
   query GetDeploymentIndexersByIndexer($indexerAddress: String!) {
     deploymentIndexers(filter: { indexerId: { equalTo: $indexerAddress } }) {
       nodes {
-        id
-        blockHeight
-        timestamp
-        status
+        ...DeploymentIndexerFields
         deployment {
           id
           project {
@@ -165,6 +187,12 @@ export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): Que
 
 export function useIndexersQuery(params?: GetDeploymentIndexersVariables): QueryResult<GetDeploymentIndexers> {
   return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
+    variables: params,
+  });
+}
+
+export function useDeploymentIndexerQuery(params?: GetDeploymentIndexerVariables): QueryResult<GetDeploymentIndexer> {
+  return useQuery<GetDeploymentIndexer, GetDeploymentIndexerVariables>(GET_DEPLOYMENT_INDEXER, {
     variables: params,
   });
 }

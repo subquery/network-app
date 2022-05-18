@@ -9,6 +9,12 @@
   flex-direction: column;
 }
 
+.indexersPagination {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .address {
   text-transform: uppercase;
   color: var(--gray700);
@@ -66,4 +72,10 @@
   align-items: center;
   justify-content: flex-end;
   padding: 1rem;
+}
+
+.searchInput {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem 0;
 }

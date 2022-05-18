@@ -29,6 +29,7 @@ const ProjectInner: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
   const query = useRouteQuery();
   const history = useHistory();
+  const [offset, setOffset] = React.useState(0);
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
   const { catSingle } = useIPFS();
@@ -39,10 +40,13 @@ const ProjectInner: React.VFC = () => {
 
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
-  const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId } : undefined);
+  const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId, offset } : undefined);
+  const fetchMore = (offset: number) => {
+    setOffset(offset);
+  };
 
   const indexers = React.useMemo(
-    () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty) /*.filter((i) => i.status !== 'TERMINATED')*/,
+    () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty),
     [asyncIndexers.data],
   );
   const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
@@ -101,15 +105,19 @@ const ProjectInner: React.VFC = () => {
     return renderAsync(asyncIndexers, {
       loading: () => <Spinner />,
       error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
-      data: () => {
+      data: (data) => {
         if (!indexers?.length) {
           return <NoIndexers />;
         }
 
         return (
-          <div className={styles.indexers}>
-            <IndexerDetails indexers={indexers} deploymentId={deploymentId} />
-          </div>
+          <IndexerDetails
+            indexers={indexers}
+            deploymentId={deploymentId}
+            totalCount={data?.deploymentIndexers?.totalCount}
+            onLoadMore={fetchMore}
+            offset={offset}
+          />
         );
       },
     });
@@ -163,7 +171,7 @@ const ProjectInner: React.VFC = () => {
               <TabButtons tabs={tabList} />
             </div>
           </div>
-          <div className={clsx('content-width', styles.content)}>
+          <div className={clsx('content-width')}>
             <Switch>
               <Route exact path={`${ROUTE}/:id/overview`}>
                 <ProjectOverview
