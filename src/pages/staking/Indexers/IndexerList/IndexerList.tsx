@@ -14,7 +14,7 @@ import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import { useIndexerCapacity } from '../../../../hooks';
-import { TableText } from '../../../../components';
+import { SearchAddress, TableText } from '../../../../components';
 import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 
@@ -90,6 +90,33 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
     [sortedIndexer],
   );
+
+  React.useEffect(() => {
+    setSearchingIndexer(false);
+    if (!searchedIndexer && searchIndexer) {
+      setSearchIndexerResult('No search result.');
+    } else {
+      setSearchIndexerResult(undefined);
+    }
+  }, [searchIndexer, searchedIndexer]);
+
+  const SearchInput = () => (
+    <SearchAddress
+      onSearch={(value) => setSearchIndexer(value)}
+      defaultValue={searchIndexer}
+      loading={searchingIndexer}
+      searchResult={searchIndexerResult}
+    />
+  );
+
+  /**
+   * SearchInput logic end
+   */
+
+  /**
+   * Sort Indexers
+   */
+
   const rawIndexerList = searchedIndexer ?? indexers ?? [];
   const sortedIndexerList = rawIndexerList.map((indexer) => {
     const commission = getCommission(indexer.commission, era);
@@ -102,35 +129,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
   );
 
-  React.useEffect(() => {
-    setSearchingIndexer(false);
-    if (!searchedIndexer && searchIndexer) {
-      setSearchIndexerResult('No search result.');
-    } else {
-      setSearchIndexerResult(undefined);
-    }
-  }, [searchIndexer, searchedIndexer]);
-
-  const SearchInput = () => (
-    <div className={styles.indexerSearch}>
-      <Input.Search
-        placeholder="Search by indexer address..."
-        allowClear
-        onSearch={(value) => setSearchIndexer(value)}
-        defaultValue={searchIndexer}
-        loading={searchingIndexer}
-        enterButton
-      />
-      {searchIndexerResult && (
-        <Typography variant="small" className="grayText">
-          {searchIndexerResult}
-        </Typography>
-      )}
-    </div>
-  );
-
   /**
-   * SearchInput logic end
+   * Sort Indexers logic end
    */
 
   const columns: TableProps<typeof sortedIndexerList[number]>['columns'] = [

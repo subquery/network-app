@@ -80,7 +80,22 @@ const GET_PROJECT_DEPLOYMENTS = gql`
   }
 `;
 
+const DEPLOYMENT_INDEXER_FIELDS = gql`
+  fragment DeploymentIndexerFields on DeploymentIndexer {
+    id
+    indexerId
+    deploymentId
+    blockHeight
+    timestamp
+    status
+    indexer {
+      metadata
+    }
+  }
+`;
+
 const GET_DEPLOYMENT_INDEXERS = gql`
+  ${DEPLOYMENT_INDEXER_FIELDS}
   query GetDeploymentIndexers($offset: Int, $deploymentId: String!) {
     deploymentIndexers(
       first: 20
@@ -89,28 +104,18 @@ const GET_DEPLOYMENT_INDEXERS = gql`
     ) {
       totalCount
       nodes {
-        id
-        indexerId
-        deploymentId
-        blockHeight
-        timestamp
-        status
-        indexer {
-          metadata
-        }
+        ...DeploymentIndexerFields
       }
     }
   }
 `;
 
 const GET_DEPLOYMENT_INDEXERS_WITH_INDEXER = gql`
+  ${DEPLOYMENT_INDEXER_FIELDS}
   query GetDeploymentIndexersByIndexer($indexerAddress: String!) {
     deploymentIndexers(filter: { indexerId: { equalTo: $indexerAddress } }) {
       nodes {
-        id
-        blockHeight
-        timestamp
-        status
+        ...DeploymentIndexerFields
         deployment {
           id
           project {
