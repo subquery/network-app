@@ -102,8 +102,6 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
   );
 
-  console.log('orderedIndexerList', orderedIndexerList);
-
   React.useEffect(() => {
     setSearchingIndexer(false);
     if (!searchedIndexer && searchIndexer) {

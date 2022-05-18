@@ -60,13 +60,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
 
   const columns: TableProps<any>['columns'] = [
     {
-      width: '30%',
-      align: 'center',
+      width: '20%',
       render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
     },
     {
       width: '30%',
-      align: 'center',
       render: () => (
         <>
           {renderAsync(progressInfo, {
@@ -78,13 +76,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
       ),
     },
     {
-      width: '10%',
-      align: 'center',
+      width: '15%',
       render: () => <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />,
     },
     {
-      width: '20%',
-      align: 'center',
+      width: '30%',
       ellipsis: true,
       render: () =>
         renderAsync(metadata, {
@@ -92,15 +88,16 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
           loading: () => <Spinner />,
           data: (data) => (
             <div className={styles.addressCont}>
-              <Typography.Text ellipsis={true}>{data?.url ?? '-'}</Typography.Text>
+              <Tooltip title={data?.url}>
+                <Typography.Text ellipsis={true}>{data?.url ?? '-'}</Typography.Text>
+              </Tooltip>
               <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon} />
             </div>
           ),
         }),
     },
     {
-      width: '10%',
-      align: 'center',
+      width: '5%',
       dataIndex: 'status',
       render: (status: string) => {
         if (status !== DeploymentStatus.READY) {

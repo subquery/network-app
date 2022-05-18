@@ -81,8 +81,13 @@ const GET_PROJECT_DEPLOYMENTS = gql`
 `;
 
 const GET_DEPLOYMENT_INDEXERS = gql`
-  query GetDeploymentIndexers($deploymentId: String!) {
-    deploymentIndexers(filter: { deploymentId: { equalTo: $deploymentId } }) {
+  query GetDeploymentIndexers($offset: Int, $deploymentId: String!) {
+    deploymentIndexers(
+      first: 20
+      offset: $offset
+      filter: { deploymentId: { equalTo: $deploymentId }, status: { notEqualTo: TERMINATED } }
+    ) {
+      totalCount
       nodes {
         id
         indexerId

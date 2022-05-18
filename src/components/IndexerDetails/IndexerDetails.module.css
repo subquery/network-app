@@ -9,6 +9,12 @@
   flex-direction: column;
 }
 
+.indexersPagination {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .address {
   text-transform: uppercase;
   color: var(--gray700);
