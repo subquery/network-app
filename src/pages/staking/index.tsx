@@ -11,18 +11,22 @@ import { Indexers, DelegateIndexer } from './Indexers';
 import { AppSidebar } from '../../components';
 import { WalletRoute } from '../../WalletRoute';
 
+export const ROOT_ROUTE = '/staking';
+export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-profile`;
+export const INDEXERS_ROUTE = `${ROOT_ROUTE}/indexers`;
+
 const Container: React.VFC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
     {
       label: t('indexer.profile'),
-      link: '/staking/my-profile',
+      link: PROFILE_ROUTE,
       icon: <BsPerson />,
     },
     {
       label: t('indexer.indexers'),
-      link: `/staking/indexers`,
+      link: INDEXERS_ROUTE,
       icon: <BsCashStack />,
     },
   ];
@@ -32,9 +36,9 @@ const Container: React.VFC = () => {
       <AppSidebar list={sidebarList}>
         <Switch>
           <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
-          <Route path="/staking/indexers" component={Indexers} />
-          <WalletRoute path="/staking/my-profile" component={Indexer} />
-          <Redirect from="/staking" to="/staking/my-profile" />
+          <Route path={INDEXERS_ROUTE} component={Indexers} />
+          <WalletRoute path={PROFILE_ROUTE} component={Indexer} />
+          <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
         </Switch>
       </AppSidebar>
     </EraProvider>

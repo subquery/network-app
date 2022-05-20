@@ -1,16 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Playground from './Playground';
+import { GraphQLPlayground } from './GraphQLPlayground';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 // import { buildSchema } from '../../utils';
 
 export default {
   title: 'Playground',
-  component: Playground,
-} as ComponentMeta<typeof Playground>;
+  component: GraphQLPlayground,
+} as ComponentMeta<typeof GraphQLPlayground>;
 
-const Template: ComponentStory<typeof Playground> = (args) => <Playground {...args} />;
+const Template: ComponentStory<typeof GraphQLPlayground> = (args) => <GraphQLPlayground {...args} />;
 
 // export const Default = Template.bind({});
 
