@@ -28,7 +28,7 @@ import {
 import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
-} from '../../../__generated__/GetOngoingServiceAgreements';
+} from '../../../__generated__/registry/GetOngoingServiceAgreements';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';

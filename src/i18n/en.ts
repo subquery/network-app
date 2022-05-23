@@ -233,7 +233,7 @@ const en = {
       delegateFailure: 'Sorry, the delegation has been failed.',
       delegateSuccess: 'Success! Your delegation has been done.',
       approveTokenToDelegate: 'Approve your token for staking',
-      noDelegating: 'No delegation available',
+      noDelegating: 'available',
       yourDelegateAmount: 'Your Delegation Amount',
       none: 'No delegator available',
       viewProfile: 'View indexer profile',
@@ -283,6 +283,8 @@ const en = {
     missions: {
       missions: 'Missions',
       leaderboard: 'Leaderboard',
+      indexing: {},
+      delegating: {},
     },
 
     plans: {

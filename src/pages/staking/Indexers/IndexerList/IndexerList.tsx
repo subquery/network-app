@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, Spinner } from '@subql/react-ui';
-import { Input, Table, TableProps } from 'antd';
+import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { extractPercentage, formatEther, renderAsync } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
+import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/registry/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';

@@ -1,5 +1,5 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export * from './Home/Leaderboard';
-export * from './Ranks/Indexing/Indexers';
+export * from './Leaderboard';
+export * from './Ranks';

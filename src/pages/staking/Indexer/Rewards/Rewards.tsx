@@ -11,7 +11,7 @@ import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../u
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
-} from '../../../../__generated__/GetRewards';
+} from '../../../../__generated__/registry/GetRewards';
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';

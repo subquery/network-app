@@ -15,7 +15,7 @@ import {
   ProjectMetadataProvider,
   QueryRegistryProvider,
   ContractsProvider,
-  QueryRegistryProjectProvider,
+  QueryApolloProvider,
   UserProjectsProvider,
   IndexerRegistryProvider,
   useWeb3,
@@ -44,7 +44,7 @@ const ErrorFallback = ({ error, componentStack, resetError }: any) => {
 const Providers: React.FC = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
-      <QueryRegistryProjectProvider endpoint={process.env.REACT_APP_QUERY_REGISTRY_PROJECT}>
+      <QueryApolloProvider>
         <Web3Provider>
           <ContractsProvider>
             <ProjectMetadataProvider>
@@ -58,7 +58,7 @@ const Providers: React.FC = ({ children }) => {
             </ProjectMetadataProvider>
           </ContractsProvider>
         </Web3Provider>
-      </QueryRegistryProjectProvider>
+      </QueryApolloProvider>
     </IPFSProvider>
   );
 };

@@ -3,7 +3,7 @@
 
 import { Table, TableProps, Tooltip } from 'antd';
 import * as React from 'react';
-import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
+import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/registry/GetDeploymentIndexers';
 import Progress from './Progress';
 import { IndexerName } from './IndexerName';
 import {
@@ -22,7 +22,7 @@ import Status from '../Status';
 import { Spinner } from '@subql/react-ui';
 import { deploymentStatus } from '../Status/Status';
 import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
-import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/GetDeploymentPlans';
+import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/registry/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import { PlansTable, PlansTableProps } from './PlansTable';
 import assert from 'assert';
@@ -30,7 +30,7 @@ import { BsPlusSquare, BsDashSquare, BsInfoSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
 import Copy from '../Copy';
 import styles from './IndexerDetails.module.css';
-import { Status as DeploymentStatus } from '../../__generated__/globalTypes';
+import { Status as DeploymentStatus } from '../../__generated__/registry/globalTypes';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 

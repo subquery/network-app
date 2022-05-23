@@ -2,32 +2,31 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
-import { GetDelegation, GetDelegationVariables } from '../__generated__/GetDelegation';
-import { GetAllDelegations, GetAllDelegationsVariables } from '../__generated__/GetAllDelegations';
-import { GetDelegations, GetDelegationsVariables } from '../__generated__/GetDelegations';
-import { GetIndexer, GetIndexerVariables } from '../__generated__/GetIndexer';
-import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/GetIndexerDelegators';
-import { GetIndexers, GetIndexersVariables } from '../__generated__/GetIndexers';
-import { GetPlans, GetPlansVariables } from '../__generated__/GetPlans';
-import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/GetPlanTemplates';
-import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/GetWithdrawls';
-import { GetRewards, GetRewardsVariables } from '../__generated__/GetRewards';
-import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/GetIndexerRewards';
-import { GetDelegator, GetDelegatorVariables } from '../__generated__/GetDelegator';
-import { GetSpecificPlans, GetSpecificPlansVariables } from '../__generated__/GetSpecificPlans';
-
 import {
-  GetOngoingServiceAgreements,
-  GetOngoingServiceAgreementsVariables,
-} from '../__generated__/GetOngoingServiceAgreements';
-import {
-  GetExpiredServiceAgreements,
   GetExpiredServiceAgreementsVariables,
-} from '../__generated__/GetExpiredServiceAgreements';
+  GetExpiredServiceAgreements,
+} from '../__generated__/registry/GetExpiredServiceAgreements';
 import {
-  GetSpecificServiceAgreements,
+  GetOngoingServiceAgreementsVariables,
+  GetOngoingServiceAgreements,
+} from '../__generated__/registry/GetOngoingServiceAgreements';
+import {
   GetSpecificServiceAgreementsVariables,
-} from '../__generated__/GetSpecificServiceAgreements';
+  GetSpecificServiceAgreements,
+} from '../__generated__/registry/GetSpecificServiceAgreements';
+import { GetAllDelegationsVariables, GetAllDelegations } from '../__generated__/registry/GetAllDelegations';
+import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
+import { GetDelegationsVariables, GetDelegations } from '../__generated__/registry/GetDelegations';
+import { GetDelegatorVariables, GetDelegator } from '../__generated__/registry/GetDelegator';
+import { GetIndexerVariables, GetIndexer } from '../__generated__/registry/GetIndexer';
+import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/registry/GetIndexerDelegators';
+import { GetIndexerRewardsVariables, GetIndexerRewards } from '../__generated__/registry/GetIndexerRewards';
+import { GetIndexersVariables, GetIndexers } from '../__generated__/registry/GetIndexers';
+import { GetPlansVariables, GetPlans } from '../__generated__/registry/GetPlans';
+import { GetPlanTemplatesVariables, GetPlanTemplates } from '../__generated__/registry/GetPlanTemplates';
+import { GetRewardsVariables, GetRewards } from '../__generated__/registry/GetRewards';
+import { GetSpecificPlansVariables, GetSpecificPlans } from '../__generated__/registry/GetSpecificPlans';
+import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry/GetWithdrawls';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -409,7 +408,7 @@ export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards>
   return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params, pollInterval: 15000 });
 }
 
-export function useIndedxerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
+export function useIndexerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
   return useQuery<GetIndexerRewards, GetIndexerRewardsVariables>(GET_INDEXER_REWARDS, { variables: params });
 }
 

@@ -7,8 +7,9 @@ import * as React from 'react';
 import { useEraValue, useIPFSMetadata } from '../../hooks';
 import { IndexerDetails, indexerMetadataSchema } from '../../models';
 import { AsyncData, mapAsync } from '../../utils';
-import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/GetIndexers';
+import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/registry/GetIndexers';
 import { IndexerName } from '../IndexerDetails/IndexerName';
+
 import { BigNumber, utils } from 'ethers';
 import { currentEraValueToString } from '../../hooks/useEraValue';
 

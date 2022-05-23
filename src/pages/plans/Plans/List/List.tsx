@@ -6,7 +6,7 @@ import { Table, TableProps } from 'antd';
 import {
   GetPlans_plans_nodes as Plan,
   GetPlans_plans_nodes_planTemplate as PlanTemplate,
-} from '../../../../__generated__/GetPlans';
+} from '../../../../__generated__/registry/GetPlans';
 import { useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/react-ui';
 import TransactionModal from '../../../../components/TransactionModal';

@@ -3,14 +3,14 @@
 
 import * as React from 'react';
 import { Table, TableProps, Pagination } from 'antd';
-import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
+import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/registry/GetDeploymentIndexers';
 import Row from './Row';
 import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
-import { Status } from '../../__generated__/globalTypes';
 import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
 import { SearchAddress } from '../SearchAddress';
+// import { Status } from '../../__generated__/registry/globalTypes';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -105,12 +105,12 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
         rowClassName={() => styles.tableHeader}
       />
       <>
-        {indexerList
+        {/* {indexerList
           .filter(notEmpty)
           .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
           .map((indexer, index) => (
             <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
-          ))}
+          ))} */}
       </>
       <div className={styles.indexersPagination}>
         <Pagination

@@ -3,7 +3,7 @@
 
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import * as React from 'react';
-import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/GetIndexers';
+import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/registry/GetIndexers';
 import ConnectedIndexerRow from './IndexerRow';
 
 type Props = {

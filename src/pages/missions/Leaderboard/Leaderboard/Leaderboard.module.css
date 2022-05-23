@@ -3,10 +3,9 @@
 }
 
 .container {
-  display: flex;
-  background-color: var(--gray200);
-  width: 100%;
-  min-height: 100%;
+  height: 20vh;
+  background: white;
+  padding: 1rem;
 }
 
 .sidebar {
@@ -19,15 +18,16 @@
   overflow: scroll;
 }
 
-.header {
+.topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.title {
-  font-weight: 600;
-  font-size: 16px;
+.header {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #444f59;
 }
 
 .profile {

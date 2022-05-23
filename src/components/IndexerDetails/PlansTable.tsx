@@ -5,7 +5,7 @@ import * as React from 'react';
 import {
   GetDeploymentPlans_plans_nodes as Plan,
   GetDeploymentPlans_plans_nodes_planTemplate as PlanTemplate,
-} from '../../__generated__/GetDeploymentPlans';
+} from '../../__generated__/registry/GetDeploymentPlans';
 import { Table, TableProps } from 'antd';
 import { LazyQueryResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
