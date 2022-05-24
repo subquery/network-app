@@ -23,7 +23,7 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
       <div className={styles.playgroundHeader}>
         {sessionToken && (
           <div className={styles.playgroundText}>
-            <Typography.Title level={4}>Session Token</Typography.Title>
+            <Typography.Title level={4}>{t('serviceAgreements.playground.sessionToken')}</Typography.Title>
             <Tooltip title={sessionToken}>
               <Typography.Text ellipsis copyable>
                 {sessionToken}
@@ -34,7 +34,7 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
 
         {decodedToken?.exp && (
           <div>
-            <Typography.Title level={4}>Token expired in</Typography.Title>
+            <Typography.Title level={4}>{t('serviceAgreements.playground.tokenExpireIn')}</Typography.Title>
             <Typography.Text>{moment(decodedToken?.exp).fromNow()}</Typography.Text>
           </div>
         )}

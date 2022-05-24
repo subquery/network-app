@@ -259,13 +259,7 @@ const en = {
       confirmWithdraw: 'Confirm Withdrawal',
       aboutToWithdraw: 'You are about to withdraw {{amount}} SQT.',
     },
-    general: {
-      current: 'current',
-      next: 'next',
-      status: 'Status',
-      active: 'Active',
-      inactive: 'Inactive',
-    },
+
     projects: {
       deploymentId: 'Deployment ID',
       nonDeployments: 'No deployed projects available.',
@@ -361,8 +355,19 @@ const en = {
         requestToken: 'Request token',
         ongoingAgreements: 'My Ongoing Service Agreements',
         auctionAndCrowdloan: 'Polkadot auction & crowdloan',
+        sessionToken: 'Session Token',
+        tokenExpireIn: 'Token expired in',
+        comingSoon: 'Playground coming soon.',
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
+    },
+    general: {
+      current: 'current',
+      next: 'next',
+      status: 'Status',
+      active: 'Active',
+      inactive: 'Inactive',
+      comingSoon: 'Coming soon.',
     },
     status: {
       success: 'Success!',

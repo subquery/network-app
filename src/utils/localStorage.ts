@@ -16,6 +16,10 @@ export const getStorage = (key: string): string | null => {
   return localStorage.getItem(key);
 };
 
+export const removeStorage = (key: string): void => {
+  return localStorage.removeItem(key);
+};
+
 export const setEncryptStorage = (key: string, value: string): void => {
   const encryptValue = encrypt(value);
   localStorage.setItem(key, encryptValue);

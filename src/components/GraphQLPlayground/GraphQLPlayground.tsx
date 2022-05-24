@@ -24,11 +24,8 @@ type Props = {
 
 export const GraphQLPlayground: React.VFC<Props> = ({ endpoint, token }) => {
   const headers = {
-    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
-
-  console.log('GraphQLPlayground', endpoint);
 
   const sortedHeaders = token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
   return (
@@ -38,7 +35,7 @@ export const GraphQLPlayground: React.VFC<Props> = ({ endpoint, token }) => {
         fetcher={async (graphQLParams) => {
           const data = await fetch(endpoint, {
             method: 'POST',
-            headers,
+            headers: sortedHeaders,
             body: JSON.stringify(graphQLParams),
           });
           return data.json().catch(() => data.text());

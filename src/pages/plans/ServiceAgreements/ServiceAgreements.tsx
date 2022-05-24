@@ -9,11 +9,11 @@ import styles from './ServiceAgreements.module.css';
 import { Redirect, Route, Switch } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
 import { Playground } from '../Playrgound';
+import { SERVICE_AGREEMENTS } from '..';
 
-export const ROUTE = '/plans/service-agreements';
-export const ONGOING_PLANS = `${ROUTE}/ongoing`;
-export const PLAYGROUND = `${ROUTE}/:indexerId/:deploymentId`;
-export const EXPIRED_PLANS = `${ROUTE}/expired`;
+export const ONGOING_PLANS = `${SERVICE_AGREEMENTS}/ongoing`;
+export const PLAYGROUND = `${SERVICE_AGREEMENTS}/playground`;
+export const EXPIRED_PLANS = `${SERVICE_AGREEMENTS}/expired`;
 
 const buttonLinks = [
   { label: 'Ongoing', link: ONGOING_PLANS },
@@ -44,7 +44,7 @@ const ServiceAgreements: React.VFC = () => {
   return (
     <div>
       <Switch>
-        <Route exact path={PLAYGROUND} component={() => <Playground />} />
+        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <Playground />} />
         <Route
           exact
           path={ONGOING_PLANS}
@@ -65,7 +65,7 @@ const ServiceAgreements: React.VFC = () => {
             </>
           )}
         />
-        <Redirect from={ROUTE} to={ONGOING_PLANS} />
+        <Redirect from={SERVICE_AGREEMENTS} to={ONGOING_PLANS} />
       </Switch>
     </div>
   );

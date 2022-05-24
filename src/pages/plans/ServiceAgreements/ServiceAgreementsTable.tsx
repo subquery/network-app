@@ -34,9 +34,8 @@ import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
-import { ONGOING_PLANS } from './ServiceAgreements';
+import { ONGOING_PLANS, PLAYGROUND } from './ServiceAgreements';
 import styles from './ServiceAgreements.module.css';
-import { SERVICE_AGREEMENTS } from '..';
 
 export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }) => {
   const asyncMetadata = useIndexerMetadata(indexer);
@@ -100,7 +99,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       dataIndex: 'id',
       title: '#',
       width: 40,
-      render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
+      render: (text: string, _: ServiceAgreement, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: 'deployment',
@@ -163,20 +162,25 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
 
   const playgroundCol = {
     title: t('indexer.action').toUpperCase(),
-    dataIndex: 'deploymentId',
+    dataIndex: 'id',
     key: 'operation',
     fixed: 'right' as FixedType,
     width: 120,
-    render: (deploymentId: string, sa: ServiceAgreement) => {
-      if (sa.indexerAddress === account) return <> - </>;
+    render: (saId: string, sa: ServiceAgreement) => {
+      if (sa.indexerAddress === account)
+        return (
+          <Typography variant="small" className="grayText">
+            {t('serviceAgreements.playground.comingSoon')}
+          </Typography>
+        );
       return (
         <Link
           to={{
-            pathname: `${SERVICE_AGREEMENTS}/${sa.indexerAddress}/${deploymentId}`,
+            pathname: `${PLAYGROUND}/${saId}`,
             state: { serviceAgreement: sa },
           }}
         >
-          Playground
+          {t('serviceAgreements.playground.title')}
         </Link>
       );
     },

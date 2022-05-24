@@ -240,7 +240,7 @@ export const trimEndSlash = (url: string): string => url.replace(/\/$/, '');
 
 export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: string): string | undefined {
   if (!endpoint) return undefined;
-  if (endpoint.includes('https://') || endpoint.includes('http://')) {
+  if (endpoint.includes('https://')) {
     return endpoint;
   }
 

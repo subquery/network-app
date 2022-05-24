@@ -15,18 +15,11 @@ interface PostReturn {
 export const POST = async ({ endpoint, headers, requestBody }: PostProps): Promise<PostReturn> => {
   let response, error;
   try {
-    const fetchResponse = await fetch(endpoint, {
+    response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...headers },
+      headers: { 'Content-Type': 'application/json', ...headers },
       body: JSON.stringify(requestBody),
     });
-
-    if (fetchResponse.ok) {
-      response = fetchResponse;
-    } else {
-      const response = await fetchResponse.json();
-      throw Error(response.message);
-    }
   } catch (e) {
     console.log('Fetch error', e);
     error = e;
