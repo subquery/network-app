@@ -4,7 +4,7 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { OwnDeployment } from '../../../../components';
+import { DeploymentInfo } from '../../../../components';
 import { useProjectMetadata, useSpecificPlansPlans, useWeb3 } from '../../../../containers';
 import { useAsyncMemo } from '../../../../hooks';
 import { mapAsync, notEmpty, renderAsync, renderAsyncArray } from '../../../../utils';
@@ -28,7 +28,7 @@ const Header: React.FC<{ deploymentId: string; projectMetadata?: string }> = ({ 
         return <Typography>Project metadata not found</Typography>;
       }
 
-      return <OwnDeployment deploymentId={deploymentId} project={projectMeta} />;
+      return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} />;
     },
   });
 };

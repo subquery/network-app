@@ -6,14 +6,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectMetadata } from '../../models';
 import IPFSImage from '../IPFSImage';
-import styles from './OwnDeployment.module.css';
+import styles from './DeploymentInfo.module.css';
 
 type Props = {
   project: ProjectMetadata;
   deploymentId?: string;
 };
 
-const OwnDeployment: React.FC<Props> = ({ project, deploymentId }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId }) => {
   const { t } = useTranslation();
 
   return (
@@ -28,5 +28,3 @@ const OwnDeployment: React.FC<Props> = ({ project, deploymentId }) => {
     </div>
   );
 };
-
-export default OwnDeployment;
