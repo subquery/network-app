@@ -20,8 +20,8 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
 
   return (
     <div className={styles.playground}>
-      <div className={styles.playgroundHeader}>
-        {sessionToken && (
+      {sessionToken && (
+        <div className={styles.playgroundHeader}>
           <div className={styles.playgroundText}>
             <Typography.Title level={4}>{t('serviceAgreements.playground.sessionToken')}</Typography.Title>
             <Tooltip title={sessionToken}>
@@ -30,15 +30,15 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
               </Typography.Text>
             </Tooltip>
           </div>
-        )}
 
-        {decodedToken?.exp && (
-          <div>
-            <Typography.Title level={4}>{t('serviceAgreements.playground.tokenExpireIn')}</Typography.Title>
-            <Typography.Text>{moment(decodedToken?.exp).fromNow()}</Typography.Text>
-          </div>
-        )}
-      </div>
+          {decodedToken?.exp && (
+            <div>
+              <Typography.Title level={4}>{t('serviceAgreements.playground.tokenExpireIn')}</Typography.Title>
+              <Typography.Text>{moment(decodedToken?.exp).fromNow()}</Typography.Text>
+            </div>
+          )}
+        </div>
+      )}
       <GraphQLPlayground endpoint={queryUrl} token={sessionToken} />
     </div>
   );

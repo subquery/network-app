@@ -58,7 +58,7 @@ export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymen
   });
 };
 
-const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
+export const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
   const meta = useAsyncMemo(
     () => getDeploymentMetadata(catSingle, deployment?.version),
@@ -76,7 +76,7 @@ const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({
   );
 };
 
-const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
+export const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
   const { getMetadataFromCid } = useProjectMetadata();
 
   const metadata = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project.metadata, getMetadataFromCid]);

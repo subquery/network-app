@@ -1,16 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Table, TableProps } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router';
-import { CurEra } from '../../../components';
+import { CurEra, DeploymentMeta, TableText } from '../../../components';
 import styles from './Playground.module.css';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/GetOngoingServiceAgreements';
 import { Link } from 'react-router-dom';
 import { useIndexerMetadata } from '../../../hooks';
-import { getEncryptStorage, removeStorage, setEncryptStorage, wrapProxyEndpoint } from '../../../utils';
+import { formatEther, getEncryptStorage, removeStorage, setEncryptStorage, wrapProxyEndpoint } from '../../../utils';
 import { POST } from '../../../utils/fetch';
 import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
@@ -20,6 +20,64 @@ import { NotificationType, openNotificationWithIcon } from '../../../components/
 import { SERVICE_AGREEMENTS } from '..';
 import { ONGOING_PLANS } from '../ServiceAgreements/ServiceAgreements';
 import { Spinner } from '@subql/react-ui';
+import i18next from 'i18next';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { Project } from '../ServiceAgreements/ServiceAgreementsTable';
+import moment from 'moment';
+
+const columns: TableProps<ServiceAgreement>['columns'] = [
+  {
+    dataIndex: 'consumerAddress',
+    title: i18next.t('serviceAgreements.headers.consumer').toUpperCase(),
+    key: 'consumer',
+    render: (consumer: ServiceAgreement['consumerAddress']) => <ConnectedIndexer id={consumer} />,
+  },
+  {
+    dataIndex: 'indexerAddress',
+    title: i18next.t('serviceAgreements.headers.indexer').toUpperCase(),
+    key: 'indexer',
+    render: (indexer: ServiceAgreement['indexerAddress']) => <ConnectedIndexer id={indexer} />,
+  },
+  {
+    dataIndex: 'deployment',
+    key: 'project',
+    title: i18next.t('serviceAgreements.headers.project').toUpperCase(),
+    render: (deployment: ServiceAgreement['deployment']) =>
+      deployment?.project && <Project project={deployment.project} />,
+  },
+  {
+    dataIndex: 'period',
+    title: i18next.t('serviceAgreements.headers.expiry').toUpperCase(),
+    key: 'expiry',
+    render: (_, sa: ServiceAgreement) => {
+      return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
+    },
+  },
+  {
+    dataIndex: 'value',
+    title: i18next.t('serviceAgreements.headers.price').toUpperCase(),
+    key: 'price',
+    render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
+  },
+];
+
+export const PlaygroundHeader: React.VFC = () => {
+  const { t } = useTranslation();
+  return (
+    <div className={styles.header}>
+      <Breadcrumb separator=">">
+        <Breadcrumb.Item className={styles.title}>
+          <Link to={SERVICE_AGREEMENTS}>{t('serviceAgreements.playground.ongoingAgreements')}</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item className={styles.title}>
+          {t('serviceAgreements.playground.auctionAndCrowdloan')}
+        </Breadcrumb.Item>
+      </Breadcrumb>
+
+      <CurEra />
+    </div>
+  );
+};
 
 export const Playground: React.VFC = () => {
   const { t } = useTranslation();
@@ -103,17 +161,18 @@ export const Playground: React.VFC = () => {
 
   return (
     <div>
-      <div className={styles.header}>
-        <Breadcrumb separator=">">
-          <Breadcrumb.Item className={styles.title}>
-            <Link to={SERVICE_AGREEMENTS}>{t('serviceAgreements.playground.ongoingAgreements')}</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item className={styles.title}>
-            {t('serviceAgreements.playground.auctionAndCrowdloan')}
-          </Breadcrumb.Item>
-        </Breadcrumb>
+      <PlaygroundHeader />
 
-        <CurEra />
+      <div className={styles.deploymentMetaContainer}>
+        <div className={styles.deploymentMeta}>
+          <DeploymentMeta
+            deploymentId={serviceAgreement.deploymentId}
+            projectMetadata={serviceAgreement.deployment?.project?.metadata}
+          />
+        </div>
+        <div className={styles.deploymentTable}>
+          <Table columns={columns} dataSource={[serviceAgreement]} rowKey={'id'} pagination={false} />
+        </div>
       </div>
 
       <div className={styles.content}>

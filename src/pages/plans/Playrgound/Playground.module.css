@@ -17,10 +17,10 @@
 
 .content {
   background: white;
-  min-height: 520px;
+  min-height: 560px;
   border-radius: 4px;
-  padding: 1rem;
-  margin: 3rem 0 1rem 0;
+  padding: 1.6rem;
+  margin: 1rem 0;
 }
 
 /* RequestToken */
@@ -38,8 +38,22 @@
 }
 
 /* playground */
-.playground {
+.deploymentMetaContainer {
+  background: white;
+  border-radius: 4px;
   padding: 1rem;
+  margin: 1rem 0;
+}
+
+.deploymentMeta {
+  border: 1px solid var(--gray300);
+  border-radius: 6px;
+  padding: 2rem 1rem;
+  margin: 1rem 0;
+}
+
+.deploymentTable {
+  margin-bottom: 1rem;
 }
 
 .playgroundHeader {
