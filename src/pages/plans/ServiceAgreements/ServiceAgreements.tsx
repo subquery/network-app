@@ -5,15 +5,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { useExpiredServiceAgreements, useServiceAgreements, useWeb3 } from '../../../containers';
-
 import styles from './ServiceAgreements.module.css';
-
 import { Redirect, Route, Switch } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
+import { Playground } from '../Playrgound';
+import { SERVICE_AGREEMENTS } from '..';
 
-export const ROUTE = '/plans/service-agreements';
-export const ONGOING_PLANS = `${ROUTE}/ongoing`;
-export const EXPIRED_PLANS = `${ROUTE}/expired`;
+export const ONGOING_PLANS = `${SERVICE_AGREEMENTS}/ongoing`;
+export const PLAYGROUND = `${SERVICE_AGREEMENTS}/playground`;
+export const EXPIRED_PLANS = `${SERVICE_AGREEMENTS}/expired`;
 
 const buttonLinks = [
   { label: 'Ongoing', link: ONGOING_PLANS },
@@ -32,18 +32,40 @@ const ServiceAgreements: React.VFC = () => {
     );
   };
 
-  return (
-    <div>
+  const SaHeader = () => (
+    <>
       <AppPageHeader title={t('plans.category.myServiceAgreement')} />
-
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
       </div>
+    </>
+  );
 
+  return (
+    <div>
       <Switch>
-        <Route exact path={ONGOING_PLANS} component={() => <Agreements queryFn={useServiceAgreements} />} />
-        <Route exact path={EXPIRED_PLANS} component={() => <Agreements queryFn={useExpiredServiceAgreements} />} />
-        <Redirect from={ROUTE} to={ONGOING_PLANS} />
+        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <Playground />} />
+        <Route
+          exact
+          path={ONGOING_PLANS}
+          component={() => (
+            <>
+              <SaHeader />
+              <Agreements queryFn={useServiceAgreements} />
+            </>
+          )}
+        />
+        <Route
+          exact
+          path={EXPIRED_PLANS}
+          component={() => (
+            <>
+              <SaHeader />
+              <Agreements queryFn={useExpiredServiceAgreements} />
+            </>
+          )}
+        />
+        <Redirect from={SERVICE_AGREEMENTS} to={ONGOING_PLANS} />
       </Switch>
     </div>
   );

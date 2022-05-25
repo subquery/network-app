@@ -1,6 +1,6 @@
 .container {
   height: 500px;
-  margin: 32px;
+  /* margin: 32px; */
   border-radius: 10px;
   overflow: hidden;
 }

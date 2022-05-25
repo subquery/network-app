@@ -8,5 +8,18 @@
   height: 40px;
 }
 
-.deploymentId {
+.url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addressCont {
+  display: flex;
+  max-width: 300px;
+}
+
+.copy {
+  margin-left: 6px;
+  flex-shrink: 0;
 }

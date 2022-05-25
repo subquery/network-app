@@ -7,6 +7,8 @@ export * from './parseError';
 export * from './getDeploymentProgress';
 export * from './getTrimmedStr';
 export * from './useDebounce';
+export * from './fetch';
+export * from './localStorage';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -233,6 +235,8 @@ export class CancellablePromise<T> extends Promise<T> {
     return this._isCancelled !== false;
   }
 }
+
+export const trimEndSlash = (url: string): string => url.replace(/\/$/, '');
 
 export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: string): string | undefined {
   if (!endpoint) return undefined;

@@ -10,9 +10,9 @@ import { Plans } from './Plans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText } from 'react-icons/bs';
 
-const ROUTE = '/plans';
-const PLAN_ROUTE = '/plans/plans';
-const SERVICE_AGREEMENTS = '/plans/service-agreements';
+export const ROUTE = '/plans';
+export const PLAN_ROUTE = '/plans/plans';
+export const SERVICE_AGREEMENTS = '/plans/service-agreements';
 
 const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();

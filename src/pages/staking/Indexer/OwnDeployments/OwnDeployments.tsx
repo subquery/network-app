@@ -6,11 +6,10 @@ import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
-import { OwnDeployment, Status } from '../../../../components';
+import { DeploymentInfo, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
-import { useContracts } from '../../../../containers';
-import { useAsyncMemo, useSortedIndexerDeployments } from '../../../../hooks';
-import { cidToBytes32, mapAsync, renderAsync } from '../../../../utils';
+import { useSortedIndexerDeployments } from '../../../../hooks';
+import { mapAsync, renderAsync } from '../../../../utils';
 import styles from './OwnDeployments.module.css';
 
 interface Props {
@@ -28,7 +27,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       dataIndex: 'deploymentId',
       width: '65%',
       render: (deploymentId: string, record: any) => (
-        <OwnDeployment deploymentId={deploymentId} project={record.projectMeta} />
+        <DeploymentInfo deploymentId={deploymentId} project={record.projectMeta} />
       ),
     },
     {

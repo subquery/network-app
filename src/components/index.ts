@@ -10,7 +10,6 @@ import ProjectHeader from './ProjectHeader';
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
 import ProjectDeployments from './ProjectDeployments';
-import Playground from './Playground';
 import NewDeployment from './NewDeployment';
 import ProjectOverview from './ProjectOverview';
 import IndexerProgress from './IndexerProgress';
@@ -23,9 +22,9 @@ import NewProject from './NewProject';
 import ConnectWallet from './ConnectWallet';
 import Copy from './Copy';
 import Status from './Status';
-export { default as OwnDeployment } from './OwnDeployment';
 export { default as IndexerList } from './IndexerList';
 export { default as DelegatorsList } from './DelegatorsList';
+export * from './DeploymentInfo';
 export * from './Sidebar';
 export * from './Card';
 export * from './CurEra';
@@ -40,6 +39,7 @@ export * from './TabButton';
 export * from './SummaryList';
 export * from './TableText';
 export * from './SearchAddress';
+export * from './GraphQLPlayground';
 
 export {
   Header,
@@ -53,7 +53,6 @@ export {
   ProjectEdit,
   ProjectDeployments,
   ProjectOverview,
-  Playground,
   NewDeployment,
   IndexerProgress,
   Spinner,

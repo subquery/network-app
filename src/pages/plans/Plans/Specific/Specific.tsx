@@ -4,34 +4,12 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { OwnDeployment } from '../../../../components';
-import { useProjectMetadata, useSpecificPlansPlans, useWeb3 } from '../../../../containers';
-import { useAsyncMemo } from '../../../../hooks';
-import { mapAsync, notEmpty, renderAsync, renderAsyncArray } from '../../../../utils';
+import { DeploymentMeta } from '../../../../components';
+import { useSpecificPlansPlans, useWeb3 } from '../../../../containers';
+import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import List from '../List';
 import { EmptyList } from '../EmptyList';
 import styles from './Specific.module.css';
-
-const Header: React.FC<{ deploymentId: string; projectMetadata?: string }> = ({ deploymentId, projectMetadata }) => {
-  const { getMetadataFromCid } = useProjectMetadata();
-
-  const metadata = useAsyncMemo(async () => {
-    if (!projectMetadata) return null;
-    return await getMetadataFromCid(projectMetadata);
-  }, [projectMetadata]);
-
-  return renderAsync(metadata, {
-    loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load project info: ${e}`}</Typography>,
-    data: (projectMeta) => {
-      if (!projectMeta) {
-        return <Typography>Project metadata not found</Typography>;
-      }
-
-      return <OwnDeployment deploymentId={deploymentId} project={projectMeta} />;
-    },
-  });
-};
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
@@ -66,7 +44,7 @@ const Specific: React.FC = () => {
                     return (
                       <div key={deployment.id} className={styles.plan}>
                         <div className={styles.header}>
-                          <Header deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
+                          <DeploymentMeta deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
                         </div>
 
                         {plans ? (

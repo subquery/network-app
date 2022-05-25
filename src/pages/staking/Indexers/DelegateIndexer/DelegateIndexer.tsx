@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { AiOutlineRight } from 'react-icons/ai';
+import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { useHistory, useParams } from 'react-router';
 import { CurEra } from '../../../../components';
@@ -12,7 +12,7 @@ import { useSortedIndexer } from '../../../../hooks';
 import { renderAsync } from '../../../../utils';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
-import { Link } from 'react-router-dom';
+import { INDEXERS_ROUTE } from '../..';
 
 type RouteParams = {
   address: string;
@@ -25,7 +25,7 @@ export const DelegateIndexer: React.VFC = () => {
 
   React.useEffect(() => {
     if (!address) {
-      history.push('/staking/indexers');
+      history.push(INDEXERS_ROUTE);
     }
   }, [address, history]);
 
@@ -34,12 +34,12 @@ export const DelegateIndexer: React.VFC = () => {
   return (
     <>
       <div className={styles.header}>
-        <Typography variant="h4" className={`${styles.title} ${styles.grayText}`}>
-          <Link to={'/staking/indexers'} className={styles.grayText}>
-            {t('delegate.toIndexer')}
-          </Link>{' '}
-          <AiOutlineRight className={styles.rightIcon} /> {t('delegate.viewProfile')}
-        </Typography>
+        <Breadcrumb separator=">">
+          <Breadcrumb.Item href={INDEXERS_ROUTE} className={styles.title}>
+            {t('indexer.indexers')}
+          </Breadcrumb.Item>
+          <Breadcrumb.Item className={styles.title}>{t('delegate.viewProfile')}</Breadcrumb.Item>
+        </Breadcrumb>
 
         <CurEra />
       </div>

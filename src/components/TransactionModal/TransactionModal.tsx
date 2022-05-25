@@ -14,7 +14,7 @@ import { MdErrorOutline } from 'react-icons/md';
 import { notification, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-enum NotificationType {
+export enum NotificationType {
   INFO = 'info',
   SUCCESS = 'success',
   ERROR = 'error',
@@ -25,7 +25,11 @@ interface NotificationProps {
   description?: string;
 }
 
-const openNotificationWithIcon = ({ type = NotificationType.INFO, title, description }: NotificationProps) => {
+export const openNotificationWithIcon = ({
+  type = NotificationType.INFO,
+  title,
+  description,
+}: NotificationProps): void => {
   notification[type]({
     message: title ?? 'Notification',
     description: description,
