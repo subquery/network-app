@@ -62,10 +62,6 @@ const columns = [
 // 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
 // 2. either indexerID
 
-const getTime = (date?: Date) => {
-  return date != null ? date.getTime() : 0;
-};
-
 export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefined }> = ({ indexer }) => {
   const formatTitle = (text: string) => {
     let formatted = text.replace(/-/g, ' ');
@@ -87,7 +83,6 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
       date: string;
     }[] = [];
 
-    //TODO: find a smarter way to render missions that aren't achieved
     if (challenges) {
       allChallenges = INDEXER_CHALLENGE_PTS.map((challenge: string) => {
         const found = challenges.find((c) => c.title === challenge);
@@ -128,7 +123,7 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
                 </div>
                 <p>Duration: 16/04/2022 - 23/04/2022</p>
             </Typography> */}
-        <Table columns={columns} dataSource={formatData(indexer?.singleChallenges, indexer?.challenges)} />
+        <Table columns={columns} dataSource={formatData(indexer.singleChallenges, indexer.challenges)} />
       </div>
     );
   } else {

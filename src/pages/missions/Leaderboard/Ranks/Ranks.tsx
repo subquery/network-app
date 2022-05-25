@@ -4,15 +4,16 @@
 import { Address, Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 
-// import Search from 'antd/lib/input/Search';
 import { ColumnsType } from 'antd/lib/table/interface';
+import React from 'react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Copy, SearchAddress } from '../../../../components';
 import { useLeaderboard } from '../../../../containers';
 import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
 import styles from './Ranks.module.css';
 
-const { Paragraph } = Typography;
+const { Title } = Typography;
 
 const columns: ColumnsType<{
   key: number;
@@ -39,7 +40,14 @@ const columns: ColumnsType<{
     dataIndex: 'indexer',
     key: 'indexer',
     width: '15%',
-    render: (indexer: string) => <Address address={indexer} size={'large'} />,
+    render: (indexer: string) => (
+      <div className={styles.address}>
+        <Address address={indexer} size={'large'} />
+        <div className={styles.item}>
+          <Copy value={indexer} className={styles.copy} iconClassName={styles.copyIcon} />
+        </div>
+      </div>
+    ),
   },
   {
     title: 'Points',
@@ -62,25 +70,27 @@ const Ranks: React.FC<any> = (seasons: any) => {
   const [state, setState] = useState('');
   // const currSeason = 1;
 
+  const SearchInput = () => <SearchAddress onSearch={(value: string) => setState(value)} />;
+
   return (
     <div className={styles.container}>
-      <Typography>
-        {/* <div className={styles.titlebutton}> */}
-        {/* <h2>Current Season</h2> */}
-        {/* <Button type="secondary" colorScheme='standard' label='Previous Season' /> */}
-        {/* </div> */}
-        {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
-        {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
-        <Paragraph>
-          <b>Total {indexers.data?.indexerChallenges?.length} indexers</b>
-        </Paragraph>
-      </Typography>
-      {/* <Search placeholder="input search text" onSearch={(value: string) => setState(value)} style={{ width: 200 }} /> */}
+      {/* <div className={styles.titlebutton}> */}
+      {/* <h2>Current Season</h2> */}
+      {/* <Button type="secondary" colorScheme='standard' label='Previous Season' /> */}
+      {/* </div> */}
+      {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
+      {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
+      <div className={styles.topBar}>
+        <SearchInput />
+        <div className={styles.indexerTotal}>
+          <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
+        </div>
+      </div>
       {renderAsyncArray(
         mapAsync((data) => {
           return data.indexerChallenges
             .filter(notEmpty)
-            .filter((value) => value.name.toLocaleLowerCase().startsWith(state))
+            .filter((value) => value.id.startsWith(state))
             .map((data, index) => {
               return {
                 key: index,

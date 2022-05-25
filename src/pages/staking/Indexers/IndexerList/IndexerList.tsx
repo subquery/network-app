@@ -85,7 +85,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
   const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
 
-  const sortedIndexer = useIndexer({ address: searchIndexer ? searchIndexer : '' });
+  const sortedIndexer = useIndexer({ address: searchIndexer ?? '' });
 
   const searchedIndexer = React.useMemo(
     () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
