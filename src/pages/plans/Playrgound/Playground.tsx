@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router';
 import { CurEra, DeploymentMeta, TableText } from '../../../components';
 import styles from './Playground.module.css';
-import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/GetOngoingServiceAgreements';
+import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
 import { Link } from 'react-router-dom';
 import { useIndexerMetadata } from '../../../hooks';
 import { formatEther, getEncryptStorage, removeStorage, setEncryptStorage, wrapProxyEndpoint } from '../../../utils';

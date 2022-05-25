@@ -116,16 +116,7 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
       });
     }
 
-    const a = allChallenges.flat();
-
-    const final = a.sort((a, b) => {
-      if (a.date === '-') return 1;
-      if (b.date === '-') return 1;
-      const aDate = new Date(a.date);
-      const bDate = new Date(b.date);
-      return getTime(bDate) - getTime(aDate);
-    });
-    return final;
+    return allChallenges.flat();
   };
 
   if (indexer) {
