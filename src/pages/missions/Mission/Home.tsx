@@ -29,8 +29,6 @@ const Home: React.VFC = (children) => {
   const history = useHistory();
   const indexer = useIndexerChallenges({ indexerId: account ?? '' });
 
-  console.log(indexer);
-
   const indexerUrl = '/missions';
 
   React.useEffect(() => {

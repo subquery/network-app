@@ -62,6 +62,10 @@ const columns = [
 // 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
 // 2. either indexerID
 
+const getTime = (date?: Date) => {
+  return date != null ? date.getTime() : 0;
+};
+
 export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefined }> = ({ indexer }) => {
   const formatTitle = (text: string) => {
     let formatted = text.replace(/-/g, ' ');
@@ -112,7 +116,16 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
       });
     }
 
-    return allChallenges.flat();
+    const a = allChallenges.flat();
+
+    const final = a.sort((a, b) => {
+      if (a.date === '-') return 1;
+      if (b.date === '-') return 1;
+      const aDate = new Date(a.date);
+      const bDate = new Date(b.date);
+      return getTime(bDate) - getTime(aDate);
+    });
+    return final;
   };
 
   if (indexer) {
