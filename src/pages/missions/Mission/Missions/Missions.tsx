@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Table, Tag } from 'antd';
+import { Table, Tag, Tooltip } from 'antd';
 import styles from './Missions.module.css';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { INDEXER_CHALLENGE_DETAILS, INDEXER_CHALLENGE_PTS } from '../../constants';
+import {
+  GetIndexer_indexerChallenge,
+  GetIndexer_indexerChallenge_challenges,
+  GetIndexer_indexerChallenge_singleChallenges,
+} from '../../../../__generated__/leaderboard/GetIndexer';
 
 const columns = [
   {
@@ -18,6 +21,14 @@ const columns = [
     title: 'MISSION',
     dataIndex: 'mission',
     key: 'mission',
+    render: (mission: string) => {
+      const description = INDEXER_CHALLENGE_DETAILS[mission]?.description;
+      return (
+        <Tooltip placement="topLeft" title={description ?? ''}>
+          {mission}
+        </Tooltip>
+      );
+    },
   },
   {
     title: 'POINTS',
@@ -51,17 +62,17 @@ const columns = [
 // 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
 // 2. either indexerID
 
-export const Missions: React.VFC<{ indexerID: string }> = ({ indexerID }) => {
-  const [challenges, setChallenges] = useState<any>(undefined);
-  const [dailyChallenges, setDailyChallenges] = useState<any>(undefined);
-
+export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefined }> = ({ indexer }) => {
   const formatTitle = (text: string) => {
     let formatted = text.replace(/-/g, ' ');
     formatted = text.replace(/_/g, ' ');
     return formatted.toUpperCase();
   };
 
-  const formatData = (challenges: any[] | undefined, dailyChallenges: any | undefined) => {
+  const formatData = (
+    challenges: ReadonlyArray<GetIndexer_indexerChallenge_singleChallenges>,
+    dailyChallenges: ReadonlyArray<GetIndexer_indexerChallenge_challenges>,
+  ) => {
     let key = 1;
     let allChallenges: {
       type: string;
@@ -75,12 +86,12 @@ export const Missions: React.VFC<{ indexerID: string }> = ({ indexerID }) => {
     //TODO: find a smarter way to render missions that aren't achieved
     if (challenges) {
       allChallenges = INDEXER_CHALLENGE_PTS.map((challenge: string) => {
-        const found = challenges.find((c: any) => c.title === challenge);
+        const found = challenges.find((c) => c.title === challenge);
 
         return {
           key: key++,
           type: 'One-off',
-          mission: formatTitle(challenge),
+          mission: challenge,
           points: found ? found.points : INDEXER_CHALLENGE_DETAILS[challenge].points,
           progress: found ? 'Completed' : 'Incomplete',
           date: '-',
@@ -89,8 +100,7 @@ export const Missions: React.VFC<{ indexerID: string }> = ({ indexerID }) => {
     }
 
     if (dailyChallenges) {
-      //FIXME: need to order by date before pushing
-      dailyChallenges.forEach((item: any) => {
+      dailyChallenges.forEach((item) => {
         allChallenges.push({
           type: 'Daily',
           key: key++,
@@ -105,42 +115,7 @@ export const Missions: React.VFC<{ indexerID: string }> = ({ indexerID }) => {
     return allChallenges.flat();
   };
 
-  const getChallenges = async (id: string) => {
-    const { data } = await axios.post('https://api.subquery.network/sq/subquery/leaderboard-s2', {
-      query: `query {
-            indexer(id: "${id}") {
-              singleChallenges
-              singleChallengePts
-            }
-        }`,
-    });
-    setChallenges(data);
-  };
-
-  const getDailyChallenges = async (id: string) => {
-    const { data } = await axios.post('https://leaderboard-api.subquery.network/graphql', {
-      query: `query {
-            indexerChallenge(id: "${id}") {
-              challenges {
-                title
-                timestamp
-                point
-              }
-            }
-        }`,
-    });
-    setDailyChallenges(data?.data?.indexerChallenge?.challenges);
-  };
-
-  // have another axios fetch that fetches fron nest project
-
-  useEffect(() => {
-    getChallenges(indexerID);
-    getDailyChallenges(indexerID);
-  }, [indexerID]);
-
-  // TODO: Should handle case if indexer isn't on the network
-  if (challenges) {
+  if (indexer) {
     return (
       <div className={styles.container}>
         {/* <Typography>
@@ -149,10 +124,7 @@ export const Missions: React.VFC<{ indexerID: string }> = ({ indexerID }) => {
                 </div>
                 <p>Duration: 16/04/2022 - 23/04/2022</p>
             </Typography> */}
-        <Table
-          columns={columns}
-          dataSource={formatData(challenges?.data?.indexer?.singleChallenges, dailyChallenges)}
-        />
+        <Table columns={columns} dataSource={formatData(indexer?.singleChallenges, indexer?.challenges)} />
       </div>
     );
   } else {

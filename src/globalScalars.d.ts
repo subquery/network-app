@@ -5,3 +5,4 @@
 type GraphQL_Datetime = Date;
 type GraphQL_BigFloat = BigInt | string;
 type GraphQL_JSON = unknown;
+type GraphQL_Date = Date;

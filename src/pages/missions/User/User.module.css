@@ -10,6 +10,7 @@
 }
 
 .indexer {
+  margin-top: 5px;
   display: flex;
 }
 
@@ -41,9 +42,17 @@
   font-size: 16px;
 }
 
+.topBar {
+  display: flex;
+  width: 100%;
+}
+
 .profile {
-  height: 148px;
-  padding: 1rem 1rem 0 1rem;
+  margin-top: 2em;
+  height: 15vh;
+  flex: 0.25;
+  width: 30%;
+  padding: 1.2rem 3rem 1rem 1rem;
   display: flex;
   background: white;
   justify-content: space-between;

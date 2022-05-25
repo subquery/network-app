@@ -3,14 +3,11 @@
 
 import * as React from 'react';
 import { Typography } from '@subql/react-ui';
-// import { useHistory } from 'react-router';
 // import { useWeb3 } from '../../../../containers';
 import { CurEra } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import { useTranslation } from 'react-i18next';
-// import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
 import Ranks from '../Ranks';
-// import { Season } from '../../../../components/Season';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -18,7 +15,7 @@ enum SectionTabs {
   Consumer = 'Consumer',
 }
 
-const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
+const tabList = [SectionTabs.Indexing];
 
 const Leaderboard: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
@@ -29,7 +26,6 @@ const Leaderboard: React.VFC = () => {
   // const sortedIndexer = useSortedIndexer(account || '');
   // const totalDelegations = useUserDelegations(account);
 
-  // React.useEffect(() => {
   //   if (!account) {
   //     history.push('/missions/leaderboard');
   //   }
@@ -51,9 +47,6 @@ const Leaderboard: React.VFC = () => {
         <CurEra />
       </div>
 
-      {/* TODO:
-            - this can be a single progress component which I can use for both Missions and 
-        */}
       {/* <Season /> */}
 
       <div>
@@ -66,16 +59,6 @@ const Leaderboard: React.VFC = () => {
           ))}
         </div>
         {curTab === SectionTabs.Indexing && <Ranks seasons={seasons} />}
-        {curTab === SectionTabs.Delegating && (
-          <div className={styles.container}>
-            <h2>Coming Soon</h2>
-          </div>
-        )}
-        {curTab === SectionTabs.Consumer && (
-          <div className={styles.container}>
-            <h2>Coming Soon</h2>
-          </div>
-        )}
       </div>
     </>
   );

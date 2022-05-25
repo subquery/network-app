@@ -12,6 +12,10 @@
   width: 25%;
 }
 
+.pointsSummary {
+  flex: 1;
+}
+
 .content {
   width: 100%;
   padding: 1rem 2rem;
@@ -22,6 +26,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1em;
 }
 
 .header {
@@ -31,8 +36,9 @@
 }
 
 .profile {
-  height: 148px;
-  padding: 1rem 1rem 0 1rem;
+  height: 15vh;
+  width: 30%;
+  padding: 1.2rem 3rem 1rem 1rem;
   display: flex;
   background: white;
   justify-content: space-between;

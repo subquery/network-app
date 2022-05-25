@@ -71,7 +71,9 @@ const Ranks: React.FC<any> = (seasons: any) => {
         {/* </div> */}
         {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
         {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
-        <Paragraph>Total {indexers.data?.indexerChallenges?.length} indexers</Paragraph>
+        <Paragraph>
+          <b>Total {indexers.data?.indexerChallenges?.length} indexers</b>
+        </Paragraph>
       </Typography>
       {/* <Search placeholder="input search text" onSearch={(value: string) => setState(value)} style={{ width: 200 }} /> */}
       {renderAsyncArray(

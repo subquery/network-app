@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { gql, QueryResult, useQuery } from '@apollo/client';
-import { GetIndexers, GetIndexers_indexerChallenges } from '../__generated__/leaderboard/GetIndexers';
+import { GetIndexer } from '../__generated__/leaderboard/GetIndexer';
+import { GetIndexers } from '../__generated__/leaderboard/GetIndexers';
+import { GetIndexerVariables } from '../__generated__/leaderboard/GetIndexer';
 
 //FIXME: orderby might need to be enum
 const GET_INDEXERS = gql`
@@ -30,6 +32,12 @@ const GET_INDEXER = gql`
       url
       totalPoints
       singlePoints
+      challenges {
+        point
+        timestamp
+        title
+        deploymentId
+      }
       singleChallenges {
         details
         points
@@ -46,11 +54,9 @@ export function useLeaderboard(): QueryResult<GetIndexers> {
   });
 }
 
-export function useIndexerChallenges(id: string): QueryResult<GetIndexers_indexerChallenges> {
-  return useQuery<GetIndexers_indexerChallenges>(GET_INDEXER, {
-    variables: {
-      indexerId: id,
-    },
+export function useIndexerChallenges(params: GetIndexerVariables): QueryResult<GetIndexer> {
+  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, {
+    variables: params,
     context: { clientName: 'leaderboard' },
   });
 }

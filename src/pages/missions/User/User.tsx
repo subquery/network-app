@@ -6,11 +6,13 @@ import { Typography } from '@subql/react-ui';
 import { useHistory, useParams } from 'react-router';
 import styles from './User.module.css';
 import { useTranslation } from 'react-i18next';
-import { CurEra } from '../../../components';
-import { Indexers } from '../../staking/Indexers';
+import { CurEra, Spinner } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { PageHeader } from 'antd';
 import Missions from '../Mission/Missions/Missions';
+import { renderAsync } from '../../../utils';
+import { useIndexerChallenges } from '../../../containers/QueryLeaderboardProject';
+import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -18,13 +20,14 @@ enum SectionTabs {
   Consumer = 'Consumer',
 }
 
-const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
+const tabList = [SectionTabs.Indexing];
 
 export const User: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
-  const { t } = useTranslation();
-
   const { id } = useParams<{ id: string }>();
+  const indexer = useIndexerChallenges({ indexerId: id });
+
+  const { t } = useTranslation();
 
   const history = useHistory();
   const routeChange = () => {
@@ -38,26 +41,45 @@ export const User: React.VFC = () => {
         <CurEra />
       </div>
 
-      <div className={styles.indexer}>
-        <Jazzicon diameter={70} />
-        <div className={styles.address}>
-          <h1>{id}</h1>
-        </div>
-      </div>
-
-      <div>
-        <div className={styles.tabList}>
-          {tabList.map((tab) => (
-            <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-              <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-              {curTab === tab && <div className={styles.line} />}
-            </div>
-          ))}
-        </div>
-        {curTab === SectionTabs.Indexing && <Missions indexerID={id} />}
-        {curTab === SectionTabs.Delegating && <>Coming Soon</>}
-        {curTab === SectionTabs.Consumer && <>Coming Soon</>}
-      </div>
+      {renderAsync(indexer, {
+        loading: () => <Spinner />,
+        error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
+        data: (data: GetIndexer) => {
+          return (
+            <>
+              <div className={styles.topar}>
+                <div className={styles.indexer}>
+                  <Jazzicon diameter={50} />
+                  <div className={styles.address}>
+                    <h2>{id}</h2>
+                  </div>
+                </div>
+                <div className={styles.profile}>
+                  <div className={styles.pointsSummary}>
+                    <h4>Total Points</h4>
+                    <h2>
+                      <b>{data?.indexerChallenge?.totalPoints} points</b>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className={styles.tabList}>
+                  {tabList.map((tab) => (
+                    <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+                      <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                      {curTab === tab && <div className={styles.line} />}
+                    </div>
+                  ))}
+                </div>
+                {curTab === SectionTabs.Indexing && <Missions indexer={indexer?.data?.indexerChallenge} />}
+                {curTab === SectionTabs.Delegating && <>Coming Soon</>}
+                {curTab === SectionTabs.Consumer && <>Coming Soon</>}
+              </div>
+            </>
+          );
+        },
+      })}
     </>
   );
 };

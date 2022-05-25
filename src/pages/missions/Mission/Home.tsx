@@ -2,14 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useWeb3 } from '../../../containers';
+import { useIndexerChallenges, useWeb3 } from '../../../containers';
 import { useHistory } from 'react-router';
 import { ConnectWallet, CurEra } from '../../../components';
 import styles from './Home.module.css';
 import { injectedConntector } from '../../../containers/Web3';
-import { Toast, Typography } from '@subql/react-ui';
+import { Spinner, Toast, Typography } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
 import Missions from './Missions/Missions';
+import { renderAsync } from '../../../utils';
+import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -17,7 +19,7 @@ enum SectionTabs {
   Consumer = 'Consumer',
 }
 
-const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
+const tabList = [SectionTabs.Indexing];
 
 const Home: React.VFC = (children) => {
   const [errorAlert, setErrorAlert] = React.useState<string | null>();
@@ -25,6 +27,9 @@ const Home: React.VFC = (children) => {
   const { account, activate, error } = useWeb3();
   const { t } = useTranslation();
   const history = useHistory();
+  const indexer = useIndexerChallenges({ indexerId: account ?? '' });
+
+  console.log(indexer);
 
   const indexerUrl = '/missions';
 
@@ -67,27 +72,45 @@ const Home: React.VFC = (children) => {
           <div className={styles.header}>{t('header.missions')}</div>
           <CurEra />
         </div>
-        <div>
-          <div className={styles.tabList}>
-            {tabList.map((tab) => (
-              <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-                {curTab === tab && <div className={styles.line} />}
-              </div>
-            ))}
-          </div>
-          {curTab === SectionTabs.Indexing && <Missions indexerID={account} />}
-          {curTab === SectionTabs.Delegating && (
-            <div className={styles.container}>
-              <h2>Coming Soon</h2>
-            </div>
-          )}
-          {curTab === SectionTabs.Consumer && (
-            <div className={styles.container}>
-              <h2>Coming Soon</h2>
-            </div>
-          )}
-        </div>
+        {renderAsync(indexer, {
+          loading: () => <Spinner />,
+          error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
+          data: (data: GetIndexer) => {
+            return (
+              <>
+                <div className={styles.profile}>
+                  <div className={styles.pointsSummary}>
+                    <h4>Total Points</h4>
+                    <h2>
+                      <b>{data?.indexerChallenge?.totalPoints} points</b>
+                    </h2>
+                  </div>
+                </div>
+                <div>
+                  <div className={styles.tabList}>
+                    {tabList.map((tab) => (
+                      <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+                        <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                        {curTab === tab && <div className={styles.line} />}
+                      </div>
+                    ))}
+                  </div>
+                  {curTab === SectionTabs.Indexing && <Missions indexer={indexer?.data?.indexerChallenge} />}
+                  {curTab === SectionTabs.Delegating && (
+                    <div className={styles.container}>
+                      <h2>Coming Soon</h2>
+                    </div>
+                  )}
+                  {curTab === SectionTabs.Consumer && (
+                    <div className={styles.container}>
+                      <h2>Coming Soon</h2>
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          },
+        })}
       </>
     );
   }
