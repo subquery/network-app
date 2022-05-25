@@ -64,18 +64,19 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
       );
 
       const { response, error } = await POST({ endpoint: requestTokenUrl, requestBody: tokenRequestBody });
-      setLoading(false);
 
       const sortedResponse = response && (await response.json());
       if (response?.ok) {
         onRequestToken && onRequestToken(sortedResponse?.token);
       } else {
         const sortedError = sortedResponse || error;
-        throw new Error(parseError(sortedError || error));
+        throw new Error(parseError(sortedError));
       }
     } catch (error) {
       setError(`Request auth token failure: ${parseError(error)}`);
     }
+
+    setLoading(false);
   };
 
   return (
