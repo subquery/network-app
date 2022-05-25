@@ -77,9 +77,9 @@ const Ranks: React.FC<any> = (seasons: any) => {
       {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
       {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
       <div className={styles.topBar}>
-        <SearchAddress defaultValue={state} onSearch={(value: string) => setState(value)} />
-        <div className={styles.indexerTotal}>
-          <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
+        <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
+        <div className={styles.searchBar}>
+          <SearchAddress defaultValue={state} onSearch={(value: string) => setState(value)} />
         </div>
       </div>
       {renderAsyncArray(
