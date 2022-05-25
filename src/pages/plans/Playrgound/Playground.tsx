@@ -128,29 +128,30 @@ export const Playground: React.VFC = () => {
   React.useEffect(() => {
     const initialQuery = async () => {
       setIsCheckingAuth(true);
-      if (queryUrl) {
-        const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
-        const { response, error } = await POST({ endpoint: queryUrl, requestBody: defaultQuery, headers });
-        if (response?.status === 200) {
-          setQueryable(true);
-        }
+      if (!queryUrl) return;
 
-        if (response?.status === 401) {
-          setQueryable(false);
-          removeStorage(TOKEN_STORAGE_KEY);
-        }
-
-        if ((response?.status !== 401 && response?.status !== 200) || error) {
-          setQueryable(undefined);
-          removeStorage(TOKEN_STORAGE_KEY);
-          openNotificationWithIcon({
-            type: NotificationType.ERROR,
-            title: 'Playground query',
-            description: 'There is an issue with playground, please check with indexer.' || error?.message, // TODO:
-          });
-          history.push(ONGOING_PLANS);
-        }
+      const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
+      const { response, error } = await POST({ endpoint: queryUrl, requestBody: defaultQuery, headers });
+      if (response?.status === 200) {
+        setQueryable(true);
       }
+
+      if (response?.status === 401) {
+        setQueryable(false);
+        removeStorage(TOKEN_STORAGE_KEY);
+      }
+
+      if ((response?.status !== 401 && response?.status !== 200) || error) {
+        setQueryable(undefined);
+        removeStorage(TOKEN_STORAGE_KEY);
+        openNotificationWithIcon({
+          type: NotificationType.ERROR,
+          title: 'Playground query',
+          description: 'There is an issue with playground, please check with indexer.' || error?.message, // TODO: Wording
+        });
+        history.push(ONGOING_PLANS);
+      }
+
       setIsCheckingAuth(false);
     };
     initialQuery();
