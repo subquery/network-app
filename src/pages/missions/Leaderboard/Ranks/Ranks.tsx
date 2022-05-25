@@ -13,8 +13,6 @@ import { useLeaderboard } from '../../../../containers';
 import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
 import styles from './Ranks.module.css';
 
-const { Title } = Typography;
-
 const columns: ColumnsType<{
   key: number;
   rank: number;
@@ -70,8 +68,6 @@ const Ranks: React.FC<any> = (seasons: any) => {
   const [state, setState] = useState('');
   // const currSeason = 1;
 
-  const SearchInput = () => <SearchAddress onSearch={(value: string) => setState(value)} />;
-
   return (
     <div className={styles.container}>
       {/* <div className={styles.titlebutton}> */}
@@ -81,7 +77,7 @@ const Ranks: React.FC<any> = (seasons: any) => {
       {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
       {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
       <div className={styles.topBar}>
-        <SearchInput />
+        <SearchAddress defaultValue={state} onSearch={(value: string) => setState(value)} />
         <div className={styles.indexerTotal}>
           <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
         </div>
