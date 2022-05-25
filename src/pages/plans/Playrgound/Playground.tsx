@@ -80,7 +80,6 @@ export const PlaygroundHeader: React.VFC = () => {
 };
 
 export const Playground: React.VFC = () => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();
   const history = useHistory();
@@ -147,7 +146,7 @@ export const Playground: React.VFC = () => {
         openNotificationWithIcon({
           type: NotificationType.ERROR,
           title: 'Playground query',
-          description: 'There is an issue with playground, please check with indexer.' || error?.message, // TODO: Wording
+          description: 'There is an issue with playground, please check with indexer.' || error?.message, // TODO: Wording redefine
         });
         history.push(ONGOING_PLANS);
       }
@@ -181,8 +180,11 @@ export const Playground: React.VFC = () => {
         {requireAuth && (
           <RequestToken
             deploymentId={serviceAgreement.deploymentId}
+            indexer={serviceAgreement.indexerAddress}
+            consumer={serviceAgreement.consumerAddress}
+            agreement={serviceAgreement.id}
             requestTokenUrl={requestTokenUrl}
-            onRequestToken={(token) => {
+            onRequestToken={(token: string) => {
               setSessionToken(token);
               setEncryptStorage(TOKEN_STORAGE_KEY, token);
             }}

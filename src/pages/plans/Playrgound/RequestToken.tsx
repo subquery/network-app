@@ -8,14 +8,25 @@ import { useWeb3 } from '../../../containers';
 import styles from './Playground.module.css';
 import { parseError } from '../../../utils';
 import { POST } from '../../../utils/fetch';
+import { authRequestBody, buildTypedMessage } from '../../../utils/eip712';
 
 interface RequestTokenProps {
+  indexer: string;
+  consumer: string;
+  agreement: string;
   deploymentId: string;
   requestTokenUrl: string | undefined;
   onRequestToken?: (token: string) => void;
 }
 
-export const RequestToken: React.FC<RequestTokenProps> = ({ deploymentId, requestTokenUrl, onRequestToken }) => {
+export const RequestToken: React.FC<RequestTokenProps> = ({
+  indexer,
+  consumer,
+  agreement,
+  deploymentId,
+  requestTokenUrl,
+  onRequestToken,
+}) => {
   const { t } = useTranslation();
   const { library, account } = useWeb3();
   const [loading, setLoading] = React.useState<boolean>();
@@ -30,15 +41,27 @@ export const RequestToken: React.FC<RequestTokenProps> = ({ deploymentId, reques
     try {
       const timestamp = new Date().getTime();
       if (!library || !account || !requestTokenUrl) return;
-      const signPayloadWithTimestamp = `${account}${deploymentId}${timestamp}`;
-      const hash = await library.getSigner().signMessage(signPayloadWithTimestamp);
 
-      const tokenRequestBody = {
-        user_id: account,
-        deployment_id: deploymentId,
-        signature: hash.replace(/^0x/, ''),
-        timestamp: timestamp,
-      };
+      const signMsg = buildTypedMessage({
+        consumer: account,
+        indexer,
+        agreement,
+        deploymentId,
+        timestamp,
+      });
+
+      const hash = await library.send('eth_signTypedData_v4', [account, signMsg]);
+
+      const tokenRequestBody = authRequestBody(
+        {
+          consumer: account,
+          timestamp: timestamp,
+          indexer,
+          agreement,
+          deploymentId,
+        },
+        hash.replace(/^0x/, ''),
+      );
 
       const { response, error } = await POST({ endpoint: requestTokenUrl, requestBody: tokenRequestBody });
       setLoading(false);
