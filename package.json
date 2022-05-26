@@ -5,15 +5,14 @@
   "scripts": {
     "start": "yarn codegen && PORT=3006 react-scripts start",
     "build": "yarn codegen && react-scripts build",
-    "codegen": "yarn codegen-registry-gql && yarn codegen-leaderboard-gql",
+    "codegen": "mkdir -p src/__generated__ && sh ./scripts/codegen.sh",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "lint": "eslint src/**/*.{ts,tsx} --fix",
-    "codegen-registry-gql": "npx apollo client:codegen --config registry.config.js --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/registry",
-    "codegen-leaderboard-gql": "npx apollo client:codegen --config leaderboard.config.js --target=typescript --tagName=gql --globalTypesFile false  --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/leaderboard"
+    "lint": "eslint src/**/*.{ts,tsx} --fix"
+   
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
