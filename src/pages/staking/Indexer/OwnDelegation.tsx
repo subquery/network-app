@@ -90,7 +90,7 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
   if (type === 'add') {
     return renderAsync(hasAllowance, {
       loading: () => (
-        <Modal title={title} submitText={submitText} onSubmit={() => null} cancelText="Cancel">
+        <Modal title={title} submitText={submitText} cancelText="Cancel">
           <Spinner />
         </Modal>
       ),

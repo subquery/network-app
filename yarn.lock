@@ -4066,10 +4066,10 @@
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/react-ui@^1.0.1-19":
-  version "1.0.1-19"
-  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-19.tgz#823f92689da83ccd76714df5ca875ec937c3f2f0"
-  integrity sha512-uvKYQ978I66rj4y3dAt4LNcNIQNq1ArTcYFfdif3Re6YRg7johCGMfBp6S1kKO4LdhliXJVAanAte4TYj50YRA==
+"@subql/react-ui@^1.0.1-22":
+  version "1.0.1-22"
+  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-22.tgz#d7497b5e46fb751fced9960cac9cbb5d2604e4bf"
+  integrity sha512-YEWvv/MTUoFLe6oaZLyZD6F9gTj/0jEC3qZ9iuY0Ht0B7G18xRhPidWr7bjnkNUb0djuujXnZtiBY17bZ0NSzw==
   dependencies:
     clsx "^1.1.1"
     eslint-plugin-react "^7.27.1"

@@ -10,11 +10,7 @@
 
 .address {
   display: flex;
-}
-
-.item {
-  margin: auto;
-  display: flex;
+  align-items: center;
 }
 
 .copy {

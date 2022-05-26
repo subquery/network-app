@@ -30,20 +30,18 @@ const columns: ColumnsType<{
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    width: '10%',
+    width: '15%',
     render: (text: string) => <div>{text}</div>,
   },
   {
     title: 'Indexer',
     dataIndex: 'indexer',
     key: 'indexer',
-    width: '15%',
+    width: '40%',
     render: (indexer: string) => (
       <div className={styles.address}>
-        <Address address={indexer} size={'large'} />
-        <div className={styles.item}>
-          <Copy value={indexer} className={styles.copy} iconClassName={styles.copyIcon} />
-        </div>
+        <Address address={indexer} truncated={false} size={'large'} />
+        <Copy value={indexer} className={styles.copy} iconClassName={styles.copyIcon} />
       </div>
     ),
   },
@@ -58,14 +56,11 @@ const columns: ColumnsType<{
       </NavLink>
     ),
   },
-  {
-    width: '60%',
-  },
 ];
 
 const Ranks: React.FC<any> = (seasons: any) => {
   const indexers = useLeaderboard();
-  const [state, setState] = useState('');
+  const [searchText, setSearchText] = useState('');
   // const currSeason = 1;
 
   return (
@@ -79,23 +74,22 @@ const Ranks: React.FC<any> = (seasons: any) => {
       <div className={styles.topBar}>
         <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
         <div className={styles.searchBar}>
-          <SearchAddress defaultValue={state} onSearch={(value: string) => setState(value)} />
+          <SearchAddress defaultValue={searchText} onSearch={(value: string) => setSearchText(value)} />
         </div>
       </div>
       {renderAsyncArray(
         mapAsync((data) => {
           return data.indexerChallenges
+            .map((data, index) => ({ ...data, rank: index + 1 }))
             .filter(notEmpty)
-            .filter((value) => value.id.startsWith(state))
-            .map((data, index) => {
-              return {
-                key: index,
-                name: data.name,
-                rank: index + 1,
-                indexer: data.id,
-                points: data.totalPoints,
-              };
-            });
+            .filter((value) => value.id.startsWith(searchText))
+            .map((data) => ({
+              key: data.rank,
+              name: data.name,
+              rank: data.rank,
+              indexer: data.id,
+              points: data.totalPoints,
+            }));
         }, indexers),
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
