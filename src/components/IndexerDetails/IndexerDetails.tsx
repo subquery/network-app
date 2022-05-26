@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Table, TableProps, Pagination } from 'antd';
-import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/GetDeploymentIndexers';
+import { Pagination, Table, TableProps } from 'antd';
+import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/registry/GetDeploymentIndexers';
 import Row from './Row';
 import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
-import { Status } from '../../__generated__/globalTypes';
+import { Status } from '../../__generated__/registry/globalTypes';
 import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
 import { SearchAddress } from '../SearchAddress';

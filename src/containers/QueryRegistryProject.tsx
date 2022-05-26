@@ -14,17 +14,17 @@ import {
 } from '@apollo/client';
 import * as React from 'react';
 import { PLAN_FIELDS, PLAN_TEMPLATE_FIELDS } from './IndexerRegistryProject';
-import { GetDeployment, GetDeploymentVariables } from '../__generated__/GetDeployment';
-import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/GetDeploymentIndexers';
+import { GetDeployment, GetDeploymentVariables } from '../__generated__/registry/GetDeployment';
+import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/registry/GetDeploymentIndexers';
 import {
-  GetDeploymentIndexersByIndexer,
   GetDeploymentIndexersByIndexerVariables,
-} from '../__generated__/GetDeploymentIndexersByIndexer';
-import { GetDeploymentPlans, GetDeploymentPlansVariables } from '../__generated__/GetDeploymentPlans';
-import { GetProject, GetProjectVariables } from '../__generated__/GetProject';
-import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/GetProjectDeployments';
-import { GetProjects, GetProjectsVariables } from '../__generated__/GetProjects';
-import { GetDeploymentIndexer, GetDeploymentIndexerVariables } from '../__generated__/GetDeploymentIndexer';
+  GetDeploymentIndexersByIndexer,
+} from '../__generated__/registry/GetDeploymentIndexersByIndexer';
+import { GetDeploymentPlansVariables, GetDeploymentPlans } from '../__generated__/registry/GetDeploymentPlans';
+import { GetProjectVariables, GetProject } from '../__generated__/registry/GetProject';
+import { GetProjectDeploymentsVariables, GetProjectDeployments } from '../__generated__/registry/GetProjectDeployments';
+import { GetProjectsVariables, GetProjects } from '../__generated__/registry/GetProjects';
+import { GetDeploymentIndexerVariables, GetDeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexer';
 
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {

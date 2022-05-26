@@ -1,0 +1,38 @@
+.container {
+  background: white;
+  padding: 1rem;
+}
+
+.titlebutton {
+  display: flex;
+  justify-content: space-between;
+}
+
+.address {
+  display: flex;
+}
+
+.item {
+  margin: auto;
+  display: flex;
+}
+
+.copy {
+  height: 16px;
+  width: 16px;
+  margin-left: 5px;
+}
+
+.copyIcon {
+  font-size: 8px;
+}
+
+.topBar {
+  margin-top: 1em;
+  margin-bottom: 2em;
+  display: flex;
+}
+
+.searchBar {
+  margin-left: auto;
+}

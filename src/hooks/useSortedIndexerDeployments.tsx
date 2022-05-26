@@ -5,8 +5,8 @@ import { useContracts, useProjectMetadata } from '../containers';
 import { useIndexerDeploymentsQuery } from '../containers/QueryRegistryProject';
 import { ProjectMetadata } from '../models';
 import { AsyncData, cidToBytes32, getDeploymentProgress } from '../utils';
-import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../__generated__/GetDeploymentIndexersByIndexer';
-import { Status } from '../__generated__/globalTypes';
+import { Status } from '../__generated__/registry/globalTypes';
+import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexersByIndexer';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 

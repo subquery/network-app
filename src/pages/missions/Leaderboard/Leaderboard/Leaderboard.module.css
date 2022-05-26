@@ -1,0 +1,68 @@
+.grayText {
+  color: var(--gray500);
+}
+
+.container {
+  height: 20vh;
+  background: white;
+  padding: 1rem;
+}
+
+.sidebar {
+  width: 25%;
+}
+
+.content {
+  width: 100%;
+  padding: 1rem 2rem;
+  overflow: scroll;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #444f59;
+}
+
+.profile {
+  height: 148px;
+  padding: 1rem 1rem 0 1rem;
+  display: flex;
+  background: white;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stakingSummary {
+  width: 65%;
+  height: 100%;
+  display: flex;
+}
+
+.tabList {
+  display: flex;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.tab {
+  background: white;
+  min-width: 5rem;
+  padding: 1rem 1rem 0 1rem;
+  cursor: pointer;
+}
+
+.tabText {
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  background: var(--sq-gradient);
+  height: 2px;
+}

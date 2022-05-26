@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useProjectMetadata, useProjectsQuery } from '../../../containers';
-import { GetProject_project as Project } from '../../../__generated__/GetProject';
+import { GetProject_project as Project } from '../../../__generated__/registry/GetProject';
 import { useAsyncMemo, useOnScreen } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import styles from './Home.module.css';

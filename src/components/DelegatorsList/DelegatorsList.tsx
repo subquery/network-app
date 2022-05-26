@@ -3,7 +3,7 @@
 
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@subql/react-ui/dist/components/Table';
 import * as React from 'react';
-import { GetIndexerDelegators_indexer_delegations_nodes as Delegator } from '../../__generated__/GetIndexerDelegators';
+import { GetIndexerDelegators_indexer_delegations_nodes as Delegator } from '../../__generated__/registry/GetIndexerDelegators';
 import DelegatorRow from './DelegatorRow';
 
 type Props = {
@@ -12,9 +12,6 @@ type Props = {
 };
 
 const IndexerList: React.FC<Props> = (props) => {
-  // TODO filter delegators with 0 stake
-  // TODO paging
-
   return (
     <Table>
       <TableHead>

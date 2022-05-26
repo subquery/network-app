@@ -7,7 +7,6 @@ import './i18n';
 
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
 import * as pages from './pages';
 import { Header, Footer } from './components';
 import {
@@ -16,7 +15,7 @@ import {
   ProjectMetadataProvider,
   QueryRegistryProvider,
   ContractsProvider,
-  QueryRegistryProjectProvider,
+  QueryApolloProvider,
   UserProjectsProvider,
   IndexerRegistryProvider,
   useWeb3,
@@ -45,7 +44,7 @@ const ErrorFallback = ({ error, componentStack, resetError }: any) => {
 const Providers: React.FC = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
-      <QueryRegistryProjectProvider endpoint={process.env.REACT_APP_QUERY_REGISTRY_PROJECT}>
+      <QueryApolloProvider>
         <Web3Provider>
           <ContractsProvider>
             <ProjectMetadataProvider>
@@ -59,7 +58,7 @@ const Providers: React.FC = ({ children }) => {
             </ProjectMetadataProvider>
           </ContractsProvider>
         </Web3Provider>
-      </QueryRegistryProjectProvider>
+      </QueryApolloProvider>
     </IPFSProvider>
   );
 };
@@ -91,33 +90,32 @@ const App: React.VFC = () => {
   const { t } = useTranslation();
 
   return (
-    <Sentry.ErrorBoundary fallback={ErrorFallback} showDialog>
-      <Providers>
-        <div className="App">
-          <Router>
-            <Header />
-            <div className="Main">
-              <BlockchainStatus>
-                <Switch>
-                  <Route component={pages.Explorer} path="/explorer" />
-                  <WalletRoute
-                    component={pages.Studio}
-                    path="/studio"
-                    title={t('studio.wallet.connect')}
-                    subtitle={t('studio.wallet.subTitle')}
-                  />
-                  <Route component={pages.Staking} path="/staking" />
-                  <WalletRoute component={pages.Plans} path="/plans" />
-                  {/*{<Route component={pages.Home} />}*/}
-                  <Redirect from="/" to="/explorer" />
-                </Switch>
-              </BlockchainStatus>
-            </div>
-            <Footer />
-          </Router>
-        </div>
-      </Providers>
-    </Sentry.ErrorBoundary>
+    <Providers>
+      <div className="App">
+        <Router>
+          <Header />
+          <div className="Main">
+            <BlockchainStatus>
+              <Switch>
+                <Route component={pages.Explorer} path="/explorer" />
+                <WalletRoute
+                  component={pages.Studio}
+                  path="/studio"
+                  title={t('studio.wallet.connect')}
+                  subtitle={t('studio.wallet.subTitle')}
+                />
+                <Route component={pages.Staking} path="/staking" />
+                <Route component={pages.Missions} path="/missions" />
+                <WalletRoute component={pages.Plans} path="/plans" />
+                {/*{<Route component={pages.Home} />}*/}
+                <Redirect from="/" to="/explorer" />
+              </Switch>
+            </BlockchainStatus>
+          </div>
+          <Footer />
+        </Router>
+      </div>
+    </Providers>
   );
 };
 

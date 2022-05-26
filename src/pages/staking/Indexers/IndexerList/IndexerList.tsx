@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, Spinner } from '@subql/react-ui';
-import { Input, Table, TableProps } from 'antd';
+import { Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { extractPercentage, formatEther, renderAsync } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/GetIndexers';
+import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/registry/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
@@ -85,7 +85,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
   const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
 
-  const sortedIndexer = useIndexer({ address: searchIndexer ? searchIndexer : '' });
+  const sortedIndexer = useIndexer({ address: searchIndexer ?? '' });
 
   const searchedIndexer = React.useMemo(
     () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),

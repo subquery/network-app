@@ -8,6 +8,7 @@ const en = {
       studio: 'Studio',
       staking: 'Stake & Delegate',
       plans: 'Plan & Offer',
+      missions: 'Missions',
       documentation: 'Documentation',
       github: 'Github',
       connectWallet: 'Connect',
@@ -232,7 +233,7 @@ const en = {
       delegateFailure: 'Sorry, the delegation has been failed.',
       delegateSuccess: 'Success! Your delegation has been done.',
       approveTokenToDelegate: 'Approve your token for staking',
-      noDelegating: 'No delegation available',
+      noDelegating: 'available',
       yourDelegateAmount: 'Your Delegation Amount',
       none: 'No delegator available',
       viewProfile: 'View indexer profile',
@@ -278,6 +279,14 @@ const en = {
       },
       totalUnclaimReward: 'You have an unclaimed reward.',
     },
+
+    missions: {
+      missions: 'Missions',
+      leaderboard: 'Leaderboard',
+      indexing: {},
+      delegating: {},
+    },
+
     plans: {
       category: {
         myServiceAgreement: 'My Service Agreements',

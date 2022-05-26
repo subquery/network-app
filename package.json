@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "yarn codegen-gql && PORT=3006 react-scripts start",
-    "build": "yarn codegen-gql && react-scripts build",
+    "start": "yarn codegen && PORT=3006 react-scripts start",
+    "build": "yarn codegen && react-scripts build",
+    "codegen": "yarn codegen-registry-gql && yarn codegen-leaderboard-gql",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint src/**/*.{ts,tsx} --fix",
-    "codegen-gql": "npx apollo client:codegen --endpoint='https://api.subquery.network/sq/subquery/subquery-network-query-registry' --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__ --excludes src/hooks/useApiEndpoint.ts"
+    "codegen-registry-gql": "npx apollo client:codegen --config registry.config.js --target=typescript --tagName=gql --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/registry",
+    "codegen-leaderboard-gql": "npx apollo client:codegen --config leaderboard.config.js --target=typescript --tagName=gql --globalTypesFile false  --useReadOnlyTypes --passthroughCustomScalars --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/leaderboard"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
@@ -79,7 +81,7 @@
     "@types/react-modal": "^3.13.1",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.3.0",
-    "apollo": "^2.33.9",
+    "apollo": "^2.34.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-header": "^3.1.1",

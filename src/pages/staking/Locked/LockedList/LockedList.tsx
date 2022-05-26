@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { convertStringToNumber, formatEther } from '../../../../utils';
-import { GetWithdrawls_withdrawls_nodes as Withdrawals } from '../../../../__generated__/GetWithdrawls';
+import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '../../../../__generated__/registry/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
@@ -14,7 +14,7 @@ import { TableText } from '../../../../components';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
-interface SortedWithdrawals extends Withdrawals {
+interface SortedWithdrawals extends Withdrawls {
   idx: number;
   startAt: string;
   endAt: string;

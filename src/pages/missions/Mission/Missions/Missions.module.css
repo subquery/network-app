@@ -1,0 +1,9 @@
+.container {
+  background: white;
+  padding: 1rem;
+}
+
+.titlebutton {
+  display: flex;
+  justify-content: space-between;
+}
