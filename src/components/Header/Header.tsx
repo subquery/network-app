@@ -26,6 +26,16 @@ const LinksDropdown = () => {
   return <Dropdown menu={menu} handleOnClick={handleOnClick} dropdownContent={t('header.hosted')} />;
 };
 
+const renderLink = (to: string, text: string) => {
+  return (
+    <Typography>
+      <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+        {text}
+      </NavLink>
+    </Typography>
+  );
+};
+
 const Header: React.VFC = () => {
   const { account, activate, deactivate } = useWeb3();
   const { t } = useTranslation();
@@ -42,16 +52,6 @@ const Header: React.VFC = () => {
       console.log('Failed to activate wallet', e);
     }
   }, [activate, account, deactivate]);
-
-  const renderLink = (to: string, text: string) => {
-    return (
-      <Typography>
-        <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
-          {text}
-        </NavLink>
-      </Typography>
-    );
-  };
 
   const handleSelected = (key: string) => {
     if (key === 'disconnect') {
@@ -95,6 +95,30 @@ const Header: React.VFC = () => {
     );
   };
 
+  const headerEntryLinks = [
+    {
+      link: '/explorer',
+      title: t('header.explorer'),
+    },
+    {
+      link: '/studio',
+      title: t('header.studio'),
+    },
+    {
+      link: '/staking',
+      title: t('header.staking'),
+    },
+    {
+      link: '/plans',
+      title: t('header.plans'),
+    },
+    // {
+    //   link: '/missions',
+    //   title: t('header.missions'),
+    // },
+    // NOTE: Hide mission entry
+  ];
+
   return (
     <div className={styles.header}>
       <div className={styles.inner}>
@@ -103,11 +127,11 @@ const Header: React.VFC = () => {
             <img src="/static/logo.png" className={styles.logo} alt="SubQuery logo" />
           </Link>
           <LinksDropdown />
-          {renderLink('/explorer', t('header.explorer'))}
-          {renderLink('/studio', t('header.studio'))}
-          {renderLink('/staking', t('header.staking'))}
-          {renderLink('/plans', t('header.plans'))}
-          {renderLink('/missions', t('header.missions'))}
+          <>
+            {headerEntryLinks.map((headerLink) => (
+              <div key={headerLink.link}>{renderLink(headerLink.link, headerLink.title)}</div>
+            ))}
+          </>
           <Button
             href="https://doc.subquery.network"
             target="_blank"
