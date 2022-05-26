@@ -12,7 +12,6 @@
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
-   
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
@@ -52,6 +51,7 @@
     "moment": "^2.29.1",
     "ramda": "^0.27.1",
     "react": "^17.0.2",
+    "react-countdown": "^2.3.2",
     "react-dom": "^17.0.2",
     "react-i18next": "^11.14.3",
     "react-icons": "^4.3.1",

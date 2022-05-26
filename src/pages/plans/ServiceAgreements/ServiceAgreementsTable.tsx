@@ -221,7 +221,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
           empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
           data: (data) => {
-            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1000 }} rowKey={'id'} />;
+            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },
         },
       )}

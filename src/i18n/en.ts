@@ -365,7 +365,7 @@ const en = {
         ongoingAgreements: 'My Ongoing Service Agreements',
         auctionAndCrowdloan: 'Polkadot auction & crowdloan',
         sessionToken: 'Session Token',
-        tokenExpireIn: 'Token expired in',
+        tokenExpireIn: 'Token expires in',
         comingSoon: 'Playground coming soon.',
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',

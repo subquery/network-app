@@ -7,14 +7,15 @@ import { useTranslation } from 'react-i18next';
 import jwt_decode from 'jwt-decode';
 import { GraphQLPlayground } from '../../../components';
 import styles from './Playground.module.css';
-import moment from 'moment';
+import Countdown from 'react-countdown';
 
 interface GraphQLQueryProps {
   queryUrl: string;
   sessionToken?: string;
+  onSessionTokenExpire?: () => void;
 }
 
-export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionToken }) => {
+export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionToken, onSessionTokenExpire }) => {
   const { t } = useTranslation();
   const decodedToken = sessionToken && (jwt_decode(sessionToken) as any);
 
@@ -34,7 +35,15 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
           {decodedToken?.exp && (
             <div>
               <Typography.Title level={4}>{t('serviceAgreements.playground.tokenExpireIn')}</Typography.Title>
-              <Typography.Text>{moment(decodedToken?.exp).fromNow()}</Typography.Text>
+              <Typography.Text>
+                <Countdown
+                  date={decodedToken?.exp}
+                  daysInHours
+                  onComplete={() => {
+                    onSessionTokenExpire && onSessionTokenExpire();
+                  }}
+                />
+              </Typography.Text>
             </div>
           )}
         </div>
