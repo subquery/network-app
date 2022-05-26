@@ -39,13 +39,6 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
     render: (indexer: ServiceAgreement['indexerAddress']) => <ConnectedIndexer id={indexer} />,
   },
   {
-    dataIndex: 'deployment',
-    key: 'project',
-    title: i18next.t('serviceAgreements.headers.project').toUpperCase(),
-    render: (deployment: ServiceAgreement['deployment']) =>
-      deployment?.project && <Project project={deployment.project} />,
-  },
-  {
     dataIndex: 'period',
     title: i18next.t('serviceAgreements.headers.expiry').toUpperCase(),
     key: 'expiry',
@@ -156,6 +149,17 @@ export const Playground: React.VFC = () => {
     initialQuery();
   }, [TOKEN_STORAGE_KEY, history, queryUrl, sessionToken]);
 
+  const requestAuthWhenTokenExpired = React.useCallback(() => {
+    setQueryable(false);
+    removeStorage(TOKEN_STORAGE_KEY);
+
+    openNotificationWithIcon({
+      type: NotificationType.ERROR,
+      title: 'Playground Query',
+      description: 'The auth token for playground query has expired.',
+    });
+  }, [TOKEN_STORAGE_KEY]);
+
   const requireAuth = queryable === false && !isCheckingAuth;
   const showPlayground = queryable && queryUrl && !isCheckingAuth;
 
@@ -190,7 +194,13 @@ export const Playground: React.VFC = () => {
             }}
           />
         )}
-        {showPlayground && <GraphQLQuery queryUrl={queryUrl} sessionToken={sessionToken} />}
+        {showPlayground && (
+          <GraphQLQuery
+            queryUrl={queryUrl}
+            sessionToken={sessionToken}
+            onSessionTokenExpire={requestAuthWhenTokenExpired}
+          />
+        )}
       </div>
     </div>
   );

@@ -200,7 +200,6 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     }, 300000);
     return () => clearInterval(interval);
   }, []);
-  console.log('serviceAgreements', serviceAgreements);
 
   // NOTE: Every 5min to query wit a new timestamp, manual set cache data which is similar to cache-network fetch policy
   React.useEffect(() => {
@@ -221,7 +220,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
           empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
           data: (data) => {
-            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1000 }} rowKey={'id'} />;
+            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },
         },
       )}

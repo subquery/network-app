@@ -49,7 +49,7 @@
 .deploymentMeta {
   border: 1px solid var(--gray300);
   border-radius: 6px;
-  padding: 2rem 1rem;
+  padding: 1rem;
   margin: 1rem 0;
 }
 
