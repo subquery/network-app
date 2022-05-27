@@ -51,6 +51,7 @@ type Props<P, T extends string> = {
     failureText?: string;
     successText?: string;
   };
+  currentStep?: number;
   onClick: Action<P, T>;
   actions: Array<
     {
@@ -74,6 +75,7 @@ type Props<P, T extends string> = {
 const TransactionModal = <P, T extends string>({
   renderContent,
   text,
+  currentStep,
   actions,
   onClick,
   inputParams,
@@ -162,6 +164,7 @@ const TransactionModal = <P, T extends string>({
             resetModal();
             !isLoading && setShowClock(false);
           }}
+          currentStep={currentStep}
           steps={text.steps}
           content={
             renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (

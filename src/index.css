@@ -142,6 +142,11 @@ textarea {
   justify-content: flex-end;
 }
 
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* For text */
 .errorText {
   color: var(--error);

@@ -7,37 +7,80 @@ import assert from 'assert';
 import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
+import clsx from 'clsx';
+import { InputNumber, Select, TableProps, Radio, Table } from 'antd';
+import * as yup from 'yup';
+import { constants } from 'ethers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
 import { cidToBytes32, convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/registry/GetPlanTemplates';
-import * as yup from 'yup';
-import { constants } from 'ethers';
-import { SummaryList } from '../../../../components';
+import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
-import { InputNumber, Select } from 'antd';
 import styles from './Create.module.css';
-import clsx from 'clsx';
 import { secondsToDhms } from '../../../../utils/dateFormatters';
+
+const getPlanTemplateColumns = (
+  onChooseTemplate: (templateId: string, idx: number) => void,
+): TableProps<Template>['columns'] => [
+  {
+    title: '#',
+    dataIndex: 'id',
+    render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
+  },
+  {
+    dataIndex: 'period',
+    title: i18next.t('plans.headers.period').toUpperCase(),
+    render: (period: string) => <TableText content={secondsToDhms(convertBigNumberToNumber(period))} />,
+  },
+  {
+    dataIndex: 'dailyReqCap',
+    title: i18next.t('plans.headers.dailyReqCap').toUpperCase(),
+    render: (dailyReqCap: string) => (
+      <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
+    ),
+  },
+  {
+    dataIndex: 'rateLimit',
+    title: i18next.t('plans.headers.rateLimit').toUpperCase(),
+    render: (rateLimit: string) => (
+      <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
+    ),
+  },
+  {
+    title: i18next.t('plans.headers.rateLimit').toUpperCase(),
+    dataIndex: 'id',
+    render: (id: string, _: Template, idx: number) => (
+      <Radio onClick={() => onChooseTemplate(id, idx)} defaultChecked />
+    ),
+  },
+];
 
 const planSchema = yup.object({
   price: yup.number().defined(),
+  templateId: yup.string().defined(),
   deploymentId: yup.string().optional(),
 });
 
 type PlanFormData = yup.Asserts<typeof planSchema>;
 
 type FormProps = {
-  template: Template;
+  templates: Array<Template>;
   onSubmit: (data: PlanFormData) => void | Promise<void>;
   onCancel: () => void;
+  curStep: number;
+  onStepChange: (step: number) => void;
   error?: string;
 };
 
-const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, error }) => {
+const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
+  const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
+
+  const template = templates[selectedTemplateIdx];
 
   const summaryList = [
     {
@@ -58,114 +101,156 @@ const PlanForm: React.VFC<FormProps> = ({ template, onSubmit, onCancel, error })
     <Formik
       initialValues={{
         price: 0,
+        templateId: template.id,
         deploymentId: '',
       }}
       validationSchema={planSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, isSubmitting, setFieldValue }) => (
-        <Form>
-          <div>
-            <SummaryList title={t('plans.create.description')} list={summaryList} />
-
-            {/* TODO: InputNumber extract component */}
-            <div className={'fullWidth'}>
-              <Typography className={styles.inputTitle}>{t('plans.create.priceTitle')} </Typography>
-              <InputNumber
-                id="price"
-                name="price"
-                addonAfter="SQT"
-                defaultValue={0}
-                min={0}
-                onChange={(value) => setFieldValue('price', value)}
-                className={'fullWidth'}
+      {({ submitForm, isValid, isSubmitting, setFieldValue }) => {
+        // First step: choose planTemplate
+        if (curStep === 0) {
+          const onChooseTemplate = (templateId: string, idx: number) => {
+            setSelectedTemplateIdx(idx);
+            setFieldValue('templateId', templateId);
+          };
+          const columns = getPlanTemplateColumns(onChooseTemplate);
+          return (
+            <Form>
+              <Table
+                columns={columns}
+                dataSource={templates}
+                rowKey={'id'}
+                pagination={false}
+                className={styles.templates}
               />
-            </div>
 
-            {/* TODO: renderItem style */}
-            <div className={styles.select}>
-              <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
-              <Select
-                id="deploymentId"
-                showSearch
-                placeholder="Select specific deployment Id"
-                optionFilterProp="children"
-                onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
-                className={'fullWidth'}
-                loading={indexerDeployments.loading}
-                size="large"
-                allowClear
-                // TODO
-                // onSearch={onSearch}
-                // filterOption={() => {}}
-              >
-                {renderAsync(indexerDeployments, {
-                  error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
-                  loading: () => <Spinner />,
-                  data: (data) => (
-                    <>
-                      {data?.map((indexerDeployments) => (
-                        <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
-                          <div>
-                            <Typography
-                              className={styles.projectName}
-                            >{`${indexerDeployments.projectName}`}</Typography>
-                            <Typography
-                              className={styles.projectDeploymentId}
-                            >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
-                          </div>
-                        </Select.Option>
-                      ))}
-                    </>
-                  ),
-                })}
-              </Select>
-            </div>
+              <div className={'flex-end'}>
+                <Button
+                  label={t('general.next')}
+                  onClick={() => onStepChange(1)}
+                  loading={isSubmitting}
+                  disabled={!isValid}
+                  colorScheme="standard"
+                />
+              </div>
+            </Form>
+          );
+        }
 
-            <Typography className={'errorText'}>{error}</Typography>
-            <div className={clsx('flex', 'flex-end', styles.btns)}>
-              <Button
-                label={t('plans.create.cancel')}
-                onClick={onCancel}
-                disabled={isSubmitting}
-                type="secondary"
-                colorScheme="neutral"
-                className={styles.btn}
-              />
-              <Button
-                label={t('plans.create.submit')}
-                onClick={submitForm}
-                loading={isSubmitting}
-                disabled={!isValid}
-                colorScheme="standard"
-              />
+        // Second step: summary and create plan
+        return (
+          <Form>
+            <div>
+              <SummaryList title={t('plans.create.description')} list={summaryList} />
+
+              {/* TODO: InputNumber extract component */}
+              <div className={'fullWidth'}>
+                <Typography className={styles.inputTitle}>{t('plans.create.priceTitle')} </Typography>
+                <InputNumber
+                  id="price"
+                  name="price"
+                  addonAfter="SQT"
+                  defaultValue={0}
+                  min={0}
+                  onChange={(value) => setFieldValue('price', value)}
+                  className={'fullWidth'}
+                />
+              </div>
+
+              {/* TODO: renderItem style */}
+              <div className={styles.select}>
+                <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
+                <Select
+                  id="deploymentId"
+                  showSearch
+                  placeholder="Select specific deployment Id"
+                  optionFilterProp="children"
+                  onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
+                  className={'fullWidth'}
+                  loading={indexerDeployments.loading}
+                  size="large"
+                  allowClear
+                  // TODO
+                  // onSearch={onSearch}
+                  // filterOption={() => {}}
+                >
+                  {renderAsync(indexerDeployments, {
+                    error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
+                    loading: () => <Spinner />,
+                    data: (data) => (
+                      <>
+                        {data?.map((indexerDeployments) => (
+                          <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
+                            <div>
+                              <Typography
+                                className={styles.projectName}
+                              >{`${indexerDeployments.projectName}`}</Typography>
+                              <Typography
+                                className={styles.projectDeploymentId}
+                              >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
+                            </div>
+                          </Select.Option>
+                        ))}
+                      </>
+                    ),
+                  })}
+                </Select>
+              </div>
+
+              <Typography className={'errorText'}>{error}</Typography>
+              <div className={clsx('flex-between', styles.btns)}>
+                <Button
+                  label={t('general.back')}
+                  onClick={() => onStepChange(0)}
+                  disabled={isSubmitting}
+                  type="secondary"
+                  colorScheme="neutral"
+                  className={styles.btn}
+                />
+                <div>
+                  <Button
+                    label={t('plans.create.cancel')}
+                    onClick={onCancel}
+                    disabled={isSubmitting}
+                    type="secondary"
+                    colorScheme="neutral"
+                    className={styles.btn}
+                  />
+                  <Button
+                    label={t('plans.create.submit')}
+                    onClick={submitForm}
+                    loading={isSubmitting}
+                    disabled={!isValid}
+                    colorScheme="standard"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        </Form>
-      )}
+          </Form>
+        );
+      }}
     </Formik>
   );
 };
 
-const Create: React.FC = () => {
+export const Create: React.FC = () => {
   const { t } = useTranslation();
+  const [curStep, setCurStep] = React.useState<number>(0);
   const pendingContracts = useContracts();
   const templates = usePlanTemplates({});
-  const template = templates.data?.planTemplates?.nodes[0];
 
-  const handleCreate = async (amount: string, deploymentId?: string) => {
+  const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    if (templates.error) {
+    if (!templates || templates.error) {
       throw templates.error;
     }
 
-    assert(template, 'No plan templates');
-
     return contracts.planManager.createPlan(
       parseEther(amount),
-      template.id,
+      templateId,
       deploymentId ? cidToBytes32(deploymentId) : constants.HashZero,
     );
   };
@@ -175,21 +260,32 @@ const Create: React.FC = () => {
       actions={[{ label: t('plans.create.title'), key: 'create' }]}
       text={{
         title: t('plans.create.title'),
-        steps: [t('plans.create.step1'), t('indexer.confirmOnMetamask')],
+        steps: ['Choose template', t('plans.create.step1'), t('indexer.confirmOnMetamask')],
         failureText: t('plans.create.failureText'),
       }}
-      onClick={(params: PlanFormData) => handleCreate(params.price.toString(), params.deploymentId)}
+      currentStep={curStep}
+      onClick={(params: PlanFormData) => handleCreate(params.price.toString(), params.templateId, params.deploymentId)}
       renderContent={(onSubmit, onCancel, isLoading, error) =>
         renderAsync(
-          mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty)[0], templates),
+          mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty), templates),
           {
             error: (e) => <Typography>{`Failed to get plan template: ${e.message}`}</Typography>,
             loading: () => <Spinner />,
-            data: (template) => {
-              if (!template) {
+            data: (templates) => {
+              if (!templates || templates?.length <= 0) {
                 return <Typography>No template found</Typography>;
               }
-              return <PlanForm template={template} onSubmit={onSubmit} onCancel={onCancel} error={error} />;
+
+              return (
+                <PlanForm
+                  templates={templates}
+                  onSubmit={onSubmit}
+                  onCancel={onCancel}
+                  error={error}
+                  curStep={curStep}
+                  onStepChange={setCurStep}
+                />
+              );
             },
           },
         )
@@ -197,5 +293,3 @@ const Create: React.FC = () => {
     />
   );
 };
-
-export default Create;
