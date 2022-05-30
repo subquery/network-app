@@ -112,11 +112,10 @@ const Header: React.VFC = () => {
       link: '/plans',
       title: t('header.plans'),
     },
-    // {
-    //   link: '/missions',
-    //   title: t('header.missions'),
-    // },
-    // NOTE: Hide mission entry
+    {
+      link: '/missions',
+      title: t('header.missions'),
+    },
   ];
 
   return (
