@@ -80,15 +80,15 @@ const Ranks: React.FC<any> = (seasons: any) => {
       {renderAsyncArray(
         mapAsync((data) => {
           return data.indexerChallenges
-            .map((data, index) => ({ ...data, rank: index + 1 }))
             .filter(notEmpty)
-            .filter((value) => value.id.startsWith(searchText))
             .sort((a, b) => b.singlePoints - a.singlePoints)
+            .map((data, index) => ({ ...data, rank: index + 1 }))
+            .filter((value) => value.id.startsWith(searchText))
             .map((data, index) => {
               return {
                 key: index,
                 name: data.name,
-                rank: index + 1,
+                rank: data.rank,
                 indexer: data.id,
                 points: data.singlePoints,
               };
