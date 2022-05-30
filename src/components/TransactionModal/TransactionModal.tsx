@@ -53,6 +53,7 @@ type Props<P, T extends string> = {
   };
   currentStep?: number;
   onClick: Action<P, T>;
+  onClose?: () => void;
   actions: Array<
     {
       label: string;
@@ -78,6 +79,7 @@ const TransactionModal = <P, T extends string>({
   currentStep,
   actions,
   onClick,
+  onClose,
   inputParams,
   variant = 'button',
   initialCheck,
@@ -111,6 +113,7 @@ const TransactionModal = <P, T extends string>({
     setIsLoading(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
+    onClose && onClose();
     !isLoading && !successModalText && setShowClock(false);
   };
 

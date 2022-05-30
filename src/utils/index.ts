@@ -3,6 +3,8 @@
 
 import { BigNumber, BigNumberish, utils } from 'ethers';
 export * from './numberFormatters';
+export * from './stringFormatters';
+export * from './dateFormatters';
 export * from './parseError';
 export * from './getDeploymentProgress';
 export * from './getTrimmedStr';

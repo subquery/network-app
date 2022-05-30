@@ -14,7 +14,14 @@ import * as yup from 'yup';
 import { constants } from 'ethers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
-import { cidToBytes32, convertBigNumberToNumber, mapAsync, notEmpty, renderAsync } from '../../../../utils';
+import {
+  cidToBytes32,
+  convertBigNumberToNumber,
+  getCapitalizedStr,
+  mapAsync,
+  notEmpty,
+  renderAsync,
+} from '../../../../utils';
 import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/registry/GetPlanTemplates';
 import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
@@ -23,6 +30,7 @@ import { secondsToDhms } from '../../../../utils/dateFormatters';
 
 const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number) => void,
+  selectedTemplateId?: string,
 ): TableProps<Template>['columns'] => [
   {
     title: '#',
@@ -52,7 +60,7 @@ const getPlanTemplateColumns = (
     title: i18next.t('plans.headers.rateLimit').toUpperCase(),
     dataIndex: 'id',
     render: (id: string, _: Template, idx: number) => (
-      <Radio onClick={() => onChooseTemplate(id, idx)} defaultChecked />
+      <Radio onClick={() => onChooseTemplate(id, idx)} checked={id === selectedTemplateId} />
     ),
   },
 ];
@@ -107,27 +115,36 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
       validationSchema={planSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, isSubmitting, setFieldValue }) => {
+      {({ submitForm, isValid, isSubmitting, setFieldValue, values }) => {
+        const selectedTemplateId = values.templateId;
+
         // First step: choose planTemplate
         if (curStep === 0) {
           const onChooseTemplate = (templateId: string, idx: number) => {
             setSelectedTemplateIdx(idx);
             setFieldValue('templateId', templateId);
           };
-          const columns = getPlanTemplateColumns(onChooseTemplate);
+          const columns = getPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
           return (
             <Form>
-              <Table
-                columns={columns}
-                dataSource={templates}
-                rowKey={'id'}
-                pagination={false}
-                className={styles.templates}
-              />
+              <div className={styles.templateList}>
+                <Table
+                  columns={columns}
+                  dataSource={templates}
+                  rowKey={'id'}
+                  pagination={false}
+                  className={styles.marginSpace}
+                  onRow={(record, rowIndex) => {
+                    return {
+                      onClick: () => rowIndex && onChooseTemplate(record?.id, rowIndex),
+                    };
+                  }}
+                />
+              </div>
 
-              <div className={'flex-end'}>
+              <div className={`${styles.marginSpace} flex-end`}>
                 <Button
-                  label={t('general.next')}
+                  label={getCapitalizedStr(t('general.next'))}
                   onClick={() => onStepChange(1)}
                   loading={isSubmitting}
                   disabled={!isValid}
@@ -265,6 +282,7 @@ export const Create: React.FC = () => {
       }}
       currentStep={curStep}
       onClick={(params: PlanFormData) => handleCreate(params.price.toString(), params.templateId, params.deploymentId)}
+      onClose={() => setCurStep(0)}
       renderContent={(onSubmit, onCancel, isLoading, error) =>
         renderAsync(
           mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty), templates),

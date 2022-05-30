@@ -28,6 +28,11 @@
   padding-top: 0.5rem;
 }
 
-.templates {
+.marginSpace {
   margin: 1rem 0;
+}
+
+.templateList {
+  height: 350px;
+  overflow: scroll;
 }
