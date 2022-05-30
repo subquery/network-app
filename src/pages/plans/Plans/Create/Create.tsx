@@ -180,11 +180,10 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
                 <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
                 <Select
                   id="deploymentId"
-                  showSearch
                   placeholder="Select specific deployment Id"
                   optionFilterProp="children"
                   onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
-                  className={'fullWidth'}
+                  className={clsx('fullWidth', 'flex')}
                   loading={indexerDeployments.loading}
                   size="large"
                   allowClear
@@ -225,7 +224,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
                   colorScheme="neutral"
                   className={styles.btn}
                 />
-                <div>
+                <div className={clsx('flex')}>
                   <Button
                     label={t('plans.create.cancel')}
                     onClick={onCancel}

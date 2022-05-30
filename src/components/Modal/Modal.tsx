@@ -84,7 +84,7 @@ export const Modal: React.FC<ModalProps> = ({
       onCancel={onCancel}
       footer={null}
       destroyOnClose={true}
-      width={'40%'}
+      width={'45%'}
     >
       <Steps />
       <Description />

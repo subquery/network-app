@@ -25,9 +25,10 @@ export const AddressName: React.VFC<{
 
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <Typography>{`${
-        address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'
-      } - ${address}`}</Typography>
+      <div className="flex-col">
+        <Typography>{address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'} </Typography>
+        <Typography>{address} </Typography>
+      </div>
     </div>
   );
 };
@@ -116,7 +117,6 @@ export const DelegateForm: React.VFC<FormProps> = ({
               </Typography>
               <Select
                 id="delegator"
-                showSearch
                 defaultValue={account}
                 optionFilterProp="children"
                 onChange={(delegator) => {
