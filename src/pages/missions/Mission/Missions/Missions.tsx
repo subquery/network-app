@@ -51,11 +51,6 @@ const columns = [
       }
     },
   },
-  {
-    title: 'DATE ACHIEVED',
-    dataIndex: 'date',
-    key: 'date',
-  },
 ];
 
 //TODO: Will need to have two props:
@@ -78,9 +73,8 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
       type: string;
       key: number;
       mission: string;
-      points: number | string;
+      points: number;
       progress: string;
-      date: string;
     }[] = [];
 
     if (challenges) {
@@ -91,25 +85,24 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
           key: key++,
           type: 'One-off',
           mission: challenge,
-          points: found ? found.points : INDEXER_CHALLENGE_DETAILS[challenge].points,
+          points: found?.points ?? INDEXER_CHALLENGE_DETAILS[challenge].points,
           progress: found ? 'Completed' : 'Incomplete',
-          date: '-',
         };
       });
     }
 
-    if (dailyChallenges) {
-      dailyChallenges.forEach((item) => {
-        allChallenges.push({
-          type: 'Daily',
-          key: key++,
-          mission: formatTitle(item.title),
-          points: item.point,
-          progress: 'Completed',
-          date: new Date(item.timestamp).toLocaleDateString(),
-        });
-      });
-    }
+    // if (dailyChallenges) {
+    //   dailyChallenges.forEach((item) => {
+    //     allChallenges.push({
+    //       type: 'Daily',
+    //       key: key++,
+    //       mission: formatTitle(item.title),
+    //       points: item.point,
+    //       progress: 'Completed',
+    //       date: new Date(item.timestamp).toLocaleDateString(),
+    //     });
+    //   });
+    // }
 
     return allChallenges.flat();
   };

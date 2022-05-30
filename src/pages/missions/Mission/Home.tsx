@@ -29,7 +29,7 @@ const Home: React.VFC = (children) => {
   const history = useHistory();
   const indexer = useIndexerChallenges({ indexerId: account ?? '' });
 
-  const indexerUrl = '/missions';
+  const indexerUrl = '/missions/my-missions';
 
   React.useEffect(() => {
     if (account) {
@@ -80,7 +80,7 @@ const Home: React.VFC = (children) => {
                   <div className={styles.pointsSummary}>
                     <h4>Total Points</h4>
                     <h2>
-                      <b>{data?.indexerChallenge?.totalPoints} points</b>
+                      <b>{data?.indexerChallenge?.singlePoints} points</b>
                     </h2>
                   </div>
                 </div>

@@ -80,16 +80,19 @@ const Ranks: React.FC<any> = (seasons: any) => {
       {renderAsyncArray(
         mapAsync((data) => {
           return data.indexerChallenges
-            .map((data, index) => ({ ...data, rank: index + 1 }))
             .filter(notEmpty)
+            .sort((a, b) => b.singlePoints - a.singlePoints)
+            .map((data, index) => ({ ...data, rank: index + 1 }))
             .filter((value) => value.id.startsWith(searchText))
-            .map((data) => ({
-              key: data.rank,
-              name: data.name,
-              rank: data.rank,
-              indexer: data.id,
-              points: data.totalPoints,
-            }));
+            .map((data, index) => {
+              return {
+                key: index,
+                name: data.name,
+                rank: data.rank,
+                indexer: data.id,
+                points: data.singlePoints,
+              };
+            });
         }, indexers),
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
