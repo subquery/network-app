@@ -2,15 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { EraProvider, useWeb3, Web3Provider } from '../../containers';
-import { Route, Switch } from 'react-router';
+import { EraProvider, Web3Provider } from '../../containers';
+import { Redirect, Route, Switch } from 'react-router';
 import Home from './Mission';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineUser } from 'react-icons/ai';
+import { AiOutlineCheckSquare, AiOutlineTrophy } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
 import { WalletRoute } from '../../WalletRoute';
 import { User } from './User';
 import Leaderboard from './Leaderboard/Leaderboard';
+
+export const ROOT_ROUTE = '/missions';
+export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-missions`;
+export const LEADERBOARD_ROUTE = `${ROOT_ROUTE}/indexers`;
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();
@@ -18,13 +22,13 @@ const Container: React.VFC = () => {
   const sidebarList = [
     {
       label: t('missions.missions'),
-      link: `/missions`,
-      icon: <AiOutlineUser />,
+      link: PROFILE_ROUTE,
+      icon: <AiOutlineCheckSquare />,
     },
     {
       label: t('missions.leaderboard'),
-      link: '/missions/leaderboard',
-      icon: <AiOutlineUser />,
+      link: LEADERBOARD_ROUTE,
+      icon: <AiOutlineTrophy />,
     },
   ];
 
@@ -33,9 +37,10 @@ const Container: React.VFC = () => {
       <EraProvider>
         <AppSidebar list={sidebarList}>
           <Switch>
-            <Route path="/missions/leaderboard" component={Leaderboard} />
             <Route path="/missions/user/:id" children={<User />} />
-            <WalletRoute path="/missions" component={Home} />
+            <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
+            <WalletRoute path="/missions/my-missions" component={Home} />
+            <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
           </Switch>
         </AppSidebar>
       </EraProvider>

@@ -27,8 +27,6 @@ export const User: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
   const indexer = useIndexerChallenges({ indexerId: id });
 
-  const { t } = useTranslation();
-
   const history = useHistory();
   const routeChange = () => {
     history.push('/missions/leaderboard');
@@ -58,7 +56,7 @@ export const User: React.VFC = () => {
                   <div className={styles.pointsSummary}>
                     <h4>Total Points</h4>
                     <h2>
-                      <b>{data?.indexerChallenge?.totalPoints} points</b>
+                      <b>{data?.indexerChallenge?.singlePoints} points</b>
                     </h2>
                   </div>
                 </div>

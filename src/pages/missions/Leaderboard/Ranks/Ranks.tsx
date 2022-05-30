@@ -83,13 +83,16 @@ const Ranks: React.FC<any> = (seasons: any) => {
             .map((data, index) => ({ ...data, rank: index + 1 }))
             .filter(notEmpty)
             .filter((value) => value.id.startsWith(searchText))
-            .map((data) => ({
-              key: data.rank,
-              name: data.name,
-              rank: data.rank,
-              indexer: data.id,
-              points: data.totalPoints,
-            }));
+            .sort((a, b) => b.singlePoints - a.singlePoints)
+            .map((data, index) => {
+              return {
+                key: index,
+                name: data.name,
+                rank: index + 1,
+                indexer: data.id,
+                points: data.singlePoints,
+              };
+            });
         }, indexers),
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
