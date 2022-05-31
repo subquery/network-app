@@ -27,6 +27,7 @@ import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
 import { secondsToDhms } from '../../../../utils/dateFormatters';
+import { NumberInput } from '../../../../components/NumberInput';
 
 const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number) => void,
@@ -161,19 +162,16 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
             <div>
               <SummaryList title={t('plans.create.description')} list={summaryList} />
 
-              {/* TODO: InputNumber extract component */}
-              <div className={'fullWidth'}>
-                <Typography className={styles.inputTitle}>{t('plans.create.priceTitle')} </Typography>
-                <InputNumber
-                  id="price"
-                  name="price"
-                  addonAfter="SQT"
-                  defaultValue={0}
-                  min={0}
-                  onChange={(value) => setFieldValue('price', value)}
-                  className={'fullWidth'}
-                />
-              </div>
+              <NumberInput
+                title={t('plans.create.priceTitle')}
+                inputParams={{
+                  onChange: (value: any) => setFieldValue('price', value),
+                  min: 0,
+                  defaultValue: 0,
+                  id: 'price',
+                  name: 'price',
+                }}
+              />
 
               {/* TODO: renderItem style */}
               <div className={styles.select}>
@@ -237,7 +235,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
                     label={t('plans.create.submit')}
                     onClick={submitForm}
                     loading={isSubmitting}
-                    disabled={!isValid}
+                    disabled={!isValid && values.price > 0}
                     colorScheme="standard"
                   />
                 </div>
