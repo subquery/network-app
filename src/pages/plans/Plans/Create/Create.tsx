@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import clsx from 'clsx';
-import { InputNumber, Select, TableProps, Radio, Table } from 'antd';
+import { Select, TableProps, Radio, Table } from 'antd';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import TransactionModal from '../../../../components/TransactionModal';
@@ -66,8 +66,96 @@ const getPlanTemplateColumns = (
   },
 ];
 
+const ChooseTemplateStep = ({
+  selectedTemplateId,
+  onChooseTemplate,
+  templates,
+  onNextStep,
+  disabled,
+}: {
+  selectedTemplateId: string;
+  onChooseTemplate: (templateId: string, idx: number) => void;
+  onNextStep?: () => void;
+  templates: Array<Template>;
+  disabled?: boolean;
+}) => {
+  const { t } = useTranslation();
+  const columns = getPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
+  return (
+    <Form>
+      <div className={styles.templateList}>
+        <Table
+          columns={columns}
+          dataSource={templates}
+          rowKey={'id'}
+          pagination={false}
+          className={styles.marginSpace}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => rowIndex && onChooseTemplate(record?.id, rowIndex),
+            };
+          }}
+        />
+      </div>
+
+      <div className={`${styles.marginSpace} flex-end`}>
+        <Button
+          label={getCapitalizedStr(t('general.next'))}
+          onClick={onNextStep}
+          disabled={disabled}
+          colorScheme="standard"
+        />
+      </div>
+    </Form>
+  );
+};
+
+const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (deploymentId: string) => void }) => {
+  const { t } = useTranslation();
+  const { account } = useWeb3();
+  const indexerDeployments = useSortedIndexerDeployments(account ?? '');
+
+  return (
+    <div className={styles.select}>
+      <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
+      <Select
+        id="deploymentId"
+        placeholder="Select specific deployment Id"
+        optionFilterProp="children"
+        onChange={(deploymentId) => onChooseSpecificPlan(deploymentId)}
+        className={clsx('fullWidth', 'flex')}
+        loading={indexerDeployments.loading}
+        size="large"
+        allowClear
+        // TODO
+        // onSearch={onSearch}
+        // filterOption={() => {}}
+      >
+        {renderAsync(indexerDeployments, {
+          error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
+          loading: () => <Spinner />,
+          data: (data) => (
+            <>
+              {data?.map((indexerDeployments) => (
+                <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
+                  <div>
+                    <Typography className={styles.projectName}>{`${indexerDeployments.projectName}`}</Typography>
+                    <Typography
+                      className={styles.projectDeploymentId}
+                    >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
+                  </div>
+                </Select.Option>
+              ))}
+            </>
+          ),
+        })}
+      </Select>
+    </div>
+  );
+};
+
 const planSchema = yup.object({
-  price: yup.number().defined(),
+  price: yup.number().defined().moreThan(0),
   templateId: yup.string().defined(),
   deploymentId: yup.string().optional(),
 });
@@ -86,10 +174,11 @@ type FormProps = {
 const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
-  const { account } = useWeb3();
-  const indexerDeployments = useSortedIndexerDeployments(account ?? '');
-
   const template = templates[selectedTemplateIdx];
+
+  const onFirstStep = () => onStepChange(0);
+  const onSecondStep = () => onStepChange(1);
+  const onThirdStep = () => onStepChange(2);
 
   const summaryList = [
     {
@@ -109,7 +198,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
   return (
     <Formik
       initialValues={{
-        price: 0,
+        price: 1,
         templateId: template.id,
         deploymentId: '',
       }}
@@ -125,34 +214,15 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
             setSelectedTemplateIdx(idx);
             setFieldValue('templateId', templateId);
           };
-          const columns = getPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
-          return (
-            <Form>
-              <div className={styles.templateList}>
-                <Table
-                  columns={columns}
-                  dataSource={templates}
-                  rowKey={'id'}
-                  pagination={false}
-                  className={styles.marginSpace}
-                  onRow={(record, rowIndex) => {
-                    return {
-                      onClick: () => rowIndex && onChooseTemplate(record?.id, rowIndex),
-                    };
-                  }}
-                />
-              </div>
 
-              <div className={`${styles.marginSpace} flex-end`}>
-                <Button
-                  label={getCapitalizedStr(t('general.next'))}
-                  onClick={() => onStepChange(1)}
-                  loading={isSubmitting}
-                  disabled={!isValid}
-                  colorScheme="standard"
-                />
-              </div>
-            </Form>
+          return (
+            <ChooseTemplateStep
+              selectedTemplateId={selectedTemplateId}
+              onChooseTemplate={onChooseTemplate}
+              templates={templates}
+              onNextStep={onSecondStep}
+              disabled={!isValid}
+            />
           );
         }
 
@@ -165,58 +235,29 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
               <NumberInput
                 title={t('plans.create.priceTitle')}
                 inputParams={{
-                  onChange: (value: any) => setFieldValue('price', value),
+                  onChange: (price) => {
+                    onSecondStep();
+                    setFieldValue('price', price);
+                  },
                   min: 0,
-                  defaultValue: 0,
+                  defaultValue: 1,
                   id: 'price',
                   name: 'price',
                 }}
               />
 
-              {/* TODO: renderItem style */}
-              <div className={styles.select}>
-                <Typography className={styles.inputTitle}>{'Select specific deployment Id'} </Typography>
-                <Select
-                  id="deploymentId"
-                  placeholder="Select specific deployment Id"
-                  optionFilterProp="children"
-                  onChange={(deploymentId) => setFieldValue('deploymentId', deploymentId)}
-                  className={clsx('fullWidth', 'flex')}
-                  loading={indexerDeployments.loading}
-                  size="large"
-                  allowClear
-                  // TODO
-                  // onSearch={onSearch}
-                  // filterOption={() => {}}
-                >
-                  {renderAsync(indexerDeployments, {
-                    error: (error) => <Typography>{`Failed to get deployment info: ${error.message}`}</Typography>,
-                    loading: () => <Spinner />,
-                    data: (data) => (
-                      <>
-                        {data?.map((indexerDeployments) => (
-                          <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
-                            <div>
-                              <Typography
-                                className={styles.projectName}
-                              >{`${indexerDeployments.projectName}`}</Typography>
-                              <Typography
-                                className={styles.projectDeploymentId}
-                              >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
-                            </div>
-                          </Select.Option>
-                        ))}
-                      </>
-                    ),
-                  })}
-                </Select>
-              </div>
+              <DeploymentIdOptions
+                onChooseSpecificPlan={(deploymentId: string) => {
+                  onSecondStep();
+                  setFieldValue('deploymentId', deploymentId);
+                }}
+              />
 
               <Typography className={'errorText'}>{error}</Typography>
               <div className={clsx('flex-between', styles.btns)}>
                 <Button
                   label={t('general.back')}
-                  onClick={() => onStepChange(0)}
+                  onClick={onFirstStep}
                   disabled={isSubmitting}
                   type="secondary"
                   colorScheme="neutral"
@@ -233,9 +274,12 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
                   />
                   <Button
                     label={t('plans.create.submit')}
-                    onClick={submitForm}
+                    onClick={() => {
+                      onThirdStep();
+                      submitForm();
+                    }}
                     loading={isSubmitting}
-                    disabled={!isValid && values.price > 0}
+                    disabled={isSubmitting || (!isValid && values.price <= 0)}
                     colorScheme="standard"
                   />
                 </div>
