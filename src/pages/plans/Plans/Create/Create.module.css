@@ -27,3 +27,12 @@
 .deploymentOption {
   padding-top: 0.5rem;
 }
+
+.marginSpace {
+  margin: 1rem 0;
+}
+
+.templateList {
+  height: 350px;
+  overflow: scroll;
+}

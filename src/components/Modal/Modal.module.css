@@ -1,5 +1,5 @@
 .text {
-  color: var(--gray500);
+  color: var(--gray600) !important;
 }
 
 .steps {
@@ -22,8 +22,8 @@
   font-size: 20px;
 }
 
-.activeStepIcon {
-  color: var(--gradient-to);
+.activeStep {
+  color: var(--gradient-to) !important;
 }
 
 .line {
@@ -32,8 +32,8 @@
 }
 
 .divider {
-  width: 100px;
-  min-width: 100px;
+  width: 10%;
+  margin: 0 10px;
 }
 
 .title {

@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Modal as AntDModal, Divider } from 'antd';
-import { Typography } from '@subql/react-ui';
-import { MdOutlineFilter1, MdOutlineFilter2 } from 'react-icons/md';
+import { Modal as AntDModal, Divider, Typography } from 'antd';
+import { MdOutlineFilter1, MdOutlineFilter2, MdOutlineFilter3 } from 'react-icons/md';
 import styles from './Modal.module.css';
 
 /**
@@ -36,46 +35,45 @@ export const Modal: React.FC<ModalProps> = ({
   content,
 }) => {
   const Title = () => (
-    <Typography variant="h6" className={styles.title}>
+    <Typography.Title level={3} className={styles.title}>
       {title || 'Modal'}
-    </Typography>
+    </Typography.Title>
   );
 
   const Steps = () => {
     if (!steps) return <div />;
 
+    // TODO: Improvement - avoid static with the Icon
     const stepIcons = [
       <MdOutlineFilter1 className={styles.stepNoIcon} />,
       <MdOutlineFilter2 className={styles.stepNoIcon} />,
+      <MdOutlineFilter3 className={styles.stepNoIcon} />,
     ];
     return (
       <div className={styles.steps}>
-        {steps.map((step, idx) => (
-          <React.Fragment key={step}>
-            <div className={styles.step}>
-              {stepIcons[idx]}
-              <Typography variant="medium" className={styles.text}>
-                {step}
-              </Typography>
-            </div>
-            {step.length > 1 && idx !== steps.length - 1 && (
-              <div className={styles.divider}>
-                <Divider />
+        {steps.map((step, idx) => {
+          const isActiveStep = currentStep === idx;
+          return (
+            <React.Fragment key={step}>
+              <div className={`${styles.step} ${isActiveStep && styles.activeStep}`}>
+                {stepIcons[idx]}
+                <Typography className={`${styles.text} ${isActiveStep && styles.activeStep}`}>{step}</Typography>
               </div>
-            )}
-          </React.Fragment>
-        ))}
+              {step.length > 1 && idx !== steps.length - 1 && (
+                <div className={styles.divider}>
+                  <Divider />
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
     );
   };
 
   const Description = () => {
     if (!description) return <div />;
-    return (
-      <Typography variant="medium" className={styles.description}>
-        {description}
-      </Typography>
-    );
+    return <Typography.Text className={styles.description}>{description}</Typography.Text>;
   };
 
   return (
@@ -86,7 +84,7 @@ export const Modal: React.FC<ModalProps> = ({
       onCancel={onCancel}
       footer={null}
       destroyOnClose={true}
-      width={'40%'}
+      width={'45%'}
     >
       <Steps />
       <Description />

@@ -37,7 +37,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <>
-      {title && <Typography>{title}</Typography>}
+      {title && <Typography className={styles.inputTitle}>{title}</Typography>}
       <div className={styles.input}>
         <InputNumber addonAfter={<Prefix />} {...inputParams} className={styles.inputNumber} />
       </div>

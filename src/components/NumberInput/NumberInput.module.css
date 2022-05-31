@@ -2,6 +2,11 @@
   margin-top: 0.4rem;
 }
 
+.inputTitle {
+  margin: 6px 0;
+  color: var(--gray700);
+}
+
 .inputNumber {
   width: 100% !important;
 }

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { Default } from './Default';
-import Create from './Create';
+import { Create } from './Create';
 import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
 import styles from './Plans.module.css';

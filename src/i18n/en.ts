@@ -374,9 +374,11 @@ const en = {
       current: 'current',
       next: 'next',
       status: 'Status',
+      back: 'Back',
       active: 'Active',
       inactive: 'Inactive',
       comingSoon: 'Coming soon.',
+      choose: 'choose',
     },
     status: {
       success: 'Success!',
