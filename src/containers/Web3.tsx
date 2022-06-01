@@ -14,9 +14,10 @@ const RPC_URLS: Record<number, string> = {
   1287: 'https://moonbeam-alpha.api.onfinality.io/public',
   1281: 'http://127.0.0.1:9933',
   1280: 'https://sqtn.api.onfinality.io/public',
+  595: 'https://tc7-eth.aca-dev.network',
 };
 
-const defaultChainId = 1280;
+const defaultChainId = 595;
 
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [/*1, 1281, 1285, */ defaultChainId],
@@ -40,15 +41,15 @@ export const NETWORK_CONFIGS = {
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
   },
   'sqn-testnet': {
-    chainId: `0x${Number(1280).toString(16)}`,
+    chainId: `0x${Number(595).toString(16)}`,
     chainName: 'SQN Testnet',
     nativeCurrency: {
       name: 'DEV',
       symbol: 'DEV',
       decimals: 18,
     },
-    rpcUrls: [RPC_URLS[1280]],
-    blockExplorerUrls: null,
+    rpcUrls: [RPC_URLS[595]],
+    blockExplorerUrls: ['https://blockscout.mandala.acala.network/'],
   },
 };
 

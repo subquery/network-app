@@ -107,7 +107,6 @@ const App: React.VFC = () => {
                 <Route component={pages.Staking} path="/staking" />
                 <Route component={pages.Missions} path="/missions" />
                 <WalletRoute component={pages.Plans} path="/plans" />
-                {/*{<Route component={pages.Home} />}*/}
                 <Redirect from="/" to="/explorer" />
               </Switch>
             </BlockchainStatus>
