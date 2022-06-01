@@ -12,6 +12,7 @@ export const INDEXER_CHALLENGE_PTS = [
   'CLAIM_REWARD',
   'WITHDRAW_CLAIMED',
   'INDEXER_UNDELEGATED',
+  'UNREGISTER_INDEXER',
 ];
 
 interface Details {
@@ -34,4 +35,5 @@ export const INDEXER_CHALLENGE_DETAILS: IndexerDetails = {
   CLAIM_REWARD: { points: 20, description: 'Indexer claims a reward' },
   WITHDRAW_CLAIMED: { points: 50, description: 'Delegator withdraws unstaked amount from indexer' },
   INDEXER_UNDELEGATED: { points: 20, description: 'Indexer gets delegation removed' },
+  UNREGISTER_INDEXER: { points: 30, description: 'Unregister your indexer' },
 };
