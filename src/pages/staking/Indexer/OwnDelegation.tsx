@@ -40,22 +40,18 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
   const addDelegation = async (props: DelegationFormProps) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    console.log('props', props);
-    console.log('contracts', contracts);
-    // TODO check allowance
 
     const ether = parseEther(props.amount.toString());
-    console.log('ether', ether);
+
     const tx = await (account === indexerAddress
       ? type === 'add'
-        ? contracts.indexerRegistry.stake(ether)
-        : contracts.indexerRegistry.unstake(ether)
+        ? contracts.staking.stake(account, ether)
+        : contracts.staking.unstake(account, ether)
       : type === 'add'
       ? contracts.staking.delegate(indexerAddress, ether)
       : contracts.staking.undelegate(indexerAddress, ether));
-    console.log('tx', tx);
-    const test = await tx.wait();
-    console.log('test', test);
+
+    await tx.wait();
     onClose();
   };
 

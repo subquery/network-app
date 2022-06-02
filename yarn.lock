@@ -4059,10 +4059,10 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/contract-sdk@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.5.0.tgz#e1dad1018bba9874e2bef1a73ca9f3dd7924236e"
-  integrity sha512-4HlTtX6KyS/iPzbq4+7bGVK/pFxETrlzAnY6cBwkrGySmgXz84NW/jFV4lgXCW4IeL/OwtKPKdyxRCSvw9Kp/A==
+"@subql/contract-sdk@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.6.0.tgz#6df54a6a4da9a654489532deb98bf35a6cbcf30a"
+  integrity sha512-LOB3YZiaIs0GVSDdRtGzDDYQ0jwMHSzlwAm/sGxi8OAl4wz24RUPjoZ3BdNMBRD3VdcRarpksGXYxUcrF0sKEg==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
