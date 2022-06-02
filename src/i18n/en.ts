@@ -233,7 +233,7 @@ const en = {
       delegateFailure: 'Sorry, the delegation has been failed.',
       delegateSuccess: 'Success! Your delegation has been done.',
       approveTokenToDelegate: 'Approve your token for staking',
-      noDelegating: 'available',
+      noDelegating: 'No delegation available',
       yourDelegateAmount: 'Your Delegation Amount',
       none: 'No delegator available',
       viewProfile: 'View indexer profile',
