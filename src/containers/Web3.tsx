@@ -44,8 +44,8 @@ export const NETWORK_CONFIGS = {
     chainId: `0x${Number(595).toString(16)}`,
     chainName: 'SQN Testnet',
     nativeCurrency: {
-      name: 'DEV',
-      symbol: 'DEV',
+      name: 'ACALA',
+      symbol: 'ACALA',
       decimals: 18,
     },
     rpcUrls: [RPC_URLS[595]],
