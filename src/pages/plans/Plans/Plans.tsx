@@ -10,9 +10,9 @@ import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
 import styles from './Plans.module.css';
 
-const ROUTE = '/plans/plans';
-export const DEFAULT_PLANS = `${ROUTE}/default`;
-export const SPECIFIC_PLANS = `${ROUTE}/specific`;
+const PLAN_ROUTE = '/plans/my-plans';
+const DEFAULT_PLANS = `${PLAN_ROUTE}/default`;
+const SPECIFIC_PLANS = `${PLAN_ROUTE}/specific`;
 
 const buttonLinks = [
   { label: 'Default', link: DEFAULT_PLANS },
@@ -21,6 +21,7 @@ const buttonLinks = [
 
 export const Plans: React.VFC = () => {
   const { t } = useTranslation();
+
   return (
     <div>
       <AppPageHeader title={t('plans.category.manageMyPlans')} />
@@ -35,7 +36,7 @@ export const Plans: React.VFC = () => {
       <Switch>
         <Route exact path={DEFAULT_PLANS} component={Default} />
         <Route exact path={SPECIFIC_PLANS} component={Specific} />
-        <Redirect from={ROUTE} to={DEFAULT_PLANS} />
+        <Redirect from={PLAN_ROUTE} to={DEFAULT_PLANS} />
       </Switch>
     </div>
   );
