@@ -292,6 +292,8 @@ const en = {
         myServiceAgreement: 'My Service Agreements',
         myPlan: 'My Plans',
         manageMyPlans: 'Manage My Plans',
+        myOffers: 'Manage My Offers',
+        offerMarketplace: 'Offer Marketplace',
       },
       default: {
         title: 'You can create maximum 5 default plans',
@@ -369,6 +371,11 @@ const en = {
         comingSoon: 'Playground coming soon.',
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
+    },
+    myOffers: {
+      open: 'Open',
+      close: 'Close',
+      expired: 'Expired',
     },
     general: {
       current: 'current',
