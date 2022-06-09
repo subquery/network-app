@@ -26,11 +26,8 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   /**
    * SearchInput logic
-   * TODO: Improve searchAddress component
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
-  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
 
   const sortedIndexer = useDeploymentIndexerQuery({
     indexerAddress: searchIndexer ?? '',
@@ -39,21 +36,12 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);
 
-  React.useEffect(() => {
-    setSearchingIndexer(sortedIndexer?.loading);
-    if (!searchedIndexer && searchIndexer && !sortedIndexer?.loading) {
-      setSearchIndexerResult('No search result.');
-    } else {
-      setSearchIndexerResult(undefined);
-    }
-  }, [searchIndexer, searchedIndexer, sortedIndexer?.loading]);
-
   const SearchInput = () => (
     <SearchAddress
       onSearch={(value) => setSearchIndexer(value)}
       defaultValue={searchIndexer}
-      loading={searchingIndexer}
-      searchResult={searchIndexerResult}
+      loading={sortedIndexer.loading}
+      emptyResult={!searchedIndexer}
     />
   );
 

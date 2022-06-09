@@ -376,10 +376,24 @@ const en = {
       open: 'Open',
       close: 'Close',
       expired: 'Expired',
+      createOffer: 'Create an Offer',
+      steps: {
+        step_0: 'Choose Deployment ID',
+        step_1: 'Choose Template',
+        step_2: 'Set Details',
+        step_3: 'Confirm',
+      },
+      step_1: {
+        title: 'Step 1: Find the SubQuery Project Deployment ID for this offer',
+        description:
+          'You can copy & paste the deployment ID of your desired project by entering their project detail page from  <1>explorer<1>.',
+        search: 'Search deployment ID',
+      },
     },
     general: {
       current: 'current',
       next: 'next',
+      cancel: 'cancel',
       status: 'Status',
       back: 'Back',
       active: 'Active',
