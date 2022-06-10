@@ -61,8 +61,9 @@ const GET_PROJECTS = gql`
 const GET_DEPLOYMENT = gql`
   query GetDeployment($deploymentId: String!) {
     deployment(id: $deploymentId) {
-      version
       id
+      version
+      projectId
     }
   }
 `;

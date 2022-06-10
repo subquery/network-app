@@ -8,7 +8,7 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import React from 'react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Copy, SearchAddress } from '../../../../components';
+import { Copy, SearchInput } from '../../../../components';
 import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
 import { useLeaderboard } from '../../../../containers';
 import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
@@ -75,7 +75,7 @@ const Ranks: React.FC<{ season: number; viewPrev: () => void; viewCurr: () => vo
       <div className={styles.topBar}>
         <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
         <div className={styles.searchBar}>
-          <SearchAddress defaultValue={searchText} onSearch={(value: string) => setSearchText(value)} />
+          <SearchInput defaultValue={searchText} onSearch={(value: string) => setSearchText(value)} />
         </div>
       </div>
       {renderAsyncArray(

@@ -4,7 +4,7 @@
 import { Typography } from '@subql/react-ui';
 import { Input, InputProps } from 'antd';
 import * as React from 'react';
-import styles from './SearchAddress.module.css';
+import styles from './SearchInput.module.css';
 
 type Props = {
   onSearch?: (input: string) => void;
@@ -14,7 +14,7 @@ type Props = {
   emptyResult?: boolean;
 } & InputProps;
 
-export const SearchAddress: React.FC<Props> = ({
+export const SearchInput: React.FC<Props> = ({
   placeholder,
   loading,
   onSearch,
@@ -36,7 +36,7 @@ export const SearchAddress: React.FC<Props> = ({
   }, [searchIndexer, emptyResult, loading]);
 
   return (
-    <div className={styles.search}>
+    <div className="fullWidth">
       <Input.Search
         placeholder={placeholder || 'Search by address...'}
         size="large"

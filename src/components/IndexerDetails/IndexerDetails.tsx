@@ -10,7 +10,7 @@ import styles from './IndexerDetails.module.css';
 import { Status } from '../../__generated__/registry/globalTypes';
 import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
-import { SearchAddress } from '../SearchAddress';
+import { SearchInput } from '../SearchInput';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -36,8 +36,8 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);
 
-  const SearchInput = () => (
-    <SearchAddress
+  const SearchAddress = () => (
+    <SearchInput
       onSearch={(value) => setSearchIndexer(value)}
       defaultValue={searchIndexer}
       loading={sortedIndexer.loading}
@@ -82,7 +82,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
   return (
     <>
       <div className={styles.searchInput}>
-        <SearchInput />
+        <SearchAddress />
       </div>
 
       <Table

@@ -1,20 +1,13 @@
-.content {
-  background: white;
-  width: 70%;
-  min-height: 420px;
-  padding: 1rem;
+.description {
+  width: 80%;
 }
 
-.steps {
+/* TODO: add custom theme  */
+.descriptionBtn {
+  padding: 0 !important;
+}
+
+.searchDeployment {
   margin: 1rem 0;
-}
-
-.tabs {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.create {
-  height: 40px;
+  width: 80%;
 }

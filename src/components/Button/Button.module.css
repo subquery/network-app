@@ -1,5 +1,4 @@
 /* TODO: custom antD theme */
 .button {
-  margin-right: 1rem;
   background: var(--gradient-to) !important;
 }
