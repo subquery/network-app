@@ -11,3 +11,14 @@
   margin: 1rem 0;
   width: 80%;
 }
+
+.deploymentInfoContainer {
+  margin: 1rem 0;
+}
+
+.deploymentInfo {
+  margin: 1rem 0;
+  border: 1px solid var(--gradient-to);
+  border-radius: 5px;
+  padding: 1rem;
+}
