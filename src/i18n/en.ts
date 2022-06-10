@@ -390,6 +390,19 @@ const en = {
         search: 'Search deployment ID',
         selectedId: 'Selected ID',
       },
+      step_2: {
+        title: 'Step 2: Choose an offer template from below',
+      },
+      step_3: {
+        title: 'Step 3: Set the details for your offer',
+        rewardPerIndexer: 'Total rewards per indexer',
+        indexerCap: 'Indexer cap',
+        totalDeposit: 'Required deposit',
+        minimumIndexedHeight: 'Minimum indexed height',
+        expireDate: 'Expiration time (Timezone: UTC)',
+        cancelWarning:
+          'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
+      },
     },
     general: {
       current: 'current',
@@ -401,6 +414,8 @@ const en = {
       inactive: 'Inactive',
       comingSoon: 'Coming soon.',
       choose: 'choose',
+      day: 'day',
+      day_other: '{{count}} days',
     },
     status: {
       success: 'Success!',

@@ -6,3 +6,7 @@ import moment from 'moment';
 export const secondsToDhms = (seconds: number): string => {
   return moment.duration(seconds, 'seconds').humanize(true);
 };
+
+export const secondsToDays = (seconds: number): number => {
+  return Number.parseFloat(moment.duration(seconds, 'seconds').asDays().toPrecision(4));
+};
