@@ -14,9 +14,10 @@ import styles from './DeploymentInfo.module.css';
 type Props = {
   project: ProjectMetadata;
   deploymentId?: string;
+  deploymentVersion?: string;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploymentVersion }) => {
   const { t } = useTranslation();
 
   return (

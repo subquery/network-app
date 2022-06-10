@@ -388,6 +388,7 @@ const en = {
         description:
           'You can copy & paste the deployment ID of your desired project by entering their project detail page from  <1>explorer<1>.',
         search: 'Search deployment ID',
+        selectedId: 'Selected ID',
       },
     },
     general: {
