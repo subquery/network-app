@@ -14,7 +14,7 @@ import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import { useIndexerCapacity } from '../../../../hooks';
-import { SearchAddress, TableText } from '../../../../components';
+import { SearchInput, TableText } from '../../../../components';
 import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 
@@ -88,13 +88,15 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     [sortedIndexer],
   );
 
-  const SearchInput = () => (
-    <SearchAddress
-      onSearch={(value) => setSearchIndexer(value)}
-      defaultValue={searchIndexer}
-      loading={sortedIndexer.loading}
-      emptyResult={!searchedIndexer}
-    />
+  const SearchAddress = () => (
+    <div className={styles.indexerSearch}>
+      <SearchInput
+        onSearch={(value: string) => setSearchIndexer(value)}
+        defaultValue={searchIndexer}
+        loading={sortedIndexer.loading}
+        emptyResult={!searchedIndexer}
+      />
+    </div>
   );
 
   /**
@@ -309,7 +311,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         <Typography variant="h6" className={styles.title}>
           {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
         </Typography>
-        <SearchInput />
+        <SearchAddress />
       </div>
 
       <Table
