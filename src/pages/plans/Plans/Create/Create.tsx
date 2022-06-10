@@ -26,10 +26,10 @@ import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__
 import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
-import { secondsToDhms } from '../../../../utils/dateFormatters';
+import { secondsToDays, secondsToDhms } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
 
-const getPlanTemplateColumns = (
+export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number) => void,
   selectedTemplateId?: string,
 ): TableProps<Template>['columns'] => [
@@ -41,7 +41,9 @@ const getPlanTemplateColumns = (
   {
     dataIndex: 'period',
     title: i18next.t('plans.headers.period').toUpperCase(),
-    render: (period: string) => <TableText content={secondsToDhms(convertBigNumberToNumber(period))} />,
+    render: (period: string) => (
+      <TableText content={i18next.t('general.day', { count: secondsToDays(convertBigNumberToNumber(period)) })} />
+    ),
   },
   {
     dataIndex: 'dailyReqCap',
@@ -58,7 +60,7 @@ const getPlanTemplateColumns = (
     ),
   },
   {
-    title: i18next.t('plans.headers.rateLimit').toUpperCase(),
+    title: i18next.t('general.choose').toUpperCase(),
     dataIndex: 'id',
     render: (id: string, _: Template, idx: number) => (
       <Radio onClick={() => onChooseTemplate(id, idx)} checked={id === selectedTemplateId} />
@@ -92,7 +94,7 @@ const ChooseTemplateStep = ({
           className={styles.marginSpace}
           onRow={(record, rowIndex) => {
             return {
-              onClick: () => rowIndex && onChooseTemplate(record?.id, rowIndex),
+              onClick: () => rowIndex !== undefined && onChooseTemplate(record?.id, rowIndex),
             };
           }}
         />
