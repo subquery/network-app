@@ -18,3 +18,13 @@
 .create {
   height: 40px;
 }
+
+.datePickerTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--gary900);
+}
+
+.datePicker {
+  width: 100%;
+}

@@ -11,22 +11,35 @@ import styles from './CreateOffer.module.css';
 import { Button } from '../../../../components/Button';
 import { SelectDeployment } from './SelectDeployment';
 import { ChooseTemplate } from './ChooseTemplate';
-import { CustomOffer } from './CustomOffer';
+import { OfferDetails } from './OfferDetails';
 import { Summary } from './Summary';
 import { getCapitalizedStr } from '../../../../utils';
 
 /** CreateOfferContext shared within 4 steps */
 export interface IOffer {
-  deploymentId?: string;
-  templateId?: string;
-  totalRewards?: string;
-  indexerCap?: number;
-  minimumIndexedHeight?: string;
-  expireDate?: Date;
+  deploymentId: string;
+  templateId: string;
+  rewardPerIndexer: number;
+  totalDeposit: string;
+  indexerCap: number;
+  minimumIndexedHeight: number;
+  expireDate: Date;
+  projectId: string;
 }
 
+const initialOffer = {
+  deploymentId: '',
+  templateId: '',
+  rewardPerIndexer: 0,
+  totalDeposit: '0',
+  indexerCap: 0,
+  minimumIndexedHeight: 1,
+  expireDate: new Date(),
+  projectId: '',
+};
+
 export interface CreateOfferContextType {
-  offer: IOffer | undefined;
+  offer: IOffer;
   updateCreateOffer: (offer: IOffer) => void;
   totalSteps: number;
   curStep: number;
@@ -37,10 +50,14 @@ export const CreateOfferContext = React.createContext<CreateOfferContextType | n
 
 /** CreateOfferContext end */
 
+export enum StepType {
+  BACK,
+  NEXT,
+}
 interface IStepButtons {
   totalSteps: number;
   curStep: number;
-  onStepChange: (step: number) => void;
+  onStepChange: (step: number, type: StepType) => void;
   disabled?: boolean;
 }
 
@@ -51,18 +68,16 @@ export const StepButtons: React.VFC<IStepButtons> = ({ totalSteps, curStep, disa
   return (
     <div className={`${styles.stepButtons} ${isFirstStep ? 'flex-end' : 'flex-between'}`}>
       {!isFirstStep && (
-        <Button onClick={() => onStepChange(curStep - 1)} type="text">
+        <Button onClick={() => onStepChange(curStep - 1, StepType.BACK)} type="text">
           <div className={styles.back}>
             <IoChevronBack /> <Typography.Text>{t('general.back')}</Typography.Text>
           </div>
         </Button>
       )}
 
-      {isLastStep && (
-        <Button onClick={() => onStepChange(curStep + 1)} disabled={disabled}>
-          {getCapitalizedStr(t('general.next'))}
-        </Button>
-      )}
+      <Button onClick={() => onStepChange(curStep + 1, StepType.NEXT)} disabled={disabled}>
+        {getCapitalizedStr(t('general.next'))}
+      </Button>
     </div>
   );
 };
@@ -77,7 +92,7 @@ const steps = [
 
 export const CreateOffer: React.VFC = () => {
   const { t } = useTranslation();
-  const [offer, setOffer] = React.useState<IOffer>();
+  const [offer, setOffer] = React.useState<IOffer>(initialOffer);
   const [curStep, setCurStep] = React.useState<number>(0);
 
   const updateCreateOffer = (offer: IOffer) => setOffer(offer);
@@ -100,7 +115,7 @@ export const CreateOffer: React.VFC = () => {
           <CreateOfferContext.Provider value={{ offer, updateCreateOffer, curStep, onStepChange, totalSteps }}>
             {curStep === 0 && <SelectDeployment />}
             {curStep === 1 && <ChooseTemplate />}
-            {curStep === 2 && <CustomOffer />}
+            {curStep === 2 && <OfferDetails />}
             {curStep === 3 && <Summary />}
           </CreateOfferContext.Provider>
         </div>
