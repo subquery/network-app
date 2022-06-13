@@ -383,17 +383,17 @@ const en = {
         step_2: 'Set Details',
         step_3: 'Confirm',
       },
-      step_1: {
+      step_0: {
         title: 'Step 1: Find the SubQuery Project Deployment ID for this offer',
         description:
           'You can copy & paste the deployment ID of your desired project by entering their project detail page from  <1>explorer<1>.',
         search: 'Search deployment ID',
         selectedId: 'Selected ID',
       },
-      step_2: {
+      step_1: {
         title: 'Step 2: Choose an offer template from below',
       },
-      step_3: {
+      step_2: {
         title: 'Step 3: Set the details for your offer',
         rewardPerIndexer: 'Total rewards per indexer',
         indexerCap: 'Indexer cap',
@@ -402,6 +402,12 @@ const en = {
         expireDate: 'Expiration time (Timezone: UTC)',
         cancelWarning:
           'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
+      },
+      step_3: {
+        title: 'Step 4: Confirm offer summary',
+        deploymentId: 'Deployment ID',
+        offerTemplate: 'Offer Template',
+        detailSettings: 'Detail settings',
       },
     },
     general: {

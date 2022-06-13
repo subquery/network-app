@@ -13,12 +13,37 @@ import { useDeploymentQuery } from '../../../../../containers';
 import { useProject } from '../../../../../hooks';
 import { renderAsync } from '../../../../../utils';
 
+export const DeploymentProject: React.VFC<{ projectId: string; title?: string }> = ({ title, projectId }) => {
+  const { t } = useTranslation();
+  const asyncProject = useProject(projectId);
+  return (
+    <div className={styles.deploymentInfoContainer}>
+      <Typography.Title level={5}>{title ?? t('myOffers.step_0.selectedId')}</Typography.Title>
+      {renderAsync(asyncProject, {
+        loading: () => <Spinner />,
+        error: (error) => <p>{`Failed to load project: ${error.message}`}</p>,
+        data: (project) => {
+          if (!project) {
+            return <></>;
+          }
+
+          return (
+            <div className={styles.deploymentInfo}>
+              <DeploymentInfo deploymentId={project.deploymentId} project={project.metadata} />
+            </div>
+          );
+        },
+      })}
+    </div>
+  );
+};
+
 const Description = () => {
   const history = useHistory();
   return (
     <div className={styles.description}>
       <Typography.Text type="secondary">
-        <Trans i18nKey="myOffers.step_1.description">
+        <Trans i18nKey="myOffers.step_0.description">
           You can copy & paste the deployment ID of your desired project by entering their project detail page from
           <Button type="link" onClick={() => history.push(EXPLORER_ROUTE)} className={styles.descriptionBtn}>
             explorer
@@ -46,11 +71,11 @@ export const SelectDeployment: React.VFC = () => {
   const SearchAddress = () => (
     <SearchInput
       onSearch={(value) => setSearchDeployment(value)}
-      onChange={(e) => !e.target.value && setSearchDeployment(undefined)}
+      onChange={(e) => !e.target.value && setSearchDeployment('')}
       defaultValue={searchDeployment || createOfferContext?.offer?.deploymentId}
       loading={sortedDeployment.loading}
       emptyResult={!searchedDeployment}
-      placeholder={t('myOffers.step_1.search')}
+      placeholder={t('myOffers.step_0.search')}
     />
   );
 
@@ -61,36 +86,17 @@ export const SelectDeployment: React.VFC = () => {
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, totalSteps, updateCreateOffer, offer } = createOfferContext;
   const onNext = (step: number) => {
-    updateCreateOffer({ ...offer, deploymentId: searchedDeployment?.id });
+    updateCreateOffer({
+      ...offer,
+      deploymentId: searchedDeployment?.id ?? '',
+      projectId: searchedDeployment?.projectId ?? '',
+    });
     onStepChange(step);
-  };
-
-  const DeploymentProject = ({ projectId }: { projectId: string }) => {
-    const asyncProject = useProject(projectId);
-    return (
-      <div className={styles.deploymentInfoContainer}>
-        <Typography.Title level={5}>{t('myOffers.step_1.selectedId')}</Typography.Title>
-        {renderAsync(asyncProject, {
-          loading: () => <Spinner />,
-          error: (error) => <p>{`Failed to load project: ${error.message}`}</p>,
-          data: (project) => {
-            if (!project) {
-              return <></>;
-            }
-            return (
-              <div className={styles.deploymentInfo}>
-                <DeploymentInfo deploymentId={project.deploymentId} project={project.metadata} />{' '}
-              </div>
-            );
-          },
-        })}
-      </div>
-    );
   };
 
   return (
     <div>
-      <Typography.Title level={4}>{t('myOffers.step_1.title')}</Typography.Title>
+      <Typography.Title level={4}>{t('myOffers.step_0.title')}</Typography.Title>
       <Description />
       <div className={styles.searchDeployment}>
         <SearchAddress />

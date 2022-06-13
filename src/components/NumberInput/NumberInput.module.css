@@ -1,14 +1,14 @@
 .input {
-  margin-top: 0.4rem;
+  margin: 1rem 0;
 }
 
 .inputTitle {
-  margin: 6px 0;
-  color: var(--gray700);
+  color: var(--gray900);
 }
 
 .inputNumber {
   width: 100% !important;
+  border-radius: 4px !important;
 }
 
 .prefix {

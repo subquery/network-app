@@ -9,7 +9,6 @@ import { usePlanTemplates } from '../../../../../containers';
 import { mapAsync, notEmpty, renderAsync } from '../../../../../utils';
 import { getPlanTemplateColumns } from '../../../Plans/Create';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
-import styles from './ChooseTemplate.module.css';
 
 export const ChooseTemplate: React.VFC = () => {
   const { t } = useTranslation();
@@ -17,13 +16,13 @@ export const ChooseTemplate: React.VFC = () => {
 
   const createOfferContext = React.useContext(CreateOfferContext);
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<string | undefined>(
-    createOfferContext?.offer?.templateId,
+    createOfferContext?.offer?.templateId ?? '',
   );
 
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, totalSteps, offer, updateCreateOffer } = createOfferContext;
   const onNext = (step: number) => {
-    updateCreateOffer({ ...offer, templateId: selectedTemplateId });
+    updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '' });
     onStepChange(step);
   };
 
@@ -31,9 +30,9 @@ export const ChooseTemplate: React.VFC = () => {
 
   return (
     <div>
-      <Typography.Title level={4}>{t('myOffers.steps.step_1')}</Typography.Title>
+      <Typography.Title level={4}>{t('myOffers.step_1.title')}</Typography.Title>
 
-      <div className={styles.container}>
+      <div>
         {renderAsync(
           mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty), asyncTemplates),
           {
