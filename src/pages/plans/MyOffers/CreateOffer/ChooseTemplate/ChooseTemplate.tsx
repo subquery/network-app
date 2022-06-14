@@ -20,7 +20,7 @@ export const ChooseTemplate: React.VFC = () => {
   );
 
   if (!createOfferContext) return <></>;
-  const { curStep, onStepChange, totalSteps, offer, updateCreateOffer } = createOfferContext;
+  const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
   const onNext = (step: number) => {
     updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '' });
     onStepChange(step);
@@ -59,7 +59,7 @@ export const ChooseTemplate: React.VFC = () => {
           },
         )}
 
-        <StepButtons totalSteps={totalSteps} curStep={curStep} onStepChange={onNext} disabled={!selectedTemplateId} />
+        <StepButtons curStep={curStep} onStepChange={onNext} disabled={!selectedTemplateId} />
       </div>
     </div>
   );

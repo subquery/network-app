@@ -96,7 +96,6 @@ export const Summary: React.VFC = () => {
         </div>
 
         <StepButtons
-          totalSteps={totalSteps}
           curStep={curStep}
           onStepChange={(step, stepType) => {
             if (stepType === StepType.NEXT) {

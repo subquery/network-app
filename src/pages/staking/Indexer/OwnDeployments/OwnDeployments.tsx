@@ -27,7 +27,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
       dataIndex: 'deploymentId',
       width: '65%',
       render: (deploymentId: string, record: any) => (
-        <DeploymentInfo deploymentId={deploymentId} project={record.projectMeta} />
+        <DeploymentInfo deploymentId={deploymentId} project={record.projectMeta} deploymentVersion={record.version} />
       ),
     },
     {

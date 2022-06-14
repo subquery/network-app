@@ -55,16 +55,14 @@ export enum StepType {
   NEXT,
 }
 interface IStepButtons {
-  totalSteps: number;
   curStep: number;
   onStepChange: (step: number, type: StepType) => void;
   disabled?: boolean;
 }
 
-export const StepButtons: React.VFC<IStepButtons> = ({ totalSteps, curStep, disabled = false, onStepChange }) => {
+export const StepButtons: React.VFC<IStepButtons> = ({ curStep, disabled = false, onStepChange }) => {
   const { t } = useTranslation();
   const isFirstStep = curStep === 0;
-  const isLastStep = curStep < totalSteps - 1;
   return (
     <div className={`${styles.stepButtons} ${isFirstStep ? 'flex-end' : 'flex-between'}`}>
       {!isFirstStep && (

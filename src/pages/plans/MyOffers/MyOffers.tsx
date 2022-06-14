@@ -9,6 +9,8 @@ import styles from './MyOffers.module.css';
 import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
 import { Button } from '../../../components/Button';
+import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useWeb3 } from '../../../containers';
+import { MyOffersTable } from './MyOfferTable';
 
 const OFFERS_ROUTE = '/plans/my-offers';
 const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
@@ -22,7 +24,7 @@ const buttonLinks = [
   { label: i18next.t('myOffers.expired'), link: EXPIRED_OFFERS },
 ];
 
-export const OfferHeader = () => {
+export const OfferHeader: React.VFC = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -41,6 +43,15 @@ export const OfferHeader = () => {
 };
 
 export const MyOffers: React.VFC = () => {
+  const { account } = useWeb3();
+  const MyOffers = ({ queryFn }: { queryFn: typeof useOwnOpenOffers }) => {
+    return (
+      <div className="contentContainer">
+        <MyOffersTable queryFn={queryFn} queryParams={{ consumer: account || '' }} />
+      </div>
+    );
+  };
+
   return (
     <Switch>
       <Route
@@ -49,7 +60,7 @@ export const MyOffers: React.VFC = () => {
         component={() => (
           <>
             <OfferHeader />
-            <div>OPEN_OFFERS</div>
+            <MyOffers queryFn={useOwnOpenOffers} />
           </>
         )}
       />
@@ -59,7 +70,7 @@ export const MyOffers: React.VFC = () => {
         component={() => (
           <>
             <OfferHeader />
-            <div>CLOSE_OFFERS</div>
+            <MyOffers queryFn={useOwnFinishedOffers} />
           </>
         )}
       />
@@ -69,7 +80,7 @@ export const MyOffers: React.VFC = () => {
         component={() => (
           <>
             <OfferHeader />
-            <div>CLOSE_OFFERS</div>
+            <MyOffers queryFn={useOwnExpiredOffers} />
           </>
         )}
       />

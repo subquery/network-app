@@ -26,7 +26,7 @@ export const OfferDetails: React.VFC = () => {
   const createOfferContext = React.useContext(CreateOfferContext);
 
   if (!createOfferContext) return <></>;
-  const { curStep, onStepChange, totalSteps, offer, updateCreateOffer } = createOfferContext;
+  const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
 
   const handleSubmitFrom = (offerDetails: OfferDetailsFrom) => {
     const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = offerDetails;
@@ -97,7 +97,6 @@ export const OfferDetails: React.VFC = () => {
                 </div>
                 <div>
                   <StepButtons
-                    totalSteps={totalSteps}
                     curStep={curStep}
                     onStepChange={(step: number, stepType: StepType) => {
                       if (stepType === StepType.NEXT) {
