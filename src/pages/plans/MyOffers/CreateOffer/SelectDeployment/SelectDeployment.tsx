@@ -13,7 +13,11 @@ import { useDeploymentQuery } from '../../../../../containers';
 import { useProject } from '../../../../../hooks';
 import { renderAsync } from '../../../../../utils';
 
-export const DeploymentProject: React.VFC<{ projectId: string; title?: string }> = ({ title, projectId }) => {
+export const DeploymentProject: React.VFC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
+  title,
+  projectId,
+  deploymentVersion,
+}) => {
   const { t } = useTranslation();
   const asyncProject = useProject(projectId);
   return (
@@ -29,7 +33,11 @@ export const DeploymentProject: React.VFC<{ projectId: string; title?: string }>
 
           return (
             <div className={styles.deploymentInfo}>
-              <DeploymentInfo deploymentId={project.deploymentId} project={project.metadata} />
+              <DeploymentInfo
+                deploymentId={project.deploymentId}
+                project={project.metadata}
+                deploymentVersion={deploymentVersion}
+              />
             </div>
           );
         },
@@ -100,13 +108,10 @@ export const SelectDeployment: React.VFC = () => {
       <Description />
       <div className={styles.searchDeployment}>
         <SearchAddress />
-        {searchedDeployment?.projectId && <DeploymentProject projectId={searchedDeployment?.projectId} />}
-        <StepButtons
-          totalSteps={totalSteps}
-          curStep={curStep}
-          onStepChange={onNext}
-          disabled={!searchedDeployment?.projectId}
-        />
+        {searchedDeployment?.projectId && (
+          <DeploymentProject projectId={searchedDeployment?.projectId} deploymentVersion={searchedDeployment.version} />
+        )}
+        <StepButtons curStep={curStep} onStepChange={onNext} disabled={!searchedDeployment?.projectId} />
       </div>
     </div>
   );

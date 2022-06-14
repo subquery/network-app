@@ -374,9 +374,21 @@ const en = {
     },
     myOffers: {
       open: 'Open',
-      close: 'Close',
+      close: 'Closed',
       expired: 'Expired',
       createOffer: 'Create an Offer',
+      non: 'There is no offers available.',
+      table: {
+        versionDeployment: 'Version - Deployment ID',
+        indexerAmount: 'No. of indexers',
+        accepted: 'Accepted',
+        cap: 'Cap',
+        dailyRewardsPerIndexer: 'Daily Rewards Per indexer',
+        period: 'Period',
+        expired: 'Expire',
+        unspendBalance: 'Unspent balance',
+        amount: 'Amount',
+      },
       steps: {
         step_0: 'Choose Deployment ID',
         step_1: 'Choose Template',

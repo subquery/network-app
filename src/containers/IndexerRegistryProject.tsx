@@ -14,6 +14,10 @@ import {
   GetSpecificServiceAgreementsVariables,
   GetSpecificServiceAgreements,
 } from '../__generated__/registry/GetSpecificServiceAgreements';
+import { GetOwnOpenOffersVariables, GetOwnOpenOffers } from '../__generated__/registry/GetOwnOpenOffers';
+import { GetOwnFinishedOffersVariables, GetOwnFinishedOffers } from '../__generated__/registry/GetOwnFinishedOffers';
+import { GetOwnExpiredOffersVariables, GetOwnExpiredOffers } from '../__generated__/registry/GetOwnExpiredOffers';
+import { GetAllOpenOffersVariables, GetAllOpenOffers } from '../__generated__/registry/GetAllOpenOffers';
 import { GetAllDelegationsVariables, GetAllDelegations } from '../__generated__/registry/GetAllDelegations';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
 import { GetDelegationsVariables, GetDelegations } from '../__generated__/registry/GetDelegations';
@@ -329,6 +333,87 @@ const GET_INDEXER_REWARDS = gql`
   }
 `;
 
+const OFFER_FIELDS = gql`
+  fragment OfferFields on Offer {
+    id
+    consumer
+    deploymentId
+    planTemplate {
+      id
+      period
+      dailyReqCap
+      rateLimit
+    }
+    deposit
+    minimumAcceptHeight
+    expireDate
+    limit # indexer cap
+    accepted # accepted indexer amount
+    reachLimit # whether reach limit
+    withdrawn # withdraw by cancel event
+  }
+`;
+
+const GET_OWN_OPEN_OFFERS = gql`
+  ${OFFER_FIELDS}
+  query GetOwnOpenOffers($consumer: String!, $now: Datetime!) {
+    offers(
+      filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
+      orderBy: EXPIRE_DATE_ASC
+      first: 20
+    ) {
+      nodes {
+        ...OfferFields
+      }
+    }
+  }
+`;
+
+const GET_OWN_FINISHED_OFFERS = gql`
+  ${OFFER_FIELDS}
+  query GetOwnFinishedOffers($consumer: String!, $now: Datetime!) {
+    offers(
+      filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: true } }
+      orderBy: EXPIRE_DATE_ASC
+      first: 20
+    ) {
+      nodes {
+        ...OfferFields
+      }
+    }
+  }
+`;
+
+const GET_OWN_EXPIRED_OFFERS = gql`
+  ${OFFER_FIELDS}
+  query GetOwnExpiredOffers($consumer: String!, $now: Datetime!) {
+    offers(
+      filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now }, reachLimit: { equalTo: true } }
+      orderBy: EXPIRE_DATE_ASC
+      first: 20
+    ) {
+      nodes {
+        ...OfferFields
+      }
+    }
+  }
+`;
+
+const GET_ALL_OPEN_OFFERS = gql`
+  ${OFFER_FIELDS}
+  query GetAllOpenOffers($now: Datetime!) {
+    offers(
+      filter: { expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
+      orderBy: EXPIRE_DATE_ASC
+      first: 20
+    ) {
+      nodes {
+        ...OfferFields
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params, pollInterval: 20000 });
 }
@@ -402,6 +487,30 @@ export function useSpecificServiceAgreements(
       variables: params,
     },
   );
+}
+
+export function useOwnOpenOffers(params: GetOwnOpenOffersVariables): QueryResult<GetOwnOpenOffers> {
+  return useQuery<GetOwnOpenOffers, GetOwnOpenOffersVariables>(GET_OWN_OPEN_OFFERS, {
+    variables: params,
+  });
+}
+
+export function useOwnFinishedOffers(params: GetOwnFinishedOffersVariables): QueryResult<GetOwnFinishedOffers> {
+  return useQuery<GetOwnFinishedOffers, GetOwnFinishedOffersVariables>(GET_OWN_FINISHED_OFFERS, {
+    variables: params,
+  });
+}
+
+export function useOwnExpiredOffers(params: GetOwnExpiredOffersVariables): QueryResult<GetOwnExpiredOffers> {
+  return useQuery<GetOwnExpiredOffers, GetOwnExpiredOffersVariables>(GET_OWN_EXPIRED_OFFERS, {
+    variables: params,
+  });
+}
+
+export function useAllOpenOffers(params: GetAllOpenOffersVariables): QueryResult<GetAllOpenOffers> {
+  return useQuery<GetAllOpenOffers, GetAllOpenOffersVariables>(GET_OWN_OPEN_OFFERS, {
+    variables: params,
+  });
 }
 
 export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
