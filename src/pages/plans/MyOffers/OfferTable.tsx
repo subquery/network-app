@@ -7,7 +7,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Table, TableProps, Typography, Tooltip } from 'antd';
-import { Copy, DeploymentMeta, TableText } from '../../../components';
+import { Copy, DeploymentInfo, DeploymentMeta, TableText } from '../../../components';
 import {
   useAllOpenOffers,
   useOwnExpiredOffers,
@@ -15,7 +15,14 @@ import {
   useOwnOpenOffers,
   useWeb3,
 } from '../../../containers';
-import { convertBigNumberToNumber, formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import {
+  convertBigNumberToNumber,
+  formatEther,
+  formatSeconds,
+  mapAsync,
+  notEmpty,
+  renderAsyncArray,
+} from '../../../utils';
 import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
@@ -32,7 +39,8 @@ const getColumns = () => {
     {
       dataIndex: 'deploymentId',
       title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
-      render: (deploymentId: string) => <DeploymentMeta deploymentId={deploymentId} />,
+      width: 100,
+      render: (deploymentId: string) => <DeploymentInfo deploymentId={deploymentId} />,
     },
   ];
 
@@ -53,9 +61,9 @@ const getColumns = () => {
       ],
     },
     {
-      dataIndex: 'period',
+      dataIndex: ['planTemplate', 'period'],
       title: i18next.t('myOffers.table.period').toUpperCase(),
-      render: (period) => <TableText content={convertBigNumberToNumber(period)} />,
+      render: (period) => <TableText content={formatSeconds(convertBigNumberToNumber(period))} />,
     },
     {
       dataIndex: 'deposit',

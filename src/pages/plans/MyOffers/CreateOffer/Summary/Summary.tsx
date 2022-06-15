@@ -3,6 +3,7 @@
 
 import { assert } from '@polkadot/util';
 import { Typography } from 'antd';
+import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
@@ -20,8 +21,9 @@ export const Summary: React.VFC = () => {
   const createOfferContext = React.useContext(CreateOfferContext);
 
   if (!createOfferContext) return <></>;
-  const { curStep, onStepChange, totalSteps, offer } = createOfferContext;
+  const { curStep, onStepChange, offer } = createOfferContext;
 
+  // TODO: IncreaseAllowance check
   // TODO: Temporary handle contract interaction here
   const handleSubmit = async () => {
     const contracts = await pendingContracts;
@@ -45,7 +47,7 @@ export const Summary: React.VFC = () => {
         templateId,
         deposit,
         limit,
-        BigInt(minimumIndexedHeight),
+        BigNumber.from(minimumIndexedHeight),
         expireDate,
       );
 

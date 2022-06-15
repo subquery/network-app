@@ -26,7 +26,7 @@ import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__
 import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
-import { secondsToDays, secondsToDhms } from '../../../../utils/dateFormatters';
+import { formatSeconds, secondsToDhms } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
 
 export const getPlanTemplateColumns = (
@@ -41,9 +41,7 @@ export const getPlanTemplateColumns = (
   {
     dataIndex: 'period',
     title: i18next.t('plans.headers.period').toUpperCase(),
-    render: (period: string) => (
-      <TableText content={i18next.t('general.day', { count: secondsToDays(convertBigNumberToNumber(period)) })} />
-    ),
+    render: (period: string) => <TableText content={formatSeconds(convertBigNumberToNumber(period))} />,
   },
   {
     dataIndex: 'dailyReqCap',
