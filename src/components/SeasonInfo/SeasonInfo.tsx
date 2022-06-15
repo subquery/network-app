@@ -17,7 +17,7 @@ const ConButton: React.VFC<{ season: number; viewPrev: () => void; viewCurr: () 
   }
 };
 
-export const SeasonInfo: React.VFC<{ season: number; viewPrev: () => void; viewCurr: () => void }> = ({
+export const SeasonInfo: React.VFC<{ season: number; viewPrev: any; viewCurr: any }> = ({
   season,
   viewPrev,
   viewCurr,
