@@ -10,3 +10,8 @@ export const secondsToDhms = (seconds: number): string => {
 export const secondsToDays = (seconds: number): number => {
   return Number.parseFloat(moment.duration(seconds, 'seconds').asDays().toPrecision(4));
 };
+
+// TODO: Improve as designer require
+export const formatSeconds = (seconds: number): string => {
+  return moment.utc(moment.duration(seconds, 'seconds').asMilliseconds()).format('hh [hours] mm [mins] ss [secs]');
+};

@@ -16,7 +16,7 @@ import Copy from '../Copy';
 import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 
 type Props = {
-  project: ProjectMetadata;
+  project?: ProjectMetadata;
   deploymentId?: string;
   deploymentVersion?: string;
 };
@@ -29,14 +29,23 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
     return await getDeploymentMetadata(catSingle, deploymentVersion);
   }, [deploymentVersion, catSingle]);
 
+  const versionHeader = deploymentMeta.data?.version
+    ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
+    : t('projects.deploymentId');
+
   return (
     <div className={styles.projectInfo}>
       <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
       <div className={styles.projectTextInfo}>
-        <Typography variant="large">{project.name}</Typography>
-        <Typography variant="small" className={styles.text}>{`${
-          deploymentMeta.data?.version && deploymentMeta.data?.version + ` - `
-        }${t('projects.deploymentId')}: ${deploymentId ?? '-'}`}</Typography>
+        {project?.name && <Typography variant="large">{project?.name}</Typography>}
+        <div className={styles.deployment}>
+          <Typography variant="small" className={styles.text}>
+            {versionHeader}
+          </Typography>
+          <Typography variant="small" className={styles.text}>
+            {deploymentId ?? '-'}
+          </Typography>
+        </div>
       </div>
     </div>
   );

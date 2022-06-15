@@ -36,11 +36,11 @@ export const OfferDetails: React.VFC = () => {
   };
 
   const initialOfferDetails = {
-    rewardPerIndexer: 1,
-    indexerCap: 1,
-    totalDeposit: (1 * 1).toString(),
-    minimumIndexedHeight: 1,
-    expireDate: moment().toDate(),
+    rewardPerIndexer: offer.rewardPerIndexer ?? 1,
+    indexerCap: offer.indexerCap ?? 1,
+    totalDeposit: offer.totalDeposit ?? (1 * 1).toString(),
+    minimumIndexedHeight: offer.minimumIndexedHeight ?? 1,
+    expireDate: offer.expireDate ?? moment().toDate(),
   };
 
   return (
