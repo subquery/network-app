@@ -38,7 +38,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
       <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
       <div className={styles.projectTextInfo}>
         {project?.name && <Typography variant="large">{project?.name}</Typography>}
-        <div className={styles.deployment}>
+        <div className={project?.name ? '' : styles.deployment}>
           <Typography variant="small" className={styles.text}>
             {versionHeader}
           </Typography>
