@@ -362,6 +362,7 @@ const GET_OWN_OPEN_OFFERS = gql`
       orderBy: EXPIRE_DATE_ASC
       first: 20
     ) {
+      totalCount
       nodes {
         ...OfferFields
       }
@@ -377,6 +378,7 @@ const GET_OWN_FINISHED_OFFERS = gql`
       orderBy: EXPIRE_DATE_ASC
       first: 20
     ) {
+      totalCount
       nodes {
         ...OfferFields
       }
@@ -392,6 +394,7 @@ const GET_OWN_EXPIRED_OFFERS = gql`
       orderBy: EXPIRE_DATE_ASC
       first: 20
     ) {
+      totalCount
       nodes {
         ...OfferFields
       }
@@ -407,6 +410,7 @@ const GET_ALL_OPEN_OFFERS = gql`
       orderBy: EXPIRE_DATE_ASC
       first: 20
     ) {
+      totalCount
       nodes {
         ...OfferFields
       }
@@ -508,8 +512,9 @@ export function useOwnExpiredOffers(params: GetOwnExpiredOffersVariables): Query
 }
 
 export function useAllOpenOffers(params: GetAllOpenOffersVariables): QueryResult<GetAllOpenOffers> {
-  return useQuery<GetAllOpenOffers, GetAllOpenOffersVariables>(GET_OWN_OPEN_OFFERS, {
+  return useQuery<GetAllOpenOffers, GetAllOpenOffersVariables>(GET_ALL_OPEN_OFFERS, {
     variables: params,
+    pollInterval: 20000,
   });
 }
 
