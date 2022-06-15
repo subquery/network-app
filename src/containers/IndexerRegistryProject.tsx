@@ -337,7 +337,12 @@ const OFFER_FIELDS = gql`
   fragment OfferFields on Offer {
     id
     consumer
-    deploymentId
+    deployment {
+      id
+      project {
+        metadata
+      }
+    }
     planTemplate {
       id
       period

@@ -38,10 +38,12 @@ const getColumns = () => {
       render: (_: string, __: Offers, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'deploymentId',
+      dataIndex: ['deployment', 'id'],
       title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
       width: 100,
-      render: (deploymentId: string) => <DeploymentInfo deploymentId={deploymentId} />,
+      render: (deploymentId: string, offer: Offers) => (
+        <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
+      ),
     },
   ];
 
@@ -133,7 +135,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                   </div>
                 )}
                 <div>
-                  <Typography.Title level={4}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
+                  <Typography.Title level={3}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
                   <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1000 }} rowKey={'id'} />
                 </div>
               </div>
