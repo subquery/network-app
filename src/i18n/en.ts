@@ -388,6 +388,8 @@ const en = {
         expired: 'Expire',
         unspendBalance: 'Unspent balance',
         amount: 'Amount',
+        totalOpenOffer: 'You have {{count}} open offer',
+        totalOpenOffer_other: 'You have {{count}} open offers',
       },
       steps: {
         step_0: 'Choose Deployment ID',
