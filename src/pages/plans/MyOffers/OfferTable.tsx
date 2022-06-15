@@ -26,6 +26,7 @@ import {
 import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
+import styles from './OfferTable.module.css';
 
 // TODO: Custom cols based on offer status
 const getColumns = () => {
@@ -81,6 +82,7 @@ interface MyOfferTableProps {
   description?: string;
 }
 
+// TODO: update totalCount text via design
 export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -126,7 +128,10 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
             return (
               <div>
                 {description && totalCount > 0 && <Typography.Text>{description}</Typography.Text>}
-                <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1500 }} rowKey={'id'} />
+                <div className={styles.table}>
+                  <Typography.Title level={4}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
+                  <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1000 }} rowKey={'id'} />
+                </div>
               </div>
             );
           },
