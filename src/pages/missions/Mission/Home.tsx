@@ -12,6 +12,9 @@ import { useTranslation } from 'react-i18next';
 import Missions from './Missions/Missions';
 import { renderAsync } from '../../../utils';
 import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
+import { CURR_SEASON, SEASONS } from '../constants';
+import { useState } from 'react';
+import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -28,6 +31,10 @@ const Home: React.VFC = (children) => {
   const { t } = useTranslation();
   const history = useHistory();
   const indexer = useIndexerChallenges({ indexerId: account ?? '' });
+  const [season, setSeason] = useState(CURR_SEASON);
+
+  const viewPrev = () => setSeason(season - 1);
+  const viewCurr = () => setSeason(CURR_SEASON);
 
   const indexerUrl = '/missions/my-missions';
 
@@ -70,6 +77,7 @@ const Home: React.VFC = (children) => {
           <div className={styles.header}>{t('header.missions')}</div>
           <CurEra />
         </div>
+        <br />
         {renderAsync(indexer, {
           loading: () => <Spinner />,
           error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
@@ -78,11 +86,12 @@ const Home: React.VFC = (children) => {
               <>
                 <div className={styles.profile}>
                   <div className={styles.pointsSummary}>
-                    <h4>Total Points</h4>
-                    <h2>
+                    <h3>Total Points</h3>
+                    <h1>
                       <b>{data?.indexerChallenge?.singlePoints} points</b>
-                    </h2>
+                    </h1>
                   </div>
+                  <SeasonProgress timePeriod={SEASONS[season]} />
                 </div>
                 <div>
                   <div className={styles.tabList}>
@@ -93,7 +102,14 @@ const Home: React.VFC = (children) => {
                       </div>
                     ))}
                   </div>
-                  {curTab === SectionTabs.Indexing && <Missions indexer={indexer?.data?.indexerChallenge} />}
+                  {curTab === SectionTabs.Indexing && (
+                    <Missions
+                      indexer={indexer?.data?.indexerChallenge}
+                      season={season}
+                      viewPrev={viewPrev}
+                      viewCurr={viewCurr}
+                    />
+                  )}
                   {curTab === SectionTabs.Delegating && (
                     <div className={styles.container}>
                       <h2>Coming Soon</h2>
