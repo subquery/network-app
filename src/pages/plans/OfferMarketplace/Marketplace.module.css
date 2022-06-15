@@ -1,9 +1,14 @@
-.tabs {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.container {
+  height: 100%;
 }
 
-.create {
-  height: 40px;
+.content {
+  background: white;
+  padding: 2rem 1rem;
+  overflow: scroll;
+  min-height: 80%;
+}
+
+.offers {
+  margin: 1rem 0;
 }

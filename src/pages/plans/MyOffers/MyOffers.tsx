@@ -10,7 +10,7 @@ import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
 import { Button } from '../../../components/Button';
 import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useWeb3 } from '../../../containers';
-import { MyOffersTable } from './MyOfferTable';
+import { OfferTable } from './OfferTable';
 
 const OFFERS_ROUTE = '/plans/my-offers';
 const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
@@ -47,7 +47,7 @@ export const MyOffers: React.VFC = () => {
   const MyOffers = ({ queryFn }: { queryFn: typeof useOwnOpenOffers }) => {
     return (
       <div className="contentContainer">
-        <MyOffersTable queryFn={queryFn} queryParams={{ consumer: account || '' }} />
+        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} />
       </div>
     );
   };

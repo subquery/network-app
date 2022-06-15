@@ -422,6 +422,12 @@ const en = {
         detailSettings: 'Detail settings',
       },
     },
+    OfferMarket: {
+      header: 'Offer Marketplace',
+      viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
+      totalOffer: 'Total {{count}} offer',
+      totalOffer_other: 'Total {{count}} offers',
+    },
     general: {
       current: 'current',
       next: 'next',

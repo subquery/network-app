@@ -8,12 +8,19 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Table, TableProps, Typography, Tooltip } from 'antd';
 import { Copy, DeploymentMeta, TableText } from '../../../components';
-import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useWeb3 } from '../../../containers';
+import {
+  useAllOpenOffers,
+  useOwnExpiredOffers,
+  useOwnFinishedOffers,
+  useOwnOpenOffers,
+  useWeb3,
+} from '../../../containers';
 import { convertBigNumberToNumber, formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 
+// TODO: Custom cols based on offer status
 const getColumns = () => {
   const idColumns: TableProps<Offers>['columns'] = [
     {
@@ -61,11 +68,12 @@ const getColumns = () => {
 };
 
 interface MyOfferTableProps {
-  queryFn: typeof useOwnOpenOffers | typeof useOwnFinishedOffers | typeof useOwnExpiredOffers;
+  queryFn: typeof useOwnOpenOffers | typeof useOwnFinishedOffers | typeof useOwnExpiredOffers | typeof useAllOpenOffers;
   queryParams?: { consumer?: string };
+  description?: string;
 }
 
-export const MyOffersTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams }) => {
+export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();
@@ -74,10 +82,12 @@ export const MyOffersTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryPara
   const sortedParams = { consumer: queryParams?.consumer ?? '', now };
   const offers = queryFn(sortedParams);
   const [data, setData] = React.useState(offers);
+  const totalCount = data?.data?.offers?.totalCount ?? 0;
 
   //   const sortedCols = pathname === ONGOING_PLANS ? [...columns, playgroundCol] : columns;
   const sortedCols = getColumns();
 
+  // TODO: share same pattern with saTable agreement, think of reusable
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -96,8 +106,6 @@ export const MyOffersTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryPara
     }
   }, [offers, offers.loading]);
 
-  console.log('data', data);
-
   return (
     <>
       {renderAsyncArray(
@@ -106,9 +114,13 @@ export const MyOffersTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryPara
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load offers: ${e}`}</Typography.Text>,
           empty: () => <EmptyList i18nKey={'myOffers.non'} />,
-          data: (data) => {
-            return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
-            // return <div>MyOfferTable</div>;
+          data: (sortedOffer) => {
+            return (
+              <div>
+                {description && totalCount > 0 && <Typography.Text>{description}</Typography.Text>}
+                <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1500 }} rowKey={'id'} />
+              </div>
+            );
           },
         },
       )}
