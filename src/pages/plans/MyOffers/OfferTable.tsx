@@ -102,7 +102,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().toDate());
-    }, 300000);
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -127,8 +127,12 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
           data: (sortedOffer) => {
             return (
               <div>
-                {description && totalCount > 0 && <Typography.Text>{description}</Typography.Text>}
-                <div className={styles.table}>
+                {description && totalCount > 0 && (
+                  <div className={styles.description}>
+                    <Typography.Text>{description}</Typography.Text>
+                  </div>
+                )}
+                <div>
                   <Typography.Title level={4}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
                   <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1000 }} rowKey={'id'} />
                 </div>

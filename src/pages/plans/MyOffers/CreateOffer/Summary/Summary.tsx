@@ -8,15 +8,22 @@ import { parseEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router';
 import { SummaryList } from '../../../../../components';
+import {
+  NotificationType,
+  openNotificationWithIcon,
+} from '../../../../../components/TransactionModal/TransactionModal';
 import { useContracts } from '../../../../../containers';
-import { cidToBytes32 } from '../../../../../utils';
+import { cidToBytes32, parseError } from '../../../../../utils';
+import { OPEN_OFFERS } from '../../MyOffers';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
 import styles from './Summary.module.css';
 
 export const Summary: React.VFC = () => {
   const { t } = useTranslation();
+  const history = useHistory();
   const pendingContracts = useContracts();
   const createOfferContext = React.useContext(CreateOfferContext);
 
@@ -42,7 +49,7 @@ export const Summary: React.VFC = () => {
     const expireDate = moment(expired).unix(); // to seconds
 
     try {
-      const result = await contracts.purchaseOfferMarket.createPurchaseOffer(
+      await contracts.purchaseOfferMarket.createPurchaseOffer(
         cidToBytes32(deploymentId),
         templateId,
         deposit,
@@ -51,9 +58,20 @@ export const Summary: React.VFC = () => {
         expireDate,
       );
 
-      console.log('handleOfferCreate result', result);
+      openNotificationWithIcon({
+        type: NotificationType.SUCCESS,
+        title: 'Offer created!',
+        description: t('status.changeValidIn15s'),
+      });
+
+      history.push(OPEN_OFFERS);
     } catch (error) {
       console.error('handleOfferCreate error', error);
+      openNotificationWithIcon({
+        type: NotificationType.ERROR,
+        title: 'Offer created Failed',
+        description: parseError(error),
+      });
     }
   };
 

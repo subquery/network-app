@@ -13,7 +13,7 @@ import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useWeb3 } 
 import { OfferTable } from './OfferTable';
 
 const OFFERS_ROUTE = '/plans/my-offers';
-const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
+export const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
 const CLOSE_OFFERS = `${OFFERS_ROUTE}/close`;
 const EXPIRED_OFFERS = `${OFFERS_ROUTE}/expired`;
 const CREATE_OFFER = `${OFFERS_ROUTE}/create`;
