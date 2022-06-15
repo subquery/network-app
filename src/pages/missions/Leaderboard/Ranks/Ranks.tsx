@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Address, Spinner } from '@subql/react-ui';
+import { Address, Button, Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 
 import { ColumnsType } from 'antd/lib/table/interface';
@@ -9,8 +9,10 @@ import React from 'react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Copy, SearchAddress } from '../../../../components';
+import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
 import { useLeaderboard } from '../../../../containers';
 import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
+import { CURR_SEASON } from '../../constants';
 import styles from './Ranks.module.css';
 
 const columns: ColumnsType<{
@@ -58,19 +60,18 @@ const columns: ColumnsType<{
   },
 ];
 
-const Ranks: React.FC<any> = (seasons: any) => {
+const Ranks: React.FC<{ season: number; viewPrev: () => void; viewCurr: () => void }> = ({
+  season,
+  viewPrev,
+  viewCurr,
+}) => {
   const indexers = useLeaderboard();
   const [searchText, setSearchText] = useState('');
-  // const currSeason = 1;
 
   return (
     <div className={styles.container}>
-      {/* <div className={styles.titlebutton}> */}
-      {/* <h2>Current Season</h2> */}
-      {/* <Button type="secondary" colorScheme='standard' label='Previous Season' /> */}
-      {/* </div> */}
-      {/* <p>Duration: {seasons.seasons[currSeason]["from"].toLocaleString().split(',')[0]} - {seasons.seasons[currSeason]["to"].toLocaleString().split(',')[0]}</p> */}
-      {/* <Button type="secondary" label={'] view previous season'} colorScheme={'standard'} /> */}
+      <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
+
       <div className={styles.topBar}>
         <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
         <div className={styles.searchBar}>

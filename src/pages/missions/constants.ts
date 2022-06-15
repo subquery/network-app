@@ -37,3 +37,17 @@ export const INDEXER_CHALLENGE_DETAILS: IndexerDetails = {
   INDEXER_UNDELEGATED: { points: 20, description: 'Indexer gets delegation removed' },
   UNREGISTER_INDEXER: { points: 30, description: 'Unregister your indexer' },
 };
+
+type Season = {
+  [key: number]: {
+    from: Date;
+    to: Date;
+  };
+};
+
+export const SEASONS: Season = {
+  2: { from: new Date(2022, 3, 24, 0, 0), to: new Date(2022, 4, 23, 11, 59) },
+  3: { from: new Date(2022, 5, 21, 0, 0), to: new Date(2022, 6, 5, 11, 59) },
+};
+
+export const CURR_SEASON = 3;

@@ -10,6 +10,7 @@ import {
   GetIndexer_indexerChallenge_challenges,
   GetIndexer_indexerChallenge_singleChallenges,
 } from '../../../../__generated__/leaderboard/GetIndexer';
+import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
 
 const columns = [
   {
@@ -57,13 +58,12 @@ const columns = [
 // 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
 // 2. either indexerID
 
-export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefined }> = ({ indexer }) => {
-  const formatTitle = (text: string) => {
-    let formatted = text.replace(/-/g, ' ');
-    formatted = text.replace(/_/g, ' ');
-    return formatted.toUpperCase();
-  };
-
+export const Missions: React.VFC<{
+  indexer: GetIndexer_indexerChallenge | undefined;
+  season?: number;
+  viewPrev?: () => void;
+  viewCurr?: () => void;
+}> = ({ indexer, season, viewPrev, viewCurr }) => {
   const formatData = (
     challenges: ReadonlyArray<GetIndexer_indexerChallenge_singleChallenges>,
     dailyChallenges: ReadonlyArray<GetIndexer_indexerChallenge_challenges>,
@@ -110,12 +110,8 @@ export const Missions: React.VFC<{ indexer: GetIndexer_indexerChallenge | undefi
   if (indexer) {
     return (
       <div className={styles.container}>
-        {/* <Typography>
-                <div className={styles.titlebutton}>
-                  <h2>Current Season</h2>
-                </div>
-                <p>Duration: 16/04/2022 - 23/04/2022</p>
-            </Typography> */}
+        {season && <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />}
+        <br />
         <Table columns={columns} dataSource={formatData(indexer.singleChallenges, indexer.challenges)} />
       </div>
     );
