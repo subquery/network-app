@@ -361,11 +361,12 @@ const OFFER_FIELDS = gql`
 
 const GET_OWN_OPEN_OFFERS = gql`
   ${OFFER_FIELDS}
-  query GetOwnOpenOffers($consumer: String!, $now: Datetime!) {
+  query GetOwnOpenOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
       filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
       orderBy: EXPIRE_DATE_ASC
       first: 20
+      offset: $offset
     ) {
       totalCount
       nodes {
@@ -377,11 +378,12 @@ const GET_OWN_OPEN_OFFERS = gql`
 
 const GET_OWN_FINISHED_OFFERS = gql`
   ${OFFER_FIELDS}
-  query GetOwnFinishedOffers($consumer: String!, $now: Datetime!) {
+  query GetOwnFinishedOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
       filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: true } }
       orderBy: EXPIRE_DATE_ASC
       first: 20
+      offset: $offset
     ) {
       totalCount
       nodes {
@@ -393,11 +395,12 @@ const GET_OWN_FINISHED_OFFERS = gql`
 
 const GET_OWN_EXPIRED_OFFERS = gql`
   ${OFFER_FIELDS}
-  query GetOwnExpiredOffers($consumer: String!, $now: Datetime!) {
+  query GetOwnExpiredOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
       filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now }, reachLimit: { equalTo: true } }
       orderBy: EXPIRE_DATE_ASC
       first: 20
+      offset: $offset
     ) {
       totalCount
       nodes {
@@ -409,11 +412,12 @@ const GET_OWN_EXPIRED_OFFERS = gql`
 
 const GET_ALL_OPEN_OFFERS = gql`
   ${OFFER_FIELDS}
-  query GetAllOpenOffers($now: Datetime!) {
+  query GetAllOpenOffers($now: Datetime!, $offset: Int) {
     offers(
       filter: { expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
       orderBy: EXPIRE_DATE_ASC
       first: 20
+      offset: $offset
     ) {
       totalCount
       nodes {
