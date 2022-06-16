@@ -1,0 +1,17 @@
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create {
+  height: 40px;
+}
+
+/* CancelOffer */
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

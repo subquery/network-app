@@ -55,13 +55,7 @@ const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, on
           <Address address={project.owner} size="small" />
         </div>
         <div className={styles.lower}>
-          {/* <Detail label={t('projectHeader.id')} value={project.id} /> */}
-          {currentVersion && (
-            <>
-              {/* <div className={styles.vertBar} /> */}
-              <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />
-            </>
-          )}
+          {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}
         </div>
       </div>
     </div>
