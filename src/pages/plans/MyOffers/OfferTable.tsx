@@ -27,6 +27,7 @@ import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
+import { BigNumber } from 'ethers';
 
 // TODO: Custom cols based on offer status
 const getColumns = () => {
@@ -40,7 +41,7 @@ const getColumns = () => {
     {
       dataIndex: ['deployment', 'id'],
       title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
-      width: 100,
+      width: 80,
       render: (deploymentId: string, offer: Offers) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
       ),
@@ -73,6 +74,30 @@ const getColumns = () => {
       title: i18next.t('myOffers.step_2.rewardPerIndexer').toUpperCase(),
       render: (deposit) => <TableText content={`${formatEther(deposit)} SQT`} />,
     },
+    {
+      dataIndex: ['planTemplate', 'dailyReqCap'],
+      title: i18next.t('plans.headers.dailyReqCap'),
+      render: (dailyReqCap: BigNumber) => (
+        <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
+      ),
+    },
+    {
+      dataIndex: ['planTemplate', 'rateLimit'],
+      title: i18next.t('plans.headers.rateLimit'),
+      render: (rateLimit: BigNumber) => (
+        <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
+      ),
+    },
+    {
+      dataIndex: 'expireDate',
+      title: i18next.t('myOffers.table.expired').toUpperCase(),
+      render: (expireDate: Date) => (
+        <TableText
+          content={moment(expireDate).utc(true).fromNow()}
+          tooltip={moment(expireDate).format('dddd, MMMM Do YYYY, h:mm:ss a')}
+        />
+      ),
+    },
   ];
 
   return [...idColumns, ...generalColumns];
@@ -89,6 +114,8 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();
+
+  console.log('pathname', pathname);
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: queryParams?.consumer ?? '', now };
@@ -136,7 +163,13 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                 )}
                 <div>
                   <Typography.Title level={3}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
-                  <Table columns={sortedCols} dataSource={sortedOffer} scroll={{ x: 1000 }} rowKey={'id'} />
+                  <Table
+                    columns={sortedCols}
+                    dataSource={sortedOffer}
+                    scroll={{ x: 1500 }}
+                    rowKey={'id'}
+                    // pagination={{ pageSize: 20 }}
+                  />
                 </div>
               </div>
             );
