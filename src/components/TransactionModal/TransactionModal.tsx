@@ -40,7 +40,7 @@ export const openNotificationWithIcon = ({
     message: title ?? 'Notification',
     description: description,
     style: { borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}` },
-    duration: type === NotificationType.INFO ? 60 : 30,
+    duration: type === NotificationType.INFO ? 45 : 30,
   });
 };
 
