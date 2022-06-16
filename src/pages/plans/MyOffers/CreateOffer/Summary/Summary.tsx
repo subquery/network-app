@@ -49,7 +49,7 @@ export const Summary: React.VFC = () => {
     const expireDate = moment(expired).unix(); // to seconds
 
     try {
-      await contracts.purchaseOfferMarket.createPurchaseOffer(
+      const tx = await contracts.purchaseOfferMarket.createPurchaseOffer(
         cidToBytes32(deploymentId),
         templateId,
         deposit,
@@ -57,6 +57,8 @@ export const Summary: React.VFC = () => {
         BigNumber.from(minimumIndexedHeight),
         expireDate,
       );
+
+      await tx.wait();
 
       openNotificationWithIcon({
         type: NotificationType.SUCCESS,

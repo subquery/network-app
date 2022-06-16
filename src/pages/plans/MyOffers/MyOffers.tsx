@@ -14,9 +14,9 @@ import { OfferTable } from './OfferTable';
 
 const OFFERS_ROUTE = '/plans/my-offers';
 export const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
-const CLOSE_OFFERS = `${OFFERS_ROUTE}/close`;
-const EXPIRED_OFFERS = `${OFFERS_ROUTE}/expired`;
-const CREATE_OFFER = `${OFFERS_ROUTE}/create`;
+export const CLOSE_OFFERS = `${OFFERS_ROUTE}/close`;
+export const EXPIRED_OFFERS = `${OFFERS_ROUTE}/expired`;
+export const CREATE_OFFER = `${OFFERS_ROUTE}/create`;
 
 const buttonLinks = [
   { label: i18next.t('myOffers.open'), link: OPEN_OFFERS },
