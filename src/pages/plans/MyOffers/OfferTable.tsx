@@ -115,6 +115,8 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
   const { pathname } = useLocation();
   const { account } = useWeb3();
 
+  const sortedCols = getColumns();
+
   console.log('pathname', pathname);
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
@@ -123,8 +125,14 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
   const [data, setData] = React.useState(offers);
   const totalCount = data?.data?.offers?.totalCount ?? 0;
 
-  //   const sortedCols = pathname === ONGOING_PLANS ? [...columns, playgroundCol] : columns;
-  const sortedCols = getColumns();
+  const fetchMoreOffers = (offset: number) => {
+    offers.fetchMore({
+      variables: {
+        offset,
+        ...sortedParams,
+      },
+    });
+  };
 
   // TODO: share same pattern with saTable agreement, think of reusable
   // NOTE: Every 5min to query wit a new timestamp
@@ -168,7 +176,16 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                     dataSource={sortedOffer}
                     scroll={{ x: 1500 }}
                     rowKey={'id'}
-                    // pagination={{ pageSize: 20 }}
+                    pagination={{
+                      total: totalCount,
+                      pageSizeOptions: ['10', '20'],
+                      onShowSizeChange: (current, pageSize) => {
+                        fetchMoreOffers?.((current - 1) * pageSize);
+                      },
+                      onChange: (page, pageSize) => {
+                        fetchMoreOffers?.((page - 1) * pageSize);
+                      },
+                    }}
                   />
                 </div>
               </div>
