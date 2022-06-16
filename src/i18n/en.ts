@@ -424,6 +424,12 @@ const en = {
         offerTemplate: 'Offer Template',
         detailSettings: 'Detail settings',
       },
+      cancel: {
+        title: 'Cancel this offer',
+        description:
+          'By cancelling this open offer, you will be able to withdraw the unspent balance. Cancellation fee will be applied and be deducted from the unspent balance.',
+        failureText: 'Sorry, failed to cancel offer',
+      },
     },
     OfferMarket: {
       header: 'Offer Marketplace',
@@ -432,6 +438,7 @@ const en = {
       totalOffer_other: 'Total {{count}} offers',
     },
     general: {
+      action: 'action',
       current: 'current',
       next: 'next',
       cancel: 'cancel',
@@ -441,6 +448,9 @@ const en = {
       inactive: 'Inactive',
       comingSoon: 'Coming soon.',
       choose: 'choose',
+      confirm: 'Confirm',
+      confirmOnMetamask: 'Confirm On MetaMask',
+      confirmCancellation: 'Confirm Cancellation',
       day: 'day',
       day_other: '{{count}} days',
     },

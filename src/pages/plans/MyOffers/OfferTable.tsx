@@ -6,6 +6,7 @@ import * as React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { BigNumber } from 'ethers';
 import { Table, TableProps, Typography, Tooltip } from 'antd';
 import { Copy, DeploymentInfo, DeploymentMeta, TableText } from '../../../components';
 import {
@@ -27,21 +28,24 @@ import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
-import { BigNumber } from 'ethers';
+import { OPEN_OFFERS } from './MyOffers';
+import { OFFER_MARKETPLACE } from '..';
+import { CancelOffer } from './CancelOffer';
 
 // TODO: Custom cols based on offer status
-const getColumns = () => {
+// TODO: Add tooltip
+const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connectedAccount?: string | null) => {
   const idColumns: TableProps<Offers>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
-      width: 40,
+      width: 60,
       render: (_: string, __: Offers, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: ['deployment', 'id'],
       title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
-      width: 80,
+      width: 460,
       render: (deploymentId: string, offer: Offers) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
       ),
@@ -55,11 +59,13 @@ const getColumns = () => {
         {
           title: i18next.t('myOffers.table.accepted').toUpperCase(),
           dataIndex: 'accepted',
+          width: 100,
           render: (accepted: number) => <TableText content={accepted} />,
         },
         {
           title: i18next.t('myOffers.table.cap').toUpperCase(),
           dataIndex: 'limit',
+          width: 100,
           render: (limit: number) => <TableText content={limit} />,
         },
       ],
@@ -100,7 +106,25 @@ const getColumns = () => {
     },
   ];
 
-  return [...idColumns, ...generalColumns];
+  const cancelColumn: TableProps<Offers>['columns'] = [
+    {
+      title: i18next.t('general.action').toUpperCase(),
+      dataIndex: 'id',
+      fixed: 'right',
+      align: 'center',
+      width: 100,
+      render: (id: string) => {
+        return <CancelOffer offerId={id} />;
+      },
+    },
+  ];
+
+  const columnsMapping = {
+    [OPEN_OFFERS]: [...idColumns, ...generalColumns, ...cancelColumn],
+    [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns],
+  };
+
+  return columnsMapping[path] ?? [...idColumns, ...generalColumns];
 };
 
 interface MyOfferTableProps {
@@ -115,9 +139,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
   const { pathname } = useLocation();
   const { account } = useWeb3();
 
-  const sortedCols = getColumns();
-
-  console.log('pathname', pathname);
+  const sortedCols = getColumns(pathname, account);
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: queryParams?.consumer ?? '', now };
@@ -174,7 +196,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                   <Table
                     columns={sortedCols}
                     dataSource={sortedOffer}
-                    scroll={{ x: 1500 }}
+                    scroll={{ x: 1800 }}
                     rowKey={'id'}
                     pagination={{
                       total: totalCount,
