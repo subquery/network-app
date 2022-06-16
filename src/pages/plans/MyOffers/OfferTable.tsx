@@ -18,6 +18,7 @@ import {
 } from '../../../containers';
 import {
   convertBigNumberToNumber,
+  formatDate,
   formatEther,
   formatSeconds,
   mapAsync,
@@ -98,10 +99,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       dataIndex: 'expireDate',
       title: i18next.t('myOffers.table.expired').toUpperCase(),
       render: (expireDate: Date) => (
-        <TableText
-          content={moment(expireDate).utc(true).fromNow()}
-          tooltip={moment(expireDate).format('dddd, MMMM Do YYYY, h:mm:ss a')}
-        />
+        <TableText content={moment(expireDate).utc(true).fromNow()} tooltip={formatDate(expireDate)} />
       ),
     },
   ];
