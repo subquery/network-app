@@ -397,7 +397,7 @@ const GET_OWN_EXPIRED_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetOwnExpiredOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
-      filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now }, reachLimit: { equalTo: true } }
+      filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now } }
       orderBy: EXPIRE_DATE_ASC
       first: 20
       offset: $offset

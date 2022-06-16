@@ -15,3 +15,7 @@ export const secondsToDays = (seconds: number): number => {
 export const formatSeconds = (seconds: number): string => {
   return moment.utc(moment.duration(seconds, 'seconds').asMilliseconds()).format('hh [hours] mm [mins] ss [secs]');
 };
+
+export const formatDate = (date: Date): string => {
+  return moment.utc(date).local().format('dddd, MMMM Do YYYY, h:mm:ss a');
+};
