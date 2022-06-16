@@ -30,7 +30,7 @@ export const OfferHeader: React.VFC = () => {
 
   return (
     <>
-      <AppPageHeader title={t('plans.category.manageMyPlans')} />
+      <AppPageHeader title={t('myOffers.title')} />
 
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />

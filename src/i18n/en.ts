@@ -373,6 +373,7 @@ const en = {
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     },
     myOffers: {
+      title: 'My offers',
       open: 'Open',
       close: 'Closed',
       expired: 'Expired',
