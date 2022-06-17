@@ -3,14 +3,21 @@
 
 import * as React from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
-import { AppPageHeader, TabButtons } from '../../../components';
+import {
+  AppPageHeader,
+  ApproveContract,
+  ModalApproveToken,
+  TabButtons,
+  tokenApprovalModalText,
+} from '../../../components';
 import { useTranslation } from 'react-i18next';
 import styles from './MyOffers.module.css';
 import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
 import { Button } from '../../../components/Button';
-import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useWeb3 } from '../../../containers';
+import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useSQToken, useWeb3 } from '../../../containers';
 import { OfferTable } from './OfferTable';
+import TransactionModal from '../../../components/TransactionModal';
 
 const OFFERS_ROUTE = '/plans/my-offers';
 export const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
@@ -24,9 +31,47 @@ const buttonLinks = [
   { label: i18next.t('myOffers.expired'), link: EXPIRED_OFFERS },
 ];
 
-export const OfferHeader: React.VFC = () => {
+// TODO: For user experiences, maybe can consider have warning notification
+export const TokenAllowanceProtect: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const { offerAllowance } = useSQToken();
+  const requiresTokenApproval = offerAllowance.data?.isZero();
+
+  if (requiresTokenApproval) {
+    return <Redirect to={OPEN_OFFERS} />;
+  } else {
+    return children;
+  }
+};
+
+export const CheckOfferAllowance: React.VFC = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { offerAllowance } = useSQToken();
+  const requiresTokenApproval = offerAllowance.data?.isZero();
+
+  if (requiresTokenApproval) {
+    return (
+      <TransactionModal
+        actions={[{ label: t('myOffers.createOffer'), key: 'createOffer' }]}
+        text={tokenApprovalModalText}
+        renderContent={() => {
+          return (
+            <ModalApproveToken
+              contract={ApproveContract.PurchaseOfferMarket}
+              onSubmit={() => offerAllowance.refetch()}
+              onSuccess={() => history.push(CREATE_OFFER)}
+            />
+          );
+        }}
+      />
+    );
+  } else {
+    return <Button onClick={() => history.push(CREATE_OFFER)}>{t('myOffers.createOffer')}</Button>;
+  }
+};
+
+export const OfferHeader: React.VFC = () => {
+  const { t } = useTranslation();
 
   return (
     <>
@@ -35,7 +80,7 @@ export const OfferHeader: React.VFC = () => {
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
         <div className={styles.create}>
-          <Button onClick={() => history.push(CREATE_OFFER)}>{t('myOffers.createOffer')}</Button>
+          <CheckOfferAllowance />
         </div>
       </div>
     </>
@@ -84,7 +129,15 @@ export const MyOffers: React.VFC = () => {
           </>
         )}
       />
-      <Route exact path={CREATE_OFFER} component={CreateOffer} />
+      <Route
+        exact
+        path={CREATE_OFFER}
+        component={() => (
+          <TokenAllowanceProtect>
+            <CreateOffer />
+          </TokenAllowanceProtect>
+        )}
+      />
       <Redirect from={OFFERS_ROUTE} to={OPEN_OFFERS} />
     </Switch>
   );
