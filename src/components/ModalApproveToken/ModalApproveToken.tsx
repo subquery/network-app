@@ -5,22 +5,24 @@ import * as React from 'react';
 import assert from 'assert';
 import { constants } from 'ethers';
 import i18next from '../../i18n';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import styles from './ModalApproveToken.module.css';
 import { useContracts } from '../../containers';
+import { parseError } from '../../utils';
 
 export const tokenApprovalModalText = {
   title: i18next.t('indexer.approveToken'),
   description: i18next.t('indexer.approveTokenToProceed'),
   submitText: i18next.t('indexer.confirmApproval'),
   inputTitle: '',
-  steps: [],
+  steps: [i18next.t('general.confirm'), i18next.t('general.confirmOnMetamask')],
   failureText: `Sorry, SQT token approval has failed.`,
 };
 
 export enum ApproveContract {
   Staking = 'staking',
   PlanManager = 'planManager',
+  PurchaseOfferMarket = 'purchaseOfferMarket',
 }
 
 interface ModalApproveTokenProps {
@@ -40,14 +42,15 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
   contract = ApproveContract.Staking,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>();
   const pendingContracts = useContracts();
   const onApproveToken = async () => {
     try {
+      setIsLoading(true);
       const contracts = await pendingContracts;
       assert(contracts, 'Contracts not available');
 
       const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
-      setIsLoading(true);
       const approvalTxResult = await approvalTx.wait();
       if (approvalTxResult.status === 1) {
         onSuccess && onSuccess();
@@ -56,16 +59,29 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
         onFail && onFail();
         onSubmit && onSubmit();
       }
+    } catch (error) {
+      console.error('ModalApproveToken', error);
+      setError(parseError(error));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={styles.btnContainer}>
-      <Button shape="round" size="large" className={styles.submitBtn} loading={isLoading} onClick={onApproveToken}>
-        {submitText || 'Confirm Approval'}
-      </Button>
-    </div>
+    <>
+      {error && <Typography.Paragraph type="danger">{error}</Typography.Paragraph>}
+      <div className={styles.btnContainer}>
+        <Button
+          shape="round"
+          size="large"
+          className={styles.submitBtn}
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={onApproveToken}
+        >
+          {submitText || 'Confirm Approval'}
+        </Button>
+      </div>
+    </>
   );
 };

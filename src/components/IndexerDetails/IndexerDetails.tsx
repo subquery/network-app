@@ -11,6 +11,7 @@ import { Status } from '../../__generated__/registry/globalTypes';
 import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
 import { SearchInput } from '../SearchInput';
+import { Typography } from '@subql/react-ui';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -81,8 +82,13 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   return (
     <>
-      <div className={styles.searchInput}>
-        <SearchAddress />
+      <div className={styles.indexerListHeader}>
+        <Typography variant="h6" className={styles.title}>
+          {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
+        </Typography>
+        <div className={styles.searchInput}>
+          <SearchAddress />
+        </div>
       </div>
 
       <Table

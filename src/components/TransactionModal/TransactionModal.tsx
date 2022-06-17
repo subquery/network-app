@@ -40,7 +40,7 @@ export const openNotificationWithIcon = ({
     message: title ?? 'Notification',
     description: description,
     style: { borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}` },
-    duration: type === NotificationType.INFO ? 60 : 30,
+    duration: type === NotificationType.INFO ? 45 : 30,
   });
 };
 
@@ -57,7 +57,7 @@ type Props<P, T extends string> = {
     successText?: string;
   };
   currentStep?: number;
-  onClick: Action<P, T>;
+  onClick?: Action<P, T>;
   onClose?: () => void;
   actions: Array<
     {
@@ -129,7 +129,7 @@ const TransactionModal = <P, T extends string>({
 
   const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: P) => {
     try {
-      if (!showModal) return;
+      if (!showModal || !action) return;
 
       const tx = await action(params, showModal);
 
