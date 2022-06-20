@@ -6,7 +6,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Button, Typography } from 'antd';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
 import styles from './SelectDeployment.module.css';
-import { useHistory } from 'react-router';
 import { EXPLORER_ROUTE } from '../../../../explorer';
 import { DeploymentInfo, SearchInput, Spinner } from '../../../../../components';
 import { useDeploymentQuery } from '../../../../../containers';
@@ -47,13 +46,12 @@ export const DeploymentProject: React.VFC<{ projectId: string; title?: string; d
 };
 
 const Description = () => {
-  const history = useHistory();
   return (
     <div className={styles.description}>
       <Typography.Text type="secondary">
         <Trans i18nKey="myOffers.step_0.description">
           You can copy & paste the deployment ID of your desired project by entering their project detail page from
-          <Button type="link" onClick={() => history.push(EXPLORER_ROUTE)} className={styles.descriptionBtn}>
+          <Button type="link" href={EXPLORER_ROUTE} className={styles.descriptionBtn} target="_blank">
             explorer
           </Button>
           .

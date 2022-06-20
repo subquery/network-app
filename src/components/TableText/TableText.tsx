@@ -15,12 +15,14 @@ interface TableTextprops {
   content?: string | number | React.ReactNode;
   className?: string;
   tooltip?: string;
+  children?: string | number | React.ReactNode;
 }
 
-export const TableText: React.FC<TableTextprops> = ({ content, className, tooltip }) => {
+export const TableText: React.FC<TableTextprops> = ({ content, children, className, tooltip }) => {
+  const sortedContent = content === undefined ? children : content;
   return (
     <Typography.Text className={[styles.text, className].join(' ')}>
-      {tooltip ? <Tooltip title={tooltip}>{content}</Tooltip> : content}
+      {tooltip ? <Tooltip title={tooltip}>{sortedContent}</Tooltip> : sortedContent}
     </Typography.Text>
   );
 };

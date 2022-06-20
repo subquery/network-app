@@ -58,22 +58,23 @@ interface IStepButtons {
   curStep: number;
   onStepChange: (step: number, type: StepType) => void;
   disabled?: boolean;
+  loading?: boolean;
 }
 
-export const StepButtons: React.VFC<IStepButtons> = ({ curStep, disabled = false, onStepChange }) => {
+export const StepButtons: React.VFC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {
   const { t } = useTranslation();
   const isFirstStep = curStep === 0;
   return (
     <div className={`${styles.stepButtons} ${isFirstStep ? 'flex-end' : 'flex-between'}`}>
       {!isFirstStep && (
-        <Button onClick={() => onStepChange(curStep - 1, StepType.BACK)} type="text">
+        <Button onClick={() => onStepChange(curStep - 1, StepType.BACK)} type="text" loading={loading}>
           <div className={styles.back}>
             <IoChevronBack /> <Typography.Text>{t('general.back')}</Typography.Text>
           </div>
         </Button>
       )}
 
-      <Button onClick={() => onStepChange(curStep + 1, StepType.NEXT)} disabled={disabled}>
+      <Button onClick={() => onStepChange(curStep + 1, StepType.NEXT)} disabled={disabled} loading={loading}>
         {getCapitalizedStr(t('general.next'))}
       </Button>
     </div>
