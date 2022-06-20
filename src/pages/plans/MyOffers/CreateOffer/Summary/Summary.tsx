@@ -23,6 +23,7 @@ import styles from './Summary.module.css';
 
 export const Summary: React.VFC = () => {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = React.useState(false);
   const history = useHistory();
   const pendingContracts = useContracts();
   const createOfferContext = React.useContext(CreateOfferContext);
@@ -30,8 +31,7 @@ export const Summary: React.VFC = () => {
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
 
-  // TODO: IncreaseAllowance check
-  // TODO: Temporary handle contract interaction here
+  // TODO: tx.await() & notification pop up handle
   const handleSubmit = async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
@@ -49,6 +49,7 @@ export const Summary: React.VFC = () => {
     const expireDate = moment(expired).unix(); // to seconds
 
     try {
+      setIsLoading(true);
       const tx = await contracts.purchaseOfferMarket.createPurchaseOffer(
         cidToBytes32(deploymentId),
         templateId,
@@ -57,6 +58,11 @@ export const Summary: React.VFC = () => {
         BigNumber.from(minimumIndexedHeight),
         expireDate,
       );
+
+      openNotificationWithIcon({
+        title: 'Offer transaction submitted.',
+        description: t('status.txSubmitted'),
+      });
 
       await tx.wait();
 
@@ -74,6 +80,8 @@ export const Summary: React.VFC = () => {
         title: 'Offer created Failed',
         description: parseError(error),
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,7 +134,8 @@ export const Summary: React.VFC = () => {
               onStepChange(step);
             }
           }}
-          // disabled={!searchedDeployment?.projectId}
+          // disabled={isLoading}
+          loading={isLoading}
         />
       </div>
     </div>

@@ -430,12 +430,37 @@ const en = {
           'By cancelling this open offer, you will be able to withdraw the unspent balance. Cancellation fee will be applied and be deducted from the unspent balance.',
         failureText: 'Sorry, failed to cancel offer',
       },
+      withdraw: {
+        title: 'withdraw',
+        modalTitle: 'Withdraw from the offer',
+        findExpired: 'Here you can find the expired offers which did not reach the required number of indexers.',
+        unspent: 'You can withdraw your unspent balance from these offers.',
+        description: 'You are about to withdraw the rest of SQT from this offer to your wallet.',
+        failureText: 'Sorry, failed to withdraw offer',
+      },
     },
-    OfferMarket: {
+    offerMarket: {
       header: 'Offer Marketplace',
       viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
       totalOffer: 'Total {{count}} offer',
       totalOffer_other: 'Total {{count}} offers',
+      accept: 'Accept',
+      acceptModal: {
+        title: 'Accept the offer',
+        check: 'Check criteria',
+        offerSummary: 'Offer summary',
+        consumer: 'Consumer',
+        passCriteria: 'You have passed {{count}} criteria',
+        criteria: 'Criteria',
+        yourProject: 'Your Project',
+        indexingStatus: 'Indexing progress',
+        projectStatus: 'Project status',
+        blockHeight: 'Block height',
+        dailyRewards: 'Daily Rewards',
+        failureText: 'Failed to accept offer',
+        afterAcceptOffer:
+          'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
+      },
     },
     general: {
       action: 'action',
@@ -457,6 +482,7 @@ const en = {
     status: {
       success: 'Success!',
       error: 'Sorry, there is something wrong',
+      txSubmitted: 'Transaction has been submitted. Please wait for the transaction confirmed.',
       changeValidIn15s: 'Change will be reflected on dashboard in 15s.',
     },
   },
