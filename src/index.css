@@ -113,6 +113,7 @@ textarea {
 }
 
 /* For general container */
+/* Naming: FlexDirection - Content - Item  */
 .fullWidth {
   width: 100%;
 }
@@ -145,6 +146,12 @@ textarea {
 .flex-between {
   display: flex;
   justify-content: space-between;
+}
+
+.flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* For text */

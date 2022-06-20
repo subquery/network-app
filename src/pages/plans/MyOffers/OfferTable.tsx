@@ -7,10 +7,11 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
-import { Table, TableProps, Typography, Tooltip } from 'antd';
-import { Copy, DeploymentInfo, DeploymentMeta, TableText } from '../../../components';
+import { Table, TableProps, Typography } from 'antd';
+import { DeploymentMeta, TableText } from '../../../components';
 import {
   useAllOpenOffers,
+  useDeploymentIndexerQuery,
   useOwnExpiredOffers,
   useOwnFinishedOffers,
   useOwnOpenOffers,
@@ -23,37 +24,76 @@ import {
   formatSeconds,
   mapAsync,
   notEmpty,
+  parseError,
+  renderAsync,
   renderAsyncArray,
 } from '../../../utils';
-import { GetOwnOpenOffers_offers_nodes as Offers } from '../../../__generated__/registry/GetOwnOpenOffers';
+import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
 import { OPEN_OFFERS } from './MyOffers';
 import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
+import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 
-// TODO: Custom cols based on offer status
+const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
+  const { account } = useWeb3();
+  const indexerDeployment = useDeploymentIndexerQuery({
+    indexerAddress: account ?? '',
+    deploymentId: offer.deployment?.id ?? '',
+  });
+
+  return (
+    <>
+      {renderAsync(indexerDeployment, {
+        loading: () => <Spinner />,
+        error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
+        data: (deployment) => {
+          const deploymentIndexer = deployment.deploymentIndexers?.nodes[0];
+          // TODO: filter the project that not indexing
+          // TODO: confirm whether to filter status ===  TERMINATED
+          if (offer.consumer === account) {
+            return <TableText content={'Your Offer'} />;
+          }
+
+          if (!deploymentIndexer || !account) {
+            return <TableText content={'-'} />;
+          }
+
+          return (
+            <AcceptOffer
+              deployment={deploymentIndexer}
+              offerId={offer.id}
+              requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
+            />
+          );
+        },
+      })}
+    </>
+  );
+};
+
 // TODO: Add tooltip
 const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connectedAccount?: string | null) => {
-  const idColumns: TableProps<Offers>['columns'] = [
+  const idColumns: TableProps<Offer>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
       width: 60,
-      render: (_: string, __: Offers, idx: number) => <TableText content={idx + 1} />,
+      render: (_: string, __: Offer, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: ['deployment', 'id'],
       title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
       width: 460,
-      render: (deploymentId: string, offer: Offers) => (
+      render: (deploymentId: string, offer: Offer) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
       ),
     },
   ];
 
-  const generalColumns: TableProps<Offers>['columns'] = [
+  const generalColumns: TableProps<Offer>['columns'] = [
     {
       title: i18next.t('myOffers.table.indexerAmount').toUpperCase(),
       children: [
@@ -104,7 +144,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
     },
   ];
 
-  const cancelColumn: TableProps<Offers>['columns'] = [
+  const cancelColumn: TableProps<Offer>['columns'] = [
     {
       title: i18next.t('general.action').toUpperCase(),
       dataIndex: 'id',
@@ -112,14 +152,28 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       align: 'center',
       width: 100,
       render: (id: string) => {
+        if (!connectedAccount) return <TableText content="-" />;
         return <CancelOffer offerId={id} />;
+      },
+    },
+  ];
+
+  const acceptColumn: TableProps<Offer>['columns'] = [
+    {
+      title: i18next.t('offerMarket.accept').toUpperCase(),
+      dataIndex: 'id',
+      fixed: 'right',
+      align: 'center',
+      width: 100,
+      render: (_: string, offer: Offer) => {
+        return <AcceptButton offer={offer} />;
       },
     },
   ];
 
   const columnsMapping = {
     [OPEN_OFFERS]: [...idColumns, ...generalColumns, ...cancelColumn],
-    [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns],
+    [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns, ...acceptColumn],
   };
 
   return columnsMapping[path] ?? [...idColumns, ...generalColumns];
@@ -190,7 +244,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                   </div>
                 )}
                 <div>
-                  <Typography.Title level={3}>{t('OfferMarket.totalOffer', { count: totalCount })}</Typography.Title>
+                  <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
                   <Table
                     columns={sortedCols}
                     dataSource={sortedOffer}
