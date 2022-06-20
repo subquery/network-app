@@ -10,6 +10,8 @@ import { useContracts } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import { getCapitalizedStr } from '../../../utils';
 import styles from './MyOffers.module.css';
+import { useLocation } from 'react-router';
+import { EXPIRED_OFFERS } from './MyOffers';
 
 type Props = {
   offerId: string;
@@ -18,16 +20,29 @@ type Props = {
 // TODO: SUMMARY LIST
 export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   const pendingContracts = useContracts();
 
-  const text = {
+  const canCelText = {
     title: t('myOffers.cancel.title'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
     description: t('myOffers.cancel.description'),
-    inputTitle: '',
     submitText: t('general.confirmCancellation'),
     failureText: t('myOffers.cancel.failureText'),
   };
+
+  const withdrawText = {
+    title: t('myOffers.withdraw.modalTitle'),
+    steps: [t('general.confirm'), t('general.confirmOnMetamask')],
+    description: t('myOffers.withdraw.description'),
+    submitText: t('general.confirm'),
+    failureText: t('myOffers.withdraw.failureText'),
+  };
+
+  const isExpiredPath = pathname === EXPIRED_OFFERS;
+  const buttonVariant = isExpiredPath ? 'textBtn' : 'errTextBtn';
+  const text = isExpiredPath ? withdrawText : canCelText;
+  const actionBtnLabel = isExpiredPath ? t('myOffers.withdraw.title') : t('general.cancel');
 
   const handleClick = async () => {
     const contracts = await pendingContracts;
@@ -38,16 +53,24 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
 
   return (
     <TransactionModal
-      variant="errTextBtn"
+      variant={buttonVariant}
       text={text}
-      actions={[{ label: getCapitalizedStr(t('general.cancel')), key: 'cancel' }]}
+      actions={[{ label: getCapitalizedStr(actionBtnLabel), key: 'cancel' }]}
       onClick={handleClick}
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
           <>
             <Typography className={'errorText'}>{error}</Typography>
             <div className={styles.btnContainer}>
-              <Button onClick={onSubmit} htmlType="submit" shape="round" size="large" danger loading={isLoading}>
+              <Button
+                onClick={onSubmit}
+                htmlType="submit"
+                shape="round"
+                size="large"
+                danger={!isExpiredPath}
+                type={isExpiredPath ? 'primary' : 'default'}
+                loading={isLoading}
+              >
                 {text.submitText}
               </Button>
             </div>

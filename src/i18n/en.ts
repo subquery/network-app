@@ -430,6 +430,14 @@ const en = {
           'By cancelling this open offer, you will be able to withdraw the unspent balance. Cancellation fee will be applied and be deducted from the unspent balance.',
         failureText: 'Sorry, failed to cancel offer',
       },
+      withdraw: {
+        title: 'withdraw',
+        modalTitle: 'Withdraw from the offer',
+        findExpired: 'Here you can find the expired offers which did not reach the required number of indexers.',
+        unspent: 'You can withdraw your unspent balance from these offers.',
+        description: 'You are about to withdraw the rest of SQT from this offer to your wallet.',
+        failureText: 'Sorry, failed to withdraw offer',
+      },
     },
     offerMarket: {
       header: 'Offer Marketplace',

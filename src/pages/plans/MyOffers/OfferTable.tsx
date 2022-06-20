@@ -32,7 +32,7 @@ import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/r
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
-import { OPEN_OFFERS } from './MyOffers';
+import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
 import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
@@ -158,6 +158,20 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
     },
   ];
 
+  const withdrawColumn: TableProps<Offer>['columns'] = [
+    {
+      title: i18next.t('general.action').toUpperCase(),
+      dataIndex: 'id',
+      fixed: 'right',
+      align: 'center',
+      width: 100,
+      render: (id: string, offer: Offer) => {
+        if (!connectedAccount || offer.withdrawn) return <TableText content="-" />;
+        return <CancelOffer offerId={id} />;
+      },
+    },
+  ];
+
   const acceptColumn: TableProps<Offer>['columns'] = [
     {
       title: i18next.t('offerMarket.accept').toUpperCase(),
@@ -173,6 +187,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
 
   const columnsMapping = {
     [OPEN_OFFERS]: [...idColumns, ...generalColumns, ...cancelColumn],
+    [EXPIRED_OFFERS]: [...idColumns, ...generalColumns, ...withdrawColumn],
     [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns, ...acceptColumn],
   };
 
