@@ -24,6 +24,7 @@
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
     "@subql/contract-sdk": "0.6.1-8",
+    "@subql/network-clients": "^0.1.1-2",
     "@subql/react-ui": "^1.0.1-22",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -138,7 +139,6 @@
     "@acala-network/api": "2.0.2-2",
     "@acala-network/bodhi": "1.0.2-0",
     "@acala-network/contracts": "1.0.22",
-    "babel-loader": "8.1.0",
-    "@polkadot/util-crypto": "9.0.1"
+    "babel-loader": "8.1.0"
   }
 }
