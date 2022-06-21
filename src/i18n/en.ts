@@ -414,7 +414,7 @@ const en = {
         indexerCap: 'Indexer cap',
         totalDeposit: 'Required deposit',
         minimumIndexedHeight: 'Minimum indexed height',
-        expireDate: 'Expiration time (Timezone: UTC)',
+        expireDate: 'Expiration time',
         cancelWarning:
           'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
       },
@@ -479,6 +479,8 @@ const en = {
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
       day_other: '{{count}} days',
+      block: 'Block',
+      blocks: 'Blocks',
     },
     status: {
       success: 'Success!',
