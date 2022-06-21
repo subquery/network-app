@@ -64,15 +64,15 @@ export const Summary: React.VFC = () => {
         description: t('status.txSubmitted'),
       });
 
-      await tx.wait();
-
-      openNotificationWithIcon({
-        type: NotificationType.SUCCESS,
-        title: 'Offer created!',
-        description: t('status.changeValidIn15s'),
-      });
-
       history.push(OPEN_OFFERS);
+
+      tx.wait().then(() => {
+        openNotificationWithIcon({
+          type: NotificationType.SUCCESS,
+          title: 'Offer created!',
+          description: t('status.changeValidIn15s'),
+        });
+      });
     } catch (error) {
       console.error('handleOfferCreate error', error);
       openNotificationWithIcon({
