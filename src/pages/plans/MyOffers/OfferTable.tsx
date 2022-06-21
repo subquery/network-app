@@ -203,12 +203,10 @@ interface MyOfferTableProps {
 }
 
 // TODO: update totalCount text via design
-// TODO: refactor searchedOffersFn for performance consideration
 export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();
-
   const sortedCols = getColumns(pathname, account);
 
   /**
@@ -216,10 +214,9 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
    */
   const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
-  const sortedParams = { consumer: queryParams?.consumer ?? '', now };
-  const offers = queryFn(sortedParams);
-  const searchedOffers = useSpecificOpenOffers({ now, deploymentId: searchDeploymentId ?? '' });
-  const sortedOffers = searchDeploymentId ? searchedOffers : offers;
+  const sortedParams = { consumer: queryParams?.consumer ?? '', now, deploymentId: searchDeploymentId ?? '' };
+  const sortedFn = searchDeploymentId ? useSpecificOpenOffers : queryFn;
+  const sortedOffers = sortedFn(sortedParams);
 
   const SearchDeployment = () => (
     <div className={styles.indexerSearch}>
@@ -228,8 +225,9 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
           setSearchDeploymentId(value);
         }}
         defaultValue={searchDeploymentId}
-        loading={offers.loading}
-        emptyResult={offers.data?.offers?.totalCount === 0}
+        loading={sortedOffers.loading}
+        emptyResult={sortedOffers.data?.offers?.totalCount === 0}
+        placeholder={t('offerMarket.searchByDeploymentId')}
       />
     </div>
   );

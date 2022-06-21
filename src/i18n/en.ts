@@ -445,6 +445,7 @@ const en = {
       totalOffer: 'Total {{count}} offer',
       totalOffer_other: 'Total {{count}} offers',
       accept: 'Accept',
+      searchByDeploymentId: 'Search by deployment Id',
       acceptModal: {
         title: 'Accept the offer',
         check: 'Check criteria',
