@@ -21,9 +21,10 @@ interface IRequirementCheck {
   requiredValue: string | number | undefined;
   value: string | number | undefined;
   passCheck: boolean;
+  formatFn?: (value: any) => string | React.ReactNode;
 }
 
-const RequirementCheck: React.FC<IRequirementCheck> = ({ title, requiredValue, value, passCheck }) => {
+const RequirementCheck: React.FC<IRequirementCheck> = ({ title, requiredValue, value, passCheck, formatFn }) => {
   const iconSize = 20;
   const iconColor = passCheck ? COLORS.success : COLORS.error;
   const Icon = ({ ...props }) =>
@@ -31,11 +32,11 @@ const RequirementCheck: React.FC<IRequirementCheck> = ({ title, requiredValue, v
 
   return (
     <div className={clsx('flex-between-center', styles.requirementCheckItem)}>
-      <Typography.Title level={5} type="secondary">
+      <Typography.Title level={5} type="secondary" className={styles.requirementCheckItemTitle}>
         {title}
       </Typography.Title>
-      <Typography.Text>{requiredValue}</Typography.Text>
-      <Typography.Text>{value}</Typography.Text>
+      <Typography.Text>{formatFn ? formatFn(requiredValue) : requiredValue}</Typography.Text>
+      <Typography.Text>{formatFn ? formatFn(value) : value}</Typography.Text>
       <Icon color={iconColor} size={iconSize} />
     </div>
   );
@@ -87,6 +88,7 @@ const CheckList: React.VFC<ICheckList> = ({
           requiredValue: REQUIRED_PROGRESS,
           value: curProgress,
           passCheck: REQUIRED_PROGRESS <= curProgress,
+          formatFn: (value: number) => `${(value * 100).toFixed(2)} %`,
         },
         {
           title: t('offerMarket.acceptModal.projectStatus'),
@@ -107,7 +109,7 @@ const CheckList: React.VFC<ICheckList> = ({
       );
 
       return (
-        <div>
+        <div className={styles.requirementCheckContainer}>
           <Typography.Title level={4}>
             {t('offerMarket.acceptModal.passCriteria', { count: passCheckAmount.length })}
           </Typography.Title>
@@ -118,6 +120,7 @@ const CheckList: React.VFC<ICheckList> = ({
               requiredValue={requirementCheck.requiredValue}
               value={requirementCheck.value}
               passCheck={requirementCheck.passCheck}
+              formatFn={requirementCheck?.formatFn}
             />
           ))}
           {error && <Typography.Text type="danger">{error}</Typography.Text>}

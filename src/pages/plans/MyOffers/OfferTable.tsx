@@ -8,13 +8,14 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { Table, TableProps, Typography } from 'antd';
-import { DeploymentMeta, TableText } from '../../../components';
+import { DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
   useAllOpenOffers,
   useDeploymentIndexerQuery,
   useOwnExpiredOffers,
   useOwnFinishedOffers,
   useOwnOpenOffers,
+  useSpecificOpenOffers,
   useWeb3,
 } from '../../../containers';
 import {
@@ -36,6 +37,7 @@ import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
 import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
+import clsx from 'clsx';
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
@@ -201,6 +203,7 @@ interface MyOfferTableProps {
 }
 
 // TODO: update totalCount text via design
+// TODO: refactor searchedOffersFn for performance consideration
 export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -208,14 +211,38 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
 
   const sortedCols = getColumns(pathname, account);
 
+  /**
+   * SearchInput logic
+   */
+  const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: queryParams?.consumer ?? '', now };
   const offers = queryFn(sortedParams);
-  const [data, setData] = React.useState(offers);
+  const searchedOffers = useSpecificOpenOffers({ now, deploymentId: searchDeploymentId ?? '' });
+  const sortedOffers = searchDeploymentId ? searchedOffers : offers;
+
+  const SearchDeployment = () => (
+    <div className={styles.indexerSearch}>
+      <SearchInput
+        onSearch={(value: string) => {
+          setSearchDeploymentId(value);
+        }}
+        defaultValue={searchDeploymentId}
+        loading={offers.loading}
+        emptyResult={offers.data?.offers?.totalCount === 0}
+      />
+    </div>
+  );
+
+  /**
+   * SearchInput logic end
+   */
+
+  const [data, setData] = React.useState(sortedOffers);
   const totalCount = data?.data?.offers?.totalCount ?? 0;
 
   const fetchMoreOffers = (offset: number) => {
-    offers.fetchMore({
+    sortedOffers.fetchMore({
       variables: {
         offset,
         ...sortedParams,
@@ -234,13 +261,13 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
 
   // NOTE: Every 5min to query wit a new timestamp, manual set cache data which is similar to cache-network fetch policy
   React.useEffect(() => {
-    if (offers.loading === true && offers.previousData) {
-      setData({ ...offers, data: offers.previousData });
-      offers.data = offers.previousData;
+    if (sortedOffers.loading === true && sortedOffers.previousData) {
+      setData({ ...sortedOffers, data: sortedOffers.previousData });
+      sortedOffers.data = sortedOffers.previousData;
     } else {
-      setData({ ...offers });
+      setData({ ...sortedOffers });
     }
-  }, [offers, offers.loading]);
+  }, [sortedOffers, sortedOffers.loading]);
 
   return (
     <>
@@ -250,7 +277,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load offers: ${e}`}</Typography.Text>,
           empty: () => <EmptyList i18nKey={'myOffers.non'} />,
-          data: (sortedOffer) => {
+          data: (offerList) => {
             return (
               <div>
                 {description && totalCount > 0 && (
@@ -259,10 +286,17 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                   </div>
                 )}
                 <div>
-                  <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
+                  <div className={clsx('flex-between', styles.offerTableHeader)}>
+                    <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
+                    {pathname === OFFER_MARKETPLACE && (
+                      <div className={styles.searchDeployment}>
+                        <SearchDeployment />
+                      </div>
+                    )}
+                  </div>
                   <Table
                     columns={sortedCols}
-                    dataSource={sortedOffer}
+                    dataSource={offerList}
                     scroll={{ x: 1800 }}
                     rowKey={'id'}
                     pagination={{
