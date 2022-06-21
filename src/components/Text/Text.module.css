@@ -1,0 +1,14 @@
+.text {
+  color: var(--gray900);
+  font-size: 16px;
+}
+
+.tooltip {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tooltipIcon {
+  margin: 0 6px;
+}

@@ -2,10 +2,6 @@
   margin: 1rem 0;
 }
 
-.inputTitle {
-  color: var(--gray900);
-}
-
 .inputNumber {
   width: 100% !important;
   border-radius: 4px !important;

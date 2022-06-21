@@ -14,6 +14,7 @@ import { ChooseTemplate } from './ChooseTemplate';
 import { OfferDetails } from './OfferDetails';
 import { Summary } from './Summary';
 import { getCapitalizedStr } from '../../../../utils';
+import moment from 'moment';
 
 /** CreateOfferContext shared within 4 steps */
 export interface IOffer {
@@ -30,11 +31,11 @@ export interface IOffer {
 const initialOffer = {
   deploymentId: '',
   templateId: '',
-  rewardPerIndexer: 0,
+  rewardPerIndexer: 1,
   totalDeposit: '0',
-  indexerCap: 0,
+  indexerCap: 1,
   minimumIndexedHeight: 1,
-  expireDate: new Date(),
+  expireDate: moment().add(12, 'hours').toDate(),
   projectId: '',
 };
 
@@ -59,6 +60,7 @@ interface IStepButtons {
   onStepChange: (step: number, type: StepType) => void;
   disabled?: boolean;
   loading?: boolean;
+  submitType?: boolean;
 }
 
 export const StepButtons: React.VFC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {

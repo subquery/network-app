@@ -411,10 +411,18 @@ const en = {
       step_2: {
         title: 'Step 3: Set the details for your offer',
         rewardPerIndexer: 'Total rewards per indexer',
+        rewardPerIndexerTooltip: 'This is the total amount a indexer will receive from accepting the offer.',
         indexerCap: 'Indexer cap',
+        indexerCapTooltip: 'This is the maximum number of indexers that can accept this offers',
         totalDeposit: 'Required deposit',
+        totalDepositTooltip: `This amount is calculated as the rewards per indexer multiplied by the indexer cap that you have stated above. \n
+        You will need to deposit this amount when you confirm the creation of this offer on MetaMask. Any unspent balance can be withdrawn when the offer expires or if you cancel the offer prior to expiration`,
         minimumIndexedHeight: 'Minimum indexed height',
-        expireDate: 'Expiration time (Timezone: UTC)',
+        minimumIndexedHeightTooltip:
+          'Only the indexer that has indexed to this block height or above can accept this offer.',
+        expireDate: 'Expiration time',
+        expireDateTooltip:
+          'Indexer cannot accept this offer after the expiration time. However, the indexer that have already accepted the offer will not be affected.',
         cancelWarning:
           'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
       },
@@ -479,6 +487,8 @@ const en = {
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
       day_other: '{{count}} days',
+      block: 'Block',
+      blocks: 'Blocks',
     },
     status: {
       success: 'Success!',
