@@ -1,3 +1,11 @@
 .description {
   margin: 1rem 0;
 }
+
+.offerTableHeader {
+  margin: 1rem 0;
+}
+
+.searchDeployment {
+  width: 360px;
+}
