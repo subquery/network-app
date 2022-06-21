@@ -30,6 +30,7 @@ export * from './Card';
 export * from './CurEra';
 export * from './Modal';
 export * from './ModalInput';
+export * from './NumberInput';
 export * from './ModalApproveToken';
 export * from './ModalStatus';
 export * from './TransactionModal';
@@ -40,6 +41,7 @@ export * from './SummaryList';
 export * from './TableText';
 export * from './SearchInput';
 export * from './GraphQLPlayground';
+export * from './Text';
 
 export {
   Header,

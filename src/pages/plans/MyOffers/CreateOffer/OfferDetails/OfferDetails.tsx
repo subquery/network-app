@@ -9,17 +9,21 @@ import { Formik, Form } from 'formik';
 import moment from 'moment';
 import styles from './OfferDetails.module.css';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
-import { NumberInput } from '../../../../../components/NumberInput';
+import { NumberInput, Text } from '../../../../../components';
 
-const OfferDetailsSchema = Yup.object({
-  rewardPerIndexer: Yup.number().required(),
-  indexerCap: Yup.number().required(),
-  totalDeposit: Yup.string().required(),
-  minimumIndexedHeight: Yup.number().required(),
-  expireDate: Yup.date().required(),
+const REWARD_PER_INDEXER = 'rewardPerIndexer';
+const INDEXER_CAP = 'indexerCap';
+const TOTAL_DEPOSIT = 'totalDeposit';
+const MINIMUM_INDEXED_HEIGHT = 'minimumIndexedHeight';
+const EXPIRE_DATE = 'expireDate';
+
+const OfferDetailsSchema = Yup.object().shape({
+  [REWARD_PER_INDEXER]: Yup.number().required().moreThan(0),
+  [INDEXER_CAP]: Yup.number().required().moreThan(0),
+  [TOTAL_DEPOSIT]: Yup.string().required(),
+  [MINIMUM_INDEXED_HEIGHT]: Yup.number().required(),
+  [EXPIRE_DATE]: Yup.date().required().min(moment().add(12, 'hours')),
 });
-
-type OfferDetailsFrom = Yup.Asserts<typeof OfferDetailsSchema>;
 
 export const OfferDetails: React.VFC = () => {
   const { t } = useTranslation();
@@ -28,7 +32,7 @@ export const OfferDetails: React.VFC = () => {
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
 
-  const handleSubmitFrom = (offerDetails: OfferDetailsFrom) => {
+  const handleSubmitFrom = (offerDetails: any) => {
     const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = offerDetails;
     const totalDeposit = (rewardPerIndexer * indexerCap).toFixed(12);
     updateCreateOffer({ ...offer, indexerCap, minimumIndexedHeight, expireDate, rewardPerIndexer, totalDeposit });
@@ -36,83 +40,97 @@ export const OfferDetails: React.VFC = () => {
   };
 
   const initialOfferDetails = {
-    rewardPerIndexer: offer.rewardPerIndexer ?? 1,
-    indexerCap: offer.indexerCap ?? 1,
-    totalDeposit: offer.totalDeposit ?? (1 * 1).toString(),
-    minimumIndexedHeight: offer.minimumIndexedHeight ?? 1,
-    expireDate: offer.expireDate ?? moment().toDate(),
+    [REWARD_PER_INDEXER]: offer.rewardPerIndexer,
+    [INDEXER_CAP]: offer.indexerCap,
+    [TOTAL_DEPOSIT]: offer.totalDeposit,
+    [MINIMUM_INDEXED_HEIGHT]: offer.minimumIndexedHeight,
+    [EXPIRE_DATE]: offer.expireDate,
   };
 
   return (
     <div>
       <Typography.Title level={4}>{t('myOffers.step_2.title')}</Typography.Title>
 
-      <div>
-        <Formik initialValues={initialOfferDetails} validationSchema={OfferDetailsSchema} onSubmit={handleSubmitFrom}>
-          {({ isSubmitting, submitForm, setFieldValue, values, isValid }) => {
-            const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = values;
-            const totalDeposit = (rewardPerIndexer * indexerCap).toFixed(12);
+      <Formik
+        initialValues={initialOfferDetails}
+        validationSchema={OfferDetailsSchema}
+        onSubmit={handleSubmitFrom}
+        validateOnMount
+      >
+        {({ isSubmitting, submitForm, setFieldValue, values, isValid, errors }) => {
+          const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = values;
+          const totalDeposit = (rewardPerIndexer * indexerCap).toFixed(12);
 
-            return (
-              <Form>
-                <div className={styles.form}>
-                  <NumberInput
-                    title={t('myOffers.step_2.rewardPerIndexer')}
-                    id="rewardPerIndexer"
-                    defaultValue={rewardPerIndexer}
-                    maxLength={12}
-                    onChange={(value) => setFieldValue('rewardPerIndexer', value)}
-                  />
-                  <NumberInput
-                    title={t('myOffers.step_2.indexerCap')}
-                    id="indexerCap"
-                    defaultValue={indexerCap}
-                    onChange={(value) => setFieldValue('indexerCap', value)}
-                  />
-                  <NumberInput
-                    title={t('myOffers.step_2.totalDeposit')}
-                    id="totalDeposit"
-                    disabled={true}
-                    value={totalDeposit}
-                  />
-                  <NumberInput
-                    title={t('myOffers.step_2.minimumIndexedHeight')}
-                    id="minimumIndexedHeight"
-                    defaultValue={minimumIndexedHeight}
-                    onChange={(value) => setFieldValue('minimumIndexedHeight', value)}
-                  />
-                  <div>
-                    <Typography.Text className={styles.datePickerTitle}>
-                      {t('myOffers.step_2.expireDate')}
-                    </Typography.Text>
-                    <DatePicker
-                      showTime
-                      size="large"
-                      id="expireDate"
-                      className={styles.datePicker}
-                      defaultValue={moment(expireDate)}
-                      onChange={(value) => setFieldValue('expireDate', value)}
-                    />
-                  </div>
-                </div>
+          return (
+            <Form>
+              <div className={styles.form}>
+                <NumberInput
+                  title={t('myOffers.step_2.rewardPerIndexer')}
+                  tooltip={t('myOffers.step_2.rewardPerIndexerTooltip')}
+                  id={REWARD_PER_INDEXER}
+                  defaultValue={rewardPerIndexer}
+                  maxLength={12}
+                  onChange={(value) => setFieldValue(REWARD_PER_INDEXER, value)}
+                  status={errors[REWARD_PER_INDEXER] ? 'error' : undefined}
+                />
+                <NumberInput
+                  title={t('myOffers.step_2.indexerCap')}
+                  tooltip={t('myOffers.step_2.indexerCapTooltip')}
+                  id={INDEXER_CAP}
+                  defaultValue={indexerCap}
+                  onChange={(value) => setFieldValue(INDEXER_CAP, value)}
+                  status={errors[INDEXER_CAP] ? 'error' : undefined}
+                />
+                <NumberInput
+                  title={t('myOffers.step_2.totalDeposit')}
+                  tooltip={t('myOffers.step_2.totalDepositTooltip')}
+                  id={TOTAL_DEPOSIT}
+                  disabled={true}
+                  value={totalDeposit}
+                />
+                <NumberInput
+                  title={t('myOffers.step_2.minimumIndexedHeight')}
+                  tooltip={t('myOffers.step_2.minimumIndexedHeightTooltip')}
+                  id={MINIMUM_INDEXED_HEIGHT}
+                  defaultValue={minimumIndexedHeight}
+                  onChange={(value) => setFieldValue(MINIMUM_INDEXED_HEIGHT, value)}
+                  unit={values[MINIMUM_INDEXED_HEIGHT] > 1 ? t('general.blocks') : t('general.block')}
+                  status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
+                />
                 <div>
-                  <StepButtons
-                    curStep={curStep}
-                    onStepChange={(step: number, stepType: StepType) => {
-                      if (stepType === StepType.NEXT) {
-                        submitForm();
-                      } else {
-                        onStepChange(step);
-                      }
+                  <Text tooltip={t('myOffers.step_2.expireDateTooltip')}>{t('myOffers.step_2.expireDate')}</Text>
+                  <DatePicker
+                    showTime
+                    disabledDate={(current) => {
+                      // Can not select days before today + 12 hours
+                      return current && current < moment().add(12, 'hours');
                     }}
-                    disabled={!isValid || isSubmitting}
+                    size="large"
+                    id={EXPIRE_DATE}
+                    className={styles.datePicker}
+                    defaultValue={moment(expireDate)}
+                    onChange={(value) => setFieldValue(EXPIRE_DATE, value)}
+                    status={errors[EXPIRE_DATE] ? 'error' : undefined}
                   />
                 </div>
-              </Form>
-            );
-          }}
-        </Formik>
-      </div>
+              </div>
+              <div>
+                <StepButtons
+                  curStep={curStep}
+                  onStepChange={(step: number, stepType: StepType) => {
+                    if (stepType === StepType.NEXT) {
+                      submitForm();
+                    } else {
+                      onStepChange(step);
+                    }
+                  }}
+                  disabled={!isValid || isSubmitting}
+                />
+              </div>
+            </Form>
+          );
+        }}
+      </Formik>
     </div>
   );
 };

@@ -9,4 +9,12 @@ export const COLORS = {
   primary: '#4388dd',
   success: '#65cd45',
   error: '#f1585b',
+
+  /*New colors*/
+  gray200: '#f4f6f8',
+  gray300: '#dfe3e8',
+  gray400: '#c4cdd5',
+  gray500: '#919eab',
+  gray700: '#454f58',
+  gray900: '#1a202c',
 };
