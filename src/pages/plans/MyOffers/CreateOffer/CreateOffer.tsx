@@ -94,7 +94,7 @@ const steps = [
 export const CreateOffer: React.VFC = () => {
   const { t } = useTranslation();
   const [offer, setOffer] = React.useState<IOffer>(initialOffer);
-  const [curStep, setCurStep] = React.useState<number>(2);
+  const [curStep, setCurStep] = React.useState<number>(0);
 
   const updateCreateOffer = (offer: IOffer) => setOffer(offer);
   const onStepChange = (step: number) => setCurStep(step);
