@@ -9,7 +9,7 @@ import { Formik, Form } from 'formik';
 import moment from 'moment';
 import styles from './OfferDetails.module.css';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
-import { NumberInput } from '../../../../../components/NumberInput';
+import { NumberInput, Text } from '../../../../../components';
 
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
@@ -66,6 +66,7 @@ export const OfferDetails: React.VFC = () => {
               <div className={styles.form}>
                 <NumberInput
                   title={t('myOffers.step_2.rewardPerIndexer')}
+                  tooltip={t('myOffers.step_2.rewardPerIndexerTooltip')}
                   id={REWARD_PER_INDEXER}
                   defaultValue={rewardPerIndexer}
                   maxLength={12}
@@ -74,6 +75,7 @@ export const OfferDetails: React.VFC = () => {
                 />
                 <NumberInput
                   title={t('myOffers.step_2.indexerCap')}
+                  tooltip={t('myOffers.step_2.indexerCapTooltip')}
                   id={INDEXER_CAP}
                   defaultValue={indexerCap}
                   onChange={(value) => setFieldValue(INDEXER_CAP, value)}
@@ -81,12 +83,14 @@ export const OfferDetails: React.VFC = () => {
                 />
                 <NumberInput
                   title={t('myOffers.step_2.totalDeposit')}
+                  tooltip={t('myOffers.step_2.totalDepositTooltip')}
                   id={TOTAL_DEPOSIT}
                   disabled={true}
                   value={totalDeposit}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.minimumIndexedHeight')}
+                  tooltip={t('myOffers.step_2.minimumIndexedHeightTooltip')}
                   id={MINIMUM_INDEXED_HEIGHT}
                   defaultValue={minimumIndexedHeight}
                   onChange={(value) => setFieldValue(MINIMUM_INDEXED_HEIGHT, value)}
@@ -94,9 +98,7 @@ export const OfferDetails: React.VFC = () => {
                   status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
                 />
                 <div>
-                  <Typography.Text className={styles.datePickerTitle}>
-                    {t('myOffers.step_2.expireDate')}
-                  </Typography.Text>
+                  <Text tooltip={t('myOffers.step_2.expireDateTooltip')}>{t('myOffers.step_2.expireDate')}</Text>
                   <DatePicker
                     showTime
                     disabledDate={(current) => {

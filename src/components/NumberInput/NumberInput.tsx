@@ -5,10 +5,12 @@ import * as React from 'react';
 import { InputNumber, InputNumberProps, Button } from 'antd';
 import { Typography } from '@subql/react-ui';
 import styles from './NumberInput.module.css';
+import { Text } from '../Text';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
   title?: string;
+  tooltip?: string;
   description?: string;
   unit?: string;
   onClickMax?: (amount: number) => void;
@@ -18,6 +20,7 @@ interface NumberInputProps extends InputNumberProps {
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   title,
+  tooltip,
   unit = 'SQT',
   maxAmountText,
   maxAmount = 0,
@@ -38,7 +41,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <div className={styles.input}>
-      {title && <Typography className={styles.inputTitle}>{title}</Typography>}
+      {title && <Text tooltip={tooltip}>{title}</Text>}
       <div>
         <InputNumber
           addonAfter={<Suffix />}
