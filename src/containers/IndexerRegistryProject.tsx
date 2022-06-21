@@ -18,6 +18,7 @@ import { GetOwnOpenOffersVariables, GetOwnOpenOffers } from '../__generated__/re
 import { GetOwnFinishedOffersVariables, GetOwnFinishedOffers } from '../__generated__/registry/GetOwnFinishedOffers';
 import { GetOwnExpiredOffersVariables, GetOwnExpiredOffers } from '../__generated__/registry/GetOwnExpiredOffers';
 import { GetAllOpenOffersVariables, GetAllOpenOffers } from '../__generated__/registry/GetAllOpenOffers';
+import { GetSpecificOpenOffersVariables, GetSpecificOpenOffers } from '../__generated__/registry/GetSpecificOpenOffers';
 import { GetAllDelegationsVariables, GetAllDelegations } from '../__generated__/registry/GetAllDelegations';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
 import { GetDelegationsVariables, GetDelegations } from '../__generated__/registry/GetDelegations';
@@ -364,7 +365,6 @@ const GET_OWN_OPEN_OFFERS = gql`
   query GetOwnOpenOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
       filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
-      orderBy: EXPIRE_DATE_ASC
       first: 20
       offset: $offset
     ) {
@@ -381,7 +381,6 @@ const GET_OWN_FINISHED_OFFERS = gql`
   query GetOwnFinishedOffers($consumer: String!, $now: Datetime!, $offset: Int) {
     offers(
       filter: { consumer: { equalTo: $consumer }, expireDate: { greaterThan: $now }, reachLimit: { equalTo: true } }
-      orderBy: EXPIRE_DATE_ASC
       first: 20
       offset: $offset
     ) {
@@ -396,12 +395,7 @@ const GET_OWN_FINISHED_OFFERS = gql`
 const GET_OWN_EXPIRED_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetOwnExpiredOffers($consumer: String!, $now: Datetime!, $offset: Int) {
-    offers(
-      filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now } }
-      orderBy: EXPIRE_DATE_ASC
-      first: 20
-      offset: $offset
-    ) {
+    offers(filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now } }, first: 20, offset: $offset) {
       totalCount
       nodes {
         ...OfferFields
@@ -413,9 +407,24 @@ const GET_OWN_EXPIRED_OFFERS = gql`
 const GET_ALL_OPEN_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetAllOpenOffers($now: Datetime!, $offset: Int) {
+    offers(filter: { expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }, first: 20, offset: $offset) {
+      totalCount
+      nodes {
+        ...OfferFields
+      }
+    }
+  }
+`;
+
+const GET_SPECIFIC_OPEN_OFFERS = gql`
+  ${OFFER_FIELDS}
+  query GetSpecificOpenOffers($deploymentId: String!, $now: Datetime!, $offset: Int) {
     offers(
-      filter: { expireDate: { greaterThan: $now }, reachLimit: { equalTo: false } }
-      orderBy: EXPIRE_DATE_ASC
+      filter: {
+        expireDate: { greaterThan: $now }
+        reachLimit: { equalTo: false }
+        deploymentId: { equalTo: $deploymentId }
+      }
       first: 20
       offset: $offset
     ) {
@@ -523,7 +532,12 @@ export function useOwnExpiredOffers(params: GetOwnExpiredOffersVariables): Query
 export function useAllOpenOffers(params: GetAllOpenOffersVariables): QueryResult<GetAllOpenOffers> {
   return useQuery<GetAllOpenOffers, GetAllOpenOffersVariables>(GET_ALL_OPEN_OFFERS, {
     variables: params,
-    pollInterval: 20000,
+  });
+}
+
+export function useSpecificOpenOffers(params: GetSpecificOpenOffersVariables): QueryResult<GetSpecificOpenOffers> {
+  return useQuery<GetSpecificOpenOffers, GetSpecificOpenOffersVariables>(GET_SPECIFIC_OPEN_OFFERS, {
+    variables: params,
   });
 }
 
