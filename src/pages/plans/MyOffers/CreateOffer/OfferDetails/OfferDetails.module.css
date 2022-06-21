@@ -1,0 +1,31 @@
+.content {
+  background: white;
+  width: 70%;
+  min-height: 420px;
+  padding: 1rem;
+}
+
+.steps {
+  margin: 1rem 0;
+  overflow: scroll;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create {
+  height: 40px;
+}
+
+.datePickerTitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--gary900);
+}
+
+.datePicker {
+  width: 100%;
+}

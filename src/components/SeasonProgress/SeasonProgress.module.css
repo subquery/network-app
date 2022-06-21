@@ -1,9 +1,8 @@
-.profile {
-  height: 130px;
-  padding: 1rem 1rem 0 1rem;
-  display: flex;
-  width: 100%;
+.seasonProgress {
+  flex: 2.5;
+  padding: 1.2rem 3rem 1rem 1rem;
   background: white;
+  display: flex;
   justify-content: space-between;
   align-items: center;
 }

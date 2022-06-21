@@ -8,6 +8,8 @@ import { CurEra } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import { useTranslation } from 'react-i18next';
 import Ranks from '../Ranks';
+import { CURR_SEASON, SEASONS } from '../../constants';
+import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 
 enum SectionTabs {
   Indexing = 'Indexing',
@@ -20,25 +22,10 @@ const tabList = [SectionTabs.Indexing];
 const Leaderboard: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
   const { t } = useTranslation();
-  // const { account } = useWeb3();
-  // const history = useHistory();
+  const [season, setSeason] = React.useState(CURR_SEASON);
 
-  // const sortedIndexer = useSortedIndexer(account || '');
-  // const totalDelegations = useUserDelegations(account);
-
-  //   if (!account) {
-  //     history.push('/missions/leaderboard');
-  //   }
-  //   return;
-  // }, [account, history]);
-
-  const seasons = {
-    1: { from: new Date(2022, 4, 11), to: new Date(2022, 4, 20) },
-    2: { from: new Date(2022, 4, 24), to: new Date(2022, 5, 1) },
-    3: { from: new Date(2022, 5, 5), to: new Date(2022, 5, 15) },
-  };
-
-  // const seasonNum = 1;
+  const viewPrev = () => setSeason(season - 1);
+  const viewCurr = () => setSeason(CURR_SEASON);
 
   return (
     <>
@@ -46,9 +33,8 @@ const Leaderboard: React.VFC = () => {
         <div className={styles.header}>{t('missions.leaderboard')}</div>
         <CurEra />
       </div>
-
-      {/* <Season /> */}
-
+      <br />
+      <SeasonProgress timePeriod={SEASONS[season]} />
       <div>
         <div className={styles.tabList}>
           {tabList.map((tab) => (
@@ -58,7 +44,7 @@ const Leaderboard: React.VFC = () => {
             </div>
           ))}
         </div>
-        {curTab === SectionTabs.Indexing && <Ranks seasons={seasons} />}
+        {curTab === SectionTabs.Indexing && <Ranks season={season} viewPrev={viewPrev} viewCurr={viewCurr} />}
       </div>
     </>
   );

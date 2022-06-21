@@ -76,8 +76,13 @@
   padding: 1rem;
 }
 
-.searchInput {
+.indexerListHeader {
+  margin: 1rem 0 2rem 0;
   display: flex;
-  justify-content: flex-end;
-  margin: 1rem 0;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.searchInput {
+  width: 360px;
 }

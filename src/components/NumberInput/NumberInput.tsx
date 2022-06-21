@@ -6,8 +6,8 @@ import { InputNumber, InputNumberProps, Button } from 'antd';
 import { Typography } from '@subql/react-ui';
 import styles from './NumberInput.module.css';
 
-interface NumberInputProps {
-  inputParams: InputNumberProps;
+interface NumberInputProps extends InputNumberProps {
+  inputParams?: InputNumberProps;
   title?: string;
   description?: string;
   unit?: string;
@@ -22,9 +22,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   maxAmountText,
   maxAmount = 0,
   onClickMax,
-  inputParams,
+  inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
+  ...inputNumberProps
 }) => {
-  const Prefix = () => (
+  const Suffix = () => (
     <div className={styles.prefix}>
       {unit && <Typography className={styles.unit}>{unit}</Typography>}
       {maxAmount > 0 && (
@@ -36,16 +37,22 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 
   return (
-    <>
+    <div className={styles.input}>
       {title && <Typography className={styles.inputTitle}>{title}</Typography>}
-      <div className={styles.input}>
-        <InputNumber addonAfter={<Prefix />} {...inputParams} className={styles.inputNumber} />
+      <div>
+        <InputNumber
+          addonAfter={<Suffix />}
+          {...inputParams}
+          {...inputNumberProps}
+          className={styles.inputNumber}
+          size="large"
+        />
       </div>
       {maxAmount > 0 && (
         <Typography className={styles.inputBottomText} variant="medium">
           {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
         </Typography>
       )}
-    </>
+    </div>
   );
 };

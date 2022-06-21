@@ -5,7 +5,7 @@ import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
 import { CgSandClock } from 'react-icons/cg';
-import { AsyncData, parseError } from '../../utils';
+import { AsyncData, COLORS, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import styles from './TransactionModal.module.css';
@@ -19,6 +19,12 @@ export enum NotificationType {
   SUCCESS = 'success',
   ERROR = 'error',
 }
+
+const borderColorMapping = {
+  [NotificationType.INFO]: COLORS.primary,
+  [NotificationType.SUCCESS]: COLORS.success,
+  [NotificationType.ERROR]: COLORS.error,
+};
 interface NotificationProps {
   type?: NotificationType;
   title?: string;
@@ -33,9 +39,8 @@ export const openNotificationWithIcon = ({
   notification[type]({
     message: title ?? 'Notification',
     description: description,
-  });
-  notification.config({
-    duration: 60,
+    style: { borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}` },
+    duration: type === NotificationType.INFO ? 45 : 30,
   });
 };
 
@@ -52,7 +57,7 @@ type Props<P, T extends string> = {
     successText?: string;
   };
   currentStep?: number;
-  onClick: Action<P, T>;
+  onClick?: Action<P, T>;
   onClose?: () => void;
   actions: Array<
     {
@@ -124,7 +129,7 @@ const TransactionModal = <P, T extends string>({
 
   const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: P) => {
     try {
-      if (!showModal) return;
+      if (!showModal || !action) return;
 
       const tx = await action(params, showModal);
 

@@ -14,7 +14,7 @@ import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import { useIndexerCapacity } from '../../../../hooks';
-import { SearchAddress, TableText } from '../../../../components';
+import { SearchInput, TableText } from '../../../../components';
 import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 
@@ -79,12 +79,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   /**
    * SearchInput logic
-   * TODO: Improve searchAddress component
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const [searchIndexerResult, setSearchIndexerResult] = React.useState<string | undefined>();
-  const [searchingIndexer, setSearchingIndexer] = React.useState<boolean>();
-
   const sortedIndexer = useIndexer({ address: searchIndexer ?? '' });
 
   const searchedIndexer = React.useMemo(
@@ -92,22 +88,15 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     [sortedIndexer],
   );
 
-  React.useEffect(() => {
-    setSearchingIndexer(sortedIndexer?.loading);
-    if (!searchedIndexer && searchIndexer && !sortedIndexer?.loading) {
-      setSearchIndexerResult('No search result.');
-    } else {
-      setSearchIndexerResult(undefined);
-    }
-  }, [searchIndexer, searchedIndexer, sortedIndexer?.loading]);
-
-  const SearchInput = () => (
-    <SearchAddress
-      onSearch={(value) => setSearchIndexer(value)}
-      defaultValue={searchIndexer}
-      loading={searchingIndexer}
-      searchResult={searchIndexerResult}
-    />
+  const SearchAddress = () => (
+    <div className={styles.indexerSearch}>
+      <SearchInput
+        onSearch={(value: string) => setSearchIndexer(value)}
+        defaultValue={searchIndexer}
+        loading={sortedIndexer.loading}
+        emptyResult={!searchedIndexer}
+      />
+    </div>
   );
 
   /**
@@ -322,7 +311,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         <Typography variant="h6" className={styles.title}>
           {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
         </Typography>
-        <SearchInput />
+        <SearchAddress />
       </div>
 
       <Table

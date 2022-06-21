@@ -11,6 +11,7 @@ export * from './getTrimmedStr';
 export * from './useDebounce';
 export * from './fetch';
 export * from './localStorage';
+export * from './colors';
 
 export function truncateAddress(address: string): string {
   if (!address) {

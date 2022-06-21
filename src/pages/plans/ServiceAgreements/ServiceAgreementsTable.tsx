@@ -8,30 +8,15 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps, Typography as AntDTypography, Tooltip } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
-import { Copy, TableText } from '../../../components';
-import {
-  useIPFS,
-  useProjectMetadata,
-  useServiceAgreements,
-  useSpecificServiceAgreements,
-  useWeb3,
-} from '../../../containers';
-import {
-  formatEther,
-  getTrimmedStr,
-  mapAsync,
-  notEmpty,
-  renderAsync,
-  renderAsyncArray,
-  wrapProxyEndpoint,
-} from '../../../utils';
+import { Copy, TableText, VersionDeployment } from '../../../components';
+import { useProjectMetadata, useServiceAgreements, useSpecificServiceAgreements, useWeb3 } from '../../../containers';
+import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
 import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/registry/GetOngoingServiceAgreements';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
-import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import { ONGOING_PLANS, PLAYGROUND } from './ServiceAgreements';
@@ -56,24 +41,6 @@ export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymen
       );
     },
   });
-};
-
-export const Deployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
-  const { catSingle } = useIPFS();
-  const meta = useAsyncMemo(
-    () => getDeploymentMetadata(catSingle, deployment?.version),
-    [deployment?.version, catSingle],
-  );
-
-  return (
-    <TableText
-      content={
-        <div className={'flex'}>
-          {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
-        </div>
-      }
-    />
-  );
 };
 
 export const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
@@ -114,7 +81,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       title: t('serviceAgreements.headers.deployment').toUpperCase(),
       key: 'deployment',
       width: 200,
-      render: (deployment: ServiceAgreement['deployment']) => <Deployment deployment={deployment} />,
+      render: (deployment: ServiceAgreement['deployment']) => <VersionDeployment deployment={deployment} />,
     },
     {
       dataIndex: 'consumerAddress',

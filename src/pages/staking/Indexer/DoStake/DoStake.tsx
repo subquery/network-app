@@ -72,11 +72,13 @@ export const DoStake: React.VFC = () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
+    assert(account, 'Account not available');
+
     const formattedAmount = parseEther(amount.toString());
     if (stakeAction === StakeAction.Stake) {
-      return contracts.indexerRegistry.stake(formattedAmount);
+      return contracts.staking.stake(account, formattedAmount);
     } else {
-      return contracts.indexerRegistry.unstake(formattedAmount);
+      return contracts.staking.unstake(account, formattedAmount);
     }
   };
 
