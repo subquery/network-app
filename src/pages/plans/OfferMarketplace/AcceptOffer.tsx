@@ -7,6 +7,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
+import { getOverrides } from '@subql/network-clients';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import { getCapitalizedStr, getDeploymentMetadata, renderAsync, parseError, COLORS } from '../../../utils';
@@ -65,6 +66,7 @@ const CheckList: React.VFC<ICheckList> = ({
 }) => {
   const { t } = useTranslation();
   const { account: indexer } = useWeb3();
+
   const deploymentMeta = useAsyncMemo(async () => {
     if (!deploymentId || !proxyEndpoint || !indexer) return null;
     return await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
@@ -159,10 +161,12 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offerId, requiredBloc
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
+    const overrides = await getOverrides();
+
     // TODO: update the root when api ready
     const tempMmrRoot = '0xab3921276c8067fe0c82def3e5ecfd8447f1961bc85768c2a56e6bd26d3c0c55';
 
-    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offerId, tempMmrRoot);
+    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offerId, tempMmrRoot, overrides);
   };
 
   return (

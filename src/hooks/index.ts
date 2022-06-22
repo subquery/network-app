@@ -21,3 +21,4 @@ export * from './useUserDelegations';
 export * from './useIsIndexer';
 export * from './useSortedIndexerDeployments';
 export * from './usePendingStakeChange';
+export * from './useNetworkClient';
