@@ -391,9 +391,21 @@ const en = {
         versionDeployment: 'Version - Deployment ID',
         indexerAmount: 'No. of indexers',
         accepted: 'Accepted',
+        acceptedTooltip: 'This is the number of indexers that have already accepted this offer',
         cap: 'Cap',
+        capTooltip: 'This is the maximum number of indexers that can accept this offers',
         dailyRewardsPerIndexer: 'Daily Rewards Per indexer',
+        dailyRewardsPerIndexerTooltip: 'This is the daily amount a indexer will receive from accepting the offer',
+        totalRewardsPerIndexer: 'Total Rewards per indexer',
+        totalRewardsPerIndexerTooltip:
+          'This is the total amount a indexer will receive from accepting the offer. This amount is calculated as the daily rewards per indexer multiplied by the period.',
+        depositAmount: 'Total deposit',
         period: 'Period',
+        periodTooltip:
+          'This is the duration the indexer who has accepted this offer will be receiving their rewards for',
+        minIndexedHeight: 'min indexed height',
+        minIndexedHeightTooltip:
+          'Only the indexer that has indexed to this block height or above can accept this offer',
         expired: 'Expire',
         unspendBalance: 'Unspent balance',
         amount: 'Amount',
@@ -493,8 +505,9 @@ const en = {
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
       day_other: '{{count}} days',
-      block: 'Block',
+      block: 'block',
       blocks: 'Blocks',
+      block_other: '{{count}} blocks',
     },
     status: {
       success: 'Success!',

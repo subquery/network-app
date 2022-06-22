@@ -3,9 +3,9 @@
 
 import * as React from 'react';
 import { InputNumber, InputNumberProps, Button } from 'antd';
-import { Typography } from '@subql/react-ui';
+// import { Typography } from '@subql/react-ui';
 import styles from './NumberInput.module.css';
-import { Text } from '../Text';
+import { AppTypography } from '../Typography';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
@@ -30,7 +30,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   const Suffix = () => (
     <div className={styles.prefix}>
-      {unit && <Typography className={styles.unit}>{unit}</Typography>}
+      {unit && <AppTypography className={styles.unit}>{unit}</AppTypography>}
       {maxAmount > 0 && (
         <Button shape="round" size="large" onClick={() => onClickMax && onClickMax(maxAmount)}>
           Max
@@ -41,7 +41,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <div className={styles.input}>
-      {title && <Text tooltip={tooltip}>{title}</Text>}
+      {title && <AppTypography tooltip={tooltip}>{title}</AppTypography>}
 
       <InputNumber
         addonAfter={<Suffix />}
@@ -52,9 +52,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       />
 
       {maxAmount > 0 && (
-        <Typography className={styles.inputBottomText} variant="medium">
+        <AppTypography className={styles.inputBottomText}>
           {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
-        </Typography>
+        </AppTypography>
       )}
     </div>
   );

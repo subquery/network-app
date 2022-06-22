@@ -5,7 +5,7 @@ import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './TabButton.module.css';
-import { Text } from '..';
+import { AppTypography } from '..';
 
 interface TabButtonProps {
   label: string;
@@ -21,9 +21,9 @@ export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, to
       className={(isActive) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
       replace
     >
-      <Text className={clsx(whiteTab && styles.whiteTabLabel)} tooltip={tooltip} noTooltipIcon>
+      <AppTypography className={clsx(whiteTab && styles.whiteTabLabel)} tooltip={tooltip} noTooltipIcon>
         {label}
-      </Text>
+      </AppTypography>
     </NavLink>
   );
 };

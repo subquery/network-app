@@ -1,11 +1,16 @@
 .text {
   color: var(--gray900);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .tooltip {
   cursor: pointer;
   display: inline-block;
+}
+
+.tooltipContent {
+  display: flex;
+  align-items: center;
 }
 
 .tooltipIcon {
