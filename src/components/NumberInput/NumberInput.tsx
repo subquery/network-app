@@ -42,15 +42,15 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <div className={styles.input}>
       {title && <Text tooltip={tooltip}>{title}</Text>}
-      <div>
-        <InputNumber
-          addonAfter={<Suffix />}
-          {...inputParams}
-          {...inputNumberProps}
-          className={styles.inputNumber}
-          size="large"
-        />
-      </div>
+
+      <InputNumber
+        addonAfter={<Suffix />}
+        {...inputParams}
+        {...inputNumberProps}
+        className={styles.inputNumber}
+        size="large"
+      />
+
       {maxAmount > 0 && (
         <Typography className={styles.inputBottomText} variant="medium">
           {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}

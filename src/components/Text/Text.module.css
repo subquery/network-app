@@ -4,9 +4,8 @@
 }
 
 .tooltip {
-  display: flex;
-  align-items: center;
   cursor: pointer;
+  display: inline-block;
 }
 
 .tooltipIcon {

@@ -375,8 +375,12 @@ const en = {
     myOffers: {
       title: 'My offers',
       open: 'Open',
-      close: 'Closed',
+      openTooltip: 'Offers that are still open to indexers to accept',
+      closed: 'Closed',
+      closedTooltip: 'Offers that have reached the indexer cap and can no longer be accepted',
       expired: 'Expired',
+      expiredTooltip:
+        'You can find offers that have expired or cancelled without reaching the indexer cap. You can withdraw any unspent balance here',
       createOffer: 'Create an Offer',
       non: 'There is no offers available.',
       table: {

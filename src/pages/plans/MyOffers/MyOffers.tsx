@@ -26,9 +26,9 @@ export const EXPIRED_OFFERS = `${OFFERS_ROUTE}/expired`;
 export const CREATE_OFFER = `${OFFERS_ROUTE}/create`;
 
 const buttonLinks = [
-  { label: i18next.t('myOffers.open'), link: OPEN_OFFERS },
-  { label: i18next.t('myOffers.close'), link: CLOSE_OFFERS },
-  { label: i18next.t('myOffers.expired'), link: EXPIRED_OFFERS },
+  { label: i18next.t('myOffers.open'), link: OPEN_OFFERS, tooltip: i18next.t('myOffers.openTooltip') },
+  { label: i18next.t('myOffers.closed'), link: CLOSE_OFFERS, tooltip: i18next.t('myOffers.closedTooltip') },
+  { label: i18next.t('myOffers.expired'), link: EXPIRED_OFFERS, tooltip: i18next.t('myOffers.expiredTooltip') },
 ];
 
 // TODO: For user experiences, maybe can consider have warning notification

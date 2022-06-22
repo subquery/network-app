@@ -7,10 +7,10 @@ import styles from './Text.module.css';
 import { Tooltip, Typography } from 'antd';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
 import { COLORS } from '../../utils';
+import clsx from 'clsx';
 
 /**
- * Custom style of table cell content using antD.
- * Apply for tables of staking dashboard / plan manager..
+ * Text with tooltip option
  */
 
 interface TextProps {
@@ -18,22 +18,38 @@ interface TextProps {
   className?: string;
   tooltip?: string;
   children?: string | number | React.ReactNode;
+  noTooltipIcon?: boolean;
 }
 
-export const Text: React.FC<TextProps> = ({ content, children, className, tooltip }) => {
-  const sortedContent = content === undefined ? children : content;
-  return (
-    <Typography.Text className={[styles.text, className].join(' ')}>
-      {tooltip ? (
-        <Tooltip title={tooltip} placement="topLeft">
-          <div className={styles.tooltip}>
-            <div>{content || children}</div>
-            <AiOutlineExclamationCircle color={COLORS.gray400} size={14} className={styles.tooltipIcon} />
-          </div>
-        </Tooltip>
-      ) : (
-        sortedContent
-      )}
+export const Text: React.FC<TextProps> = ({
+  content,
+  children,
+  className,
+  tooltip,
+  noTooltipIcon,
+  ...typographyProps
+}) => {
+  const rawContent = content === undefined ? children : content;
+  const sortedContent = ['string', 'number'].includes(typeof rawContent) ? (
+    <Typography.Text className={clsx(styles.text, className)} {...typographyProps}>
+      {rawContent}
     </Typography.Text>
+  ) : (
+    <>{rawContent}</>
   );
+
+  if (tooltip) {
+    return (
+      <Tooltip title={tooltip} placement={`${noTooltipIcon ? 'top' : 'topLeft'}`}>
+        <div className={clsx(styles.tooltip)}>
+          {sortedContent}
+          {!noTooltipIcon && tooltip && (
+            <AiOutlineExclamationCircle color={COLORS.gray400} size={14} className={styles.tooltipIcon} />
+          )}
+        </div>
+      </Tooltip>
+    );
+  }
+
+  return <Typography.Text className={clsx(styles.text, className)}>{sortedContent}</Typography.Text>;
 };

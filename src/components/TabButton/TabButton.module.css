@@ -33,8 +33,11 @@
   min-width: 6rem;
   margin: 0;
   text-align: center;
+  width: 100%;
 }
 
+/* TODO: antD theme */
 .whiteTabLabel {
-  color: var(--gray500);
+  color: var(--gray500) !important;
+  font-size: 18px;
 }

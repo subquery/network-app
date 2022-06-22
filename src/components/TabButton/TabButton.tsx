@@ -3,24 +3,27 @@
 
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Typography } from '@subql/react-ui';
 import clsx from 'clsx';
 import styles from './TabButton.module.css';
+import { Text } from '..';
 
 interface TabButtonProps {
   label: string;
   link: string;
   whiteTab?: boolean;
+  tooltip?: string;
 }
 
-export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab }) => {
+export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, tooltip }) => {
   return (
     <NavLink
       to={link}
       className={(isActive) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
       replace
     >
-      <Typography className={clsx(whiteTab && styles.whiteTabLabel)}>{label}</Typography>
+      <Text className={clsx(whiteTab && styles.whiteTabLabel)} tooltip={tooltip} noTooltipIcon>
+        {label}
+      </Text>
     </NavLink>
   );
 };
@@ -34,7 +37,7 @@ export const TabButtons: React.VFC<TabButtonsProps> = ({ tabs, whiteTab }) => {
   return (
     <div className={clsx(styles.tabContainer, whiteTab && styles.whiteTabContainer)}>
       {tabs.map((tab) => (
-        <TabButton key={tab.link} label={tab.label} link={tab.link} whiteTab={whiteTab} />
+        <TabButton key={tab.link} {...tab} whiteTab={whiteTab} />
       ))}
     </div>
   );
