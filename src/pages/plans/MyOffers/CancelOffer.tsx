@@ -8,10 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { Typography } from '@subql/react-ui';
 import { useContracts } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
-import { getCapitalizedStr } from '../../../utils';
+import { convertStringToNumber, formatEther, getCapitalizedStr } from '../../../utils';
 import styles from './MyOffers.module.css';
 import { useLocation } from 'react-router';
-import { EXPIRED_OFFERS } from './MyOffers';
+import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
+import { useNetworkClient } from '../../../hooks';
+import { SummaryList } from '../../../components';
 
 type Props = {
   offerId: string;
@@ -19,9 +21,41 @@ type Props = {
 
 // TODO: SUMMARY LIST
 export const CancelOffer: React.FC<Props> = ({ offerId }) => {
+  const [cancelPenalty, setCancelPenalty] = React.useState<string>();
+  // const [unSpent, setUnSpent] = React.useState();
+  // const [receive, setReceive] = React.useState();
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const pendingContracts = useContracts();
+  const networkClient = useNetworkClient();
+
+  React.useEffect(() => {
+    async function getCancelPenalty() {
+      const client = await networkClient;
+      if (client && pathname === OPEN_OFFERS) {
+        const offer = convertStringToNumber(offerId);
+        const cancelPenalty = await client.cancelOfferPenaltyFee(offer);
+        setCancelPenalty(formatEther(cancelPenalty));
+
+        // const unSpent = await client.cancelOfferUnspentBalance(offer);
+        // setUnSpent(formatEther(unSpent))
+      }
+    }
+    getCancelPenalty();
+  }, [networkClient, offerId, pathname]);
+
+  const cancelOfferSummary = [
+    {
+      label: t('myOffers.cancel.cancelFee'),
+      value: `${cancelPenalty} SQT`,
+    },
+  ];
+
+  const CancelOfferSummary = () => (
+    <div className={styles.cancelOfferSummary}>
+      <SummaryList list={cancelOfferSummary} />
+    </div>
+  );
 
   const canCelText = {
     title: t('myOffers.cancel.title'),
@@ -60,6 +94,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
           <>
+            {pathname === OPEN_OFFERS && <CancelOfferSummary />}
             <Typography className={'errorText'}>{error}</Typography>
             <div className={styles.btnContainer}>
               <Button
@@ -68,7 +103,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
                 shape="round"
                 size="large"
                 danger={!isExpiredPath}
-                type={isExpiredPath ? 'primary' : 'default'}
+                type={'primary'}
                 loading={isLoading}
               >
                 {text.submitText}

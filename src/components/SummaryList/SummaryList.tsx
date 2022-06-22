@@ -18,7 +18,7 @@ interface SummaryListProps {
 export const SummaryList: React.VFC<SummaryListProps> = ({ title, list }) => {
   return (
     <div className={styles.container}>
-      <Typography>{title ?? 'Summary'}</Typography>
+      {title && <Typography>{title}</Typography>}
       <div className={styles.list}>
         {list.map((list) => (
           <div className={styles.listItem} key={list.label}>

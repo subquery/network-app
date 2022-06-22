@@ -332,7 +332,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                   <Table
                     columns={sortedCols}
                     dataSource={offerList}
-                    scroll={{ x: 1800 }}
+                    scroll={{ x: 2000 }}
                     rowKey={'id'}
                     pagination={{
                       total: totalCount,
