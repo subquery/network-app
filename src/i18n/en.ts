@@ -375,17 +375,37 @@ const en = {
     myOffers: {
       title: 'My offers',
       open: 'Open',
-      close: 'Closed',
+      openTooltip: 'Offers that are still open to indexers to accept',
+      closed: 'Closed',
+      closedTooltip: 'Offers that have reached the indexer cap and can no longer be accepted',
+      closedDescription: 'Here you can find the offers that have reached indexer cap',
       expired: 'Expired',
+      expiredDescription:
+        'Here you can find the expired offers which did not reach the required number of indexers. \n  You can withdraw your unspent balance from these offers.',
+      expiredUnspent: 'You can withdraw your unspent balance from these offers.',
+      expiredTooltip:
+        'You can find offers that have expired or cancelled without reaching the indexer cap. You can withdraw any unspent balance here',
       createOffer: 'Create an Offer',
       non: 'There is no offers available.',
       table: {
         versionDeployment: 'Version - Deployment ID',
         indexerAmount: 'No. of indexers',
         accepted: 'Accepted',
+        acceptedTooltip: 'This is the number of indexers that have already accepted this offer',
         cap: 'Cap',
+        capTooltip: 'This is the maximum number of indexers that can accept this offers',
         dailyRewardsPerIndexer: 'Daily Rewards Per indexer',
+        dailyRewardsPerIndexerTooltip: 'This is the daily amount a indexer will receive from accepting the offer',
+        totalRewardsPerIndexer: 'Total Rewards per indexer',
+        totalRewardsPerIndexerTooltip:
+          'This is the total amount a indexer will receive from accepting the offer. This amount is calculated as the daily rewards per indexer multiplied by the period.',
+        depositAmount: 'Total deposit',
         period: 'Period',
+        periodTooltip:
+          'This is the duration the indexer who has accepted this offer will be receiving their rewards for',
+        minIndexedHeight: 'min indexed height',
+        minIndexedHeightTooltip:
+          'Only the indexer that has indexed to this block height or above can accept this offer',
         expired: 'Expire',
         unspendBalance: 'Unspent balance',
         amount: 'Amount',
@@ -441,8 +461,6 @@ const en = {
       withdraw: {
         title: 'withdraw',
         modalTitle: 'Withdraw from the offer',
-        findExpired: 'Here you can find the expired offers which did not reach the required number of indexers.',
-        unspent: 'You can withdraw your unspent balance from these offers.',
         description: 'You are about to withdraw the rest of SQT from this offer to your wallet.',
         failureText: 'Sorry, failed to withdraw offer',
       },
@@ -487,8 +505,9 @@ const en = {
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
       day_other: '{{count}} days',
-      block: 'Block',
+      block: 'block',
       blocks: 'Blocks',
+      block_other: '{{count}} blocks',
     },
     status: {
       success: 'Success!',

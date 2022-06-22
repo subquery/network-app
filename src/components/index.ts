@@ -41,7 +41,7 @@ export * from './SummaryList';
 export * from './TableText';
 export * from './SearchInput';
 export * from './GraphQLPlayground';
-export * from './Text';
+export * from './Typography';
 
 export {
   Header,

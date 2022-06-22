@@ -9,7 +9,7 @@ import { Formik, Form } from 'formik';
 import moment from 'moment';
 import styles from './OfferDetails.module.css';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
-import { NumberInput, Text } from '../../../../../components';
+import { NumberInput, AppTypography } from '../../../../../components';
 
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
@@ -98,7 +98,9 @@ export const OfferDetails: React.VFC = () => {
                   status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
                 />
                 <div>
-                  <Text tooltip={t('myOffers.step_2.expireDateTooltip')}>{t('myOffers.step_2.expireDate')}</Text>
+                  <AppTypography tooltip={t('myOffers.step_2.expireDateTooltip')}>
+                    {t('myOffers.step_2.expireDate')}
+                  </AppTypography>
                   <DatePicker
                     showTime
                     disabledDate={(current) => {
