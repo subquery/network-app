@@ -378,7 +378,11 @@ const en = {
       openTooltip: 'Offers that are still open to indexers to accept',
       closed: 'Closed',
       closedTooltip: 'Offers that have reached the indexer cap and can no longer be accepted',
+      closedDescription: 'Here you can find the offers that have reached indexer cap',
       expired: 'Expired',
+      expiredDescription:
+        'Here you can find the expired offers which did not reach the required number of indexers. \n  You can withdraw your unspent balance from these offers.',
+      expiredUnspent: 'You can withdraw your unspent balance from these offers.',
       expiredTooltip:
         'You can find offers that have expired or cancelled without reaching the indexer cap. You can withdraw any unspent balance here',
       createOffer: 'Create an Offer',
@@ -445,8 +449,6 @@ const en = {
       withdraw: {
         title: 'withdraw',
         modalTitle: 'Withdraw from the offer',
-        findExpired: 'Here you can find the expired offers which did not reach the required number of indexers.',
-        unspent: 'You can withdraw your unspent balance from these offers.',
         description: 'You are about to withdraw the rest of SQT from this offer to your wallet.',
         failureText: 'Sorry, failed to withdraw offer',
       },

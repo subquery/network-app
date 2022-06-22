@@ -279,9 +279,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
             return (
               <div>
                 {description && totalCount > 0 && (
-                  <div className={styles.description}>
-                    <Typography.Text>{description}</Typography.Text>
-                  </div>
+                  <Typography.Text className={styles.description}>{description}</Typography.Text>
                 )}
                 <div>
                   <div className={clsx('flex-between', styles.offerTableHeader)}>

@@ -87,47 +87,38 @@ export const OfferHeader: React.VFC = () => {
   );
 };
 
-export const MyOffers: React.VFC = () => {
+interface MyOfferProps {
+  queryFn: typeof useOwnOpenOffers | typeof useOwnFinishedOffers | typeof useOwnExpiredOffers;
+  description?: string;
+}
+
+const MyOffer: React.FC<MyOfferProps> = ({ queryFn, description }) => {
   const { account } = useWeb3();
-  const MyOffers = ({ queryFn }: { queryFn: typeof useOwnOpenOffers }) => {
-    return (
+  return (
+    <>
+      <OfferHeader />
       <div className="contentContainer">
-        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} />
+        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
       </div>
-    );
-  };
+    </>
+  );
+};
+
+export const MyOffers: React.VFC = () => {
+  const { t } = useTranslation();
 
   return (
     <Switch>
-      <Route
-        exact
-        path={OPEN_OFFERS}
-        component={() => (
-          <>
-            <OfferHeader />
-            <MyOffers queryFn={useOwnOpenOffers} />
-          </>
-        )}
-      />
+      <Route exact path={OPEN_OFFERS} component={() => <MyOffer queryFn={useOwnOpenOffers} />} />
       <Route
         exact
         path={CLOSE_OFFERS}
-        component={() => (
-          <>
-            <OfferHeader />
-            <MyOffers queryFn={useOwnFinishedOffers} />
-          </>
-        )}
+        component={() => <MyOffer queryFn={useOwnFinishedOffers} description={t('myOffers.closedDescription')} />}
       />
       <Route
         exact
         path={EXPIRED_OFFERS}
-        component={() => (
-          <>
-            <OfferHeader />
-            <MyOffers queryFn={useOwnExpiredOffers} />
-          </>
-        )}
+        component={() => <MyOffer queryFn={useOwnExpiredOffers} description={t('myOffers.expiredDescription')} />}
       />
       <Route
         exact
