@@ -20,6 +20,7 @@ import {
 } from '../../../containers';
 import {
   convertBigNumberToNumber,
+  convertStringToNumber,
   formatDate,
   formatEther,
   formatSeconds,
@@ -38,6 +39,7 @@ import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
+import { TableTitle } from '../../../components/TableTitle';
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
@@ -87,7 +89,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
     },
     {
       dataIndex: ['deployment', 'id'],
-      title: i18next.t('myOffers.table.versionDeployment').toUpperCase(),
+      title: <TableTitle title={i18next.t('myOffers.table.versionDeployment')} />,
       width: 460,
       render: (deploymentId: string, offer: Offer) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
@@ -100,13 +102,20 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       title: i18next.t('myOffers.table.indexerAmount').toUpperCase(),
       children: [
         {
-          title: i18next.t('myOffers.table.accepted').toUpperCase(),
+          title: (
+            <TableTitle
+              title={i18next.t('myOffers.table.accepted')}
+              tooltip={i18next.t('myOffers.table.acceptedTooltip')}
+            />
+          ),
           dataIndex: 'accepted',
           width: 100,
           render: (accepted: number) => <TableText content={accepted} />,
         },
         {
-          title: i18next.t('myOffers.table.cap').toUpperCase(),
+          title: (
+            <TableTitle title={i18next.t('myOffers.table.cap')} tooltip={i18next.t('myOffers.table.capTooltip')} />
+          ),
           dataIndex: 'limit',
           width: 100,
           render: (limit: number) => <TableText content={limit} />,
@@ -115,31 +124,61 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
     },
     {
       dataIndex: ['planTemplate', 'period'],
-      title: i18next.t('myOffers.table.period').toUpperCase(),
+      title: (
+        <TableTitle title={i18next.t('myOffers.table.period')} tooltip={i18next.t('myOffers.table.periodTooltip')} />
+      ),
       render: (period) => <TableText content={formatSeconds(convertBigNumberToNumber(period))} />,
     },
     {
       dataIndex: 'deposit',
-      title: i18next.t('myOffers.step_2.rewardPerIndexer').toUpperCase(),
+      title: (
+        <TableTitle
+          title={i18next.t('myOffers.table.totalRewardsPerIndexer')}
+          tooltip={i18next.t('myOffers.table.totalRewardsPerIndexerTooltip')}
+        />
+      ),
+      width: 200,
+      render: (deposit, offer) => (
+        <TableText content={`${convertStringToNumber(formatEther(deposit)) / offer.limit} SQT`} />
+      ),
+    },
+    {
+      dataIndex: 'deposit',
+      title: <TableTitle title={i18next.t('myOffers.table.depositAmount')} />,
       render: (deposit) => <TableText content={`${formatEther(deposit)} SQT`} />,
     },
     {
+      dataIndex: 'minimumAcceptHeight',
+      title: (
+        <TableTitle
+          title={i18next.t('myOffers.table.minIndexedHeight')}
+          tooltip={i18next.t('myOffers.table.minIndexedHeightTooltip')}
+        />
+      ),
+      width: 180,
+      render: (minimumAcceptHeight) => (
+        <TableText content={i18next.t('general.block', { count: convertBigNumberToNumber(minimumAcceptHeight) })} />
+      ),
+    },
+    {
       dataIndex: ['planTemplate', 'dailyReqCap'],
-      title: i18next.t('plans.headers.dailyReqCap'),
+      title: <TableTitle title={i18next.t('plans.headers.dailyReqCap')} />,
+      width: 160,
       render: (dailyReqCap: BigNumber) => (
         <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
       ),
     },
     {
       dataIndex: ['planTemplate', 'rateLimit'],
-      title: i18next.t('plans.headers.rateLimit'),
+      title: <TableTitle title={i18next.t('plans.headers.rateLimit')} />,
+      width: 160,
       render: (rateLimit: BigNumber) => (
         <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
       ),
     },
     {
       dataIndex: 'expireDate',
-      title: i18next.t('myOffers.table.expired').toUpperCase(),
+      title: <TableTitle title={i18next.t('myOffers.table.expired')} />,
       render: (expireDate: Date) => (
         <TableText content={moment(expireDate).utc(true).fromNow()} tooltip={formatDate(expireDate)} />
       ),
@@ -279,9 +318,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
             return (
               <div>
                 {description && totalCount > 0 && (
-                  <div className={styles.description}>
-                    <Typography.Text>{description}</Typography.Text>
-                  </div>
+                  <Typography.Text className={styles.description}>{description}</Typography.Text>
                 )}
                 <div>
                   <div className={clsx('flex-between', styles.offerTableHeader)}>

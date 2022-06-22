@@ -4,6 +4,11 @@
 import * as React from 'react';
 import styles from './Table.module.css';
 
+/**
+ * NOTE:
+ * FROM April 2022, use antD table
+ */
+
 type TableProps = {
   className?: string;
 };

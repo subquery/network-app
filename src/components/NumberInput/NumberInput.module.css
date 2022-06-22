@@ -2,6 +2,7 @@
   margin: 1rem 0;
 }
 
+/* TODO: antD theme custom */
 .inputNumber {
   width: 100% !important;
   border-radius: 4px !important;
@@ -12,9 +13,9 @@
   justify-content: center;
   align-items: center;
 }
-
+/* TODO: antD theme custom */
 .unit {
-  color: var(--gray500);
+  color: var(--gray500) !important;
   margin: 0 0.5rem;
 }
 
@@ -34,6 +35,7 @@
   color: var(--error);
 }
 
+/* TODO: antD theme custom */
 .submitBtn {
   background: var(--gradient-to) !important;
   color: white !important;
