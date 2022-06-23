@@ -138,14 +138,14 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
         />
       ),
       width: 200,
-      render: (deposit, offer) => (
-        <TableText content={`${convertStringToNumber(formatEther(deposit)) / offer.limit} SQT`} />
-      ),
+      render: (deposit) => <TableText content={`${formatEther(deposit)} SQT`} />,
     },
     {
       dataIndex: 'deposit',
       title: <TableTitle title={i18next.t('myOffers.table.depositAmount')} />,
-      render: (deposit) => <TableText content={`${formatEther(deposit)} SQT`} />,
+      render: (deposit, offer) => (
+        <TableText content={`${convertStringToNumber(formatEther(deposit)) * offer.limit} SQT`} />
+      ),
     },
     {
       dataIndex: 'minimumAcceptHeight',

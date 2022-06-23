@@ -10,6 +10,8 @@ import moment from 'moment';
 import styles from './OfferDetails.module.css';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
+import { ethers } from 'ethers';
+import { convertStringToNumber } from '../../../../../utils';
 
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
@@ -17,8 +19,11 @@ const TOTAL_DEPOSIT = 'totalDeposit';
 const MINIMUM_INDEXED_HEIGHT = 'minimumIndexedHeight';
 const EXPIRE_DATE = 'expireDate';
 
+const formEther = (val: string) => ethers.utils.parseUnits(val, 18);
 const OfferDetailsSchema = Yup.object().shape({
-  [REWARD_PER_INDEXER]: Yup.number().required().moreThan(0),
+  [REWARD_PER_INDEXER]: Yup.string()
+    .required()
+    .test('Reward should be greater than zero', (reward) => (reward ? formEther(reward).gt('0') : false)),
   [INDEXER_CAP]: Yup.number().required().moreThan(0),
   [TOTAL_DEPOSIT]: Yup.string().required(),
   [MINIMUM_INDEXED_HEIGHT]: Yup.number().required(),
@@ -59,7 +64,7 @@ export const OfferDetails: React.VFC = () => {
       >
         {({ isSubmitting, submitForm, setFieldValue, values, isValid, errors }) => {
           const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = values;
-          const totalDeposit = (rewardPerIndexer * indexerCap).toFixed(12);
+          const totalDeposit = rewardPerIndexer ? convertStringToNumber(rewardPerIndexer) * indexerCap : '0';
 
           return (
             <Form>
@@ -72,6 +77,8 @@ export const OfferDetails: React.VFC = () => {
                   maxLength={12}
                   onChange={(value) => setFieldValue(REWARD_PER_INDEXER, value)}
                   status={errors[REWARD_PER_INDEXER] ? 'error' : undefined}
+                  stringMode
+                  step="0.00001"
                 />
                 <NumberInput
                   title={t('myOffers.step_2.indexerCap')}
@@ -87,6 +94,8 @@ export const OfferDetails: React.VFC = () => {
                   id={TOTAL_DEPOSIT}
                   disabled={true}
                   value={totalDeposit}
+                  stringMode
+                  step="0.00001"
                 />
                 <NumberInput
                   title={t('myOffers.step_2.minimumIndexedHeight')}
