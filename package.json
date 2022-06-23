@@ -22,7 +22,7 @@
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
     "@subql/contract-sdk": "0.6.1-8",
-    "@subql/network-clients": "^0.1.1-5",
+    "@subql/network-clients": "^0.1.1-7",
     "@subql/react-ui": "^1.0.1-22",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
