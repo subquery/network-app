@@ -20,7 +20,7 @@ import moment from 'moment';
 export interface IOffer {
   deploymentId: string;
   templateId: string;
-  rewardPerIndexer: number;
+  rewardPerIndexer: string;
   totalDeposit: string;
   indexerCap: number;
   minimumIndexedHeight: number;
@@ -31,7 +31,7 @@ export interface IOffer {
 const initialOffer = {
   deploymentId: '',
   templateId: '',
-  rewardPerIndexer: 1,
+  rewardPerIndexer: '1',
   totalDeposit: '0',
   indexerCap: 1,
   minimumIndexedHeight: 1,

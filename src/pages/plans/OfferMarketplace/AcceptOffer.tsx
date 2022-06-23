@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { getEthGas } from '@subql/network-clients';
+import { Status as AppStatus } from '../../../components';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import { getCapitalizedStr, getDeploymentMetadata, renderAsync, parseError, COLORS } from '../../../utils';
@@ -16,29 +17,57 @@ import { GetDeploymentIndexer_deploymentIndexers_nodes as DeploymentIndexer } fr
 import { Status } from '../../../__generated__/registry/globalTypes';
 import styles from './Marketplace.module.css';
 import clsx from 'clsx';
+import { deploymentStatus } from '../../../components/Status/Status';
 
 interface IRequirementCheck {
   title: string;
   requiredValue: string | number | undefined;
   value: string | number | undefined;
   passCheck: boolean;
+  formatFn?: (value: any) => string | number | React.ReactNode;
+  errorMsg?: string;
+}
+
+interface ISortedValue {
+  value: string | number | undefined;
   formatFn?: (value: any) => string | React.ReactNode;
 }
 
-const RequirementCheck: React.FC<IRequirementCheck> = ({ title, requiredValue, value, passCheck, formatFn }) => {
+const RequirementCheck: React.FC<IRequirementCheck> = ({
+  title,
+  requiredValue,
+  value,
+  passCheck,
+  formatFn,
+  errorMsg,
+}) => {
   const iconSize = 20;
   const iconColor = passCheck ? COLORS.success : COLORS.error;
   const Icon = ({ ...props }) =>
     passCheck ? <AiOutlineCheckCircle {...props} /> : <AiOutlineCloseCircle {...props} />;
 
+  const SortedValue = ({ value, formatFn }: ISortedValue) => {
+    if (formatFn) {
+      if (['string', 'number'].includes(typeof formatFn(value))) {
+        return <Typography.Text>{formatFn(value)}</Typography.Text>;
+      }
+      return <>{formatFn(value)}</>;
+    }
+
+    return <Typography.Text>{value}</Typography.Text>;
+  };
+
   return (
-    <div className={clsx('flex-between-center', styles.requirementCheckItem)}>
-      <Typography.Title level={5} type="secondary" className={styles.requirementCheckItemTitle}>
-        {title}
-      </Typography.Title>
-      <Typography.Text>{formatFn ? formatFn(requiredValue) : requiredValue}</Typography.Text>
-      <Typography.Text>{formatFn ? formatFn(value) : value}</Typography.Text>
-      <Icon color={iconColor} size={iconSize} />
+    <div className={styles.requirementCheckItemContainer}>
+      <div className={clsx('flex-between-center', styles.requirementCheckItem)}>
+        <Typography.Title level={5} type="secondary" className={styles.requirementCheckItemTitle}>
+          {title}
+        </Typography.Title>
+        <SortedValue value={requiredValue} formatFn={formatFn} />
+        <SortedValue value={value} formatFn={formatFn} />
+        <Icon color={iconColor} size={iconSize} />
+      </div>
+      {!passCheck && errorMsg && <Typography.Text type={'danger'}>{errorMsg}</Typography.Text>}
     </div>
   );
 };
@@ -91,18 +120,22 @@ const CheckList: React.VFC<ICheckList> = ({
           value: curProgress,
           passCheck: REQUIRED_PROGRESS <= curProgress,
           formatFn: (value: number) => `${(value * 100).toFixed(2)} %`,
+          errorMsg: t('offerMarket.acceptModal.indexingStatusError'),
         },
         {
           title: t('offerMarket.acceptModal.projectStatus'),
           requiredValue: REQUIRED_STATUS,
           value: status,
           passCheck: REQUIRED_STATUS === status,
+          formatFn: (status: string) => <AppStatus text={status} color={deploymentStatus[status]} />,
+          errorMsg: t('offerMarket.acceptModal.projectStatusError'),
         },
         {
           title: t('offerMarket.acceptModal.blockHeight'),
           requiredValue: REQUIRED_BLOCKHEIGHT,
           value: latestBlockHeight,
           passCheck: REQUIRED_BLOCKHEIGHT <= (latestBlockHeight ?? 0),
+          errorMsg: t('offerMarket.acceptModal.blockHeightError'),
         },
       ];
 
@@ -116,14 +149,7 @@ const CheckList: React.VFC<ICheckList> = ({
             {t('offerMarket.acceptModal.passCriteria', { count: passCheckAmount.length })}
           </Typography.Title>
           {sortedRequirementCheckList.map((requirementCheck) => (
-            <RequirementCheck
-              key={requirementCheck.title}
-              title={requirementCheck.title}
-              requiredValue={requirementCheck.requiredValue}
-              value={requirementCheck.value}
-              passCheck={requirementCheck.passCheck}
-              formatFn={requirementCheck?.formatFn}
-            />
+            <RequirementCheck key={requirementCheck.title} {...requirementCheck} />
           ))}
           {error && <Typography.Text type="danger">{error}</Typography.Text>}
           <div className={clsx(styles.btnContainer, 'flex-end')}>
