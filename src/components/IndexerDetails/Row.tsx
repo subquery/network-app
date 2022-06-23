@@ -33,6 +33,7 @@ import styles from './IndexerDetails.module.css';
 import { Status as DeploymentStatus } from '../../__generated__/registry/globalTypes';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { getEthGas } from '@subql/network-clients';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -181,7 +182,8 @@ const ConnectedRow: React.VFC<
     assert(deploymentId, 'DeploymentId not provided');
     assert(planId, 'planId not provided');
 
-    return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId);
+    const ethGas = await getEthGas('high');
+    return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId, ethGas);
   };
 
   const progressInfo = useAsyncMemo(async () => {
