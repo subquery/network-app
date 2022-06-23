@@ -31,7 +31,6 @@ export const Summary: React.VFC = () => {
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
 
-  // TODO: tx.await() & notification pop up handle
   const handleSubmit = async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
@@ -39,13 +38,13 @@ export const Summary: React.VFC = () => {
     const {
       deploymentId,
       templateId,
-      totalDeposit,
+      rewardPerIndexer,
       indexerCap: limit,
       minimumIndexedHeight,
       expireDate: expired,
     } = offer;
 
-    const deposit = parseEther(totalDeposit);
+    const deposit = parseEther(rewardPerIndexer);
     const expireDate = moment(expired).unix(); // to seconds
 
     try {
