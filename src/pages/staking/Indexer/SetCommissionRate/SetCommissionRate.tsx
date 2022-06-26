@@ -10,7 +10,7 @@ import { useIsIndexer } from '../../../../hooks';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
-import { useCommissionRate } from '../../../../hooks/useCommissionRate';
+import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 
 export const SetCommissionRate: React.VFC = () => {
   const pendingContracts = useContracts();
@@ -20,7 +20,6 @@ export const SetCommissionRate: React.VFC = () => {
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const commissionRate = useCommissionRate(account);
 
-  // TODO:useCommission
   const modalText = React.useMemo(
     () => ({
       title: t('indexer.updateCommissionRate'),
@@ -37,7 +36,7 @@ export const SetCommissionRate: React.VFC = () => {
   const handleClick = async (amount: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    return contracts.staking.setCommissionRate(Math.floor(parseInt(amount, 10) * 10000));
+    return contracts.staking.setCommissionRate(Math.floor(parseInt(amount, 10) * COMMISSION_DIV_UNIT));
   };
 
   return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus), {
