@@ -11,7 +11,8 @@ import styles from './OfferDetails.module.css';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
 import { ethers } from 'ethers';
-import { convertStringToNumber } from '../../../../../utils';
+import { convertStringToNumber, formatEther } from '../../../../../utils';
+import { useSQToken } from '../../../../../containers';
 
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
@@ -32,6 +33,7 @@ const OfferDetailsSchema = Yup.object().shape({
 
 export const OfferDetails: React.VFC = () => {
   const { t } = useTranslation();
+  const { balance } = useSQToken();
   const createOfferContext = React.useContext(CreateOfferContext);
 
   if (!createOfferContext) return <></>;
@@ -87,6 +89,7 @@ export const OfferDetails: React.VFC = () => {
                   defaultValue={indexerCap}
                   onChange={(value) => setFieldValue(INDEXER_CAP, value)}
                   status={errors[INDEXER_CAP] ? 'error' : undefined}
+                  unit={values[INDEXER_CAP] > 1 ? t('indexer.title') : t('indexer.indexers')}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.totalDeposit')}
@@ -96,6 +99,7 @@ export const OfferDetails: React.VFC = () => {
                   value={totalDeposit}
                   stringMode
                   step="0.00001"
+                  description={balance.data ? `${t('general.balance')}: ${formatEther(balance.data)} SQT ` : undefined}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.minimumIndexedHeight')}

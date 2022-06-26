@@ -25,6 +25,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   maxAmountText,
   maxAmount = 0,
   onClickMax,
+  description,
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
@@ -39,6 +40,19 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
+  const InputBottomText = () => {
+    const maxText =
+      maxAmount > 0
+        ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
+        : undefined;
+    const inputBottomText = maxText ?? description;
+    if (inputBottomText) {
+      return <AppTypography className={styles.inputBottomText}>{inputBottomText}</AppTypography>;
+    }
+
+    return <></>;
+  };
+
   return (
     <div className={styles.input}>
       {title && <AppTypography tooltip={tooltip}>{title}</AppTypography>}
@@ -51,11 +65,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         size="large"
       />
 
-      {maxAmount > 0 && (
-        <AppTypography className={styles.inputBottomText}>
-          {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
-        </AppTypography>
-      )}
+      <InputBottomText />
     </div>
   );
 };

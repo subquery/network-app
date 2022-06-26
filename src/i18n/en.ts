@@ -513,6 +513,7 @@ const en = {
       block: 'Block',
       blocks: 'Blocks',
       block_other: '{{count}} Blocks',
+      balance: 'Balance',
     },
     status: {
       success: 'Success!',
