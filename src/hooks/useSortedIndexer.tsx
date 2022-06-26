@@ -15,7 +15,8 @@ import { useIndexerCapacity } from './useIndexerCapacity';
 
 export const getCommission = (value: unknown, curEra: number | undefined): CurrentEraValue<string> => {
   const commission = parseRawEraValue(value, curEra);
-  const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0), 10));
+  // commission-divUnit = perMil / 100 -> 10,000
+  const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0), 10000));
   return sortedCommission;
 };
 
