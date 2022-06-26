@@ -10,6 +10,7 @@ import { useIsIndexer } from '../../../../hooks';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
+import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 
 export const SetCommissionRate: React.VFC = () => {
   const pendingContracts = useContracts();
@@ -17,21 +18,25 @@ export const SetCommissionRate: React.VFC = () => {
   const { account } = useWeb3();
   const isIndexer = useIsIndexer(account);
   const rewardClaimStatus = useRewardCollectStatus(account || '');
+  const commissionRate = useCommissionRate(account);
 
-  // TODO:useCommission
-  const modalText = {
-    title: t('indexer.updateCommissionRate'),
-    steps: [t('indexer.setNewCommissionRate'), t('indexer.confirmOnMetamask')],
-    description: t('indexer.newRateValidNext2Era'),
-    inputTitle: t('indexer.enterCommissionRate'),
-    submitText: t('indexer.confirmRate'),
-    failureText: `Sorry, the commission update operation has failed.`,
-  };
+  const modalText = React.useMemo(
+    () => ({
+      title: t('indexer.updateCommissionRate'),
+      steps: [t('indexer.setNewCommissionRate'), t('indexer.confirmOnMetamask')],
+      description: t('indexer.newRateValidNext2Era'),
+      inputTitle: t('indexer.enterCommissionRate'),
+      inputBottomText: `${t('indexer.currentRate')}: ${commissionRate.data}%`,
+      submitText: t('indexer.confirmRate'),
+      failureText: `Sorry, the commission update operation has failed.`,
+    }),
+    [commissionRate.data, t],
+  );
 
   const handleClick = async (amount: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    return contracts.staking.setCommissionRate(Math.floor(parseInt(amount, 10) * 10));
+    return contracts.staking.setCommissionRate(Math.floor(parseInt(amount, 10) * COMMISSION_DIV_UNIT));
   };
 
   return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus), {

@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Spinner } from '@subql/react-ui';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 export * from './numberFormatters';
 export * from './stringFormatters';
@@ -95,7 +96,7 @@ export function mapAsync<O, T>(scope: (t: T) => O, data: AsyncData<T>): AsyncDat
 type RenderResult = React.ReactElement | null;
 
 type Handlers<T> = {
-  loading: () => RenderResult;
+  loading?: () => RenderResult;
   error: (error: Error) => RenderResult;
   data: (data: T, asyncData: AsyncData<T>) => RenderResult;
 };
@@ -106,6 +107,8 @@ type HandlersArray<T extends any[]> = {
   data: (data: T, asyncData: AsyncData<T>) => RenderResult;
   empty: () => RenderResult;
 };
+
+const defaultLoading = () => <Spinner />;
 
 export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): RenderResult {
   if (data.data !== undefined) {
@@ -118,7 +121,7 @@ export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): Rende
   } else if (data.error) {
     return handlers.error(data.error);
   } else if (data.loading) {
-    return handlers.loading();
+    return handlers.loading ? handlers.loading() : defaultLoading();
   }
 
   return null;

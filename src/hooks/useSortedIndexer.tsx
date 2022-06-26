@@ -10,12 +10,16 @@ import {
   mergeAsync,
   toPercentage,
 } from '../utils';
+import { COMMISSION_DIV_UNIT } from './useCommissionRate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
 import { useIndexerCapacity } from './useIndexerCapacity';
 
 export const getCommission = (value: unknown, curEra: number | undefined): CurrentEraValue<string> => {
   const commission = parseRawEraValue(value, curEra);
-  const sortedCommission = mapEraValue(commission, (v) => toPercentage(convertBigNumberToNumber(v ?? 0), 10));
+
+  const sortedCommission = mapEraValue(commission, (v) =>
+    toPercentage(convertBigNumberToNumber(v ?? 0), COMMISSION_DIV_UNIT),
+  );
   return sortedCommission;
 };
 
