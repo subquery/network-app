@@ -52,6 +52,7 @@ type Props<P, T extends string> = {
     steps: string[];
     description?: string;
     inputTitle?: string;
+    inputBottomText?: string;
     submitText?: string;
     failureText?: string;
     successText?: string;
@@ -180,6 +181,7 @@ const TransactionModal = <P, T extends string>({
                 {...inputParams}
                 inputTitle={text.inputTitle}
                 submitText={text.submitText}
+                inputBottomText={text.inputBottomText}
                 failureModalText={failureModalText}
                 onSubmit={wrapTxAction(onClick, true)}
                 isLoading={isLoading}

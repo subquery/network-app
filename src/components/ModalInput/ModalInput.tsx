@@ -78,11 +78,11 @@ export const ModalInput: React.FC<Props> = ({
             formik.setFieldValue('input', value);
           },
           value: formik.values.input,
-
           disabled: isLoading,
           max: maxInputNumber,
           min: min,
         }}
+        maxAmountText={inputBottomText}
         maxAmount={maxInputNumber}
         onClickMax={(value) => {
           formik.setErrors({ input: undefined });
