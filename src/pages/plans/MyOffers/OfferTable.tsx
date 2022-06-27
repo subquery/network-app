@@ -78,7 +78,6 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   );
 };
 
-// TODO: Add tooltip
 const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connectedAccount?: string | null) => {
   const idColumns: TableProps<Offer>['columns'] = [
     {
@@ -90,7 +89,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
     {
       dataIndex: ['deployment', 'id'],
       title: <TableTitle title={i18next.t('myOffers.table.versionDeployment')} />,
-      width: 460,
+      width: 480,
       render: (deploymentId: string, offer: Offer) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
       ),

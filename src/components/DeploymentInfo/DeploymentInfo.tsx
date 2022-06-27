@@ -14,6 +14,7 @@ import styles from './DeploymentInfo.module.css';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../__generated__/registry/GetOngoingServiceAgreements';
 import Copy from '../Copy';
 import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
+import { Tooltip } from 'antd';
 
 type Props = {
   project?: ProjectMetadata;
@@ -36,17 +37,23 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
   return (
     <div className={styles.projectInfo}>
       <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
-      <div className={styles.projectTextInfo}>
-        {project?.name && <Typography variant="large">{project?.name}</Typography>}
-        <div className={project?.name ? '' : styles.deployment}>
-          <Typography variant="small" className={styles.text}>
-            {versionHeader}
-          </Typography>
-          <Typography variant="small" className={styles.text}>
-            {deploymentId ?? '-'}
-          </Typography>
+
+      <Tooltip title={deploymentId}>
+        <div className={styles.projectTextInfo}>
+          {project?.name && <Typography variant="large">{project?.name}</Typography>}
+          <div className={project?.name ? '' : styles.deployment}>
+            <Typography variant="small" className={styles.text}>
+              {versionHeader}
+            </Typography>
+            <div className="flex-center">
+              <Typography variant="small" className={styles.text}>
+                {deploymentId ?? '-'}
+              </Typography>
+              <Copy value={deploymentId} />
+            </div>
+          </div>
         </div>
-      </div>
+      </Tooltip>
     </div>
   );
 };
