@@ -16,7 +16,7 @@ import { convertBigNumberToNumber, formatEther } from '../../../../utils';
 import { SummaryList, TableText } from '../../../../components';
 import styles from './List.module.css';
 import clsx from 'clsx';
-import { secondsToDhms } from '../../../../utils/dateFormatters';
+import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { last } from 'ramda';
 
 type Props = {
@@ -61,7 +61,9 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       dataIndex: 'planTemplate',
       key: 'period',
       title: t('plans.headers.period').toUpperCase(),
-      render: (value: PlanTemplate) => <TableText content={secondsToDhms(convertBigNumberToNumber(value.period))} />,
+      render: (value: PlanTemplate) => (
+        <TableText content={formatSecondsDuration(convertBigNumberToNumber(value.period))} />
+      ),
     },
     {
       dataIndex: 'planTemplate',
@@ -109,7 +111,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
               },
               {
                 label: t('plans.headers.period'),
-                value: secondsToDhms(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
+                value: formatSecondsDuration(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
               },
               {
                 label: t('plans.headers.dailyReqCap'),

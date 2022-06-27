@@ -8,10 +8,12 @@ import { useTranslation } from 'react-i18next';
 import { Formik, Form } from 'formik';
 import moment from 'moment';
 import styles from './OfferDetails.module.css';
+import { AiOutlineWarning } from 'react-icons/ai';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
 import { ethers } from 'ethers';
-import { convertStringToNumber } from '../../../../../utils';
+import { COLORS, convertStringToNumber, formatEther } from '../../../../../utils';
+import { useSQToken } from '../../../../../containers';
 
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
@@ -23,7 +25,7 @@ const formEther = (val: string) => ethers.utils.parseUnits(val, 18);
 const OfferDetailsSchema = Yup.object().shape({
   [REWARD_PER_INDEXER]: Yup.string()
     .required()
-    .test('Reward should be greater than zero', (reward) => (reward ? formEther(reward).gt('0') : false)),
+    .test('Reward should be greater than 0.', (reward) => (reward ? formEther(reward).gt('0') : false)),
   [INDEXER_CAP]: Yup.number().required().moreThan(0),
   [TOTAL_DEPOSIT]: Yup.string().required(),
   [MINIMUM_INDEXED_HEIGHT]: Yup.number().required(),
@@ -32,6 +34,7 @@ const OfferDetailsSchema = Yup.object().shape({
 
 export const OfferDetails: React.VFC = () => {
   const { t } = useTranslation();
+  const { balance } = useSQToken();
   const createOfferContext = React.useContext(CreateOfferContext);
 
   if (!createOfferContext) return <></>;
@@ -79,6 +82,7 @@ export const OfferDetails: React.VFC = () => {
                   status={errors[REWARD_PER_INDEXER] ? 'error' : undefined}
                   stringMode
                   step="0.00001"
+                  errorMsg={errors[REWARD_PER_INDEXER] && t('myOffers.step_2.rewardPerIndexerErrorMsg')}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.indexerCap')}
@@ -87,6 +91,8 @@ export const OfferDetails: React.VFC = () => {
                   defaultValue={indexerCap}
                   onChange={(value) => setFieldValue(INDEXER_CAP, value)}
                   status={errors[INDEXER_CAP] ? 'error' : undefined}
+                  unit={values[INDEXER_CAP] > 1 ? t('indexer.title') : t('indexer.indexers')}
+                  errorMsg={errors[INDEXER_CAP] && t('myOffers.step_2.indexerCapErrorMsg')}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.totalDeposit')}
@@ -96,6 +102,10 @@ export const OfferDetails: React.VFC = () => {
                   value={totalDeposit}
                   stringMode
                   step="0.00001"
+                  max={formatEther(balance.data)}
+                  status={errors[TOTAL_DEPOSIT] ? 'error' : undefined}
+                  description={balance.data ? `${t('general.balance')}: ${formatEther(balance.data)} SQT ` : undefined}
+                  errorMsg={errors[TOTAL_DEPOSIT] && t('myOffers.step_2.totalDepositErrorMsg')}
                 />
                 <NumberInput
                   title={t('myOffers.step_2.minimumIndexedHeight')}
@@ -105,6 +115,7 @@ export const OfferDetails: React.VFC = () => {
                   onChange={(value) => setFieldValue(MINIMUM_INDEXED_HEIGHT, value)}
                   unit={values[MINIMUM_INDEXED_HEIGHT] > 1 ? t('general.blocks') : t('general.block')}
                   status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
+                  errorMsg={errors[MINIMUM_INDEXED_HEIGHT] && t('myOffers.step_2.minimumIndexedHeightTooltip')}
                 />
                 <div>
                   <AppTypography tooltip={t('myOffers.step_2.expireDateTooltip')}>
@@ -122,7 +133,14 @@ export const OfferDetails: React.VFC = () => {
                     defaultValue={moment(expireDate)}
                     onChange={(value) => setFieldValue(EXPIRE_DATE, value)}
                     status={errors[EXPIRE_DATE] ? 'error' : undefined}
+                    placement={'topLeft'}
                   />
+                  <div className={styles.cancelWarning}>
+                    <AiOutlineWarning color={COLORS.error} size={16} />
+                    <AppTypography className={styles.cancelWarningText}>
+                      {t('myOffers.step_2.cancelWarning')}
+                    </AppTypography>
+                  </div>
                 </div>
               </div>
               <div>

@@ -5,6 +5,7 @@ import { Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { GetPlanTemplates_planTemplates_nodes as PlanTemplate } from '../../../../../__generated__/registry/GetPlanTemplates';
 import { usePlanTemplates } from '../../../../../containers';
 import { mapAsync, notEmpty, renderAsync } from '../../../../../utils';
 import { getPlanTemplateColumns } from '../../../Plans/Create';
@@ -18,15 +19,24 @@ export const ChooseTemplate: React.VFC = () => {
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<string | undefined>(
     createOfferContext?.offer?.templateId ?? '',
   );
+  const [selectedTemplate, setSelectedTemplate] = React.useState<PlanTemplate | undefined>();
 
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
   const onNext = (step: number) => {
-    updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '' });
+    updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '', planTemplate: selectedTemplate });
     onStepChange(step);
   };
 
-  const columns = getPlanTemplateColumns((templateId: string) => setSelectedTemplateId(templateId), selectedTemplateId);
+  const onChooseTemplate = (templateId: string, template?: PlanTemplate) => {
+    setSelectedTemplateId(templateId);
+    template && setSelectedTemplate(template);
+  };
+
+  const columns = getPlanTemplateColumns(
+    (templateId, _, template) => onChooseTemplate(templateId, template),
+    selectedTemplateId,
+  );
 
   return (
     <div>
@@ -50,7 +60,7 @@ export const ChooseTemplate: React.VFC = () => {
                   pagination={false}
                   onRow={(record) => {
                     return {
-                      onClick: () => setSelectedTemplateId(record?.id),
+                      onClick: () => onChooseTemplate(record?.id, record),
                     };
                   }}
                 />

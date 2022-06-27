@@ -17,7 +17,7 @@ import { ContractTransaction } from '@ethersproject/contracts';
 import { IndexerDetails } from '../../models';
 import { IndexerName } from './IndexerName';
 import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
-import { secondsToDhms } from '../../utils/dateFormatters';
+import { formatSecondsDuration } from '../../utils/dateFormatters';
 import { SummaryList } from '../SummaryList';
 import styles from './IndexerDetails.module.css';
 import { last } from 'ramda';
@@ -68,7 +68,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
     },
     {
       label: t('plans.headers.period'),
-      value: secondsToDhms(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
+      value: formatSecondsDuration(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
     },
     {
       label: t('plans.headers.dailyReqCap'),
@@ -177,7 +177,7 @@ export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, 
       title: t('plans.headers.period'),
       align: 'center',
       render: (value: PlanTemplate) => (
-        <TableText content={secondsToDhms(convertBigNumberToNumber(value?.period ?? 0))} />
+        <TableText content={formatSecondsDuration(convertBigNumberToNumber(value?.period ?? 0))} />
       ),
     },
     {

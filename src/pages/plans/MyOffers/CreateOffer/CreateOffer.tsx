@@ -6,6 +6,7 @@ import { Steps, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { IoChevronBack } from 'react-icons/io5';
+import { GetDeploymentPlans_plans_nodes_planTemplate as PlanTemplate } from '../../../../__generated__/registry/GetDeploymentPlans';
 import { AppPageHeader } from '../../../../components';
 import styles from './CreateOffer.module.css';
 import { Button } from '../../../../components/Button';
@@ -20,6 +21,7 @@ import moment from 'moment';
 export interface IOffer {
   deploymentId: string;
   templateId: string;
+  planTemplate?: PlanTemplate;
   rewardPerIndexer: string;
   totalDeposit: string;
   indexerCap: number;
@@ -31,6 +33,7 @@ export interface IOffer {
 const initialOffer = {
   deploymentId: '',
   templateId: '',
+  planTemplate: undefined,
   rewardPerIndexer: '1',
   totalDeposit: '0',
   indexerCap: 1,
