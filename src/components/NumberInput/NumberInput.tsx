@@ -13,6 +13,7 @@ interface NumberInputProps extends InputNumberProps {
   tooltip?: string;
   description?: string;
   unit?: string;
+  errorMsg?: string;
   onClickMax?: (amount: number) => void;
   maxAmount?: number;
   maxAmountText?: string;
@@ -25,6 +26,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   maxAmountText,
   maxAmount = 0,
   onClickMax,
+  description,
+  errorMsg,
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
@@ -39,6 +42,19 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
+  const maxText =
+    maxAmount > 0
+      ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
+      : undefined;
+  const inputBottomText = maxText ?? description;
+  const InputBottomText = () => <AppTypography className={styles.inputBottomText}>{inputBottomText}</AppTypography>;
+
+  const ErrorText = () => (
+    <AppTypography className={styles.inputBottomText} type="danger">
+      {errorMsg}
+    </AppTypography>
+  );
+
   return (
     <div className={styles.input}>
       {title && <AppTypography tooltip={tooltip}>{title}</AppTypography>}
@@ -51,11 +67,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         size="large"
       />
 
-      {maxAmount > 0 && (
-        <AppTypography className={styles.inputBottomText}>
-          {maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`}
-        </AppTypography>
-      )}
+      {inputBottomText && <InputBottomText />}
+      {errorMsg && <ErrorText />}
     </div>
   );
 };

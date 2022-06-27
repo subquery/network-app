@@ -19,11 +19,10 @@ type Props = {
   offerId: string;
 };
 
-// TODO: SUMMARY LIST
 export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const [cancelPenalty, setCancelPenalty] = React.useState<string>();
-  // const [unSpent, setUnSpent] = React.useState();
-  // const [receive, setReceive] = React.useState();
+  const [unSpent, setUnSpent] = React.useState<string>();
+  const [receive, setReceive] = React.useState<string>();
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const pendingContracts = useContracts();
@@ -37,8 +36,13 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
         const cancelPenalty = await client.cancelOfferPenaltyFee(offer);
         setCancelPenalty(formatEther(cancelPenalty));
 
-        // const unSpent = await client.cancelOfferUnspentBalance(offer);
-        // setUnSpent(formatEther(unSpent))
+        const unSpent = await client.cancelOfferUnspentBalance(offer);
+        setUnSpent(formatEther(unSpent));
+
+        if (cancelPenalty && unSpent) {
+          const shouldReceive = unSpent.sub(cancelPenalty);
+          setReceive(formatEther(shouldReceive));
+        }
       }
     }
     getCancelPenalty();
@@ -46,8 +50,16 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
 
   const cancelOfferSummary = [
     {
+      label: t('myOffers.cancel.unSpent'),
+      value: `${unSpent ? `${unSpent} SQT` : '-'} `,
+    },
+    {
       label: t('myOffers.cancel.cancelFee'),
-      value: `${cancelPenalty} SQT`,
+      value: `${cancelPenalty ? `${cancelPenalty} SQT` : '-'} `,
+    },
+    {
+      label: t('myOffers.cancel.youWillReceive'),
+      value: `${receive ? `${receive} SQT` : '-'} `,
     },
   ];
 

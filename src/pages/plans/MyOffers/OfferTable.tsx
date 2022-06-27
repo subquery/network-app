@@ -23,7 +23,7 @@ import {
   convertStringToNumber,
   formatDate,
   formatEther,
-  formatSeconds,
+  formatSecondsDuration,
   mapAsync,
   notEmpty,
   parseError,
@@ -127,7 +127,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       title: (
         <TableTitle title={i18next.t('myOffers.table.period')} tooltip={i18next.t('myOffers.table.periodTooltip')} />
       ),
-      render: (period) => <TableText content={formatSeconds(convertBigNumberToNumber(period))} />,
+      render: (period) => <TableText content={formatSecondsDuration(convertBigNumberToNumber(period))} />,
     },
     {
       dataIndex: 'deposit',
