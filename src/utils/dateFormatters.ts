@@ -10,7 +10,9 @@ export const secondsToDays = (seconds: number): number => {
 };
 
 export const formatSecondsDuration = (seconds: number): string => {
-  return moment.duration(seconds, 'seconds').format('d [days], h [hrs], m [mins]');
+  return moment.duration(seconds, 'seconds').format('d [days], h [hrs], m [mins]', {
+    trim: 'all',
+  });
 };
 
 export const formatDate = (date: Date): string => {
