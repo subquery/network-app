@@ -462,6 +462,8 @@ const en = {
           'By cancelling this open offer, you will be able to withdraw the unspent balance. Cancellation fee will be applied and be deducted from the unspent balance.',
         failureText: 'Sorry, failed to cancel offer',
         cancelFee: 'Cancellation fee',
+        unSpent: 'Unspent balance',
+        youWillReceive: 'You will receive',
       },
       withdraw: {
         title: 'withdraw',
