@@ -14,11 +14,27 @@ export const QueryApolloProvider: React.FC = (props) => {
     uri: process.env.REACT_APP_LEADERBOARD_PROJECT,
   });
 
+  const season2Link = new HttpLink({
+    uri: process.env.REACT_APP_SEASON_2,
+  });
+
+  const season3Link = new HttpLink({
+    uri: process.env.REACT_APP_SEASON_3,
+  });
+
   const client = new ApolloClient({
     link: ApolloLink.split(
       (operation) => operation.getContext().clientName === 'leaderboard',
       leaderboardLink, // will use this link if client name specified in useQuery
-      registryLink, // default link
+      ApolloLink.split(
+        (operation) => operation.getContext().clientName === 'leaderboardS2',
+        season2Link,
+        ApolloLink.split(
+          (operation) => operation.getContext().clientName === 'leaderboardS3',
+          season3Link,
+          registryLink, // default link
+        ),
+      ),
     ),
     cache: new InMemoryCache({
       typePolicies: {
