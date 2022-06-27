@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useIndexerChallenges, useWeb3 } from '../../../containers';
+import { useParticipantChallenges, useWeb3 } from '../../../containers';
 import { useHistory } from 'react-router';
 import { ConnectWallet, CurEra } from '../../../components';
 import styles from './Home.module.css';
@@ -11,18 +11,17 @@ import { Spinner, Toast, Typography } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
 import Missions from './Missions/Missions';
 import { renderAsync } from '../../../utils';
-import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
-import { CURR_SEASON, SEASONS } from '../constants';
+import { CURR_SEASON, getMissionDetails, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 
 enum SectionTabs {
-  Indexing = 'Indexing',
-  Delegating = 'Delegating',
+  Indexing = 'Indexer',
+  Delegating = 'Delegator',
   Consumer = 'Consumer',
 }
 
-const tabList = [SectionTabs.Indexing];
+const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
 
 const Home: React.VFC = (children) => {
   const [errorAlert, setErrorAlert] = React.useState<string | null>();
@@ -30,8 +29,8 @@ const Home: React.VFC = (children) => {
   const { account, activate, error } = useWeb3();
   const { t } = useTranslation();
   const history = useHistory();
-  const indexer = useIndexerChallenges({ indexerId: account ?? '' });
   const [season, setSeason] = useState(CURR_SEASON);
+  const participant = useParticipantChallenges(season, { indexerId: account ?? '' });
 
   const viewPrev = () => setSeason(season - 1);
   const viewCurr = () => setSeason(CURR_SEASON);
@@ -78,17 +77,17 @@ const Home: React.VFC = (children) => {
           <CurEra />
         </div>
         <br />
-        {renderAsync(indexer, {
+        {renderAsync(participant, {
           loading: () => <Spinner />,
-          error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
-          data: (data: GetIndexer) => {
+          error: (e) => <div>{`Unable to fetch Participant: ${e.message}`}</div>,
+          data: (data: any) => {
             return (
               <>
                 <div className={styles.profile}>
                   <div className={styles.pointsSummary}>
                     <h3>Total Points</h3>
                     <h1>
-                      <b>{data?.indexerChallenge?.singlePoints} points</b>
+                      <b>{data?.indexerS3Challenge?.singlePoints} points</b>
                     </h1>
                   </div>
                   <SeasonProgress timePeriod={SEASONS[season]} />
@@ -104,21 +103,30 @@ const Home: React.VFC = (children) => {
                   </div>
                   {curTab === SectionTabs.Indexing && (
                     <Missions
-                      indexer={indexer?.data?.indexerChallenge}
+                      participant={data.indexer}
+                      missionDetails={getMissionDetails('Indexer')}
                       season={season}
                       viewPrev={viewPrev}
                       viewCurr={viewCurr}
                     />
                   )}
                   {curTab === SectionTabs.Delegating && (
-                    <div className={styles.container}>
-                      <h2>Coming Soon</h2>
-                    </div>
+                    <Missions
+                      participant={data.delegator}
+                      missionDetails={getMissionDetails('Delegator')}
+                      season={season}
+                      viewPrev={viewPrev}
+                      viewCurr={viewCurr}
+                    />
                   )}
                   {curTab === SectionTabs.Consumer && (
-                    <div className={styles.container}>
-                      <h2>Coming Soon</h2>
-                    </div>
+                    <Missions
+                      participant={data.consumer}
+                      missionDetails={getMissionDetails('Consumer')}
+                      season={season}
+                      viewPrev={viewPrev}
+                      viewCurr={viewCurr}
+                    />
                   )}
                 </div>
               </>
