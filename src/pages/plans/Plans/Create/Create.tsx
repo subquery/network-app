@@ -17,6 +17,7 @@ import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers'
 import {
   cidToBytes32,
   convertBigNumberToNumber,
+  convertStringToNumber,
   getCapitalizedStr,
   mapAsync,
   notEmpty,
@@ -26,7 +27,7 @@ import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__
 import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
-import { formatSeconds, secondsToDhms } from '../../../../utils/dateFormatters';
+import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
 
 export const getPlanTemplateColumns = (
@@ -41,7 +42,7 @@ export const getPlanTemplateColumns = (
   {
     dataIndex: 'period',
     title: i18next.t('plans.headers.period').toUpperCase(),
-    render: (period: string) => <TableText content={formatSeconds(convertBigNumberToNumber(period))} />,
+    render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
   },
   {
     dataIndex: 'dailyReqCap',
@@ -183,7 +184,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
   const summaryList = [
     {
       label: t('plans.headers.period'),
-      value: secondsToDhms(convertBigNumberToNumber(template.period)),
+      value: formatSecondsDuration(convertBigNumberToNumber(template.period)),
     },
     {
       label: t('plans.headers.dailyReqCap'),
