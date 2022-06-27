@@ -13,6 +13,8 @@ module.exports = {
         excludes: [
             'src/hooks/useApiEndpoint.ts',
             'src/containers/QueryLeaderboardProject.tsx',
+            'src/containers/QuerySeason2Project.tsx',
+            'src/containers/QuerySeason3Project.tsx',
         ]
     }
 };
