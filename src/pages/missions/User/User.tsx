@@ -5,44 +5,57 @@ import * as React from 'react';
 import { Typography } from '@subql/react-ui';
 import { useHistory, useParams } from 'react-router';
 import styles from './User.module.css';
-import { useTranslation } from 'react-i18next';
 import { CurEra, Spinner } from '../../../components';
 import Jazzicon from 'react-jazzicon';
-import { PageHeader } from 'antd';
+import { PageHeader, Breadcrumb } from 'antd';
 import Missions from '../Mission/Missions/Missions';
 import { renderAsync } from '../../../utils';
-import { useIndexerChallenges } from '../../../containers/QueryLeaderboardProject';
-import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
+import { useParticipantChallenges } from '../../../containers';
+import { CURR_SEASON, getMissionDetails } from '../constants';
+import { Link } from 'react-router-dom';
 
 enum SectionTabs {
-  Indexing = 'Indexing',
-  Delegating = 'Delegating',
+  Indexing = 'Indexer',
+  Delegating = 'Delegator',
   Consumer = 'Consumer',
 }
 
-const tabList = [SectionTabs.Indexing];
+const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
 
 export const User: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
   const { id } = useParams<{ id: string }>();
-  const indexer = useIndexerChallenges({ indexerId: id });
+
+  const [season, setSeason] = React.useState(CURR_SEASON);
+  const participant = useParticipantChallenges(season, { indexerId: id });
+
+  const viewPrev = () => setSeason(season - 1);
+  const viewCurr = () => setSeason(CURR_SEASON);
 
   const history = useHistory();
   const routeChange = () => {
-    history.push('/missions/leaderboard');
+    history.push('/missions/ranks');
   };
 
   return (
     <>
       <div className={styles.header}>
-        <PageHeader className="site-page-header" onBack={routeChange} title="Leaderboard" />
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to={'/missions/ranks'} onClick={routeChange}>
+              Season {season}
+            </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>{id}</Breadcrumb.Item>
+        </Breadcrumb>
         <CurEra />
       </div>
+      <br />
 
-      {renderAsync(indexer, {
+      {renderAsync(participant, {
         loading: () => <Spinner />,
         error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
-        data: (data: GetIndexer) => {
+        data: (data: any) => {
           return (
             <>
               <div className={styles.topar}>
@@ -52,27 +65,46 @@ export const User: React.VFC = () => {
                     <h2>{id}</h2>
                   </div>
                 </div>
-                <div className={styles.profile}>
-                  <div className={styles.pointsSummary}>
-                    <h4>Total Points</h4>
-                    <h2>
-                      <b>{data?.indexerChallenge?.singlePoints} points</b>
-                    </h2>
-                  </div>
-                </div>
               </div>
               <div>
                 <div className={styles.tabList}>
-                  {tabList.map((tab) => (
-                    <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                      <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-                      {curTab === tab && <div className={styles.line} />}
-                    </div>
-                  ))}
+                  {tabList.map((tab) => {
+                    if (tab === SectionTabs.Consumer && season === 2) return undefined;
+                    return (
+                      <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+                        <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                        {curTab === tab && <div className={styles.line} />}
+                      </div>
+                    );
+                  })}
                 </div>
-                {curTab === SectionTabs.Indexing && <Missions indexer={indexer?.data?.indexerChallenge} />}
-                {curTab === SectionTabs.Delegating && <>Coming Soon</>}
-                {curTab === SectionTabs.Consumer && <>Coming Soon</>}
+                {curTab === SectionTabs.Indexing && (
+                  <Missions
+                    participant={data?.indexer}
+                    viewCurr={viewCurr}
+                    viewPrev={viewPrev}
+                    season={3}
+                    missionDetails={getMissionDetails('Indexer')}
+                  />
+                )}
+                {curTab === SectionTabs.Delegating && (
+                  <Missions
+                    participant={data?.delegator}
+                    viewCurr={viewCurr}
+                    viewPrev={viewPrev}
+                    season={3}
+                    missionDetails={getMissionDetails('Delegator')}
+                  />
+                )}
+                {curTab === SectionTabs.Consumer && (
+                  <Missions
+                    participant={data?.consumer}
+                    viewCurr={viewCurr}
+                    viewPrev={viewPrev}
+                    season={3}
+                    missionDetails={getMissionDetails('Consumer')}
+                  />
+                )}
               </div>
             </>
           );

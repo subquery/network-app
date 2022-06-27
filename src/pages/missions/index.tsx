@@ -14,7 +14,7 @@ import Leaderboard from './Leaderboard/Leaderboard';
 
 export const ROOT_ROUTE = '/missions';
 export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-missions`;
-export const LEADERBOARD_ROUTE = `${ROOT_ROUTE}/indexers`;
+export const LEADERBOARD_ROUTE = `${ROOT_ROUTE}/ranks`;
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();

@@ -4,13 +4,7 @@
 import * as React from 'react';
 import { Table, Tag, Tooltip } from 'antd';
 import styles from './Missions.module.css';
-import { INDEXER_CHALLENGE_DETAILS, INDEXER_CHALLENGE_PTS } from '../../constants';
-import {
-  GetIndexer_indexerChallenge,
-  GetIndexer_indexerChallenge_challenges,
-  GetIndexer_indexerChallenge_singleChallenges,
-} from '../../../../__generated__/leaderboard/GetIndexer';
-import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
+import { INDEXER_CHALLENGE_DETAILS, IndexerDetails } from '../../constants';
 
 const columns = [
   {
@@ -59,36 +53,50 @@ const columns = [
 // 2. either indexerID
 
 export const Missions: React.VFC<{
-  indexer: GetIndexer_indexerChallenge | undefined;
-  season?: number;
-  viewPrev?: () => void;
-  viewCurr?: () => void;
-}> = ({ indexer, season, viewPrev, viewCurr }) => {
-  const formatData = (
-    challenges: ReadonlyArray<GetIndexer_indexerChallenge_singleChallenges>,
-    dailyChallenges: ReadonlyArray<GetIndexer_indexerChallenge_challenges>,
-  ) => {
+  participant: any;
+  missionDetails: IndexerDetails;
+  season: number;
+  viewPrev: () => void;
+  viewCurr: () => void;
+}> = ({ participant, missionDetails, season, viewPrev, viewCurr }) => {
+  const formatData = (DETAILS: IndexerDetails, challenges: ReadonlyArray<any>, dailyChallenges: ReadonlyArray<any>) => {
     let key = 1;
     let allChallenges: {
       type: string;
       key: number;
+      title: string;
       mission: string;
       points: number;
       progress: string;
     }[] = [];
 
     if (challenges) {
-      allChallenges = INDEXER_CHALLENGE_PTS.map((challenge: string) => {
-        const found = challenges.find((c) => c.title === challenge);
-
+      allChallenges = challenges.map((v: { title: string; points: number; details: string }) => {
+        const i = DETAILS[v.title];
         return {
           key: key++,
           type: 'One-off',
-          mission: challenge,
-          points: found?.points ?? INDEXER_CHALLENGE_DETAILS[challenge].points,
-          progress: found ? 'Completed' : 'Incomplete',
+          title: v.title,
+          mission: i?.description,
+          points: i?.points,
+          progress: i ? 'Completed' : 'Incomplete',
         };
       });
+
+      for (const [i, item] of Object.entries(DETAILS)) {
+        const found = allChallenges?.find((v: any) => v.mission === i);
+
+        if (!found) {
+          allChallenges.push({
+            key: key++,
+            type: 'One-off',
+            title: '',
+            mission: item?.description,
+            points: item?.points,
+            progress: 'Incomplete',
+          });
+        }
+      }
     }
 
     // if (dailyChallenges) {
@@ -107,16 +115,18 @@ export const Missions: React.VFC<{
     return allChallenges.flat();
   };
 
-  if (indexer) {
+  if (participant) {
     return (
       <div className={styles.container}>
-        {season && <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />}
-        <br />
-        <Table columns={columns} dataSource={formatData(indexer.singleChallenges, indexer.challenges)} />
+        <Table columns={columns} dataSource={formatData(missionDetails, participant.singleChallenges, [])} />
       </div>
     );
   } else {
-    return <></>;
+    return (
+      <div className={styles.container}>
+        <Table columns={columns} dataSource={formatData(missionDetails, [], [])} />
+      </div>
+    );
   }
 };
 

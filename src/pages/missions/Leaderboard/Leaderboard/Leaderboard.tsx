@@ -3,26 +3,25 @@
 
 import * as React from 'react';
 import { Typography } from '@subql/react-ui';
-// import { useWeb3 } from '../../../../containers';
 import { CurEra } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import { useTranslation } from 'react-i18next';
 import Ranks from '../Ranks';
 import { CURR_SEASON, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
+import { useParticipants } from '../../../../containers';
 
 enum SectionTabs {
-  Indexing = 'Indexing',
-  Delegating = 'Delegating',
-  Consumer = 'Consumer',
+  Challenges = 'Challenges',
 }
 
-const tabList = [SectionTabs.Indexing];
+const tabList = [SectionTabs.Challenges];
 
 const Leaderboard: React.VFC = () => {
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
+  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Challenges);
   const { t } = useTranslation();
   const [season, setSeason] = React.useState(CURR_SEASON);
+  const participants = useParticipants(season);
 
   const viewPrev = () => setSeason(season - 1);
   const viewCurr = () => setSeason(CURR_SEASON);
@@ -44,7 +43,9 @@ const Leaderboard: React.VFC = () => {
             </div>
           ))}
         </div>
-        {curTab === SectionTabs.Indexing && <Ranks season={season} viewPrev={viewPrev} viewCurr={viewCurr} />}
+        {curTab === SectionTabs.Challenges && (
+          <Ranks season={season} ranks={participants} viewPrev={viewPrev} viewCurr={viewCurr} />
+        )}
       </div>
     </>
   );

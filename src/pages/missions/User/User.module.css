@@ -47,18 +47,6 @@
   width: 100%;
 }
 
-.profile {
-  margin-top: 2em;
-  height: 15vh;
-  flex: 0.25;
-  width: 30%;
-  padding: 1.2rem 3rem 1rem 1rem;
-  display: flex;
-  background: white;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .stakingSummary {
   width: 65%;
   height: 100%;
