@@ -15,7 +15,13 @@ import {
   openNotificationWithIcon,
 } from '../../../../../components/TransactionModal/TransactionModal';
 import { useContracts } from '../../../../../containers';
-import { cidToBytes32, parseError } from '../../../../../utils';
+import {
+  cidToBytes32,
+  convertBigNumberToNumber,
+  convertStringToNumber,
+  formatSecondsDuration,
+  parseError,
+} from '../../../../../utils';
 import { OPEN_OFFERS } from '../../MyOffers';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
@@ -30,6 +36,8 @@ export const Summary: React.VFC = () => {
 
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
+
+  console.log('offer', offer);
 
   const handleSubmit = async () => {
     const contracts = await pendingContracts;
@@ -84,6 +92,29 @@ export const Summary: React.VFC = () => {
     }
   };
 
+  const TemplateDetailsSummary = [
+    {
+      label: t('plans.headers.id'),
+      value: offer?.planTemplate?.id,
+    },
+    {
+      label: t('plans.headers.period'),
+      value: formatSecondsDuration(convertBigNumberToNumber(offer?.planTemplate?.period ?? 0)),
+    },
+    {
+      label: t('plans.headers.dailyReqCap'),
+      value: t('plans.default.query', {
+        count: convertStringToNumber(offer?.planTemplate?.dailyReqCap.toString() ?? '0'),
+      }),
+    },
+    {
+      label: t('plans.headers.rateLimit'),
+      value: `${
+        offer?.planTemplate?.rateLimit ? `${offer?.planTemplate?.rateLimit} ${t('plans.default.requestPerMin')}` : '-'
+      }`,
+    },
+  ];
+
   const OfferDetailsSummary = [
     {
       label: t('myOffers.step_2.rewardPerIndexer'),
@@ -116,8 +147,7 @@ export const Summary: React.VFC = () => {
         </div>
 
         <div>
-          <Typography.Title level={5}>{'Template Id'}</Typography.Title>
-          <Typography.Text>{offer.templateId}</Typography.Text>
+          <SummaryList title={t('myOffers.step_3.planTemplate')} list={TemplateDetailsSummary} />
         </div>
 
         <div>

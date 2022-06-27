@@ -455,6 +455,7 @@ const en = {
         deploymentId: 'Deployment ID',
         offerTemplate: 'Offer Template',
         detailSettings: 'Detail settings',
+        planTemplate: 'Plan Template',
       },
       cancel: {
         title: 'Cancel this offer',

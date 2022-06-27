@@ -31,7 +31,7 @@ import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
 
 export const getPlanTemplateColumns = (
-  onChooseTemplate: (templateId: string, idx: number) => void,
+  onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
   selectedTemplateId?: string,
 ): TableProps<Template>['columns'] => [
   {
@@ -61,8 +61,8 @@ export const getPlanTemplateColumns = (
   {
     title: i18next.t('general.choose').toUpperCase(),
     dataIndex: 'id',
-    render: (id: string, _: Template, idx: number) => (
-      <Radio onClick={() => onChooseTemplate(id, idx)} checked={id === selectedTemplateId} />
+    render: (id: string, template: Template, idx: number) => (
+      <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
     ),
   },
 ];

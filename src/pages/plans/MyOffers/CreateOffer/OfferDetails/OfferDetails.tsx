@@ -136,7 +136,7 @@ export const OfferDetails: React.VFC = () => {
                     placement={'topLeft'}
                   />
                   <div className={styles.cancelWarning}>
-                    <AiOutlineWarning color={COLORS.error} />
+                    <AiOutlineWarning color={COLORS.error} size={16} />
                     <AppTypography className={styles.cancelWarningText}>
                       {t('myOffers.step_2.cancelWarning')}
                     </AppTypography>
