@@ -177,6 +177,7 @@ const CheckList: React.VFC<ICheckList> = ({
           {sortedRequirementCheckList.map((requirementCheck) => (
             <RequirementCheck key={requirementCheck.title} {...requirementCheck} />
           ))}
+          <Typography.Paragraph>{t('offerMarket.acceptModal.afterAcceptOffer')}</Typography.Paragraph>
           {error && <Typography.Text type="danger">{error}</Typography.Text>}
           <div className={clsx(styles.btnContainer, 'flex-end')}>
             <Button onClick={onSubmit} htmlType="submit" shape="round" size="large" type="primary" loading={isLoading}>
