@@ -502,7 +502,7 @@ const en = {
         blockHeight: 'Block height',
         blockHeightError: 'Your project is currently behind the minimum blockheight.',
         dailyRewards: 'Daily Rewards',
-        dailyRewardsError: 'Your available SQT is not enough for offer creation.',
+        dailyRewardsError: 'Please stake more SQT or get more delegation to increase daily reward capacity.',
         failureText: 'Failed to accept offer',
         afterAcceptOffer:
           'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',

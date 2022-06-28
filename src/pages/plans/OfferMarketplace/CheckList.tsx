@@ -20,9 +20,21 @@ import {
 } from '../../../utils';
 import { useAsyncMemo } from '../../../hooks';
 import { Status } from '../../../__generated__/registry/globalTypes';
-import styles from './Marketplace.module.css';
+import styles from './AcceptOffer.module.css';
 import { deploymentStatus } from '../../../components/Status/Status';
 import { useNetworkClient } from '../../../hooks';
+
+const RequirementCheckListTitle = () => {
+  const titles = ['CRITERIA', 'REQUIRED', 'ACTUAL', 'PASS'];
+
+  return (
+    <div className={clsx('flex-between-center', styles.checkListTitle)}>
+      {titles.map((title) => (
+        <Typography.Text key={title}>{title}</Typography.Text>
+      ))}
+    </div>
+  );
+};
 
 interface IRequirementCheck {
   title: string;
@@ -54,18 +66,18 @@ const RequirementCheck: React.FC<IRequirementCheck> = ({
   const SortedValue = ({ value, formatFn }: ISortedValue) => {
     if (formatFn) {
       if (['string', 'number'].includes(typeof formatFn(value))) {
-        return <Typography.Text>{formatFn(value)}</Typography.Text>;
+        return <Typography.Text className={styles.requirementText}>{formatFn(value)}</Typography.Text>;
       }
-      return <>{formatFn(value)}</>;
+      return <div className={styles.requirementText}>{formatFn(value)}</div>;
     }
 
-    return <Typography.Text>{value}</Typography.Text>;
+    return <Typography.Text className={styles.requirementText}>{value}</Typography.Text>;
   };
 
   return (
     <div className={styles.requirementCheckItemContainer}>
       <div className={clsx('flex-between-center', styles.requirementCheckItem)}>
-        <Typography.Title level={5} type="secondary" className={styles.requirementCheckItemTitle}>
+        <Typography.Title level={5} type="secondary" className={styles.requirementText}>
           {title}
         </Typography.Title>
         <SortedValue value={requiredValue} formatFn={formatFn} />
@@ -158,22 +170,33 @@ export const CheckList: React.VFC<ICheckList> = ({
         },
       ];
 
-      const passCheckAmount = sortedRequirementCheckList.filter(
+      const passCheckItems = sortedRequirementCheckList.filter(
         (requirementCheck) => requirementCheck.passCheck === true,
       );
+
+      const disabledAcceptOffer = passCheckItems.length !== sortedRequirementCheckList.length || !!error;
 
       return (
         <div className={styles.requirementCheckContainer}>
           <Typography.Title level={4}>
-            {t('offerMarket.acceptModal.passCriteria', { count: passCheckAmount.length })}
+            {t('offerMarket.acceptModal.passCriteria', { count: passCheckItems.length })}
           </Typography.Title>
+          <RequirementCheckListTitle />
           {sortedRequirementCheckList.map((requirementCheck) => (
             <RequirementCheck key={requirementCheck.title} {...requirementCheck} />
           ))}
           <Typography.Paragraph>{t('offerMarket.acceptModal.afterAcceptOffer')}</Typography.Paragraph>
           {error && <Typography.Text type="danger">{error}</Typography.Text>}
           <div className={clsx(styles.btnContainer, 'flex-end')}>
-            <Button onClick={onSubmit} htmlType="submit" shape="round" size="large" type="primary" loading={isLoading}>
+            <Button
+              onClick={onSubmit}
+              htmlType="submit"
+              shape="round"
+              size="large"
+              type="primary"
+              loading={isLoading}
+              disabled={disabledAcceptOffer || isLoading}
+            >
               {t('offerMarket.accept')}
             </Button>
           </div>
