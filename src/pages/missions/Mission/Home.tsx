@@ -9,7 +9,7 @@ import { Spinner } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
 import { Missions, MissionsProps } from './Missions/Missions';
 import { getCapitalizedStr } from '../../../utils';
-import { CURR_SEASON, getMissionDetails, MISSION_TYPE, SEASONS } from '../constants';
+import { CURR_SEASON, MISSION_TYPE, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
@@ -19,12 +19,12 @@ interface PointListProps extends Partial<MissionsProps> {
   missionType: MISSION_TYPE;
   data: any; //TODO: data Type
 }
-const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
+
+export const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
   const { t } = useTranslation();
-  console.log(data);
   const dataSource = data[missionType];
   const totalPoint = data[missionType]['singleChallengePts'] ?? data[missionType]['totalPoints'];
-  console.log(data);
+
   if (!dataSource) {
     return <Typography.Title level={5}>There is no data available.</Typography.Title>;
   }
@@ -66,12 +66,12 @@ export const Home: React.VFC = () => {
   const viewCurr = () => setSeason(CURR_SEASON);
 
   if (participant.data && indexer.data) {
-    //TODO: Fix messy data manipulation
     const data = { ...participant.data, writable: true };
     const indexerTotal =
       indexer.data.indexerS3Challenges.totalPoints -
-      data.delegator.singleChallengePts -
-      data.consumer.singleChallengePts;
+      indexer.data.indexerS3Challenges.singlePoints +
+      data.indexer.singleChallengePts;
+
     data.indexer = { ...data.indexer, dailyChallenges: indexer.data.indexerS3Challenges.challenges };
     data.indexer.singleChallengePts = indexerTotal;
     return (

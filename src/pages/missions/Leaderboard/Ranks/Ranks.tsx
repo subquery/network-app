@@ -95,14 +95,14 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
             .sort((a: { singlePoints: number }, b: { singlePoints: number }) => b.singlePoints - a.singlePoints)
             .map((data: any, index: number) => ({ ...data, rank: index + 1 }))
             .filter((value: { id: string }) => value.id.startsWith(searchText))
-            .map((data: { name: any; rank: any; id: any; singlePoints: any }, index: any) => {
+            .map((data: { name: any; rank: any; id: any; totalPoints: any }, index: any) => {
               return {
                 key: index,
                 name: data.name,
                 rank: data.rank,
                 season: season,
                 indexer: data.id,
-                points: data.singlePoints,
+                points: data.totalPoints,
               };
             });
         }, ranks),

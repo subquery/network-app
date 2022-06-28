@@ -8,22 +8,17 @@ import styles from './User.module.css';
 import { CurEra, Spinner } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { Breadcrumb } from 'antd';
-import { Missions } from '../Mission/Missions/Missions';
 import { useParticipantChallenges } from '../../../containers';
-import { getMissionDetails, MISSION_TYPE } from '../constants';
+import { MISSION_TYPE } from '../constants';
 import { Link } from 'react-router-dom';
 import { LEADERBOARD_ROUTE } from '..';
+import { PointList } from '../Mission';
+import { getCapitalizedStr } from '../../../utils';
 
-enum SectionTabs {
-  Indexing = 'Indexer',
-  Delegating = 'Delegator',
-  Consumer = 'Consumer',
-}
-
-const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consumer];
+const tabList = [MISSION_TYPE.INDEXER, MISSION_TYPE.DELEGATOR, MISSION_TYPE.CONSUMER];
 
 export const User: React.VFC = () => {
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
+  const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
   const { season, id } = useParams<{ season: string; id: string }>();
   const [participant, indexer] = useParticipantChallenges(Number(season), { indexerId: id });
   const seasonNum = Number(season);
@@ -33,20 +28,31 @@ export const User: React.VFC = () => {
     history.push(LEADERBOARD_ROUTE);
   };
 
-  return (
-    <>
-      <div className={styles.header}>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link to={LEADERBOARD_ROUTE} onClick={routeChange}>
-              Season {season}
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>{id}</Breadcrumb.Item>
-        </Breadcrumb>
-        <CurEra />
-      </div>
-      {participant?.data && indexer?.data ? (
+  if (participant.data && indexer.data) {
+    const data = { ...participant.data, writable: true };
+    console.log(indexer.data.indexerS3Challenges);
+    const indexerTotal =
+      indexer.data.indexerS3Challenges.totalPoints -
+      indexer.data.indexerS3Challenges.singlePoints +
+      data.indexer.singleChallengePts;
+
+    data.indexer = { ...data.indexer, dailyChallenges: indexer.data.indexerS3Challenges.challenges };
+    data.indexer.singleChallengePts = indexerTotal;
+
+    return (
+      <>
+        <div className={styles.header}>
+          <Breadcrumb>
+            <Breadcrumb.Item>
+              <Link to={LEADERBOARD_ROUTE} onClick={routeChange}>
+                Season {season}
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>{id}</Breadcrumb.Item>
+          </Breadcrumb>
+          <CurEra />
+        </div>
+
         <>
           <div className={styles.topar}>
             <div className={styles.indexer}>
@@ -59,38 +65,23 @@ export const User: React.VFC = () => {
           <div>
             <div className={styles.tabList}>
               {tabList.map((tab) => {
-                if (tab === SectionTabs.Consumer && seasonNum === 2) return undefined;
+                if (tab === MISSION_TYPE.CONSUMER && seasonNum === 2) return undefined;
                 return (
                   <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                    <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                    <Typography className={`${styles.tabText} ${styles.grayText}`}>{getCapitalizedStr(tab)}</Typography>
                     {curTab === tab && <div className={styles.line} />}
                   </div>
                 );
               })}
             </div>
-            {curTab === SectionTabs.Indexing && (
-              <Missions participant={participant.data?.indexer} season={seasonNum} missionType={MISSION_TYPE.INDEXER} />
-            )}
-            {curTab === SectionTabs.Delegating && (
-              <Missions
-                participant={participant.data?.delegator}
-                season={seasonNum}
-                missionType={MISSION_TYPE.DELEGATOR}
-              />
-            )}
-            {curTab === SectionTabs.Consumer && (
-              <Missions
-                participant={participant.data?.consumer}
-                season={seasonNum}
-                missionType={MISSION_TYPE.CONSUMER}
-              />
-            )}
+            <div className={styles.tabcontainer}>
+              <PointList missionType={curTab} data={data} season={seasonNum} />
+            </div>
           </div>
         </>
-      ) : (
-        <Spinner />
-      )}
-      ;
-    </>
-  );
+      </>
+    );
+  } else {
+    return <Spinner />;
+  }
 };
