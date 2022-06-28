@@ -76,25 +76,23 @@ export const Home: React.VFC = () => {
         data: (data: any) => {
           return (
             <>
-              <div>
-                <div className={styles.tabList}>
-                  {tabList.map((tab) => {
-                    if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
-                    return (
-                      <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                        <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
-                          {getCapitalizedStr(tab)}
-                        </Typography.Text>
-                        {curTab === tab && <div className={styles.line} />}
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className={styles.container}>
-                  <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
+              <div className={styles.tabList}>
+                {tabList.map((tab) => {
+                  if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
+                  return (
+                    <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+                      <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
+                        {getCapitalizedStr(tab)}
+                      </Typography.Text>
+                      {curTab === tab && <div className={styles.line} />}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className={styles.container}>
+                <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
 
-                  <PointList missionType={curTab} data={data} season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
-                </div>
+                <PointList missionType={curTab} data={data} season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
               </div>
             </>
           );
