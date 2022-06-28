@@ -26,17 +26,16 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const pendingContracts = useContracts();
-  const networkClient = useNetworkClient();
+  const contractClient = useNetworkClient();
 
   React.useEffect(() => {
     async function getCancelPenalty() {
-      const client = await networkClient;
-      if (client && pathname === OPEN_OFFERS) {
+      if (contractClient && pathname === OPEN_OFFERS) {
         const offer = convertStringToNumber(offerId);
-        const cancelPenalty = await client.cancelOfferPenaltyFee(offer);
+        const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
         setCancelPenalty(formatEther(cancelPenalty));
 
-        const unSpent = await client.cancelOfferUnspentBalance(offer);
+        const unSpent = await contractClient.cancelOfferUnspentBalance(offer);
         setUnSpent(formatEther(unSpent));
 
         if (cancelPenalty && unSpent) {
@@ -46,7 +45,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
       }
     }
     getCancelPenalty();
-  }, [networkClient, offerId, pathname]);
+  }, [contractClient, offerId, pathname]);
 
   const cancelOfferSummary = [
     {
