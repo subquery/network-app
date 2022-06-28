@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Typography } from '@subql/react-ui';
-import { CurEra } from '../../../../components';
+import { AppPageHeader } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import { useTranslation } from 'react-i18next';
 import Ranks from '../Ranks';
@@ -28,11 +28,8 @@ export const Leaderboard: React.VFC = () => {
 
   return (
     <>
-      <div className={styles.topBar}>
-        <div className={styles.header}>{t('missions.leaderboard')}</div>
-        <CurEra />
-      </div>
-      <br />
+      <AppPageHeader title={t('missions.leaderboard')} />
+
       <SeasonProgress timePeriod={SEASONS[season]} />
       <div>
         <div className={styles.tabList}>
