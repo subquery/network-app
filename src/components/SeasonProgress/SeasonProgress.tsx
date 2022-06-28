@@ -20,9 +20,9 @@ function getPeriod(mTo: moment.Moment, mNow: moment.Moment): string {
   const minutes = duration.minutes();
   duration.subtract(moment.duration(minutes, 'minutes'));
 
-  const seconds = duration.seconds();
+  // const seconds = duration.seconds();
 
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 function getStatus(mTo: moment.Moment, mNow: moment.Moment): string {
