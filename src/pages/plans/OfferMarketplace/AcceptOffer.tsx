@@ -8,16 +8,28 @@ import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { getEthGas } from '@subql/network-clients';
+import clsx from 'clsx';
+import { BigNumber } from 'ethers';
 import { Status as AppStatus } from '../../../components';
+import moment from 'moment';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
-import { getCapitalizedStr, getDeploymentMetadata, renderAsync, parseError, COLORS } from '../../../utils';
+import {
+  getCapitalizedStr,
+  getDeploymentMetadata,
+  renderAsync,
+  parseError,
+  COLORS,
+  formatEther,
+  convertStringToNumber,
+} from '../../../utils';
 import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { GetDeploymentIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../__generated__/registry/GetDeploymentIndexer';
+import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { Status } from '../../../__generated__/registry/globalTypes';
 import styles from './Marketplace.module.css';
-import clsx from 'clsx';
 import { deploymentStatus } from '../../../components/Status/Status';
+import { useNetworkClient } from '../../../hooks';
 
 interface IRequirementCheck {
   title: string;
@@ -77,6 +89,8 @@ interface ICheckList {
   deploymentId: string;
   proxyEndpoint: string | undefined;
   offerId: string;
+  planDuration: string | undefined;
+  rewardPerIndexer: string;
   requiredBlockHeight: number; //TODO: or should use bigInt?
   onSubmit: (params: unknown) => void;
   error?: any;
@@ -88,40 +102,45 @@ const CheckList: React.VFC<ICheckList> = ({
   requiredBlockHeight,
   deploymentId,
   offerId,
+  rewardPerIndexer,
+  planDuration,
   proxyEndpoint,
   onSubmit,
   error,
   isLoading,
 }) => {
+  const [dailyRewardCapcity, setDailyRewardCapcity] = React.useState<number>();
   const { t } = useTranslation();
   const { account: indexer } = useWeb3();
+  const contractClient = useNetworkClient();
+
+  const REQUIRED_STATUS = Status.READY;
+  const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
+  const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
+  const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
+
+  React.useEffect(() => {
+    async function getDailyRewardCapcity() {
+      if (contractClient && indexer) {
+        const dailyRewardCapcity = await contractClient.dailyRewardCapcity(indexer);
+        setDailyRewardCapcity(convertStringToNumber(formatEther(dailyRewardCapcity)));
+      }
+    }
+    getDailyRewardCapcity();
+  }, [contractClient, indexer, offerId]);
 
   const deploymentMeta = useAsyncMemo(async () => {
     if (!deploymentId || !proxyEndpoint || !indexer) return null;
     return await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
   }, [deploymentId, indexer, proxyEndpoint]);
 
-  const REQUIRED_STATUS = Status.READY;
-  const REQUIRED_PROGRESS = 1;
-  const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
-
   return renderAsync(deploymentMeta, {
     loading: () => <Spinner />,
     error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
     data: (data) => {
       const latestBlockHeight = data?.lastProcessedHeight;
-      const targetBlockHeight = data?.targetHeight;
-      const curProgress = latestBlockHeight && targetBlockHeight ? latestBlockHeight / targetBlockHeight : 0;
 
       const sortedRequirementCheckList = [
-        {
-          title: t('offerMarket.acceptModal.indexingStatus'),
-          requiredValue: REQUIRED_PROGRESS,
-          value: curProgress,
-          passCheck: REQUIRED_PROGRESS <= curProgress,
-          formatFn: (value: number) => `${(value * 100).toFixed(2)} %`,
-          errorMsg: t('offerMarket.acceptModal.indexingStatusError'),
-        },
         {
           title: t('offerMarket.acceptModal.projectStatus'),
           requiredValue: REQUIRED_STATUS,
@@ -136,6 +155,13 @@ const CheckList: React.VFC<ICheckList> = ({
           value: latestBlockHeight,
           passCheck: REQUIRED_BLOCKHEIGHT <= (latestBlockHeight ?? 0),
           errorMsg: t('offerMarket.acceptModal.blockHeightError'),
+        },
+        {
+          title: t('offerMarket.acceptModal.dailyRewards'),
+          requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
+          value: `${dailyRewardCapcity} SQT`,
+          passCheck: REQUIRED_DAILY_REWARD_CAP <= (dailyRewardCapcity ?? 0),
+          errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
       ];
 
@@ -164,13 +190,13 @@ const CheckList: React.VFC<ICheckList> = ({
 };
 
 type Props = {
-  offerId: string;
+  offer: Offer;
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
 };
 
 // TODO: SUMMARY LIST
-export const AcceptOffer: React.FC<Props> = ({ deployment, offerId, requiredBlockHeight }) => {
+export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const pendingContracts = useContracts();
@@ -191,7 +217,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offerId, requiredBloc
 
     // TODO: update the root when api ready
     const tempMmrRoot = '0xab3921276c8067fe0c82def3e5ecfd8447f1961bc85768c2a56e6bd26d3c0c55';
-    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offerId, tempMmrRoot, ethGas);
+    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer.id, tempMmrRoot, ethGas);
   };
 
   return (
@@ -211,7 +237,9 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offerId, requiredBloc
               status={deployment.status}
               deploymentId={deployment.deploymentId}
               proxyEndpoint={data?.url}
-              offerId={offerId}
+              offerId={offer.id}
+              rewardPerIndexer={offer.deposit.toString()}
+              planDuration={offer.planTemplate?.period.toString()}
               requiredBlockHeight={requiredBlockHeight}
               onSubmit={onSubmit}
               isLoading={isLoading}

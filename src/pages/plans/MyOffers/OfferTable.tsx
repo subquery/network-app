@@ -68,7 +68,7 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
           return (
             <AcceptOffer
               deployment={deploymentIndexer}
-              offerId={offer.id}
+              offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />
           );
