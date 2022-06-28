@@ -138,7 +138,7 @@ const en = {
     },
     connectWallet: {
       title: 'Connect wallet',
-      subtitle: 'Create and manage your SubQuery projects. <br> Learn how to create a SubQuery project <1>here</1>.',
+      subtitle: 'To participate in our test network, please start by connecting your wallet first.',
       connectWith: 'Connect With:',
       metamaskDesc: 'Connect with Metamask browser extension',
     },
@@ -434,6 +434,8 @@ const en = {
         rewardPerIndexerTooltip: 'This is the total amount a indexer will receive from accepting the offer.',
         rewardPerIndexerErrorMsg: 'Please put a valid reward for an indexer.',
         indexerCap: 'Indexer cap',
+        indexer: 'Indexer',
+        indexer_other: 'Indexers',
         indexerCapTooltip: 'This is the maximum number of indexers that can accept this offers',
         indexerCapErrorMsg: 'Please put a valid indexer cap.',
         totalDeposit: 'Required deposit',
@@ -448,10 +450,11 @@ const en = {
         expireDateTooltip:
           'Indexer cannot accept this offer after the expiration time. However, the indexer that have already accepted the offer will not be affected.',
         cancelWarning:
-          'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
+          'Cancelling an offer before it expires will result in 10% of the unspent balance being charged as a cancellation fee.',
       },
       step_3: {
         title: 'Step 4: Confirm offer summary',
+        consumer: 'Consumer',
         deploymentId: 'Deployment ID',
         offerTemplate: 'Offer Template',
         detailSettings: 'Detail settings',
@@ -481,6 +484,7 @@ const en = {
       accept: 'Accept',
       searchByDeploymentId: 'Search by deployment Id',
       acceptModal: {
+        moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',
         title: 'Accept the offer',
         check: 'Check criteria',
         offerSummary: 'Offer summary',

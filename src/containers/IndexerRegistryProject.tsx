@@ -341,6 +341,7 @@ const OFFER_FIELDS = gql`
     deployment {
       id
       project {
+        id
         metadata
       }
     }
