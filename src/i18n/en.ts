@@ -434,6 +434,8 @@ const en = {
         rewardPerIndexerTooltip: 'This is the total amount a indexer will receive from accepting the offer.',
         rewardPerIndexerErrorMsg: 'Please put a valid reward for an indexer.',
         indexerCap: 'Indexer cap',
+        indexer: 'Indexer',
+        indexer_other: 'Indexers',
         indexerCapTooltip: 'This is the maximum number of indexers that can accept this offers',
         indexerCapErrorMsg: 'Please put a valid indexer cap.',
         totalDeposit: 'Required deposit',
@@ -452,6 +454,7 @@ const en = {
       },
       step_3: {
         title: 'Step 4: Confirm offer summary',
+        consumer: 'Consumer',
         deploymentId: 'Deployment ID',
         offerTemplate: 'Offer Template',
         detailSettings: 'Detail settings',
@@ -481,6 +484,7 @@ const en = {
       accept: 'Accept',
       searchByDeploymentId: 'Search by deployment Id',
       acceptModal: {
+        moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',
         title: 'Accept the offer',
         check: 'Check criteria',
         offerSummary: 'Offer summary',

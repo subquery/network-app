@@ -2,192 +2,95 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import assert from 'assert';
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
-import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { getEthGas } from '@subql/network-clients';
-import clsx from 'clsx';
-import { BigNumber } from 'ethers';
-import { Status as AppStatus } from '../../../components';
 import moment from 'moment';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import {
-  getCapitalizedStr,
-  getDeploymentMetadata,
-  renderAsync,
-  parseError,
-  COLORS,
-  formatEther,
+  convertBigNumberToNumber,
   convertStringToNumber,
+  formatEther,
+  formatSecondsDuration,
+  getCapitalizedStr,
+  renderAsync,
 } from '../../../utils';
-import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
+import { useIndexerMetadata } from '../../../hooks';
 import { GetDeploymentIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../../../__generated__/registry/GetDeploymentIndexer';
 import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
-import { Status } from '../../../__generated__/registry/globalTypes';
-import styles from './Marketplace.module.css';
-import { deploymentStatus } from '../../../components/Status/Status';
-import { useNetworkClient } from '../../../hooks';
+import { CheckList } from './CheckList';
+import styles from './AcceptOffer.module.css';
+import { DeploymentProject } from '../MyOffers/CreateOffer/SelectDeployment';
+import { StepButtons } from '../MyOffers/CreateOffer';
+import { SummaryList } from '../../../components';
 
-interface IRequirementCheck {
-  title: string;
-  requiredValue: string | number | undefined;
-  value: string | number | undefined;
-  passCheck: boolean;
-  formatFn?: (value: any) => string | number | React.ReactNode;
-  errorMsg?: string;
+interface OfferSummaryProps {
+  offer: Offer;
+  onNext: (step: number) => void;
+  curStep: number;
 }
 
-interface ISortedValue {
-  value: string | number | undefined;
-  formatFn?: (value: any) => string | React.ReactNode;
-}
+const OfferSummary: React.VFC<OfferSummaryProps> = ({ offer, onNext, curStep }) => {
+  const { t } = useTranslation();
 
-const RequirementCheck: React.FC<IRequirementCheck> = ({
-  title,
-  requiredValue,
-  value,
-  passCheck,
-  formatFn,
-  errorMsg,
-}) => {
-  const iconSize = 20;
-  const iconColor = passCheck ? COLORS.success : COLORS.error;
-  const Icon = ({ ...props }) =>
-    passCheck ? <AiOutlineCheckCircle {...props} /> : <AiOutlineCloseCircle {...props} />;
-
-  const SortedValue = ({ value, formatFn }: ISortedValue) => {
-    if (formatFn) {
-      if (['string', 'number'].includes(typeof formatFn(value))) {
-        return <Typography.Text>{formatFn(value)}</Typography.Text>;
-      }
-      return <>{formatFn(value)}</>;
-    }
-
-    return <Typography.Text>{value}</Typography.Text>;
-  };
+  const offerSummary = [
+    {
+      label: t('myOffers.step_3.consumer'),
+      value: offer.consumer,
+    },
+    {
+      label: t('myOffers.step_2.rewardPerIndexer'),
+      value: `${formatEther(offer.deposit)} SQT`,
+    },
+    {
+      label: t('myOffers.step_2.minimumIndexedHeight'),
+      value: t('general.block', { count: convertStringToNumber(offer.minimumAcceptHeight.toString()) }),
+    },
+    {
+      label: t('plans.headers.period'),
+      value: formatSecondsDuration(convertBigNumberToNumber(offer?.planTemplate?.period ?? 0)),
+    },
+    {
+      label: t('plans.headers.dailyReqCap'),
+      value: t('plans.default.query', {
+        count: convertStringToNumber(offer?.planTemplate?.dailyReqCap.toString() ?? '0'),
+      }),
+    },
+    {
+      label: t('plans.headers.rateLimit'),
+      value: `${
+        offer?.planTemplate?.rateLimit ? `${offer?.planTemplate?.rateLimit} ${t('plans.default.requestPerMin')}` : '-'
+      }`,
+    },
+    {
+      label: t('myOffers.step_2.expireDate'),
+      value: moment(offer.expireDate).format(),
+    },
+  ];
 
   return (
-    <div className={styles.requirementCheckItemContainer}>
-      <div className={clsx('flex-between-center', styles.requirementCheckItem)}>
-        <Typography.Title level={5} type="secondary" className={styles.requirementCheckItemTitle}>
-          {title}
-        </Typography.Title>
-        <SortedValue value={requiredValue} formatFn={formatFn} />
-        <SortedValue value={value} formatFn={formatFn} />
-        <Icon color={iconColor} size={iconSize} />
+    <div>
+      <Typography.Title level={4}>{t('offerMarket.acceptModal.offerSummary')}</Typography.Title>
+      <div className={styles.offerSummary}>
+        {offer.deployment?.project?.id && (
+          <div>
+            <DeploymentProject projectId={offer.deployment.project.id} title={t('myOffers.step_3.deploymentId')} />
+          </div>
+        )}
+        <SummaryList list={offerSummary} />
+        <Typography.Paragraph>{t('offerMarket.acceptModal.moveFromSummary')}</Typography.Paragraph>
+        <StepButtons
+          curStep={curStep}
+          onStepChange={(step) => {
+            onNext(step);
+          }}
+        />
       </div>
-      {!passCheck && errorMsg && <Typography.Text type={'danger'}>{errorMsg}</Typography.Text>}
     </div>
   );
-};
-
-interface ICheckList {
-  status: string | undefined;
-  deploymentId: string;
-  proxyEndpoint: string | undefined;
-  offerId: string;
-  planDuration: string | undefined;
-  rewardPerIndexer: string;
-  requiredBlockHeight: number; //TODO: or should use bigInt?
-  onSubmit: (params: unknown) => void;
-  error?: any;
-  isLoading?: boolean;
-}
-
-const CheckList: React.VFC<ICheckList> = ({
-  status,
-  requiredBlockHeight,
-  deploymentId,
-  offerId,
-  rewardPerIndexer,
-  planDuration,
-  proxyEndpoint,
-  onSubmit,
-  error,
-  isLoading,
-}) => {
-  const [dailyRewardCapcity, setDailyRewardCapcity] = React.useState<number>();
-  const { t } = useTranslation();
-  const { account: indexer } = useWeb3();
-  const contractClient = useNetworkClient();
-
-  const REQUIRED_STATUS = Status.READY;
-  const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
-  const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
-  const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
-
-  React.useEffect(() => {
-    async function getDailyRewardCapcity() {
-      if (contractClient && indexer) {
-        const dailyRewardCapcity = await contractClient.dailyRewardCapcity(indexer);
-        setDailyRewardCapcity(convertStringToNumber(formatEther(dailyRewardCapcity)));
-      }
-    }
-    getDailyRewardCapcity();
-  }, [contractClient, indexer, offerId]);
-
-  const deploymentMeta = useAsyncMemo(async () => {
-    if (!deploymentId || !proxyEndpoint || !indexer) return null;
-    return await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
-  }, [deploymentId, indexer, proxyEndpoint]);
-
-  return renderAsync(deploymentMeta, {
-    loading: () => <Spinner />,
-    error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
-    data: (data) => {
-      const latestBlockHeight = data?.lastProcessedHeight;
-
-      const sortedRequirementCheckList = [
-        {
-          title: t('offerMarket.acceptModal.projectStatus'),
-          requiredValue: REQUIRED_STATUS,
-          value: status,
-          passCheck: REQUIRED_STATUS === status,
-          formatFn: (status: string) => <AppStatus text={status} color={deploymentStatus[status]} />,
-          errorMsg: t('offerMarket.acceptModal.projectStatusError'),
-        },
-        {
-          title: t('offerMarket.acceptModal.blockHeight'),
-          requiredValue: REQUIRED_BLOCKHEIGHT,
-          value: latestBlockHeight,
-          passCheck: REQUIRED_BLOCKHEIGHT <= (latestBlockHeight ?? 0),
-          errorMsg: t('offerMarket.acceptModal.blockHeightError'),
-        },
-        {
-          title: t('offerMarket.acceptModal.dailyRewards'),
-          requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
-          value: `${dailyRewardCapcity} SQT`,
-          passCheck: REQUIRED_DAILY_REWARD_CAP <= (dailyRewardCapcity ?? 0),
-          errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
-        },
-      ];
-
-      const passCheckAmount = sortedRequirementCheckList.filter(
-        (requirementCheck) => requirementCheck.passCheck === true,
-      );
-
-      return (
-        <div className={styles.requirementCheckContainer}>
-          <Typography.Title level={4}>
-            {t('offerMarket.acceptModal.passCriteria', { count: passCheckAmount.length })}
-          </Typography.Title>
-          {sortedRequirementCheckList.map((requirementCheck) => (
-            <RequirementCheck key={requirementCheck.title} {...requirementCheck} />
-          ))}
-          <Typography.Paragraph>{t('offerMarket.acceptModal.afterAcceptOffer')}</Typography.Paragraph>
-          {error && <Typography.Text type="danger">{error}</Typography.Text>}
-          <div className={clsx(styles.btnContainer, 'flex-end')}>
-            <Button onClick={onSubmit} htmlType="submit" shape="round" size="large" type="primary" loading={isLoading}>
-              {t('offerMarket.accept')}
-            </Button>
-          </div>
-        </div>
-      );
-    },
-  });
 };
 
 type Props = {
@@ -196,8 +99,8 @@ type Props = {
   requiredBlockHeight: number;
 };
 
-// TODO: SUMMARY LIST
 export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight }) => {
+  const [curStep, setCurStep] = React.useState<number>(0);
   const { t } = useTranslation();
   const { account } = useWeb3();
   const pendingContracts = useContracts();
@@ -205,7 +108,11 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
 
   const text = {
     title: t('offerMarket.acceptModal.title'),
-    steps: [t('offerMarket.acceptModal.check'), t('general.confirmOnMetamask')],
+    steps: [
+      t('offerMarket.acceptModal.offerSummary'),
+      t('offerMarket.acceptModal.check'),
+      t('general.confirmOnMetamask'),
+    ],
     submitText: t('offerMarket.accept'),
     failureText: t('offerMarket.acceptModal.failureText'),
   };
@@ -224,10 +131,14 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
   return (
     <TransactionModal
       variant="textBtn"
+      currentStep={curStep}
       text={text}
       actions={[{ label: getCapitalizedStr(t('offerMarket.accept')), key: 'acceptOffer' }]}
       onClick={handleClick}
       renderContent={(onSubmit, _, isLoading, error) => {
+        if (curStep === 0) {
+          return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer} />;
+        }
         return renderAsync(indexerMetadata, {
           loading: () => <Spinner />,
           error: (error) => (
