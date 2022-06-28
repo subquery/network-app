@@ -52,7 +52,10 @@ const columns: ColumnsType<{
     key: 'points',
     width: '20%',
     render: (points: string, record) => (
-      <NavLink to={'/missions/user/' + record.indexer} key={'/missions/user/' + record.indexer}>
+      <NavLink
+        to={'/missions/season/' + record.season + '/user/' + record.indexer}
+        key={'/missions/season/' + record.season + '/user' + record.indexer}
+      >
         {points} points
       </NavLink>
     ),

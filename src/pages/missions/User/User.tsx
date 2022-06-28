@@ -7,7 +7,7 @@ import { useHistory, useParams } from 'react-router';
 import styles from './User.module.css';
 import { CurEra, Spinner } from '../../../components';
 import Jazzicon from 'react-jazzicon';
-import { PageHeader, Breadcrumb } from 'antd';
+import { Breadcrumb } from 'antd';
 import Missions from '../Mission/Missions/Missions';
 import { renderAsync } from '../../../utils';
 import { useParticipantChallenges } from '../../../containers';
@@ -24,13 +24,9 @@ const tabList = [SectionTabs.Indexing, SectionTabs.Delegating, SectionTabs.Consu
 
 export const User: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
-  const { id } = useParams<{ id: string }>();
-
-  const [season, setSeason] = React.useState(CURR_SEASON);
-  const participant = useParticipantChallenges(season, { indexerId: id });
-
-  const viewPrev = () => setSeason(season - 1);
-  const viewCurr = () => setSeason(CURR_SEASON);
+  const { season, id } = useParams<{ season: string; id: string }>();
+  const participant = useParticipantChallenges(Number(season), { indexerId: id });
+  const seasonNum = Number(season);
 
   const history = useHistory();
   const routeChange = () => {
@@ -69,7 +65,7 @@ export const User: React.VFC = () => {
               <div>
                 <div className={styles.tabList}>
                   {tabList.map((tab) => {
-                    if (tab === SectionTabs.Consumer && season === 2) return undefined;
+                    if (tab === SectionTabs.Consumer && seasonNum === 2) return undefined;
                     return (
                       <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
                         <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
@@ -81,27 +77,21 @@ export const User: React.VFC = () => {
                 {curTab === SectionTabs.Indexing && (
                   <Missions
                     participant={data?.indexer}
-                    viewCurr={viewCurr}
-                    viewPrev={viewPrev}
-                    season={3}
+                    season={seasonNum}
                     missionDetails={getMissionDetails('Indexer')}
                   />
                 )}
                 {curTab === SectionTabs.Delegating && (
                   <Missions
                     participant={data?.delegator}
-                    viewCurr={viewCurr}
-                    viewPrev={viewPrev}
-                    season={3}
+                    season={seasonNum}
                     missionDetails={getMissionDetails('Delegator')}
                   />
                 )}
                 {curTab === SectionTabs.Consumer && (
                   <Missions
                     participant={data?.consumer}
-                    viewCurr={viewCurr}
-                    viewPrev={viewPrev}
-                    season={3}
+                    season={seasonNum}
                     missionDetails={getMissionDetails('Consumer')}
                   />
                 )}
