@@ -40,12 +40,12 @@ export const NETWORK_CONFIGS = {
     rpcUrls: [RPC_URLS[1287]],
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
   },
-  'sqn-testnet': {
+  'acala-testnet': {
     chainId: `0x${Number(595).toString(16)}`,
-    chainName: 'SQN Testnet',
+    chainName: 'Acala Testnet',
     nativeCurrency: {
-      name: 'ACALA',
-      symbol: 'ACALA',
+      name: 'ACA',
+      symbol: 'ACA',
       decimals: 18,
     },
     rpcUrls: [RPC_URLS[595]],

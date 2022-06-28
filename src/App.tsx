@@ -70,7 +70,7 @@ const BlockchainStatus: React.FC = ({ children }) => {
   const isMetaMask = React.useMemo(() => !!window.ethereum?.isMetaMask, []);
 
   const handleSwitchNetwork = () => {
-    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['sqn-testnet']]);
+    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['acala-testnet']]);
   };
 
   if (error instanceof UnsupportedChainIdError) {
