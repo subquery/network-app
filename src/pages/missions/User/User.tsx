@@ -8,10 +8,10 @@ import styles from './User.module.css';
 import { CurEra, Spinner } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { Breadcrumb } from 'antd';
-import Missions from '../Mission/Missions/Missions';
+import { Missions } from '../Mission/Missions/Missions';
 import { renderAsync } from '../../../utils';
 import { useParticipantChallenges } from '../../../containers';
-import { CURR_SEASON, getMissionDetails } from '../constants';
+import { getMissionDetails } from '../constants';
 import { Link } from 'react-router-dom';
 
 enum SectionTabs {
