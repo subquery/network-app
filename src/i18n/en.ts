@@ -138,7 +138,7 @@ const en = {
     },
     connectWallet: {
       title: 'Connect wallet',
-      subtitle: 'Create and manage your SubQuery projects. <br> Learn how to create a SubQuery project <1>here</1>.',
+      subtitle: 'To participate in our test network, please start by connecting your wallet first.',
       connectWith: 'Connect With:',
       metamaskDesc: 'Connect with Metamask browser extension',
     },
