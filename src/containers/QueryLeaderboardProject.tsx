@@ -64,6 +64,7 @@ const GET_PARTICIPANT_S3 = gql`
       challenges {
         point
         timestamp
+        details
         title
         deploymentId
       }
@@ -103,9 +104,9 @@ export function useParticipant(season: number, params: any): QueryResult<GetPart
 
 // QUERY FUNCTIONS FOR SUBQUERY PROJECTS
 
-function getParticipantChallengesQuery(season: number): DocumentNode | TypedDocumentNode<any, OperationVariables> {
-  if (season === 2) return GET_PARTICIPANT_CHALLENGES_S2;
-  if (season === 3) return GET_PARTICIPANT_CHALLENGES_S3;
+function getParticipantChallengesQuery(season: number): DocumentNode[] | TypedDocumentNode<any, OperationVariables>[] {
+  // if (season === 2) return GET_PARTICIPANT_CHALLENGES_S2;
+  if (season === 3) return [GET_PARTICIPANT_CHALLENGES_S3, GET_PARTICIPANT_S3];
   throw new Error('Invalid season');
 }
 
@@ -115,11 +116,19 @@ function getSeasonClientName(season: number): string {
   throw new Error('Invalid season');
 }
 
-export function useParticipantChallenges(season: number, params: any): QueryResult<any> {
+export function useParticipantChallenges(season: number, params: any): QueryResult<any, any>[] {
   const CLIENT_NAME = getSeasonClientName(season);
-  const QUERY = getParticipantChallengesQuery(season);
-  return useQuery<any, any>(QUERY, {
+  const [QUERY1, QUERY2] = getParticipantChallengesQuery(season);
+
+  const res1 = useQuery<any, any>(QUERY1, {
     variables: params,
     context: { clientName: CLIENT_NAME },
   });
+
+  const res2 = useQuery<any, any>(QUERY2, {
+    variables: params,
+    context: { clientName: 'leaderboard' },
+  });
+
+  return [res1, res2];
 }
