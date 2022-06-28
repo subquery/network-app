@@ -17,7 +17,7 @@ enum SectionTabs {
 
 const tabList = [SectionTabs.Challenges];
 
-const Leaderboard: React.VFC = () => {
+export const Leaderboard: React.VFC = () => {
   const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Challenges);
   const { t } = useTranslation();
   const [season, setSeason] = React.useState(CURR_SEASON);
@@ -50,5 +50,3 @@ const Leaderboard: React.VFC = () => {
     </>
   );
 };
-
-export default Leaderboard;

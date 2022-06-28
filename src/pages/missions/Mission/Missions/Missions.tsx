@@ -131,5 +131,3 @@ export const Missions: React.VFC<{
     );
   }
 };
-
-export default Missions;

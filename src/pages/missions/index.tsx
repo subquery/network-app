@@ -2,15 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { EraProvider, Web3Provider } from '../../containers';
+import { EraProvider } from '../../containers';
 import { Redirect, Route, Switch } from 'react-router';
-import Home from './Mission';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckSquare, AiOutlineTrophy } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
-import { WalletRoute } from '../../WalletRoute';
 import { User } from './User';
-import Leaderboard from './Leaderboard/Leaderboard';
+import { Leaderboard } from './Leaderboard';
+import { Home } from './Mission';
 
 export const ROOT_ROUTE = '/missions';
 export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-missions`;
@@ -33,18 +32,16 @@ const Container: React.VFC = () => {
   ];
 
   return (
-    <Web3Provider>
-      <EraProvider>
-        <AppSidebar list={sidebarList}>
-          <Switch>
-            <Route path="/missions/season/:season/user/:id" children={<User />} />
-            <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
-            <WalletRoute path="/missions/my-missions" component={Home} />
-            <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
-          </Switch>
-        </AppSidebar>
-      </EraProvider>
-    </Web3Provider>
+    <EraProvider>
+      <AppSidebar list={sidebarList}>
+        <Switch>
+          <Route path="/missions/season/:season/user/:id" children={<User />} />
+          <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
+          <Route path={PROFILE_ROUTE} component={Home} />
+          <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
+        </Switch>
+      </AppSidebar>
+    </EraProvider>
   );
 };
 
