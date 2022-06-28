@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Table, Tag, Tooltip } from 'antd';
 import styles from './Missions.module.css';
-import { INDEXER_CHALLENGE_DETAILS, IndexerDetails } from '../../constants';
+import { INDEXER_CHALLENGE_DETAILS, MISSION_TYPE, getMissionDetails } from '../../constants';
 
 const columns = [
   {
@@ -48,20 +48,30 @@ const columns = [
   },
 ];
 
-//TODO: Will need to have two props:
-// 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
-// 2. either indexerID
-
 export interface MissionsProps {
   participant: any;
-  missionDetails: IndexerDetails;
+  dailyChallenges?: any;
+  missionType: MISSION_TYPE;
   season: number;
   viewPrev?: () => void;
   viewCurr?: () => void;
 }
 
-export const Missions: React.VFC<MissionsProps> = ({ participant, missionDetails, season, viewPrev, viewCurr }) => {
-  const formatData = (DETAILS: IndexerDetails, challenges: ReadonlyArray<any>, dailyChallenges: ReadonlyArray<any>) => {
+export const Missions: React.VFC<MissionsProps> = ({
+  participant,
+  dailyChallenges,
+  missionType,
+  season,
+  viewPrev,
+  viewCurr,
+}) => {
+  const formatData = (
+    missionType: MISSION_TYPE,
+    challenges: ReadonlyArray<any>,
+    dailyChallenges: ReadonlyArray<any>,
+  ) => {
+    const DETAILS = getMissionDetails(missionType);
+
     let key = 1;
     let allChallenges: {
       type: string;
@@ -88,6 +98,19 @@ export const Missions: React.VFC<MissionsProps> = ({ participant, missionDetails
         });
     }
 
+    if (missionType === MISSION_TYPE.INDEXER) {
+      dailyChallenges.forEach((item) => {
+        allChallenges.push({
+          type: 'Daily',
+          key: key++,
+          mission: item?.details,
+          points: item?.point,
+          progress: 'Completed',
+          title: '',
+        });
+      });
+    }
+
     for (const [i, item] of Object.entries(DETAILS)) {
       const found = allChallenges?.find((v: any) => v.title === i);
 
@@ -103,32 +126,22 @@ export const Missions: React.VFC<MissionsProps> = ({ participant, missionDetails
       }
     }
 
-    // if (dailyChallenges) {
-    //   dailyChallenges.forEach((item) => {
-    //     allChallenges.push({
-    //       type: 'Daily',
-    //       key: key++,
-    //       mission: formatTitle(item.title),
-    //       points: item.point,
-    //       progress: 'Completed',
-    //       date: new Date(item.timestamp).toLocaleDateString(),
-    //     });
-    //   });
-    // }
-
     return allChallenges.flat();
   };
 
   if (participant) {
     return (
       <div className={styles.container}>
-        <Table columns={columns} dataSource={formatData(missionDetails, participant.singleChallenges, [])} />
+        <Table
+          columns={columns}
+          dataSource={formatData(missionType, participant.singleChallenges, dailyChallenges ?? [])}
+        />
       </div>
     );
   } else {
     return (
       <div className={styles.container}>
-        <Table columns={columns} dataSource={formatData(missionDetails, [], [])} />
+        <Table columns={columns} dataSource={formatData(missionType, [], [])} />
       </div>
     );
   }
