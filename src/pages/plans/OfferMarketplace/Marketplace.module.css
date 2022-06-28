@@ -12,21 +12,3 @@
 .offers {
   margin: 1rem 0;
 }
-
-.requirementCheckContainer {
-  margin: 1rem 0;
-}
-
-.requirementCheckItemContainer {
-  margin: 1rem 0;
-}
-
-.requirementCheckItem {
-  border: 1px solid var(--gray300);
-  padding: 0.6rem;
-  border-radius: 4px;
-}
-
-.requirementCheckItemTitle {
-  width: 20%;
-}

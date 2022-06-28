@@ -24,11 +24,12 @@ const Container: React.VFC = () => {
       link: PROFILE_ROUTE,
       icon: <AiOutlineCheckSquare />,
     },
-    {
-      label: t('missions.leaderboard'),
-      link: LEADERBOARD_ROUTE,
-      icon: <AiOutlineTrophy />,
-    },
+    // TODO: Uncomment when ready
+    // {
+    //   label: t('missions.leaderboard'),
+    //   link: LEADERBOARD_ROUTE,
+    //   icon: <AiOutlineTrophy />,
+    // },
   ];
 
   return (

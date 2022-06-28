@@ -100,10 +100,10 @@ const Header: React.VFC = () => {
       link: '/explorer',
       title: t('header.explorer'),
     },
-    {
-      link: '/studio',
-      title: t('header.studio'),
-    },
+    // {
+    //   link: '/studio',
+    //   title: t('header.studio'),
+    // },
     {
       link: '/staking',
       title: t('header.staking'),
