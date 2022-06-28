@@ -30,7 +30,8 @@ const IndexerMessageType = [
 
 const domain = {
   name: 'Subquery',
-  chainId: 1280,
+  // TODO: need to change this basing on current selected chain
+  chainId: 595,
 };
 
 export function buildTypedMessage(message: Message): string {
