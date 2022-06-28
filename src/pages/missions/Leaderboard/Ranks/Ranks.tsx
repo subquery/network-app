@@ -5,12 +5,14 @@ import { Address, Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 
 import { ColumnsType } from 'antd/lib/table/interface';
+import i18next from 'i18next';
+
 import React from 'react';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Copy, SearchInput } from '../../../../components';
+import { useHistory } from 'react-router-dom';
+import { Copy, SearchInput, TableText } from '../../../../components';
 import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
-import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
+import { notEmpty, renderAsyncArray, mapAsync, convertStringToNumber } from '../../../../utils';
 import styles from './Ranks.module.css';
 
 const columns: ColumnsType<{
@@ -52,12 +54,7 @@ const columns: ColumnsType<{
     key: 'points',
     width: '20%',
     render: (points: string, record) => (
-      <NavLink
-        to={'/missions/season/' + record.season + '/user/' + record.indexer}
-        key={'/missions/season/' + record.season + '/user' + record.indexer}
-      >
-        {points} points
-      </NavLink>
+      <TableText>{i18next.t('missions.point', { count: convertStringToNumber(points) })}</TableText>
     ),
   },
 ];
@@ -68,7 +65,8 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
   viewPrev,
   viewCurr,
 }) => {
-  const [searchText, setSearchText] = useState('');
+  const history = useHistory();
+  const [searchText, setSearchText] = useState<string>('');
 
   return (
     <div className={styles.container}>
@@ -90,6 +88,7 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
             challenges = data?.indexerS2Challenges;
           }
 
+          // TODO: Too many any
           return challenges
             .filter(notEmpty)
             .sort((a: { singlePoints: number }, b: { singlePoints: number }) => b.singlePoints - a.singlePoints)
@@ -110,7 +109,19 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography>No Indexers available.</Typography>,
-          data: (data) => <Table columns={columns} dataSource={data} />,
+          data: (data) => (
+            <Table
+              columns={columns}
+              dataSource={data}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    history.push(`/missions/season/${record.season}/user/${record.indexer}`);
+                  },
+                };
+              }}
+            />
+          ),
         },
       )}
     </div>
