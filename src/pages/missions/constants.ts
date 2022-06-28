@@ -1,42 +1,61 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export const INDEXER_CHALLENGE_PTS = [
-  'INDEX_SINGLE',
-  'INDEX_ALL',
-  'ATTRACT_DELEGATOR',
-  'CHANGE_COMMISSION',
-  'DEFAULT_PLAN',
-  'OVERRIDE_PLAN',
-  'SERVICE_AGREEMENT',
-  'CLAIM_REWARD',
-  'WITHDRAW_CLAIMED',
-  'INDEXER_UNDELEGATED',
-  'UNREGISTER_INDEXER',
-];
-
 interface Details {
   points: number;
   description: string;
 }
 
-interface IndexerDetails {
+export interface IndexerDetails {
   [key: string]: Details;
 }
 
 export const INDEXER_CHALLENGE_DETAILS: IndexerDetails = {
-  INDEX_SINGLE: { points: 10, description: 'Fully index a project from demo projects list' },
-  INDEX_ALL: { points: 50, description: 'Index all projects from demo projects list' },
-  ATTRACT_DELEGATOR: { points: 20, description: 'Get your first delegator' },
+  INDEX_SINGLE_PROJECT: { points: 10, description: 'Fully index a project from projects list' },
+  INDEX_ALL_PROJECTS: { points: 200, description: 'Index all projects from projects list' },
+  DELEGATOR_ATTRACTED: { points: 20, description: 'Get your first delegator' },
   CHANGE_COMMISSION: { points: 10, description: 'Either increase of decrease commission rate' },
-  DEFAULT_PLAN: { points: 50, description: 'Create a default plan' },
-  OVERRIDE_PLAN: { points: 50, description: 'Create a override plan' },
-  SERVICE_AGREEMENT: { points: 50, description: 'Get a service agreement from consumer' },
-  CLAIM_REWARD: { points: 20, description: 'Indexer claims a reward' },
-  WITHDRAW_CLAIMED: { points: 50, description: 'Delegator withdraws unstaked amount from indexer' },
-  INDEXER_UNDELEGATED: { points: 20, description: 'Indexer gets delegation removed' },
+  CREATE_DEFAULT_PLAN: { points: 50, description: 'Create a default plan' },
+  CREATE_SPECIFIC_PLAN: { points: 50, description: 'Create a deployment-specific plan' },
+  SERVICE_AGREEMENT_CREATED: { points: 50, description: 'Get a service agreement from consumer' },
+  CLAIM_REWARD: { points: 20, description: "Indexer claims a reward from reward distributor to an indexer's wallet" },
+  WITHDRAW_UNSTAKED: {
+    points: 50,
+    description: "Indexer withdraws unstaked amount from staking contract to an indexer's wallet",
+  },
+  INDEXER_UNDELEGATED: { points: 20, description: 'Indexer gets undelegated from delegator' },
+  ACCEPT_OFFER: { points: 50, description: 'Indexer to accept an offer in the offer market' },
+  UPDATE_CONTROLLER: { points: 30, description: 'Update controller account to new one' },
   UNREGISTER_INDEXER: { points: 30, description: 'Unregister your indexer' },
 };
+
+export const DELEGATOR_CHALLENGE_DETAILS: IndexerDetails = {
+  CLAIM_REWARD: { points: 20, description: "Delegator claims a reward from reward distributor to delegator's wallet" },
+  DELEGATE_TO_INDEXER: { points: 50, description: 'Delegator add delegation to an indexer' },
+  UNDELEGATE_FROM_INDEXER: { points: 50, description: 'Delegator undelegate from an indexer' },
+  WITHDRAW_DELEGATION: { points: 50, description: 'Delegator withdraws undelegated amount from an indexer' },
+};
+
+export const CONSUMER_CHALLENGE_DETAILS: IndexerDetails = {
+  PURCHASE_PLAN: { points: 50, description: 'Consumer purchase a plan from an indexer' },
+  CREATE_PURCHASE_OFFER: { points: 50, description: 'A purchase offer is created by consumer' },
+  SERVICE_AGREEMENT_CREATED: { points: 50, description: 'Get service agreement from an indexer' },
+  CANCEL_PURCHASE_OFFER: { points: 30, description: 'Cancel offer before it expires' },
+  WITHDRAW_PURCHASE_OFFER: { points: 30, description: 'Withdraw SQT locked in the offer after it expires' },
+};
+
+export enum MISSION_TYPE {
+  INDEXER = 'indexer',
+  DELEGATOR = 'delegator',
+  CONSUMER = 'consumer',
+}
+
+export function getMissionDetails(missionType: MISSION_TYPE): IndexerDetails {
+  if (missionType === MISSION_TYPE.INDEXER) return INDEXER_CHALLENGE_DETAILS;
+  if (missionType === MISSION_TYPE.DELEGATOR) return DELEGATOR_CHALLENGE_DETAILS;
+  if (missionType === MISSION_TYPE.CONSUMER) return CONSUMER_CHALLENGE_DETAILS;
+  throw new Error('Invalid mission type');
+}
 
 type Season = {
   [key: number]: {

@@ -1,21 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Address, Button, Spinner } from '@subql/react-ui';
+import { Address, Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 
 import { ColumnsType } from 'antd/lib/table/interface';
+import i18next from 'i18next';
+
 import React from 'react';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Copy, SearchInput } from '../../../../components';
+import { useHistory } from 'react-router-dom';
+import { Copy, SearchInput, TableText } from '../../../../components';
 import { SeasonInfo } from '../../../../components/SeasonInfo/SeasonInfo';
-import { useLeaderboard } from '../../../../containers';
-import { notEmpty, renderAsyncArray, mapAsync } from '../../../../utils';
-import { CURR_SEASON } from '../../constants';
+import { notEmpty, renderAsyncArray, mapAsync, convertStringToNumber } from '../../../../utils';
 import styles from './Ranks.module.css';
 
 const columns: ColumnsType<{
+  season: string;
   key: number;
   rank: number;
   indexer: string;
@@ -53,53 +54,75 @@ const columns: ColumnsType<{
     key: 'points',
     width: '20%',
     render: (points: string, record) => (
-      <NavLink to={'/missions/user/' + record.indexer} key={'/missions/user/' + record.indexer}>
-        {points} points
-      </NavLink>
+      <TableText>{i18next.t('missions.point', { count: convertStringToNumber(points) })}</TableText>
     ),
   },
 ];
 
-const Ranks: React.FC<{ season: number; viewPrev: () => void; viewCurr: () => void }> = ({
+// TODO: Fix total Participants, wrong
+const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCurr: () => void }> = ({
   season,
+  ranks,
   viewPrev,
   viewCurr,
 }) => {
-  const indexers = useLeaderboard();
-  const [searchText, setSearchText] = useState('');
+  const history = useHistory();
+  const [searchText, setSearchText] = useState<string>('');
 
   return (
     <div className={styles.container}>
       <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
 
       <div className={styles.topBar}>
-        <h2>Total {indexers.data?.indexerChallenges?.length} indexers</h2>
+        <h2>{ranks.data?.indexersS3Challenges?.length} Participants</h2>
         <div className={styles.searchBar}>
           <SearchInput defaultValue={searchText} onSearch={(value: string) => setSearchText(value)} />
         </div>
       </div>
       {renderAsyncArray(
-        mapAsync((data) => {
-          return data.indexerChallenges
+        mapAsync((data: any) => {
+          let challenges;
+          if (season === 3) {
+            challenges = data?.indexersS3Challenges;
+          }
+          if (season === 2) {
+            challenges = data?.indexersS2Challenges;
+          }
+
+          // TODO: Too many any
+          return challenges
             .filter(notEmpty)
-            .sort((a, b) => b.singlePoints - a.singlePoints)
-            .map((data, index) => ({ ...data, rank: index + 1 }))
-            .filter((value) => value.id.startsWith(searchText))
-            .map((data, index) => {
+            .sort((a: { singlePoints: number }, b: { singlePoints: number }) => b.singlePoints - a.singlePoints)
+            .map((data: any, index: number) => ({ ...data, rank: index + 1 }))
+            .filter((value: { id: string }) => value.id.startsWith(searchText))
+            .map((data: { name: any; rank: any; id: any; singlePoints: any }, index: any) => {
               return {
                 key: index,
                 name: data.name,
                 rank: data.rank,
+                season: season,
                 indexer: data.id,
                 points: data.singlePoints,
               };
             });
-        }, indexers),
+        }, ranks),
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography>No Indexers available.</Typography>,
-          data: (data) => <Table columns={columns} dataSource={data} />,
+          data: (data) => (
+            <Table
+              columns={columns}
+              dataSource={data}
+              onRow={(record) => {
+                return {
+                  onClick: () => {
+                    history.push(`/missions/season/${record.season}/user/${record.indexer}`);
+                  },
+                };
+              }}
+            />
+          ),
         },
       )}
     </div>

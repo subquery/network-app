@@ -2,132 +2,104 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useIndexerChallenges, useWeb3 } from '../../../containers';
-import { useHistory } from 'react-router';
-import { ConnectWallet, CurEra } from '../../../components';
+import { useParticipantChallenges, useWeb3 } from '../../../containers';
+import { AppPageHeader } from '../../../components';
 import styles from './Home.module.css';
-import { injectedConntector } from '../../../containers/Web3';
-import { Spinner, Toast, Typography } from '@subql/react-ui';
+import { Spinner } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
-import Missions from './Missions/Missions';
-import { renderAsync } from '../../../utils';
-import { GetIndexer } from '../../../__generated__/leaderboard/GetIndexer';
-import { CURR_SEASON, SEASONS } from '../constants';
+import clsx from 'clsx';
+import { Missions, MissionsProps } from './Missions/Missions';
+import { getCapitalizedStr, renderAsync } from '../../../utils';
+import { CURR_SEASON, getMissionDetails, MISSION_TYPE, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
+import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
+import { Typography } from 'antd';
 
-enum SectionTabs {
-  Indexing = 'Indexing',
-  Delegating = 'Delegating',
-  Consumer = 'Consumer',
+interface PointListProps extends Partial<MissionsProps> {
+  missionType: MISSION_TYPE;
+  data: any; //TODO: data Type
 }
-
-const tabList = [SectionTabs.Indexing];
-
-const Home: React.VFC = (children) => {
-  const [errorAlert, setErrorAlert] = React.useState<string | null>();
-  const [curTab, setCurTab] = React.useState<SectionTabs>(SectionTabs.Indexing);
-  const { account, activate, error } = useWeb3();
+const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const indexer = useIndexerChallenges({ indexerId: account ?? '' });
+
+  const dataSource = data[missionType];
+  const totalPoint = data[missionType]['singleChallengePts'];
+
+  if (!dataSource) {
+    return <Typography.Title level={5}>There is no data available.</Typography.Title>;
+  }
+
+  return (
+    <>
+      {data[missionType]['singleChallengePts'] && (
+        <div className={styles.totalPoints}>
+          <Typography.Text type="secondary" className={styles.pointText}>
+            {t('missions.totalPoint')}
+          </Typography.Text>
+          <Typography.Text className={styles.pointText}>{t('missions.point', { count: totalPoint })}</Typography.Text>
+        </div>
+      )}
+      <div>
+        <Missions
+          participant={dataSource}
+          missionDetails={getMissionDetails(missionType)}
+          season={season ?? 3}
+          viewPrev={viewPrev}
+          viewCurr={viewCurr}
+        />
+      </div>
+    </>
+  );
+};
+
+const tabList = [MISSION_TYPE.INDEXER, MISSION_TYPE.DELEGATOR, MISSION_TYPE.CONSUMER];
+
+export const Home: React.VFC = () => {
+  const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
+  const { account } = useWeb3();
+  const { t } = useTranslation();
   const [season, setSeason] = useState(CURR_SEASON);
+  const participant = useParticipantChallenges(season, { indexerId: account ?? '' });
 
   const viewPrev = () => setSeason(season - 1);
   const viewCurr = () => setSeason(CURR_SEASON);
 
-  const indexerUrl = '/missions/my-missions';
+  return (
+    <>
+      <AppPageHeader title={t('header.missions')} />
+      <SeasonProgress timePeriod={SEASONS[season]} />
 
-  React.useEffect(() => {
-    if (account) {
-      history.push(indexerUrl);
-    }
-  }, [account, history, indexerUrl]);
-
-  React.useEffect(() => {
-    if (error) {
-      setErrorAlert(error.message || 'Failed to connect wallet.');
-    }
-  }, [error]);
-
-  const handleConnectWallet = React.useCallback(async () => {
-    if (account) return;
-
-    try {
-      await activate(injectedConntector);
-    } catch (e) {
-      setErrorAlert('Failed to activate wallet');
-      console.log('Failed to activate wallet', e);
-    }
-  }, [activate, account]);
-
-  if (!account) {
-    return (
-      <div className={styles.container}>
-        {errorAlert && <Toast state="error" text={errorAlert} className={styles.error} />}
-        <div className={styles.connectWallet}>
-          <ConnectWallet onConnect={handleConnectWallet} />
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <>
-        <div className={styles.topBar}>
-          <div className={styles.header}>{t('header.missions')}</div>
-          <CurEra />
-        </div>
-        <br />
-        {renderAsync(indexer, {
-          loading: () => <Spinner />,
-          error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
-          data: (data: GetIndexer) => {
-            return (
-              <>
-                <div className={styles.profile}>
-                  <div className={styles.pointsSummary}>
-                    <h3>Total Points</h3>
-                    <h1>
-                      <b>{data?.indexerChallenge?.singlePoints} points</b>
-                    </h1>
-                  </div>
-                  <SeasonProgress timePeriod={SEASONS[season]} />
-                </div>
-                <div>
-                  <div className={styles.tabList}>
-                    {tabList.map((tab) => (
+      {renderAsync(participant, {
+        loading: () => <Spinner />,
+        error: (e) => <div>{`Unable to fetch Participant: ${e.message}`}</div>,
+        data: (data: any) => {
+          return (
+            <>
+              <div>
+                <div className={styles.tabList}>
+                  {tabList.map((tab) => {
+                    if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
+                    return (
                       <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                        <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                        <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
+                          {getCapitalizedStr(tab)}
+                        </Typography.Text>
                         {curTab === tab && <div className={styles.line} />}
                       </div>
-                    ))}
-                  </div>
-                  {curTab === SectionTabs.Indexing && (
-                    <Missions
-                      indexer={indexer?.data?.indexerChallenge}
-                      season={season}
-                      viewPrev={viewPrev}
-                      viewCurr={viewCurr}
-                    />
-                  )}
-                  {curTab === SectionTabs.Delegating && (
-                    <div className={styles.container}>
-                      <h2>Coming Soon</h2>
-                    </div>
-                  )}
-                  {curTab === SectionTabs.Consumer && (
-                    <div className={styles.container}>
-                      <h2>Coming Soon</h2>
-                    </div>
-                  )}
+                    );
+                  })}
                 </div>
-              </>
-            );
-          },
-        })}
-      </>
-    );
-  }
-};
+                <div className={styles.container}>
+                  <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
 
-export default Home;
+                  <PointList missionType={curTab} data={data} season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
+                </div>
+              </div>
+            </>
+          );
+        },
+      })}
+    </>
+  );
+};

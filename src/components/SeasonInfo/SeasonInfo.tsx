@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button } from '@subql/react-ui';
+import moment from 'moment';
 import { SEASONS } from '../../pages/missions/constants';
 import styles from './SeasonInfo.module.css';
 
@@ -22,18 +23,20 @@ export const SeasonInfo: React.VFC<{ season: number; viewPrev: any; viewCurr: an
   viewPrev,
   viewCurr,
 }) => {
+  const DATE_FORMAT = 'DD/MM/YYYY';
+  const from = moment(SEASONS[season]['from'] ?? undefined).format(DATE_FORMAT);
+  const to = moment(SEASONS[season]['to'] ?? undefined).format(DATE_FORMAT);
+
   return (
     <div>
       <div className={styles.titlebutton}>
         <h1>
           <b>Season {season}</b>
         </h1>
-        <ConButton season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
+        {/* NOTE: Hide previous button until ready */}
+        {/* <ConButton season={season} viewPrev={viewPrev} viewCurr={viewCurr} /> */}
       </div>
-      <h3>
-        Duration: {SEASONS[season]['from'].toLocaleString().split(',')[0]} -{' '}
-        {SEASONS[season]['to'].toLocaleString().split(',')[0]}
-      </h3>
+      <h3>{`Duration: ${from} - ${to}`}</h3>
       <h3>Data is typically updated every half hour</h3>
     </div>
   );

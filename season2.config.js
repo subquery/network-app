@@ -6,16 +6,16 @@ require('dotenv').config();
 module.exports = {
     client: {
         service: {
-            name: 'leaderboard',
-            url: process.env.REACT_APP_LEADERBOARD_PROJECT
+            name: 'registry',
+            url: process.env.REACT_APP_SEASON_2,
         },
         tagName: "gql",
         excludes: [
             'src/hooks/useApiEndpoint.ts',
             'src/containers/IndexerRegistryProject.tsx',
             'src/containers/QueryRegistryProject.tsx',
-            'src/containers/QuerySeason2Project.tsx',
+            'src/containers/QueryLeaderboardProject.tsx',
             'src/containers/QuerySeason3Project.tsx',
-        ],
+        ]
     }
 };
