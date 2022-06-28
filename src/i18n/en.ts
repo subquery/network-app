@@ -448,7 +448,7 @@ const en = {
         expireDateTooltip:
           'Indexer cannot accept this offer after the expiration time. However, the indexer that have already accepted the offer will not be affected.',
         cancelWarning:
-          'Cancelling an offer before it expires will result in x% of the unspent balance being charged as a cancellation fee.',
+          'Cancelling an offer before it expires will result in 10% of the unspent balance being charged as a cancellation fee.',
       },
       step_3: {
         title: 'Step 4: Confirm offer summary',
