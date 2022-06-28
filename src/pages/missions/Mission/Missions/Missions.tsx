@@ -56,8 +56,8 @@ export const Missions: React.VFC<{
   participant: any;
   missionDetails: IndexerDetails;
   season: number;
-  viewPrev: () => void;
-  viewCurr: () => void;
+  viewPrev?: () => void;
+  viewCurr?: () => void;
 }> = ({ participant, missionDetails, season, viewPrev, viewCurr }) => {
   const formatData = (DETAILS: IndexerDetails, challenges: ReadonlyArray<any>, dailyChallenges: ReadonlyArray<any>) => {
     let key = 1;
@@ -71,31 +71,33 @@ export const Missions: React.VFC<{
     }[] = [];
 
     if (challenges) {
-      allChallenges = challenges.map((v: { title: string; points: number; details: string }) => {
-        const i = DETAILS[v.title];
-        return {
-          key: key++,
-          type: 'One-off',
-          title: v.title,
-          mission: i?.description,
-          points: i?.points,
-          progress: i ? 'Completed' : 'Incomplete',
-        };
-      });
-
-      for (const [i, item] of Object.entries(DETAILS)) {
-        const found = allChallenges?.find((v: any) => v.mission === i);
-
-        if (!found) {
-          allChallenges.push({
+      allChallenges = challenges
+        .filter((challenge) => DETAILS[challenge.title])
+        .map((v: { title: string; points: number; details: string }) => {
+          const i = DETAILS[v.title];
+          return {
             key: key++,
             type: 'One-off',
-            title: '',
-            mission: item?.description,
-            points: item?.points,
-            progress: 'Incomplete',
-          });
-        }
+            title: v.title,
+            mission: i?.description,
+            points: i?.points,
+            progress: i ? 'Completed' : 'Incomplete',
+          };
+        });
+    }
+
+    for (const [i, item] of Object.entries(DETAILS)) {
+      const found = allChallenges?.find((v: any) => v.title === i);
+
+      if (!found) {
+        allChallenges.push({
+          key: key++,
+          type: 'One-off',
+          title: '',
+          mission: item?.description,
+          points: item?.points,
+          progress: 'Incomplete',
+        });
       }
     }
 

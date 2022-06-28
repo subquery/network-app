@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useParticipantChallenges, useWeb3 } from '../../../containers';
+import { useParticipant, useParticipantChallenges, useWeb3 } from '../../../containers';
 import { useHistory } from 'react-router';
 import { ConnectWallet, CurEra } from '../../../components';
 import styles from './Home.module.css';
@@ -14,6 +14,7 @@ import { renderAsync } from '../../../utils';
 import { CURR_SEASON, getMissionDetails, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
+import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
 
 enum SectionTabs {
   Indexing = 'Indexer',
@@ -31,6 +32,7 @@ const Home: React.VFC = (children) => {
   const history = useHistory();
   const [season, setSeason] = useState(CURR_SEASON);
   const participant = useParticipantChallenges(season, { indexerId: account ?? '' });
+  const indexer = useParticipant(season, { indexerId: account ?? '' });
 
   const viewPrev = () => setSeason(season - 1);
   const viewCurr = () => setSeason(CURR_SEASON);
@@ -77,9 +79,9 @@ const Home: React.VFC = (children) => {
           <CurEra />
         </div>
         <br />
-        {renderAsync(participant, {
+        {renderAsync(indexer, {
           loading: () => <Spinner />,
-          error: (e) => <div>{`Unable to fetch Participant: ${e.message}`}</div>,
+          error: (e) => <div>{`Unable to fetch Indexer: ${e.message}`}</div>,
           data: (data: any) => {
             return (
               <>
@@ -92,14 +94,30 @@ const Home: React.VFC = (children) => {
                   </div>
                   <SeasonProgress timePeriod={SEASONS[season]} />
                 </div>
+              </>
+            );
+          },
+        })}
+        {renderAsync(participant, {
+          loading: () => <Spinner />,
+          error: (e) => <div>{`Unable to fetch Participant: ${e.message}`}</div>,
+          data: (data: any) => {
+            return (
+              <>
                 <div>
                   <div className={styles.tabList}>
-                    {tabList.map((tab) => (
-                      <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                        <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
-                        {curTab === tab && <div className={styles.line} />}
-                      </div>
-                    ))}
+                    {tabList.map((tab) => {
+                      if (tab === SectionTabs.Consumer && season === 2) return undefined;
+                      return (
+                        <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+                          <Typography className={`${styles.tabText} ${styles.grayText}`}>{tab}</Typography>
+                          {curTab === tab && <div className={styles.line} />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className={styles.container}>
+                    <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
                   </div>
                   {curTab === SectionTabs.Indexing && (
                     <Missions

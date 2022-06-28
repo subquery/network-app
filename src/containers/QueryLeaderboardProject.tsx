@@ -71,7 +71,7 @@ const GET_PARTICIPANT_S3 = gql`
   }
 `;
 
-// QUERY FUNCTIONS
+// QUERY FUNCTIONS FOR TRACKING BACKEND
 
 function getParticipantsQuery(season: number): DocumentNode | TypedDocumentNode<any, OperationVariables> {
   if (season === 2) return GET_PARTICIPANTS_S2;
@@ -101,7 +101,7 @@ export function useParticipant(season: number, params: any): QueryResult<GetPart
   });
 }
 
-// QUERY FROM SUBQUERY PROJECTS
+// QUERY FUNCTIONS FOR SUBQUERY PROJECTS
 
 function getParticipantChallengesQuery(season: number): DocumentNode | TypedDocumentNode<any, OperationVariables> {
   if (season === 2) return GET_PARTICIPANT_CHALLENGES_S2;

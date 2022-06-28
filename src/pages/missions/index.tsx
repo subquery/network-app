@@ -37,7 +37,7 @@ const Container: React.VFC = () => {
       <EraProvider>
         <AppSidebar list={sidebarList}>
           <Switch>
-            <Route path="/missions/user/:id" children={<User />} />
+            <Route path="/missions/season/:season/user/:id" children={<User />} />
             <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
             <WalletRoute path="/missions/my-missions" component={Home} />
             <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
