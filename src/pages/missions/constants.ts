@@ -44,10 +44,16 @@ export const CONSUMER_CHALLENGE_DETAILS: IndexerDetails = {
   WITHDRAW_PURCHASE_OFFER: { points: 30, description: 'Withdraw SQT locked in the offer after it expires' },
 };
 
-export function getMissionDetails(missionType: 'Indexer' | 'Delegator' | 'Consumer'): IndexerDetails {
-  if (missionType === 'Indexer') return INDEXER_CHALLENGE_DETAILS;
-  if (missionType === 'Delegator') return DELEGATOR_CHALLENGE_DETAILS;
-  if (missionType === 'Consumer') return CONSUMER_CHALLENGE_DETAILS;
+export enum MISSION_TYPE {
+  INDEXER = 'indexer',
+  DELEGATOR = 'delegator',
+  CONSUMER = 'consumer',
+}
+
+export function getMissionDetails(missionType: MISSION_TYPE): IndexerDetails {
+  if (missionType === MISSION_TYPE.INDEXER) return INDEXER_CHALLENGE_DETAILS;
+  if (missionType === MISSION_TYPE.DELEGATOR) return DELEGATOR_CHALLENGE_DETAILS;
+  if (missionType === MISSION_TYPE.CONSUMER) return CONSUMER_CHALLENGE_DETAILS;
   throw new Error('Invalid mission type');
 }
 

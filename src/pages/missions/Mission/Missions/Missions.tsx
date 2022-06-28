@@ -52,13 +52,15 @@ const columns = [
 // 1. const missionType = 'Indexing' | 'Delegating' | 'Consumer'
 // 2. either indexerID
 
-export const Missions: React.VFC<{
+export interface MissionsProps {
   participant: any;
   missionDetails: IndexerDetails;
   season: number;
   viewPrev?: () => void;
   viewCurr?: () => void;
-}> = ({ participant, missionDetails, season, viewPrev, viewCurr }) => {
+}
+
+export const Missions: React.VFC<MissionsProps> = ({ participant, missionDetails, season, viewPrev, viewCurr }) => {
   const formatData = (DETAILS: IndexerDetails, challenges: ReadonlyArray<any>, dailyChallenges: ReadonlyArray<any>) => {
     let key = 1;
     let allChallenges: {
