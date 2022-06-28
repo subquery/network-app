@@ -11,8 +11,9 @@ import { Breadcrumb } from 'antd';
 import { Missions } from '../Mission/Missions/Missions';
 import { renderAsync } from '../../../utils';
 import { useParticipantChallenges } from '../../../containers';
-import { getMissionDetails } from '../constants';
+import { getMissionDetails, MISSION_TYPE } from '../constants';
 import { Link } from 'react-router-dom';
+import { LEADERBOARD_ROUTE } from '..';
 
 enum SectionTabs {
   Indexing = 'Indexer',
@@ -30,7 +31,7 @@ export const User: React.VFC = () => {
 
   const history = useHistory();
   const routeChange = () => {
-    history.push('/missions/ranks');
+    history.push(LEADERBOARD_ROUTE);
   };
 
   return (
@@ -38,7 +39,7 @@ export const User: React.VFC = () => {
       <div className={styles.header}>
         <Breadcrumb>
           <Breadcrumb.Item>
-            <Link to={'/missions/ranks'} onClick={routeChange}>
+            <Link to={LEADERBOARD_ROUTE} onClick={routeChange}>
               Season {season}
             </Link>
           </Breadcrumb.Item>
@@ -46,7 +47,6 @@ export const User: React.VFC = () => {
         </Breadcrumb>
         <CurEra />
       </div>
-      <br />
 
       {renderAsync(participant, {
         loading: () => <Spinner />,
@@ -78,21 +78,21 @@ export const User: React.VFC = () => {
                   <Missions
                     participant={data?.indexer}
                     season={seasonNum}
-                    missionDetails={getMissionDetails('Indexer')}
+                    missionDetails={getMissionDetails(MISSION_TYPE.INDEXER)}
                   />
                 )}
                 {curTab === SectionTabs.Delegating && (
                   <Missions
                     participant={data?.delegator}
                     season={seasonNum}
-                    missionDetails={getMissionDetails('Delegator')}
+                    missionDetails={getMissionDetails(MISSION_TYPE.DELEGATOR)}
                   />
                 )}
                 {curTab === SectionTabs.Consumer && (
                   <Missions
                     participant={data?.consumer}
                     season={seasonNum}
-                    missionDetails={getMissionDetails('Consumer')}
+                    missionDetails={getMissionDetails(MISSION_TYPE.CONSUMER)}
                   />
                 )}
               </div>

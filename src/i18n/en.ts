@@ -285,6 +285,9 @@ const en = {
       leaderboard: 'Leaderboard',
       indexing: {},
       delegating: {},
+      totalPoint: 'Total point:',
+      point: 'point',
+      point_other: '{{count}} points',
     },
 
     plans: {
@@ -501,6 +504,7 @@ const en = {
           'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
       },
     },
+
     general: {
       action: 'action',
       current: 'current',
