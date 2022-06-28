@@ -23,12 +23,12 @@ interface PointListProps extends Partial<MissionsProps> {
 const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
   const { t } = useTranslation();
 
-  const dataSource = data[missionType];
-  const totalPoint = data[missionType]['singleChallengePts'];
-
-  if (!dataSource) {
+  if (!data || !data[missionType]) {
     return <Typography.Title level={5}>There is no data available.</Typography.Title>;
   }
+
+  const dataSource = data[missionType];
+  const totalPoint = data && data[missionType] ? data[missionType]['singleChallengePts'] : undefined;
 
   return (
     <>
