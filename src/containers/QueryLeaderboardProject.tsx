@@ -13,7 +13,7 @@ import { GET_PARTICIPANT_CHALLENGES_S3 } from './QuerySeason3Project';
 // DAILY TRACKING BACKEND
 const GET_PARTICIPANTS_S2 = gql`
   query GetParticipantsS2 {
-    indexerS2Challenges(orderBy: TOTAL_PTS_DESC, take: 200) {
+    indexersS2Challenges(orderBy: TOTAL_PTS_DESC, take: 200) {
       id
       name
       url
@@ -43,7 +43,7 @@ const GET_PARTICIPANT_S2 = gql`
 
 const GET_PARTICIPANTS_S3 = gql`
   query GetParticipantsS3 {
-    indexerS3Challenges(orderBy: TOTAL_PTS_DESC, take: 200) {
+    indexersS3Challenges(orderBy: TOTAL_PTS_DESC, take: 200) {
       id
       name
       url
@@ -55,7 +55,7 @@ const GET_PARTICIPANTS_S3 = gql`
 
 const GET_PARTICIPANT_S3 = gql`
   query GetParticipantS3($indexerId: String!) {
-    indexerS3Challenge(id: $indexerId) {
+    indexerS3Challenges(id: $indexerId) {
       id
       name
       url

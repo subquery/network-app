@@ -59,6 +59,7 @@ const columns: ColumnsType<{
   },
 ];
 
+// TODO: Fix total Participants, wrong
 const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCurr: () => void }> = ({
   season,
   ranks,
@@ -73,7 +74,7 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
       <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
 
       <div className={styles.topBar}>
-        <h2>{ranks.data?.indexerS3Challenges?.length} Participants</h2>
+        <h2>{ranks.data?.indexersS3Challenges?.length} Participants</h2>
         <div className={styles.searchBar}>
           <SearchInput defaultValue={searchText} onSearch={(value: string) => setSearchText(value)} />
         </div>
@@ -82,10 +83,10 @@ const Ranks: React.FC<{ season: number; ranks: any; viewPrev: () => void; viewCu
         mapAsync((data: any) => {
           let challenges;
           if (season === 3) {
-            challenges = data?.indexerS3Challenges;
+            challenges = data?.indexersS3Challenges;
           }
           if (season === 2) {
-            challenges = data?.indexerS2Challenges;
+            challenges = data?.indexersS2Challenges;
           }
 
           // TODO: Too many any
