@@ -15,6 +15,7 @@ import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgres
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
 import { Typography } from 'antd';
 
+// TODO: Move together with MissionTable
 interface PointListProps extends Partial<MissionsProps> {
   missionType: MISSION_TYPE;
   data: any; //TODO: data Type
@@ -23,15 +24,17 @@ interface PointListProps extends Partial<MissionsProps> {
 export const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
   const { t } = useTranslation();
   const dataSource = data[missionType];
-  const totalPoint = data[missionType]['singleChallengePts'] ?? data[missionType]['totalPoints'];
 
   if (!dataSource) {
     return <Typography.Title level={5}>There is no data available.</Typography.Title>;
   }
 
+  const totalPoint = dataSource['singleChallengePts'] ?? dataSource['totalPoints'] ?? undefined;
+  const dailyChallenges = data[MISSION_TYPE.INDEXER] && data[MISSION_TYPE.INDEXER]['dailyChallenges']; // TODO: review the args of Missions
+
   return (
     <>
-      {totalPoint && (
+      {totalPoint !== undefined && (
         <div className={styles.totalPoints}>
           <Typography.Text type="secondary" className={styles.pointText}>
             {t('missions.totalPoint')}
@@ -44,7 +47,7 @@ export const PointList: React.VFC<PointListProps> = ({ missionType, data, season
           participant={dataSource}
           missionType={missionType}
           season={season ?? 3}
-          dailyChallenges={data['indexer']['dailyChallenges']}
+          dailyChallenges={dailyChallenges}
           viewPrev={viewPrev}
           viewCurr={viewCurr}
         />
@@ -53,56 +56,81 @@ export const PointList: React.VFC<PointListProps> = ({ missionType, data, season
   );
 };
 
-const tabList = [MISSION_TYPE.INDEXER, MISSION_TYPE.DELEGATOR, MISSION_TYPE.CONSUMER];
+export const tabList = [MISSION_TYPE.INDEXER, MISSION_TYPE.DELEGATOR, MISSION_TYPE.CONSUMER];
+
+//TODO: add dataType for participate & indexer and move after refactor
+//TODO: viewPrev, viewCurr not been used
+interface TabContentProps {
+  participant: any;
+  indexer: any;
+  seasonInfo?: boolean;
+  season: number;
+}
+export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, seasonInfo, season }) => {
+  const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
+
+  if (participant?.loading || indexer?.loading) {
+    return <Spinner />;
+  }
+
+  // TODO: move under tabList
+  if (!participant?.data || !indexer?.data) {
+    return (
+      <div className={styles.nonData}>
+        <Typography.Title level={5}>There is no data available</Typography.Title>
+      </div>
+    );
+  }
+
+  const data = { ...participant.data, writable: true };
+
+  const totalPoints = indexer?.data?.indexerS3Challenges?.totalPoints ?? 0;
+  const singlePoints = indexer?.data?.indexerS3Challenges?.singlePoints ?? 0;
+  const indexerSingleChallengePts = data?.indexer?.singleChallengePts ?? 0;
+  const indexerTotal = totalPoints - singlePoints + indexerSingleChallengePts;
+
+  data.indexer = { ...data.indexer, dailyChallenges: indexer?.data?.indexerS3Challenges?.challenges };
+  data.indexer.singleChallengePts = indexerTotal;
+
+  return (
+    <div>
+      <div className={styles.tabList}>
+        {tabList.map((tab) => {
+          if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
+          return (
+            <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
+              <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
+                {getCapitalizedStr(tab)}
+              </Typography.Text>
+              {curTab === tab && <div className={styles.line} />}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.container}>
+        {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
+
+        <PointList missionType={curTab} data={data} season={season} viewPrev={undefined} viewCurr={undefined} />
+      </div>
+    </div>
+  );
+};
 
 export const Home: React.VFC = () => {
-  const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
   const { account } = useWeb3();
   const { t } = useTranslation();
   const [season, setSeason] = useState(CURR_SEASON);
   const [participant, indexer] = useParticipantChallenges(season, { indexerId: account ?? '' });
 
-  const viewPrev = () => setSeason(season - 1);
-  const viewCurr = () => setSeason(CURR_SEASON);
+  // const viewPrev = () => setSeason(season - 1);
+  // const viewCurr = () => setSeason(CURR_SEASON);
 
-  if (participant.data && indexer.data) {
-    const data = { ...participant.data, writable: true };
-    const indexerTotal =
-      indexer.data.indexerS3Challenges.totalPoints -
-      indexer.data.indexerS3Challenges.singlePoints +
-      data.indexer.singleChallengePts;
+  return (
+    <>
+      <AppPageHeader title={t('header.missions')} />
+      <SeasonProgress timePeriod={SEASONS[season]} />
 
-    data.indexer = { ...data.indexer, dailyChallenges: indexer.data.indexerS3Challenges.challenges };
-    data.indexer.singleChallengePts = indexerTotal;
-    return (
-      <>
-        <AppPageHeader title={t('header.missions')} />
-        <SeasonProgress timePeriod={SEASONS[season]} />
-        <>
-          <div>
-            <div className={styles.tabList}>
-              {tabList.map((tab) => {
-                if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
-                return (
-                  <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
-                    <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
-                      {getCapitalizedStr(tab)}
-                    </Typography.Text>
-                    {curTab === tab && <div className={styles.line} />}
-                  </div>
-                );
-              })}
-            </div>
-            <div className={styles.container}>
-              <SeasonInfo season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
-
-              <PointList missionType={curTab} data={data} season={season} viewPrev={viewPrev} viewCurr={viewCurr} />
-            </div>
-          </div>
-        </>
-      </>
-    );
-  } else {
-    return <Spinner />;
-  }
+      <TabContent participant={participant} indexer={indexer} season={season} seasonInfo />
+    </>
+  );
 };
