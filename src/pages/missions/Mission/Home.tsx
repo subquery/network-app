@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
 import { Typography } from 'antd';
+import { useConsumerPoints, useDelegatorPoints } from '../../../containers/QuerySeason3Project';
 
 // TODO: Move together with MissionTable
 interface PointListProps extends Partial<MissionsProps> {
@@ -21,16 +22,17 @@ interface PointListProps extends Partial<MissionsProps> {
   data: any; //TODO: data Type
 }
 
-export const PointList: React.VFC<PointListProps> = ({ missionType, data, season, viewPrev, viewCurr }) => {
+export const PointList: React.VFC<PointListProps> = ({
+  missionType,
+  data,
+  season,
+  dailyChallenges,
+  viewPrev,
+  viewCurr,
+}) => {
   const { t } = useTranslation();
-  const dataSource = data[missionType];
 
-  if (!dataSource) {
-    return <Typography.Title level={5}>There is no data available.</Typography.Title>;
-  }
-
-  const totalPoint = dataSource['singleChallengePts'] ?? dataSource['totalPoints'] ?? undefined;
-  const dailyChallenges = data[MISSION_TYPE.INDEXER] && data[MISSION_TYPE.INDEXER]['dailyChallenges']; // TODO: review the args of Missions
+  const totalPoint = data['singleChallengePts'] ?? data['totalPoints'] ?? undefined;
 
   return (
     <>
@@ -44,7 +46,7 @@ export const PointList: React.VFC<PointListProps> = ({ missionType, data, season
       )}
       <div>
         <Missions
-          participant={dataSource}
+          participant={data}
           missionType={missionType}
           season={season ?? 3}
           dailyChallenges={dailyChallenges}
@@ -69,31 +71,8 @@ interface TabContentProps {
 export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, seasonInfo, season }) => {
   const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
 
-  if (participant?.loading || indexer?.loading) {
-    return <Spinner />;
-  }
-
-  // TODO: move under tabList
-  if (!participant?.data || !indexer?.data) {
+  const TabHeader: React.FC = () => {
     return (
-      <div className={styles.nonData}>
-        <Typography.Title level={5}>There is no data available</Typography.Title>
-      </div>
-    );
-  }
-
-  const data = { ...participant.data, writable: true };
-
-  const totalPoints = indexer?.data?.indexerS3Challenges?.totalPoints ?? 0;
-  const singlePoints = indexer?.data?.indexerS3Challenges?.singlePoints ?? 0;
-  const indexerSingleChallengePts = data?.indexer?.singleChallengePts ?? 0;
-  const indexerTotal = totalPoints - singlePoints + indexerSingleChallengePts;
-
-  data.indexer = { ...data.indexer, dailyChallenges: indexer?.data?.indexerS3Challenges?.challenges };
-  data.indexer.singleChallengePts = indexerTotal;
-
-  return (
-    <div>
       <div className={styles.tabList}>
         {tabList.map((tab) => {
           if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
@@ -107,12 +86,58 @@ export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, s
           );
         })}
       </div>
-      <div className={styles.container}>
-        {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
+    );
+  };
 
-        <PointList missionType={curTab} data={data} season={season} viewPrev={undefined} viewCurr={undefined} />
+  const isLoading = participant?.loading || indexer?.loading;
+
+  const data = { ...participant.data, writable: true };
+
+  const totalPoints = indexer?.data?.indexerS3Challenges?.totalPoints ?? 0;
+  const singlePoints = indexer?.data?.indexerS3Challenges?.singlePoints ?? 0;
+  const indexerSingleChallengePts = data?.indexer?.singleChallengePts ?? 0;
+  const indexerTotal = totalPoints - singlePoints + indexerSingleChallengePts;
+
+  data.indexer = { ...data.indexer, dailyChallenges: indexer?.data?.indexerS3Challenges?.challenges };
+  data.indexer.singleChallengePts = indexerTotal;
+
+  const sortedData = data[curTab];
+  const dailyChallenges = data[MISSION_TYPE.INDEXER].dailyChallenges;
+
+  const MainContent = () => {
+    if (isLoading) {
+      return <Spinner />;
+    }
+
+    return (
+      <>
+        {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
+        {!sortedData && (
+          <Typography.Title level={4} className={styles.nonData}>
+            There is no data available.
+          </Typography.Title>
+        )}
+        {sortedData && (
+          <PointList
+            missionType={curTab}
+            data={sortedData}
+            dailyChallenges={dailyChallenges}
+            season={season}
+            viewPrev={undefined}
+            viewCurr={undefined}
+          />
+        )}
+      </>
+    );
+  };
+
+  return (
+    <>
+      <TabHeader />
+      <div className={styles.container}>
+        <MainContent />
       </div>
-    </div>
+    </>
   );
 };
 
@@ -121,6 +146,10 @@ export const Home: React.VFC = () => {
   const { t } = useTranslation();
   const [season, setSeason] = useState(CURR_SEASON);
   const [participant, indexer] = useParticipantChallenges(season, { indexerId: account ?? '' });
+
+  // ISSUE: CAN NOT GET Incomplete chanllenge to display, review the whole code
+  // const consumer = useConsumerPoints({ account: account ?? '' });
+  // const delegator = useDelegatorPoints({ account: account ?? '' });
 
   // const viewPrev = () => setSeason(season - 1);
   // const viewCurr = () => setSeason(CURR_SEASON);
