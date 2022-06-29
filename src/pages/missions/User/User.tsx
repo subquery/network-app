@@ -36,7 +36,7 @@ export const User: React.VFC = () => {
         </Breadcrumb>
         <CurEra />
       </div>
-
+      <br />
       <>
         <div className={styles.topar}>
           <div className={styles.indexer}>
