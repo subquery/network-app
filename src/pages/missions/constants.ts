@@ -66,7 +66,7 @@ type Season = {
 
 export const SEASONS: Season = {
   2: { from: new Date(2022, 3, 24, 0, 0), to: new Date(2022, 4, 23, 11, 59) },
-  3: { from: new Date(2022, 5, 21, 0, 0), to: new Date(2022, 6, 5, 11, 59) },
+  3: { from: new Date(1656496800000), to: new Date(1657875600000) }, // 'June 29 2022 22:00 NZDT' - 'July 15 2022 21:00 NZDT'
 };
 
 export const CURR_SEASON = 3;
