@@ -135,6 +135,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
       text={text}
       actions={[{ label: getCapitalizedStr(t('offerMarket.accept')), key: 'acceptOffer' }]}
       onClick={handleClick}
+      onClose={() => setCurStep(0)}
       renderContent={(onSubmit, _, isLoading, error) => {
         if (curStep === 0) {
           return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer} />;
