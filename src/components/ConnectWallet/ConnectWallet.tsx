@@ -24,10 +24,8 @@ const Wallet: React.VFC<{ name: string; icon: string; onClick?: () => void }> = 
       leftItem={
         <div className={styles.wallet}>
           <div>
-            <div className={styles.walletUpper}>
-              <img src={icon} alt="wallet logo" className={styles.walletIcon} />
-              <Typography variant="h5">{name}</Typography>
-            </div>
+            <img src={icon} alt="wallet logo" className={styles.walletIcon} />
+
             <Typography variant="body" className={styles.walletSubtitle}>
               {t('connectWallet.metamaskDesc')}
             </Typography>
@@ -46,15 +44,7 @@ const ConnectWallet: React.VFC<Props> = ({ title, subTitle, onConnect }) => {
     <div className={styles.container}>
       <Typography variant="h4">{title || t('connectWallet.title')}</Typography>
       <Typography variant="body" className={styles.subtitle2}>
-        <Trans i18nKey="connectWallet.subtitle">
-          {subTitle || t('connectWallet.subtitle')}
-          <a href="/" target="_blank">
-            here
-          </a>
-        </Trans>
-      </Typography>
-      <Typography variant="h6" className={styles.connectWith}>
-        {t('connectWallet.connectWith')}
+        {t('connectWallet.subtitle')}
       </Typography>
       <Wallet name="Metamask" icon="/static/metamask.png" onClick={onConnect} />
     </div>

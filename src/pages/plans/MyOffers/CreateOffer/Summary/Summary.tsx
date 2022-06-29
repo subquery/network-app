@@ -37,8 +37,6 @@ export const Summary: React.VFC = () => {
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
 
-  console.log('offer', offer);
-
   const handleSubmit = async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
@@ -118,19 +116,19 @@ export const Summary: React.VFC = () => {
   const OfferDetailsSummary = [
     {
       label: t('myOffers.step_2.rewardPerIndexer'),
-      value: offer?.rewardPerIndexer,
+      value: `${offer?.rewardPerIndexer} SQT`,
     },
     {
       label: t('myOffers.step_2.totalDeposit'),
-      value: offer?.totalDeposit,
+      value: `${offer?.totalDeposit} SQT`,
     },
     {
       label: t('myOffers.step_2.indexerCap'),
-      value: offer?.indexerCap,
+      value: t('myOffers.step_2.indexer', { count: offer?.indexerCap }),
     },
     {
       label: t('myOffers.step_2.minimumIndexedHeight'),
-      value: offer?.minimumIndexedHeight,
+      value: t('general.block', { count: offer?.minimumIndexedHeight }),
     },
     {
       label: t('myOffers.step_2.expireDate'),
