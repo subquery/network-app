@@ -2,9 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Table, Tag, Tooltip } from 'antd';
+import { Table, Tag } from 'antd';
 import styles from './Missions.module.css';
 import { INDEXER_CHALLENGE_DETAILS, MISSION_TYPE, getMissionDetails } from '../../constants';
+import { COLORS, convertStringToNumber } from '../../../../utils';
+import { TableText } from '../../../../components';
+import i18next from 'i18next';
+
+// TODO: Progress Status should be defined at one place
+const progressColorMapping = {
+  Incomplete: 'blue',
+  Completed: 'green',
+  Expired: 'red',
+};
+
+const ProgressTag: React.VFC<{ progress: 'Incomplete' | 'Completed' | 'Expired' }> = ({ progress }) => {
+  return <Tag color={progressColorMapping[progress] ?? COLORS.gray400}>{progress}</Tag>;
+};
 
 const columns = [
   {
@@ -18,33 +32,22 @@ const columns = [
     key: 'mission',
     render: (mission: string) => {
       const description = INDEXER_CHALLENGE_DETAILS[mission]?.description;
-      return (
-        <Tooltip placement="topLeft" title={description ?? ''}>
-          {mission}
-        </Tooltip>
-      );
+      return <TableText tooltip={description}>{mission}</TableText>;
     },
   },
   {
     title: 'POINTS',
     dataIndex: 'points',
     key: 'points',
+    render: (points: string) => {
+      return <TableText>{i18next.t('missions.point', { count: convertStringToNumber(points) })}</TableText>;
+    },
   },
   {
     title: 'YOUR PROGRESS',
     dataIndex: 'progress',
     key: 'progress',
-    render: (progress: 'Incomplete' | 'Completed' | 'Expired') => {
-      if (progress === 'Incomplete') {
-        return <Tag color="blue">{progress}</Tag>;
-      }
-      if (progress === 'Completed') {
-        return <Tag color="green">{progress}</Tag>;
-      }
-      if (progress === 'Expired') {
-        return <Tag color="red">{progress}</Tag>;
-      }
-    },
+    render: (progress: 'Incomplete' | 'Completed' | 'Expired') => <ProgressTag progress={progress} />,
   },
 ];
 
