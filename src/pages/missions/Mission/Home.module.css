@@ -4,7 +4,7 @@
 
 .container {
   background: white;
-  padding: 1rem;
+  padding: 1rem 2rem;
 }
 
 .sidebar {
@@ -64,11 +64,17 @@
   align-items: center;
 
   border: 1px solid var(--gray300);
-  padding: 0.6rem 1rem;
+  padding: 1rem;
   border-radius: 6px;
-  margin: 1rem;
+  margin: 1rem 0;
 }
 
 .pointText {
   font-size: 18px;
+}
+
+.nonData {
+  margin: 1rem 0;
+  background: white;
+  padding: 1rem;
 }

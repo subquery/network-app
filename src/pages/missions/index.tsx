@@ -24,7 +24,6 @@ const Container: React.VFC = () => {
       link: PROFILE_ROUTE,
       icon: <AiOutlineCheckSquare />,
     },
-    // TODO: Uncomment when ready
     // {
     //   label: t('missions.leaderboard'),
     //   link: LEADERBOARD_ROUTE,
