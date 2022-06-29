@@ -1,16 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-interface Details {
+interface Point {
   points: number;
   description: string;
 }
 
-export interface IndexerDetails {
-  [key: string]: Details;
+export interface Points {
+  [key: string]: Point;
 }
 
-export const INDEXER_CHALLENGE_DETAILS: IndexerDetails = {
+export const INDEXER_CHALLENGE_DETAILS: Points = {
   INDEX_SINGLE_PROJECT: { points: 10, description: 'Fully index a project from projects list' },
   INDEX_ALL_PROJECTS: { points: 200, description: 'Index all projects from projects list' },
   DELEGATOR_ATTRACTED: { points: 20, description: 'Get your first delegator' },
@@ -29,14 +29,14 @@ export const INDEXER_CHALLENGE_DETAILS: IndexerDetails = {
   UNREGISTER_INDEXER: { points: 30, description: 'Unregister your indexer' },
 };
 
-export const DELEGATOR_CHALLENGE_DETAILS: IndexerDetails = {
+export const DELEGATOR_CHALLENGE_DETAILS: Points = {
   CLAIM_REWARD: { points: 20, description: "Delegator claims a reward from reward distributor to delegator's wallet" },
   DELEGATE_TO_INDEXER: { points: 50, description: 'Delegator add delegation to an indexer' },
   UNDELEGATE_FROM_INDEXER: { points: 50, description: 'Delegator undelegate from an indexer' },
   WITHDRAW_DELEGATION: { points: 50, description: 'Delegator withdraws undelegated amount from an indexer' },
 };
 
-export const CONSUMER_CHALLENGE_DETAILS: IndexerDetails = {
+export const CONSUMER_CHALLENGE_DETAILS: Points = {
   PURCHASE_PLAN: { points: 50, description: 'Consumer purchase a plan from an indexer' },
   CREATE_PURCHASE_OFFER: { points: 50, description: 'A purchase offer is created by consumer' },
   SERVICE_AGREEMENT_CREATED: { points: 50, description: 'Get service agreement from an indexer' },
@@ -50,7 +50,7 @@ export enum MISSION_TYPE {
   CONSUMER = 'consumer',
 }
 
-export function getMissionDetails(missionType: MISSION_TYPE): IndexerDetails {
+export function getMissionDetails(missionType: MISSION_TYPE): Points {
   if (missionType === MISSION_TYPE.INDEXER) return INDEXER_CHALLENGE_DETAILS;
   if (missionType === MISSION_TYPE.DELEGATOR) return DELEGATOR_CHALLENGE_DETAILS;
   if (missionType === MISSION_TYPE.CONSUMER) return CONSUMER_CHALLENGE_DETAILS;
