@@ -45,7 +45,11 @@
 }
 
 .logo {
-  height: 48px;
+  width: 15%;
+}
+
+.logoImg {
+  width: 100%;
 }
 
 .hosted {
