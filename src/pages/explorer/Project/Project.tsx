@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
-import { IndexerProgress, NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
+import { NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import {
   ProjectProgressProvider,
@@ -33,7 +33,7 @@ const ProjectInner: React.VFC = () => {
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
   const { catSingle } = useIPFS();
-  const { indexersStatus, chainBlockHeight, updateIndexerStatus } = useProjectProgress();
+  const { updateIndexerStatus } = useProjectProgress();
 
   const asyncProject = useProjectFromQuery(id);
   const { data: deployments } = useDeploymentsQuery({ projectId: id });
@@ -151,25 +151,16 @@ const ProjectInner: React.VFC = () => {
       return (
         <div className={styles.container}>
           <div className={styles.upper}>
-            <div className="content-width">
+            <div className={styles.projectHeader}>
               <ProjectHeader
                 project={project}
                 versions={deploymentVersions}
                 currentVersion={deploymentId}
                 onChangeVersion={handleChangeVersion}
               />
-
-              <IndexerProgress
-                startBlock={
-                  /*Math.min(...(project.deployment?.manifest.dataSources ?? []).map((ds) => ds.startBlock ?? 1))*/ 1
-                }
-                chainBlockHeight={chainBlockHeight}
-                indexerStatus={indexersStatus}
-                containerClassName={styles.progress}
-              />
-
-              <TabButtons tabs={tabList} />
             </div>
+
+            <TabButtons tabs={tabList} />
           </div>
           <div className={clsx('content-width')}>
             <Switch>
