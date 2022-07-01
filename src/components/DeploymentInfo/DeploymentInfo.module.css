@@ -4,10 +4,11 @@
 
 .projectInfo {
   display: flex;
+  height: 5em;
 }
 
 .ipfsImage {
-  max-width: 60px;
+  object-fit: cover;
 }
 
 .projectTextInfo {

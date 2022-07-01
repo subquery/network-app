@@ -145,7 +145,7 @@ export const Summary: React.VFC = () => {
         </div>
 
         <div>
-          <SummaryList title={t('myOffers.step_3.planTemplate')} list={TemplateDetailsSummary} />
+          <SummaryList title={t('myOffers.step_3.offerTemplate')} list={TemplateDetailsSummary} />
         </div>
 
         <div>
