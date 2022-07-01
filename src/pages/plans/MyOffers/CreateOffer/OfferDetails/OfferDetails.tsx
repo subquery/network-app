@@ -91,7 +91,7 @@ export const OfferDetails: React.VFC = () => {
                   defaultValue={indexerCap}
                   onChange={(value) => setFieldValue(INDEXER_CAP, value)}
                   status={errors[INDEXER_CAP] ? 'error' : undefined}
-                  unit={values[INDEXER_CAP] > 1 ? t('indexer.title') : t('indexer.indexers')}
+                  unit={t('indexer.indexerOneOrMany')}
                   errorMsg={errors[INDEXER_CAP] && t('myOffers.step_2.indexerCapErrorMsg')}
                 />
                 <NumberInput
@@ -113,7 +113,7 @@ export const OfferDetails: React.VFC = () => {
                   id={MINIMUM_INDEXED_HEIGHT}
                   defaultValue={minimumIndexedHeight}
                   onChange={(value) => setFieldValue(MINIMUM_INDEXED_HEIGHT, value)}
-                  unit={values[MINIMUM_INDEXED_HEIGHT] > 1 ? t('general.blocks') : t('general.block')}
+                  unit={t('general.blockOneOrMany')}
                   status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
                   errorMsg={errors[MINIMUM_INDEXED_HEIGHT] && t('myOffers.step_2.minimumIndexedHeightTooltip')}
                 />

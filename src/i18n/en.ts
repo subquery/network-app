@@ -163,6 +163,7 @@ const en = {
     indexer: {
       title: 'Indexer',
       indexers: 'Indexers',
+      indexerOneOrMany: 'Indexer(s)',
       profile: 'My profile',
       currentEra: 'Current Era',
       indexing: 'Indexing',
@@ -524,10 +525,10 @@ const en = {
       confirmOnMetamask: 'Confirm On MetaMask',
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
-      day_other: '{{count}} days',
+      dayOther: '{{count}} days',
       block: 'Block',
-      blocks: 'Blocks',
-      block_other: '{{count}} Blocks',
+      blockOneOrMany: 'Block(s)',
+      blockOther: '{{count}} Blocks',
       balance: 'Balance',
     },
     status: {
