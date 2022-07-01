@@ -122,9 +122,12 @@ const Header: React.VFC = () => {
     <div className={styles.header}>
       <div className={styles.inner}>
         <div className={styles.left}>
-          <Link to="/" className={styles.logo}>
-            <img src="/static/logo.png" className={styles.logoImg} alt="SubQuery logo" />
-          </Link>
+          <div className={styles.logo}>
+            <Link to="/">
+              <img src="/static/logo.png" className={styles.logoImg} alt="SubQuery logo" />
+            </Link>
+          </div>
+
           <LinksDropdown />
           <>
             {headerEntryLinks.map((headerLink) => (
