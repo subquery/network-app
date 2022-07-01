@@ -7,6 +7,10 @@
 }
 
 .upper {
-  padding-top: 33px;
   background: var(--sq-background-gradient);
+  padding: 2rem 2rem 0 2rem;
+}
+
+.projectHeader {
+  margin: 2rem 0;
 }

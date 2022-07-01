@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography, Spinner } from '@subql/react-ui';
-import { Table, TableProps } from 'antd';
+import { Pagination, Table, TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import { useIndexerCapacity } from '../../../../hooks';
 import { SearchInput, TableText } from '../../../../components';
 import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
+import clsx from 'clsx';
 
 const Capacity: React.VFC<{ indexer: string; fieldKey: 'current' | 'after' }> = ({ indexer, fieldKey }) => {
   const indexerCapacity = useIndexerCapacity(indexer);
@@ -317,18 +318,22 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
       <Table
         columns={columns}
         rowKey="id"
-        dataSource={orderedIndexerList}
+        dataSource={[...orderedIndexerList]}
         scroll={{ x: 1600 }}
-        pagination={{
-          total: searchedIndexer ? searchedIndexer.length : totalCount,
-          pageSizeOptions: ['10', '20'],
-          onShowSizeChange: (current, pageSize) => {
-            onLoadMore?.((current - 1) * pageSize);
-          },
-          onChange: (page, pageSize) => {
-            onLoadMore?.((page - 1) * pageSize);
-          },
+        pagination={false} // offset function get partial data but antD fill from page 1
+      />
+      <Pagination
+        className={clsx('flex-end', 'verticalMargin')}
+        defaultCurrent={1}
+        total={searchedIndexer ? searchedIndexer.length : totalCount}
+        onShowSizeChange={(current, pageSize) => {
+          onLoadMore?.((current - 1) * pageSize);
         }}
+        onChange={(page, pageSize) => {
+          onLoadMore?.((page - 1) * pageSize);
+        }}
+        pageSize={10} // must be the same as useQuery first field
+        pageSizeOptions={[]}
       />
     </div>
   );

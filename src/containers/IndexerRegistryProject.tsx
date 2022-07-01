@@ -97,7 +97,7 @@ const GET_INDEXER = gql`
 const GET_INDEXERS = gql`
   ${INDEXER_FIELDS}
   query GetIndexers($offset: Int, $order: IndexersOrderBy = ID_ASC) {
-    indexers(first: 20, offset: $offset, orderBy: [$order], filter: { active: { equalTo: true } }) {
+    indexers(first: 10, offset: $offset, orderBy: [$order], filter: { active: { equalTo: true } }) {
       totalCount
       nodes {
         ...IndexerFields
@@ -442,7 +442,10 @@ export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer>
 }
 
 export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexers> {
-  return useQuery<GetIndexers, GetIndexersVariables>(GET_INDEXERS, { variables: params, pollInterval: 20000 });
+  return useQuery<GetIndexers, GetIndexersVariables>(GET_INDEXERS, {
+    variables: params,
+    pollInterval: 20000,
+  });
 }
 
 export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): QueryResult<GetIndexerDelegators> {

@@ -174,7 +174,7 @@ export const CheckList: React.VFC<ICheckList> = ({
         (requirementCheck) => requirementCheck.passCheck === true,
       );
 
-      const disabledAcceptOffer = passCheckItems.length !== sortedRequirementCheckList.length || !!error;
+      const disabledAcceptOffer = passCheckItems.length !== sortedRequirementCheckList.length;
 
       return (
         <div className={styles.requirementCheckContainer}>
