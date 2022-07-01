@@ -20,6 +20,10 @@ export const Indexers: React.VFC = () => {
       variables: {
         offset,
       },
+      updateQuery: (previousIndexers, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return previousIndexers;
+        return { ...fetchMoreResult }; // make it as new object then will trigger render
+      },
     });
   };
 
@@ -44,6 +48,7 @@ export const Indexers: React.VFC = () => {
               if (!data || data?.totalCount === 0) {
                 return <Typography>{`No Indexer available.`}</Typography>;
               }
+
               return (
                 <IndexerList indexers={data.data} totalCount={data.totalCount} onLoadMore={fetchMore} era={data.era} />
               );

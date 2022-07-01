@@ -154,6 +154,16 @@ textarea {
   align-items: center;
 }
 
+.verticalMargin {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.horizontalMargin {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 /* For text */
 .errorText {
   color: var(--error);
