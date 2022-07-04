@@ -45,7 +45,7 @@
     "graphql-ws": "^5.8.2",
     "i18next": "^21.2.4",
     "i18next-browser-languagedetector": "^6.1.2",
-    "ipfs-http-client": "^57.0.3",
+    "ipfs-http-client": "53.0.1",
     "js-yaml": "^4.1.0",
     "jwt-decode": "^3.1.2",
     "lru-cache": "^6.0.0",
@@ -134,6 +134,7 @@
     "@acala-network/api": "2.0.2-2",
     "@acala-network/bodhi": "1.0.2-0",
     "@acala-network/contracts": "1.0.22",
-    "babel-loader": "8.1.0"
+    "babel-loader": "8.1.0",
+    "ipfs-http-client": "53.0.1"
   }
 }
