@@ -42,6 +42,7 @@ export * from './TableText';
 export * from './SearchInput';
 export * from './GraphQLPlayground';
 export * from './Typography';
+export * from './Table';
 
 export {
   Header,

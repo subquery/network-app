@@ -15,6 +15,10 @@ import { ethers } from 'ethers';
 import { COLORS, convertStringToNumber, formatEther } from '../../../../../utils';
 import { useSQToken } from '../../../../../containers';
 
+// Can not select days before today + 24 hours, value & validation
+export const EXPIRE_DATE_GAP = 24;
+export const EXPIRE_DATE_GAP_UNIT = 'hours';
+
 const REWARD_PER_INDEXER = 'rewardPerIndexer';
 const INDEXER_CAP = 'indexerCap';
 const TOTAL_DEPOSIT = 'totalDeposit';
@@ -29,7 +33,7 @@ const OfferDetailsSchema = Yup.object().shape({
   [INDEXER_CAP]: Yup.number().required().moreThan(0),
   [TOTAL_DEPOSIT]: Yup.string().required(),
   [MINIMUM_INDEXED_HEIGHT]: Yup.number().required(),
-  [EXPIRE_DATE]: Yup.date().required().min(moment().add(12, 'hours')),
+  [EXPIRE_DATE]: Yup.date().required().min(moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT)),
 });
 
 export const OfferDetails: React.VFC = () => {
@@ -124,8 +128,8 @@ export const OfferDetails: React.VFC = () => {
                   <DatePicker
                     showTime
                     disabledDate={(current) => {
-                      // Can not select days before today + 12 hours
-                      return current && current < moment().add(12, 'hours');
+                      // Can not select days before today + 24 hours
+                      return current && current < moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT);
                     }}
                     size="large"
                     id={EXPIRE_DATE}

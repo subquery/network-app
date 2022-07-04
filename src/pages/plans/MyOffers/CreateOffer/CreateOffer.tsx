@@ -12,7 +12,7 @@ import styles from './CreateOffer.module.css';
 import { Button } from '../../../../components/Button';
 import { SelectDeployment } from './SelectDeployment';
 import { ChooseTemplate } from './ChooseTemplate';
-import { OfferDetails } from './OfferDetails';
+import { EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT, OfferDetails } from './OfferDetails';
 import { Summary } from './Summary';
 import { getCapitalizedStr } from '../../../../utils';
 import moment from 'moment';
@@ -38,7 +38,7 @@ const initialOffer = {
   totalDeposit: '0',
   indexerCap: 1,
   minimumIndexedHeight: 1,
-  expireDate: moment().add(12, 'hours').toDate(),
+  expireDate: moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT).toDate(),
   projectId: '',
 };
 
