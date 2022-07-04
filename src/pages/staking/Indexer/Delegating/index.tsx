@@ -91,7 +91,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       render: (id: string, record) => {
         if (id === delegator) {
           return <Typography className={clsx('grayText', styles.nonDelegateBtn)}>-</Typography>;
-        } else if ((record?.value?.after ?? 0) <= 0) {
+        } else if ((record?.value?.after ?? 0) === 0) {
           return (
             <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>
           );
