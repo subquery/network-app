@@ -326,9 +326,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         className={clsx('flex-end', 'verticalMargin')}
         defaultCurrent={1}
         total={searchedIndexer ? searchedIndexer.length : totalCount}
-        onShowSizeChange={(current, pageSize) => {
-          onLoadMore?.((current - 1) * pageSize);
-        }}
+        showSizeChanger={false}
         onChange={(page, pageSize) => {
           onLoadMore?.((page - 1) * pageSize);
         }}
