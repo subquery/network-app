@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { Table, TableProps, Typography } from 'antd';
-import { DeploymentMeta, SearchInput, TableText } from '../../../components';
+import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
   useAllOpenOffers,
   useDeploymentIndexerQuery,
@@ -283,6 +283,10 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
         offset,
         ...sortedParams,
       },
+      updateQuery: (previousOffers, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return previousOffers;
+        return { ...fetchMoreResult }; // make it as new object then will trigger render
+      },
     });
   };
 
@@ -328,17 +332,12 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                       </div>
                     )}
                   </div>
-                  <Table
-                    columns={sortedCols}
-                    dataSource={offerList}
-                    scroll={{ x: 2000 }}
-                    rowKey={'id'}
-                    pagination={{
+
+                  <AntDTable
+                    customPagination
+                    tableProps={{ columns: sortedCols, dataSource: offerList, scroll: { x: 2000 }, rowKey: 'id' }}
+                    paginationProps={{
                       total: totalCount,
-                      pageSizeOptions: ['10', '20'],
-                      onShowSizeChange: (current, pageSize) => {
-                        fetchMoreOffers?.((current - 1) * pageSize);
-                      },
                       onChange: (page, pageSize) => {
                         fetchMoreOffers?.((page - 1) * pageSize);
                       },
