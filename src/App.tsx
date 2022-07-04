@@ -8,7 +8,7 @@ import './i18n';
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import * as pages from './pages';
-import { Header, Footer } from './components';
+import { Header, Footer, BannerTestnet } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -94,6 +94,7 @@ const App: React.VFC = () => {
       <div className="App">
         <Router>
           <Header />
+          <BannerTestnet />
           <div className="Main">
             <BlockchainStatus>
               <Switch>
