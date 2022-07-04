@@ -11,6 +11,7 @@ import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../
 import { useDelegations, useEra } from '../../../../containers';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { TableText } from '../../../../components';
+import clsx from 'clsx';
 
 interface Props {
   delegator: string;
@@ -50,7 +51,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
     {
       title: t('indexer.title').toUpperCase(),
       dataIndex: 'indexer',
-      width: 100,
+      width: 80,
       render: (text: string) => <TableText content={text} />,
     },
     {
@@ -86,11 +87,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexer',
       key: 'operation',
       fixed: 'right',
-      width: 50,
-      align: 'center',
+      width: 65,
       render: (id: string, record) => {
         if (id === delegator) {
-          return <Typography>-</Typography>;
+          return <Typography className={clsx('grayText', styles.nonDelegateBtn)}>-</Typography>;
+        } else if ((record?.value?.after ?? 0) === 0) {
+          return (
+            <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>
+          );
         } else {
           return <DoUndelegate indexerAddress={id} availableBalance={record.value.after} />;
         }

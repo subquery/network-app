@@ -6,3 +6,7 @@
 .header {
   margin-bottom: 2rem;
 }
+
+.nonDelegateBtn {
+  font-size: 14px;
+}
