@@ -12,7 +12,7 @@ import { convertStringToNumber, formatEther, getCapitalizedStr } from '../../../
 import styles from './MyOffers.module.css';
 import { useLocation } from 'react-router';
 import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
-import { useNetworkClient } from '../../../hooks';
+import { useContractClient } from '../../../hooks';
 import { SummaryList } from '../../../components';
 
 type Props = {
@@ -26,7 +26,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const pendingContracts = useContracts();
-  const contractClient = useNetworkClient();
+  const contractClient = useContractClient();
 
   React.useEffect(() => {
     async function getCancelPenalty() {
