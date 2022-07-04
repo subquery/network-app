@@ -1,11 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import styles from './BannerTestnet.module.css';
 import { Button } from '../Button';
 
-export const BannerTestnet = () => {
+export const BannerTestnet: FC = () => {
   const [show, setShow] = useState(true);
 
   if (!show) return null;
@@ -15,9 +15,8 @@ export const BannerTestnet = () => {
         <div className={styles.left}>
           <img src="/static/rocket.svg" alt="rocket" />
           <div className={styles.text}>
-            {/* // todo: make text the correct design size */}
-            <b>Season 3 Frontier Testnet has started 🔥</b>
-            <p>Duration: 16/02/2022 - 23/02/2022</p>
+            <div className={styles.title}>Season 3 Frontier Testnet has started 🔥</div>
+            <div className={styles.date}>Duration: 16/02/2022 - 23/02/2022</div>
           </div>
         </div>
         <div className={styles.right}>
@@ -26,15 +25,12 @@ export const BannerTestnet = () => {
             // href={}
             target="_blank"
             type="default"
-            // ! trying to apply correct text color through css?
-            // className={styles.button}
-            // ? can you do inline css variables?
-            // style={{ color: var('--sq-primary-blue')}}
           >
             Learn How to Participate
           </Button>
           <div className={styles.closeButton} onClick={() => setShow(false)}>
             <img src="/static/x.svg" alt="close icon" />
+            {/* // todo: if user closes banner, dont show it again on refresh? */}
           </div>
         </div>
       </div>
