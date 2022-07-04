@@ -4627,15 +4627,14 @@
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@^0.1.1-11":
-  version "0.1.1-11"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.1.1-11.tgz#6e04941bb313640d0baff9cfe1ef289f86035528"
-  integrity sha512-ErRcoAzxTljodOPBJGQJCw1vzbXQfYdf3i+E9h8PiIOY1GOugpxTCSpyfraQpsS9BfgxPs7t/kF3k2uYyqCmHA==
+"@subql/network-clients@0.1.1-12":
+  version "0.1.1-12"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.1.1-12.tgz#c69b971e47dd1ba4124b889fbf8e7e9c416effde"
+  integrity sha512-ZlaZ3qOGFog9/bSA8julPkxuRY60WCOQpe8ix6VN6TYMvS/hxOwgrSBtpopMH8WevWw7ZchwaQQ5PPP3ouXbcA==
   dependencies:
     axios "^0.27.2"
     buffer "^6.0.3"
     ethers "^5.6.8"
-    ipfs-http-client "^57.0.1"
 
 "@subql/react-ui@^1.0.1-22":
   version "1.0.1-22"
@@ -11577,7 +11576,7 @@ ipfs-core-utils@^0.11.1:
     timeout-abort-controller "^1.1.1"
     uint8arrays "^3.0.0"
 
-ipfs-http-client@53.0.1, ipfs-http-client@^57.0.1:
+ipfs-http-client@53.0.1:
   version "53.0.1"
   resolved "https://registry.yarnpkg.com/ipfs-http-client/-/ipfs-http-client-53.0.1.tgz#1ae5afce607c87cec285429c7de665e341a3ec7d"
   integrity sha512-0hmm5esSxoArEtVE9jeLwLw3pJm6rJA1kWKW+3Nqs2O8TQVSot8u1nzopF/yJ2IJGd5PHJc2JxqtEdVzV+p7nQ==
