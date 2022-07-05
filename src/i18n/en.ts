@@ -525,10 +525,10 @@ const en = {
       confirmOnMetamask: 'Confirm On MetaMask',
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
-      dayOther: '{{count}} days',
+      day_other: '{{count}} days',
       block: 'Block',
-      blockOneOrMany: 'Block(s)',
-      blockOther: '{{count}} Blocks',
+      blocks: 'Blocks',
+      block_other: '{{count}} Blocks',
       balance: 'Balance',
     },
     status: {
