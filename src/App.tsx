@@ -7,8 +7,9 @@ import './i18n';
 
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import moment from 'moment';
 import * as pages from './pages';
-import { Header, Footer, BannerTestnet } from './components';
+import { Header, Footer, GlobalBanner } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -29,6 +30,7 @@ import studioStyles from './pages/studio/index.module.css';
 import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
 import clsx from 'clsx';
+import { SEASON3 } from './pages/missions/constants';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -94,7 +96,13 @@ const App: React.VFC = () => {
       <div className="App">
         <Router>
           <Header />
-          <BannerTestnet />
+          <GlobalBanner
+            title={t('globalBanner.title')}
+            subTitle={`Duration: ${moment(SEASON3.START).format('DD/MM/YYYY')} - ${moment(SEASON3.END).format(
+              'DD/MM/YYYY',
+            )}`}
+            navigationLink="https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96"
+          />
           <div className="Main">
             <BlockchainStatus>
               <Switch>

@@ -14,6 +14,10 @@ const en = {
       connectWallet: 'Connect',
       hosted: 'Frontier (Testnet)',
     },
+    globalBanner: {
+      title: 'Season 3 Frontier Testnet has started 🔥',
+      duration: 'Duration',
+    },
     footer: {
       title: 'Join The Future',
       copyright: 'SubQuery © ',

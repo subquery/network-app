@@ -43,7 +43,7 @@ export * from './SearchInput';
 export * from './GraphQLPlayground';
 export * from './Typography';
 export * from './Table';
-export * from './BannerTestnet';
+export * from './GlobalBanner';
 
 export {
   Header,

@@ -64,9 +64,15 @@ type Season = {
   };
 };
 
+// Share with App global banner
+export const SEASON3 = {
+  START: new Date(1656496800000), //'June 29 2022 22:00 NZDT'
+  END: new Date(1657875600000), //July 15 2022 21:00 NZDT
+};
+
 export const SEASONS: Season = {
   2: { from: new Date(2022, 3, 24, 0, 0), to: new Date(2022, 4, 23, 11, 59) },
-  3: { from: new Date(1656496800000), to: new Date(1657875600000) }, // 'June 29 2022 22:00 NZDT' - 'July 15 2022 21:00 NZDT'
+  3: { from: SEASON3.START, to: SEASON3.END },
 };
 
 export const CURR_SEASON = 3;

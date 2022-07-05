@@ -1,58 +1,41 @@
 .banner {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  background-color: var(--sq-primary-blue);
-}
-
-.bannerContent {
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  flex-wrap: wrap;
-  max-width: 1440px;
+  align-items: center;
+  background-color: var(--sq-primary-blue);
   width: 100%;
-  color: white;
+  height: 90px;
+  padding: 1rem 3rem;
 }
 
 .left {
+  height: 100%;
   display: flex;
-  flex-direction: row;
   align-items: center;
   column-gap: 16px;
-  padding-left: 48px;
-  height: 90px;
 }
 
 .text {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 0px;
-  height: 100%;
-  font-family: 'Inter';
 }
 
+/* TODO: antD color custom */
 .title {
-  font-size: 20px;
-  font-family: inherit;
+  font-size: 22px;
+  font-weight: 500;
+  color: white !important;
 }
 
-.date {
-  font-size: 14px;
-  font-family: inherit;
+.subTitle {
+  font-size: 16px;
+  color: white !important;
 }
 
 .right {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
   column-gap: 24px;
-  padding-right: 48px;
-  height: 90px;
 }
 
 /* @media screen and (max-width: var(--tabletWidth)) { */
