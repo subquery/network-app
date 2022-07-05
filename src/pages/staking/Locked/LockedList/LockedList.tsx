@@ -11,21 +11,23 @@ import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
+import { useState } from 'react';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
-  startAt: string;
   endAt: string;
   status: string;
 }
+
 interface props {
   withdrawals: SortedWithdrawals[];
 }
 
 export const LockedList: React.VFC<props> = ({ withdrawals }) => {
   const { t } = useTranslation();
+  const [disabled, setDisabled] = useState(false);
 
   const columns: TableProps<SortedWithdrawals>['columns'] = [
     {
@@ -40,16 +42,9 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       width: 100,
       render: (value: string) => <TableText content={`${formatEther(value)} SQT`} />,
     },
-
     {
-      title: t('withdrawals.startAt').toUpperCase(),
-      dataIndex: 'startAt',
-      width: 80,
-      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
-    },
-    {
-      title: t('withdrawals.endAt').toUpperCase(),
-      dataIndex: 'endAt',
+      title: t('withdrawals.lockedUntil').toUpperCase(),
+      dataIndex: 'lockedUntil',
       width: 80,
       render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
     },
@@ -74,9 +69,8 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        {unlockedWithdrawalsTotal > 0 && <DoWithdraw unlockedAmount={availableWithdrawalsAmount} />}
+        {unlockedWithdrawalsTotal > 0 && <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={disabled} />}
       </div>
-
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
     </div>
   );
