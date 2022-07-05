@@ -163,7 +163,6 @@ const en = {
     indexer: {
       title: 'Indexer',
       indexers: 'Indexers',
-      indexerOneOrMany: 'Indexer(s)',
       profile: 'My profile',
       currentEra: 'Current Era',
       indexing: 'Indexing',
