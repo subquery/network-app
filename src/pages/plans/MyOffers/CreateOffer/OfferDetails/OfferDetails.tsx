@@ -95,7 +95,7 @@ export const OfferDetails: React.VFC = () => {
                   defaultValue={indexerCap}
                   onChange={(value) => setFieldValue(INDEXER_CAP, value)}
                   status={errors[INDEXER_CAP] ? 'error' : undefined}
-                  unit={values[INDEXER_CAP] > 1 ? t('indexer.title') : t('indexer.indexers')}
+                  unit={values[INDEXER_CAP] > 1 ? t('indexer.indexers') : t('indexer.title')}
                   errorMsg={errors[INDEXER_CAP] && t('myOffers.step_2.indexerCapErrorMsg')}
                 />
                 <NumberInput
