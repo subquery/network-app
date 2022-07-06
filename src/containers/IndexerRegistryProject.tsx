@@ -303,7 +303,7 @@ const GET_REWARDS = gql`
         claimedTime
       }
     }
-    unclaimedRewards(filter: { delegatorAddress: { equalTo: $address } }) {
+    unclaimedRewards(filter: { delegatorAddress: { equalTo: $address }, amount: { greaterThan: "0" } }) {
       totalCount
       nodes {
         id

@@ -281,7 +281,8 @@ const en = {
         button: 'Claim',
         submit: 'Confirm Claim',
       },
-      totalUnclaimReward: 'You have an unclaimed reward.',
+      totalUnclaimReward: 'You have {{count}} unclaimed reward',
+      totalUnclaimReward_other: 'You have {{count}} unclaimed rewards',
     },
 
     missions: {
