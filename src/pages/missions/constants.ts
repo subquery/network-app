@@ -26,7 +26,6 @@ export const INDEXER_CHALLENGE_DETAILS: Points = {
   INDEXER_UNDELEGATED: { points: 20, description: 'Indexer gets undelegated from delegator' },
   ACCEPT_OFFER: { points: 50, description: 'Indexer to accept an offer in the offer market' },
   UPDATE_CONTROLLER: { points: 30, description: 'Update controller account to new one' },
-  UNREGISTER_INDEXER: { points: 30, description: 'Unregister your indexer' },
 };
 
 export const DELEGATOR_CHALLENGE_DETAILS: Points = {
