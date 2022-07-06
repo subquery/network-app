@@ -4627,10 +4627,10 @@
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@0.1.1-12":
-  version "0.1.1-12"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.1.1-12.tgz#c69b971e47dd1ba4124b889fbf8e7e9c416effde"
-  integrity sha512-ZlaZ3qOGFog9/bSA8julPkxuRY60WCOQpe8ix6VN6TYMvS/hxOwgrSBtpopMH8WevWw7ZchwaQQ5PPP3ouXbcA==
+"@subql/network-clients@0.1.1-13":
+  version "0.1.1-13"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.1.1-13.tgz#b04255a27b624fbd7e6b1d48be2ec38c2a6382ba"
+  integrity sha512-8gMAE2YPxRhBpTx9Nv4aoMl8y2nu7JMpaqBGDH6yje7O8d5qQSDqbcZ9qLlHLAa215HKnmsZ1LMIRSvjtt+upw==
   dependencies:
     axios "^0.27.2"
     buffer "^6.0.3"
