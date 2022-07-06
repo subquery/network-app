@@ -396,7 +396,11 @@ const GET_OWN_FINISHED_OFFERS = gql`
 const GET_OWN_EXPIRED_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetOwnExpiredOffers($consumer: String!, $now: Datetime!, $offset: Int) {
-    offers(filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now } }, first: 10, offset: $offset) {
+    offers(
+      filter: { consumer: { equalTo: $consumer }, expireDate: { lessThan: $now }, reachLimit: { equalTo: false } }
+      first: 10
+      offset: $offset
+    ) {
       totalCount
       nodes {
         ...OfferFields
