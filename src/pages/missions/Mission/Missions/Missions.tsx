@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Table, Tag } from 'antd';
 import styles from './Missions.module.css';
-import { INDEXER_CHALLENGE_DETAILS, MISSION_TYPE, getMissionDetails } from '../../constants';
+import { INDEXER_CHALLENGE_DETAILS, PARTICIPANT, missionMapping } from '../../constants';
 import { COLORS, convertStringToNumber } from '../../../../utils';
 import { TableText } from '../../../../components';
 import i18next from 'i18next';
@@ -54,7 +54,7 @@ const columns = [
 export interface MissionsProps {
   participant: any;
   dailyChallenges?: any;
-  missionType: MISSION_TYPE;
+  missionType: PARTICIPANT;
   season: number;
   viewPrev?: () => void;
   viewCurr?: () => void;
@@ -69,11 +69,11 @@ export const Missions: React.VFC<MissionsProps> = ({
   viewCurr,
 }) => {
   const formatData = (
-    missionType: MISSION_TYPE,
+    missionType: PARTICIPANT,
     challenges: ReadonlyArray<any>,
     dailyChallenges: ReadonlyArray<any>,
   ) => {
-    const DETAILS = getMissionDetails(missionType);
+    const DETAILS = missionMapping[missionType];
 
     let key = 1;
     let allChallenges: {
@@ -101,7 +101,7 @@ export const Missions: React.VFC<MissionsProps> = ({
         });
     }
 
-    if (missionType === MISSION_TYPE.INDEXER) {
+    if (missionType === PARTICIPANT.INDEXER) {
       dailyChallenges.forEach((item) => {
         allChallenges.push({
           type: 'Daily',

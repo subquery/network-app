@@ -44,18 +44,23 @@ export const CONSUMER_CHALLENGE_DETAILS: Points = {
   WITHDRAW_PURCHASE_OFFER: { points: 30, description: 'Withdraw SQT locked in the offer after it expires' },
 };
 
+// TODO: make 'one-off', 'daily' as i18n
 export enum MISSION_TYPE {
+  oneOff = 'One-off',
+  daily = 'Daily',
+}
+
+export enum PARTICIPANT {
   INDEXER = 'indexer',
   DELEGATOR = 'delegator',
   CONSUMER = 'consumer',
 }
 
-export function getMissionDetails(missionType: MISSION_TYPE): Points {
-  if (missionType === MISSION_TYPE.INDEXER) return INDEXER_CHALLENGE_DETAILS;
-  if (missionType === MISSION_TYPE.DELEGATOR) return DELEGATOR_CHALLENGE_DETAILS;
-  if (missionType === MISSION_TYPE.CONSUMER) return CONSUMER_CHALLENGE_DETAILS;
-  throw new Error('Invalid mission type');
-}
+export const missionMapping = {
+  [PARTICIPANT.INDEXER]: INDEXER_CHALLENGE_DETAILS,
+  [PARTICIPANT.DELEGATOR]: DELEGATOR_CHALLENGE_DETAILS,
+  [PARTICIPANT.CONSUMER]: CONSUMER_CHALLENGE_DETAILS,
+};
 
 type Season = {
   [key: number]: {

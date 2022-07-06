@@ -9,16 +9,16 @@ import { Spinner } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
 import { Missions, MissionsProps } from './Missions/Missions';
 import { getCapitalizedStr } from '../../../utils';
-import { CURR_SEASON, MISSION_TYPE, SEASONS } from '../constants';
+import { CURR_SEASON, PARTICIPANT, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
 import { Typography } from 'antd';
-import { useConsumerPoints, useDelegatorPoints } from '../../../containers/QuerySeason3Project';
+// import { useConsumerPoints, useDelegatorPoints } from '../../../containers/QuerySeason3Project';
 
 // TODO: Move together with MissionTable
 interface PointListProps extends Partial<MissionsProps> {
-  missionType: MISSION_TYPE;
+  missionType: PARTICIPANT;
   data: any; //TODO: data Type
 }
 
@@ -36,14 +36,16 @@ export const PointList: React.VFC<PointListProps> = ({
 
   return (
     <>
-      {totalPoint !== undefined && (
+      {
         <div className={styles.totalPoints}>
           <Typography.Text type="secondary" className={styles.pointText}>
             {t('missions.totalPoint')}
           </Typography.Text>
-          <Typography.Text className={styles.pointText}>{t('missions.point', { count: totalPoint })}</Typography.Text>
+          <Typography.Text className={styles.pointText}>
+            {t('missions.point', { count: totalPoint ?? 0 })}
+          </Typography.Text>
         </div>
-      )}
+      }
       <div>
         <Missions
           participant={data}
@@ -58,7 +60,7 @@ export const PointList: React.VFC<PointListProps> = ({
   );
 };
 
-export const tabList = [MISSION_TYPE.INDEXER, MISSION_TYPE.DELEGATOR, MISSION_TYPE.CONSUMER];
+export const tabList = [PARTICIPANT.INDEXER, PARTICIPANT.DELEGATOR, PARTICIPANT.CONSUMER];
 
 //TODO: add dataType for participate & indexer and move after refactor
 //TODO: viewPrev, viewCurr not been used
@@ -69,13 +71,13 @@ interface TabContentProps {
   season: number;
 }
 export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, seasonInfo, season }) => {
-  const [curTab, setCurTab] = React.useState<MISSION_TYPE>(MISSION_TYPE.INDEXER);
+  const [curTab, setCurTab] = React.useState<PARTICIPANT>(PARTICIPANT.INDEXER);
 
   const TabHeader: React.FC = () => {
     return (
       <div className={styles.tabList}>
         {tabList.map((tab) => {
-          if (tab === MISSION_TYPE.CONSUMER && season === 2) return undefined;
+          if (tab === PARTICIPANT.CONSUMER && season === 2) return undefined;
           return (
             <div key={tab} className={styles.tab} onClick={() => setCurTab(tab)}>
               <Typography.Text className={`${styles.tabText} ${styles.grayText}`}>
@@ -101,8 +103,8 @@ export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, s
   data.indexer = { ...data.indexer, dailyChallenges: indexer?.data?.indexerS3Challenges?.challenges };
   data.indexer.singleChallengePts = indexerTotal;
 
-  const sortedData = data[curTab];
-  const dailyChallenges = data[MISSION_TYPE.INDEXER].dailyChallenges;
+  const sortedData = data[curTab] || [];
+  const dailyChallenges = data[PARTICIPANT.INDEXER].dailyChallenges;
 
   const MainContent = () => {
     if (isLoading) {
@@ -112,11 +114,6 @@ export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, s
     return (
       <>
         {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
-        {!sortedData && (
-          <Typography.Title level={4} className={styles.nonData}>
-            There is no data available.
-          </Typography.Title>
-        )}
         {sortedData && (
           <PointList
             missionType={curTab}
