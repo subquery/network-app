@@ -1,0 +1,23 @@
+.container {
+  background: white;
+}
+
+.titlebutton {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totalPoints {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border: 1px solid var(--gray300);
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+.pointText {
+  font-size: 18px;
+}

@@ -1,16 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-interface Point {
+interface MISSION {
   points: number;
   description: string;
 }
 
-export interface Points {
-  [key: string]: Point;
+export interface MISSIONS {
+  [key: string]: MISSION;
 }
 
-export const INDEXER_CHALLENGE_DETAILS: Points = {
+// one-off challenges of indexers
+export const INDEXER_CHALLENGE_DETAILS: MISSIONS = {
   INDEX_SINGLE_PROJECT: { points: 10, description: 'Fully index a project from projects list' },
   INDEX_ALL_PROJECTS: { points: 200, description: 'Index all projects from projects list' },
   DELEGATOR_ATTRACTED: { points: 20, description: 'Get your first delegator' },
@@ -28,14 +29,16 @@ export const INDEXER_CHALLENGE_DETAILS: Points = {
   UPDATE_CONTROLLER: { points: 30, description: 'Update controller account to new one' },
 };
 
-export const DELEGATOR_CHALLENGE_DETAILS: Points = {
+// one-off challenges of delegators
+export const DELEGATOR_CHALLENGE_DETAILS: MISSIONS = {
   CLAIM_REWARD: { points: 20, description: "Delegator claims a reward from reward distributor to delegator's wallet" },
   DELEGATE_TO_INDEXER: { points: 50, description: 'Delegator add delegation to an indexer' },
   UNDELEGATE_FROM_INDEXER: { points: 50, description: 'Delegator undelegate from an indexer' },
   WITHDRAW_DELEGATION: { points: 50, description: 'Delegator withdraws undelegated amount from an indexer' },
 };
 
-export const CONSUMER_CHALLENGE_DETAILS: Points = {
+// one-off challenges of consumer
+export const CONSUMER_CHALLENGE_DETAILS: MISSIONS = {
   PURCHASE_PLAN: { points: 50, description: 'Consumer purchase a plan from an indexer' },
   CREATE_PURCHASE_OFFER: { points: 50, description: 'A purchase offer is created by consumer' },
   SERVICE_AGREEMENT_CREATED: { points: 50, description: 'Get service agreement from an indexer' },
@@ -43,10 +46,16 @@ export const CONSUMER_CHALLENGE_DETAILS: Points = {
   WITHDRAW_PURCHASE_OFFER: { points: 30, description: 'Withdraw SQT locked in the offer after it expires' },
 };
 
+export enum MISSION_STATUS {
+  INCOMPLETE = 'Incomplete',
+  COMPLETED = 'Completed',
+  EXPIRED = 'Expired',
+}
+
 // TODO: make 'one-off', 'daily' as i18n
 export enum MISSION_TYPE {
-  oneOff = 'One-off',
-  daily = 'Daily',
+  ONE_OFF = 'One-off',
+  DAILY = 'Daily',
 }
 
 export enum PARTICIPANT {
