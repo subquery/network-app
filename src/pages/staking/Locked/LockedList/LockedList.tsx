@@ -11,7 +11,7 @@ import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
@@ -28,6 +28,12 @@ interface props {
 export const LockedList: React.VFC<props> = ({ withdrawals }) => {
   const { t } = useTranslation();
   const [disabled, setDisabled] = useState(false);
+  const unlockedWithdrawals = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format());
+  const unlockedWithdrawalsTotal = unlockedWithdrawals.length;
+
+  useEffect(() => {
+    setDisabled(unlockedWithdrawalsTotal === 0);
+  }, [unlockedWithdrawalsTotal]);
 
   const columns: TableProps<SortedWithdrawals>['columns'] = [
     {
@@ -44,7 +50,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     },
     {
       title: t('withdrawals.lockedUntil').toUpperCase(),
-      dataIndex: 'lockedUntil',
+      dataIndex: 'endAt',
       width: 80,
       render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
     },
@@ -56,11 +62,9 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     },
   ];
 
-  const unlockedWithdrawals = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format());
   const availableWithdrawalsAmount = unlockedWithdrawals.reduce((sum, withdrawal) => {
     return sum + convertStringToNumber(formatEther(withdrawal.amount));
   }, 0);
-  const unlockedWithdrawalsTotal = unlockedWithdrawals.length;
   const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedWithdrawalsTotal || 0 })}`;
 
   return (
@@ -69,7 +73,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        {unlockedWithdrawalsTotal > 0 && <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={disabled} />}
+        <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={disabled} />
       </div>
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
     </div>

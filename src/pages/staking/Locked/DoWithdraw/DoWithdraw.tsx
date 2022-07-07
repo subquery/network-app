@@ -39,6 +39,7 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disable
       <TransactionModal
         text={modalText}
         actions={[{ label: t('withdrawals.withdraw'), key: 'claim', disabled: disabled }]}
+        variant={disabled ? 'disabledButton' : 'button'}
         onClick={handleClick}
         renderContent={(onSubmit, _, isLoading, error) => {
           return (
