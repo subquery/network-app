@@ -10,6 +10,7 @@ const en = {
       plans: 'Plan & Offer',
       missions: 'Missions',
       documentation: 'Documentation',
+      forum: 'Forum',
       github: 'Github',
       connectWallet: 'Connect',
       hosted: 'Frontier (Testnet)',

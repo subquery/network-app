@@ -135,12 +135,21 @@ const Header: React.VFC = () => {
             ))}
           </>
           <Button
-            href="https://doc.subquery.network"
+            href="https://academy.subquery.network/subquery_network/testnet/welcome.html"
             target="_blank"
             className={styles.navLink}
             rel="noreferrer"
             type="link"
             label={t('header.documentation')}
+            colorScheme="standard"
+          />
+          <Button
+            href="https://forum.subquery.network/c/season-3/6"
+            target="_blank"
+            className={styles.navLink}
+            rel="noreferrer"
+            type="link"
+            label={t('header.forum')}
             colorScheme="standard"
           />
           {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
