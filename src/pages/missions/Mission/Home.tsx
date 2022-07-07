@@ -7,63 +7,19 @@ import { AppPageHeader } from '../../../components';
 import styles from './Home.module.css';
 import { Spinner } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
-import { Missions, MissionsProps } from './Missions/Missions';
 import { getCapitalizedStr } from '../../../utils';
 import { CURR_SEASON, PARTICIPANT, SEASONS } from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
 import { Typography } from 'antd';
-// import { useConsumerPoints, useDelegatorPoints } from '../../../containers/QuerySeason3Project';
-
-// TODO: Move together with MissionTable
-interface PointListProps extends Partial<MissionsProps> {
-  missionType: PARTICIPANT;
-  data: any; //TODO: data Type
-}
-
-export const PointList: React.VFC<PointListProps> = ({
-  missionType,
-  data,
-  season,
-  dailyChallenges,
-  viewPrev,
-  viewCurr,
-}) => {
-  const { t } = useTranslation();
-
-  const totalPoint = data['singleChallengePts'] ?? data['totalPoints'] ?? undefined;
-
-  return (
-    <>
-      {
-        <div className={styles.totalPoints}>
-          <Typography.Text type="secondary" className={styles.pointText}>
-            {t('missions.totalPoint')}
-          </Typography.Text>
-          <Typography.Text className={styles.pointText}>
-            {t('missions.point', { count: totalPoint ?? 0 })}
-          </Typography.Text>
-        </div>
-      }
-      <div>
-        <Missions
-          participant={data}
-          missionType={missionType}
-          season={season ?? 3}
-          dailyChallenges={dailyChallenges}
-          viewPrev={viewPrev}
-          viewCurr={viewCurr}
-        />
-      </div>
-    </>
-  );
-};
+import { MissionTable } from './MissionTable/MissionTable';
 
 export const tabList = [PARTICIPANT.INDEXER, PARTICIPANT.DELEGATOR, PARTICIPANT.CONSUMER];
 
 //TODO: add dataType for participate & indexer and move after refactor
 //TODO: viewPrev, viewCurr not been used
+//TODO: use tabButton content
 interface TabContentProps {
   participant: any;
   indexer: any;
@@ -115,9 +71,9 @@ export const TabContent: React.VFC<TabContentProps> = ({ participant, indexer, s
       <>
         {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
         {sortedData && (
-          <PointList
-            missionType={curTab}
-            data={sortedData}
+          <MissionTable
+            participant={curTab}
+            challenges={sortedData}
             dailyChallenges={dailyChallenges}
             season={season}
             viewPrev={undefined}
