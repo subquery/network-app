@@ -40,17 +40,6 @@
   text-align: center;
 }
 
-.tab {
-  background: white;
-  min-width: 5rem;
-  padding: 1rem 1rem 0 1rem;
-  cursor: pointer;
-}
-
-.tabText {
-  margin-bottom: 0.5rem;
-}
-
 .line {
   background: var(--sq-gradient);
   height: 2px;

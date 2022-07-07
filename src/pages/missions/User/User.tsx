@@ -15,7 +15,7 @@ import { TabContent } from '../Mission';
 // TODO: replace Jazzicon with connectedIndexer
 export const User: React.VFC = () => {
   const { season, id } = useParams<{ season: string; id: string }>();
-  const [participant, indexer] = useParticipantChallenges(Number(season), { indexerId: id }); //TODO: rethink about the structure
+  const [completedMissions, indexer] = useParticipantChallenges(Number(season), { indexerId: id }); //TODO: rethink about the structure
   const sortedSeason = Number(season);
 
   const history = useHistory();
@@ -46,7 +46,7 @@ export const User: React.VFC = () => {
             </div>
           </div>
         </div>
-        <TabContent participant={participant} indexer={indexer} season={sortedSeason} />
+        <TabContent completedMissions={completedMissions} indexer={indexer} season={sortedSeason} />
       </>
     </>
   );
