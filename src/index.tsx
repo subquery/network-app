@@ -3,14 +3,21 @@
 
 // Required because we import @subql/common/dist/project rather than @subql/common
 import 'reflect-metadata';
-import React from 'react';
 import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
+import TagManager from 'react-gtm-module';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css';
 import './index.css';
+
+const tagManagerArgs = {
+  gtmId: 'G-DK4PX8F61X',
+};
+
+const isProd = process.env.NODE_ENV === 'production';
+isProd && TagManager.initialize(tagManagerArgs);
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -20,12 +27,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-ReactDOM.render(
-  <>
-    <App />
-  </>,
-  document.getElementById('root'),
-);
+ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
