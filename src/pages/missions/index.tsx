@@ -9,10 +9,9 @@ import { AiOutlineCheckSquare, AiOutlineTrophy } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
 import { User } from './User';
 import { Leaderboard } from './Leaderboard';
-import { Home } from './Mission';
+import { Home, MISSION_ROUTE } from './Mission';
 
 export const ROOT_ROUTE = '/missions';
-export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-missions`;
 export const LEADERBOARD_ROUTE = `${ROOT_ROUTE}/ranks`;
 
 const Container: React.VFC = () => {
@@ -21,7 +20,7 @@ const Container: React.VFC = () => {
   const sidebarList = [
     {
       label: t('missions.missions'),
-      link: PROFILE_ROUTE,
+      link: MISSION_ROUTE,
       icon: <AiOutlineCheckSquare />,
     },
     // {
@@ -37,8 +36,8 @@ const Container: React.VFC = () => {
         <Switch>
           <Route path="/missions/season/:season/user/:id" children={<User />} />
           <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
-          <Route path={PROFILE_ROUTE} component={Home} />
-          <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />
+          <Route path={MISSION_ROUTE} component={Home} />
+          <Redirect from={ROOT_ROUTE} to={MISSION_ROUTE} />
         </Switch>
       </AppSidebar>
     </EraProvider>
