@@ -17,9 +17,10 @@ import { SummaryList } from '../../../components';
 
 type Props = {
   offerId: string;
+  refundAmount?: number;
 };
 
-export const CancelOffer: React.FC<Props> = ({ offerId }) => {
+export const CancelOffer: React.FC<Props> = ({ offerId, refundAmount }) => {
   const [cancelPenalty, setCancelPenalty] = React.useState<string>();
   const [unSpent, setUnSpent] = React.useState<string>();
   const [receive, setReceive] = React.useState<string>();
@@ -68,7 +69,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
     </div>
   );
 
-  const canCelText = {
+  const cancelText = {
     title: t('myOffers.cancel.title'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
     description: t('myOffers.cancel.description'),
@@ -79,14 +80,14 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const withdrawText = {
     title: t('myOffers.withdraw.modalTitle'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
-    description: t('myOffers.withdraw.description'),
+    description: t('myOffers.withdraw.description', { amount: refundAmount }),
     submitText: t('general.confirm'),
     failureText: t('myOffers.withdraw.failureText'),
   };
 
   const isExpiredPath = pathname === EXPIRED_OFFERS;
   const buttonVariant = isExpiredPath ? 'textBtn' : 'errTextBtn';
-  const text = isExpiredPath ? withdrawText : canCelText;
+  const text = isExpiredPath ? withdrawText : cancelText;
   const actionBtnLabel = isExpiredPath ? t('myOffers.withdraw.title') : t('general.cancel');
 
   const handleClick = async () => {

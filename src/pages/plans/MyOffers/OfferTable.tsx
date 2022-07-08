@@ -207,7 +207,9 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       width: 100,
       render: (id: string, offer: Offer) => {
         if (!connectedAccount || offer.withdrawn) return <TableText content="-" />;
-        return <CancelOffer offerId={id} />;
+        return (
+          <CancelOffer offerId={id} refundAmount={convertStringToNumber(formatEther(offer.deposit)) * offer.limit} />
+        );
       },
     },
   ];
