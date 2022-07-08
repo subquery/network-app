@@ -6,10 +6,16 @@ import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3, useWithdrawls } from '../../../../containers';
-import { useLockPeriod } from '../../../../hooks';
+import { defaultLockPeriod, useLockPeriod } from '../../../../hooks';
 import { mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import { LockedList } from '../LockedList';
 
+export enum LOCK_STATUS {
+  LOCK = 'lock',
+  UNLOCK = 'UNLOCK',
+}
+
+// TODO: refactor mapAsync & remove defaultLockPeriod
 export const Locked: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -22,10 +28,10 @@ export const Locked: React.VFC = () => {
         mapAsync(
           ([withdrawlsResult, lockPeriod]) =>
             withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
-              const startAt = moment(withdrawal?.startTime).format();
-              const endAt = moment(startAt).add(lockPeriod, 'second').format();
-              const status = moment().format() > endAt ? t('withdrawals.unlock') : t('withdrawals.lock');
-              return { ...withdrawal, startAt, endAt, status, idx };
+              const utcStartAt = moment.utc(withdrawal?.startTime);
+              const utcEndAt = moment.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
+              const status = moment.utc() > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
+              return { ...withdrawal, endAt: utcEndAt.local().format(), status, idx };
             }),
           mergeAsync(withdrawals, lockPeriod),
         ),

@@ -13,9 +13,10 @@ import clsx from 'clsx';
 
 interface DoWithdrawProps {
   unlockedAmount: number;
+  disabled: boolean;
 }
 
-export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount }) => {
+export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disabled }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
@@ -37,7 +38,8 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount }) => {
     <div>
       <TransactionModal
         text={modalText}
-        actions={[{ label: t('withdrawals.withdraw'), key: 'claim' }]}
+        actions={[{ label: t('withdrawals.withdraw'), key: 'claim', disabled: disabled }]}
+        variant={disabled ? 'disabledButton' : 'button'}
         onClick={handleClick}
         renderContent={(onSubmit, _, isLoading, error) => {
           return (
@@ -51,7 +53,6 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount }) => {
                   onClick={onSubmit}
                   htmlType="submit"
                   shape="round"
-                  size="large"
                   className={styles.submitBtn}
                   loading={isLoading}
                 >

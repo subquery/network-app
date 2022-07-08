@@ -11,15 +11,16 @@ import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
+import { LOCK_STATUS } from '../Home';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
-  startAt: string;
   endAt: string;
-  status: string;
+  status: LOCK_STATUS;
 }
+
 interface props {
   withdrawals: SortedWithdrawals[];
 }
@@ -40,15 +41,8 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       width: 100,
       render: (value: string) => <TableText content={`${formatEther(value)} SQT`} />,
     },
-
     {
-      title: t('withdrawals.startAt').toUpperCase(),
-      dataIndex: 'startAt',
-      width: 80,
-      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
-    },
-    {
-      title: t('withdrawals.endAt').toUpperCase(),
+      title: t('withdrawals.lockedUntil').toUpperCase(),
       dataIndex: 'endAt',
       width: 80,
       render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
@@ -57,16 +51,20 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: t('withdrawals.status').toUpperCase(),
       dataIndex: 'status',
       width: 30,
-      render: (value: string) => <TableText content={value} />,
+      render: (value: LOCK_STATUS) => (
+        <TableText content={value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked')} />
+      ),
     },
   ];
 
-  const unlockedWithdrawals = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format());
-  const availableWithdrawalsAmount = unlockedWithdrawals.reduce((sum, withdrawal) => {
+  const unlockedRewards = withdrawals.filter((withdrawal) => withdrawal.status === LOCK_STATUS.UNLOCK);
+  const hasUnlockedRewards = unlockedRewards?.length > 0;
+
+  const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedRewards?.length || 0 })}`;
+
+  const availableWithdrawalsAmount = unlockedRewards.reduce((sum, withdrawal) => {
     return sum + convertStringToNumber(formatEther(withdrawal.amount));
   }, 0);
-  const unlockedWithdrawalsTotal = unlockedWithdrawals.length;
-  const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedWithdrawalsTotal || 0 })}`;
 
   return (
     <div className={styles.container}>
@@ -74,9 +72,8 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        {unlockedWithdrawalsTotal > 0 && <DoWithdraw unlockedAmount={availableWithdrawalsAmount} />}
+        <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={!hasUnlockedRewards} />
       </div>
-
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
     </div>
   );
