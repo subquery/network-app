@@ -32,7 +32,7 @@ const OfferDetailsSchema = Yup.object().shape({
     .test('Reward should be greater than 0.', (reward) => (reward ? formEther(reward).gt('0') : false)),
   [INDEXER_CAP]: Yup.number().required().moreThan(0),
   [TOTAL_DEPOSIT]: Yup.string().required(),
-  [MINIMUM_INDEXED_HEIGHT]: Yup.number().required(),
+  [MINIMUM_INDEXED_HEIGHT]: Yup.number().required().moreThan(0),
   [EXPIRE_DATE]: Yup.date().required().min(moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT)),
 });
 
@@ -119,7 +119,7 @@ export const OfferDetails: React.VFC = () => {
                   onChange={(value) => setFieldValue(MINIMUM_INDEXED_HEIGHT, value)}
                   unit={values[MINIMUM_INDEXED_HEIGHT] > 1 ? t('general.blocks') : t('general.block')}
                   status={errors[MINIMUM_INDEXED_HEIGHT] ? 'error' : undefined}
-                  errorMsg={errors[MINIMUM_INDEXED_HEIGHT] && t('myOffers.step_2.minimumIndexedHeightTooltip')}
+                  errorMsg={errors[MINIMUM_INDEXED_HEIGHT] && t('myOffers.step_2.minimumIndexedHeightErrorMsg')}
                 />
                 <div>
                   <AppTypography tooltip={t('myOffers.step_2.expireDateTooltip')}>

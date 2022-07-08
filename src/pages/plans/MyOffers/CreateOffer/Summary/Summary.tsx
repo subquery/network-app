@@ -128,7 +128,9 @@ export const Summary: React.VFC = () => {
     },
     {
       label: t('myOffers.step_2.minimumIndexedHeight'),
-      value: t('general.block', { count: offer?.minimumIndexedHeight }),
+      value: t(offer?.minimumIndexedHeight > 1 ? 'general.blocks_other' : 'general.block_other', {
+        count: offer?.minimumIndexedHeight,
+      }),
     },
     {
       label: t('myOffers.step_2.expireDate'),
