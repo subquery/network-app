@@ -6,7 +6,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3, useWithdrawls } from '../../../../containers';
-import { useLockPeriod } from '../../../../hooks';
+import { defaultLockPeriod, useLockPeriod } from '../../../../hooks';
 import { mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import { LockedList } from '../LockedList';
 
@@ -22,10 +22,10 @@ export const Locked: React.VFC = () => {
         mapAsync(
           ([withdrawlsResult, lockPeriod]) =>
             withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
-              const startAt = moment(withdrawal?.startTime).local().format();
-              const endAt = moment(startAt).add(lockPeriod, 'second').format();
-              const status = moment().format() > endAt ? t('withdrawals.unlocked') : t('withdrawals.locked');
-              return { ...withdrawal, endAt, status, idx };
+              const utcStartAt = moment.utc(withdrawal?.startTime);
+              const utcEndAt = moment.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
+              const status = moment.utc() > utcEndAt ? t('withdrawals.unlocked') : t('withdrawals.locked');
+              return { ...withdrawal, endAt: utcEndAt.local().format(), status, idx };
             }),
           mergeAsync(withdrawals, lockPeriod),
         ),
