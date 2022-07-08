@@ -11,14 +11,14 @@ import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
-import { useState, useEffect } from 'react';
+import { LOCK_STATUS } from '../Home';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
   endAt: string;
-  status: string;
+  status: LOCK_STATUS;
 }
 
 interface props {
@@ -27,13 +27,6 @@ interface props {
 
 export const LockedList: React.VFC<props> = ({ withdrawals }) => {
   const { t } = useTranslation();
-  const [disabled, setDisabled] = useState(false);
-  const unlockedWithdrawals = withdrawals.filter((withdrawal) => withdrawal.endAt < moment().format());
-  const unlockedWithdrawalsTotal = unlockedWithdrawals.length;
-
-  useEffect(() => {
-    setDisabled(unlockedWithdrawalsTotal === 0);
-  }, [unlockedWithdrawalsTotal]);
 
   const columns: TableProps<SortedWithdrawals>['columns'] = [
     {
@@ -58,14 +51,20 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: t('withdrawals.status').toUpperCase(),
       dataIndex: 'status',
       width: 30,
-      render: (value: string) => <TableText content={value} />,
+      render: (value: LOCK_STATUS) => (
+        <TableText content={value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked')} />
+      ),
     },
   ];
 
-  const availableWithdrawalsAmount = unlockedWithdrawals.reduce((sum, withdrawal) => {
+  const unlockedRewards = withdrawals.filter((withdrawal) => withdrawal.status === LOCK_STATUS.UNLOCK);
+  const hasUnlockedRewards = unlockedRewards?.length > 0;
+
+  const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedRewards?.length || 0 })}`;
+
+  const availableWithdrawalsAmount = unlockedRewards.reduce((sum, withdrawal) => {
     return sum + convertStringToNumber(formatEther(withdrawal.amount));
   }, 0);
-  const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedWithdrawalsTotal || 0 })}`;
 
   return (
     <div className={styles.container}>
@@ -73,7 +72,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={disabled} />
+        <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={!hasUnlockedRewards} />
       </div>
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
     </div>
