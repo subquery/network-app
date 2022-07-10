@@ -9,6 +9,7 @@ import { COLORS, convertStringToNumber } from '../../../../utils';
 import { TableText } from '../../../../components';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 
 // TODO: Progress Status should be defined at one place
 const ProgressTag: React.VFC<{ progress: string; color?: string }> = ({ progress, color }) => {
@@ -22,11 +23,13 @@ const progressColorMapping = {
 };
 
 export type Challenge = {
+  key: string;
   type: MISSION_TYPE;
   title?: string | undefined;
   mission: string;
   points: number;
   progress: MISSION_STATUS;
+  timestamp?: Date;
 };
 
 const columns: TableProps<Challenge>['columns'] = [
@@ -34,14 +37,22 @@ const columns: TableProps<Challenge>['columns'] = [
     title: 'TYPES',
     dataIndex: 'type',
     width: '10%',
+    sorter: (a, b) => (a.type === MISSION_TYPE.DAILY ? -1 : 1),
+    defaultSortOrder: 'ascend',
   },
   {
     title: 'MISSION',
     dataIndex: 'mission',
-    width: '60%',
     render: (mission: string) => {
       const description = INDEXER_CHALLENGE_DETAILS[mission]?.description;
       return <TableText tooltip={description}>{mission}</TableText>;
+    },
+  },
+  {
+    title: 'CREATE AT',
+    dataIndex: 'timestamp',
+    render: (timestamp: Date) => {
+      return <div>{moment.utc(timestamp).local().format('DD/MM/YYYY hh:mm:s')}</div>;
     },
   },
   {
@@ -97,10 +108,12 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
         const mission = allOneOffMissions[oneOffMissionKey];
 
         return {
+          key: `${mission.description}-${completedChallenge.timestamp}`,
           type: MISSION_TYPE.ONE_OFF,
           mission: mission.description,
           points: mission.points,
           progress: status,
+          timestamp: completedChallenge.timestamp,
         };
       });
     }
@@ -112,10 +125,12 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
     if (participant === PARTICIPANT.INDEXER && dailyChallenges && dailyChallenges?.length > 0) {
       sortedDailyChallenges = dailyChallenges.map((dailyChallenge, idx) => {
         return {
+          key: `${dailyChallenge.details}-${dailyChallenge.timestamp}`,
           type: MISSION_TYPE.DAILY,
           mission: dailyChallenge.details,
           points: dailyChallenge.point,
           progress: MISSION_STATUS.COMPLETED,
+          timestamp: dailyChallenge.timestamp,
         };
       });
     }
@@ -135,7 +150,7 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
         </div>
       )}
       <div className={styles.container}>
-        <Table columns={columns} dataSource={[...oneOffMissions, ...indexerDailyChallenges]} rowKey={'mission'} />
+        <Table columns={columns} dataSource={[...oneOffMissions, ...indexerDailyChallenges]} rowKey={'key'} />
       </div>
     </>
   );
