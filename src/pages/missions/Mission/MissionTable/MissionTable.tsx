@@ -49,9 +49,10 @@ const columns: TableProps<Challenge>['columns'] = [
     },
   },
   {
-    title: 'CREATE AT',
+    title: 'TIMESTAMP',
     dataIndex: 'timestamp',
     render: (timestamp: Date) => {
+      if (!timestamp) return <TableText>{'-'}</TableText>;
       return <div>{moment.utc(timestamp).local().format('DD/MM/YYYY hh:mm:s')}</div>;
     },
   },
@@ -108,12 +109,12 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
         const mission = allOneOffMissions[oneOffMissionKey];
 
         return {
-          key: `${mission.description}-${completedChallenge.timestamp}`,
+          key: `${mission.description}-${completedChallenge?.timestamp ?? new Date()}`,
           type: MISSION_TYPE.ONE_OFF,
           mission: mission.description,
           points: mission.points,
           progress: status,
-          timestamp: completedChallenge.timestamp,
+          timestamp: completedChallenge?.timestamp,
         };
       });
     }
