@@ -30,17 +30,18 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
 
   React.useEffect(() => {
     async function getCancelPenalty() {
-      if (contractClient && pathname === OPEN_OFFERS) {
+      if (contractClient) {
         const offer = convertStringToNumber(offerId);
-        const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
-        setCancelPenalty(formatEther(cancelPenalty));
-
         const unSpent = await contractClient.cancelOfferUnspentBalance(offer);
         setUnSpent(formatEther(unSpent));
 
-        if (cancelPenalty && unSpent) {
-          const shouldReceive = unSpent.sub(cancelPenalty);
-          setReceive(formatEther(shouldReceive));
+        if (pathname === OPEN_OFFERS) {
+          const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
+          setCancelPenalty(formatEther(cancelPenalty));
+          if (cancelPenalty && unSpent) {
+            const shouldReceive = unSpent.sub(cancelPenalty);
+            setReceive(formatEther(shouldReceive));
+          }
         }
       }
     }
@@ -68,7 +69,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
     </div>
   );
 
-  const canCelText = {
+  const cancelText = {
     title: t('myOffers.cancel.title'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
     description: t('myOffers.cancel.description'),
@@ -79,14 +80,14 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const withdrawText = {
     title: t('myOffers.withdraw.modalTitle'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
-    description: t('myOffers.withdraw.description'),
+    description: t('myOffers.withdraw.description', { bigNumAmount: unSpent }),
     submitText: t('general.confirm'),
     failureText: t('myOffers.withdraw.failureText'),
   };
 
   const isExpiredPath = pathname === EXPIRED_OFFERS;
   const buttonVariant = isExpiredPath ? 'textBtn' : 'errTextBtn';
-  const text = isExpiredPath ? withdrawText : canCelText;
+  const text = isExpiredPath ? withdrawText : cancelText;
   const actionBtnLabel = isExpiredPath ? t('myOffers.withdraw.title') : t('general.cancel');
 
   const handleClick = async () => {

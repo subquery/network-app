@@ -480,7 +480,7 @@ const en = {
       withdraw: {
         title: 'withdraw',
         modalTitle: 'Withdraw from the offer',
-        description: 'You are about to withdraw the rest of SQT from this offer to your wallet.',
+        description: 'You are about to withdraw {{bigNumAmount}} SQT from this offer to your wallet',
         failureText: 'Sorry, failed to withdraw offer',
       },
     },

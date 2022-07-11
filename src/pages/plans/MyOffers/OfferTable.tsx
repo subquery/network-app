@@ -7,7 +7,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
-import { Table, TableProps, Typography } from 'antd';
+import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
   useAllOpenOffers,
