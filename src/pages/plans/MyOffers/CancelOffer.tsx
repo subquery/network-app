@@ -17,10 +17,9 @@ import { SummaryList } from '../../../components';
 
 type Props = {
   offerId: string;
-  refundAmount?: number;
 };
 
-export const CancelOffer: React.FC<Props> = ({ offerId, refundAmount }) => {
+export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const [cancelPenalty, setCancelPenalty] = React.useState<string>();
   const [unSpent, setUnSpent] = React.useState<string>();
   const [receive, setReceive] = React.useState<string>();
@@ -31,17 +30,17 @@ export const CancelOffer: React.FC<Props> = ({ offerId, refundAmount }) => {
 
   React.useEffect(() => {
     async function getCancelPenalty() {
-      if (contractClient && pathname === OPEN_OFFERS) {
+      if (contractClient && (pathname === OPEN_OFFERS || pathname === EXPIRED_OFFERS)) {
         const offer = convertStringToNumber(offerId);
-        const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
-        setCancelPenalty(formatEther(cancelPenalty));
-
         const unSpent = await contractClient.cancelOfferUnspentBalance(offer);
         setUnSpent(formatEther(unSpent));
-
-        if (cancelPenalty && unSpent) {
-          const shouldReceive = unSpent.sub(cancelPenalty);
-          setReceive(formatEther(shouldReceive));
+        if (pathname === OPEN_OFFERS) {
+          const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
+          setCancelPenalty(formatEther(cancelPenalty));
+          if (cancelPenalty && unSpent) {
+            const shouldReceive = unSpent.sub(cancelPenalty);
+            setReceive(formatEther(shouldReceive));
+          }
         }
       }
     }
@@ -80,7 +79,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId, refundAmount }) => {
   const withdrawText = {
     title: t('myOffers.withdraw.modalTitle'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
-    description: t('myOffers.withdraw.description', { amount: refundAmount }),
+    description: t('myOffers.withdraw.description', { amountStr: unSpent }),
     submitText: t('general.confirm'),
     failureText: t('myOffers.withdraw.failureText'),
   };

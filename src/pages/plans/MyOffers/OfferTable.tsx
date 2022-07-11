@@ -7,7 +7,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
-import { Table, TableProps, Typography } from 'antd';
+import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
   useAllOpenOffers,
@@ -207,9 +207,7 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       width: 100,
       render: (id: string, offer: Offer) => {
         if (!connectedAccount || offer.withdrawn) return <TableText content="-" />;
-        return (
-          <CancelOffer offerId={id} refundAmount={convertStringToNumber(formatEther(offer.deposit)) * offer.limit} />
-        );
+        return <CancelOffer offerId={id} />;
       },
     },
   ];
