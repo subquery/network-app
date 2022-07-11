@@ -90,12 +90,14 @@ export const SelectDeployment: React.VFC = () => {
    */
 
   if (!createOfferContext) return <></>;
+
+  const searchedProjectId = searchedDeployment?.project?.id;
   const { curStep, onStepChange, totalSteps, updateCreateOffer, offer } = createOfferContext;
   const onNext = (step: number) => {
     updateCreateOffer({
       ...offer,
       deploymentId: searchedDeployment?.id ?? '',
-      projectId: searchedDeployment?.projectId ?? '',
+      projectId: searchedProjectId ?? '',
     });
     onStepChange(step);
   };
@@ -106,10 +108,10 @@ export const SelectDeployment: React.VFC = () => {
       <Description />
       <div className={styles.searchDeployment}>
         <SearchAddress />
-        {searchedDeployment?.projectId && (
-          <DeploymentProject projectId={searchedDeployment?.projectId} deploymentVersion={searchedDeployment.version} />
+        {searchedProjectId && (
+          <DeploymentProject projectId={searchedProjectId} deploymentVersion={searchedDeployment.version} />
         )}
-        <StepButtons curStep={curStep} onStepChange={onNext} disabled={!searchedDeployment?.projectId} />
+        <StepButtons curStep={curStep} onStepChange={onNext} disabled={!searchedProjectId} />
       </div>
     </div>
   );

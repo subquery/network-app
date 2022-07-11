@@ -5,15 +5,47 @@ import * as React from 'react';
 import { Table, TableProps, Tag, Typography } from 'antd';
 import styles from './MissionTable.module.css';
 import { INDEXER_CHALLENGE_DETAILS, PARTICIPANT, missionMapping, MISSION_STATUS, MISSION_TYPE } from '../../constants';
-import { COLORS, convertStringToNumber } from '../../../../utils';
+import { COLORS, convertStringToNumber, parseError } from '../../../../utils';
 import { TableText } from '../../../../components';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
+import { useDeploymentQuery, useProjectMetadata } from '../../../../containers';
+import { Spinner } from '@subql/react-ui';
 
 // TODO: Progress Status should be defined at one place
 const ProgressTag: React.VFC<{ progress: string; color?: string }> = ({ progress, color }) => {
   return <Tag color={color ?? COLORS.gray400}>{progress}</Tag>;
+};
+
+interface IDailyChallenge {
+  mission: string;
+  deploymentId: string;
+}
+const DailyChallenge = ({ mission, deploymentId }: IDailyChallenge) => {
+  const [projectName, setProjectName] = React.useState<string>();
+  const [loading, setIsLoading] = React.useState<boolean>();
+  const deployment = useDeploymentQuery({ deploymentId });
+  const { getMetadataFromCid } = useProjectMetadata();
+
+  React.useEffect(() => {
+    setIsLoading(deployment.loading);
+    async function getProjectInfo() {
+      if (deployment.data) {
+        const projectMeta = deployment.data.deployment?.project?.metadata || '';
+        const project = await getMetadataFromCid(projectMeta);
+        setProjectName(project.name);
+      }
+    }
+    getProjectInfo();
+  }, [deployment.data, deployment.loading, getMetadataFromCid]);
+
+  if (loading) return <Spinner />;
+  if (deployment?.error && !deployment.data)
+    return <Typography.Text type="danger">{parseError(deployment?.error)}</Typography.Text>;
+
+  const sortedMission = `${mission} : ${projectName}`;
+  return <TableText>{sortedMission}</TableText>;
 };
 
 const progressColorMapping = {
@@ -30,7 +62,7 @@ export type Challenge = {
   points: number;
   progress: MISSION_STATUS;
   timestamp?: Date;
-  createAt?: string;
+  deploymentId?: string;
 };
 
 const columns: TableProps<Challenge>['columns'] = [
@@ -44,7 +76,10 @@ const columns: TableProps<Challenge>['columns'] = [
   {
     title: 'MISSION',
     dataIndex: 'mission',
-    render: (mission: string) => {
+    render: (mission: string, challenge: Challenge) => {
+      if (challenge?.deploymentId) {
+        return <DailyChallenge mission={mission} deploymentId={challenge?.deploymentId} />;
+      }
       const description = INDEXER_CHALLENGE_DETAILS[mission]?.description;
       return <TableText tooltip={description}>{mission}</TableText>;
     },
@@ -116,7 +151,6 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
           points: mission.points,
           progress: status,
           timestamp: completedChallenge?.timestamp,
-          createAt: completedChallenge?.timestamp,
         };
       });
     }
@@ -134,24 +168,12 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
           points: dailyChallenge.point,
           progress: MISSION_STATUS.COMPLETED,
           timestamp: dailyChallenge?.timestamp,
-          createAt: dailyChallenge?.timestamp,
+          deploymentId: dailyChallenge?.deploymentId,
         };
       });
     }
     return sortedDailyChallenges;
   }, [dailyChallenges, participant]);
-
-  // TODO: Remove once the duplicate indexerDailyChallenges sorted at backend
-  const filteredDailyChallenges = indexerDailyChallenges.reduce((result, curDailyChallenge) => {
-    const sameDayRecord = result.find((result) =>
-      moment(result?.timestamp).isSame(moment(curDailyChallenge?.timestamp), 'day'),
-    );
-    if (!sameDayRecord) {
-      result.push(curDailyChallenge);
-    }
-
-    return result;
-  }, [] as Array<Challenge>);
 
   return (
     <>
@@ -166,7 +188,7 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
         </div>
       )}
       <div className={styles.container}>
-        <Table columns={columns} dataSource={[...oneOffMissions, ...filteredDailyChallenges]} rowKey={'key'} />
+        <Table columns={columns} dataSource={[...oneOffMissions, ...indexerDailyChallenges]} rowKey={'key'} />
       </div>
     </>
   );
