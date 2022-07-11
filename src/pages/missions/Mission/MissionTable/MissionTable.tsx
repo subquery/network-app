@@ -97,8 +97,6 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
   const { t } = useTranslation();
   const totalPoint = challenges['singleChallengePts'] ?? challenges['totalPoints'] ?? 0;
 
-  console.log('dailyChallenges', dailyChallenges);
-
   const allOneOffMissions = missionMapping[participant];
   const oneOffMissions: Array<Challenge> = React.useMemo(() => {
     let sortedOneOffMissions = [] as Array<Challenge>;
