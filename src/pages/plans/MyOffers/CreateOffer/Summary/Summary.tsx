@@ -124,11 +124,13 @@ export const Summary: React.VFC = () => {
     },
     {
       label: t('myOffers.step_2.indexerCap'),
-      value: t('myOffers.step_2.indexer', { count: offer?.indexerCap }),
+      value: t('myOffers.step_2.indexerCapWithCount', { count: offer?.indexerCap }),
     },
     {
       label: t('myOffers.step_2.minimumIndexedHeight'),
-      value: t('general.block', { count: offer?.minimumIndexedHeight }),
+      value: t('general.blockWithCount', {
+        count: offer?.minimumIndexedHeight,
+      }),
     },
     {
       label: t('myOffers.step_2.expireDate'),

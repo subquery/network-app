@@ -443,8 +443,8 @@ const en = {
         rewardPerIndexerTooltip: 'This is the total amount a indexer will receive from accepting the offer.',
         rewardPerIndexerErrorMsg: 'Please put a valid reward for an indexer.',
         indexerCap: 'Indexer cap',
-        indexer: 'Indexer',
-        indexer_other: 'Indexers',
+        indexerCapWithCount_one: '{{count}} Indexer',
+        indexerCapWithCount_other: '{{count}} Indexers',
         indexerCapTooltip: 'This is the maximum number of indexers that can accept this offers',
         indexerCapErrorMsg: 'Please put a valid indexer cap.',
         totalDeposit: 'Required deposit',
@@ -454,7 +454,7 @@ const en = {
         minimumIndexedHeight: 'Minimum indexed height',
         minimumIndexedHeightTooltip:
           'Only the indexer that has indexed to this block height or above can accept this offer.',
-        minimumIndexedHeightErrorMsg: 'Please put a valid blockHeight.',
+        minimumIndexedHeightErrorMsg: 'Please put a valid block height.',
         expireDate: 'Expiration time',
         expireDateTooltip:
           'Indexer cannot accept this offer after the expiration time. However, the indexer that have already accepted the offer will not be affected.',
@@ -532,7 +532,8 @@ const en = {
       day_other: '{{count}} days',
       block: 'Block',
       blocks: 'Blocks',
-      block_other: '{{count}} Blocks',
+      blockWithCount_one: '{{count}} Block',
+      blockWithCount_other: '{{count}} Blocks',
       balance: 'Balance',
     },
     status: {
