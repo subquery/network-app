@@ -32,9 +32,11 @@ const DailyChallenge = ({ mission, deploymentId }: IDailyChallenge) => {
     setIsLoading(deployment.loading);
     async function getProjectInfo() {
       if (deployment.data) {
+        setIsLoading(true);
         const projectMeta = deployment.data.deployment?.project?.metadata || '';
         const project = await getMetadataFromCid(projectMeta);
         setProjectName(project.name);
+        setIsLoading(false);
       }
     }
     getProjectInfo();
