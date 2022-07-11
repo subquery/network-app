@@ -63,7 +63,10 @@ const GET_DEPLOYMENT = gql`
     deployment(id: $deploymentId) {
       id
       version
-      projectId
+      project {
+        id
+        metadata
+      }
     }
   }
 `;
