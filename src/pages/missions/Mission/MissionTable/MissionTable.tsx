@@ -30,6 +30,7 @@ export type Challenge = {
   points: number;
   progress: MISSION_STATUS;
   timestamp?: Date;
+  createAt?: string;
 };
 
 const columns: TableProps<Challenge>['columns'] = [
@@ -96,6 +97,8 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
   const { t } = useTranslation();
   const totalPoint = challenges['singleChallengePts'] ?? challenges['totalPoints'] ?? 0;
 
+  console.log('dailyChallenges', dailyChallenges);
+
   const allOneOffMissions = missionMapping[participant];
   const oneOffMissions: Array<Challenge> = React.useMemo(() => {
     let sortedOneOffMissions = [] as Array<Challenge>;
@@ -115,6 +118,7 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
           points: mission.points,
           progress: status,
           timestamp: completedChallenge?.timestamp,
+          createAt: completedChallenge?.timestamp,
         };
       });
     }
@@ -126,17 +130,30 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
     if (participant === PARTICIPANT.INDEXER && dailyChallenges && dailyChallenges?.length > 0) {
       sortedDailyChallenges = dailyChallenges.map((dailyChallenge, idx) => {
         return {
-          key: `${dailyChallenge.details}-${dailyChallenge.timestamp}`,
+          key: `${dailyChallenge.details}-${dailyChallenge?.timestamp ?? new Date()}`,
           type: MISSION_TYPE.DAILY,
           mission: dailyChallenge.details,
           points: dailyChallenge.point,
           progress: MISSION_STATUS.COMPLETED,
-          timestamp: dailyChallenge.timestamp,
+          timestamp: dailyChallenge?.timestamp,
+          createAt: dailyChallenge?.timestamp,
         };
       });
     }
     return sortedDailyChallenges;
   }, [dailyChallenges, participant]);
+
+  // TODO: Remove once the duplicate indexerDailyChallenges sorted at backend
+  const filteredDailyChallenges = indexerDailyChallenges.reduce((result, curDailyChallenge) => {
+    const sameDayRecord = result.find((result) =>
+      moment(result?.timestamp).isSame(moment(curDailyChallenge?.timestamp), 'day'),
+    );
+    if (!sameDayRecord) {
+      result.push(curDailyChallenge);
+    }
+
+    return result;
+  }, [] as Array<Challenge>);
 
   return (
     <>
@@ -151,7 +168,7 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
         </div>
       )}
       <div className={styles.container}>
-        <Table columns={columns} dataSource={[...oneOffMissions, ...indexerDailyChallenges]} rowKey={'key'} />
+        <Table columns={columns} dataSource={[...oneOffMissions, ...filteredDailyChallenges]} rowKey={'key'} />
       </div>
     </>
   );
