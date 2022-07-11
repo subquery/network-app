@@ -30,10 +30,11 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
 
   React.useEffect(() => {
     async function getCancelPenalty() {
-      if (contractClient && (pathname === OPEN_OFFERS || pathname === EXPIRED_OFFERS)) {
+      if (contractClient) {
         const offer = convertStringToNumber(offerId);
         const unSpent = await contractClient.cancelOfferUnspentBalance(offer);
         setUnSpent(formatEther(unSpent));
+
         if (pathname === OPEN_OFFERS) {
           const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
           setCancelPenalty(formatEther(cancelPenalty));
@@ -79,7 +80,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const withdrawText = {
     title: t('myOffers.withdraw.modalTitle'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
-    description: t('myOffers.withdraw.description', { amountStr: unSpent }),
+    description: t('myOffers.withdraw.description', { bigNumAmount: unSpent }),
     submitText: t('general.confirm'),
     failureText: t('myOffers.withdraw.failureText'),
   };
