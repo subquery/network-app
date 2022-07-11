@@ -44,7 +44,7 @@ const DailyChallenge = ({ mission, deploymentId }: IDailyChallenge) => {
   if (deployment?.error && !deployment.data)
     return <Typography.Text type="danger">{parseError(deployment?.error)}</Typography.Text>;
 
-  const sortedMission = `${mission} : ${projectName}`;
+  const sortedMission = `${mission} : ${projectName || `Deployment - ${deploymentId}`}`;
   return <TableText>{sortedMission}</TableText>;
 };
 
