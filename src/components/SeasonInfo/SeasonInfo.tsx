@@ -4,6 +4,7 @@
 import { Button } from '@subql/react-ui';
 import moment from 'moment';
 import { SEASONS } from '../../pages/missions/constants';
+import { DATE_FORMAT, DATE_WITH_TIME_FORMAT } from '../../utils';
 import styles from './SeasonInfo.module.css';
 
 const ConButton: React.VFC<{ season: number; viewPrev: () => void; viewCurr: () => void }> = ({
@@ -23,9 +24,8 @@ export const SeasonInfo: React.VFC<{ season: number; viewPrev: any; viewCurr: an
   viewPrev,
   viewCurr,
 }) => {
-  const DATE_FORMAT = 'DD/MM/YYYY';
   const from = moment(SEASONS[season]['from'] ?? undefined).format(DATE_FORMAT);
-  const to = moment(SEASONS[season]['to'] ?? undefined).format(DATE_FORMAT);
+  const to = moment(SEASONS[season]['to'] ?? undefined).format(DATE_WITH_TIME_FORMAT);
 
   return (
     <div>
@@ -36,7 +36,7 @@ export const SeasonInfo: React.VFC<{ season: number; viewPrev: any; viewCurr: an
         {/* NOTE: Hide previous button until ready */}
         {/* <ConButton season={season} viewPrev={viewPrev} viewCurr={viewCurr} /> */}
       </div>
-      <h3>{`Duration: ${from} - ${to}`}</h3>
+      <h3>{`Duration: ${from} - ${to} Local time`}</h3>
       <h3>Data is typically updated every half hour</h3>
     </div>
   );
