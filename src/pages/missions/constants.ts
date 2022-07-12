@@ -80,7 +80,7 @@ type Season = {
 // Share with App global banner
 export const SEASON3 = {
   START: new Date(1656496800000), //'June 29 2022 22:00 NZDT'
-  END: new Date(1657875600000), //July 15 2022 21:00 NZDT
+  END: new Date(1658447940000), //11:59 22Jul 2022 NZDT - 23:59 21Jul 2022 UTC
 };
 
 export const SEASONS: Season = {
