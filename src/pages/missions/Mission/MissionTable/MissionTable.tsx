@@ -130,7 +130,6 @@ export interface MissionTableProps {
   viewCurr?: () => void;
 }
 
-// TODO: ReadonlyArray<any>
 export const MissionTable: React.VFC<MissionTableProps> = ({
   challenges,
   dailyChallenges,

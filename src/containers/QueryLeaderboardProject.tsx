@@ -9,12 +9,16 @@ import {
 } from '../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 import { LEADERBOARD_CLIENT } from './QueryApolloProvider';
 
+// TODO: skip & take for pagination
 const GET_S3_CHALLENGE_RANKS = gql`
-  query GetS3ChallengeRanks($participant: String!, $offset: Int) {
-    S3Challenges(roleCategory: $participant, orderBy: TOTAL_PTS_DESC, offset: $offset) {
+  query GetS3ChallengeRanks($roleCategory: ROLE_CATEGORY!) {
+    S3Challenges(roleCategory: $roleCategory, orderBy: TOTAL_PTS_DESC, take: 2000) {
       consumerTotalPoints
       delegatorTotalPoints
       indexerTotalPoints
+      id
+      name
+      url
     }
   }
 `;

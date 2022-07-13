@@ -22,8 +22,6 @@ import {
 } from '../../../containers/QuerySeason3Project';
 import { renderAsync } from '../../../utils';
 
-export const tabList = [PARTICIPANT.INDEXER, PARTICIPANT.DELEGATOR, PARTICIPANT.CONSUMER];
-
 export const MISSION_ROUTE = `/missions/my-missions`;
 const INDEXER_PARTICIPANT = `${MISSION_ROUTE}/indexer`;
 const DELEGATOR_PARTICIPANT = `${MISSION_ROUTE}/delegator`;
@@ -94,7 +92,7 @@ export const TabContent: React.VFC<TabContentProps> = ({
   );
 };
 
-const SortedTabContent: React.FC = ({ children }) => {
+export const SortedTabContent: React.FC = ({ children }) => {
   return (
     <div className={styles.tabContent}>
       <SeasonInfo season={CURR_SEASON} viewPrev={undefined} viewCurr={undefined} />

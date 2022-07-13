@@ -7,10 +7,9 @@ import styles from './User.module.css';
 import { CurEra } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { Breadcrumb } from 'antd';
-// import { useParticipantChallenges } from '../../../containers';
 import { Link } from 'react-router-dom';
-import { LEADERBOARD_ROUTE } from '..';
 import { TabContent } from '../Mission';
+import { LEADERBOARD_ROUTE } from '../Leaderboard';
 
 // TODO: replace Jazzicon with connectedIndexer
 export const User: React.VFC = () => {
