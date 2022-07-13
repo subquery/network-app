@@ -8,7 +8,7 @@ import { CurEra } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
-import { TabContent } from '../Mission';
+// import { TabContent } from '../Mission';
 import { LEADERBOARD_ROUTE } from '../Leaderboard';
 
 // TODO: replace Jazzicon with connectedIndexer
@@ -45,7 +45,7 @@ export const User: React.VFC = () => {
             </div>
           </div>
         </div>
-        <TabContent completedMissions={completedMissions} indexer={indexer} season={sortedSeason} />
+        {/* <TabContent completedMissions={completedMissions} indexer={indexer} season={sortedSeason} /> */}
       </>
     </>
   );

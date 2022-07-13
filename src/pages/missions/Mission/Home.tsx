@@ -33,66 +33,7 @@ const buttonLinks = [
   { label: getCapitalizedStr(PARTICIPANT.CONSUMER), link: CONSUMER_PARTICIPANT },
 ];
 
-//TODO: add dataType for participate & indexer and refactor data extraction
-//TODO: viewPrev, viewCurr not been used
-interface TabContentProps {
-  participant?: PARTICIPANT;
-  completedMissions: any;
-  indexer: any;
-  seasonInfo?: boolean;
-  season: number;
-}
-export const TabContent: React.VFC<TabContentProps> = ({
-  participant = PARTICIPANT.INDEXER,
-  completedMissions,
-  indexer,
-  seasonInfo,
-  season,
-}) => {
-  const isLoading = completedMissions?.loading || indexer?.loading;
-
-  const data = { ...completedMissions.data };
-
-  const totalPoints = indexer?.data?.indexerS3Challenges?.totalPoints ?? 0;
-  const singlePoints = indexer?.data?.indexerS3Challenges?.singlePoints ?? 0;
-  const indexerSingleChallengePts = data?.indexer?.singleChallengePts ?? 0;
-  const indexerTotal = totalPoints - singlePoints + indexerSingleChallengePts;
-
-  data.indexer = { ...data.indexer, dailyChallenges: indexer?.data?.indexerS3Challenges?.challenges };
-  data.indexer.singleChallengePts = indexerTotal;
-
-  const sortedData = data[participant] || [];
-  const dailyChallenges = data[PARTICIPANT.INDEXER].dailyChallenges;
-
-  const MainContent = () => {
-    if (isLoading) {
-      return <Spinner />;
-    }
-    return (
-      <>
-        {seasonInfo && <SeasonInfo season={season} viewPrev={undefined} viewCurr={undefined} />}
-        {sortedData && (
-          <MissionTable
-            participant={participant}
-            challenges={sortedData}
-            dailyChallenges={dailyChallenges}
-            season={season}
-            viewPrev={undefined}
-            viewCurr={undefined}
-          />
-        )}
-      </>
-    );
-  };
-
-  return (
-    <div className={styles.container}>
-      <MainContent />
-    </div>
-  );
-};
-
-export const SortedTabContent: React.FC = ({ children }) => {
+export const TabContent: React.FC = ({ children }) => {
   return (
     <div className={styles.tabContent}>
       <SeasonInfo season={CURR_SEASON} viewPrev={undefined} viewCurr={undefined} />
@@ -122,7 +63,7 @@ const Missions = ({ account, queryChallengesFn, participant, queryDataKey, query
   const dailyChallenges = queryDailyChallengesFn ? queryDailyChallengesFn({ account }) : undefined;
 
   return (
-    <SortedTabContent>
+    <TabContent>
       {renderAsync(challenges, {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenges: ${e.message}`}</Typography.Text>,
@@ -142,7 +83,7 @@ const Missions = ({ account, queryChallengesFn, participant, queryDataKey, query
           );
         },
       })}
-    </SortedTabContent>
+    </TabContent>
   );
 };
 

@@ -10,7 +10,7 @@ import { CURR_SEASON, PARTICIPANT, ROLE_CATEGORY, SEASONS } from '../../constant
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 import { getCapitalizedStr, renderAsync } from '../../../../utils';
 import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProject';
-import { SortedTabContent } from '../../Mission';
+import { TabContent } from '../../Mission';
 import { Table, Typography } from 'antd';
 import { Address } from '@subql/react-ui';
 import { TableTitle } from '../../../../components/TableTitle';
@@ -61,7 +61,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
   const s3Ranks = useS3ChallengeRanks({ roleCategory: participant });
 
   return (
-    <SortedTabContent>
+    <TabContent>
       {renderAsync(s3Ranks, {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenge ranks: ${e.message}`}</Typography.Text>,
@@ -81,7 +81,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
           );
         },
       })}
-    </SortedTabContent>
+    </TabContent>
   );
 };
 
