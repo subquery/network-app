@@ -153,7 +153,7 @@ const en = {
       button: 'Switch Network',
     },
     indexerProgress: {
-      blocks_one: '1 block behind',
+      projectSynced: 'Up to date',
       blocks_other: '{{count}} blocks behind',
     },
     deployments: {
