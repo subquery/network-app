@@ -11,9 +11,13 @@ import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
-import { LOCK_STATUS } from '../Home';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
+
+export enum LOCK_STATUS {
+  LOCK = 'lock',
+  UNLOCK = 'UNLOCK',
+}
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
