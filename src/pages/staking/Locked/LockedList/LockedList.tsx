@@ -14,6 +14,11 @@ import { TableText } from '../../../../components';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
+export enum LOCK_STATUS {
+  LOCK = 'lock',
+  UNLOCK = 'UNLOCK',
+}
+
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
   endAt: string;
