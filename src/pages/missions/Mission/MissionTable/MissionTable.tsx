@@ -4,7 +4,14 @@
 import * as React from 'react';
 import { Table, TableProps, Tag, Typography } from 'antd';
 import styles from './MissionTable.module.css';
-import { INDEXER_CHALLENGE_DETAILS, PARTICIPANT, missionMapping, MISSION_STATUS, MISSION_TYPE } from '../../constants';
+import {
+  INDEXER_CHALLENGE_DETAILS,
+  PARTICIPANT,
+  missionMapping,
+  MISSION_STATUS,
+  MISSION_TYPE,
+  CURR_SEASON,
+} from '../../constants';
 import { COLORS, convertStringToNumber, parseError } from '../../../../utils';
 import { TableText } from '../../../../components';
 import i18next from 'i18next';
@@ -12,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useDeploymentQuery, useProjectMetadata } from '../../../../containers';
 import { Spinner } from '@subql/react-ui';
+import { GetS3ParticipantDailyChallenges_S3Challenge_indexerDailyChallenges as IndexerDailyChallenge } from '../../../../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 
 // TODO: Progress Status should be defined at one place
 const ProgressTag: React.VFC<{ progress: string; color?: string }> = ({ progress, color }) => {
@@ -112,11 +120,12 @@ const columns: TableProps<Challenge>['columns'] = [
 
 // TODO: remove any type
 export interface MissionTableProps {
-  challenges: { singleChallenges?: Array<any>; singleChallengePts?: number; totalPoints?: number };
-  dailyChallenges?: Array<any>;
+  challenges: { singleChallenges?: Array<any>; singleChallengePts?: number };
+  dailyChallenges?: ReadonlyArray<IndexerDailyChallenge>;
   participant: PARTICIPANT;
   hideTotalPoints?: boolean;
-  season: number;
+  totalPoint?: number;
+  season?: number;
   viewPrev?: () => void;
   viewCurr?: () => void;
 }
@@ -127,12 +136,12 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
   dailyChallenges,
   participant,
   hideTotalPoints,
-  season,
+  totalPoint,
+  season = CURR_SEASON,
   viewPrev,
   viewCurr,
 }) => {
   const { t } = useTranslation();
-  const totalPoint = challenges['singleChallengePts'] ?? challenges['totalPoints'] ?? 0;
 
   const allOneOffMissions = missionMapping[participant];
   const oneOffMissions: Array<Challenge> = React.useMemo(() => {
@@ -167,7 +176,7 @@ export const MissionTable: React.VFC<MissionTableProps> = ({
           key: `${dailyChallenge.details}-${dailyChallenge?.timestamp ?? new Date()}`,
           type: MISSION_TYPE.DAILY,
           mission: dailyChallenge.details,
-          points: dailyChallenge.point,
+          points: dailyChallenge.points,
           progress: MISSION_STATUS.COMPLETED,
           timestamp: dailyChallenge?.timestamp,
           deploymentId: dailyChallenge?.deploymentId,

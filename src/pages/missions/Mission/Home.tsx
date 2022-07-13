@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { Typography } from 'antd';
 import { useS3DailyChallenges, useWeb3 } from '../../../containers';
 import { AppPageHeader, TabButtons } from '../../../components';
 import styles from './Home.module.css';
@@ -19,7 +20,7 @@ import {
   useS3DelegatorChallenges,
   useS3IndexerChallenges,
 } from '../../../containers/QuerySeason3Project';
-// import { useS3ConsumerPoints, useS3DelegatorPoints } from '../../../containers/QuerySeason3Project';
+import { renderAsync } from '../../../utils';
 
 export const tabList = [PARTICIPANT.INDEXER, PARTICIPANT.DELEGATOR, PARTICIPANT.CONSUMER];
 
@@ -93,56 +94,65 @@ export const TabContent: React.VFC<TabContentProps> = ({
   );
 };
 
+const SortedTabContent: React.FC = ({ children }) => {
+  return (
+    <div className={styles.tabContent}>
+      <SeasonInfo season={CURR_SEASON} viewPrev={undefined} viewCurr={undefined} />
+      <div className={styles.content}>{children}</div>
+    </div>
+  );
+};
+
+//TODO: queryChallengesFn: typeof useS3DelegatorChallenges, typeof useS3ConsumerChallenges, typeof useS3IndexerChallenges
+//TODO: dataKey replacement
+//TODO: remove any
+enum DATA_QUERY_KEY {
+  INDEXER = 'indexer',
+  DELEGATOR = 'delegator',
+  CONSUMER = 'consumer',
+}
 interface MissionsProps {
   account: string;
-  queryChallengesFn: typeof useS3IndexerChallenges | typeof useS3ConsumerChallenges | typeof useS3DelegatorChallenges;
+  participant: PARTICIPANT;
+  queryDataKey: DATA_QUERY_KEY;
+  queryChallengesFn: any;
+  queryDailyChallengesFn?: typeof useS3DailyChallenges;
 }
 
-const Missions = ({ account, queryChallengesFn }: MissionsProps) => {
+const Missions = ({ account, queryChallengesFn, participant, queryDataKey, queryDailyChallengesFn }: MissionsProps) => {
   const challenges = queryChallengesFn({ account });
-  console.log('challenges', challenges);
+  const dailyChallenges = queryDailyChallengesFn ? queryDailyChallengesFn({ account }) : undefined;
 
-  return <div>{'missions'}</div>;
+  return (
+    <SortedTabContent>
+      {renderAsync(challenges, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography.Text type="danger">{`Failed to load challenges: ${e.message}`}</Typography.Text>,
+        data: (data: any) => {
+          const challenges = data[queryDataKey];
+          const totalPoint =
+            queryDataKey === DATA_QUERY_KEY.INDEXER && dailyChallenges?.data
+              ? dailyChallenges?.data.S3Challenge.indexerTotalPoints
+              : challenges.singleChallengePts;
+          return (
+            <MissionTable
+              participant={participant}
+              challenges={challenges}
+              totalPoint={totalPoint}
+              dailyChallenges={dailyChallenges?.data?.S3Challenge.indexerDailyChallenges}
+            />
+          );
+        },
+      })}
+    </SortedTabContent>
+  );
 };
 
-interface IndexerMissionsProps extends MissionsProps {
-  queryDailyChallengesFn: typeof useS3DailyChallenges;
-}
-
-const IndexerMissions = ({ account, queryChallengesFn, queryDailyChallengesFn }: IndexerMissionsProps) => {
-  const challenges = queryChallengesFn({ account });
-  const dailyChallenges = queryDailyChallengesFn({ account });
-  console.log('challenges', challenges);
-  console.log('dailyChallenges', dailyChallenges);
-
-  return <div>{'IndexerMissions'}</div>;
-};
-
-//TODO: make data fetch separately
+// TODO: move no account wallet handler here
 export const Home: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [season, setSeason] = useState(CURR_SEASON);
-  // const [completedMissions, indexer] = useParticipantChallenges(season, { indexerId: account ?? '' });
-
-  // ISSUE: CAN NOT GET Incomplete chanllenge to display, review the whole code
-  // const consumer = useS3ConsumerChallenges({ account: account ?? '' });
-  // const delegator = useS3DelegatorPoints({ account: account ?? '' });
-
-  // const viewPrev = () => setSeason(season - 1);
-  // const viewCurr = () => setSeason(CURR_SEASON);
-
-  const SortedTableContent = ({ participant }: { participant: PARTICIPANT }) => {
-    return (
-      <TabContent
-        completedMissions={[]} //completedMissions
-        indexer={[]} //indexer
-        participant={participant}
-        season={season}
-        seasonInfo
-      />
-    );
-  };
 
   return (
     <>
@@ -157,26 +167,39 @@ export const Home: React.VFC = () => {
         <Route
           exact
           path={INDEXER_PARTICIPANT}
-          // component={() => <SortedTableContent participant={PARTICIPANT.INDEXER} />}
           component={() => (
-            <IndexerMissions
+            <Missions
               account={account ?? ''}
+              queryDataKey={DATA_QUERY_KEY.INDEXER}
               queryChallengesFn={useS3IndexerChallenges}
               queryDailyChallengesFn={useS3DailyChallenges}
+              participant={PARTICIPANT.INDEXER}
             />
           )}
         />
         <Route
           exact
           path={DELEGATOR_PARTICIPANT}
-          // component={() => <SortedTableContent participant={PARTICIPANT.DELEGATOR} />}
-          component={() => <Missions account={account ?? ''} queryChallengesFn={useS3DelegatorChallenges} />}
+          component={() => (
+            <Missions
+              queryDataKey={DATA_QUERY_KEY.DELEGATOR}
+              account={account ?? ''}
+              queryChallengesFn={useS3DelegatorChallenges}
+              participant={PARTICIPANT.DELEGATOR}
+            />
+          )}
         />
         <Route
           exact
           path={CONSUMER_PARTICIPANT}
-          // component={() => <SortedTableContent participant={PARTICIPANT.CONSUMER} />}
-          component={() => <Missions account={account ?? ''} queryChallengesFn={useS3ConsumerChallenges} />}
+          component={() => (
+            <Missions
+              account={account ?? ''}
+              queryDataKey={DATA_QUERY_KEY.CONSUMER}
+              queryChallengesFn={useS3ConsumerChallenges}
+              participant={PARTICIPANT.CONSUMER}
+            />
+          )}
         />
         <Redirect from={MISSION_ROUTE} to={INDEXER_PARTICIPANT} />
       </Switch>
