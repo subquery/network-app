@@ -7,13 +7,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3, useWithdrawls } from '../../../../containers';
 import { defaultLockPeriod, useLockPeriod } from '../../../../hooks';
-import { mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '../../../../utils';
+import { LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import { LockedList } from '../LockedList';
-
-export enum LOCK_STATUS {
-  LOCK = 'lock',
-  UNLOCK = 'UNLOCK',
-}
 
 // TODO: refactor mapAsync & remove defaultLockPeriod
 export const Locked: React.VFC = () => {

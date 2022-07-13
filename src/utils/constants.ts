@@ -3,3 +3,8 @@
 
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_WITH_TIME_FORMAT = 'DD/MM/YYYY hh:mm:ss A';
+
+export enum LOCK_STATUS {
+  LOCK = 'lock',
+  UNLOCK = 'UNLOCK',
+}
