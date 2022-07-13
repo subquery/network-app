@@ -58,6 +58,14 @@ export enum MISSION_TYPE {
   DAILY = 'Daily',
 }
 
+// TODO: definition from leaderboard graphql
+// TODO: expose from leaderboard backend
+export enum ROLE_CATEGORY {
+  INDEXER = 'INDEXER',
+  DELEGATOR = 'DELEGATOR',
+  CONSUMER = 'CONSUMER',
+}
+
 export enum PARTICIPANT {
   INDEXER = 'indexer',
   DELEGATOR = 'delegator',

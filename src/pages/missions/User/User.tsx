@@ -7,15 +7,14 @@ import styles from './User.module.css';
 import { CurEra } from '../../../components';
 import Jazzicon from 'react-jazzicon';
 import { Breadcrumb } from 'antd';
-import { useParticipantChallenges } from '../../../containers';
 import { Link } from 'react-router-dom';
-import { LEADERBOARD_ROUTE } from '..';
-import { TabContent } from '../Mission';
+// import { TabContent } from '../Mission';
+import { LEADERBOARD_ROUTE } from '../Leaderboard';
 
 // TODO: replace Jazzicon with connectedIndexer
 export const User: React.VFC = () => {
   const { season, id } = useParams<{ season: string; id: string }>();
-  const [completedMissions, indexer] = useParticipantChallenges(Number(season), { indexerId: id }); //TODO: rethink about the structure
+  const [completedMissions, indexer] = [[], []]; // useParticipantChallenges(Number(season), { indexerId: id }); //TODO: rethink about the structure
   const sortedSeason = Number(season);
 
   const history = useHistory();
@@ -46,7 +45,7 @@ export const User: React.VFC = () => {
             </div>
           </div>
         </div>
-        <TabContent completedMissions={completedMissions} indexer={indexer} season={sortedSeason} />
+        {/* <TabContent completedMissions={completedMissions} indexer={indexer} season={sortedSeason} /> */}
       </>
     </>
   );

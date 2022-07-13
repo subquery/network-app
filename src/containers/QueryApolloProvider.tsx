@@ -5,6 +5,10 @@ import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } fro
 import { offsetLimitPagination } from '@apollo/client/utilities';
 import React from 'react';
 
+export const LEADERBOARD_CLIENT = 'leaderboard';
+export const SEASON_2_CLIENT = 'season2';
+export const SEASON_3_CLIENT = 'season3';
+
 export const QueryApolloProvider: React.FC = (props) => {
   const registryLink = new HttpLink({
     uri: process.env.REACT_APP_QUERY_REGISTRY_PROJECT,
@@ -24,13 +28,13 @@ export const QueryApolloProvider: React.FC = (props) => {
 
   const client = new ApolloClient({
     link: ApolloLink.split(
-      (operation) => operation.getContext().clientName === 'leaderboard',
+      (operation) => operation.getContext().clientName === LEADERBOARD_CLIENT,
       leaderboardLink, // will use this link if client name specified in useQuery
       ApolloLink.split(
-        (operation) => operation.getContext().clientName === 'leaderboardS2',
+        (operation) => operation.getContext().clientName === SEASON_2_CLIENT,
         season2Link,
         ApolloLink.split(
-          (operation) => operation.getContext().clientName === 'leaderboardS3',
+          (operation) => operation.getContext().clientName === SEASON_3_CLIENT,
           season3Link,
           registryLink, // default link
         ),

@@ -1,25 +1,18 @@
-.grayText {
-  color: var(--gray500);
-}
-
 .tabList {
   display: flex;
   margin-top: 2rem;
   text-align: center;
 }
 
-.tab {
-  background: white;
-  min-width: 5rem;
-  padding: 1rem 1rem 0 1rem;
-  cursor: pointer;
+.address {
+  display: flex;
+  align-items: center;
 }
 
-.tabText {
-  margin-bottom: 0.5rem;
+.copy {
+  margin-left: 5px;
 }
 
-.line {
-  background: var(--sq-gradient);
-  height: 2px;
+.copyIcon {
+  font-size: 10px;
 }

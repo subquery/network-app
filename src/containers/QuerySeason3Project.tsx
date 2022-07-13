@@ -2,27 +2,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
-import { GetConsumerPointsVariables, GetConsumerPoints } from '../__generated__/leaderboard-season3/GetConsumerPoints';
 import {
-  GetDelegatorPointsVariables,
-  GetDelegatorPoints,
-} from '../__generated__/leaderboard-season3/GetDelegatorPoints';
+  GetConsumerChallengesVariables,
+  GetConsumerChallenges,
+} from '../__generated__/leaderboard-season3/GetConsumerChallenges';
+import {
+  GetDelegatorChallengesVariables,
+  GetDelegatorChallenges,
+} from '../__generated__/leaderboard-season3/GetDelegatorChallenges';
 
-export const GET_PARTICIPANT_CHALLENGES_S3 = gql`
-  query GetSingleChallengesS3($indexerId: String!) {
-    indexer(id: $indexerId) {
-      id
-      singleChallengePts
-      singleChallenges
-    }
+import {
+  GetIndexerChallengesVariables,
+  GetIndexerChallenges,
+} from '../__generated__/leaderboard-season3/GetIndexerChallenges';
+import { SEASON_3_CLIENT } from './QueryApolloProvider';
 
-    delegator(id: $indexerId) {
-      id
-      singleChallengePts
-      singleChallenges
-    }
-
-    consumer(id: $indexerId) {
+const GET_INDEXER_CHALLENGES = gql`
+  query GetIndexerChallenges($account: String!) {
+    indexer(id: $account) {
       id
       singleChallengePts
       singleChallenges
@@ -30,42 +27,43 @@ export const GET_PARTICIPANT_CHALLENGES_S3 = gql`
   }
 `;
 
-const CHALLENGE_POINTS = gql`
-  fragment challengePoints on Consumer {
-    id
-    singleChallengePts
-    singleChallenges
-  }
-`;
-
-const GET_CONSUMER_POINTS = gql`
-  ${CHALLENGE_POINTS}
-  query GetConsumerPoints($account: String!) {
+const GET_CONSUMER_CHALLENGES = gql`
+  query GetConsumerChallenges($account: String!) {
     consumer(id: $account) {
-      ...challengePoints
+      id
+      singleChallengePts
+      singleChallenges
     }
   }
 `;
 
-const GET_DELEGATOR_POINTS = gql`
-  ${CHALLENGE_POINTS}
-  query GetDelegatorPoints($account: String!) {
-    consumer(id: $account) {
-      ...challengePoints
+const GET_DELEGATOR_CHALLENGES = gql`
+  query GetDelegatorChallenges($account: String!) {
+    delegator(id: $account) {
+      id
+      singleChallengePts
+      singleChallenges
     }
   }
 `;
 
-export function useConsumerPoints(params: GetConsumerPointsVariables): QueryResult<GetConsumerPoints> {
-  return useQuery<GetConsumerPoints, GetConsumerPointsVariables>(GET_CONSUMER_POINTS, {
+export function useS3IndexerChallenges(params: GetIndexerChallengesVariables): QueryResult<GetIndexerChallenges> {
+  return useQuery<GetIndexerChallenges, GetIndexerChallengesVariables>(GET_INDEXER_CHALLENGES, {
     variables: params,
-    context: { clientName: 'leaderboardS3' },
+    context: { clientName: SEASON_3_CLIENT },
   });
 }
 
-export function useDelegatorPoints(params: GetDelegatorPointsVariables): QueryResult<GetDelegatorPoints> {
-  return useQuery<GetDelegatorPoints, GetDelegatorPointsVariables>(GET_DELEGATOR_POINTS, {
+export function useS3ConsumerChallenges(params: GetConsumerChallengesVariables): QueryResult<GetConsumerChallenges> {
+  return useQuery<GetConsumerChallenges, GetConsumerChallengesVariables>(GET_CONSUMER_CHALLENGES, {
     variables: params,
-    context: { clientName: 'leaderboardS3' },
+    context: { clientName: SEASON_3_CLIENT },
+  });
+}
+
+export function useS3DelegatorChallenges(params: GetDelegatorChallengesVariables): QueryResult<GetDelegatorChallenges> {
+  return useQuery<GetDelegatorChallenges, GetDelegatorChallengesVariables>(GET_DELEGATOR_CHALLENGES, {
+    variables: params,
+    context: { clientName: SEASON_3_CLIENT },
   });
 }

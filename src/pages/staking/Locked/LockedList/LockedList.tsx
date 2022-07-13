@@ -5,7 +5,7 @@ import { Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { convertStringToNumber, formatEther } from '../../../../utils';
+import { convertStringToNumber, formatEther, LOCK_STATUS } from '../../../../utils';
 import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '../../../../__generated__/registry/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
