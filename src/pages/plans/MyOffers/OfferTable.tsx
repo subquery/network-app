@@ -156,7 +156,9 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       ),
       width: 180,
       render: (minimumAcceptHeight) => (
-        <TableText content={i18next.t('general.block', { count: convertBigNumberToNumber(minimumAcceptHeight) })} />
+        <TableText
+          content={i18next.t('general.blockWithCount', { count: convertBigNumberToNumber(minimumAcceptHeight) })}
+        />
       ),
     },
     {

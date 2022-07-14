@@ -533,7 +533,7 @@ const en = {
       day_other: '{{count}} days',
       block: 'Block',
       blocks: 'Blocks',
-      blockWithCount_one: '{{count}} Block',
+      blockWithCount: '{{count}} Block',
       blockWithCount_other: '{{count}} Blocks',
       balance: 'Balance',
     },
