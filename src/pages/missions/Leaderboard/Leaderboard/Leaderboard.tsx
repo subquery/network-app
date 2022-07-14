@@ -4,8 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { Table, Typography } from 'antd';
-import { Address } from '@subql/react-ui';
+import { Table, TableProps, Typography } from 'antd';
 import { AppPageHeader, Copy, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
@@ -16,65 +15,35 @@ import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProj
 import { TabContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
 import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
-import { GetS3ChallengeRanks_S3Challenges as S3Ranks } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
+import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
+import { IndexerName } from '../../../../components/IndexerDetails/IndexerName';
 
-// TODO: rank id with same points
-// TODO: name with account col
-// TODO: totalCount field,otherwise no pagination feature
-const getColumns = (participant: ROLE_CATEGORY, curPage = 1) => {
-  const columns = [
+const getColumns = () => {
+  const columns: TableProps<S3Rank>['columns'] = [
     {
-      title: <TableTitle title="#" />,
-      dataIndex: 'id',
+      title: <TableTitle title="rank" />,
+      dataIndex: 'rank',
       width: '10%',
-      render: (_: string, __: any, idx: number) => <TableText>{(curPage - 1) * 10 + (idx + 1)}</TableText>,
+      render: (rank: number) => <TableText>{rank}</TableText>,
     },
     {
       title: <TableTitle title="account" />,
       dataIndex: 'id',
-      render: (account: string) => (
+      render: (account: string, rank: S3Rank) => (
         <div className={styles.address}>
-          <Address address={account} truncated={false} size={'large'} />
-          <Copy value={account} className={styles.copy} iconClassName={styles.copyIcon} />
+          <IndexerName address={account} name={rank.name} fullAddress />
         </div>
       ),
     },
-  ];
-
-  const indexerCols = [
     {
       title: <TableTitle title="points" />,
-      dataIndex: 'indexerTotalPoints',
-      sorter: (a: S3Ranks, b: S3Ranks) => a.indexerTotalPoints - b.indexerTotalPoints,
+      dataIndex: 'totalPoints',
+      sorter: (a: S3Rank, b: S3Rank) => a.totalPoints - b.totalPoints,
       render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
     },
   ];
 
-  const consumerCols = [
-    {
-      title: <TableTitle title="points" />,
-      dataIndex: 'consumerTotalPoints',
-      sorter: (a: S3Ranks, b: S3Ranks) => a.consumerTotalPoints - b.consumerTotalPoints,
-      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
-    },
-  ];
-
-  const delegatorCols = [
-    {
-      title: <TableTitle title="points" />,
-      dataIndex: 'delegatorTotalPoints',
-      sorter: (a: S3Ranks, b: S3Ranks) => a.delegatorTotalPoints - b.delegatorTotalPoints,
-      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
-    },
-  ];
-
-  const dataKeyMapping = {
-    [ROLE_CATEGORY.INDEXER]: [...columns, ...indexerCols],
-    [ROLE_CATEGORY.CONSUMER]: [...columns, ...consumerCols],
-    [ROLE_CATEGORY.DELEGATOR]: [...columns, ...delegatorCols],
-  };
-
-  return dataKeyMapping[participant];
+  return columns;
 };
 
 interface RanksProps {
@@ -92,8 +61,8 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
         data: (data) => {
           return (
             <Table
-              columns={getColumns(participant, curPage)}
-              dataSource={data.S3Challenges}
+              columns={getColumns()}
+              dataSource={data.S3Challenges.challenges}
               key="id"
               pagination={{
                 onChange(current) {
