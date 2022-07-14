@@ -18,11 +18,13 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
     [startBlock, currentBlock, targetBlock],
   );
 
+  const blocksBehind = Math.max(targetBlock - currentBlock, 0);
+
   return (
     <div className={styles.progress}>
       <ProgressBar progress={maxProgress} className={styles.progressBar} />
       <Typography variant="medium" className={styles.behind}>
-        {t('indexerProgress.blocks', { count: Math.max(targetBlock - currentBlock, 0) })}
+        {blocksBehind > 0 ? t('indexerProgress.blocks', { count: blocksBehind }) : t('indexerProgress.projectSynced')}
       </Typography>
     </div>
   );
