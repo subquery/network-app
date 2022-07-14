@@ -154,6 +154,7 @@ const en = {
     },
     indexerProgress: {
       projectSynced: 'Up to date',
+      blocks: '{{count}} block behind',
       blocks_other: '{{count}} blocks behind',
     },
     deployments: {
