@@ -16,17 +16,12 @@ import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProj
 import { TabContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
 import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
+import { GetS3ChallengeRanks_S3Challenges as S3Ranks } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
 
 // TODO: rank id with same points
 // TODO: name with account col
 // TODO: totalCount field,otherwise no pagination feature
 const getColumns = (participant: ROLE_CATEGORY, curPage = 1) => {
-  const dataKeyMapping = {
-    [ROLE_CATEGORY.INDEXER]: 'indexerTotalPoints',
-    [ROLE_CATEGORY.CONSUMER]: 'consumerTotalPoints',
-    [ROLE_CATEGORY.DELEGATOR]: 'delegatorTotalPoints',
-  };
-
   const columns = [
     {
       title: <TableTitle title="#" />,
@@ -44,14 +39,42 @@ const getColumns = (participant: ROLE_CATEGORY, curPage = 1) => {
         </div>
       ),
     },
+  ];
+
+  const indexerCols = [
     {
       title: <TableTitle title="points" />,
-      dataIndex: dataKeyMapping[participant],
+      dataIndex: 'indexerTotalPoints',
+      sorter: (a: S3Ranks, b: S3Ranks) => a.indexerTotalPoints - b.indexerTotalPoints,
       render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
     },
   ];
 
-  return columns;
+  const consumerCols = [
+    {
+      title: <TableTitle title="points" />,
+      dataIndex: 'consumerTotalPoints',
+      sorter: (a: S3Ranks, b: S3Ranks) => a.consumerTotalPoints - b.consumerTotalPoints,
+      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
+    },
+  ];
+
+  const delegatorCols = [
+    {
+      title: <TableTitle title="points" />,
+      dataIndex: 'delegatorTotalPoints',
+      sorter: (a: S3Ranks, b: S3Ranks) => a.delegatorTotalPoints - b.delegatorTotalPoints,
+      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
+    },
+  ];
+
+  const dataKeyMapping = {
+    [ROLE_CATEGORY.INDEXER]: [...columns, ...indexerCols],
+    [ROLE_CATEGORY.CONSUMER]: [...columns, ...consumerCols],
+    [ROLE_CATEGORY.DELEGATOR]: [...columns, ...delegatorCols],
+  };
+
+  return dataKeyMapping[participant];
 };
 
 interface RanksProps {
