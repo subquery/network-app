@@ -4,17 +4,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
+import { Table, Typography } from 'antd';
+import { Address } from '@subql/react-ui';
 import { AppPageHeader, Copy, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
-import { CURR_SEASON, PARTICIPANT, ROLE_CATEGORY, SEASONS } from '../../constants';
+import i18next from 'i18next';
+import { CURR_SEASON, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 import { getCapitalizedStr, renderAsync } from '../../../../utils';
 import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProject';
 import { TabContent } from '../../Mission';
-import { Table, Typography } from 'antd';
-import { Address } from '@subql/react-ui';
 import { TableTitle } from '../../../../components/TableTitle';
-import i18next from 'i18next';
+import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
 
 // TODO: rank id with same points
 // TODO: name with account col
