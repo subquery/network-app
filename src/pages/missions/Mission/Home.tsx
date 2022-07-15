@@ -9,7 +9,15 @@ import styles from './Home.module.css';
 import { Spinner } from '@subql/react-ui';
 import { useTranslation } from 'react-i18next';
 import { getCapitalizedStr } from '../../../utils';
-import { CURR_SEASON, PARTICIPANT, SEASONS } from '../constants';
+import {
+  CURR_SEASON,
+  MISSION_ROUTE,
+  OWN_CONSUMER_PARTICIPANT,
+  OWN_DELEGATOR_PARTICIPANT,
+  OWN_INDEXER_PARTICIPANT,
+  PARTICIPANT,
+  SEASONS,
+} from '../constants';
 import { useState } from 'react';
 import { SeasonProgress } from '../../../components/SeasonProgress/SeasonProgress';
 import { SeasonInfo } from '../../../components/SeasonInfo/SeasonInfo';
@@ -22,18 +30,7 @@ import {
 } from '../../../containers/QuerySeason3Project';
 import { renderAsync } from '../../../utils';
 
-export const MISSION_ROUTE = `/missions/my-missions`;
-const INDEXER_PARTICIPANT = `${MISSION_ROUTE}/indexer`;
-const DELEGATOR_PARTICIPANT = `${MISSION_ROUTE}/delegator`;
-const CONSUMER_PARTICIPANT = `${MISSION_ROUTE}/consumer`;
-
-const buttonLinks = [
-  { label: getCapitalizedStr(PARTICIPANT.INDEXER), link: INDEXER_PARTICIPANT },
-  { label: getCapitalizedStr(PARTICIPANT.DELEGATOR), link: DELEGATOR_PARTICIPANT },
-  { label: getCapitalizedStr(PARTICIPANT.CONSUMER), link: CONSUMER_PARTICIPANT },
-];
-
-export const TabContent: React.FC = ({ children }) => {
+export const SeasonContent: React.FC = ({ children }) => {
   return (
     <div className={styles.tabContent}>
       <SeasonInfo season={CURR_SEASON} viewPrev={undefined} viewCurr={undefined} />
@@ -63,7 +60,7 @@ const Missions = ({ account, queryChallengesFn, participant, queryDataKey, query
   const dailyChallenges = queryDailyChallengesFn ? queryDailyChallengesFn({ account }) : undefined;
 
   return (
-    <TabContent>
+    <SeasonContent>
       {renderAsync(challenges, {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenges: ${e.message}`}</Typography.Text>,
@@ -72,7 +69,7 @@ const Missions = ({ account, queryChallengesFn, participant, queryDataKey, query
           const totalPoint =
             queryDataKey === DATA_QUERY_KEY.INDEXER && dailyChallenges?.data
               ? dailyChallenges?.data.S3Challenge.indexerTotalPoints
-              : challenges.singleChallengePts;
+              : challenges?.singleChallengePts;
           return (
             <MissionTable
               participant={participant}
@@ -83,7 +80,70 @@ const Missions = ({ account, queryChallengesFn, participant, queryDataKey, query
           );
         },
       })}
-    </TabContent>
+    </SeasonContent>
+  );
+};
+
+interface HomeProps {
+  account: string;
+  indexerPath: string;
+  delegatorPath: string;
+  consumerPath: string;
+  rootPath?: string;
+}
+
+export const MissionTabs: React.FC<HomeProps> = ({ account, rootPath, indexerPath, delegatorPath, consumerPath }) => {
+  const buttonLinks = [
+    { label: getCapitalizedStr(PARTICIPANT.INDEXER), link: indexerPath },
+    { label: getCapitalizedStr(PARTICIPANT.DELEGATOR), link: delegatorPath },
+    { label: getCapitalizedStr(PARTICIPANT.CONSUMER), link: consumerPath },
+  ];
+  return (
+    <>
+      <div className={styles.tabList}>
+        <TabButtons tabs={buttonLinks} whiteTab />
+      </div>
+      <Switch>
+        <Route
+          exact
+          path={indexerPath}
+          component={() => (
+            <Missions
+              account={account ?? ''}
+              queryDataKey={DATA_QUERY_KEY.INDEXER}
+              queryChallengesFn={useS3IndexerChallenges}
+              queryDailyChallengesFn={useS3DailyChallenges}
+              participant={PARTICIPANT.INDEXER}
+            />
+          )}
+        />
+        <Route
+          exact
+          path={delegatorPath}
+          component={() => (
+            <Missions
+              queryDataKey={DATA_QUERY_KEY.DELEGATOR}
+              account={account ?? ''}
+              queryChallengesFn={useS3DelegatorChallenges}
+              participant={PARTICIPANT.DELEGATOR}
+            />
+          )}
+        />
+        <Route
+          exact
+          path={consumerPath}
+          component={() => (
+            <Missions
+              account={account ?? ''}
+              queryDataKey={DATA_QUERY_KEY.CONSUMER}
+              queryChallengesFn={useS3ConsumerChallenges}
+              participant={PARTICIPANT.CONSUMER}
+            />
+          )}
+        />
+        {rootPath && <Redirect from={rootPath} to={indexerPath} />}
+      </Switch>
+    </>
   );
 };
 
@@ -98,50 +158,13 @@ export const Home: React.VFC = () => {
       <AppPageHeader title={t('header.missions')} />
       <SeasonProgress timePeriod={SEASONS[season]} />
 
-      <div className={styles.tabList}>
-        <TabButtons tabs={buttonLinks} whiteTab />
-      </div>
-
-      <Switch>
-        <Route
-          exact
-          path={INDEXER_PARTICIPANT}
-          component={() => (
-            <Missions
-              account={account ?? ''}
-              queryDataKey={DATA_QUERY_KEY.INDEXER}
-              queryChallengesFn={useS3IndexerChallenges}
-              queryDailyChallengesFn={useS3DailyChallenges}
-              participant={PARTICIPANT.INDEXER}
-            />
-          )}
-        />
-        <Route
-          exact
-          path={DELEGATOR_PARTICIPANT}
-          component={() => (
-            <Missions
-              queryDataKey={DATA_QUERY_KEY.DELEGATOR}
-              account={account ?? ''}
-              queryChallengesFn={useS3DelegatorChallenges}
-              participant={PARTICIPANT.DELEGATOR}
-            />
-          )}
-        />
-        <Route
-          exact
-          path={CONSUMER_PARTICIPANT}
-          component={() => (
-            <Missions
-              account={account ?? ''}
-              queryDataKey={DATA_QUERY_KEY.CONSUMER}
-              queryChallengesFn={useS3ConsumerChallenges}
-              participant={PARTICIPANT.CONSUMER}
-            />
-          )}
-        />
-        <Redirect from={MISSION_ROUTE} to={INDEXER_PARTICIPANT} />
-      </Switch>
+      <MissionTabs
+        account={account ?? ''}
+        indexerPath={OWN_INDEXER_PARTICIPANT}
+        delegatorPath={OWN_DELEGATOR_PARTICIPANT}
+        consumerPath={OWN_CONSUMER_PARTICIPANT}
+        rootPath={MISSION_ROUTE}
+      />
     </>
   );
 };

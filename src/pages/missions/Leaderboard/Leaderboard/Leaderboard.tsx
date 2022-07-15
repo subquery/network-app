@@ -3,16 +3,16 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch, useHistory } from 'react-router';
 import { Table, TableProps, Typography } from 'antd';
 import { AppPageHeader, Copy, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
-import { CURR_SEASON, PARTICIPANT, SEASONS } from '../../constants';
+import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 import { getCapitalizedStr, renderAsync } from '../../../../utils';
 import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProject';
-import { TabContent } from '../../Mission';
+import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
 import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
 import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
@@ -51,10 +51,11 @@ interface RanksProps {
 }
 const Ranks: React.VFC<RanksProps> = ({ participant }) => {
   const [curPage, setCurPage] = React.useState<number>(1);
+  const history = useHistory();
   const s3Ranks = useS3ChallengeRanks({ roleCategory: participant });
 
   return (
-    <TabContent>
+    <SeasonContent>
       {renderAsync(s3Ranks, {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenge ranks: ${e.message}`}</Typography.Text>,
@@ -70,15 +71,19 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
                 },
                 showSizeChanger: false,
               }}
+              onRow={(record) => {
+                return {
+                  onClick: () => history.push(`${MISSION_ROUTE}/${CURR_SEASON}/${record.id}`),
+                };
+              }}
             />
           );
         },
       })}
-    </TabContent>
+    </SeasonContent>
   );
 };
 
-export const LEADERBOARD_ROUTE = `/missions/ranks`;
 const INDEXER_PARTICIPANTS = `${LEADERBOARD_ROUTE}/indexer`;
 const DELEGATOR_PARTICIPANTS = `${LEADERBOARD_ROUTE}/delegator`;
 const CONSUMER_PARTICIPANTS = `${LEADERBOARD_ROUTE}/consumer`;
@@ -89,6 +94,7 @@ const buttonLinks = [
   { label: getCapitalizedStr(PARTICIPANT.CONSUMER), link: CONSUMER_PARTICIPANTS },
 ];
 
+// TODO: curSeason can make as hook.context
 export const Leaderboard: React.VFC = () => {
   const { t } = useTranslation();
   const [season, setSeason] = React.useState(CURR_SEASON);
