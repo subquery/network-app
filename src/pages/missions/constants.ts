@@ -1,6 +1,14 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// Path
+export const ROOT_ROUTE = '/missions';
+export const MISSION_ROUTE = `/missions/my-missions`;
+export const LEADERBOARD_ROUTE = `/missions/ranks`;
+export const OWN_INDEXER_PARTICIPANT = `${MISSION_ROUTE}/indexer`;
+export const OWN_DELEGATOR_PARTICIPANT = `${MISSION_ROUTE}/delegator`;
+export const OWN_CONSUMER_PARTICIPANT = `${MISSION_ROUTE}/consumer`;
+
 interface MISSION {
   points: number;
   description: string;
@@ -46,26 +54,6 @@ export const CONSUMER_CHALLENGE_DETAILS: MISSIONS = {
   WITHDRAW_PURCHASE_OFFER: { points: 30, description: 'Withdraw SQT locked in the offer after it expires' },
 };
 
-export enum MISSION_STATUS {
-  INCOMPLETE = 'Incomplete',
-  COMPLETED = 'Completed',
-  EXPIRED = 'Expired',
-}
-
-// TODO: make 'one-off', 'daily' as i18n
-export enum MISSION_TYPE {
-  ONE_OFF = 'One-off',
-  DAILY = 'Daily',
-}
-
-// TODO: definition from leaderboard graphql
-// TODO: expose from leaderboard backend
-export enum ROLE_CATEGORY {
-  INDEXER = 'INDEXER',
-  DELEGATOR = 'DELEGATOR',
-  CONSUMER = 'CONSUMER',
-}
-
 export enum PARTICIPANT {
   INDEXER = 'indexer',
   DELEGATOR = 'delegator',
@@ -77,6 +65,18 @@ export const missionMapping = {
   [PARTICIPANT.DELEGATOR]: DELEGATOR_CHALLENGE_DETAILS,
   [PARTICIPANT.CONSUMER]: CONSUMER_CHALLENGE_DETAILS,
 };
+
+export enum MISSION_STATUS {
+  INCOMPLETE = 'Incomplete',
+  COMPLETED = 'Completed',
+  EXPIRED = 'Expired',
+}
+
+// TODO: make 'one-off', 'daily' as i18n
+export enum MISSION_TYPE {
+  ONE_OFF = 'One-off',
+  DAILY = 'Daily',
+}
 
 type Season = {
   [key: number]: {

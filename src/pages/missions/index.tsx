@@ -7,11 +7,11 @@ import { Redirect, Route, Switch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckSquare, AiOutlineTrophy } from 'react-icons/ai';
 import { AppSidebar } from '../../components';
-import { User } from './User';
-import { Leaderboard, LEADERBOARD_ROUTE } from './Leaderboard';
-import { Home, MISSION_ROUTE } from './Mission';
-
-export const ROOT_ROUTE = '/missions';
+import { Participant } from './Participant';
+import { Leaderboard } from './Leaderboard';
+import { Home } from './Mission';
+import { LEADERBOARD_ROUTE, MISSION_ROUTE, ROOT_ROUTE } from './constants';
+import { WalletRoute } from '../../WalletRoute';
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();
@@ -33,9 +33,9 @@ const Container: React.VFC = () => {
     <EraProvider>
       <AppSidebar list={sidebarList}>
         <Switch>
-          <Route path="/missions/season/:season/user/:id" children={<User />} />
           <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
-          <Route path={MISSION_ROUTE} component={Home} />
+          <Route path={`${MISSION_ROUTE}/:season/:account`} children={<Participant />} />
+          <WalletRoute path={MISSION_ROUTE} component={Home} />
           <Redirect from={ROOT_ROUTE} to={MISSION_ROUTE} />
         </Switch>
       </AppSidebar>

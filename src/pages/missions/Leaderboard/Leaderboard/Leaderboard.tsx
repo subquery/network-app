@@ -3,50 +3,48 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
-import { AppPageHeader, Copy, Spinner, TabButtons, TableText } from '../../../../components';
+import { Redirect, Route, Switch, useHistory } from 'react-router';
+import { Table, TableProps, Typography } from 'antd';
+import { AppPageHeader, SearchInput, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
-import { CURR_SEASON, PARTICIPANT, ROLE_CATEGORY, SEASONS } from '../../constants';
+import i18next from 'i18next';
+import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 import { getCapitalizedStr, renderAsync } from '../../../../utils';
-import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProject';
-import { TabContent } from '../../Mission';
-import { Table, Typography } from 'antd';
-import { Address } from '@subql/react-ui';
+import { useS3ChallengeRanks, useS3DailyChallenges } from '../../../../containers/QueryLeaderboardProject';
+import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
-import i18next from 'i18next';
+import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
+import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
+import { GetS3ParticipantDailyChallenges_S3Challenge as S3AccountRank } from '../../../../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
+import { IndexerName } from '../../../../components/IndexerDetails/IndexerName';
 
-// TODO: rank id with same points
-// TODO: name with account col
-// TODO: totalCount field,otherwise no pagination feature
-const getColumns = (participant: ROLE_CATEGORY, curPage = 1) => {
-  const dataKeyMapping = {
-    [ROLE_CATEGORY.INDEXER]: 'indexerTotalPoints',
-    [ROLE_CATEGORY.CONSUMER]: 'consumerTotalPoints',
-    [ROLE_CATEGORY.DELEGATOR]: 'delegatorTotalPoints',
-  };
-
-  const columns = [
+const getColumns = (history: ReturnType<typeof useHistory>) => {
+  const columns: TableProps<S3Rank | S3AccountRank>['columns'] = [
     {
-      title: <TableTitle title="#" />,
-      dataIndex: 'id',
+      title: <TableTitle title="rank" />,
+      dataIndex: 'rank',
       width: '10%',
-      render: (_: string, __: any, idx: number) => <TableText>{(curPage - 1) * 10 + (idx + 1)}</TableText>,
+      render: (rank: number) => <TableText>{rank}</TableText>,
     },
     {
       title: <TableTitle title="account" />,
       dataIndex: 'id',
-      render: (account: string) => (
+      render: (account, rank) => (
         <div className={styles.address}>
-          <Address address={account} truncated={false} size={'large'} />
-          <Copy value={account} className={styles.copy} iconClassName={styles.copyIcon} />
+          <IndexerName address={account} name={rank.name} fullAddress />
         </div>
       ),
     },
     {
       title: <TableTitle title="points" />,
-      dataIndex: dataKeyMapping[participant],
-      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
+      dataIndex: 'totalPoints',
+      sorter: (a, b) => a.totalPoints - b.totalPoints,
+      render: (points, rank) => (
+        <div className={styles.points} onClick={() => history.push(`${MISSION_ROUTE}/${CURR_SEASON}/${rank.id}`)}>
+          {i18next.t('missions.point', { count: points })}
+        </div>
+      ),
     },
   ];
 
@@ -57,35 +55,81 @@ interface RanksProps {
   participant: ROLE_CATEGORY;
 }
 const Ranks: React.VFC<RanksProps> = ({ participant }) => {
+  const { t } = useTranslation();
   const [curPage, setCurPage] = React.useState<number>(1);
+  const history = useHistory();
   const s3Ranks = useS3ChallengeRanks({ roleCategory: participant });
 
+  /**
+   * SearchInput logic
+   * TODO: add filter to `S3Challenges` resolver to make table accept Type align
+   */
+  const [searchAccount, setSearchAccount] = React.useState<string | undefined>();
+  const [searchError, setSearchError] = React.useState<string | undefined>();
+  const searchedRank = useS3DailyChallenges({ account: searchAccount ?? '', roleCategory: participant });
+
+  const SearchAccountRank = () => (
+    <div className={styles.accountSearch}>
+      <SearchInput
+        onSearch={(value: string) => {
+          setSearchAccount(value);
+        }}
+        defaultValue={searchAccount}
+        loading={searchedRank.loading}
+        emptyResult={searchedRank.data === undefined}
+        placeholder={'Search address...'}
+      />
+    </div>
+  );
+
+  /**
+   * SearchInput logic end
+   */
+
+  React.useEffect(() => {
+    if (searchedRank.error) {
+      setSearchError(searchedRank.error.message || 'Error: failed to search');
+    }
+  }, [searchedRank.error]);
+
   return (
-    <TabContent>
+    <SeasonContent>
       {renderAsync(s3Ranks, {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenge ranks: ${e.message}`}</Typography.Text>,
         data: (data) => {
+          const sortedData = searchedRank.data?.S3Challenge
+            ? [searchedRank.data?.S3Challenge]
+            : data.S3Challenges.challenges;
+
+          const totalCount = sortedData?.length;
           return (
-            <Table
-              columns={getColumns(participant, curPage)}
-              dataSource={data.S3Challenges}
-              key="id"
-              pagination={{
-                onChange(current) {
-                  setCurPage(current);
-                },
-                showSizeChanger: false,
-              }}
-            />
+            <>
+              <div className={styles.header}>
+                <Typography.Title level={3}>
+                  {t('missions.participant', { count: totalCount || 0, role: participant.toLowerCase() })}
+                </Typography.Title>
+                <SearchAccountRank />
+              </div>
+              <Table
+                columns={getColumns(history)}
+                dataSource={sortedData}
+                key="id"
+                pagination={{
+                  onChange(current) {
+                    setCurPage(current);
+                  },
+                  showSizeChanger: false,
+                }}
+              />
+            </>
           );
         },
       })}
-    </TabContent>
+    </SeasonContent>
   );
 };
 
-export const LEADERBOARD_ROUTE = `/missions/ranks`;
 const INDEXER_PARTICIPANTS = `${LEADERBOARD_ROUTE}/indexer`;
 const DELEGATOR_PARTICIPANTS = `${LEADERBOARD_ROUTE}/delegator`;
 const CONSUMER_PARTICIPANTS = `${LEADERBOARD_ROUTE}/consumer`;
@@ -96,6 +140,7 @@ const buttonLinks = [
   { label: getCapitalizedStr(PARTICIPANT.CONSUMER), link: CONSUMER_PARTICIPANTS },
 ];
 
+// TODO: curSeason can make as hook.context
 export const Leaderboard: React.VFC = () => {
   const { t } = useTranslation();
   const [season, setSeason] = React.useState(CURR_SEASON);

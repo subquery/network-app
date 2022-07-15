@@ -4,15 +4,16 @@
   text-align: center;
 }
 
-.address {
+.points {
+  color: var(--primary);
+}
+
+.accountSearch {
+  width: 430px;
+}
+
+.header {
   display: flex;
-  align-items: center;
-}
-
-.copy {
-  margin-left: 5px;
-}
-
-.copyIcon {
-  font-size: 10px;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }

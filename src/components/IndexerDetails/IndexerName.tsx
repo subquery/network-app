@@ -13,22 +13,23 @@ type Props = {
   name?: string;
   image?: string;
   address: string;
+  fullAddress?: boolean;
   onAddressClick?: (address: string) => void;
 };
 
-export const IndexerName: React.FC<Props> = ({ name, image, address, onAddressClick }) => {
+export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress, onAddressClick }) => {
   return (
     <div className={styles.indexer}>
       <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
       <div className={styles.indexerText}>
-        <Typography>{name}</Typography>
+        {name && <Typography>{name}</Typography>}
         <div className={styles.addressCont}>
           <Typography
             variant="small"
             className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
             onClick={() => onAddressClick && onAddressClick(address)}
           >
-            {truncateAddress(address)}
+            {fullAddress ? address : truncateAddress(address)}
           </Typography>
           <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon} />
         </div>

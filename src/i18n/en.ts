@@ -295,6 +295,8 @@ const en = {
       totalPoint: 'Total point:',
       point: 'point',
       point_other: '{{count}} points',
+      participant: 'There is {{count}} {{role}}',
+      participant_other: 'There are {{count}} {{role}}s',
     },
 
     plans: {

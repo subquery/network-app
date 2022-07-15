@@ -8,16 +8,18 @@ import styles from './AppPageHeader.module.css';
 import { CurEra } from '../CurEra';
 
 type Props = {
-  title: string;
+  title: string | React.ReactNode;
 };
 
 export const AppPageHeader: React.VFC<Props> = ({ title }) => {
   return (
     <div className={styles.header}>
-      {title && (
+      {title && typeof title === 'string' ? (
         <Typography variant="h5" className={clsx(styles.title, styles.text)}>
           {title}
         </Typography>
+      ) : (
+        <>{title}</>
       )}
 
       <CurEra />
