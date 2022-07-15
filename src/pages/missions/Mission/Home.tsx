@@ -29,6 +29,7 @@ import {
   useS3IndexerChallenges,
 } from '../../../containers/QuerySeason3Project';
 import { renderAsync } from '../../../utils';
+import { ROLE_CATEGORY } from '../../../__generated__/leaderboard/globalTypes.d';
 
 export const SeasonContent: React.FC = ({ children }) => {
   return (
@@ -57,7 +58,9 @@ interface MissionsProps {
 
 const Missions = ({ account, queryChallengesFn, participant, queryDataKey, queryDailyChallengesFn }: MissionsProps) => {
   const challenges = queryChallengesFn({ account });
-  const dailyChallenges = queryDailyChallengesFn ? queryDailyChallengesFn({ account }) : undefined;
+  const dailyChallenges = queryDailyChallengesFn
+    ? queryDailyChallengesFn({ account, roleCategory: ROLE_CATEGORY.INDEXER })
+    : undefined;
 
   return (
     <SeasonContent>

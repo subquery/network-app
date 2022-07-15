@@ -36,8 +36,8 @@ const GET_S3_CHALLENGE_RANKS = gql`
 `;
 
 const GET_S3_PARTICIPANT_DAILY_CHALLENGES = gql`
-  query GetS3ParticipantDailyChallenges($account: String!) {
-    S3Challenge(id: $account) {
+  query GetS3ParticipantDailyChallenges($account: String!, $roleCategory: ROLE_CATEGORY!) {
+    S3Challenge(id: $account, roleCategory: $roleCategory) {
       consumerTotalPoints
       delegatorTotalPoints
       indexerTotalPoints
@@ -73,6 +73,7 @@ export function useS3DailyChallenges(
     {
       variables: params,
       context: { clientName: LEADERBOARD_CLIENT },
+      fetchPolicy: 'network-only',
     },
   );
 }

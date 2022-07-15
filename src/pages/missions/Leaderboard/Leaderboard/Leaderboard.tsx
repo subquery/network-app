@@ -66,7 +66,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
    */
   const [searchAccount, setSearchAccount] = React.useState<string | undefined>();
   const [searchError, setSearchError] = React.useState<string | undefined>();
-  const searchedRank = useS3DailyChallenges({ account: searchAccount ?? '' });
+  const searchedRank = useS3DailyChallenges({ account: searchAccount ?? '', roleCategory: participant });
 
   const SearchAccountRank = () => (
     <div className={styles.accountSearch}>
@@ -92,8 +92,6 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
     }
   }, [searchedRank.error]);
 
-  console.log('searchedRank', searchedRank);
-
   return (
     <SeasonContent>
       {renderAsync(s3Ranks, {
@@ -111,7 +109,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
                 <Typography.Title level={3}>
                   {t('missions.participant', { count: totalCount || 0, role: participant.toLowerCase() })}
                 </Typography.Title>
-                {/* <SearchAccountRank /> */}
+                <SearchAccountRank />
               </div>
               <Table
                 columns={getColumns(history)}

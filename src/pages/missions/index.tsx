@@ -11,6 +11,7 @@ import { Participant } from './Participant';
 import { Leaderboard } from './Leaderboard';
 import { Home } from './Mission';
 import { LEADERBOARD_ROUTE, MISSION_ROUTE, ROOT_ROUTE } from './constants';
+import { WalletRoute } from '../../WalletRoute';
 
 const Container: React.VFC = () => {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ const Container: React.VFC = () => {
         <Switch>
           <Route path={LEADERBOARD_ROUTE} component={Leaderboard} />
           <Route path={`${MISSION_ROUTE}/:season/:account`} children={<Participant />} />
-          <Route path={MISSION_ROUTE} component={Home} />
+          <WalletRoute path={MISSION_ROUTE} component={Home} />
           <Redirect from={ROOT_ROUTE} to={MISSION_ROUTE} />
         </Switch>
       </AppSidebar>
