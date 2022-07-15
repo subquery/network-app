@@ -5,21 +5,22 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory } from 'react-router';
 import { Table, TableProps, Typography } from 'antd';
-import { AppPageHeader, Spinner, TabButtons, TableText } from '../../../../components';
+import { AppPageHeader, SearchInput, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
 import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
 import { getCapitalizedStr, renderAsync } from '../../../../utils';
-import { useS3ChallengeRanks } from '../../../../containers/QueryLeaderboardProject';
+import { useS3ChallengeRanks, useS3DailyChallenges } from '../../../../containers/QueryLeaderboardProject';
 import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
 import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes.d';
 import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
+import { GetS3ParticipantDailyChallenges_S3Challenge as S3AccountRank } from '../../../../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 import { IndexerName } from '../../../../components/IndexerDetails/IndexerName';
 
-const getColumns = () => {
-  const columns: TableProps<S3Rank>['columns'] = [
+const getColumns = (history: ReturnType<typeof useHistory>) => {
+  const columns: TableProps<S3Rank | S3AccountRank>['columns'] = [
     {
       title: <TableTitle title="rank" />,
       dataIndex: 'rank',
@@ -29,7 +30,7 @@ const getColumns = () => {
     {
       title: <TableTitle title="account" />,
       dataIndex: 'id',
-      render: (account: string, rank: S3Rank) => (
+      render: (account, rank) => (
         <div className={styles.address}>
           <IndexerName address={account} name={rank.name} fullAddress />
         </div>
@@ -38,8 +39,12 @@ const getColumns = () => {
     {
       title: <TableTitle title="points" />,
       dataIndex: 'totalPoints',
-      sorter: (a: S3Rank, b: S3Rank) => a.totalPoints - b.totalPoints,
-      render: (points: number) => <div className={styles.points}>{i18next.t('missions.point', { count: points })}</div>,
+      sorter: (a, b) => a.totalPoints - b.totalPoints,
+      render: (points, rank) => (
+        <div className={styles.points} onClick={() => history.push(`${MISSION_ROUTE}/${CURR_SEASON}/${rank.id}`)}>
+          {i18next.t('missions.point', { count: points })}
+        </div>
+      ),
     },
   ];
 
@@ -50,9 +55,44 @@ interface RanksProps {
   participant: ROLE_CATEGORY;
 }
 const Ranks: React.VFC<RanksProps> = ({ participant }) => {
+  const { t } = useTranslation();
   const [curPage, setCurPage] = React.useState<number>(1);
   const history = useHistory();
   const s3Ranks = useS3ChallengeRanks({ roleCategory: participant });
+
+  /**
+   * SearchInput logic
+   * TODO: add filter to `S3Challenges` resolver to make table accept Type align
+   */
+  const [searchAccount, setSearchAccount] = React.useState<string | undefined>();
+  const [searchError, setSearchError] = React.useState<string | undefined>();
+  const searchedRank = useS3DailyChallenges({ account: searchAccount ?? '' });
+
+  const SearchAccountRank = () => (
+    <div className={styles.accountSearch}>
+      <SearchInput
+        onSearch={(value: string) => {
+          setSearchAccount(value);
+        }}
+        defaultValue={searchAccount}
+        loading={searchedRank.loading}
+        emptyResult={searchedRank.data === undefined}
+        placeholder={'Search address...'}
+      />
+    </div>
+  );
+
+  /**
+   * SearchInput logic end
+   */
+
+  React.useEffect(() => {
+    if (searchedRank.error) {
+      setSearchError(searchedRank.error.message || 'Error: failed to search');
+    }
+  }, [searchedRank.error]);
+
+  console.log('searchedRank', searchedRank);
 
   return (
     <SeasonContent>
@@ -60,23 +100,31 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
         loading: () => <Spinner />,
         error: (e) => <Typography.Text type="danger">{`Failed to load challenge ranks: ${e.message}`}</Typography.Text>,
         data: (data) => {
+          const sortedData = searchedRank.data?.S3Challenge
+            ? [searchedRank.data?.S3Challenge]
+            : data.S3Challenges.challenges;
+
+          const totalCount = sortedData?.length;
           return (
-            <Table
-              columns={getColumns()}
-              dataSource={data.S3Challenges.challenges}
-              key="id"
-              pagination={{
-                onChange(current) {
-                  setCurPage(current);
-                },
-                showSizeChanger: false,
-              }}
-              onRow={(record) => {
-                return {
-                  onClick: () => history.push(`${MISSION_ROUTE}/${CURR_SEASON}/${record.id}`),
-                };
-              }}
-            />
+            <>
+              <div className={styles.header}>
+                <Typography.Title level={3}>
+                  {t('missions.participant', { count: totalCount || 0, role: participant.toLowerCase() })}
+                </Typography.Title>
+                {/* <SearchAccountRank /> */}
+              </div>
+              <Table
+                columns={getColumns(history)}
+                dataSource={sortedData}
+                key="id"
+                pagination={{
+                  onChange(current) {
+                    setCurPage(current);
+                  },
+                  showSizeChanger: false,
+                }}
+              />
+            </>
           );
         },
       })}

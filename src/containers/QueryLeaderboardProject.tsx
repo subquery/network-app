@@ -41,9 +41,11 @@ const GET_S3_PARTICIPANT_DAILY_CHALLENGES = gql`
       consumerTotalPoints
       delegatorTotalPoints
       indexerTotalPoints
+      totalPoints
       id
       name
       url
+      rank
       indexerDailyChallenges {
         points
         title

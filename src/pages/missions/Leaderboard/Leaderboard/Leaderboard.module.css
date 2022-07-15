@@ -7,3 +7,13 @@
 .points {
   color: var(--primary);
 }
+
+.accountSearch {
+  width: 430px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
