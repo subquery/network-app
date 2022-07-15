@@ -4,15 +4,6 @@
   text-align: center;
 }
 
-.address {
-  display: flex;
-  align-items: center;
-}
-
-.copy {
-  margin-left: 5px;
-}
-
-.copyIcon {
-  font-size: 10px;
+.points {
+  color: var(--primary);
 }

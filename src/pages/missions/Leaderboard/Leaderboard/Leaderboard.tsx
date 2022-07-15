@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory } from 'react-router';
 import { Table, TableProps, Typography } from 'antd';
-import { AppPageHeader, Copy, Spinner, TabButtons, TableText } from '../../../../components';
+import { AppPageHeader, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
 import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
@@ -39,7 +39,7 @@ const getColumns = () => {
       title: <TableTitle title="points" />,
       dataIndex: 'totalPoints',
       sorter: (a: S3Rank, b: S3Rank) => a.totalPoints - b.totalPoints,
-      render: (points: number) => <TableText>{i18next.t('missions.point', { count: points })}</TableText>,
+      render: (points: number) => <div className={styles.points}>{i18next.t('missions.point', { count: points })}</div>,
     },
   ];
 
