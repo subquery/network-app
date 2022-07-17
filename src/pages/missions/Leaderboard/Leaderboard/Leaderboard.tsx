@@ -19,6 +19,7 @@ import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../
 import { GetS3ParticipantDailyChallenges_S3Challenge as S3AccountRank } from '../../../../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 import { IndexerName } from '../../../../components/IndexerDetails/IndexerName';
 import { notification } from 'antd';
+import { Link } from 'react-router-dom';
 
 const getColumns = (history: ReturnType<typeof useHistory>) => {
   const columns: TableProps<S3Rank | S3AccountRank>['columns'] = [
@@ -42,9 +43,13 @@ const getColumns = (history: ReturnType<typeof useHistory>) => {
       dataIndex: 'totalPoints',
       sorter: (a, b) => a.totalPoints - b.totalPoints,
       render: (points, rank) => (
-        <div className={styles.points} onClick={() => history.push(`${MISSION_ROUTE}/${CURR_SEASON}/${rank.id}`)}>
+        <Link
+          onClick={(e) => e.stopPropagation()}
+          className={styles.points}
+          to={`${MISSION_ROUTE}/${CURR_SEASON}/${rank.id}`}
+        >
           {i18next.t('missions.point', { count: points })}
-        </div>
+        </Link>
       ),
     },
   ];
