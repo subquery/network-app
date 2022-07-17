@@ -10,7 +10,7 @@ import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
 import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
-import { getCapitalizedStr, renderAsync } from '../../../../utils';
+import { COLORS, getCapitalizedStr, renderAsync } from '../../../../utils';
 import { useS3ChallengeRanks, useS3DailyChallenges } from '../../../../containers/QueryLeaderboardProject';
 import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
@@ -18,6 +18,7 @@ import { ROLE_CATEGORY } from '../../../../__generated__/leaderboard/globalTypes
 import { GetS3ChallengeRanks_S3Challenges_challenges as S3Rank } from '../../../../__generated__/leaderboard/GetS3ChallengeRanks';
 import { GetS3ParticipantDailyChallenges_S3Challenge as S3AccountRank } from '../../../../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 import { IndexerName } from '../../../../components/IndexerDetails/IndexerName';
+import { notification } from 'antd';
 
 const getColumns = (history: ReturnType<typeof useHistory>) => {
   const columns: TableProps<S3Rank | S3AccountRank>['columns'] = [
@@ -51,9 +52,19 @@ const getColumns = (history: ReturnType<typeof useHistory>) => {
   return columns;
 };
 
+const openNotification = (address: string) => {
+  notification.open({
+    message: i18next.t('missions.clipboard'),
+    description: address,
+    duration: 3,
+    style: { borderBottom: `4px solid ${COLORS.primary}` },
+  });
+};
+
 interface RanksProps {
   participant: ROLE_CATEGORY;
 }
+
 const Ranks: React.VFC<RanksProps> = ({ participant }) => {
   const { t } = useTranslation();
   const [curPage, setCurPage] = React.useState<number>(1);
@@ -115,6 +126,14 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
                 columns={getColumns(history)}
                 dataSource={sortedData}
                 key="id"
+                onRow={(record) => {
+                  return {
+                    onClick: async () => {
+                      await navigator.clipboard.writeText(record.id);
+                      openNotification(record.id);
+                    },
+                  };
+                }}
                 pagination={{
                   onChange(current) {
                     setCurPage(current);
