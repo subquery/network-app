@@ -15,7 +15,7 @@ import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../../components/NumberInput';
-import { parseRawEraValue } from '../../../../hooks/useEraValue';
+import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { BigNumber, BigNumberish } from 'ethers';
 
 export const AddressName: React.VFC<{
@@ -75,6 +75,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
+  console.log('indexerDelegation', indexerDelegation);
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -152,10 +153,17 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   data: (data) => {
                     const sortedDelegations =
                       data.delegations?.nodes
+                        .map((delegation) => ({
+                          ...delegation,
+                          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, curEra), (v) =>
+                            convertStringToNumber(formatEther(v ?? 0)),
+                          ),
+                        }))
                         .filter(
                           (delegation) =>
-                            delegation?.indexerId !== indexerAddress &&
-                            delegation?.delegatorId !== delegation?.indexerId,
+                            (delegation.value.current || delegation.value.after) &&
+                            delegation.indexerId !== account &&
+                            delegation?.indexerId !== indexerAddress,
                         )
                         .map((delegation) => delegation?.indexerId) ?? [];
 
