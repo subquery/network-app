@@ -15,7 +15,8 @@ import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../../components/NumberInput';
-import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
+import { parseRawEraValue } from '../../../../hooks/useEraValue';
+import { BigNumber, BigNumberish } from 'ethers';
 
 export const AddressName: React.VFC<{
   address?: string;
@@ -42,6 +43,7 @@ type DelegateFormData = yup.Asserts<typeof delegateSchema>;
 
 type FormProps = {
   indexerAddress: string;
+  indexerCapacity?: BigNumberish;
   delegatedAmount: number;
   onSubmit: (data: DelegateFormData) => void | Promise<void>;
   onCancel?: () => void;
@@ -49,10 +51,17 @@ type FormProps = {
   curEra?: number;
 };
 
+/**
+ *
+ * TODO: refactor DelegateForm and DoDelegate with latest design change
+ * DoDelegate cal indexer's info
+ * DelegateForm cal account's info - latest design, should engage a better solution
+ */
 export const DelegateForm: React.VFC<FormProps> = ({
   curEra,
   onSubmit,
   indexerAddress,
+  indexerCapacity = BigNumber.from(0),
   delegatedAmount,
   onCancel,
   error,
@@ -70,20 +79,24 @@ export const DelegateForm: React.VFC<FormProps> = ({
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
     const rawDelegate = parseRawEraValue(indexerDelegation?.data?.delegation?.amount, curEra);
-    const currentDelegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
-    return currentDelegate;
+    return rawDelegate;
   };
 
   const isYourself = delegateFrom === account;
-  let maxAmount: number | undefined, maxAmountText: string | undefined;
+  let maxAmount: BigNumberish | undefined;
 
-  if (!isYourself) {
-    const sortedIndexrDelegation = getIndexerDelegation();
-    maxAmount = sortedIndexrDelegation?.after;
-    maxAmountText = `Your delegation: ${sortedIndexrDelegation?.after} SQT (next era).`;
+  if (isYourself) {
+    maxAmount = balance.data;
   } else {
-    maxAmount = convertStringToNumber(formatEther(balance.data ?? 0));
+    const indexerDelegation = getIndexerDelegation();
+    maxAmount = indexerDelegation?.after;
   }
+
+  const sortedMaxAmount = convertStringToNumber(
+    formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? 0,
+  );
+
+  const maxAmountText = `Max available delegation: ${sortedMaxAmount} SQT (next era).`;
 
   const summaryList = [
     {
@@ -175,10 +188,10 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   value: values.input,
 
                   disabled: isSubmitting,
-                  max: account && maxAmount ? maxAmount : undefined,
+                  max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                   min: 0,
                 }}
-                maxAmount={account ? maxAmount : undefined}
+                maxAmount={account ? sortedMaxAmount : undefined}
                 maxAmountText={maxAmountText}
                 onClickMax={(value) => {
                   setErrors({ input: undefined });

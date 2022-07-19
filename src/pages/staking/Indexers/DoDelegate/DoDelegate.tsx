@@ -13,6 +13,7 @@ import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus
 import { Spinner, Typography } from '@subql/react-ui';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
+import { useIndexerCapacity } from '../../../../hooks';
 
 interface DoDelegateProps {
   indexerAddress: string;
@@ -28,6 +29,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const delegation = useDelegation(account ?? '', indexerAddress);
+  const indexerCapacity = useIndexerCapacity(indexerAddress);
 
   const modalText = requireTokenApproval
     ? tokenApprovalModalText
@@ -53,11 +55,11 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
     return contracts.staking.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra), {
+  return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra, indexerCapacity), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const [r, d, era] = data;
+      const [r, d, era, capacity] = data;
       const isActionDisabled = !stakingAllowance.data || !r?.hasClaimedRewards;
 
       let curDelegatedAmount = 0;
@@ -90,6 +92,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
                 onCancel={onCancel}
                 indexerAddress={indexerAddress}
                 delegatedAmount={curDelegatedAmount}
+                indexerCapacity={capacity?.after}
                 error={error}
                 curEra={era?.index}
               />
