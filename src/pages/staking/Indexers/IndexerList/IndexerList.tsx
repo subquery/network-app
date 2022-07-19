@@ -13,6 +13,7 @@ import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
+import i18next from 'i18next';
 import { useIndexerCapacity } from '../../../../hooks';
 import { AntDTable, SearchInput, TableText } from '../../../../components';
 import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
@@ -63,6 +64,195 @@ const Delegation: React.VFC<{
     </>
   );
 };
+
+interface SortedIndexerListProps {
+  commission: CurrentEraValue<string>;
+  totalStake: CurrentEraValue<number>;
+  __typename: 'Indexer';
+  id: string;
+  metadata: string | null;
+  controller: string | null;
+}
+
+const getColumns = (
+  account: string,
+  era: number | undefined,
+  viewIndexerDetail: (url: string) => void,
+): TableProps<SortedIndexerListProps>['columns'] => [
+  {
+    title: '#',
+    key: 'idx',
+    width: 20,
+    render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
+    onCell: (record: SortedIndexerListProps) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
+  },
+  {
+    title: i18next.t('indexer.title').toUpperCase(),
+    dataIndex: 'id',
+    width: 80,
+    render: (val: string) => <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} />,
+  },
+  {
+    title: i18next.t('indexer.totalStake').toUpperCase(),
+    children: [
+      {
+        title: i18next.t('general.current').toUpperCase(),
+        dataIndex: ['totalStake', 'current'],
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+        sorter: (a, b) => a.totalStake.current - b.totalStake.current,
+      },
+      {
+        title: i18next.t('general.next').toUpperCase(),
+        dataIndex: ['totalStake', 'after'],
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+        sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
+      },
+    ],
+  },
+  {
+    title: i18next.t('indexer.ownStake').toUpperCase(),
+
+    children: [
+      {
+        title: i18next.t('general.current').toUpperCase(),
+        dataIndex: 'totalStake',
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: CurrentEraValue<number>, record: any) => (
+          <Delegation
+            indexer={record.id}
+            totalStake={value}
+            fieldKey="current"
+            curEra={era}
+            delegateType={'ownStake'}
+          />
+        ),
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+      {
+        title: i18next.t('general.next').toUpperCase(),
+        dataIndex: 'totalStake',
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: CurrentEraValue<number>, record: any) => (
+          <Delegation indexer={record.id} totalStake={value} fieldKey="after" curEra={era} delegateType={'ownStake'} />
+        ),
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+    ],
+  },
+  {
+    title: i18next.t('indexer.delegated').toUpperCase(),
+    children: [
+      {
+        title: i18next.t('general.current').toUpperCase(),
+        dataIndex: 'totalStake',
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: CurrentEraValue<number>, record: any) => (
+          <Delegation indexer={record.id} totalStake={value} fieldKey="current" curEra={era} />
+        ),
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+      {
+        title: i18next.t('general.next').toUpperCase(),
+        dataIndex: 'totalStake',
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: CurrentEraValue<number>, record: any) => (
+          <Delegation indexer={record.id} totalStake={value} fieldKey="after" curEra={era} />
+        ),
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+    ],
+  },
+  {
+    title: i18next.t('indexer.commission').toUpperCase(),
+    children: [
+      {
+        title: i18next.t('general.current').toUpperCase(),
+        dataIndex: ['commission', 'current'],
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: string) => <TableText content={value || '-'} />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+        sorter: (a, b) => extractPercentage(a.commission.current) - extractPercentage(b.commission.current),
+      },
+      {
+        title: i18next.t('general.next').toUpperCase(),
+        dataIndex: ['commission', 'after'],
+        key: 'currentTotalStake',
+        width: 40,
+        render: (value: string) => <TableText content={value || '-'} />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+        sorter: (a, b) => extractPercentage(a.commission.after ?? '0') - extractPercentage(b.commission.after ?? '0'),
+      },
+    ],
+  },
+  {
+    title: i18next.t('indexer.capacity').toUpperCase(),
+    children: [
+      {
+        title: i18next.t('general.current').toUpperCase(),
+        dataIndex: 'id',
+        width: 40,
+        render: (value: string) => <Capacity indexer={value} fieldKey="current" />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+      {
+        title: i18next.t('general.next').toUpperCase(),
+        dataIndex: 'id',
+        width: 40,
+        render: (value: string) => <Capacity indexer={value} fieldKey="after" />,
+        onCell: (record) => ({
+          onClick: () => viewIndexerDetail(record.id),
+        }),
+      },
+    ],
+  },
+  {
+    title: i18next.t('indexer.action').toUpperCase(),
+    dataIndex: 'id',
+    key: 'operation',
+    fixed: 'right' as FixedType,
+    width: 40,
+    align: 'center',
+    render: (id: string) => {
+      if (id === account) return <Typography> - </Typography>;
+      return (
+        <div className={'flex-start'}>
+          <DoDelegate indexerAddress={id} variant="textBtn" />
+        </div>
+      );
+    },
+  },
+];
 
 interface props {
   indexers?: Indexer[];
@@ -123,187 +313,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
    * Sort Indexers logic end
    */
 
-  const columns: TableProps<typeof sortedIndexerList[number]>['columns'] = [
-    {
-      title: '#',
-      key: 'idx',
-      width: 20,
-      render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
-      onCell: (record) => ({
-        onClick: () => viewIndexerDetail(record.id),
-      }),
-    },
-    {
-      title: t('indexer.title').toUpperCase(),
-      dataIndex: 'id',
-      width: 80,
-      render: (val: string) => <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} />,
-    },
-    {
-      title: t('indexer.totalStake').toUpperCase(),
-      children: [
-        {
-          title: t('general.current').toUpperCase(),
-          dataIndex: ['totalStake', 'current'],
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-          sorter: (a, b) => a.totalStake.current - b.totalStake.current,
-        },
-        {
-          title: t('general.next').toUpperCase(),
-          dataIndex: ['totalStake', 'after'],
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-          sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
-        },
-      ],
-    },
-    {
-      title: t('indexer.ownStake').toUpperCase(),
-
-      children: [
-        {
-          title: t('general.current').toUpperCase(),
-          dataIndex: 'totalStake',
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: CurrentEraValue<number>, record: any) => (
-            <Delegation
-              indexer={record.id}
-              totalStake={value}
-              fieldKey="current"
-              curEra={era}
-              delegateType={'ownStake'}
-            />
-          ),
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-        {
-          title: t('general.next').toUpperCase(),
-          dataIndex: 'totalStake',
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: CurrentEraValue<number>, record: any) => (
-            <Delegation
-              indexer={record.id}
-              totalStake={value}
-              fieldKey="after"
-              curEra={era}
-              delegateType={'ownStake'}
-            />
-          ),
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-      ],
-    },
-    {
-      title: t('indexer.delegated').toUpperCase(),
-      children: [
-        {
-          title: t('general.current').toUpperCase(),
-          dataIndex: 'totalStake',
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: CurrentEraValue<number>, record: any) => (
-            <Delegation indexer={record.id} totalStake={value} fieldKey="current" curEra={era} />
-          ),
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-        {
-          title: t('general.next').toUpperCase(),
-          dataIndex: 'totalStake',
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: CurrentEraValue<number>, record: any) => (
-            <Delegation indexer={record.id} totalStake={value} fieldKey="after" curEra={era} />
-          ),
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-      ],
-    },
-    {
-      title: t('indexer.commission').toUpperCase(),
-      children: [
-        {
-          title: t('general.current').toUpperCase(),
-          dataIndex: ['commission', 'current'],
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: string) => <TableText content={value || '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-          sorter: (a, b) => extractPercentage(a.commission.current) - extractPercentage(b.commission.current),
-        },
-        {
-          title: t('general.next').toUpperCase(),
-          dataIndex: ['commission', 'after'],
-          key: 'currentTotalStake',
-          width: 40,
-          render: (value: string) => <TableText content={value || '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-          sorter: (a, b) => extractPercentage(a.commission.after ?? '0') - extractPercentage(b.commission.after ?? '0'),
-        },
-      ],
-    },
-    {
-      title: t('indexer.capacity').toUpperCase(),
-      children: [
-        {
-          title: t('general.current').toUpperCase(),
-          dataIndex: 'id',
-          width: 40,
-          render: (value: string) => <Capacity indexer={value} fieldKey="current" />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-        {
-          title: t('general.next').toUpperCase(),
-          dataIndex: 'id',
-          width: 40,
-          render: (value: string) => <Capacity indexer={value} fieldKey="after" />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.id),
-          }),
-        },
-      ],
-    },
-    {
-      title: t('indexer.action').toUpperCase(),
-      dataIndex: 'id',
-      key: 'operation',
-      fixed: 'right' as FixedType,
-      width: 40,
-      align: 'center',
-      render: (id: string) => {
-        if (id === account) return <Typography> - </Typography>;
-        return (
-          <div className={'flex-start'}>
-            <DoDelegate indexerAddress={id} variant="textBtn" />
-          </div>
-        );
-      },
-    },
-  ];
+  const columns = getColumns(account ?? '', era, viewIndexerDetail);
 
   return (
     <div className={styles.container}>
@@ -316,7 +326,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
       <AntDTable
         customPagination
-        tableProps={{ columns: columns, rowKey: 'id', dataSource: [...orderedIndexerList], scroll: { x: 1600 } }}
+        tableProps={{ columns, rowKey: 'id', dataSource: [...orderedIndexerList], scroll: { x: 1600 } }}
         paginationProps={{
           total: searchedIndexer ? searchedIndexer.length : totalCount,
           onChange: (page, pageSize) => {
