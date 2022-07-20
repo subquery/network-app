@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { OperationVariables, QueryResult } from '@apollo/client';
 import { Spinner } from '@subql/react-ui';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 export * from './numberFormatters';
@@ -252,4 +253,17 @@ export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: str
   }
 
   return `https://gql-proxy.subquery.network/${indexerAddr}?to=${encodeURIComponent(endpoint)}`;
+}
+
+export function getUseQueryFetchMore<TData = any, TVariables = OperationVariables>(
+  queryFn: QueryResult<TData, TVariables>,
+  params?: TVariables,
+): void {
+  queryFn.fetchMore({
+    variables: params,
+    updateQuery: (previousResult, { fetchMoreResult }) => {
+      if (!fetchMoreResult) return previousResult;
+      return { ...fetchMoreResult };
+    },
+  });
 }

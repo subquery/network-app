@@ -4,13 +4,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useHistory } from 'react-router';
-import { Table, TableProps, Typography } from 'antd';
-import { AppPageHeader, SearchInput, Spinner, TabButtons, TableText } from '../../../../components';
+import { TableProps, Typography } from 'antd';
+import { AntDTable, AppPageHeader, SearchInput, Spinner, TabButtons, TableText } from '../../../../components';
 import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
 import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
-import { getCapitalizedStr, renderAsync } from '../../../../utils';
+import { getCapitalizedStr, renderAsync, getUseQueryFetchMore } from '../../../../utils';
 import { useS3ChallengeRanks, useS3DailyChallenges } from '../../../../containers/QueryLeaderboardProject';
 import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
@@ -59,9 +59,15 @@ interface RanksProps {
 }
 const Ranks: React.VFC<RanksProps> = ({ participant }) => {
   const { t } = useTranslation();
-  const [curPage, setCurPage] = React.useState<number>(1);
   const history = useHistory();
-  const s3Ranks = useS3ChallengeRanks({ roleCategory: participant });
+  const [curPage, setCurPage] = React.useState<number>(1);
+  const [pageSize, setPageSize] = React.useState<number>(10);
+  const s3RanksQueryParam = { roleCategory: participant, skip: (curPage - 1) * pageSize, take: pageSize };
+  const s3Ranks = useS3ChallengeRanks(s3RanksQueryParam);
+
+  const fetchMore = () => {
+    getUseQueryFetchMore(s3Ranks, s3RanksQueryParam);
+  };
 
   /**
    * SearchInput logic
@@ -105,7 +111,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
             ? [searchedRank.data?.S3Challenge]
             : data.S3Challenges.challenges;
 
-          const totalCount = sortedData?.length;
+          const totalCount = searchAccount && searchedRank.data?.S3Challenge ? 1 : data.S3Challenges.totalCount;
           return (
             <>
               <div className={styles.header}>
@@ -114,15 +120,25 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
                 </Typography.Title>
                 <SearchAccountRank />
               </div>
-              <Table
-                columns={getColumns(history, participant)}
-                dataSource={sortedData}
-                key="id"
-                pagination={{
-                  onChange(current) {
-                    setCurPage(current);
+
+              <AntDTable
+                customPagination
+                tableProps={{
+                  columns: getColumns(history, participant),
+                  rowKey: 'id',
+                  dataSource: sortedData,
+                }}
+                paginationProps={{
+                  total: totalCount,
+                  pageSizeOptions: ['10', '20', '50'],
+                  showSizeChanger: true,
+                  current: curPage,
+                  pageSize,
+                  onChange: (page, pageSize) => {
+                    setPageSize(pageSize);
+                    setCurPage(page);
+                    fetchMore();
                   },
-                  showSizeChanger: false,
                 }}
               />
             </>
