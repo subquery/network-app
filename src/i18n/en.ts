@@ -16,8 +16,9 @@ const en = {
       hosted: 'Frontier (Testnet)',
     },
     globalBanner: {
-      title: 'Season 3 Frontier Testnet has started 🔥',
-      duration: 'Duration',
+      title: 'Season 3 has finished, SubQuery Frontier was a huge success! 🔥',
+      subtitle: 'The incentivised phase of the SubQuery Frontier Network has finished, get ready for the Kepler Network',
+      buttonLabel: 'Read about Kepler',
     },
     footer: {
       title: 'Join The Future',

@@ -89,10 +89,7 @@ const BlockchainStatus: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-const SEASON3_INTRO_URL = 'https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96';
-const season3Duration = `Duration: ${moment(SEASON3.START).format(DATE_FORMAT)} - ${moment(SEASON3.END).format(
-  DATE_WITH_TIME_FORMAT,
-)} Local Time`;
+const NAV_LINK = 'https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96';
 
 const App: React.VFC = () => {
   const { t } = useTranslation();
@@ -102,7 +99,7 @@ const App: React.VFC = () => {
       <div className="App">
         <Router>
           <Header />
-          <GlobalBanner title={t('globalBanner.title')} subTitle={season3Duration} navigationLink={SEASON3_INTRO_URL} />
+          <GlobalBanner title={t('globalBanner.title')} subTitle={'globalBanner.subtitle'} navigationLink={NAV_LINK} navigationText={'globalBanner.buttonLabel'} />
           <div className="Main">
             <BlockchainStatus>
               <Switch>
