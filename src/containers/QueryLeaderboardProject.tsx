@@ -9,11 +9,9 @@ import {
 } from '../__generated__/leaderboard/GetS3ParticipantDailyChallenges';
 import { LEADERBOARD_CLIENT } from './QueryApolloProvider';
 
-// TODO: skip & take for pagination
-// TODO: totalCount should be query from SQL database
 const GET_S3_CHALLENGE_RANKS = gql`
-  query GetS3ChallengeRanks($roleCategory: ROLE_CATEGORY!) {
-    S3Challenges(roleCategory: $roleCategory, orderBy: TOTAL_PTS_DESC, skip: 0, take: 3000) {
+  query GetS3ChallengeRanks($roleCategory: ROLE_CATEGORY!, $skip: Int!, $take: Int) {
+    S3Challenges(roleCategory: $roleCategory, orderBy: TOTAL_PTS_DESC, skip: $skip, take: $take) {
       totalCount
       challenges {
         consumerTotalPoints
