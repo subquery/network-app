@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useEra, useIndexers } from '../../../../containers';
 import { AppPageHeader } from '../../../../components';
 import styles from './Indexers.module.css';
-import { mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
+import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { IndexerList } from '../IndexerList/IndexerList';
 
 export const Indexers: React.VFC = () => {
@@ -16,15 +16,7 @@ export const Indexers: React.VFC = () => {
   const { t } = useTranslation();
 
   const fetchMore = (offset: number) => {
-    indexers.fetchMore({
-      variables: {
-        offset,
-      },
-      updateQuery: (previousIndexers, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousIndexers;
-        return { ...fetchMoreResult }; // make it as new object then will trigger render
-      },
-    });
+    getUseQueryFetchMore(indexers, { offset });
   };
 
   return (

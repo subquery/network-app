@@ -10,7 +10,7 @@ import styles from './Leaderboard.module.css';
 import i18next from 'i18next';
 import { CURR_SEASON, LEADERBOARD_ROUTE, MISSION_ROUTE, PARTICIPANT, SEASONS } from '../../constants';
 import { SeasonProgress } from '../../../../components/SeasonProgress/SeasonProgress';
-import { getCapitalizedStr, renderAsync } from '../../../../utils';
+import { getCapitalizedStr, renderAsync, getUseQueryFetchMore } from '../../../../utils';
 import { useS3ChallengeRanks, useS3DailyChallenges } from '../../../../containers/QueryLeaderboardProject';
 import { SeasonContent } from '../../Mission';
 import { TableTitle } from '../../../../components/TableTitle';
@@ -66,13 +66,7 @@ const Ranks: React.VFC<RanksProps> = ({ participant }) => {
   const s3Ranks = useS3ChallengeRanks(s3RanksQueryParam);
 
   const fetchMore = () => {
-    s3Ranks.fetchMore({
-      variables: s3RanksQueryParam,
-      updateQuery: (previousRanks, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousRanks;
-        return { ...fetchMoreResult }; // make it as new object then will trigger render
-      },
-    });
+    getUseQueryFetchMore(s3Ranks, s3RanksQueryParam);
   };
 
   /**
