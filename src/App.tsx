@@ -30,8 +30,8 @@ import studioStyles from './pages/studio/index.module.css';
 import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
 import clsx from 'clsx';
-import { SEASON3, SEASON3_ACTIVE } from './pages/missions/constants';
-import { DATE_FORMAT, DATE_WITH_TIME_FORMAT } from './utils';
+import { SEASON3 } from './pages/missions/constants';
+import { DATE_FORMAT } from './utils';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -92,6 +92,7 @@ const BlockchainStatus: React.FC = ({ children }) => {
 const SEASON3_INTRO_URL = 'https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96';
 const SEASON3_START_DATE = moment(SEASON3.START).format(DATE_FORMAT);
 const SEASON3_END_DATE = moment(SEASON3.END).format(DATE_FORMAT);
+const SEASON3_ACTIVE = moment().toDate() < SEASON3.END;
 
 const App: React.VFC = () => {
   const { t } = useTranslation();

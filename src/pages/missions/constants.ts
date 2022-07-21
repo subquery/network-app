@@ -98,6 +98,4 @@ export const SEASONS: Season = {
   3: { from: SEASON3.START, to: SEASON3.END },
 };
 
-export const SEASON3_ACTIVE = moment().toDate() < SEASON3.END;
-
 export const CURR_SEASON = 3;
