@@ -92,7 +92,7 @@ const BlockchainStatus: React.FC = ({ children }) => {
 const SEASON3_INTRO_URL = 'https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96';
 const SEASON3_START_DATE = moment(SEASON3.START).format(DATE_FORMAT);
 const SEASON3_END_DATE = moment(SEASON3.END).format(DATE_FORMAT);
-const SEASON3_ACTIVE = moment().toDate() < SEASON3.END;
+const SEASON3_ACTIVE = moment().utc().toDate() < SEASON3.END;
 
 const App: React.VFC = () => {
   const { t } = useTranslation();
