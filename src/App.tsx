@@ -102,7 +102,15 @@ const App: React.VFC = () => {
       <div className="App">
         <Router>
           <Header />
-          <GlobalBanner title={t('globalBanner.title')} subTitle={season3Duration} navigationLink={SEASON3_INTRO_URL} />
+          {SEASON3.END < moment().toDate() ? (
+            <GlobalBanner title={t('globalBanner.seasonEndTitle')} subTitle={t('globalBanner.seasonEndDescription')} />
+          ) : (
+            <GlobalBanner
+              title={t('globalBanner.title')}
+              subTitle={season3Duration}
+              navigationLink={SEASON3_INTRO_URL}
+            />
+          )}
           <div className="Main">
             <BlockchainStatus>
               <Switch>
