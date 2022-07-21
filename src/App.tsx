@@ -31,7 +31,7 @@ import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
 import clsx from 'clsx';
 import { SEASON3 } from './pages/missions/constants';
-import { DATE_FORMAT, DATE_WITH_TIME_FORMAT } from './utils';
+import { DATE_FORMAT } from './utils';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -90,19 +90,27 @@ const BlockchainStatus: React.FC = ({ children }) => {
 };
 
 const SEASON3_INTRO_URL = 'https://forum.subquery.network/t/introduction-for-subquery-testnet-season3/96';
-const season3Duration = `Duration: ${moment(SEASON3.START).format(DATE_FORMAT)} - ${moment(SEASON3.END).format(
-  DATE_WITH_TIME_FORMAT,
-)} Local Time`;
+const SEASON3_START_DATE = moment(SEASON3.START).format(DATE_FORMAT);
+const SEASON3_END_DATE = moment(SEASON3.END).format(DATE_FORMAT);
+const SEASON3_ACTIVE = moment().utc().toDate() < SEASON3.END;
 
 const App: React.VFC = () => {
   const { t } = useTranslation();
+
+  const title = SEASON3_ACTIVE ? t('globalBanner.title') : t('globalBanner.seasonEndTitle');
+  const description = SEASON3_ACTIVE
+    ? t('globalBanner.description', { startDate: SEASON3_START_DATE, endDate: SEASON3_END_DATE })
+    : t('globalBanner.seasonEndDescription');
+
+  //TODO: Add link for kepler once avaliable
+  const navLink = SEASON3_ACTIVE ? SEASON3_INTRO_URL : undefined;
 
   return (
     <Providers>
       <div className="App">
         <Router>
           <Header />
-          <GlobalBanner title={t('globalBanner.title')} subTitle={season3Duration} navigationLink={SEASON3_INTRO_URL} />
+          <GlobalBanner title={title} subTitle={description} navigationLink={navLink} />
           <div className="Main">
             <BlockchainStatus>
               <Switch>

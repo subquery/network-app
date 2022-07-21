@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import moment from 'moment';
+
 // Path
 export const ROOT_ROUTE = '/missions';
 export const MISSION_ROUTE = `/missions/my-missions`;
