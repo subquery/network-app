@@ -30,7 +30,7 @@ import studioStyles from './pages/studio/index.module.css';
 import { Button, Typography } from '@subql/react-ui';
 import { WalletRoute } from './WalletRoute';
 import clsx from 'clsx';
-import { SEASON3 } from './pages/missions/constants';
+import { SEASON3, SEASON3_ACTIVE } from './pages/missions/constants';
 import { DATE_FORMAT, DATE_WITH_TIME_FORMAT } from './utils';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
@@ -96,20 +96,20 @@ const SEASON3_END_DATE = moment(SEASON3.END).format(DATE_FORMAT);
 const App: React.VFC = () => {
   const { t } = useTranslation();
 
+  const title = SEASON3_ACTIVE ? t('globalBanner.title') : t('globalBanner.seasonEndTitle');
+  const description = SEASON3_ACTIVE
+    ? t('globalBanner.description', { startDate: SEASON3_START_DATE, endDate: SEASON3_END_DATE })
+    : t('globalBanner.seasonEndDescription');
+
+  //TODO: Add link for kepler once avaliable
+  const navLink = SEASON3_ACTIVE ? SEASON3_INTRO_URL : undefined;
+
   return (
     <Providers>
       <div className="App">
         <Router>
           <Header />
-          {SEASON3.END < moment().toDate() ? (
-            <GlobalBanner title={t('globalBanner.seasonEndTitle')} subTitle={t('globalBanner.seasonEndDescription')} />
-          ) : (
-            <GlobalBanner
-              title={t('globalBanner.title')}
-              subTitle={t('globalBanner.description', { startDate: SEASON3_START_DATE, endDate: SEASON3_END_DATE })}
-              navigationLink={SEASON3_INTRO_URL}
-            />
-          )}
+          <GlobalBanner title={title} subTitle={description} navigationLink={navLink} />
           <div className="Main">
             <BlockchainStatus>
               <Switch>

@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import moment from 'moment';
+
 // Path
 export const ROOT_ROUTE = '/missions';
 export const MISSION_ROUTE = `/missions/my-missions`;
@@ -95,5 +97,7 @@ export const SEASONS: Season = {
   2: { from: new Date(2022, 3, 24, 0, 0), to: new Date(2022, 4, 23, 11, 59) },
   3: { from: SEASON3.START, to: SEASON3.END },
 };
+
+export const SEASON3_ACTIVE = moment().toDate() < SEASON3.END;
 
 export const CURR_SEASON = 3;
