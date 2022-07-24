@@ -88,12 +88,11 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
           error: () => <Typography>-</Typography>,
           loading: () => <Spinner />,
           data: (data) => (
-            <div className={styles.addressCont}>
+            <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon}>
               <Tooltip title={data?.url}>
                 <Typography.Text ellipsis={true}>{data?.url ?? '-'}</Typography.Text>
               </Tooltip>
-              <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon} />
-            </div>
+            </Copy>
           ),
         }),
     },
