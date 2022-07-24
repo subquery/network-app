@@ -32,12 +32,13 @@ export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymen
       const rawUrl = data?.url;
       const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexer);
       return (
-        <div className={styles.addressCont}>
-          <Tooltip title={queryUrl}>
-            <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
-          </Tooltip>
-          <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon} />
-        </div>
+        <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon}>
+          <div className={styles.addressCont}>
+            <Tooltip title={queryUrl}>
+              <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
+            </Tooltip>
+          </div>
+        </Copy>
       );
     },
   });

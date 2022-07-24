@@ -23,15 +23,12 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
       <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
       <div className={styles.indexerText}>
         {name && <Typography>{name}</Typography>}
-        <div className={styles.addressCont}>
-          <Typography
-            variant="small"
-            className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
-            onClick={() => onAddressClick && onAddressClick(address)}
-          >
-            {fullAddress ? address : truncateAddress(address)}
-          </Typography>
-          <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon} />
+        <div>
+          <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon}>
+            <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
+              {fullAddress ? address : truncateAddress(address)}
+            </Typography>
+          </Copy>
         </div>
       </div>
     </div>

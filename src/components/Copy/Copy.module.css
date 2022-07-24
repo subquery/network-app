@@ -2,7 +2,6 @@
   height: 24px;
   width: 24px;
   margin: 0 6px;
-  /*font-size: 24px;*/
 
   border-radius: 100px;
   background: rgba(67, 136, 221, 0.08);
@@ -12,7 +11,10 @@
   cursor: pointer;
 }
 
+.content {
+  width: 100%;
+}
+
 .copy {
   color: var(--primary);
-  font-size: 12px;
 }

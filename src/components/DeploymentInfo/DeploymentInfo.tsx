@@ -45,12 +45,12 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
             <Typography variant="small" className={styles.text}>
               {versionHeader}
             </Typography>
-            <div className="flex-center">
+
+            <Copy value={deploymentId}>
               <Typography variant="small" className={styles.text}>
                 {deploymentId ?? '-'}
               </Typography>
-              <Copy value={deploymentId} />
-            </div>
+            </Copy>
           </div>
         </div>
       </Tooltip>
@@ -93,11 +93,7 @@ export const VersionDeployment: React.VFC<{ deployment: ServiceAgreement['deploy
 
   return (
     <TableText
-      content={
-        <div className={'flex'}>
-          {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`} <Copy value={deployment?.id} />
-        </div>
-      }
+      content={<Copy value={deployment?.id}> {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`}</Copy>}
     />
   );
 };
