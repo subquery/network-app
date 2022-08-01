@@ -19,7 +19,7 @@ const en = {
       title: 'Season 3 Frontier Testnet has started 🔥',
       description: 'Duration: {{startDate}} - {{endDate}} Local Time',
       duration: 'Duration',
-      seasonEndTitle: 'Season 3 has finished, SubQuery Frontier was a huge success! 🔥',
+      seasonEndTitle: 'Season finished, SubQuery Frontier was a huge success! 🔥',
       seasonEndDescription:
         'The incentivised phase of the SubQuery Frontier Network has finished, get ready for the Kepler Network',
     },
