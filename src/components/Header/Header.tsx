@@ -124,7 +124,7 @@ const Header: React.VFC = () => {
         <div className={styles.left}>
           <div className={styles.logo}>
             <Link to="/">
-              <img src="/static/kepler-logo.svg" className={styles.logoImg} alt="SubQuery logo" />
+              <img src="/static/logo.png" className={styles.logoImg} alt="SubQuery logo" />
             </Link>
           </div>
 
