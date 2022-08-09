@@ -1,6 +1,10 @@
 name: Prod
 on:
   workflow_dispatch:
+    inputs:
+      bucket:
+        description: 'PROD Bucket name'
+        required: true
 
 jobs:
   build:
@@ -27,8 +31,8 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: build
-          bucket: frontier.subquery.network
-          bucket-region: ap-southeast-2
+          bucket: ${{ github.event.inputs.bucket }}
+          bucket-region: ${{ secrets.S3_PROD_BUCKET_REGION }}
           invalidation: /*
           dist-id: ${{ secrets.CLOUDFRONT_ID_PROD }}
           delete-removed: false

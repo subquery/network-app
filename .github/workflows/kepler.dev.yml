@@ -1,10 +1,9 @@
 name: Dev
 on:
   workflow_dispatch:
-    inputs:
-      bucket:
-        description: 'DEV Bucket name'
-        required: true
+  push:
+    branches:
+      - kepler-network
 
 jobs:
   build:
@@ -31,7 +30,7 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: build
-          bucket: ${{ github.event.inputs.bucket }}
+          bucket: ${{ secrets.KEPLER_DEV_BUCKET }}
           bucket-region: ${{ secrets.S3_DEV_BUCKET_REGION }}
           invalidation: /*
           dist-id: ${{ secrets.CLOUDFRONT_ID_DEV }}
