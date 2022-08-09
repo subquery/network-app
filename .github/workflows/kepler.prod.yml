@@ -1,4 +1,4 @@
-name: Prod
+name: Kepler-Prod
 on:
   workflow_dispatch:
 

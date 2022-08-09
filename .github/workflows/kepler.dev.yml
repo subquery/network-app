@@ -1,4 +1,4 @@
-name: Dev
+name: Kepler-Dev
 on:
   workflow_dispatch:
   push:
