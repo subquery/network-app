@@ -26,13 +26,68 @@ const LinksDropdown = () => {
   return <Dropdown menu={menu} handleOnClick={handleOnClick} dropdownContent={t('header.hosted')} />;
 };
 
-const renderLink = (to: string, text: string) => {
+const HeaderLinks = () => {
+  const { t } = useTranslation();
+
+  const entryLinks = [
+    {
+      link: '/explorer',
+      title: t('header.explorer'),
+    },
+    {
+      link: '/staking',
+      title: t('header.staking'),
+    },
+    {
+      link: '/plans',
+      title: t('header.plans'),
+    },
+    {
+      link: '/swap',
+      title: t('header.swap'),
+    },
+    {
+      link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
+      title: t('header.documentation'),
+    },
+    {
+      link: 'https://forum.subquery.network/c/season-3/6',
+      title: t('header.forum'),
+    },
+  ];
+
+  const renderLink = (to: string, text: string) => {
+    const isInternalLink = !to.startsWith('http');
+
+    if (isInternalLink) {
+      return (
+        <Typography>
+          <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+            {text}
+          </NavLink>
+        </Typography>
+      );
+    }
+
+    return (
+      <Button
+        href={to}
+        target="_blank"
+        className={styles.navLink}
+        rel="noreferrer"
+        type="link"
+        label={text}
+        colorScheme="standard"
+      />
+    );
+  };
+
   return (
-    <Typography>
-      <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
-        {text}
-      </NavLink>
-    </Typography>
+    <>
+      {entryLinks.map((headerLink) => {
+        return <div key={headerLink.link}>{renderLink(headerLink.link, headerLink.title)}</div>;
+      })}
+    </>
   );
 };
 
@@ -95,29 +150,6 @@ const Header: React.VFC = () => {
     );
   };
 
-  const headerEntryLinks = [
-    {
-      link: '/explorer',
-      title: t('header.explorer'),
-    },
-    // {
-    //   link: '/studio',
-    //   title: t('header.studio'),
-    // },
-    {
-      link: '/staking',
-      title: t('header.staking'),
-    },
-    {
-      link: '/plans',
-      title: t('header.plans'),
-    },
-    {
-      link: '/missions',
-      title: t('header.missions'),
-    },
-  ];
-
   return (
     <div className={styles.header}>
       <div className={styles.inner}>
@@ -129,32 +161,7 @@ const Header: React.VFC = () => {
           </div>
 
           <LinksDropdown />
-          <>
-            {headerEntryLinks.map((headerLink) => (
-              <div key={headerLink.link}>{renderLink(headerLink.link, headerLink.title)}</div>
-            ))}
-          </>
-          <Button
-            href="https://academy.subquery.network/subquery_network/testnet/welcome.html"
-            target="_blank"
-            className={styles.navLink}
-            rel="noreferrer"
-            type="link"
-            label={t('header.documentation')}
-            colorScheme="standard"
-          />
-          <Button
-            href="https://forum.subquery.network/c/season-3/6"
-            target="_blank"
-            className={styles.navLink}
-            rel="noreferrer"
-            type="link"
-            label={t('header.forum')}
-            colorScheme="standard"
-          />
-          {/*<a href="https://github.com/subquery/subql" target="_blank" className={styles.navLink} rel="noreferrer">
-            {t('header.github')}
-          </a>*/}
+          <HeaderLinks />
         </div>
         <div className={styles.right}>
           {account ? (

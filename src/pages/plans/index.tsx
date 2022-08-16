@@ -18,7 +18,7 @@ export const SERVICE_AGREEMENTS = `${ROUTE}/service-agreements`;
 export const MY_OFFERS = `${ROUTE}/my-offers`;
 export const OFFER_MARKETPLACE = `${ROUTE}/offers`;
 
-const PlanAndOffer: React.VFC = () => {
+export const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();
   const sidebarList = [
     {
@@ -57,5 +57,3 @@ const PlanAndOffer: React.VFC = () => {
     </EraProvider>
   );
 };
-
-export default PlanAndOffer;

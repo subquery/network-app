@@ -13,7 +13,7 @@ import { Home } from './Mission';
 import { LEADERBOARD_ROUTE, MISSION_ROUTE, ROOT_ROUTE } from './constants';
 import { WalletRoute } from '../../WalletRoute';
 
-const Container: React.VFC = () => {
+export const Missions: React.VFC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
@@ -42,5 +42,3 @@ const Container: React.VFC = () => {
     </EraProvider>
   );
 };
-
-export default Container;

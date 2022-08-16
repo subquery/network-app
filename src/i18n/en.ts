@@ -14,6 +14,7 @@ const en = {
       github: 'Github',
       connectWallet: 'Connect',
       hosted: 'Frontier (Testnet)',
+      swap: 'Swap',
     },
     globalBanner: {
       title: 'Season 3 Frontier Testnet has started 🔥',
@@ -519,6 +520,10 @@ const en = {
         afterAcceptOffer:
           'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
       },
+    },
+    swap: {
+      buyKSQT: 'aUSD → kSQT',
+      sellKSQT: 'kSQT → aUSD',
     },
 
     general: {

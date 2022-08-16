@@ -10,17 +10,13 @@ import React from 'react';
 import { NetworkConnector } from '../NetworkConnector';
 
 const RPC_URLS: Record<number, string> = {
-  1285: 'wss://moonriver.api.onfinality.io/public-ws',
-  1287: 'https://moonbeam-alpha.api.onfinality.io/public',
-  1281: 'http://127.0.0.1:9933',
-  1280: 'https://sqtn.api.onfinality.io/public',
-  595: 'https://tc7-eth.aca-dev.network',
+  595: 'https://acala-mandala.api.onfinality.io/public',
 };
 
 const defaultChainId = 595;
 
 export const injectedConntector = new InjectedConnector({
-  supportedChainIds: [/*1, 1281, 1285, */ defaultChainId],
+  supportedChainIds: [defaultChainId],
 });
 
 const networkConnector = new NetworkConnector({
@@ -29,17 +25,6 @@ const networkConnector = new NetworkConnector({
 });
 
 export const NETWORK_CONFIGS = {
-  'moonbase-alpha': {
-    chainId: `0x${Number(1287).toString(16)}`,
-    chainName: 'Moonbase Alpha',
-    nativeCurrency: {
-      name: 'DEV',
-      symbol: 'DEV',
-      decimals: 18,
-    },
-    rpcUrls: [RPC_URLS[1287]],
-    blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
-  },
   'acala-testnet': {
     chainId: `0x${Number(595).toString(16)}`,
     chainName: 'Acala Testnet',

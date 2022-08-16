@@ -8,7 +8,7 @@ import Create from './Create';
 import Home from './Home';
 import Project from './Project';
 
-const Studio: React.VFC = () => {
+export const Studio: React.VFC = () => {
   return (
     <div className="fullWidth">
       <Switch>
@@ -19,5 +19,3 @@ const Studio: React.VFC = () => {
     </div>
   );
 };
-
-export default Studio;
