@@ -15,7 +15,7 @@ export const ROOT_ROUTE = '/staking';
 export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-profile`;
 export const INDEXERS_ROUTE = `${ROOT_ROUTE}/indexers`;
 
-const Container: React.VFC = () => {
+export const Staking: React.VFC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
@@ -44,5 +44,3 @@ const Container: React.VFC = () => {
     </EraProvider>
   );
 };
-
-export default Container;

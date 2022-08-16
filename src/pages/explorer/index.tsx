@@ -9,7 +9,7 @@ import { Project } from './Project';
 export const EXPLORER_ROUTE = '/explorer';
 const PROJECT_ROUTE = '/explorer/project';
 
-const Explorer: React.VFC = () => {
+export const Explorer: React.VFC = () => {
   return (
     <Switch>
       <Route path={`${PROJECT_ROUTE}/:id`} component={Project} />
@@ -17,5 +17,3 @@ const Explorer: React.VFC = () => {
     </Switch>
   );
 };
-
-export default Explorer;
