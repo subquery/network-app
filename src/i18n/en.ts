@@ -534,7 +534,6 @@ const en = {
       swappableBalance: 'Your Swappable BALANCE',
       swappableBalanceTooltip:
         'This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for aUSD.',
-
       approveUSD: 'Approve aUSD',
       swapButton: 'Swap',
     },
