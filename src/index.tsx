@@ -9,8 +9,7 @@ import { BrowserTracing } from '@sentry/tracing';
 import TagManager from 'react-gtm-module';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import 'antd/dist/antd.css';
-import './index.css';
+import './index.less';
 
 const tagManagerArgs = {
   gtmId: 'G-DK4PX8F61X',

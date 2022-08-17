@@ -1,11 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Button } from 'antd';
 import i18next from 'i18next';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import { TabButtons } from '../../components';
 import styles from './Swap.module.css';
+import { SwapForm } from './SwapForm';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -24,8 +26,8 @@ export const Swap: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
         <Switch>
-          <Route exact path={SWAP_SELL_ROUTE} component={() => <div>Sell KSQT</div>} />
-          <Route exact path={SWAP_BUY_ROUTE} component={() => <div>Buy KSQT</div>} />
+          <Route exact path={SWAP_SELL_ROUTE} component={() => <SwapForm />} />
+          <Route exact path={SWAP_BUY_ROUTE} component={() => <SwapForm />} />
           <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
         </Switch>
       </div>
