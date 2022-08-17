@@ -33,7 +33,11 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   const Suffix = () => (
     <div className={styles.prefix}>
-      {unit && <AppTypography className={styles.unit}>{unit}</AppTypography>}
+      {unit && (
+        <AppTypography className={styles.unit} type="secondary">
+          {unit}
+        </AppTypography>
+      )}
       {maxAmount > 0 && (
         <Button shape="round" size="large" onClick={() => onClickMax && onClickMax(maxAmount)}>
           Max
@@ -57,7 +61,11 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
   return (
     <div className={styles.input}>
-      {title && <AppTypography tooltip={tooltip}>{title}</AppTypography>}
+      {title && (
+        <AppTypography tooltip={tooltip} className={styles.inputTitle}>
+          {title}
+        </AppTypography>
+      )}
 
       <InputNumber
         addonAfter={<Suffix />}

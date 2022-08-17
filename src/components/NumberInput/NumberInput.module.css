@@ -2,6 +2,12 @@
   margin: 1rem 0;
 }
 
+.inputTitle {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
 /* TODO: antD theme custom */
 .inputNumber {
   width: 100% !important;
@@ -13,9 +19,8 @@
   justify-content: center;
   align-items: center;
 }
-/* TODO: antD theme custom */
+
 .unit {
-  color: var(--gray500) !important;
   margin: 0 0.5rem;
 }
 
