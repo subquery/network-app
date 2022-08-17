@@ -1,0 +1,27 @@
+.container {
+  margin: 2rem 0;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.stats {
+  width: 48%;
+}
+
+.dataUpdateText {
+  font-size: 16px;
+}
+
+.swapAction {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.swapButton {
+  width: 20%;
+}

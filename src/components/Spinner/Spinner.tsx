@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CircularProgress } from '@material-ui/core';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import * as React from 'react';
 import styles from './Spinner.module.css';
 
@@ -9,10 +10,12 @@ type Props = {
   size?: number;
 };
 
-const Spinner: React.VFC<Props> = (props) => {
+const Spinner: React.VFC<Props> = ({ size }) => {
+  const antIcon = <LoadingOutlined style={{ fontSize: size }} spin />;
+
   return (
     <div className={styles.spinner}>
-      <CircularProgress size={props.size} />
+      <Spin indicator={antIcon} />
     </div>
   );
 };

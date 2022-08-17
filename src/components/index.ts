@@ -44,6 +44,7 @@ export * from './GraphQLPlayground';
 export * from './Typography';
 export * from './Table';
 export * from './GlobalBanner';
+export * from './Stat';
 
 export {
   Header,

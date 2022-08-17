@@ -8,3 +8,6 @@ export enum LOCK_STATUS {
   LOCK = 'lock',
   UNLOCK = 'UNLOCK',
 }
+
+export const STABLE_TOKEN = 'aUSD';
+export const TOKEN = 'kSQT';
