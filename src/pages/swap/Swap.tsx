@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button } from 'antd';
 import i18next from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +61,7 @@ export const Swap: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
         <Switch>
-        <Route exact path={SWAP_SELL_ROUTE} component={() => <GetAUSD />} />
+          <Route exact path={SWAP_SELL_ROUTE} component={() => <GetAUSD />} />
           <Route exact path={SWAP_BUY_ROUTE} component={() => <SellAUSD />} />
           <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
         </Switch>

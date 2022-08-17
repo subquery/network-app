@@ -31,16 +31,16 @@
   align-items: center;
 }
 
-.content {
-  width: 50%;
-  background: white;
-  border-radius: 8px;
-
-  padding: 1rem;
+.statsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
-.tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.stats {
+  width: 48%;
+}
+
+.dataUpdateText {
+  font-size: 16px;
 }
