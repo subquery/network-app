@@ -524,6 +524,16 @@ const en = {
     swap: {
       buyKSQT: 'aUSD → kSQT',
       sellKSQT: 'kSQT → aUSD',
+      poolSize: 'kSQT pool size',
+      poolSizeTooltip: 'This is the amount of kSQT currently available to be purchased in the liquidity pool',
+      curRate: 'current rate',
+      curRateTooltip: 'The token rate will remain fixed in Kepler network before mainnet is launched',
+      dataUpdateEvery5Min: 'Data is updated every 5 minutes',
+      from: 'From',
+      to: 'To',
+      swappableBalance: 'Your Swappable BALANCE',
+      swappableBalanceTooltip:
+        'This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for aUSD.',
     },
 
     general: {
