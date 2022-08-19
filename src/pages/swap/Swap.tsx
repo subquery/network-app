@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import i18next from 'i18next';
+import { BigNumber, BigNumberish } from 'ethers';
+import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch, useLocation } from 'react-router';
@@ -19,38 +20,81 @@ const buttonLinks = [
   { label: i18next.t('swap.sellKSQT'), link: SWAP_SELL_ROUTE },
 ];
 
+const getStats = ({
+  kSQTPoolSize,
+  swappableBalance,
+  kSQTAUSDRate,
+  t,
+}: {
+  kSQTPoolSize?: BigNumberish;
+  swappableBalance?: BigNumberish;
+  kSQTAUSDRate: number;
+  t: TFunction;
+}) => {
+  const curRateStats = {
+    title: t('swap.curRate'),
+    value: `1 kSQT = ${1 / kSQTAUSDRate} aUSD`,
+    tooltip: t('swap.curRateTooltip'),
+  };
+
+  if (kSQTPoolSize) {
+    return [
+      { title: t('swap.poolSize'), value: `${kSQTPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
+      curRateStats,
+    ];
+  }
+
+  return [
+    {
+      title: t('swap.swappableBalance'),
+      value: `${swappableBalance ?? 0} kSQT`,
+      tooltip: t('swap.swappableBalanceTooltip'),
+    },
+    curRateStats,
+  ];
+};
+
 const SellAUSD = () => {
-  // TODO: get kSQT pool size, kSQT:aUSD, from data feed
   const { t } = useTranslation();
+  // TODO: get kSQT pool size, kSQT:aUSD, from contract
+  const kSQTPoolSize = BigNumber.from('100');
+  const kSQTAUSDRate = 1 / 0.02;
+  const aUSDBalance = BigNumber.from('500');
+
+  const fromMax = aUSDBalance;
+  const toMax = kSQTPoolSize;
   const pair = {
     from: STABLE_TOKEN,
-    fromMax: 500,
+    fromMax,
     to: TOKEN,
-    toMax: 300,
+    toMax,
   };
-  const stats = [
-    { title: t('swap.poolSize'), value: '0 kSQT', tooltip: t('swap.poolSizeTooltip') },
-    { title: t('swap.curRate'), value: '1 kSQT = 0.02 aUSD', tooltip: t('swap.curRateTooltip') },
-  ];
 
-  return <SwapForm stats={stats} pair={pair} />;
+  const stats = getStats({ kSQTPoolSize, kSQTAUSDRate, t });
+
+  return <SwapForm stats={stats} pair={pair} fromRate={1 / kSQTAUSDRate} />;
 };
 
 const GetAUSD = () => {
-  // TODO: get kSQT pool size, kSQT:aUSD, from data feed
   const { t } = useTranslation();
+
+  // TODO: get kSQT pool size, kSQT:aUSD, from contract
+  const kSQTAUSDRate = 1 / 0.02;
+  const swappableBalance = BigNumber.from('50');
+  const kSQTBalance = BigNumber.from('500');
+
+  const fromMax = kSQTBalance.gt(swappableBalance) ? swappableBalance : kSQTBalance;
+  const toMax = kSQTBalance;
+
   const pair = {
     from: STABLE_TOKEN,
-    fromMax: 500,
+    fromMax,
     to: TOKEN,
-    toMax: 300,
+    toMax: toMax,
   };
-  const stats = [
-    { title: t('swap.swappableBalance'), value: '0 kSQT', tooltip: t('swap.swappableBalanceTooltip') },
-    { title: t('swap.curRate'), value: '1 kSQT = 0.02 aUSD', tooltip: t('swap.curRateTooltip') },
-  ];
+  const stats = getStats({ swappableBalance, kSQTAUSDRate, t });
 
-  return <SwapForm stats={stats} pair={pair} />;
+  return <SwapForm stats={stats} pair={pair} fromRate={kSQTAUSDRate} />;
 };
 
 export const Swap: React.VFC = () => {

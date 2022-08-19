@@ -5,6 +5,7 @@ import * as React from 'react';
 import { InputNumber, InputNumberProps, Button } from 'antd';
 import styles from './NumberInput.module.css';
 import { AppTypography } from '../Typography';
+import { BigNumberish } from 'ethers';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
@@ -13,8 +14,8 @@ interface NumberInputProps extends InputNumberProps {
   description?: string;
   unit?: string;
   errorMsg?: string;
-  onClickMax?: (amount: number) => void;
-  maxAmount?: number;
+  onClickMax?: (amount: number | BigNumberish) => void;
+  maxAmount?: number | BigNumberish;
   maxAmountText?: string;
 }
 

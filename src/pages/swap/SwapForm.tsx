@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { AppTypography, NumberInput, Stat } from '../../components';
 import styles from './SwapForm.module.css';
 import * as Yup from 'yup';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 
 interface Stats {
   title: string;
@@ -18,14 +18,15 @@ interface Stats {
 
 interface SwapPair {
   from: string;
-  fromMax: number;
+  fromMax: BigNumberish;
   to: string;
-  toMax: number;
+  toMax: BigNumberish;
 }
 
 interface ISwapForm {
   stats: Array<Stats>;
   pair: SwapPair;
+  fromRate?: number;
 }
 
 interface PairFrom {
@@ -36,20 +37,25 @@ interface PairFrom {
 const FROM_INPUT_ID = 'from';
 const TO_INPUT_ID = 'to';
 
-export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
+export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => {
   const { t } = useTranslation();
-  // TODO: update initial value based on real current Rate
-  const initialPairValues: PairFrom = { from: '1', to: '1' };
+  const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
   // TODO: update limitation
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
-      .test('From should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
+      .test('isValid', 'From should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
+      .test('isValid', 'From should be smaller than max amount.', (from) =>
+        from ? BigNumber.from(from).lte(pair.fromMax) : false,
+      )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
-      .test('To should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
+      .test('isValid', 'To should be greater than 0.', (to) => (to ? BigNumber.from(to).gt('0') : false))
+      .test('isValid', 'TO should be smaller than to amount.', (to) =>
+        to ? BigNumber.from(to).lte(pair.toMax) : false,
+      )
       .typeError('Please input valid to amount.'),
   });
 
@@ -69,13 +75,14 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
         <Formik
           initialValues={initialPairValues}
           validationSchema={SwapFormSchema}
-          validateOnMount
           onSubmit={(values, actions) => {
             // TODO: Form submit action
             actions.setSubmitting(false);
           }}
+          // validateOnMount
         >
           {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm, errors }) => {
+            console.log('values', values);
             console.log('errors', errors);
             return (
               <Form>
@@ -84,8 +91,8 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
                   name={FROM_INPUT_ID}
                   title={t('swap.from')}
                   unit={pair.from}
-                  maxAmount={pair.fromMax}
                   stringMode
+                  maxAmount={pair.fromMax}
                   value={values.from}
                   onChange={(value) => setFieldValue(FROM_INPUT_ID, value)}
                   errorMsg={errors[FROM_INPUT_ID]}
@@ -130,6 +137,3 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
     </div>
   );
 };
-function formEther(from: string) {
-  throw new Error('Function not implemented.');
-}
