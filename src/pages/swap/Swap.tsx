@@ -4,7 +4,7 @@
 import i18next from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch, useLocation } from 'react-router';
 import { TabButtons } from '../../components';
 import { STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
