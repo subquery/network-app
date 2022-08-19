@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './TabButton.module.css';
 import { AppTypography } from '..';
@@ -15,13 +15,20 @@ interface TabButtonProps {
 }
 
 export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, tooltip }) => {
+  const { pathname } = useLocation();
+
   return (
     <NavLink
       to={link}
       className={(isActive) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
       replace
     >
-      <AppTypography className={clsx(whiteTab && styles.whiteTabLabel)} tooltip={tooltip} noTooltipIcon>
+      <AppTypography
+        className={clsx(whiteTab && styles.whiteTabLabel)}
+        type={pathname === link ? undefined : 'secondary'}
+        tooltip={tooltip}
+        noTooltipIcon
+      >
         {label}
       </AppTypography>
     </NavLink>
