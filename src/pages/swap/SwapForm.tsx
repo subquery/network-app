@@ -39,7 +39,7 @@ const TO_INPUT_ID = 'to';
 export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
   const { t } = useTranslation();
   // TODO: update initial value based on real current Rate
-  const initialPairValues: PairFrom = { from: '0', to: '0' };
+  const initialPairValues: PairFrom = { from: '1', to: '1' };
 
   // TODO: update limitation
   const SwapFormSchema = Yup.object().shape({
@@ -88,8 +88,8 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
                   stringMode
                   value={values.from}
                   onChange={(value) => setFieldValue(FROM_INPUT_ID, value)}
+                  errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => {
-                    console.log('value', value);
                     setErrors({ [FROM_INPUT_ID]: undefined });
                     setFieldValue(FROM_INPUT_ID, value);
                   }}
@@ -103,8 +103,8 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
                   stringMode
                   value={values.to}
                   onChange={(value) => setFieldValue(TO_INPUT_ID, value)}
+                  errorMsg={errors[TO_INPUT_ID]}
                   onClickMax={(value) => {
-                    console.log('value', value);
                     setErrors({ [TO_INPUT_ID]: undefined });
                     setFieldValue(TO_INPUT_ID, value);
                   }}
