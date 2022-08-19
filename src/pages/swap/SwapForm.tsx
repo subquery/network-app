@@ -7,6 +7,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppTypography, NumberInput, Stat } from '../../components';
 import styles from './SwapForm.module.css';
+import * as Yup from 'yup';
+import { BigNumber } from 'ethers';
 
 interface Stats {
   title: string;
@@ -36,9 +38,20 @@ const TO_INPUT_ID = 'to';
 
 export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
   const { t } = useTranslation();
+  // TODO: update initial value based on real current Rate
   const initialPairValues: PairFrom = { from: '0', to: '0' };
-  const onClickMax = (id: string, value: string, onClick: (id: string, value: string) => void) => () =>
-    onClick(id, value);
+
+  // TODO: update limitation
+  const SwapFormSchema = Yup.object().shape({
+    from: Yup.string()
+      .required()
+      .test('From should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
+      .typeError('Please input valid from amount.'),
+    to: Yup.string()
+      .required()
+      .test('To should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
+      .typeError('Please input valid to amount.'),
+  });
 
   return (
     <div className={styles.container}>
@@ -55,12 +68,15 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
       <div>
         <Formik
           initialValues={initialPairValues}
+          validationSchema={SwapFormSchema}
+          validateOnMount
           onSubmit={(values, actions) => {
-            console.log({ values, actions });
+            // TODO: Form submit action
             actions.setSubmitting(false);
           }}
         >
-          {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => {
+          {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm, errors }) => {
+            console.log('errors', errors);
             return (
               <Form>
                 <NumberInput
@@ -114,3 +130,6 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
     </div>
   );
 };
+function formEther(from: string) {
+  throw new Error('Function not implemented.');
+}
