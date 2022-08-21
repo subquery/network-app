@@ -5,8 +5,8 @@ import { BigNumber, BigNumberish } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch, useLocation } from 'react-router';
-import { TabButtons } from '../../components';
+import { Redirect, Route, Switch } from 'react-router';
+import { AppTypography, TabButtons } from '../../components';
 import { STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
@@ -98,6 +98,7 @@ const GetAUSD = () => {
 };
 
 export const Swap: React.VFC = () => {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -110,6 +111,8 @@ export const Swap: React.VFC = () => {
           <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
         </Switch>
       </div>
+
+      <AppTypography className={styles.dataUpdateText}>{t('swap.dataUpdateEvery5Min')}</AppTypography>
     </div>
   );
 };
