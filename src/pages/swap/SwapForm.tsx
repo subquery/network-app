@@ -5,10 +5,11 @@ import { Button } from 'antd';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppTypography, NumberInput, Stat } from '../../components';
+import { NumberInput, Stat } from '../../components';
 import styles from './SwapForm.module.css';
 import * as Yup from 'yup';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumberish } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 
 interface Stats {
   title: string;
@@ -45,18 +46,22 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
-      .test('isValid', 'From should be greater than 0.', (from) => (from ? BigNumber.from(from).gt('0') : false))
-      .test('isValid', 'From should be smaller than max amount.', (from) =>
-        from ? BigNumber.from(from).lte(pair.fromMax) : false,
-      )
+      .test('isMin', 'From should be greater than 0.', (from) => {
+        return from ? parseEther(from).gt('0') : false;
+      })
+      .test('isMax', 'From should be smaller than max amount.', (from) => {
+        return from ? parseEther(from).lte(parseEther(pair.fromMax.toString())) : false;
+      })
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
-      .test('isValid', 'To should be greater than 0.', (to) => (to ? BigNumber.from(to).gt('0') : false))
-      .test('isValid', 'TO should be smaller than to amount.', (to) =>
-        to ? BigNumber.from(to).lte(pair.toMax) : false,
+      .test('isMin', 'To should be greater than 0.', (to) => {
+        return to ? parseEther(to).gt('0') : false;
+      })
+      .test('isValid', 'To should be smaller than max amount.', (to) =>
+        to ? parseEther(to).lte(parseEther(pair.toMax.toString())) : false,
       )
-      .typeError('Please input valid to amount.'),
+      .typeError('Please input valid from amount.'),
   });
 
   return (
@@ -69,8 +74,6 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
         ))}
       </div>
 
-      <AppTypography className={styles.dataUpdateText}>{t('swap.dataUpdateEvery5Min')}</AppTypography>
-
       <div>
         <Formik
           initialValues={initialPairValues}
@@ -79,11 +82,9 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
             // TODO: Form submit action
             actions.setSubmitting(false);
           }}
-          // validateOnMount
+          validateOnMount
         >
           {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm, errors }) => {
-            console.log('values', values);
-            console.log('errors', errors);
             return (
               <Form>
                 <NumberInput
@@ -106,8 +107,8 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
                   name={TO_INPUT_ID}
                   title={t('swap.to')}
                   unit={pair.to}
-                  maxAmount={pair.toMax}
                   stringMode
+                  maxAmount={pair.toMax}
                   value={values.to}
                   onChange={(value) => setFieldValue(TO_INPUT_ID, value)}
                   errorMsg={errors[TO_INPUT_ID]}
