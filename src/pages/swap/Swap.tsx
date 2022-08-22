@@ -87,9 +87,9 @@ const GetAUSD = () => {
   const toMax = kSQTBalance;
 
   const pair = {
-    from: STABLE_TOKEN,
+    from: TOKEN,
     fromMax,
-    to: TOKEN,
+    to: STABLE_TOKEN,
     toMax: toMax,
   };
   const stats = getStats({ swappableBalance, kSQTAUSDRate, t });

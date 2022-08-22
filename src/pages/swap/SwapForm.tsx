@@ -9,7 +9,7 @@ import { NumberInput, Stat } from '../../components';
 import styles from './SwapForm.module.css';
 import * as Yup from 'yup';
 import { BigNumberish } from 'ethers';
-import { parseEther } from 'ethers/lib/utils';
+import { tokenDecimals } from '../../utils';
 
 interface Stats {
   title: string;
@@ -42,24 +42,45 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
-  // TODO: update limitation
+  // TODO: confirm minimal convert val,  aUSD - 12, kSQT - 18
+  // TODO: confirm error msg with design/business
+  const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
+    const val = typeof value === 'number' ? value.toString() : value;
+    if (fileKey === FROM_INPUT_ID) {
+      return (parseFloat(val) * fromRate).toFixed(tokenDecimals[pair.from] ?? 18);
+    }
+
+    if (fileKey === TO_INPUT_ID) {
+      return (parseFloat(val) / fromRate).toFixed(tokenDecimals[pair.to] ?? 18);
+    }
+  };
+
+  const updateFieldVal = (
+    fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID,
+    value: string | number | null,
+    setValues: (props: any) => void,
+    setErrors: (props: any) => void,
+  ) => {
+    if (!value) return null;
+    const autoUpdateField = fileKey === FROM_INPUT_ID ? TO_INPUT_ID : FROM_INPUT_ID;
+    setErrors({ [fileKey]: undefined });
+    const sortedTo = calWithRate(fileKey, value);
+    setValues({ [fileKey]: value, [autoUpdateField]: sortedTo });
+  };
+
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
-      .test('isMin', 'From should be greater than 0.', (from) => {
-        return from ? parseEther(from).gt('0') : false;
-      })
-      .test('isMax', 'From should be smaller than max amount.', (from) => {
-        return from ? parseEther(from).lte(parseEther(pair.fromMax.toString())) : false;
-      })
+      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
+      .test('isMax', 'From should be smaller than max amount.', (from) =>
+        from ? parseFloat(from) <= parseFloat(pair.fromMax.toString()) : false,
+      )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
-      .test('isMin', 'To should be greater than 0.', (to) => {
-        return to ? parseEther(to).gt('0') : false;
-      })
+      .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
       .test('isValid', 'To should be smaller than max amount.', (to) =>
-        to ? parseEther(to).lte(parseEther(pair.toMax.toString())) : false,
+        to ? parseFloat(to) <= parseFloat(pair.toMax.toString()) : false,
       )
       .typeError('Please input valid from amount.'),
   });
@@ -84,7 +105,7 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
           }}
           validateOnMount
         >
-          {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm, errors }) => {
+          {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
             return (
               <Form>
                 <NumberInput
@@ -95,12 +116,9 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
-                  onChange={(value) => setFieldValue(FROM_INPUT_ID, value)}
+                  onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
-                  onClickMax={(value) => {
-                    setErrors({ [FROM_INPUT_ID]: undefined });
-                    setFieldValue(FROM_INPUT_ID, value);
-                  }}
+                  onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
                 />
                 <NumberInput
                   id={TO_INPUT_ID}
@@ -110,12 +128,9 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
                   stringMode
                   maxAmount={pair.toMax}
                   value={values.to}
-                  onChange={(value) => setFieldValue(TO_INPUT_ID, value)}
+                  onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
-                  onClickMax={(value) => {
-                    setErrors({ [TO_INPUT_ID]: undefined });
-                    setFieldValue(TO_INPUT_ID, value);
-                  }}
+                  onClickMax={(value) => updateFieldVal(TO_INPUT_ID, value.toString(), setValues, setErrors)}
                 />
 
                 <div className={styles.swapAction}>
@@ -126,6 +141,7 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
                     size="large"
                     className={styles.swapButton}
                     disabled={!isValid}
+                    loading={isSubmitting}
                   >
                     {t('swap.swapButton')}
                   </Button>

@@ -11,3 +11,7 @@ export enum LOCK_STATUS {
 
 export const STABLE_TOKEN = 'aUSD';
 export const TOKEN = 'kSQT';
+export const tokenDecimals: { [key: string]: number } = {
+  [STABLE_TOKEN]: 12,
+  [TOKEN]: 18,
+};
