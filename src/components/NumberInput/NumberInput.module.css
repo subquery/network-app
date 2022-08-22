@@ -32,12 +32,7 @@
 }
 
 .inputBottomText {
-  color: var(--gray500);
-}
-
-.inputError {
-  margin: 1rem 0;
-  color: var(--error);
+  display: block;
 }
 
 /* TODO: antD theme custom */

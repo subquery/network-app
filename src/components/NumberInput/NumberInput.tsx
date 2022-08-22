@@ -3,9 +3,9 @@
 
 import * as React from 'react';
 import { InputNumber, InputNumberProps, Button } from 'antd';
-// import { Typography } from '@subql/react-ui';
 import styles from './NumberInput.module.css';
 import { AppTypography } from '../Typography';
+import { BigNumberish } from 'ethers';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
@@ -14,8 +14,8 @@ interface NumberInputProps extends InputNumberProps {
   description?: string;
   unit?: string;
   errorMsg?: string;
-  onClickMax?: (amount: number) => void;
-  maxAmount?: number;
+  onClickMax?: (amount: number | BigNumberish) => void;
+  maxAmount?: number | BigNumberish;
   maxAmountText?: string;
 }
 
@@ -33,15 +33,15 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   const Suffix = () => (
     <div className={styles.prefix}>
+      {maxAmount > 0 && (
+        <Button shape="round" size="small" type={'primary'} onClick={() => onClickMax && onClickMax(maxAmount)}>
+          Max
+        </Button>
+      )}
       {unit && (
         <AppTypography className={styles.unit} type="secondary">
           {unit}
         </AppTypography>
-      )}
-      {maxAmount > 0 && (
-        <Button shape="round" size="large" onClick={() => onClickMax && onClickMax(maxAmount)}>
-          Max
-        </Button>
       )}
     </div>
   );
@@ -75,8 +75,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         size="large"
       />
 
-      {inputBottomText && <InputBottomText />}
       {errorMsg && <ErrorText />}
+      {inputBottomText && <InputBottomText />}
     </div>
   );
 };

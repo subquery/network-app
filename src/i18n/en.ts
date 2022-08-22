@@ -536,6 +536,7 @@ const en = {
         'This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for aUSD.',
       approveUSD: 'Approve aUSD',
       swapButton: 'Swap',
+      walletBalance: 'Wallet Balance',
     },
 
     general: {

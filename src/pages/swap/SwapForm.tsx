@@ -5,8 +5,11 @@ import { Button } from 'antd';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppTypography, NumberInput, Stat } from '../../components';
+import { NumberInput, Stat } from '../../components';
 import styles from './SwapForm.module.css';
+import * as Yup from 'yup';
+import { BigNumberish } from 'ethers';
+import { tokenDecimals } from '../../utils';
 
 interface Stats {
   title: string;
@@ -16,14 +19,15 @@ interface Stats {
 
 interface SwapPair {
   from: string;
-  fromMax: number;
+  fromMax: BigNumberish;
   to: string;
-  toMax: number;
+  toMax: BigNumberish;
 }
 
 interface ISwapForm {
   stats: Array<Stats>;
   pair: SwapPair;
+  fromRate?: number;
 }
 
 interface PairFrom {
@@ -34,11 +38,52 @@ interface PairFrom {
 const FROM_INPUT_ID = 'from';
 const TO_INPUT_ID = 'to';
 
-export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
+export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => {
   const { t } = useTranslation();
-  const initialPairValues: PairFrom = { from: '0', to: '0' };
-  const onClickMax = (id: string, value: string, onClick: (id: string, value: string) => void) => () =>
-    onClick(id, value);
+  const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
+
+  // TODO: confirm minimal convert val,  aUSD - 12, kSQT - 18
+  // TODO: confirm error msg with design/business
+  const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
+    const val = typeof value === 'number' ? value.toString() : value;
+    if (fileKey === FROM_INPUT_ID) {
+      return (parseFloat(val) * fromRate).toFixed(tokenDecimals[pair.from] ?? 18);
+    }
+
+    if (fileKey === TO_INPUT_ID) {
+      return (parseFloat(val) / fromRate).toFixed(tokenDecimals[pair.to] ?? 18);
+    }
+  };
+
+  const updateFieldVal = (
+    fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID,
+    value: string | number | null,
+    setValues: (props: any) => void,
+    setErrors: (props: any) => void,
+  ) => {
+    if (!value) return null;
+    const autoUpdateField = fileKey === FROM_INPUT_ID ? TO_INPUT_ID : FROM_INPUT_ID;
+    setErrors({ [fileKey]: undefined });
+    const sortedTo = calWithRate(fileKey, value);
+    setValues({ [fileKey]: value, [autoUpdateField]: sortedTo });
+  };
+
+  const SwapFormSchema = Yup.object().shape({
+    from: Yup.string()
+      .required()
+      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
+      .test('isMax', 'From should be smaller than max amount.', (from) =>
+        from ? parseFloat(from) <= parseFloat(pair.fromMax.toString()) : false,
+      )
+      .typeError('Please input valid from amount.'),
+    to: Yup.string()
+      .required()
+      .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
+      .test('isValid', 'To should be smaller than max amount.', (to) =>
+        to ? parseFloat(to) <= parseFloat(pair.toMax.toString()) : false,
+      )
+      .typeError('Please input valid from amount.'),
+  });
 
   return (
     <div className={styles.container}>
@@ -50,17 +95,17 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
         ))}
       </div>
 
-      <AppTypography className={styles.dataUpdateText}>{t('swap.dataUpdateEvery5Min')}</AppTypography>
-
       <div>
         <Formik
           initialValues={initialPairValues}
+          validationSchema={SwapFormSchema}
           onSubmit={(values, actions) => {
-            console.log({ values, actions });
+            // TODO: Form submit action
             actions.setSubmitting(false);
           }}
+          validateOnMount
         >
-          {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => {
+          {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
             return (
               <Form>
                 <NumberInput
@@ -68,30 +113,24 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
                   name={FROM_INPUT_ID}
                   title={t('swap.from')}
                   unit={pair.from}
-                  maxAmount={pair.fromMax}
                   stringMode
+                  maxAmount={pair.fromMax}
                   value={values.from}
-                  onChange={(value) => setFieldValue(FROM_INPUT_ID, value)}
-                  onClickMax={(value) => {
-                    console.log('value', value);
-                    setErrors({ [FROM_INPUT_ID]: undefined });
-                    setFieldValue(FROM_INPUT_ID, value);
-                  }}
+                  onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
+                  errorMsg={errors[FROM_INPUT_ID]}
+                  onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
                 />
                 <NumberInput
                   id={TO_INPUT_ID}
                   name={TO_INPUT_ID}
                   title={t('swap.to')}
                   unit={pair.to}
-                  maxAmount={pair.toMax}
                   stringMode
+                  maxAmount={pair.toMax}
                   value={values.to}
-                  onChange={(value) => setFieldValue(TO_INPUT_ID, value)}
-                  onClickMax={(value) => {
-                    console.log('value', value);
-                    setErrors({ [TO_INPUT_ID]: undefined });
-                    setFieldValue(TO_INPUT_ID, value);
-                  }}
+                  onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
+                  errorMsg={errors[TO_INPUT_ID]}
+                  onClickMax={(value) => updateFieldVal(TO_INPUT_ID, value.toString(), setValues, setErrors)}
                 />
 
                 <div className={styles.swapAction}>
@@ -102,6 +141,7 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair }) => {
                     size="large"
                     className={styles.swapButton}
                     disabled={!isValid}
+                    loading={isSubmitting}
                   >
                     {t('swap.swapButton')}
                   </Button>

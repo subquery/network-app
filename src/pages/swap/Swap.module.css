@@ -5,10 +5,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 2rem 0;
 }
 
 .content {
-  width: 50%;
+  width: 50vw;
   background: white;
   border-radius: 8px;
 
@@ -19,4 +20,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dataUpdateText {
+  font-size: 16px;
+  margin: 1rem;
 }

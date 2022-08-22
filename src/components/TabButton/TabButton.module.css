@@ -36,8 +36,6 @@
   width: 100%;
 }
 
-/* TODO: antD theme */
 .whiteTabLabel {
-  color: var(--gray500) !important;
   font-size: 18px;
 }
