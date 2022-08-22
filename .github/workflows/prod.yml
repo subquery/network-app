@@ -1,6 +1,9 @@
 name: Prod
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - kepler-network
 
 jobs:
   build:
