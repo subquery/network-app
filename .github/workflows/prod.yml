@@ -27,10 +27,10 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: build
-          bucket: frontier.subquery.network
+          bucket: kepler.subquery.network
           bucket-region: ap-southeast-2
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_PROD }}
+          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_PROD }}
           delete-removed: false
           no-cache: true
           private: true
