@@ -3,8 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
-      - dev-pipeline
+      - kepler-network
 
 jobs:
   build:
@@ -31,10 +30,10 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: build
-          bucket: ${{ secrets.DEV_BUCKET }}
-          bucket-region: ${{ secrets.S3_DEV_BUCKET_REGION }}
+          bucket: kepler.thechaindata.com
+          bucket-region: ap-southeast-2
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_DEV }}
+          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
           delete-removed: false
           no-cache: true
           private: true
