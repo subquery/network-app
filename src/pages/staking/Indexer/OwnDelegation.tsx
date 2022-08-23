@@ -127,7 +127,7 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
     if (!account) return undefined;
 
     return await contracts.staking
-      .getStakingAmount(account, indexerAddress)
+      .delegation(account, indexerAddress)
       .then((res) => ({ era: res.era.toNumber(), value: res.valueAt, valueAfter: res.valueAfter } as EraValue));
   }, [account, indexerAddress, pendingContracts]);
 

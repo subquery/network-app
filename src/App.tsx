@@ -22,7 +22,7 @@ import {
   SQTokenProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
-import { NETWORK_CONFIGS } from './containers/Web3';
+import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
 import { UnsupportedChainIdError } from '@web3-react/core';
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
@@ -70,7 +70,7 @@ const BlockchainStatus: React.FC = ({ children }) => {
   const isMetaMask = React.useMemo(() => !!window.ethereum?.isMetaMask, []);
 
   const handleSwitchNetwork = () => {
-    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS['acala-testnet']]);
+    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS[SUPPORTED_NETWORK]]);
   };
 
   if (error instanceof UnsupportedChainIdError) {
