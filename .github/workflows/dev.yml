@@ -1,4 +1,4 @@
-name: Dev
+name: Kepler-Dev
 on:
   workflow_dispatch:
   push:
@@ -37,4 +37,3 @@ jobs:
           delete-removed: false
           no-cache: true
           private: true
-      
