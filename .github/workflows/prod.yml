@@ -1,4 +1,4 @@
-name: Prod
+name: Kepler-Prod
 on:
   workflow_dispatch:
   push:
@@ -37,4 +37,3 @@ jobs:
           delete-removed: false
           no-cache: true
           private: true
-
