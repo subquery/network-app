@@ -50,7 +50,7 @@ export const NETWORK_CONFIGS = {
       decimals: 18,
     },
     rpcUrls: [RPC_URLS[1287]],
-    blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
+    blockExplorerUrls: ['https://moonbase.moonscan.io/'],
   },
   [ACALA_NETWORK]: {
     chainId: `0x${Number(595).toString(16)}`,

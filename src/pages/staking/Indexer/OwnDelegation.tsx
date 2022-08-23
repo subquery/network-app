@@ -111,7 +111,6 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
   return renderDefault();
 };
 
-// TODO: confirm latest change from contract
 const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }) => {
   const { account } = useWeb3();
   const pendingContracts = useContracts();
@@ -127,9 +126,9 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
 
     if (!account) return undefined;
 
-    // return await contracts.staking
-    //   .getStakingAmount(account, indexerAddress)
-    //   .then((res) => ({ era: res.era.toNumber(), value: res.valueAt, valueAfter: res.valueAfter } as EraValue));
+    return await contracts.staking
+      .delegation(account, indexerAddress)
+      .then((res) => ({ era: res.era.toNumber(), value: res.valueAt, valueAfter: res.valueAfter } as EraValue));
   }, [account, indexerAddress, pendingContracts]);
 
   const eraValue = useEraValue(currentStake.data);
