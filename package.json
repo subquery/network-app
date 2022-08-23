@@ -21,7 +21,7 @@
     "@sentry/tracing": "^6.19.4",
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
-    "@subql/contract-sdk": "0.7.0",
+    "@subql/contract-sdk": "0.10.2-8",
     "@subql/network-clients": "0.1.1-13",
     "@subql/react-ui": "^1.0.1-22",
     "@testing-library/jest-dom": "^5.11.4",
@@ -137,7 +137,7 @@
     "@acala-network/api": "2.0.2-2",
     "@acala-network/bodhi": "1.0.2-0",
     "@acala-network/contracts": "1.0.22",
-    "babel-loader": "8.1.0",
-    "ipfs-http-client": "53.0.1"
+    "ipfs-http-client": "53.0.1",
+    "@polkadot/x-global": "7.9.2"
   }
 }

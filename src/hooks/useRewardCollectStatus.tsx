@@ -5,6 +5,7 @@ import { useAsyncMemo } from '.';
 import { useContracts } from '../containers';
 import { AsyncData } from '../utils';
 
+// TODO: confirm latest change from contract
 export function useRewardCollectStatus(indexer: string): AsyncData<{ hasClaimedRewards: boolean } | undefined> {
   const pendingContracts = useContracts();
 
@@ -15,7 +16,8 @@ export function useRewardCollectStatus(indexer: string): AsyncData<{ hasClaimedR
 
     const [currentEra, lastClaimedEra, lastSettledEra] = await Promise.all([
       contracts.eraManager.eraNumber(),
-      contracts.rewardsDistributor.getLastClaimEra(indexer),
+      contracts.rewardsDistributor.getCommissionRateChangedEra(indexer),
+      // contracts.rewardsDistributor.getLastClaimEra(indexer),
       contracts.rewardsDistributor.getLastSettledEra(indexer),
     ]);
     const rewardClaimStatus = currentEra.eq(lastClaimedEra.add(1)) && lastSettledEra.lte(lastClaimedEra);

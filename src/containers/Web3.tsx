@@ -1,19 +1,35 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-// import { NetworkConnector } from '@web3-react/network-connector';
+import { NetworkConnector } from '@web3-react/network-connector';
 import { providers } from 'ethers';
-import React from 'react';
-import { NetworkConnector } from '../NetworkConnector';
 
-const RPC_URLS: Record<number, string> = {
-  595: 'https://acala-mandala.api.onfinality.io/public',
+const MOONBEAM_NETWORK = 'moonbase-alpha';
+const ACALA_NETWORK = 'acala-testnet';
+const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
+  [MOONBEAM_NETWORK]: {
+    chainId: 1287,
+    rpc: 'https://moonbeam-alpha.api.onfinality.io/public',
+  },
+  [ACALA_NETWORK]: {
+    chainId: 595,
+    rpc: 'https://acala-mandala-adapter.api.onfinality.io/public',
+  },
 };
+export const SUPPORTED_NETWORK = MOONBEAM_NETWORK;
+const defaultChainId = NETWORKS[SUPPORTED_NETWORK].chainId;
+const RPC_URLS: Record<number, string> = Object.keys(NETWORKS).reduce((result, curNetwork) => {
+  const network = NETWORKS[curNetwork];
+  if (network) {
+    return { ...result, [network.chainId]: network.rpc };
+  }
 
-const defaultChainId = 595;
+  return result;
+}, {});
 
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [defaultChainId],
@@ -25,7 +41,18 @@ const networkConnector = new NetworkConnector({
 });
 
 export const NETWORK_CONFIGS = {
-  'acala-testnet': {
+  [MOONBEAM_NETWORK]: {
+    chainId: `0x${Number(1287).toString(16)}`,
+    chainName: 'Moonbase Alpha',
+    nativeCurrency: {
+      name: 'DEV',
+      symbol: 'DEV',
+      decimals: 18,
+    },
+    rpcUrls: [RPC_URLS[1287]],
+    blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network/'],
+  },
+  [ACALA_NETWORK]: {
     chainId: `0x${Number(595).toString(16)}`,
     chainName: 'Acala Testnet',
     nativeCurrency: {
@@ -65,11 +92,9 @@ const InitProvider: React.VFC = () => {
   return null;
 };
 
-export const Web3Provider: React.FC = (props) => {
-  return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <InitProvider />
-      {props.children}
-    </Web3ReactProvider>
-  );
-};
+export const Web3Provider: React.FC = (props) => (
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <InitProvider />
+    {props.children}
+  </Web3ReactProvider>
+);
