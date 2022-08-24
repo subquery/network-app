@@ -28,7 +28,7 @@ export function useSwapRate(orderId: number): AsyncData<number> {
  * @args: orderId
  * @returns swap pool
  */
-export function useSwapPool(orderId: number): AsyncData<string> {
+export function useSwapPool(orderId: number): AsyncData<BigNumber> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     const contracts = await pendingContracts;
@@ -38,7 +38,7 @@ export function useSwapPool(orderId: number): AsyncData<string> {
       orderId,
     );
 
-    return formatEther(pool);
+    return pool;
   }, [pendingContracts]);
 }
 

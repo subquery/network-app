@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from 'antd';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,12 +24,12 @@ const buttonLinks = [
 ];
 
 const getStats = ({
-  kSQTPoolSize,
+  sqtPoolSize,
   swappableBalance,
   sqtAUSDRate,
   t,
 }: {
-  kSQTPoolSize?: BigNumberish;
+  sqtPoolSize?: BigNumberish;
   swappableBalance?: BigNumberish;
   sqtAUSDRate: number;
   t: TFunction;
@@ -40,9 +40,9 @@ const getStats = ({
     tooltip: t('swap.curRateTooltip'),
   };
 
-  if (kSQTPoolSize) {
+  if (sqtPoolSize) {
     return [
-      { title: t('swap.poolSize'), value: `${kSQTPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
+      { title: t('swap.poolSize'), value: `${sqtPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
       curRateStats,
     ];
   }
@@ -69,13 +69,13 @@ const SellAUSD = () => {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [kSQTAUSDRate, kSQTPoolSize] = data;
+      const [sqtAUSDRate, sqtPoolSize] = data;
 
-      if (!kSQTAUSDRate || !kSQTPoolSize) return <Spinner />;
+      if (!sqtPoolSize || !sqtPoolSize) return <Spinner />;
 
       const aUSDBalance = '500'; //TODO: stableCoinBalance
-      const sortedRate = kSQTAUSDRate ?? 0;
-      const sortedPoolSize = kSQTPoolSize ?? '0';
+      const sortedRate = sqtAUSDRate ?? 0;
+      const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
 
       const pair = {
         from: STABLE_TOKEN,
@@ -84,7 +84,7 @@ const SellAUSD = () => {
         toMax: sortedPoolSize,
       };
 
-      const stats = getStats({ kSQTPoolSize, sqtAUSDRate: sortedRate, t });
+      const stats = getStats({ sqtPoolSize: sortedPoolSize, sqtAUSDRate: sortedRate, t });
 
       return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;
     },
@@ -104,6 +104,7 @@ const GetAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [swapRate, tradableQuota, sqtBalance] = data;
+
       if (!swapRate || !tradableQuota) return <Spinner />;
 
       const sortedBalance = sqtBalance ?? BigNumber.from('0'); //TODO: stableCoinBalance
