@@ -18,7 +18,7 @@ export function useSwapRate(orderId: number): AsyncData<number> {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const [_, __, amountGive, amountGet] = await contracts.permissionedExchange.orders(orderId);
+    const { amountGive, amountGet } = await contracts.permissionedExchange.orders(orderId);
 
     return convertStringToNumber(formatEther(amountGive)) / convertStringToNumber(formatEther(amountGet));
   }, [pendingContracts]);
@@ -34,11 +34,9 @@ export function useSwapPool(orderId: number): AsyncData<BigNumber> {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const [_, __, amountGive, amountGet, sender, expireDate, pool] = await contracts.permissionedExchange.orders(
-      orderId,
-    );
+    const { amountGiveLeft } = await contracts.permissionedExchange.orders(orderId);
 
-    return pool;
+    return amountGiveLeft;
   }, [pendingContracts]);
 }
 
@@ -51,9 +49,6 @@ export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
   return useAsyncMemo(async () => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-
-    const tradeQuota = await contracts.permissionedExchange.tradeQuota(contracts.sqToken.address, account);
-    console.log('tradeQuota', tradeQuota);
 
     return await contracts.permissionedExchange.tradeQuota(contracts.sqToken.address, account);
   }, [pendingContracts]);
