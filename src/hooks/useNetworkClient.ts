@@ -3,7 +3,8 @@
 
 import { ContractClient, NetworkClient } from '@subql/network-clients';
 import { ContractSDK } from '@subql/contract-sdk';
-import deploymentDetails from '@subql/contract-sdk/publish/testnet.json';
+// import deploymentDetails from '@subql/contract-sdk/publish/testnet.json';
+import deploymentDetails from '@subql/contract-sdk/publish/moonbase.json';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import * as React from 'react';
 import { useWeb3 } from '../containers';
