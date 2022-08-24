@@ -10,6 +10,8 @@ export enum LOCK_STATUS {
 }
 
 export const STABLE_TOKEN = 'aUSD';
+//Todo: Temp stable token, switch to aUSD contract sdk
+export const STABLE_TOKEN_ADDRESS = 0xf98bf104e268d7cbb7949029fee874e3cd1db8fa;
 export const TOKEN = 'kSQT';
 export const tokenDecimals: { [key: string]: number } = {
   [STABLE_TOKEN]: 12,

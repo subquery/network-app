@@ -19,9 +19,9 @@ interface Stats {
 
 interface SwapPair {
   from: string;
-  fromMax: BigNumberish;
+  fromMax: string;
   to: string;
-  toMax: BigNumberish;
+  toMax: string;
 }
 
 interface ISwapForm {
@@ -38,12 +38,11 @@ interface PairFrom {
 const FROM_INPUT_ID = 'from';
 const TO_INPUT_ID = 'to';
 
+// TODO: confirm error msg with design/business
 export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => {
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
-  // TODO: confirm minimal convert val,  aUSD - 12, kSQT - 18
-  // TODO: confirm error msg with design/business
   const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
     const val = typeof value === 'number' ? value.toString() : value;
     if (fileKey === FROM_INPUT_ID) {
@@ -73,14 +72,14 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
       .required()
       .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
       .test('isMax', 'From should be smaller than max amount.', (from) =>
-        from ? parseFloat(from) <= parseFloat(pair.fromMax.toString()) : false,
+        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
       )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
       .test('isValid', 'To should be smaller than max amount.', (to) =>
-        to ? parseFloat(to) <= parseFloat(pair.toMax.toString()) : false,
+        to ? parseFloat(to) <= parseFloat(pair.toMax) : false,
       )
       .typeError('Please input valid from amount.'),
   });

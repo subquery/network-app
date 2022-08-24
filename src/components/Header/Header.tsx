@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
-import testnet from '@subql/contract-sdk/publish/testnet.json';
+// import testnet from '@subql/contract-sdk/publish/testnet.json';
+import testnet from '@subql/contract-sdk/publish/moonbase.json';
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Typography } from '@subql/react-ui';

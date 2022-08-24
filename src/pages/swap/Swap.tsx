@@ -1,13 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber, BigNumberish } from 'ethers';
+import { Typography } from 'antd';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { AppTypography, TabButtons } from '../../components';
-import { STABLE_TOKEN, TOKEN } from '../../utils';
+import { AppTypography, Spinner, TabButtons } from '../../components';
+import { useSQToken, useWeb3 } from '../../containers';
+import { useSellSQTQuota, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
+import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 
@@ -21,25 +24,25 @@ const buttonLinks = [
 ];
 
 const getStats = ({
-  kSQTPoolSize,
+  sqtPoolSize,
   swappableBalance,
-  kSQTAUSDRate,
+  sqtAUSDRate,
   t,
 }: {
-  kSQTPoolSize?: BigNumberish;
+  sqtPoolSize?: BigNumberish;
   swappableBalance?: BigNumberish;
-  kSQTAUSDRate: number;
+  sqtAUSDRate: number;
   t: TFunction;
 }) => {
   const curRateStats = {
     title: t('swap.curRate'),
-    value: `1 kSQT = ${1 / kSQTAUSDRate} aUSD`,
+    value: `1 kSQT = ${sqtAUSDRate} aUSD`,
     tooltip: t('swap.curRateTooltip'),
   };
 
-  if (kSQTPoolSize) {
+  if (sqtPoolSize) {
     return [
-      { title: t('swap.poolSize'), value: `${kSQTPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
+      { title: t('swap.poolSize'), value: `${sqtPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
       curRateStats,
     ];
   }
@@ -56,45 +59,74 @@ const getStats = ({
 
 const SellAUSD = () => {
   const { t } = useTranslation();
-  // TODO: get kSQT pool size, kSQT:aUSD, from contract
-  const kSQTPoolSize = BigNumber.from('100');
-  const kSQTAUSDRate = 1 / 0.02;
-  const aUSDBalance = BigNumber.from('500');
 
-  const fromMax = aUSDBalance;
-  const toMax = kSQTPoolSize;
-  const pair = {
-    from: STABLE_TOKEN,
-    fromMax,
-    to: TOKEN,
-    toMax,
-  };
+  // TODO: get activeOrder
+  const getUSDOrderId = 2;
+  const swapRate = useSwapRate(getUSDOrderId);
+  const swapPool = useSwapPool(getUSDOrderId);
 
-  const stats = getStats({ kSQTPoolSize, kSQTAUSDRate, t });
+  return renderAsyncArray(mergeAsync(swapRate, swapPool), {
+    error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
+    empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
+    data: (data) => {
+      const [sqtAUSDRate, sqtPoolSize] = data;
 
-  return <SwapForm stats={stats} pair={pair} fromRate={1 / kSQTAUSDRate} />;
+      if (!sqtPoolSize || !sqtPoolSize) return <Spinner />;
+
+      const aUSDBalance = '500'; //TODO: stableCoinBalance
+      const sortedRate = sqtAUSDRate ?? 0;
+      const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
+
+      const pair = {
+        from: STABLE_TOKEN,
+        fromMax: aUSDBalance,
+        to: TOKEN,
+        toMax: sortedPoolSize,
+      };
+
+      const stats = getStats({ sqtPoolSize: sortedPoolSize, sqtAUSDRate: sortedRate, t });
+
+      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;
+    },
+  });
 };
 
 const GetAUSD = () => {
   const { t } = useTranslation();
+  const { account } = useWeb3();
 
-  // TODO: get kSQT pool size, kSQT:aUSD, from contract
-  const kSQTAUSDRate = 1 / 0.02;
-  const swappableBalance = BigNumber.from('50');
-  const kSQTBalance = BigNumber.from('500');
+  const swapRate = useSwapRate(2);
+  const tradableQuota = useSellSQTQuota(account ?? '');
+  const { balance } = useSQToken();
 
-  const fromMax = kSQTBalance.gt(swappableBalance) ? swappableBalance : kSQTBalance;
-  const toMax = kSQTBalance;
+  return renderAsyncArray(mergeAsync(swapRate, tradableQuota, balance), {
+    error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
+    empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
+    data: (data) => {
+      const [swapRate, tradableQuota, sqtBalance] = data;
 
-  const pair = {
-    from: TOKEN,
-    fromMax,
-    to: STABLE_TOKEN,
-    toMax: toMax,
-  };
-  const stats = getStats({ swappableBalance, kSQTAUSDRate, t });
+      if (!swapRate || !tradableQuota) return <Spinner />;
 
-  return <SwapForm stats={stats} pair={pair} fromRate={kSQTAUSDRate} />;
+      const sortedBalance = sqtBalance ?? BigNumber.from('0'); //TODO: stableCoinBalance
+      const sortedRate = swapRate ?? 0;
+      const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
+
+      const fromMax = sortedBalance.gt(sortedPoolSize) ? tradableQuota : sortedBalance;
+      const toMax = sortedBalance;
+
+      const pair = {
+        from: TOKEN,
+        fromMax: formatEther(fromMax).toString(),
+        to: STABLE_TOKEN,
+        toMax: formatEther(toMax).toString(),
+      };
+
+      console.log('pair', pair);
+      const stats = getStats({ swappableBalance: tradableQuota, sqtAUSDRate: sortedRate, t });
+
+      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;
+    },
+  });
 };
 
 export const Swap: React.VFC = () => {
