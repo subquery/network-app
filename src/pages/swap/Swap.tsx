@@ -7,7 +7,7 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { AppTypography, TabButtons } from '../../components';
+import { AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
@@ -57,7 +57,6 @@ const getStats = ({
   ];
 };
 
-// TODO: loading handler
 const SellAUSD = () => {
   const { t } = useTranslation();
 
@@ -71,7 +70,9 @@ const SellAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [kSQTAUSDRate, kSQTPoolSize] = data;
-      console.log('data', data);
+
+      if (!kSQTAUSDRate || !kSQTPoolSize) return <Spinner />;
+
       const aUSDBalance = '500'; //TODO: stableCoinBalance
       const sortedRate = kSQTAUSDRate ?? 0;
       const sortedPoolSize = kSQTPoolSize ?? '0';
@@ -103,6 +104,8 @@ const GetAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [swapRate, tradableQuota, sqtBalance] = data;
+      if (!swapRate || !tradableQuota) return <Spinner />;
+
       const sortedBalance = sqtBalance ?? BigNumber.from('0'); //TODO: stableCoinBalance
       const sortedRate = swapRate ?? 0;
       const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
@@ -116,6 +119,8 @@ const GetAUSD = () => {
         to: STABLE_TOKEN,
         toMax: formatEther(toMax).toString(),
       };
+
+      console.log('pair', pair);
       const stats = getStats({ swappableBalance: tradableQuota, sqtAUSDRate: sortedRate, t });
 
       return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;

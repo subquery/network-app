@@ -38,12 +38,11 @@ interface PairFrom {
 const FROM_INPUT_ID = 'from';
 const TO_INPUT_ID = 'to';
 
+// TODO: confirm error msg with design/business
 export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => {
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
-  // TODO: confirm minimal convert val,  aUSD - 12, kSQT - 18
-  // TODO: confirm error msg with design/business
   const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
     const val = typeof value === 'number' ? value.toString() : value;
     if (fileKey === FROM_INPUT_ID) {
