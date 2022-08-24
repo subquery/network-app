@@ -108,6 +108,7 @@ WithMetadata.args = {
     loading: false,
     data: {
       name: 'Joe Blogs',
+      ens: 'joe.eth',
       image: 'QmSHRjrjBQCpdtjkoUdgKs6kCgdeYsJx5qmqijCp8Yjruh',
       url: 'https://subquery.network',
     },

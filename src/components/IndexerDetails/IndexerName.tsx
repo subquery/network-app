@@ -44,7 +44,7 @@ export const ConnectedIndexer: React.VFC<{
 
   return (
     <IndexerName
-      name={id === account ? 'You' : asyncMetadata.data?.name}
+      name={id === account ? 'You' : asyncMetadata.data?.ens ?? asyncMetadata.data?.name}
       image={asyncMetadata.data?.image}
       address={id}
       onAddressClick={onAddressClick}

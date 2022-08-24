@@ -24,5 +24,5 @@ function useIndexerRegistryImpl(logger: Logger): { getIndexer: (address: string)
 
 export const { useContainer: useIndexerRegistry, Provider: IndexerRegistryProvider } = createContainer(
   useIndexerRegistryImpl,
-  { displayName: 'IndexerRegistry ' },
+  { displayName: 'IndexerRegistry' },
 );
