@@ -6,15 +6,15 @@ require('dotenv').config();
 module.exports = {
   client: {
     service: {
-      name: 'leaderboard',
-      url: process.env.REACT_APP_LEADERBOARD_PROJECT,
+      name: 'swapExchange',
+      url: process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT,
     },
     tagName: 'gql',
     excludes: [
       'src/hooks/useApiEndpoint.ts',
       'src/containers/IndexerRegistryProject.tsx',
       'src/containers/QueryRegistryProject.tsx',
-      'src/containers/QuerySwapExchangeProject.tsx',
+      'src/containers/QueryLeaderboardProject.tsx',
       'src/containers/QuerySeason3Project.tsx',
     ],
   },
