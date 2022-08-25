@@ -3,6 +3,7 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import { Progress } from 'antd';
+import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +13,8 @@ import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
 
 const getEraTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
-  if (mNow < mTo) return 'This Era has ended';
-  return `Ends in ${getTimeLeft(mTo, mNow)}`;
+  if (mNow < mTo) return i18next.t(`era.ended`);
+  return i18next.t('era.timeLeft', { duration: getTimeLeft(mTo, mNow) });
 };
 
 const getEraProgress = (now: Date, estEndTime: Date, startTime: Date): number => {
@@ -29,11 +30,11 @@ export const CurEra: React.FC = () => {
     <>
       {renderAsync(currentEra, {
         loading: () => <Spinner />,
-        error: (e) => <Typography>{`${t('indexer.currentEra')}: -`}</Typography>,
+        error: (e) => <Typography>{`${t('era.currentEra')}: -`}</Typography>,
         data: (era) => {
           if (!era) return null;
           const now = new Date();
-          const eraHours = era.period / 3600;
+          const eraHours = `${era.period / 3600}`;
           const mNow = moment(now);
 
           const mTo = moment(era.estEndTime);
@@ -42,8 +43,8 @@ export const CurEra: React.FC = () => {
           return (
             <div className={styles.eraContainer}>
               <div className={styles.currentEraText}>
-                <AppTypography tooltip={`1 era = ${eraHours} hours`} tooltipDirection="top">
-                  {`${t('indexer.currentEra')}: ${era.index}`}
+                <AppTypography tooltip={`${t('era.tooltip', { hour: eraHours })}`} tooltipDirection="top">
+                  {`${t('era.currentEra')}: ${era.index}`}
                 </AppTypography>
               </div>
               <div className={styles.eraProgress}>
