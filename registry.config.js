@@ -4,17 +4,17 @@
 require('dotenv').config();
 
 module.exports = {
-    client: {
-        service: {
-            name: 'registry',
-            url: process.env.REACT_APP_QUERY_REGISTRY_PROJECT, 
-        },
-        tagName: "gql",
-        excludes: [
-            'src/hooks/useApiEndpoint.ts',
-            'src/containers/QueryLeaderboardProject.tsx',
-            'src/containers/QuerySeason2Project.tsx',
-            'src/containers/QuerySeason3Project.tsx',
-        ]
-    }
+  client: {
+    service: {
+      name: 'registry',
+      url: process.env.REACT_APP_QUERY_REGISTRY_PROJECT,
+    },
+    tagName: 'gql',
+    excludes: [
+      'src/hooks/useApiEndpoint.ts',
+      'src/containers/QueryLeaderboardProject.tsx',
+      'src/containers/QuerySwapExchangeProject.tsx',
+      'src/containers/QuerySeason3Project.tsx',
+    ],
+  },
 };

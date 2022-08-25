@@ -8,6 +8,16 @@ npx apollo client:codegen \
   --customScalarsPrefix=GraphQL_ \
   --outputFlat src/__generated__/registry
 
+# swap exchange
+npx apollo client:codegen \
+  --config swapExchange.config.js \
+  --target=typescript \
+  --tagName=gql \
+  --useReadOnlyTypes \
+  --passthroughCustomScalars \
+  --globalTypesFile src/__generated__/swapExchange/globalTypes.d.ts \
+  --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/swapExchange
+
 # leaderboard nest backend
 npx apollo client:codegen \
   --config leaderboard.config.js \
