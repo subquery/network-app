@@ -36,6 +36,10 @@ const HeaderLinks = () => {
       title: t('header.explorer'),
     },
     {
+      link: '/studio',
+      title: t('header.studio'),
+    },
+    {
       link: '/staking',
       title: t('header.staking'),
     },
