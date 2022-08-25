@@ -67,7 +67,7 @@ const ProjectInner: React.VFC = () => {
       (async function fetchMeta() {
         let indexerMeta;
         try {
-          const metadata = await getIndexerMetadata(catSingle, indexer.indexer?.metadata);
+          const metadata = await getIndexerMetadata(catSingle, id, indexer.indexer?.metadata);
 
           if (!metadata) return;
           indexerMeta = await getDeploymentMetadata({

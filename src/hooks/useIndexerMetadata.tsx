@@ -4,9 +4,8 @@
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerRegistry, useIPFS } from '../containers';
 import { IndexerDetails, indexerMetadataSchema } from '../models';
-import { AsyncData, bytes32ToCid } from '../utils';
+import { fetchEns, AsyncData, bytes32ToCid } from '../utils';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
-import { ethers } from 'ethers';
 
 export async function getIndexerMetadata(
   catSingle: (cid: string) => Promise<Uint8Array>,
@@ -15,9 +14,8 @@ export async function getIndexerMetadata(
 ): Promise<IndexerDetails | undefined> {
   if (!cid) return undefined;
 
-  const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/eth');
-  const ens = await provider.lookupAddress(address);
   const obj = (await fetchIpfsMetadata(catSingle, cid)) as IndexerDetails;
+  const ens = await fetchEns(address);
   obj.ens = ens;
 
   return indexerMetadataSchema.validate(obj);

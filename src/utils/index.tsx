@@ -9,6 +9,7 @@ export * from './stringFormatters';
 export * from './dateFormatters';
 export * from './parseError';
 export * from './getDeploymentProgress';
+export * from './fetchEns';
 export * from './getTrimmedStr';
 export * from './useDebounce';
 export * from './fetch';
