@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
-import { convertStringToNumber, mergeAsync, renderAsync } from '../../../../utils';
+import { convertStringToNumber, fetchEns, mergeAsync, renderAsync } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 
@@ -34,10 +34,18 @@ export const MyProfile: React.VFC = () => {
   const history = useHistory();
   const sortedIndexer = useSortedIndexer(account || '');
   const totalDelegations = useUserDelegations(account);
+  const [userId, setUserId] = React.useState<string>(account ?? '');
 
   React.useEffect(() => {
     if (!account) {
       history.push('/staking');
+    } else {
+      const loadEns = async (account: string) => {
+        const ens = await fetchEns(account);
+        if (ens) setUserId(ens);
+      };
+
+      loadEns(account);
     }
     return;
   }, [account, history]);
@@ -69,7 +77,7 @@ export const MyProfile: React.VFC = () => {
             ];
             return (
               <>
-                <div>{<Address address={account ?? ''} size="large" />}</div>
+                <div>{<Address truncated={userId.length > 20} address={userId} size="large" />}</div>
                 <div className={styles.stakingSummary}>
                   {cards.map((card) => (
                     <Card category={card.category} title={card.title} value={card.value} key={card.category} />
