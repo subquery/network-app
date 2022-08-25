@@ -2,14 +2,24 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Spinner, Typography } from '@subql/react-ui';
-import { Progress, Tooltip } from 'antd';
+import { Progress } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEra } from '../../containers';
-import { getPeriod, getProgress, renderAsync } from '../../utils';
+import { getTimeLeft, getProgress, renderAsync } from '../../utils';
 import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
+
+const getEraTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
+  if (mNow < mTo) return 'This Era has ended';
+  return `Ends in ${getTimeLeft(mTo, mNow)}`;
+};
+
+const getEraProgress = (now: Date, estEndTime: Date, startTime: Date): number => {
+  if (now > estEndTime) return 100;
+  return getProgress(now, estEndTime, startTime);
+};
 
 export const CurEra: React.FC = () => {
   const { currentEra } = useEra();
@@ -23,26 +33,31 @@ export const CurEra: React.FC = () => {
         data: (era) => {
           if (!era) return null;
           const now = new Date();
+          const eraHours = era.period / 3600;
           const mNow = moment(now);
+
           const mTo = moment(era.estEndTime);
-          const progress = getProgress(now, era.startTime, era.estEndTime);
+          const progress = getEraProgress(now, era.estEndTime, era.startTime);
 
           return (
             <div className={styles.eraContainer}>
               <div className={styles.currentEraText}>
-                <AppTypography tooltip="1 era = x days" tooltipDirection="top">
+                <AppTypography tooltip={`1 era = ${eraHours} hours`} tooltipDirection="top">
                   {`${t('indexer.currentEra')}: ${era.index}`}
                 </AppTypography>
               </div>
-              <Typography variant="small" className={styles.countdownText}>
-                Ends in {getPeriod(mNow, mTo)}
-              </Typography>
+              <div className={styles.eraProgress}>
+                <Typography variant="small" className={styles.countdownText}>
+                  {getEraTimeLeft(mNow, mTo)}
+                </Typography>
+              </div>
               <Progress
                 strokeColor={{
-                  '0%': '#4289DE',
-                  '100%': '#EA4D8A',
+                  '0%': 'var(--gradient-from)',
+                  '100%': 'var(--gradient-to)',
                 }}
-                percent={progress / 100}
+                className={styles.progressBar}
+                percent={progress}
               />
             </div>
           );
