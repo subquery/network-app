@@ -20,10 +20,6 @@ export const formatDate = (date: Date): string => {
 };
 
 export const getTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
-  if (mNow.isAfter(mTo)) {
-    return '0d 0h 0m 0s';
-  }
-
   const duration = moment.duration(mTo.diff(mNow));
   const days = Math.floor(duration.asDays());
   duration.subtract(moment.duration(days, 'days'));

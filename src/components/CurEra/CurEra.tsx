@@ -18,8 +18,7 @@ const getEraTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
 };
 
 const getEraProgress = (now: Date, estEndTime: Date, startTime: Date): number => {
-  if (now > estEndTime) return 100;
-  return getProgress(now, estEndTime, startTime);
+  return getProgress(now, startTime, estEndTime);
 };
 
 export const CurEra: React.FC = () => {
