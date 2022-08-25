@@ -120,11 +120,11 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       ),
     },
     {
-      dataIndex: 'value',
+      dataIndex: 'lockedAmount',
       title: t('serviceAgreements.headers.price').toUpperCase(),
       key: 'price',
       width: 100,
-      render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
+      render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} SQT`} />,
     },
   ];
 

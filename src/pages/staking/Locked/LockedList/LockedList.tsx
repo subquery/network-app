@@ -17,7 +17,7 @@ const dateFormat = 'MMMM Do YY, h:mm:ss a';
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
   endAt: string;
-  status: LOCK_STATUS;
+  lockStatus: LOCK_STATUS;
 }
 
 interface props {
@@ -48,7 +48,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     },
     {
       title: t('withdrawals.status').toUpperCase(),
-      dataIndex: 'status',
+      dataIndex: 'lockStatus',
       width: 30,
       render: (value: LOCK_STATUS) => (
         <TableText content={value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked')} />
@@ -56,7 +56,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
     },
   ];
 
-  const unlockedRewards = withdrawals.filter((withdrawal) => withdrawal.status === LOCK_STATUS.UNLOCK);
+  const unlockedRewards = withdrawals.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
   const hasUnlockedRewards = unlockedRewards?.length > 0;
 
   const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedRewards?.length || 0 })}`;

@@ -47,10 +47,10 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
     },
   },
   {
-    dataIndex: 'value',
+    dataIndex: 'lockedAmount',
     title: i18next.t('serviceAgreements.headers.price').toUpperCase(),
     key: 'price',
-    render: (price: ServiceAgreement['value']) => <TableText content={`${formatEther(price)} SQT`} />,
+    render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} SQT`} />,
   },
 ];
 
