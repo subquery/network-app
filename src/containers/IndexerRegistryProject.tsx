@@ -71,7 +71,7 @@ const SERVICE_AGREEMENT_FIELDS = gql`
     indexerAddress
     consumerAddress
     period
-    value
+    lockedAmount
     startTime
     endTime
     deployment {
@@ -173,7 +173,7 @@ const GET_DELEGATIONS = gql`
 const GET_WITHDRAWLS = gql`
   query GetWithdrawls($delegator: String!, $offset: Int) {
     withdrawls(
-      filter: { delegator: { equalTo: $delegator }, and: { claimed: { equalTo: false } } }
+      filter: { delegator: { equalTo: $delegator }, and: { status: { equalTo: CLAIMED } } }
       first: 10
       offset: $offset
     ) {
@@ -184,7 +184,7 @@ const GET_WITHDRAWLS = gql`
         indexer
         startTime
         amount
-        claimed
+        status
       }
     }
   }
