@@ -105,7 +105,7 @@ type Handlers<T> = {
 };
 
 type HandlersArray<T extends any[]> = {
-  loading: () => RenderResult;
+  loading?: () => RenderResult;
   error: (error: Error) => RenderResult;
   data: (data: T, asyncData: AsyncData<T>) => RenderResult;
   empty: () => RenderResult;
@@ -145,7 +145,7 @@ export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: 
   if (data.error) {
     return handlers.error(data.error);
   } else if (data.loading) {
-    return handlers.loading();
+    return handlers.loading ? handlers.loading() : defaultLoading();
   }
 
   return null;

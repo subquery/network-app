@@ -10,6 +10,7 @@
 
 .content {
   width: 50vw;
+  min-height: 50vh;
   background: white;
   border-radius: 8px;
 

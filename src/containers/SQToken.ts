@@ -46,11 +46,21 @@ function useSQTokenImpl() {
     return contracts.sqToken.allowance(account, contracts.purchaseOfferMarket.address);
   }, [account, pendingContracts]);
 
+  const permissionExchangeAllowance = useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
+
+    assert(contracts, 'Contracts not available');
+    assert(account, 'Account not available');
+
+    return contracts.sqToken.allowance(account, contracts.permissionedExchange.address);
+  }, [account, pendingContracts]);
+
   return {
     balance,
     stakingAllowance,
     planAllowance,
     offerAllowance,
+    permissionExchangeAllowance,
   };
 }
 
