@@ -18,15 +18,6 @@ npx apollo client:codegen \
   --globalTypesFile src/__generated__/leaderboard/globalTypes.d.ts \
   --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/leaderboard
 
-# leaderboard season 2
-npx apollo client:codegen \
-  --config season2.config.js \
-  --target=typescript \
-  --tagName=gql \
-  --useReadOnlyTypes \
-  --passthroughCustomScalars \
-  --globalTypesFile src/__generated__/leaderboard-season2/globalTypes.d.ts \
-  --customScalarsPrefix=GraphQL_ --outputFlat src/__generated__/leaderboard-season2
 
 # leaderboard season 3 
 npx apollo client:codegen \

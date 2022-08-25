@@ -8,14 +8,12 @@ import React from 'react';
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
 export const LEADERBOARD_CLIENT = 'leaderboard';
-export const SEASON_2_CLIENT = 'season2';
 export const SEASON_3_CLIENT = 'season3';
 // const leaderboardLink = getHttpLink(process.env.REACT_APP_LEADERBOARD_PROJECT);
-// const season2Link = getHttpLink(process.env.REACT_APP_SEASON_2);
 // const season3Link = getHttpLink(process.env.REACT_APP_SEASON_3);
 
-export const SWAP_EXCHANGE_CLIENT = 'season3';
-export const swapLink = getHttpLink(process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT);
+export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
+const swapLink = getHttpLink(process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT);
 const registryLink = getHttpLink(process.env.REACT_APP_QUERY_REGISTRY_PROJECT);
 
 export const QueryApolloProvider: React.FC = (props) => {
