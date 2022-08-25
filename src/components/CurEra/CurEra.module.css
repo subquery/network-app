@@ -1,3 +1,20 @@
-.eraText {
+.currentEraText {
   color: var(--gray700);
+  text-align: right;
+}
+
+.countdownText {
+  color: var(--gray700);
+  text-align: right;
+  padding-right: 1em;
+}
+
+.eraContainer {
+  display: flex;
+  width: 12vw;
+  flex-direction: column;
+}
+
+.s {
+  font-size: 10em;
 }

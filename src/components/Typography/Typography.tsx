@@ -19,6 +19,7 @@ interface Props extends TextProps {
   tooltip?: string;
   tooltipColor?: string;
   tooltipSize?: number;
+  tooltipDirection?: 'top' | 'left' | 'right' | 'bottom';
   children?: string | number | React.ReactNode;
   noTooltipIcon?: boolean;
 }
@@ -29,6 +30,7 @@ export const AppTypography: React.FC<Props> = ({
   className,
   tooltip,
   tooltipSize,
+  tooltipDirection = 'top',
   tooltipColor,
   noTooltipIcon,
   ...typographyProps
@@ -44,7 +46,7 @@ export const AppTypography: React.FC<Props> = ({
 
   if (tooltip) {
     return (
-      <Tooltip title={tooltip}>
+      <Tooltip title={tooltip} placement={tooltipDirection}>
         <div className={clsx(styles.tooltip)}>
           <div className={clsx(styles.tooltipContent)}>
             {sortedContent}

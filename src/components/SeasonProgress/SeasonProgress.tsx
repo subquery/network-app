@@ -3,6 +3,7 @@
 
 import { Progress } from 'antd';
 import moment from 'moment';
+import { getProgress } from '../../utils';
 import styles from './SeasonProgress.module.css';
 
 function getPeriod(mTo: moment.Moment, mNow: moment.Moment): string {
@@ -46,9 +47,7 @@ export const SeasonProgress: React.VFC<{
 
   const status = getStatus(mTo, mNow);
   const timeLeft = getPeriod(mTo, mNow);
-  const percent_complete = parseInt(
-    ((Math.abs(now.getTime() - from.getTime()) / (to.getTime() - from.getTime())) * 100).toFixed(0),
-  );
+  const percent_complete = getProgress(now, from, to);
 
   return (
     <div className={styles.seasonProgress}>
