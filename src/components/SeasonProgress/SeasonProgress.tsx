@@ -3,27 +3,8 @@
 
 import { Progress } from 'antd';
 import moment from 'moment';
+import { getProgress, getTimeLeft } from '../../utils';
 import styles from './SeasonProgress.module.css';
-
-function getPeriod(mTo: moment.Moment, mNow: moment.Moment): string {
-  if (mNow.isAfter(mTo)) {
-    return '0d 0h 0m 0s';
-  }
-
-  const duration = moment.duration(mTo.diff(mNow));
-  const days = Math.floor(duration.asDays());
-  duration.subtract(moment.duration(days, 'days'));
-
-  const hours = duration.hours();
-  duration.subtract(moment.duration(hours, 'hours'));
-
-  const minutes = duration.minutes();
-  duration.subtract(moment.duration(minutes, 'minutes'));
-
-  // const seconds = duration.seconds();
-
-  return `${days}d ${hours}h ${minutes}m`;
-}
 
 function getStatus(mTo: moment.Moment, mNow: moment.Moment): string {
   if (mNow.isAfter(mTo)) {
@@ -45,10 +26,8 @@ export const SeasonProgress: React.VFC<{
   const mNow = moment(now);
 
   const status = getStatus(mTo, mNow);
-  const timeLeft = getPeriod(mTo, mNow);
-  const percent_complete = parseInt(
-    ((Math.abs(now.getTime() - from.getTime()) / (to.getTime() - from.getTime())) * 100).toFixed(0),
-  );
+  const timeLeft = getTimeLeft(mTo, mNow);
+  const percent_complete = getProgress(now, from, to);
 
   return (
     <div className={styles.seasonProgress}>
