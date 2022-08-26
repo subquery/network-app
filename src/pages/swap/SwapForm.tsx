@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,7 @@ interface ISwapForm {
   stats: Array<Stats>;
   pair: SwapPair;
   fromRate?: number;
+  noOrderInPool?: boolean;
 }
 
 interface PairFrom {
@@ -39,7 +40,8 @@ const FROM_INPUT_ID = 'from';
 const TO_INPUT_ID = 'to';
 
 // TODO: confirm error msg with design/business
-export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => {
+// TODO: confirm alert component and move as component
+export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1, noOrderInPool }) => {
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
@@ -86,6 +88,12 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
 
   return (
     <div className={styles.container}>
+      {noOrderInPool && (
+        <div className={styles.errorAlert}>
+          <Alert message={t('swap.noOrderInPool')} type="error" closable showIcon className={styles.alert} />
+        </div>
+      )}
+
       <div className={styles.statsContainer}>
         {stats.map((statsItem) => (
           <div className={styles.stats} key={statsItem.title}>
@@ -139,7 +147,7 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1 }) => 
                     shape="round"
                     size="large"
                     className={styles.swapButton}
-                    disabled={!isValid}
+                    disabled={!isValid || noOrderInPool}
                     loading={isSubmitting}
                   >
                     {t('swap.swapButton')}

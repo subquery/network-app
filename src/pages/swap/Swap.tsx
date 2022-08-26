@@ -2,17 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from 'antd';
-import { BigNumber, BigNumberish, utils } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
 import { AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
-import { useSellSQTQuota, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
+import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
+import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -57,23 +58,28 @@ const getStats = ({
   ];
 };
 
+// TODO: replace with aUSD sdk pkg when switch back to acala network
+// TODO: when order is undefined at useSwapData, upon design confirm
 const SellAUSD = () => {
   const { t } = useTranslation();
 
-  // TODO: get activeOrder
-  const getUSDOrderId = 2;
-  const swapRate = useSwapRate(getUSDOrderId);
-  const swapPool = useSwapPool(getUSDOrderId);
+  const { permissionExchangeAllowance } = useSQToken();
+  const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
+  const orderId = useSwapOrderId(SQToken.address ?? '');
+  console.log('orderId', orderId);
+
+  // TODO: when order is undefined, upon design confirm
+  const swapRate = useSwapRate(orderId);
+  const swapPool = useSwapPool(orderId);
 
   return renderAsyncArray(mergeAsync(swapRate, swapPool), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [sqtAUSDRate, sqtPoolSize] = data;
+      if (sqtPoolSize === undefined || sqtPoolSize === undefined) return <Spinner />;
 
-      if (!sqtPoolSize || !sqtPoolSize) return <Spinner />;
-
-      const aUSDBalance = '500'; //TODO: stableCoinBalance
+      const aUSDBalance = '500'; //TODO: stableCoinBalance with sdk later
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
 
@@ -86,7 +92,7 @@ const SellAUSD = () => {
 
       const stats = getStats({ sqtPoolSize: sortedPoolSize, sqtAUSDRate: sortedRate, t });
 
-      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;
+      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} noOrderInPool={!orderId} />;
     },
   });
 };
@@ -94,8 +100,13 @@ const SellAUSD = () => {
 const GetAUSD = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const { permissionExchangeAllowance } = useSQToken();
+  const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
 
-  const swapRate = useSwapRate(2);
+  const orderId = useSwapOrderId(SQToken.address ?? '');
+
+  // TODO: when order is undefined, upon design confirm
+  const swapRate = useSwapRate(orderId);
   const tradableQuota = useSellSQTQuota(account ?? '');
   const { balance } = useSQToken();
 
@@ -105,7 +116,7 @@ const GetAUSD = () => {
     data: (data) => {
       const [swapRate, tradableQuota, sqtBalance] = data;
 
-      if (!swapRate || !tradableQuota) return <Spinner />;
+      if (swapRate === undefined || tradableQuota === undefined) return <Spinner />;
 
       const sortedBalance = sqtBalance ?? BigNumber.from('0'); //TODO: stableCoinBalance
       const sortedRate = swapRate ?? 0;
@@ -124,7 +135,7 @@ const GetAUSD = () => {
       console.log('pair', pair);
       const stats = getStats({ swappableBalance: tradableQuota, sqtAUSDRate: sortedRate, t });
 
-      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} />;
+      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} noOrderInPool={!orderId} />;
     },
   });
 };

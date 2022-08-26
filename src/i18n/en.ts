@@ -543,6 +543,7 @@ const en = {
       approveUSD: 'Approve aUSD',
       swapButton: 'Swap',
       walletBalance: 'Wallet Balance',
+      noOrderInPool: 'There is no available order in pool currently.',
     },
 
     general: {
