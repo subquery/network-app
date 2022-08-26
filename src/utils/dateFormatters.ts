@@ -20,17 +20,8 @@ export const formatDate = (date: Date): string => {
 };
 
 export const getTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
-  const duration = moment.duration(mTo.diff(mNow));
-  const days = Math.floor(duration.asDays());
-  duration.subtract(moment.duration(days, 'days'));
-
-  const hours = duration.hours();
-  duration.subtract(moment.duration(hours, 'hours'));
-
-  const minutes = duration.minutes();
-  duration.subtract(moment.duration(minutes, 'minutes'));
-
-  return `${days}d ${hours}h ${minutes}m`;
+  if (mTo.isAfter(mNow)) return 'This period is over';
+  return moment.duration(mTo.diff(mNow)).format('DD [d] hh [h] mm [m]');
 };
 
 export const getProgress = (now: Date, from: Date, to: Date): number => {
