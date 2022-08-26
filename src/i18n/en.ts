@@ -171,11 +171,17 @@ const en = {
     errors: {
       transactionRejected: 'User rejected the request',
     },
+    era: {
+      currentEra: 'Current Era',
+      tooltip: `1 era = {{hour}} hour`,
+      tooltip_other: `1 era = {{hour}} hours`,
+      timeLeft: `Ends in {{duration}}`,
+      ended: 'This Era has ended',
+    },
     indexer: {
       title: 'Indexer',
       indexers: 'Indexers',
       profile: 'My profile',
-      currentEra: 'Current Era',
       indexing: 'Indexing',
       totalStakeAmount: 'Total Stake amount',
       rewards: 'Rewards',

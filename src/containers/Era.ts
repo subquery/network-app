@@ -9,6 +9,7 @@ import { useContracts } from './Contracts';
 
 type Era = {
   startTime: Date;
+  estEndTime: Date;
   index: number;
   period: number;
 };
@@ -36,6 +37,7 @@ function useEraImpl(logger: Logger) {
 
     const era: Era = {
       startTime: bnToDate(startTime),
+      estEndTime: bnToDate(startTime.add(period)),
       period: period.toNumber(),
       index: index.toNumber(),
     };
