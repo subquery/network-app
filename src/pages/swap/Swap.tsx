@@ -66,7 +66,6 @@ const SellAUSD = () => {
   const { permissionExchangeAllowance } = useSQToken();
   const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
   const orderId = useSwapOrderId(SQToken.address ?? '');
-  console.log('orderId', orderId);
 
   // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
@@ -92,7 +91,16 @@ const SellAUSD = () => {
 
       const stats = getStats({ sqtPoolSize: sortedPoolSize, sqtAUSDRate: sortedRate, t });
 
-      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} noOrderInPool={!orderId} />;
+      return (
+        <SwapForm
+          stats={stats}
+          pair={pair}
+          fromRate={sortedRate}
+          noOrderInPool={!orderId}
+          requireTokenApproval={!!requireTokenApproval}
+          onClickSwap={() => console.log('test')}
+        />
+      );
     },
   });
 };
@@ -132,10 +140,18 @@ const GetAUSD = () => {
         toMax: formatEther(toMax).toString(),
       };
 
-      console.log('pair', pair);
       const stats = getStats({ swappableBalance: tradableQuota, sqtAUSDRate: sortedRate, t });
 
-      return <SwapForm stats={stats} pair={pair} fromRate={sortedRate} noOrderInPool={!orderId} />;
+      return (
+        <SwapForm
+          stats={stats}
+          pair={pair}
+          fromRate={sortedRate}
+          noOrderInPool={!orderId}
+          requireTokenApproval={!!requireTokenApproval}
+          onClickSwap={() => (requireTokenApproval ? permissionExchangeAllowance.refetch() : console.log('test'))}
+        />
+      );
     },
   });
 };

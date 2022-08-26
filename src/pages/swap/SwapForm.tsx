@@ -5,11 +5,11 @@ import { Alert, Button } from 'antd';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberInput, Stat } from '../../components';
+import { getTokenApprovalModalText, ModalApproveToken, NumberInput, Stat, SummaryList } from '../../components';
 import styles from './SwapForm.module.css';
 import * as Yup from 'yup';
-import { BigNumberish } from 'ethers';
 import { tokenDecimals } from '../../utils';
+import TransactionModal from '../../components/TransactionModal';
 
 interface Stats {
   title: string;
@@ -29,6 +29,8 @@ interface ISwapForm {
   pair: SwapPair;
   fromRate?: number;
   noOrderInPool?: boolean;
+  requireTokenApproval?: boolean;
+  onClickSwap?: () => void;
 }
 
 interface PairFrom {
@@ -41,7 +43,14 @@ const TO_INPUT_ID = 'to';
 
 // TODO: confirm error msg with design/business
 // TODO: confirm alert component and move as component
-export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1, noOrderInPool }) => {
+export const SwapForm: React.FC<ISwapForm> = ({
+  stats,
+  pair,
+  fromRate = 1,
+  noOrderInPool,
+  requireTokenApproval,
+  onClickSwap,
+}) => {
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
@@ -86,6 +95,16 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1, noOrd
       .typeError('Please input valid from amount.'),
   });
 
+  const modalText = requireTokenApproval
+    ? getTokenApprovalModalText(pair.from)
+    : {
+        title: t('swap.confirmSwap'),
+        steps: [t('swap.reviewSwap'), t('indexer.confirmOnMetamask')],
+        submitText: t('general.confirm'),
+        failureText: t('swap.swapSuccess'),
+        successText: t('swap.swapFailure'),
+      };
+
   return (
     <div className={styles.container}>
       {noOrderInPool && (
@@ -107,12 +126,25 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1, noOrd
           initialValues={initialPairValues}
           validationSchema={SwapFormSchema}
           onSubmit={(values, actions) => {
+            console.log('values', values);
             // TODO: Form submit action
             actions.setSubmitting(false);
           }}
           validateOnMount
         >
           {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
+            const isActionDisabled = !isValid || noOrderInPool;
+            const summaryList = [
+              {
+                label: t('swap.from'),
+                value: `${values[FROM_INPUT_ID]} ${pair.from}`,
+              },
+              {
+                label: t('swap.to'),
+                value: `${values[TO_INPUT_ID]} ${pair.to}`,
+              },
+            ];
+
             return (
               <Form>
                 <NumberInput
@@ -141,17 +173,47 @@ export const SwapForm: React.FC<ISwapForm> = ({ stats, pair, fromRate = 1, noOrd
                 />
 
                 <div className={styles.swapAction}>
-                  <Button
-                    htmlType="submit"
-                    type="primary"
-                    shape="round"
-                    size="large"
-                    className={styles.swapButton}
-                    disabled={!isValid || noOrderInPool}
-                    loading={isSubmitting}
-                  >
-                    {t('swap.swapButton')}
-                  </Button>
+                  <TransactionModal
+                    text={modalText}
+                    actions={[
+                      {
+                        label: t('swap.swapButton'),
+                        key: 'swap',
+                        disabled: isActionDisabled,
+                      },
+                    ]}
+                    onClick={submitForm}
+                    renderContent={(onSubmit, onCancel, isLoading, error) => {
+                      if (!!requireTokenApproval) {
+                        return (
+                          <ModalApproveToken
+                            onSubmit={() => {
+                              onClickSwap && onClickSwap();
+                            }}
+                          />
+                        );
+                      }
+
+                      return (
+                        <>
+                          <SummaryList title={t('swap.swapReviewTitle')} list={summaryList} />
+                          <div className="flex-end">
+                            <Button
+                              htmlType="submit"
+                              type="primary"
+                              shape="round"
+                              size="large"
+                              className={styles.swapButton}
+                              loading={isSubmitting || isLoading}
+                            >
+                              {t('swap.swapButton')}
+                            </Button>
+                          </div>
+                        </>
+                      );
+                    }}
+                    variant={isActionDisabled ? 'disabledButton' : 'button'}
+                  />
                 </div>
               </Form>
             );
