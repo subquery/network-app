@@ -192,7 +192,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                       {
                         label: t('swap.swapButton'),
                         key: 'swap',
-                        // disabled: isActionDisabled,
+                        disabled: isActionDisabled,
                       },
                     ]}
                     onClick={submitForm}

@@ -202,6 +202,7 @@ const TransactionModal = <P, T extends string>({
                 handleBtnClick(key);
               }}
               className={variant}
+              colorScheme="standard"
               size="medium"
               disabled={disabled || showClock}
               rightItem={
