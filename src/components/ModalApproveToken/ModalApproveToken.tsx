@@ -8,17 +8,17 @@ import i18next from '../../i18n';
 import { Button, Typography } from 'antd';
 import styles from './ModalApproveToken.module.css';
 import { useContracts } from '../../containers';
-import { parseError } from '../../utils';
+import { parseError, TOKEN } from '../../utils';
 
-export const tokenApprovalModalText = {
-  title: i18next.t('indexer.approveToken'),
-  description: i18next.t('indexer.approveTokenToProceed'),
-  submitText: i18next.t('indexer.confirmApproval'),
-  inputTitle: '',
+export const getTokenApprovalModalText = (token = TOKEN) => ({
+  title: i18next.t('tokenApproval.approve', { token }),
+  description: i18next.t('tokenApproval.approveToProceed', { token }),
+  submitText: i18next.t('tokenApproval.confirm'),
   steps: [i18next.t('general.confirm'), i18next.t('general.confirmOnMetamask')],
   failureText: `Sorry, SQT token approval has failed.`,
-};
+});
 
+export const tokenApprovalModalText = getTokenApprovalModalText();
 export enum ApproveContract {
   Staking = 'staking',
   PlanManager = 'planManager',

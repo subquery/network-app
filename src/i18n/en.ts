@@ -213,9 +213,6 @@ const en = {
       currentRate: 'Current rate',
       confirmRate: 'Confirm Rate',
       action: 'action',
-      approveToken: 'Allow the SubQuery Network to use your SQT',
-      approveTokenToProceed: 'You must give the SubQuery Network smart contracts permission to use your SQT.',
-      confirmApproval: 'Approve on MetaMask',
       notRegister: 'You haven’t registered as an indexer yet.',
       doStake: 'You haven’t staked yet. Stake to become an indexer.',
       learnMore: 'Learn how to become an indexer',
@@ -225,6 +222,11 @@ const en = {
       here: 'here',
       amount: ' There are {{count}} indexer.',
       amount_other: ' There are {{count}} indexers.',
+    },
+    tokenApproval: {
+      approve: 'Allow the SubQuery Network to use your {{token}}',
+      approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',
+      confirm: 'Approve on MetaMask',
     },
 
     delegate: {
@@ -543,6 +545,12 @@ const en = {
       approveUSD: 'Approve aUSD',
       swapButton: 'Swap',
       walletBalance: 'Wallet Balance',
+      noOrderInPool: 'There is no available order in pool currently.',
+      confirmSwap: 'Confirm Swap',
+      reviewSwap: 'Review Swap',
+      swapReviewTitle: 'You are going to swap:',
+      swapSuccess: 'The swap transaction has succeeded.',
+      swapFailure: 'The transaction has failed.',
     },
 
     general: {
