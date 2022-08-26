@@ -4,7 +4,9 @@
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import { useContracts } from '../containers';
+import moment from 'moment';
+import * as React from 'react';
+import { useContracts, useOrders } from '../containers';
 import { AsyncData, convertStringToNumber } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
@@ -12,9 +14,11 @@ import { useAsyncMemo } from './useAsyncMemo';
  * @args: orderId
  * @returns amountGive/amountGet rate: number
  */
-export function useSwapRate(orderId: number): AsyncData<number> {
+export function useSwapRate(orderId: number | undefined): AsyncData<number> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
+    if (!orderId) return 0;
+
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
@@ -28,9 +32,11 @@ export function useSwapRate(orderId: number): AsyncData<number> {
  * @args: orderId
  * @returns swap pool
  */
-export function useSwapPool(orderId: number): AsyncData<BigNumber> {
+export function useSwapPool(orderId: number | undefined): AsyncData<BigNumber> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
+    if (!orderId) return BigNumber.from(0);
+
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
@@ -52,4 +58,22 @@ export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
 
     return await contracts.permissionedExchange.tradeQuota(contracts.sqToken.address, account);
   }, [pendingContracts]);
+}
+
+/**
+ * @args: tokenGive address
+ * @returns orderId | undefined
+ */
+export function useSwapOrderId(swapFrom: string): number | undefined {
+  const [orderId, setOrderId] = React.useState<number>();
+  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const { data: orders, loading } = useOrders({ swapFrom: swapFrom, now });
+
+  React.useEffect(() => {
+    if (orders && orders.nodes && orders.nodes[0]) {
+      const order = orders.nodes[0];
+      setOrderId(parseInt(order.id));
+    }
+  }, [loading, orders]);
+  return orderId;
 }

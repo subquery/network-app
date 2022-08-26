@@ -9,7 +9,7 @@ const GET_ORDERS = gql`
   query GetOrders($swapFrom: String!, $now: Datetime!) {
     orders(
       orderBy: EXPIRE_DATE_DESC
-      filter: { status: { equalTo: "ACTIVE" }, expireDate: { greaterThan: $now }, tokenGive: { equalTo: $swapFrom } }
+      filter: { status: { equalTo: ACTIVE }, expireDate: { greaterThan: $now }, tokenGive: { equalTo: $swapFrom } }
     ) {
       totalCount
       nodes {
@@ -23,7 +23,8 @@ const GET_ORDERS = gql`
 
 export function useOrders(params: GetOrdersVariables): QueryResult<GetOrders_orders> {
   return useQuery<GetOrders_orders, GetOrdersVariables>(GET_ORDERS, {
+    variables: params,
     context: { clientName: SWAP_EXCHANGE_CLIENT },
-    pollInterval: 20000,
+    nextFetchPolicy: 'cache-and-network',
   });
 }
