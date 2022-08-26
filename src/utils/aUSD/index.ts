@@ -1,13 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ethers } from 'ethers';
+import { ethers, Contract } from 'ethers';
 import abi from './aUSD.json';
 
 // NOTE: Tmp solution and will replace with aUSD contract sdk
 // NOTE: Why not use hook: plan to move to network-client
-const STABLE_TOKEN_ADDRESS = '0xf98bf104e268d7cbb7949029fee874e3cd1db8fa';
-export const initialAUSDContract = async () => {
+export const STABLE_TOKEN_ADDRESS = '0xf98bf104e268d7cbb7949029fee874e3cd1db8fa';
+export const initialAUSDContract = async (): Promise<Contract> => {
   const ethereum = (window as any).ethereum;
   const accounts = await ethereum.request({
     method: 'eth_requestAccounts',

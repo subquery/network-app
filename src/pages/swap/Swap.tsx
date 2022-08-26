@@ -7,14 +7,14 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { AppTypography, Spinner, TabButtons } from '../../components';
+import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
-import { useAUSDAllowance, useAUSDBalance } from '../../hooks/useASUDContract';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract } from '../../hooks/useASUDContract';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -64,7 +64,9 @@ const getStats = ({
 const SellAUSD = () => {
   const { t } = useTranslation();
 
-  const requireTokenApproval = useAUSDAllowance()?.data?.isZero();
+  const aUSDContract = useAUSDContract();
+  const aUSDAllowance = useAUSDAllowance();
+  const requireTokenApproval = aUSDAllowance?.data?.isZero();
   const orderId = useSwapOrderId(SQToken.address ?? '');
 
   const swapRate = useSwapRate(orderId);
@@ -98,7 +100,8 @@ const SellAUSD = () => {
           fromRate={sortedRate}
           noOrderInPool={!orderId}
           requireTokenApproval={!!requireTokenApproval}
-          onClickSwap={() => console.log('test')}
+          contractAddress={aUSDContract.data?.address}
+          onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
         />
       );
     },
@@ -150,6 +153,7 @@ const GetAUSD = () => {
           noOrderInPool={!orderId}
           requireTokenApproval={!!requireTokenApproval}
           onClickSwap={() => (requireTokenApproval ? permissionExchangeAllowance.refetch() : console.log('test'))}
+          contract={ApproveContract.PermissionedExchange}
         />
       );
     },

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import assert from 'assert';
-import { constants } from 'ethers';
+import { BigNumber, constants, ContractReceipt, ContractTransaction } from 'ethers';
 import i18next from '../../i18n';
 import { Button, Typography } from 'antd';
 import styles from './ModalApproveToken.module.css';
@@ -23,6 +23,7 @@ export enum ApproveContract {
   Staking = 'staking',
   PlanManager = 'planManager',
   PurchaseOfferMarket = 'purchaseOfferMarket',
+  PermissionedExchange = 'permissionedExchange',
 }
 
 interface ModalApproveTokenProps {
@@ -32,6 +33,8 @@ interface ModalApproveTokenProps {
   onFail?: () => void;
   onSubmit?: () => void;
   contract?: ApproveContract;
+  contractAddress?: string;
+  onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
 }
 
 export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
@@ -40,6 +43,8 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
   onSuccess,
   onSubmit,
   contract = ApproveContract.Staking,
+  contractAddress,
+  onIncreaseAllowance,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>();
@@ -50,8 +55,16 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
       const contracts = await pendingContracts;
       assert(contracts, 'Contracts not available');
 
-      const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
-      const approvalTxResult = await approvalTx.wait();
+      let approvalTxResult: ContractReceipt;
+
+      if (onIncreaseAllowance && contractAddress) {
+        const approvalTx = await onIncreaseAllowance(contractAddress, constants.MaxUint256);
+        approvalTxResult = await approvalTx.wait();
+      } else {
+        const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
+        approvalTxResult = await approvalTx.wait();
+      }
+
       if (approvalTxResult.status === 1) {
         onSuccess && onSuccess();
         onSubmit && onSubmit();

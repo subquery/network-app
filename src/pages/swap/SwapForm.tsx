@@ -5,9 +5,17 @@ import { Alert, Button } from 'antd';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getTokenApprovalModalText, ModalApproveToken, NumberInput, Stat, SummaryList } from '../../components';
-import styles from './SwapForm.module.css';
 import * as Yup from 'yup';
+import { BigNumber, ContractTransaction } from 'ethers';
+import {
+  ApproveContract,
+  getTokenApprovalModalText,
+  ModalApproveToken,
+  NumberInput,
+  Stat,
+  SummaryList,
+} from '../../components';
+import styles from './SwapForm.module.css';
 import { tokenDecimals } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 
@@ -31,6 +39,9 @@ interface ISwapForm {
   noOrderInPool?: boolean;
   requireTokenApproval?: boolean;
   onClickSwap?: () => void;
+  contract?: ApproveContract;
+  contractAddress?: string;
+  onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
 }
 
 interface PairFrom {
@@ -50,6 +61,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
   noOrderInPool,
   requireTokenApproval,
   onClickSwap,
+  contract,
+  contractAddress,
+  onIncreaseAllowance,
 }) => {
   const { t } = useTranslation();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
@@ -178,7 +192,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                       {
                         label: t('swap.swapButton'),
                         key: 'swap',
-                        disabled: isActionDisabled,
+                        // disabled: isActionDisabled,
                       },
                     ]}
                     onClick={submitForm}
@@ -186,6 +200,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
                       if (!!requireTokenApproval) {
                         return (
                           <ModalApproveToken
+                            onIncreaseAllowance={onIncreaseAllowance}
+                            contract={contract}
+                            contractAddress={contractAddress}
                             onSubmit={() => {
                               onClickSwap && onClickSwap();
                             }}
