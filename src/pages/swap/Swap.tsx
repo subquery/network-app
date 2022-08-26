@@ -14,6 +14,7 @@ import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
+import { useAUSDAllowance, useAUSDBalance } from '../../hooks/useASUDContract';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -63,22 +64,21 @@ const getStats = ({
 const SellAUSD = () => {
   const { t } = useTranslation();
 
-  const { permissionExchangeAllowance } = useSQToken();
-  const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
+  const requireTokenApproval = useAUSDAllowance()?.data?.isZero();
   const orderId = useSwapOrderId(SQToken.address ?? '');
 
-  // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
+  const aUSDBalance = useAUSDBalance();
 
-  return renderAsyncArray(mergeAsync(swapRate, swapPool), {
+  return renderAsyncArray(mergeAsync(swapRate, swapPool, aUSDBalance), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [sqtAUSDRate, sqtPoolSize] = data;
+      const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
       if (sqtPoolSize === undefined || sqtPoolSize === undefined) return <Spinner />;
 
-      const aUSDBalance = '500'; //TODO: stableCoinBalance with sdk later
+      const aUSDBalance = formatEther(aUSDAmount) ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
 

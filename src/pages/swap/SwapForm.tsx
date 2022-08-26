@@ -130,7 +130,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
             // TODO: Form submit action
             actions.setSubmitting(false);
           }}
-          validateOnMount
         >
           {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
             const isActionDisabled = !isValid || noOrderInPool;
