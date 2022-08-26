@@ -27,8 +27,7 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
     }
 
     const query = data.project;
-    // FIXME: hardcode `metadata cid`, can remove this once subql project up to date
-    const metadata = await getMetadataFromCid('QmXUU7Srs1GLrHzgucoo2aMTt7T4ePG8TnA3mKjWLPhWnn');
+    const metadata = await getMetadataFromCid(query.metadata);
 
     return {
       ...query,
