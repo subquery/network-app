@@ -19,8 +19,8 @@ export const formatDate = (date: Date): string => {
   return moment.utc(date).local().format('dddd, MMMM Do YYYY, h:mm:ss a');
 };
 
-export const getTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
-  if (mTo.isAfter(mNow)) return 'This period is over';
+export const getTimeLeft = (mNow: moment.Moment, mTo: moment.Moment): string => {
+  if (mNow.isAfter(mTo)) return 'This period is over';
   return moment.duration(mTo.diff(mNow)).format('DD [d] hh [h] mm [m]');
 };
 
