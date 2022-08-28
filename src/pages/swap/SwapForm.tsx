@@ -7,6 +7,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { BigNumber, ContractTransaction } from 'ethers';
+import assert from 'assert';
 import {
   ApproveContract,
   getTokenApprovalModalText,
@@ -18,6 +19,9 @@ import {
 import styles from './SwapForm.module.css';
 import { tokenDecimals } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
+import { useContracts } from '../../containers';
+// import { getEthGas } from '@subql/network-clients';
+import { parseEther } from 'ethers/lib/utils';
 
 interface Stats {
   title: string;
@@ -36,11 +40,11 @@ interface ISwapForm {
   stats: Array<Stats>;
   pair: SwapPair;
   fromRate?: number;
-  noOrderInPool?: boolean;
+  orderId: string | undefined;
   requireTokenApproval?: boolean;
-  onClickSwap?: () => void;
   contract?: ApproveContract;
   contractAddress?: string;
+  onApproveAllowance?: () => void;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
 }
 
@@ -58,14 +62,15 @@ export const SwapForm: React.FC<ISwapForm> = ({
   stats,
   pair,
   fromRate = 1,
-  noOrderInPool,
+  orderId,
   requireTokenApproval,
-  onClickSwap,
   contract,
   contractAddress,
+  onApproveAllowance,
   onIncreaseAllowance,
 }) => {
   const { t } = useTranslation();
+  const pendingContracts = useContracts();
   const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
   const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
@@ -119,9 +124,18 @@ export const SwapForm: React.FC<ISwapForm> = ({
         successText: t('swap.swapFailure'),
       };
 
+  const onTradeOrder = async (orderId: string, amount: BigNumber) => {
+    const contracts = await pendingContracts;
+    assert(contracts, 'Contracts not available');
+
+    // TODO: use when for acala network
+    // const ethGas = await getEthGas('high');
+    return contracts.permissionedExchange.trade(orderId, amount);
+  };
+
   return (
     <div className={styles.container}>
-      {noOrderInPool && (
+      {!orderId && (
         <div className={styles.errorAlert}>
           <Alert message={t('swap.noOrderInPool')} type="error" closable showIcon className={styles.alert} />
         </div>
@@ -140,13 +154,11 @@ export const SwapForm: React.FC<ISwapForm> = ({
           initialValues={initialPairValues}
           validationSchema={SwapFormSchema}
           onSubmit={(values, actions) => {
-            console.log('values', values);
-            // TODO: Form submit action
             actions.setSubmitting(false);
           }}
         >
           {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
-            const isActionDisabled = !isValid || noOrderInPool;
+            const isActionDisabled = !isValid || !orderId;
             const summaryList = [
               {
                 label: t('swap.from'),
@@ -195,7 +207,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
                         disabled: isActionDisabled,
                       },
                     ]}
-                    onClick={submitForm}
+                    onClick={() => {
+                      assert(orderId, 'There is no orderId available.');
+                      return onTradeOrder(orderId, parseEther(values[FROM_INPUT_ID]));
+                    }}
                     renderContent={(onSubmit, onCancel, isLoading, error) => {
                       if (!!requireTokenApproval) {
                         return (
@@ -203,9 +218,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                             onIncreaseAllowance={onIncreaseAllowance}
                             contract={contract}
                             contractAddress={contractAddress}
-                            onSubmit={() => {
-                              onClickSwap && onClickSwap();
-                            }}
+                            onSubmit={() => onApproveAllowance && onApproveAllowance()}
                           />
                         );
                       }
@@ -215,7 +228,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                           <SummaryList title={t('swap.swapReviewTitle')} list={summaryList} />
                           <div className="flex-end">
                             <Button
-                              htmlType="submit"
+                              onClick={onSubmit}
                               type="primary"
                               shape="round"
                               size="large"

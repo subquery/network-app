@@ -98,7 +98,7 @@ const SellAUSD = () => {
           stats={stats}
           pair={pair}
           fromRate={sortedRate}
-          noOrderInPool={!orderId}
+          orderId={orderId}
           requireTokenApproval={!!requireTokenApproval}
           contractAddress={aUSDContract.data?.address}
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
@@ -150,9 +150,9 @@ const GetAUSD = () => {
           stats={stats}
           pair={pair}
           fromRate={sortedRate}
-          noOrderInPool={!orderId}
+          orderId={orderId}
           requireTokenApproval={!!requireTokenApproval}
-          onClickSwap={() => (requireTokenApproval ? permissionExchangeAllowance.refetch() : console.log('test'))}
+          onApproveAllowance={() => requireTokenApproval && permissionExchangeAllowance.refetch()}
           contract={ApproveContract.PermissionedExchange}
         />
       );
