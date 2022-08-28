@@ -58,7 +58,7 @@ export const CurEra: React.FC = () => {
                 }}
                 trailColor={'var(--gray300'}
                 className={styles.progressBar}
-                percent={50}
+                percent={progress}
               />
             </div>
           );
