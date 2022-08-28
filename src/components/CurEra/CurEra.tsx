@@ -12,9 +12,9 @@ import { getTimeLeft, getProgress, renderAsync } from '../../utils';
 import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
 
-const getEraTimeLeft = (mTo: moment.Moment, mNow: moment.Moment): string => {
-  if (mNow < mTo) return i18next.t(`era.ended`);
-  return i18next.t('era.timeLeft', { duration: getTimeLeft(mTo, mNow) });
+const getEraTimeLeft = (mNow: moment.Moment, mTo: moment.Moment): string => {
+  if (mNow.isAfter(mTo)) return i18next.t(`era.ended`);
+  return i18next.t('era.timeLeft', { duration: getTimeLeft(mNow, mTo) });
 };
 
 const getEraProgress = (now: Date, estEndTime: Date, startTime: Date): number => {
