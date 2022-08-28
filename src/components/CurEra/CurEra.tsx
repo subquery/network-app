@@ -56,8 +56,9 @@ export const CurEra: React.FC = () => {
                   '0%': 'var(--gradient-from)',
                   '100%': 'var(--gradient-to)',
                 }}
+                trailColor={'var(--gray300'}
                 className={styles.progressBar}
-                percent={progress}
+                percent={50}
               />
             </div>
           );
