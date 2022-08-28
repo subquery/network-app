@@ -10,7 +10,7 @@ import { providers } from 'ethers';
 
 const MOONBEAM_NETWORK = 'moonbase-alpha';
 const ACALA_NETWORK = 'acala-testnet';
-const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
+export const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
   [MOONBEAM_NETWORK]: {
     chainId: 1287,
     rpc: 'https://moonbeam-alpha.api.onfinality.io/public',

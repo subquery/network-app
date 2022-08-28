@@ -14,7 +14,7 @@ import { useAsyncMemo } from './useAsyncMemo';
  * @args: orderId
  * @returns amountGive/amountGet rate: number
  */
-export function useSwapRate(orderId: number | undefined): AsyncData<number> {
+export function useSwapRate(orderId: string | undefined): AsyncData<number> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     if (!orderId) return 0;
@@ -32,7 +32,7 @@ export function useSwapRate(orderId: number | undefined): AsyncData<number> {
  * @args: orderId
  * @returns swap pool
  */
-export function useSwapPool(orderId: number | undefined): AsyncData<BigNumber> {
+export function useSwapPool(orderId: string | undefined): AsyncData<BigNumber> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     if (!orderId) return BigNumber.from(0);
@@ -64,15 +64,15 @@ export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
  * @args: tokenGive address
  * @returns orderId | undefined
  */
-export function useSwapOrderId(swapFrom: string): number | undefined {
-  const [orderId, setOrderId] = React.useState<number>();
+export function useSwapOrderId(swapFrom: string): string | undefined {
+  const [orderId, setOrderId] = React.useState<string>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const { data: orders, loading } = useOrders({ swapFrom: swapFrom, now });
 
   React.useEffect(() => {
     if (orders && orders.nodes && orders.nodes[0]) {
       const order = orders.nodes[0];
-      setOrderId(parseInt(order.id));
+      setOrderId(order.id);
     }
   }, [loading, orders]);
   return orderId;

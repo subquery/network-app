@@ -7,13 +7,14 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { AppTypography, Spinner, TabButtons } from '../../components';
+import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract } from '../../hooks/useASUDContract';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -63,22 +64,23 @@ const getStats = ({
 const SellAUSD = () => {
   const { t } = useTranslation();
 
-  const { permissionExchangeAllowance } = useSQToken();
-  const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
+  const aUSDContract = useAUSDContract();
+  const aUSDAllowance = useAUSDAllowance();
+  const requireTokenApproval = aUSDAllowance?.data?.isZero();
   const orderId = useSwapOrderId(SQToken.address ?? '');
 
-  // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
+  const aUSDBalance = useAUSDBalance();
 
-  return renderAsyncArray(mergeAsync(swapRate, swapPool), {
+  return renderAsyncArray(mergeAsync(swapRate, swapPool, aUSDBalance), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [sqtAUSDRate, sqtPoolSize] = data;
+      const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
       if (sqtPoolSize === undefined || sqtPoolSize === undefined) return <Spinner />;
 
-      const aUSDBalance = '500'; //TODO: stableCoinBalance with sdk later
+      const aUSDBalance = formatEther(aUSDAmount) ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
 
@@ -96,9 +98,10 @@ const SellAUSD = () => {
           stats={stats}
           pair={pair}
           fromRate={sortedRate}
-          noOrderInPool={!orderId}
+          orderId={orderId}
           requireTokenApproval={!!requireTokenApproval}
-          onClickSwap={() => console.log('test')}
+          contractAddress={aUSDContract.data?.address}
+          onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
         />
       );
     },
@@ -147,9 +150,10 @@ const GetAUSD = () => {
           stats={stats}
           pair={pair}
           fromRate={sortedRate}
-          noOrderInPool={!orderId}
+          orderId={orderId}
           requireTokenApproval={!!requireTokenApproval}
-          onClickSwap={() => (requireTokenApproval ? permissionExchangeAllowance.refetch() : console.log('test'))}
+          onApproveAllowance={() => requireTokenApproval && permissionExchangeAllowance.refetch()}
+          contract={ApproveContract.PermissionedExchange}
         />
       );
     },

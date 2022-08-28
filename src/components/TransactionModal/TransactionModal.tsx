@@ -150,7 +150,12 @@ const TransactionModal = <P, T extends string>({
         throw new Error(text.failureText);
       }
     } catch (error) {
-      console.log('TxAction error', error);
+      console.error('TxAction error', error);
+      openNotificationWithIcon({
+        type: NotificationType.ERROR,
+        title: failureModalText ?? 'Failure',
+        description: parseError(error),
+      });
       setFailureModalText(parseError(error));
       if (rethrow) {
         throw error;
@@ -202,6 +207,7 @@ const TransactionModal = <P, T extends string>({
                 handleBtnClick(key);
               }}
               className={variant}
+              colorScheme="standard"
               size="medium"
               disabled={disabled || showClock}
               rightItem={
