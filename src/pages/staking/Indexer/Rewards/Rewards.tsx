@@ -3,7 +3,7 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table, TableProps } from 'antd';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useRewards, useWeb3 } from '../../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
@@ -46,12 +46,11 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
-      render: (_, reward: Reward | UnclaimedReward) => (
-        <TableText
-          content={isClaimedReward(reward) ? t('rewards.claimed') : t('rewards.unClaimed')}
-          className={isClaimedReward(reward) ? 'grayText' : styles.unClaimedText}
-        />
-      ),
+      render: (_, reward: Reward | UnclaimedReward) => {
+        const hasClaimed = isClaimedReward(reward);
+        const tagColor = hasClaimed ? 'green' : 'blue';
+        return <Tag color={tagColor}>{hasClaimed ? t('rewards.claimed') : t('rewards.unClaimed')}</Tag>;
+      },
     },
   ];
 
@@ -80,7 +79,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
                   <Typography variant="h6" className={styles.header}>
                     {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
                   </Typography>
-                  {totalUnclaimedRewards && unclaimedRewardsFromIndexers && (
+                  {totalUnclaimedRewards > 0 && unclaimedRewardsFromIndexers && (
                     <ClaimRewards indexers={unclaimedRewardsFromIndexers} account={account ?? ''} />
                   )}
                 </div>
