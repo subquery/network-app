@@ -292,12 +292,15 @@ const en = {
       claim: {
         title: 'Claim Rewards',
         step1: 'Confirm claim',
-        desription: 'You are about to claim {{amount}} SQT',
-        button: 'Claim',
+        description: 'You are about to claim {{count}} unclaimed reward from {{count}} indexer',
+        description_other: 'You are about to claim {{count}} unclaimed rewards from {{count}} indexers',
+        button: 'Claim all unclaimed rewards',
         submit: 'Confirm Claim',
       },
       totalUnclaimReward: 'You have {{count}} unclaimed reward',
       totalUnclaimReward_other: 'You have {{count}} unclaimed rewards',
+      claimed: 'Claimed',
+      unClaimed: 'UnClaimed',
     },
 
     missions: {

@@ -3,10 +3,9 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table, TableProps } from 'antd';
-import clsx from 'clsx';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useRewards } from '../../../../containers';
+import { useRewards, useWeb3 } from '../../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import {
   GetRewards_rewards_nodes as Reward,
@@ -21,6 +20,7 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 }
 
 const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) => {
+  const { account } = useWeb3();
   const rewards = useRewards({ address: delegatorAddress });
   const { t } = useTranslation('translation');
 
@@ -46,12 +46,11 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
-      render: (t, reward: Reward | UnclaimedReward) =>
-        isClaimedReward(reward) ? (
-          <TableText content={'Claimed'} className={'grayText'} />
-        ) : (
-          <ClaimRewards indexer={reward.indexerAddress} amount={formatEther(reward.amount)} />
-        ),
+      render: (_, reward: Reward | UnclaimedReward) => {
+        const hasClaimed = isClaimedReward(reward);
+        const tagColor = hasClaimed ? 'green' : 'blue';
+        return <Tag color={tagColor}>{hasClaimed ? t('rewards.claimed') : t('rewards.unClaimed')}</Tag>;
+      },
     },
   ];
 
@@ -69,14 +68,25 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
           loading: () => <Spinner />,
           empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
-          data: (data) => (
-            <>
-              <Typography variant="h6" className={styles.header}>
-                {t('rewards.totalUnclaimReward', { count: rewards?.data?.unclaimedRewards?.totalCount || 0 })}
-              </Typography>
-              <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
-            </>
-          ),
+          data: (data) => {
+            const totalUnclaimedRewards = rewards?.data?.unclaimedRewards?.totalCount || 0;
+            const unclaimedRewardsFromIndexers = rewards?.data?.unclaimedRewards?.nodes?.map(
+              (unclaimedRewards) => unclaimedRewards?.indexerAddress ?? '',
+            );
+            return (
+              <>
+                <div className="flex-between">
+                  <Typography variant="h6" className={styles.header}>
+                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                  </Typography>
+                  {totalUnclaimedRewards > 0 && unclaimedRewardsFromIndexers && (
+                    <ClaimRewards indexers={unclaimedRewardsFromIndexers} account={account ?? ''} />
+                  )}
+                </div>
+                <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
+              </>
+            );
+          },
         },
       )}
     </div>

@@ -11,20 +11,20 @@ import styles from './ClaimRewards.module.css';
 import { Typography } from '@subql/react-ui';
 
 type Props = {
-  indexer: string;
-  amount: string;
+  account: string;
+  indexers: Array<string>;
+  // amount: string; TODO: after update subql project on rewards
   onClaimed?: () => void;
 };
 
-const ClaimRewards: React.FC<Props> = ({ indexer, onClaimed, amount }) => {
+const ClaimRewards: React.FC<Props> = ({ account, indexers, onClaimed }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
   const text = {
     title: t('rewards.claim.title'),
     steps: [t('rewards.claim.step1'), t('indexer.confirmOnMetamask')],
-    description: t('rewards.claim.desription', { amount }),
-    inputTitle: '',
+    description: t('rewards.claim.description', { count: indexers.length }),
     submitText: t('rewards.claim.submit'),
     failureText: 'Sorry, failed to claim rewards',
   };
@@ -33,7 +33,7 @@ const ClaimRewards: React.FC<Props> = ({ indexer, onClaimed, amount }) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const pendingTx = contracts.rewardsDistributor.claim(indexer);
+    const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
 
     pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
 
@@ -42,7 +42,7 @@ const ClaimRewards: React.FC<Props> = ({ indexer, onClaimed, amount }) => {
 
   return (
     <TransactionModal
-      variant="textBtn"
+      variant="button"
       text={text}
       actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
       onClick={handleClick}
