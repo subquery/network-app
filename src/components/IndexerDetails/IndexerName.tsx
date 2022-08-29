@@ -8,6 +8,7 @@ import IPFSImage from '../IPFSImage';
 import Copy from '../Copy';
 import { Typography } from '@subql/react-ui';
 import { useIndexerMetadata } from '../../hooks';
+import { useENS } from '../../hooks/useEns';
 
 type Props = {
   name?: string;
@@ -41,10 +42,11 @@ export const ConnectedIndexer: React.VFC<{
   onAddressClick?: (id: string) => void;
 }> = ({ id, account, onAddressClick }) => {
   const asyncMetadata = useIndexerMetadata(id);
+  const asyncEns = useENS(id);
 
   return (
     <IndexerName
-      name={id === account ? 'You' : asyncMetadata.data?.name}
+      name={id === account ? 'You' : asyncEns.data ?? asyncMetadata.data?.name}
       image={asyncMetadata.data?.image}
       address={id}
       onAddressClick={onAddressClick}

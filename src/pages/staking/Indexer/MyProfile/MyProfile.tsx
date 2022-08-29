@@ -14,6 +14,7 @@ import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
 import { convertStringToNumber, mergeAsync, renderAsync } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
+import { useENS } from '../../../../hooks/useEns';
 
 const ROUTE = '/staking/my-profile';
 const INDEXING = `${ROUTE}/indexing`;
@@ -34,6 +35,8 @@ export const MyProfile: React.VFC = () => {
   const history = useHistory();
   const sortedIndexer = useSortedIndexer(account || '');
   const totalDelegations = useUserDelegations(account);
+  const ens = useENS(account || '');
+  const userId = ens.data ?? account ?? '';
 
   React.useEffect(() => {
     if (!account) {
@@ -69,7 +72,7 @@ export const MyProfile: React.VFC = () => {
             ];
             return (
               <>
-                <div>{<Address address={account ?? ''} size="large" />}</div>
+                <div>{<Address truncated={userId.length > 20} address={userId} size="large" />}</div>
                 <div className={styles.stakingSummary}>
                   {cards.map((card) => (
                     <Card category={card.category} title={card.title} value={card.value} key={card.category} />
