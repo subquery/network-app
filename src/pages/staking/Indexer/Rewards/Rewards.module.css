@@ -2,6 +2,10 @@
   font-size: 14px;
 }
 
+.unClaimedText {
+  color: var(--primary);
+}
+
 .header {
   margin-bottom: 2rem;
 }
