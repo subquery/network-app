@@ -4,7 +4,6 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
-import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useRewards, useWeb3 } from '../../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
@@ -15,7 +14,6 @@ import {
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
-import { assert } from 'console';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
