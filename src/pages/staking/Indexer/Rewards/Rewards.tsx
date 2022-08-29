@@ -48,7 +48,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: t('rewards.header3').toUpperCase(),
       dataIndex: 'amount',
       key: 'action',
-      render: (t, reward: Reward | UnclaimedReward) => (
+      render: (_, reward: Reward | UnclaimedReward) => (
         <TableText
           content={isClaimedReward(reward) ? t('rewards.claimed') : t('rewards.unClaimed')}
           className={isClaimedReward(reward) ? 'grayText' : styles.unClaimedText}
