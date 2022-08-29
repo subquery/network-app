@@ -33,6 +33,7 @@ import styles from './IndexerDetails.module.css';
 import { Status as DeploymentStatus } from '../../__generated__/registry/globalTypes';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { useENS } from '../../hooks/useEns';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -48,6 +49,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
+  const ens = useENS(indexer.indexerId ?? '');
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
   const rowData = [
@@ -61,7 +63,9 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
   const columns: TableProps<any>['columns'] = [
     {
       width: '20%',
-      render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
+      render: () => (
+        <IndexerName name={ens?.data ?? metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />
+      ),
     },
     {
       width: '30%',
