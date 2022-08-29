@@ -6,7 +6,6 @@ import { Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
-import { getEthGas } from '@subql/network-clients';
 import moment from 'moment';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
@@ -121,11 +120,9 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const ethGas = await getEthGas('high');
-
     // TODO: update the root when api ready
     const tempMmrRoot = '0xab3921276c8067fe0c82def3e5ecfd8447f1961bc85768c2a56e6bd26d3c0c55';
-    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer.id, tempMmrRoot, ethGas);
+    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer.id, tempMmrRoot);
   };
 
   return (
