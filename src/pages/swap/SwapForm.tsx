@@ -20,7 +20,6 @@ import styles from './SwapForm.module.css';
 import { tokenDecimals } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
-// import { getEthGas } from '@subql/network-clients';
 import { parseEther } from 'ethers/lib/utils';
 
 interface Stats {
@@ -128,8 +127,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    // TODO: use when for acala network
-    // const ethGas = await getEthGas('high');
     return contracts.permissionedExchange.trade(orderId, amount);
   };
 
