@@ -4,10 +4,9 @@
 import { Button, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@subql/react-ui';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import clsx from 'clsx';
-import { Status as AppStatus } from '../../../components';
+import { Status as AppStatus, Spinner } from '../../../components';
 import moment from 'moment';
 import { useWeb3 } from '../../../containers';
 import {
@@ -17,6 +16,7 @@ import {
   COLORS,
   formatEther,
   convertStringToNumber,
+  mergeAsync,
 } from '../../../utils';
 import { useAsyncMemo } from '../../../hooks';
 import { Status } from '../../../__generated__/registry/globalTypes';
@@ -71,7 +71,7 @@ const RequirementCheck: React.FC<IRequirementCheck> = ({
       return <div className={styles.requirementText}>{formatFn(value)}</div>;
     }
 
-    return <Typography.Text className={styles.requirementText}>{value}</Typography.Text>;
+    return <Typography.Text className={styles.requirementText}>{value ?? '-'}</Typography.Text>;
   };
 
   return (
@@ -114,7 +114,6 @@ export const CheckList: React.VFC<ICheckList> = ({
   error,
   isLoading,
 }) => {
-  const [dailyRewardCapcity, setDailyRewardCapcity] = React.useState<number>();
   const { t } = useTranslation();
   const { account: indexer } = useWeb3();
   const contractClient = useContractClient();
@@ -124,26 +123,23 @@ export const CheckList: React.VFC<ICheckList> = ({
   const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
 
-  React.useEffect(() => {
-    async function getDailyRewardCapcity() {
-      if (contractClient && indexer) {
-        const dailyRewardCapcity = await contractClient.dailyRewardCapcity(indexer);
-        setDailyRewardCapcity(convertStringToNumber(formatEther(dailyRewardCapcity)));
-      }
-    }
-    getDailyRewardCapcity();
-  }, [contractClient, indexer, offerId]);
-
   const deploymentMeta = useAsyncMemo(async () => {
     if (!deploymentId || !proxyEndpoint || !indexer) return null;
     return await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
   }, [deploymentId, indexer, proxyEndpoint]);
 
-  return renderAsync(deploymentMeta, {
+  const dailyRewardCapacity = useAsyncMemo(async () => {
+    if (!contractClient || !indexer) return null;
+    return await contractClient.dailyRewardCapcity(indexer);
+  }, [contractClient, indexer, offerId]);
+
+  return renderAsync(mergeAsync(deploymentMeta, dailyRewardCapacity), {
     loading: () => <Spinner />,
     error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
     data: (data) => {
-      const latestBlockHeight = data?.lastProcessedHeight;
+      const [metadata, cap] = data;
+      const latestBlockHeight = metadata?.lastProcessedHeight;
+      const dailyRewardCapacity = convertStringToNumber(formatEther(cap ?? 0));
 
       const sortedRequirementCheckList = [
         {
@@ -164,8 +160,8 @@ export const CheckList: React.VFC<ICheckList> = ({
         {
           title: t('offerMarket.acceptModal.dailyRewards'),
           requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
-          value: `${dailyRewardCapcity} SQT`,
-          passCheck: REQUIRED_DAILY_REWARD_CAP <= (dailyRewardCapcity ?? 0),
+          value: `${dailyRewardCapacity} SQT`,
+          passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCapacity,
           errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
       ];
