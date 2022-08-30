@@ -160,7 +160,7 @@ export const CheckList: React.VFC<ICheckList> = ({
         {
           title: t('offerMarket.acceptModal.dailyRewards'),
           requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
-          value: dailyRewardCapacity ? `${dailyRewardCapacity} SQT` : undefined,
+          value: `${dailyRewardCapacity} SQT`,
           passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCapacity,
           errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
