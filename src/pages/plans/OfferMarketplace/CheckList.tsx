@@ -4,10 +4,9 @@
 import { Button, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@subql/react-ui';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import clsx from 'clsx';
-import { Status as AppStatus } from '../../../components';
+import { Status as AppStatus, Spinner } from '../../../components';
 import moment from 'moment';
 import { useWeb3 } from '../../../containers';
 import {
@@ -71,7 +70,7 @@ const RequirementCheck: React.FC<IRequirementCheck> = ({
       return <div className={styles.requirementText}>{formatFn(value)}</div>;
     }
 
-    return <Typography.Text className={styles.requirementText}>{value}</Typography.Text>;
+    return <Typography.Text className={styles.requirementText}>{value ?? <Spinner />}</Typography.Text>;
   };
 
   return (
@@ -114,7 +113,7 @@ export const CheckList: React.VFC<ICheckList> = ({
   error,
   isLoading,
 }) => {
-  const [dailyRewardCapcity, setDailyRewardCapcity] = React.useState<number>();
+  const [dailyRewardCapacity, setDailyRewardCapcity] = React.useState<number>();
   const { t } = useTranslation();
   const { account: indexer } = useWeb3();
   const contractClient = useContractClient();
@@ -164,8 +163,8 @@ export const CheckList: React.VFC<ICheckList> = ({
         {
           title: t('offerMarket.acceptModal.dailyRewards'),
           requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
-          value: `${dailyRewardCapcity} SQT`,
-          passCheck: REQUIRED_DAILY_REWARD_CAP <= (dailyRewardCapcity ?? 0),
+          value: dailyRewardCapacity ? `${dailyRewardCapacity} SQT` : undefined,
+          passCheck: !dailyRewardCapacity ? true : REQUIRED_DAILY_REWARD_CAP <= dailyRewardCapacity,
           errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
       ];
