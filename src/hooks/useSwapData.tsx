@@ -25,7 +25,7 @@ export function useSwapRate(orderId: string | undefined): AsyncData<number> {
     const { amountGive, amountGet } = await contracts.permissionedExchange.orders(orderId);
 
     return convertStringToNumber(formatEther(amountGive)) / convertStringToNumber(formatEther(amountGet));
-  }, [pendingContracts]);
+  }, [pendingContracts, orderId]);
 }
 
 /**
@@ -43,7 +43,7 @@ export function useSwapPool(orderId: string | undefined): AsyncData<BigNumber> {
     const { amountGiveLeft } = await contracts.permissionedExchange.orders(orderId);
 
     return amountGiveLeft;
-  }, [pendingContracts]);
+  }, [pendingContracts, orderId]);
 }
 
 /**
@@ -64,7 +64,8 @@ export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
  * @args: tokenGive address
  * @returns orderId | undefined
  */
-export function useSwapOrderId(swapFrom: string): string | undefined {
+export function useSwapOrderId(swapFrom: string): { orderId: string | undefined; loading: boolean } {
+  const mountedRef = React.useRef(true);
   const [orderId, setOrderId] = React.useState<string>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const { data, loading } = useOrders({ swapFrom: swapFrom, now });
@@ -74,7 +75,10 @@ export function useSwapOrderId(swapFrom: string): string | undefined {
     if (order) {
       setOrderId(order?.id);
     }
+    return () => {
+      mountedRef.current = false;
+    };
   }, [data, loading]);
 
-  return orderId;
+  return { orderId, loading };
 }

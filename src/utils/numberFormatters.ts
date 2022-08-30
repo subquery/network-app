@@ -11,8 +11,9 @@ export function convertBigNumberToNumber(value: BigNumberish | BigInt): number {
   return BigNumber.from(value).toNumber();
 }
 
-export function formatEther(value: BigNumberish | BigInt | undefined): string {
-  return utils.formatEther(BigNumber.from(value ?? 0).toString());
+export function formatEther(value: BigNumberish | BigInt | undefined, toFixed?: number): string {
+  const formattedEther = utils.formatEther(BigNumber.from(value ?? 0).toString());
+  return toFixed ? convertStringToNumber(formattedEther).toFixed(toFixed) : formattedEther;
 }
 
 // TODO: should only be number and percentage formatter
