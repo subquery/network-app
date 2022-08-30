@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { NETWORKS, SUPPORTED_NETWORK } from '../containers/Web3';
+
 export interface Message {
   deploymentId: string;
   timestamp: number;
@@ -30,8 +32,7 @@ const IndexerMessageType = [
 
 const domain = {
   name: 'Subquery',
-  // TODO: need to change this basing on current selected chain
-  chainId: 595,
+  chainId: NETWORKS[SUPPORTED_NETWORK].chainId,
 };
 
 export function buildTypedMessage(message: Message): string {
