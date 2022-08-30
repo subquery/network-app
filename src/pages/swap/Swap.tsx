@@ -10,7 +10,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
-import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
+import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
@@ -67,7 +67,7 @@ const SellAUSD = () => {
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
-  const orderId = useSwapOrderId(SQToken.address ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
 
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
@@ -78,11 +78,11 @@ const SellAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
-      if (sqtPoolSize === undefined || sqtPoolSize === undefined) return <Spinner />;
+      if (sqtPoolSize === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-      const aUSDBalance = formatEther(aUSDAmount) ?? '0';
+      const aUSDBalance = formatEther(aUSDAmount, 4) ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
-      const sortedPoolSize = formatEther(sqtPoolSize) ?? '0';
+      const sortedPoolSize = formatEther(sqtPoolSize, 4) ?? '0';
 
       const pair = {
         from: STABLE_TOKEN,
@@ -102,6 +102,7 @@ const SellAUSD = () => {
           requireTokenApproval={!!requireTokenApproval}
           contractAddress={aUSDContract.data?.address}
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
+          // onApproveAllowance={} TODO: call refetch utils when for real aUSD contract
         />
       );
     },
@@ -114,7 +115,7 @@ const GetAUSD = () => {
   const { permissionExchangeAllowance } = useSQToken();
   const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
 
-  const orderId = useSwapOrderId(SQToken.address ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
 
   // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
@@ -127,10 +128,10 @@ const GetAUSD = () => {
     data: (data) => {
       const [swapRate, tradableQuota, sqtBalance] = data;
 
-      if (swapRate === undefined || tradableQuota === undefined) return <Spinner />;
+      if (swapRate === undefined || tradableQuota === undefined || fetchingOrderId) return <Spinner />;
 
-      const sortedBalance = sqtBalance ?? BigNumber.from('0'); //TODO: stableCoinBalance
-      const sortedRate = swapRate ?? 0;
+      const sortedBalance = sqtBalance ?? BigNumber.from('0');
+      const sortedRate = !swapRate ? 0 : 1 / swapRate;
       const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
 
       const fromMax = sortedBalance.gt(sortedPoolSize) ? tradableQuota : sortedBalance;
@@ -138,12 +139,16 @@ const GetAUSD = () => {
 
       const pair = {
         from: TOKEN,
-        fromMax: formatEther(fromMax).toString(),
+        fromMax: formatEther(fromMax, 4),
         to: STABLE_TOKEN,
-        toMax: formatEther(toMax).toString(),
+        toMax: formatEther(toMax, 4),
       };
 
-      const stats = getStats({ swappableBalance: tradableQuota, sqtAUSDRate: sortedRate, t });
+      const stats = getStats({
+        swappableBalance: formatEther(tradableQuota, 4),
+        sqtAUSDRate: sortedRate, // NOTE: as always display xSQT:xAUSD
+        t,
+      });
 
       return (
         <SwapForm
