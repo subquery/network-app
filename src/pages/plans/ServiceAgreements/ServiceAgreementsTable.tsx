@@ -33,11 +33,9 @@ export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymen
       const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexer);
       return (
         <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon}>
-          <div className={styles.addressCont}>
-            <Tooltip title={queryUrl}>
-              <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
-            </Tooltip>
-          </div>
+          <Tooltip title={queryUrl}>
+            <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
+          </Tooltip>
         </Copy>
       );
     },
@@ -115,6 +113,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
       title: t('indexers.head.url').toUpperCase(),
       key: 'indexer',
       width: 200,
+      ellipsis: true,
       render: (indexer: ServiceAgreement['indexerAddress'], sa: ServiceAgreement) => (
         <QueryUrl indexer={indexer} deploymentId={sa.deploymentId} />
       ),
