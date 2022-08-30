@@ -34,7 +34,7 @@ const Copy: React.FC<Props> = ({ value, className, iconClassName, children, icon
   };
 
   return (
-    <div className={'flex-center'} onClick={handleClick}>
+    <div className="flex-center" onClick={handleClick}>
       {children}
       <div className={clsx(styles.container, className)}>
         <div className={clsx(styles.copy, iconClassName)}>
