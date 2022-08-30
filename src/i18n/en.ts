@@ -511,6 +511,7 @@ const en = {
       accept: 'Accept',
       searchByDeploymentId: 'Search by deployment Id',
       acceptModal: {
+        nonCriteriaData: 'There is no criteria data available',
         moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',
         title: 'Accept the offer',
         check: 'Check criteria',

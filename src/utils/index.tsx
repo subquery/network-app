@@ -269,3 +269,7 @@ export function getUseQueryFetchMore<TData = any, TVariables = OperationVariable
     },
   });
 }
+
+export function isUndefined(val: unknown): boolean {
+  return val === undefined;
+}
