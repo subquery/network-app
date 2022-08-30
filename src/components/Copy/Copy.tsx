@@ -19,10 +19,9 @@ type Props = {
   className?: string;
   iconClassName?: string;
   iconSize?: number;
-  flexType?: 'flex-start' | 'flex-center' | 'flex-end';
 };
 
-const Copy: React.FC<Props> = ({ value, className, iconClassName, children, iconSize, flexType = 'flex-center' }) => {
+const Copy: React.FC<Props> = ({ value, className, iconClassName, children, iconSize }) => {
   const [icon, setIcon] = React.useState<boolean>(false);
 
   const handleClick = () => {
@@ -35,8 +34,8 @@ const Copy: React.FC<Props> = ({ value, className, iconClassName, children, icon
   };
 
   return (
-    <div className={flexType} onClick={handleClick}>
-      <div>{children}</div>
+    <div className={'flex-center'} onClick={handleClick}>
+      {children}
       <div className={clsx(styles.container, className)}>
         <div className={clsx(styles.copy, iconClassName)}>
           {icon ? <BsCheckLg size={iconSize ?? 10} /> : <BsClipboard size={iconSize ?? 10} />}

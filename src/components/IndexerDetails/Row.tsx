@@ -85,14 +85,15 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
     },
     {
       width: '30%',
+      ellipsis: true,
       render: () =>
         renderAsync(metadata, {
           error: () => <Typography>-</Typography>,
           loading: () => <Spinner />,
           data: (data) => (
-            <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon} flexType="flex-start">
+            <Copy value={data?.url} className={styles.copy} iconClassName={styles.copyIcon}>
               <Tooltip title={data?.url}>
-                <Typography.Text>{data?.url ? `${data?.url.substring(0, 50)}...` : '-'}</Typography.Text>
+                <Typography.Text ellipsis={true}>{data?.url ?? '-'}</Typography.Text>
               </Tooltip>
             </Copy>
           ),
