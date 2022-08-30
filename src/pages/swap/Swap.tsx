@@ -10,7 +10,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
-import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, TOKEN } from '../../utils';
+import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
@@ -67,7 +67,8 @@ const SellAUSD = () => {
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
-  const orderId = useSwapOrderId(SQToken.address ?? '');
+  const orderId = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
+  console.log('SellAUSD - orderId', orderId);
 
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);

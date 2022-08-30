@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useQuery, gql, QueryResult } from '@apollo/client';
-import { GetOrdersVariables, GetOrders_orders } from '../__generated__/swapExchange/GetOrders';
+import { GetOrders, GetOrdersVariables } from '../__generated__/swapExchange/GetOrders';
 import { SWAP_EXCHANGE_CLIENT } from './QueryApolloProvider';
 
 const GET_ORDERS = gql`
@@ -21,10 +21,9 @@ const GET_ORDERS = gql`
   }
 `;
 
-export function useOrders(params: GetOrdersVariables): QueryResult<GetOrders_orders> {
-  return useQuery<GetOrders_orders, GetOrdersVariables>(GET_ORDERS, {
+export function useOrders(params: GetOrdersVariables): QueryResult<GetOrders> {
+  return useQuery<GetOrders, GetOrdersVariables>(GET_ORDERS, {
     variables: params,
     context: { clientName: SWAP_EXCHANGE_CLIENT },
-    nextFetchPolicy: 'cache-and-network',
   });
 }

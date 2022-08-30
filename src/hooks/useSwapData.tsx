@@ -67,13 +67,14 @@ export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
 export function useSwapOrderId(swapFrom: string): string | undefined {
   const [orderId, setOrderId] = React.useState<string>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
-  const { data: orders, loading } = useOrders({ swapFrom: swapFrom, now });
+  const { data, loading } = useOrders({ swapFrom: swapFrom, now });
 
   React.useEffect(() => {
-    if (orders && orders.nodes && orders.nodes[0]) {
-      const order = orders.nodes[0];
-      setOrderId(order.id);
+    const order = data?.orders?.nodes[0];
+    if (order) {
+      setOrderId(order?.id);
     }
-  }, [loading, orders]);
+  }, [data, loading]);
+
   return orderId;
 }
