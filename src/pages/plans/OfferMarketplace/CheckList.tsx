@@ -11,12 +11,13 @@ import moment from 'moment';
 import { useWeb3 } from '../../../containers';
 import {
   getDeploymentMetadata,
-  renderAsync,
   parseError,
   COLORS,
   formatEther,
   convertStringToNumber,
   mergeAsync,
+  renderAsyncArray,
+  isUndefined,
 } from '../../../utils';
 import { useAsyncMemo } from '../../../hooks';
 import { Status } from '../../../__generated__/registry/globalTypes';
@@ -133,11 +134,14 @@ export const CheckList: React.VFC<ICheckList> = ({
     return await contractClient.dailyRewardCapcity(indexer);
   }, [contractClient, indexer, offerId]);
 
-  return renderAsync(mergeAsync(deploymentMeta, dailyRewardCapacity), {
-    loading: () => <Spinner />,
+  return renderAsyncArray(mergeAsync(deploymentMeta, dailyRewardCapacity), {
     error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
+    empty: () => <Typography.Text>{t('offerMarket.acceptModal.nonCriteriaData')}</Typography.Text>,
     data: (data) => {
       const [metadata, cap] = data;
+
+      if (isUndefined(metadata) || isUndefined(cap)) return <Spinner />;
+
       const latestBlockHeight = metadata?.lastProcessedHeight;
       const dailyRewardCapacity = convertStringToNumber(formatEther(cap ?? 0));
 
