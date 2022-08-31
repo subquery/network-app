@@ -9,8 +9,9 @@ import * as React from 'react';
 import { useContracts, useOrders } from '../containers';
 import { AsyncData, convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
+import { BigNumberish } from '@ethersproject/bignumber';
 
-function formatToken(value: BigNumber, unit = 18) {
+export function formatToken(value: BigNumberish, unit = 18): number {
   return convertStringToNumber(formatUnits(value, unit));
 }
 

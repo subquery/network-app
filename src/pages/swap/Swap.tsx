@@ -112,7 +112,7 @@ const SellAUSD = () => {
           fromRate={sortedRate}
           orderId={orderId}
           requireTokenApproval={!!requireTokenApproval}
-          contractAddress={aUSDContract.data?.address}
+          contract={ApproveContract.PermissionedExchange}
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
           onApproveAllowance={() => aUSDAllowance?.refetch()}
           increaseAllowanceAmount={aUSDSupply}

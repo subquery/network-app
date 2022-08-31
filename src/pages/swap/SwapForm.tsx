@@ -17,10 +17,10 @@ import {
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
-import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL } from '../../utils';
+import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL, tokenDecimals } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
-import { parseEther } from 'ethers/lib/utils';
+import { parseUnits } from 'ethers/lib/utils';
 
 interface Stats {
   title: string;
@@ -42,7 +42,6 @@ interface ISwapForm {
   orderId: string | undefined;
   requireTokenApproval?: boolean;
   contract?: ApproveContract;
-  contractAddress?: string;
   onApproveAllowance?: () => void;
   increaseAllowanceAmount?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
@@ -65,7 +64,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
   orderId,
   requireTokenApproval,
   contract,
-  contractAddress,
   onApproveAllowance,
   increaseAllowanceAmount,
   onIncreaseAllowance,
@@ -126,11 +124,13 @@ export const SwapForm: React.FC<ISwapForm> = ({
         successText: t('swap.swapFailure'),
       };
 
-  const onTradeOrder = async (orderId: string, amount: BigNumber) => {
+  const onTradeOrder = async (amount: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
+    assert(orderId, 'There is no orderId available.');
 
-    return contracts.permissionedExchange.trade(orderId, amount);
+    const { tokenGet } = await contracts.permissionedExchange.orders(orderId);
+    return contracts.permissionedExchange.trade(orderId, parseUnits(amount, tokenDecimals[tokenGet]));
   };
 
   return (
@@ -209,17 +209,13 @@ export const SwapForm: React.FC<ISwapForm> = ({
                         disabled: isActionDisabled,
                       },
                     ]}
-                    onClick={() => {
-                      assert(orderId, 'There is no orderId available.');
-                      return onTradeOrder(orderId, parseEther(values[FROM_INPUT_ID]));
-                    }}
+                    onClick={() => onTradeOrder(values[FROM_INPUT_ID])}
                     renderContent={(onSubmit, onCancel, isLoading, error) => {
                       if (!!requireTokenApproval) {
                         return (
                           <ModalApproveToken
                             onIncreaseAllowance={onIncreaseAllowance}
                             contract={contract}
-                            contractAddress={contractAddress}
                             increaseAllowanceAmount={increaseAllowanceAmount}
                             onSubmit={() => onApproveAllowance && onApproveAllowance()}
                           />
