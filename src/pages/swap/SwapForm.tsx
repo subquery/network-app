@@ -73,20 +73,14 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
-  const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
+  const calWithRate = (value: string | number) => {
     const val = typeof value === 'number' ? value.toString() : value;
-    if (fileKey === FROM_INPUT_ID) {
-      return (parseFloat(val) * fromRate).toFixed(TOKEN_DECIMAL);
-    }
-
-    if (fileKey === TO_INPUT_ID) {
-      return (parseFloat(val) / fromRate).toFixed(TOKEN_DECIMAL);
-    }
+    return (parseFloat(val) * fromRate).toFixed(TOKEN_DECIMAL);
   };
 
   const initialPairValues: PairFrom = {
     from: '1',
-    to: calWithRate(pair.from === TOKEN ? FROM_INPUT_ID : TO_INPUT_ID, '1') ?? '0',
+    to: calWithRate('1') ?? '0',
   };
 
   const updateFieldVal = (
@@ -98,7 +92,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
     if (!value) return null;
     const autoUpdateField = fileKey === FROM_INPUT_ID ? TO_INPUT_ID : FROM_INPUT_ID;
     setErrors({ [fileKey]: undefined });
-    const sortedTo = calWithRate(fileKey, value);
+    const sortedTo = calWithRate(value);
     setValues({ [fileKey]: value, [autoUpdateField]: sortedTo });
   };
 
