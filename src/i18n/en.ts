@@ -294,7 +294,7 @@ const en = {
         title: 'Claim Rewards',
         step1: 'Confirm claim',
         description: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexer',
-        description_other: 'You are about to claim {{count}} {{token}} from {{count}} indexers',
+        description_other: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexers',
         button: 'Claim all unclaimed rewards',
         submit: 'Confirm Claim',
       },
