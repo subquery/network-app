@@ -72,13 +72,13 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           data: (data) => {
             const totalUnclaimedRewards = rewards?.data?.unclaimedRewards?.totalCount || 0;
             const unclaimedRewards = rewards?.data?.unclaimedRewards?.nodes?.reduce(
-              (result, unclaimedReward): any => {
+              (result, unclaimedReward) => {
                 const totalUnclaimed = result.totalAmount.add(BigNumber.from(unclaimedReward?.amount ?? '0'));
                 const sortedIndexers = [...result.indexers, unclaimedReward?.indexerAddress];
                 return { indexers: sortedIndexers, totalAmount: totalUnclaimed };
               },
               {
-                indexers: [],
+                indexers: [] as Array<string | undefined>,
                 totalAmount: BigNumber.from('0'),
               },
             );
@@ -90,7 +90,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
                   </Typography>
                   {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
                     <ClaimRewards
-                      indexers={unclaimedRewards?.indexers}
+                      indexers={unclaimedRewards?.indexers as string[]}
                       account={account ?? ''}
                       totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
                     />
