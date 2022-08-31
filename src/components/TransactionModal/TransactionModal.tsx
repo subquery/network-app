@@ -77,6 +77,7 @@ type Props<P, T extends string> = {
   ) => React.ReactNode | undefined;
   variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
   initialCheck?: AsyncData<unknown>;
+  onSuccess?: () => void;
 };
 
 const TransactionModal = <P, T extends string>({
@@ -86,6 +87,7 @@ const TransactionModal = <P, T extends string>({
   actions,
   onClick,
   onClose,
+  onSuccess,
   inputParams,
   variant = 'button',
   initialCheck,
@@ -140,6 +142,7 @@ const TransactionModal = <P, T extends string>({
       const result = await tx.wait();
 
       if (result.status) {
+        onSuccess && onSuccess();
         setSuccessModalText(text.successText || 'Success');
         openNotificationWithIcon({
           type: NotificationType.SUCCESS,
@@ -209,7 +212,8 @@ const TransactionModal = <P, T extends string>({
               className={variant}
               colorScheme="standard"
               size="medium"
-              disabled={disabled || showClock}
+              disabled={disabled || showClock || isLoading}
+              loading={isLoading}
               rightItem={
                 tooltip &&
                 disabled && (
