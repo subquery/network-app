@@ -24,6 +24,12 @@ const getEraProgress = (now: Date, estEndTime: Date, startTime: Date): number =>
 export const CurEra: React.FC = () => {
   const { currentEra } = useEra();
   const { t } = useTranslation();
+  const [now, setNow] = React.useState<Date>(new Date());
+
+  React.useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -32,7 +38,6 @@ export const CurEra: React.FC = () => {
         error: (e) => <Typography>{`${t('era.currentEra')}: -`}</Typography>,
         data: (era) => {
           if (!era) return null;
-          const now = new Date();
           const eraHours = `${era.period / 3600}`;
           const mNow = moment(now);
 
