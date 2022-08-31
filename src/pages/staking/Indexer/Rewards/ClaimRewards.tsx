@@ -9,22 +9,27 @@ import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts } from '../../../../containers';
 import styles from './ClaimRewards.module.css';
 import { Typography } from '@subql/react-ui';
+import { TOKEN } from '../../../../utils';
 
 type Props = {
   account: string;
   indexers: Array<string>;
-  // amount: string; TODO: after update subql project on rewards
+  totalUnclaimed: string;
   onClaimed?: () => void;
 };
 
-const ClaimRewards: React.FC<Props> = ({ account, indexers, onClaimed }) => {
+const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
   const text = {
     title: t('rewards.claim.title'),
     steps: [t('rewards.claim.step1'), t('indexer.confirmOnMetamask')],
-    description: t('rewards.claim.description', { count: indexers.length }),
+    description: t('rewards.claim.description', {
+      count: indexers.length,
+      totalUnclaimed: totalUnclaimed,
+      token: TOKEN,
+    }),
     submitText: t('rewards.claim.submit'),
     failureText: 'Sorry, failed to claim rewards',
   };
