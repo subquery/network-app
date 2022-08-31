@@ -17,7 +17,7 @@ import {
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
-import { TOKEN, TOKEN_DECIMAL } from '../../utils';
+import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
 import { parseEther } from 'ethers/lib/utils';
@@ -107,9 +107,12 @@ export const SwapForm: React.FC<ISwapForm> = ({
     to: Yup.string()
       .required()
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
-      .test('isValid', 'To should be smaller than max amount.', (to) =>
-        to ? parseFloat(to) <= parseFloat(pair.toMax) : false,
-      )
+      .test('isValid', 'To should be smaller than max amount.', (to) => {
+        if (pair.to === STABLE_TOKEN) {
+          return true;
+        }
+        return to ? parseFloat(to) <= parseFloat(pair.toMax) : false;
+      })
       .typeError('Please input valid from amount.'),
   });
 
@@ -153,6 +156,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
           onSubmit={(values, actions) => {
             actions.setSubmitting(false);
           }}
+          validateOnMount
         >
           {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
             const isActionDisabled = !isValid || !orderId;
@@ -187,7 +191,8 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   title={t('swap.to')}
                   unit={pair.to}
                   stringMode
-                  maxAmount={pair.toMax}
+                  maxAmount={pair.to === TOKEN ? pair.toMax : undefined}
+                  description={`Current balance: ${pair.toMax}`}
                   value={values.to}
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}

@@ -15,15 +15,15 @@ export enum LOCK_STATUS {
 export const STABLE_TOKEN = 'aUSD';
 export const TOKEN_DECIMAL = 12;
 
-export const SQT_TOKEN = testnet.SQToken.address;
+export const SQT_TOKEN_ADDRESS = testnet.SQToken.address;
 export const TOKEN = 'kSQT';
 
 export const tokenDecimals: { [key: string]: number } = {
   [STABLE_TOKEN_ADDRESS]: 12,
-  [SQT_TOKEN]: 18,
+  [SQT_TOKEN_ADDRESS]: 18,
 };
 
 export const tokenNames: { [key: string]: string } = {
   [STABLE_TOKEN_ADDRESS]: STABLE_TOKEN,
-  [SQT_TOKEN]: TOKEN,
+  [SQT_TOKEN_ADDRESS]: TOKEN,
 };

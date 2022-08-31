@@ -122,6 +122,7 @@ const SellAUSD = () => {
   });
 };
 
+// TODO: Improve useSwapToken function: as current use TOKEN in util / useSwapToken two places
 const GetAUSD = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -130,7 +131,6 @@ const GetAUSD = () => {
 
   const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
 
-  // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
   const swapTokens = useSwapToken(orderId);
   const tradableQuota = useSellSQTQuota(account ?? '');
@@ -161,7 +161,7 @@ const GetAUSD = () => {
 
       const stats = getStats({
         swappableBalance: formatEther(tradableQuota, 4),
-        sqtAUSDRate: sortedRate, // NOTE: as always display xSQT:xAUSD
+        sqtAUSDRate: sortedRate,
         tokenGet: tokens?.tokenGet ?? '',
         tokenGive: tokens?.tokenGive ?? '',
         t,
