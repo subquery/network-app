@@ -12,7 +12,7 @@ import { useAsyncMemo } from './useAsyncMemo';
 
 /**
  * @args: orderId
- * @returns amountGive/amountGet rate: number
+ * @returns amountGet/amountGive rate: number
  */
 export function useSwapRate(orderId: string | undefined): AsyncData<number> {
   const pendingContracts = useContracts();
@@ -24,7 +24,7 @@ export function useSwapRate(orderId: string | undefined): AsyncData<number> {
 
     const { amountGive, amountGet } = await contracts.permissionedExchange.orders(orderId);
 
-    return convertStringToNumber(formatEther(amountGive)) / convertStringToNumber(formatEther(amountGet));
+    return convertStringToNumber(formatEther(amountGet)) / convertStringToNumber(formatEther(amountGive));
   }, [pendingContracts, orderId]);
 }
 

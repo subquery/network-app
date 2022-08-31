@@ -67,7 +67,7 @@ const SellAUSD = () => {
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
-  const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
 
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
@@ -115,7 +115,7 @@ const GetAUSD = () => {
   const { permissionExchangeAllowance } = useSQToken();
   const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
 
-  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
 
   // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber, Contract } from 'ethers';
-import { useWeb3 } from '../containers';
+import { useContracts, useWeb3 } from '../containers';
 import { AsyncData, initialAUSDContract } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
@@ -31,9 +31,13 @@ export function useAUSDBalance(): AsyncData<BigNumber | undefined> {
  */
 export function useAUSDAllowance(): AsyncData<BigNumber> {
   const { account } = useWeb3();
+  const pendingContracts = useContracts();
+
   return useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
     const aUSDContract = await initialAUSDContract();
-    if (!aUSDContract || !account) return BigNumber.from('0');
-    return await aUSDContract.allowance(account, aUSDContract.address);
-  }, [account]);
+    if (!aUSDContract || !account || !contracts) return BigNumber.from('0');
+
+    return await aUSDContract.allowance(account, contracts.permissionedExchange.address);
+  }, [account, pendingContracts]);
 }

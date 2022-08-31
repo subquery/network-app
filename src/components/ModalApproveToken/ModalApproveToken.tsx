@@ -57,8 +57,9 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
 
       let approvalTxResult: ContractReceipt;
 
+      // TODO: put totalSupply
       if (onIncreaseAllowance && contractAddress) {
-        const approvalTx = await onIncreaseAllowance(contractAddress, constants.MaxUint256);
+        const approvalTx = await onIncreaseAllowance(contractAddress, BigNumber.from(1000000000000));
         approvalTxResult = await approvalTx.wait();
       } else {
         const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
