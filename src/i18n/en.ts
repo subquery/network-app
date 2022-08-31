@@ -201,6 +201,7 @@ const en = {
       stakeInputTitle: 'Enter the amount of SQT you want to stake',
       confirmStake: 'Confirm Stake',
       enterUnstakeAmount: 'Enter Unstake Amount',
+      unstakeBalanceNextEra: 'Available unstake amount: {{amount}} {{token}}',
       unstakeValidNextEra:
         'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
       unstakeInputTitle: 'Enter the amount of SQT you want to unstake',
@@ -246,7 +247,7 @@ const en = {
       delegateAmount: 'Delegation amount',
       confirmDelegate: 'Confirm Delegation',
       undelegateValidNextEra:
-        'Tokens will be undelegated from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',
+        'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. ',
       undelegateAmount: 'Enter the amount of SQT you want to undelegate',
       confirmUndelegate: 'Confirm Undelegation',
       delegateFailure: 'Sorry, the delegation has been failed.',
@@ -292,8 +293,8 @@ const en = {
       claim: {
         title: 'Claim Rewards',
         step1: 'Confirm claim',
-        description: 'You are about to claim {{count}} unclaimed reward from {{count}} indexer',
-        description_other: 'You are about to claim {{count}} unclaimed rewards from {{count}} indexers',
+        description: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexer',
+        description_other: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexers',
         button: 'Claim all unclaimed rewards',
         submit: 'Confirm Claim',
       },

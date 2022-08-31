@@ -14,6 +14,7 @@ import {
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
+import { BigNumber } from 'ethers';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -70,8 +71,16 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
           empty: () => <Typography variant="h6">{t('rewards.none')}</Typography>,
           data: (data) => {
             const totalUnclaimedRewards = rewards?.data?.unclaimedRewards?.totalCount || 0;
-            const unclaimedRewardsFromIndexers = rewards?.data?.unclaimedRewards?.nodes?.map(
-              (unclaimedRewards) => unclaimedRewards?.indexerAddress ?? '',
+            const unclaimedRewards = rewards?.data?.unclaimedRewards?.nodes?.reduce(
+              (result, unclaimedReward) => {
+                const totalUnclaimed = result.totalAmount.add(BigNumber.from(unclaimedReward?.amount ?? '0'));
+                const sortedIndexers = [...result.indexers, unclaimedReward?.indexerAddress];
+                return { indexers: sortedIndexers, totalAmount: totalUnclaimed };
+              },
+              {
+                indexers: [] as Array<string | undefined>,
+                totalAmount: BigNumber.from('0'),
+              },
             );
             return (
               <>
@@ -79,8 +88,12 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
                   <Typography variant="h6" className={styles.header}>
                     {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
                   </Typography>
-                  {totalUnclaimedRewards > 0 && unclaimedRewardsFromIndexers && (
-                    <ClaimRewards indexers={unclaimedRewardsFromIndexers} account={account ?? ''} />
+                  {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
+                    <ClaimRewards
+                      indexers={unclaimedRewards?.indexers as string[]}
+                      account={account ?? ''}
+                      totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                    />
                   )}
                 </div>
                 <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
