@@ -97,7 +97,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
 
       {account === indexer && (
         <div className={styles.btns}>
-          <DoStake />
+          <DoStake stakeAmountNextEra={sortedTableData[0].ownStake.after} />
           <SetCommissionRate />
         </div>
       )}

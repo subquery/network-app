@@ -201,6 +201,7 @@ const en = {
       stakeInputTitle: 'Enter the amount of SQT you want to stake',
       confirmStake: 'Confirm Stake',
       enterUnstakeAmount: 'Enter Unstake Amount',
+      unstakeBalanceNextEra: 'Available unstake amount: {{amount}} {{token}}',
       unstakeValidNextEra:
         'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
       unstakeInputTitle: 'Enter the amount of SQT you want to unstake',
@@ -246,7 +247,7 @@ const en = {
       delegateAmount: 'Delegation amount',
       confirmDelegate: 'Confirm Delegation',
       undelegateValidNextEra:
-        'Tokens will be undelegated from next era. They will then be locked for 28 days before you can withdraw. During this period, tokens do not earn any rewards. ',
+        'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. ',
       undelegateAmount: 'Enter the amount of SQT you want to undelegate',
       confirmUndelegate: 'Confirm Undelegation',
       delegateFailure: 'Sorry, the delegation has been failed.',

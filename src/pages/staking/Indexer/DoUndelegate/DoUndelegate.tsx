@@ -10,6 +10,8 @@ import TransactionModal from '../../../../components/TransactionModal';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { renderAsync } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
+import { useLockPeriod } from '../../../../hooks';
+import moment from 'moment';
 
 interface DoUndelegateProps {
   indexerAddress: string;
@@ -20,11 +22,14 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
+  const lockPeriod = useLockPeriod();
 
   const modalText = {
     title: t('delegate.undelegate'),
     steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
-    description: t('delegate.undelegateValidNextEra'),
+    description: t('delegate.undelegateValidNextEra', {
+      duration: `${moment.duration(lockPeriod.data, 'seconds').as('hours').toPrecision(3)} hours`,
+    }),
     inputTitle: t('delegate.undelegateAmount'),
     submitText: t('delegate.confirmUndelegate'),
     failureText: 'Sorry, could not undelegate',
