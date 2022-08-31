@@ -172,11 +172,7 @@ const GET_DELEGATIONS = gql`
 
 const GET_WITHDRAWLS = gql`
   query GetWithdrawls($delegator: String!, $offset: Int) {
-    withdrawls(
-      filter: { delegator: { equalTo: $delegator }, and: { status: { equalTo: CLAIMED } } }
-      first: 10
-      offset: $offset
-    ) {
+    withdrawls(filter: { delegator: { equalTo: $delegator }, status: { notEqualTo: CANCELLED } }, offset: $offset) {
       nodes {
         id
         index

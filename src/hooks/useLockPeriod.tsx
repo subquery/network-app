@@ -21,5 +21,5 @@ export function useLockPeriod(): AsyncData<number> {
 
     const lockPeriod = await contracts.staking.lockPeriod();
     return convertBigNumberToNumber(lockPeriod);
-  }, []);
+  }, [pendingContracts]);
 }
