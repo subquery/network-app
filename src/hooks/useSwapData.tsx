@@ -3,16 +3,35 @@
 
 import assert from 'assert';
 import { BigNumber } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
 import { useContracts, useOrders } from '../containers';
-import { AsyncData, convertStringToNumber } from '../utils';
+import { AsyncData, convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
+
+function formatToken(value: BigNumber, unit = 18) {
+  return convertStringToNumber(formatUnits(value, unit));
+}
+
+export function useSwapToken(
+  orderId: string | undefined,
+): AsyncData<{ tokenGet: string; tokenGive: string } | undefined> {
+  const pendingContracts = useContracts();
+  return useAsyncMemo(async () => {
+    if (!orderId) return undefined;
+
+    const contracts = await pendingContracts;
+    assert(contracts, 'Contracts not available');
+
+    const { tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
+    return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
+  }, [pendingContracts, orderId]);
+}
 
 /**
  * @args: orderId
- * @returns amountGive/amountGet rate: number
+ * @returns amountGet/amountGive rate: number
  */
 export function useSwapRate(orderId: string | undefined): AsyncData<number> {
   const pendingContracts = useContracts();
@@ -22,9 +41,8 @@ export function useSwapRate(orderId: string | undefined): AsyncData<number> {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const { amountGive, amountGet } = await contracts.permissionedExchange.orders(orderId);
-
-    return convertStringToNumber(formatEther(amountGive)) / convertStringToNumber(formatEther(amountGet));
+    const { amountGive, amountGet, tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
+    return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
   }, [pendingContracts, orderId]);
 }
 

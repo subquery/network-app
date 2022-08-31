@@ -1,6 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { STABLE_TOKEN_ADDRESS } from './aUSD';
+import testnet from '@subql/contract-sdk/publish/moonbase.json';
+
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_WITH_TIME_FORMAT = 'DD/MM/YYYY hh:mm:ss A';
 
@@ -10,9 +13,17 @@ export enum LOCK_STATUS {
 }
 
 export const STABLE_TOKEN = 'aUSD';
+export const TOKEN_DECIMAL = 12;
 
+export const SQT_TOKEN = testnet.SQToken.address;
 export const TOKEN = 'kSQT';
+
 export const tokenDecimals: { [key: string]: number } = {
-  [STABLE_TOKEN]: 12,
-  [TOKEN]: 18,
+  [STABLE_TOKEN_ADDRESS]: 12,
+  [SQT_TOKEN]: 18,
+};
+
+export const tokenNames: { [key: string]: string } = {
+  [STABLE_TOKEN_ADDRESS]: STABLE_TOKEN,
+  [SQT_TOKEN]: TOKEN,
 };

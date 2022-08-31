@@ -72,16 +72,17 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
 
-export function mergeAsync<T1, T2, T3, T4>(
+export function mergeAsync<T1, T2, T3, T4, T5>(
   v1: AsyncData<T1>,
   v2: AsyncData<T2>,
   v3?: AsyncData<T3>,
   v4?: AsyncData<T4>,
-): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined, T4 | undefined]> {
+  v5?: AsyncData<T5>,
+): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined, T4 | undefined, T5 | undefined]> {
   return {
-    loading: v1.loading || v2.loading || !!v3?.loading || !!v4?.loading,
-    error: v1.error || v2.error || v3?.error || v4?.error,
-    data: [v1.data, v2.data, v3?.data, v4?.data],
+    loading: v1.loading || v2.loading || !!v3?.loading || !!v4?.loading || !!v5?.loading,
+    error: v1.error || v2.error || v3?.error || v4?.error || v5?.error,
+    data: [v1.data, v2.data, v3?.data, v4?.data, v5?.data],
   };
 }
 

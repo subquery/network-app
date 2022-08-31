@@ -35,6 +35,7 @@ interface ModalApproveTokenProps {
   contract?: ApproveContract;
   contractAddress?: string;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
+  increaseAllowanceAmount?: BigNumber;
 }
 
 export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
@@ -45,6 +46,7 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
   contract = ApproveContract.Staking,
   contractAddress,
   onIncreaseAllowance,
+  increaseAllowanceAmount,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>();
@@ -57,8 +59,9 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
 
       let approvalTxResult: ContractReceipt;
 
+      // TODO: put totalSupply
       if (onIncreaseAllowance && contractAddress) {
-        const approvalTx = await onIncreaseAllowance(contractAddress, constants.MaxUint256);
+        const approvalTx = await onIncreaseAllowance(contractAddress, increaseAllowanceAmount ?? BigNumber.from('0'));
         approvalTxResult = await approvalTx.wait();
       } else {
         const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);

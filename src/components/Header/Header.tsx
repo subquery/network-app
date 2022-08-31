@@ -13,6 +13,7 @@ import styles from './Header.module.css';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';
+import { STABLE_TOKEN_ADDRESS } from '../../utils';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -132,12 +133,27 @@ const Header: React.VFC = () => {
         },
       });
     }
+
+    if (key === 'addStableToken') {
+      window.ethereum?.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: STABLE_TOKEN_ADDRESS,
+            symbol: 'aUSD',
+            decimals: 12,
+          },
+        },
+      });
+    }
   };
 
   const AccountActions = ({ account }: { account: string }) => {
     const { t } = useTranslation();
     const menu = [
       { key: 'addToken', label: 'Import SQT to wallet' },
+      { key: 'addStableToken', label: 'Import aUSD to wallet' },
       { key: 'disconnect', label: 'Disconnect' },
     ];
 

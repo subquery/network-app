@@ -9,12 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
 import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
-import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate } from '../../hooks/useSwapData';
+import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
-import { useAUSDAllowance, useAUSDBalance, useAUSDContract } from '../../hooks/useASUDContract';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -29,16 +29,20 @@ const getStats = ({
   sqtPoolSize,
   swappableBalance,
   sqtAUSDRate,
+  tokenGet,
+  tokenGive,
   t,
 }: {
   sqtPoolSize?: BigNumberish;
   swappableBalance?: BigNumberish;
+  tokenGet: string;
+  tokenGive: string;
   sqtAUSDRate: number;
   t: TFunction;
 }) => {
   const curRateStats = {
     title: t('swap.curRate'),
-    value: `1 kSQT = ${sqtAUSDRate} aUSD`,
+    value: `1 ${tokenGet} = ${sqtAUSDRate} ${tokenGive}`,
     tooltip: t('swap.curRateTooltip'),
   };
 
@@ -67,20 +71,22 @@ const SellAUSD = () => {
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
-  const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
 
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
+  const swapTokens = useSwapToken(orderId);
   const aUSDBalance = useAUSDBalance();
+  const aUSDTotalSupply = useAUSDTotalSupply();
 
-  return renderAsyncArray(mergeAsync(swapRate, swapPool, aUSDBalance), {
+  return renderAsyncArray(mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
+      const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply] = data;
       if (sqtPoolSize === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-      const aUSDBalance = formatEther(aUSDAmount, 4) ?? '0';
+      const aUSDBalance = aUSDAmount ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize, 4) ?? '0';
 
@@ -91,7 +97,13 @@ const SellAUSD = () => {
         toMax: sortedPoolSize,
       };
 
-      const stats = getStats({ sqtPoolSize: sortedPoolSize, sqtAUSDRate: sortedRate, t });
+      const stats = getStats({
+        sqtPoolSize: sortedPoolSize,
+        sqtAUSDRate: sortedRate,
+        tokenGet: tokens?.tokenGet ?? '',
+        tokenGive: tokens?.tokenGive ?? '',
+        t,
+      });
 
       return (
         <SwapForm
@@ -102,7 +114,8 @@ const SellAUSD = () => {
           requireTokenApproval={!!requireTokenApproval}
           contractAddress={aUSDContract.data?.address}
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
-          // onApproveAllowance={} TODO: call refetch utils when for real aUSD contract
+          onApproveAllowance={() => aUSDAllowance?.refetch()}
+          increaseAllowanceAmount={aUSDSupply}
         />
       );
     },
@@ -115,38 +128,42 @@ const GetAUSD = () => {
   const { permissionExchangeAllowance } = useSQToken();
   const requireTokenApproval = permissionExchangeAllowance?.data?.isZero();
 
-  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(STABLE_TOKEN_ADDRESS ?? '');
 
   // TODO: when order is undefined, upon design confirm
   const swapRate = useSwapRate(orderId);
+  const swapTokens = useSwapToken(orderId);
   const tradableQuota = useSellSQTQuota(account ?? '');
   const { balance } = useSQToken();
+  const aUSDBalance = useAUSDBalance();
 
-  return renderAsyncArray(mergeAsync(swapRate, tradableQuota, balance), {
+  return renderAsyncArray(mergeAsync(swapRate, tradableQuota, swapTokens, balance, aUSDBalance), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [swapRate, tradableQuota, sqtBalance] = data;
+      const [swapRate, tradableQuota, tokens, sqtBalance, aUSDAmount] = data;
 
       if (swapRate === undefined || tradableQuota === undefined || fetchingOrderId) return <Spinner />;
 
       const sortedBalance = sqtBalance ?? BigNumber.from('0');
-      const sortedRate = !swapRate ? 0 : 1 / swapRate;
+      const sortedRate = swapRate ?? 0;
       const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
 
       const fromMax = sortedBalance.gt(sortedPoolSize) ? tradableQuota : sortedBalance;
-      const toMax = sortedBalance;
+      const toMax = aUSDAmount ?? '0';
 
       const pair = {
         from: TOKEN,
         fromMax: formatEther(fromMax, 4),
         to: STABLE_TOKEN,
-        toMax: formatEther(toMax, 4),
+        toMax,
       };
 
       const stats = getStats({
         swappableBalance: formatEther(tradableQuota, 4),
         sqtAUSDRate: sortedRate, // NOTE: as always display xSQT:xAUSD
+        tokenGet: tokens?.tokenGet ?? '',
+        tokenGive: tokens?.tokenGive ?? '',
         t,
       });
 
