@@ -46,7 +46,7 @@ const OfferSummary: React.VFC<OfferSummaryProps> = ({ offer, onNext, curStep }) 
     },
     {
       label: t('myOffers.step_2.minimumIndexedHeight'),
-      value: t('general.block', { count: convertStringToNumber(offer.minimumAcceptHeight.toString()) }),
+      value: t('general.blockWithCount', { count: convertStringToNumber(offer.minimumAcceptHeight.toString()) }),
     },
     {
       label: t('plans.headers.period'),
