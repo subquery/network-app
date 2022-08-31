@@ -80,7 +80,7 @@ const SellAUSD = () => {
       const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
       if (sqtPoolSize === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-      const aUSDBalance = formatEther(aUSDAmount, 4) ?? '0';
+      const aUSDBalance = aUSDAmount ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize, 4) ?? '0';
 
@@ -121,12 +121,13 @@ const GetAUSD = () => {
   const swapRate = useSwapRate(orderId);
   const tradableQuota = useSellSQTQuota(account ?? '');
   const { balance } = useSQToken();
+  const aUSDBalance = useAUSDBalance();
 
-  return renderAsyncArray(mergeAsync(swapRate, tradableQuota, balance), {
+  return renderAsyncArray(mergeAsync(swapRate, tradableQuota, balance, aUSDBalance), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [swapRate, tradableQuota, sqtBalance] = data;
+      const [swapRate, tradableQuota, sqtBalance, aUSDAmount] = data;
 
       if (swapRate === undefined || tradableQuota === undefined || fetchingOrderId) return <Spinner />;
 
@@ -135,13 +136,13 @@ const GetAUSD = () => {
       const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
 
       const fromMax = sortedBalance.gt(sortedPoolSize) ? tradableQuota : sortedBalance;
-      const toMax = sortedBalance;
+      const toMax = aUSDAmount ?? '0';
 
       const pair = {
         from: TOKEN,
         fromMax: formatEther(fromMax, 4),
         to: STABLE_TOKEN,
-        toMax: formatEther(toMax, 4),
+        toMax,
       };
 
       const stats = getStats({

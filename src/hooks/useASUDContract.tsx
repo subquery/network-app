@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber, Contract } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useContracts, useWeb3 } from '../containers';
-import { AsyncData, initialAUSDContract } from '../utils';
+import { AsyncData, formatEther, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
 /**
@@ -18,11 +19,13 @@ export function useAUSDContract(): AsyncData<Contract> {
 /**
  * @returns balance
  */
-export function useAUSDBalance(): AsyncData<BigNumber | undefined> {
+export function useAUSDBalance(): AsyncData<string | undefined> {
+  const { account } = useWeb3();
   return useAsyncMemo(async () => {
     const aUSDContract = await initialAUSDContract();
-    if (!aUSDContract) return undefined;
-    return await aUSDContract?.signer?.getBalance();
+    if (!aUSDContract || !account) return undefined;
+    const aUSD = await aUSDContract?.balanceOf(account);
+    return formatUnits(aUSD, STABLE_TOKEN_DECIMAL);
   }, []);
 }
 
