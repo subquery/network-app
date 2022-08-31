@@ -214,7 +214,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
                           <ModalApproveToken
                             onIncreaseAllowance={onIncreaseAllowance}
                             contract={contract}
-                            contractAddress={contractAddress}
                             increaseAllowanceAmount={increaseAllowanceAmount}
                             onSubmit={() => onApproveAllowance && onApproveAllowance()}
                           />
