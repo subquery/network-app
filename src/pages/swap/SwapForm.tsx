@@ -44,6 +44,7 @@ interface ISwapForm {
   contract?: ApproveContract;
   contractAddress?: string;
   onApproveAllowance?: () => void;
+  increaseAllowanceAmount?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
 }
 
@@ -66,6 +67,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   contract,
   contractAddress,
   onApproveAllowance,
+  increaseAllowanceAmount,
   onIncreaseAllowance,
 }) => {
   const { t } = useTranslation();
@@ -219,6 +221,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                             onIncreaseAllowance={onIncreaseAllowance}
                             contract={contract}
                             contractAddress={contractAddress}
+                            increaseAllowanceAmount={increaseAllowanceAmount}
                             onSubmit={() => onApproveAllowance && onApproveAllowance()}
                           />
                         );

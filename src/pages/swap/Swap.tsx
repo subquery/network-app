@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { BigNumber, BigNumberish } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
@@ -14,7 +14,7 @@ import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_A
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
-import { useAUSDAllowance, useAUSDBalance, useAUSDContract } from '../../hooks/useASUDContract';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
 
 const SWAP_ROUTE = '/swap';
 const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
@@ -72,12 +72,13 @@ const SellAUSD = () => {
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
   const aUSDBalance = useAUSDBalance();
+  const aUSDTotalSupply = useAUSDTotalSupply();
 
-  return renderAsyncArray(mergeAsync(swapRate, swapPool, aUSDBalance), {
+  return renderAsyncArray(mergeAsync(swapRate, swapPool, aUSDBalance, aUSDTotalSupply), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [sqtAUSDRate, sqtPoolSize, aUSDAmount] = data;
+      const [sqtAUSDRate, sqtPoolSize, aUSDAmount, aUSDSupply] = data;
       if (sqtPoolSize === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
       const aUSDBalance = aUSDAmount ?? '0';
@@ -102,7 +103,8 @@ const SellAUSD = () => {
           requireTokenApproval={!!requireTokenApproval}
           contractAddress={aUSDContract.data?.address}
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
-          // onApproveAllowance={} TODO: call refetch utils when for real aUSD contract
+          onApproveAllowance={() => aUSDAllowance?.refetch()}
+          increaseAllowanceAmount={aUSDSupply}
         />
       );
     },

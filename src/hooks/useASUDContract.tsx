@@ -4,7 +4,7 @@
 import { BigNumber, Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useContracts, useWeb3 } from '../containers';
-import { AsyncData, formatEther, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
+import { AsyncData, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
 /**
@@ -26,13 +26,13 @@ export function useAUSDBalance(): AsyncData<string | undefined> {
     if (!aUSDContract || !account) return undefined;
     const aUSD = await aUSDContract?.balanceOf(account);
     return formatUnits(aUSD, STABLE_TOKEN_DECIMAL);
-  }, []);
+  }, [account]);
 }
 
 /**
  * @returns useAUSDAllowance
  */
-export function useAUSDAllowance(): AsyncData<BigNumber> {
+export function useAUSDAllowance(): AsyncData<BigNumber> & { refetch: (retainCurrent?: boolean) => void } {
   const { account } = useWeb3();
   const pendingContracts = useContracts();
 
@@ -43,4 +43,16 @@ export function useAUSDAllowance(): AsyncData<BigNumber> {
 
     return await aUSDContract.allowance(account, contracts.permissionedExchange.address);
   }, [account, pendingContracts]);
+}
+
+/**
+ * @returns
+ */
+export function useAUSDTotalSupply(): AsyncData<BigNumber> {
+  return useAsyncMemo(async () => {
+    const aUSDContract = await initialAUSDContract();
+    if (!aUSDContract) return BigNumber.from('0');
+
+    return await aUSDContract.totalSupply();
+  }, []);
 }
