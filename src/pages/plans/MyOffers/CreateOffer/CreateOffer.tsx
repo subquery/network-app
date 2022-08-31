@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Steps, Typography } from 'antd';
+import { Steps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { IoChevronBack } from 'react-icons/io5';
+import { LeftOutlined } from '@ant-design/icons';
 import { GetDeploymentPlans_plans_nodes_planTemplate as PlanTemplate } from '../../../../__generated__/registry/GetDeploymentPlans';
 import { AppPageHeader } from '../../../../components';
 import styles from './CreateOffer.module.css';
@@ -72,10 +72,13 @@ export const StepButtons: React.VFC<IStepButtons> = ({ loading, curStep, disable
   return (
     <div className={`${styles.stepButtons} ${isFirstStep ? 'flex-end' : 'flex-between'}`}>
       {!isFirstStep && (
-        <Button onClick={() => onStepChange(curStep - 1, StepType.BACK)} type="text" loading={loading}>
-          <div className={styles.back}>
-            <IoChevronBack /> <Typography.Text>{t('general.back')}</Typography.Text>
-          </div>
+        <Button
+          onClick={() => onStepChange(curStep - 1, StepType.BACK)}
+          type="text"
+          loading={loading}
+          icon={<LeftOutlined />}
+        >
+          {t('general.back')}
         </Button>
       )}
 
