@@ -17,7 +17,7 @@ import {
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
-import { tokenDecimals } from '../../utils';
+import { TOKEN, TOKEN_DECIMAL } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
 import { parseEther } from 'ethers/lib/utils';
@@ -70,17 +70,21 @@ export const SwapForm: React.FC<ISwapForm> = ({
 }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
-  const initialPairValues: PairFrom = { from: '1', to: fromRate.toString() };
 
   const calWithRate = (fileKey: typeof FROM_INPUT_ID | typeof TO_INPUT_ID, value: string | number) => {
     const val = typeof value === 'number' ? value.toString() : value;
     if (fileKey === FROM_INPUT_ID) {
-      return (parseFloat(val) * fromRate).toFixed(tokenDecimals[pair.from] ?? 18);
+      return (parseFloat(val) * fromRate).toFixed(TOKEN_DECIMAL);
     }
 
     if (fileKey === TO_INPUT_ID) {
-      return (parseFloat(val) / fromRate).toFixed(tokenDecimals[pair.to] ?? 18);
+      return (parseFloat(val) / fromRate).toFixed(TOKEN_DECIMAL);
     }
+  };
+
+  const initialPairValues: PairFrom = {
+    from: '1',
+    to: calWithRate(pair.from === TOKEN ? FROM_INPUT_ID : TO_INPUT_ID, '1') ?? '0',
   };
 
   const updateFieldVal = (
