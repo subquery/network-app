@@ -9,7 +9,7 @@ import { tokenApprovalModalText, ModalApproveToken } from '../../../../component
 import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertStringToNumber, mergeAsync, renderAsyncArray } from '../../../../utils';
+import { convertStringToNumber, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
@@ -50,7 +50,11 @@ const getContentText = (
   };
 };
 
-export const DoStake: React.VFC = () => {
+interface IDoStake {
+  stakeAmountNextEra?: number | undefined;
+}
+
+export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
   const pendingContracts = useContracts();
   const { t } = useTranslation();
@@ -64,8 +68,7 @@ export const DoStake: React.VFC = () => {
   const requireTokenApproval = stakingAllowance?.data?.isZero();
 
   const curAmount =
-    stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : undefined;
-  const showMaxButton = stakeAction === StakeAction.Stake;
+    stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : stakeAmountNextEra;
   const modalText = getContentText(stakeAction, requireTokenApproval, t, lockPeriod.data);
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
@@ -113,7 +116,11 @@ export const DoStake: React.VFC = () => {
             },
           ]}
           inputParams={{
-            showMaxButton,
+            showMaxButton: true,
+            inputBottomText:
+              stakeAction === StakeAction.UnStake
+                ? t('indexer.unstakeBalanceNextEra', { amount: curAmount, token: TOKEN })
+                : undefined,
             curAmount,
           }}
           onClick={handleClick}
