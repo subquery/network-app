@@ -45,6 +45,7 @@ interface ISwapForm {
   onApproveAllowance?: () => void;
   increaseAllowanceAmount?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
+  onUpdateSwapData?: () => void;
 }
 
 interface PairFrom {
@@ -67,6 +68,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onApproveAllowance,
   increaseAllowanceAmount,
   onIncreaseAllowance,
+  onUpdateSwapData,
 }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
@@ -109,6 +111,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
         if (pair.to === STABLE_TOKEN) {
           return true;
         }
+
         return to ? parseFloat(to) <= parseFloat(pair.toMax) : false;
       })
       .typeError('Please input valid from amount.'),
@@ -156,9 +159,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
           onSubmit={(values, actions) => {
             actions.setSubmitting(false);
           }}
+          enableReinitialize
           validateOnMount
         >
-          {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
+          {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
             const isActionDisabled = !isValid || !orderId;
             const summaryList = [
               {
@@ -210,6 +214,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
                       },
                     ]}
                     onClick={() => onTradeOrder(values[FROM_INPUT_ID])}
+                    onSuccess={() => {
+                      resetForm();
+                      onUpdateSwapData && onUpdateSwapData();
+                    }}
                     renderContent={(onSubmit, onCancel, isLoading, error) => {
                       if (!!requireTokenApproval) {
                         return (

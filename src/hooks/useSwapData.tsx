@@ -7,8 +7,8 @@ import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
 import { useContracts, useOrders } from '../containers';
-import { AsyncData, convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
-import { useAsyncMemo } from './useAsyncMemo';
+import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
+import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
 import { BigNumberish } from '@ethersproject/bignumber';
 
 export function formatToken(value: BigNumberish, unit = 18): number {
@@ -17,7 +17,7 @@ export function formatToken(value: BigNumberish, unit = 18): number {
 
 export function useSwapToken(
   orderId: string | undefined,
-): AsyncData<{ tokenGet: string; tokenGive: string } | undefined> {
+): AsyncMemoReturn<{ tokenGet: string; tokenGive: string } | undefined> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     if (!orderId) return undefined;
@@ -34,7 +34,7 @@ export function useSwapToken(
  * @args: orderId
  * @returns amountGet/amountGive rate: number
  */
-export function useSwapRate(orderId: string | undefined): AsyncData<number> {
+export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     if (!orderId) return 0;
@@ -51,7 +51,7 @@ export function useSwapRate(orderId: string | undefined): AsyncData<number> {
  * @args: orderId
  * @returns swap pool
  */
-export function useSwapPool(orderId: string | undefined): AsyncData<BigNumber> {
+export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNumber> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     if (!orderId) return BigNumber.from(0);
@@ -69,7 +69,7 @@ export function useSwapPool(orderId: string | undefined): AsyncData<BigNumber> {
  * @args: account
  * @returns tradable amount
  */
-export function useSellSQTQuota(account: string): AsyncData<BigNumber> {
+export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const pendingContracts = useContracts();
   return useAsyncMemo(async () => {
     const contracts = await pendingContracts;

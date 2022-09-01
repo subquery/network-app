@@ -7,7 +7,7 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { ApproveContract, AppTypography, Spinner, TabButtons } from '../../components';
+import { ApproveContract, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
@@ -84,15 +84,15 @@ const SellAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply] = data;
-      if (sqtPoolSize === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
+      if (sqtAUSDRate === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-      const aUSDBalance = aUSDAmount ?? '0';
+      const sortedAUSDBalance = aUSDAmount ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
       const sortedPoolSize = formatEther(sqtPoolSize, 4) ?? '0';
 
       const pair = {
         from: STABLE_TOKEN,
-        fromMax: aUSDBalance,
+        fromMax: sortedAUSDBalance,
         to: TOKEN,
         toMax: sortedPoolSize,
       };
@@ -116,6 +116,11 @@ const SellAUSD = () => {
           onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
           onApproveAllowance={() => aUSDAllowance?.refetch()}
           increaseAllowanceAmount={aUSDSupply}
+          onUpdateSwapData={() => {
+            swapTokens.refetch(true);
+            swapPool.refetch(true);
+            aUSDBalance.refetch(true);
+          }}
         />
       );
     },
@@ -141,15 +146,15 @@ const GetAUSD = () => {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
-      const [swapRate, tradableQuota, tokens, sqtBalance, aUSDAmount] = data;
+      const [swapRate, tradeQuota, tokens, sqtBalance, aUSDAmount] = data;
 
-      if (swapRate === undefined || tradableQuota === undefined || fetchingOrderId) return <Spinner />;
+      if (aUSDAmount === undefined || swapRate === undefined || fetchingOrderId) return <Spinner />;
 
       const sortedBalance = sqtBalance ?? BigNumber.from('0');
       const sortedRate = swapRate ?? 0;
-      const sortedPoolSize = tradableQuota ?? BigNumber.from('0');
+      const sortedPoolSize = tradeQuota ?? BigNumber.from('0');
 
-      const fromMax = sortedBalance.gt(sortedPoolSize) ? tradableQuota : sortedBalance;
+      const fromMax = sortedBalance.gt(sortedPoolSize) ? tradeQuota : sortedBalance;
       const toMax = aUSDAmount ?? '0';
 
       const pair = {
@@ -160,7 +165,7 @@ const GetAUSD = () => {
       };
 
       const stats = getStats({
-        swappableBalance: formatEther(tradableQuota, 4),
+        swappableBalance: formatEther(tradeQuota, 4),
         sqtAUSDRate: sortedRate,
         tokenGet: tokens?.tokenGet ?? '',
         tokenGive: tokens?.tokenGive ?? '',
@@ -176,6 +181,12 @@ const GetAUSD = () => {
           requireTokenApproval={!!requireTokenApproval}
           onApproveAllowance={() => requireTokenApproval && permissionExchangeAllowance.refetch()}
           contract={ApproveContract.PermissionedExchange}
+          onUpdateSwapData={() => {
+            swapTokens.refetch(true);
+            balance.refetch(true);
+            aUSDBalance.refetch(true);
+            tradableQuota.refetch(true);
+          }}
         />
       );
     },
@@ -183,7 +194,6 @@ const GetAUSD = () => {
 };
 
 export const Swap: React.VFC = () => {
-  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -196,8 +206,6 @@ export const Swap: React.VFC = () => {
           <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
         </Switch>
       </div>
-
-      <AppTypography className={styles.dataUpdateText}>{t('swap.dataUpdateEvery5Min')}</AppTypography>
     </div>
   );
 };

@@ -4,11 +4,15 @@
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import { AsyncData, CancellablePromise } from '../utils';
 
+export interface AsyncMemoReturn<T> extends AsyncData<T> {
+  refetch: (retainCurrent?: boolean) => void;
+}
+
 export function useAsyncMemo<T>(
   factory: () => Promise<T> | undefined | null,
   deps: DependencyList,
   initial: T | undefined = undefined,
-): AsyncData<T> & { refetch: (retainCurrent?: boolean) => void } {
+): AsyncMemoReturn<T> {
   const [result, setResult] = useState<AsyncData<T>>({ data: initial, loading: false });
 
   const task = useRef<CancellablePromise<void>>();
