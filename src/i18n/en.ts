@@ -287,9 +287,9 @@ const en = {
     },
     rewards: {
       none: 'No rewards available.',
-      header1: 'Indexer',
-      header2: 'Amount',
-      header3: 'Action',
+      indexer: 'Indexer',
+      amount: 'Amount',
+      action: 'Action',
       claim: {
         title: 'Claim Rewards',
         step1: 'Confirm claim',
@@ -301,7 +301,7 @@ const en = {
       totalUnclaimReward: 'You have {{count}} unclaimed reward',
       totalUnclaimReward_other: 'You have {{count}} unclaimed rewards',
       claimed: 'Claimed',
-      unClaimed: 'UnClaimed',
+      unclaimed: 'Unclaimed',
     },
 
     missions: {

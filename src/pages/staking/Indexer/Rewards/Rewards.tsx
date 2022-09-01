@@ -15,6 +15,7 @@ import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
+import moment from 'moment';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -32,25 +33,25 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       render: (t, r, index) => <TableText content={index + 1} />,
     },
     {
-      title: t('rewards.header1').toUpperCase(),
+      title: t('rewards.indexer').toUpperCase(),
       dataIndex: 'indexerAddress',
       key: 'indexer',
       render: (text: string) => <TableText content={text} />,
     },
     {
-      title: t('rewards.header2').toUpperCase(),
+      title: t('rewards.amount').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: BigInt) => <TableText content={`${formatEther(amount)} SQT`} />,
     },
     {
-      title: t('rewards.header3').toUpperCase(),
-      dataIndex: 'amount',
+      title: t('rewards.action').toUpperCase(),
+      dataIndex: 'action',
       key: 'action',
       render: (_, reward: Reward | UnclaimedReward) => {
         const hasClaimed = isClaimedReward(reward);
         const tagColor = hasClaimed ? 'green' : 'blue';
-        return <Tag color={tagColor}>{hasClaimed ? t('rewards.claimed') : t('rewards.unClaimed')}</Tag>;
+        return <Tag color={tagColor}>{hasClaimed ? t('rewards.claimed') : t('rewards.unclaimed')}</Tag>;
       },
     },
   ];
@@ -61,7 +62,9 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
         mapAsync(
           (data) =>
             ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
-              data.rewards?.nodes.filter(notEmpty) ?? [],
+              data.rewards?.nodes
+                .filter(notEmpty)
+                .sort((a, b) => moment(b.claimedTime).unix() - moment(a.claimedTime).unix()) ?? [],
             ),
           rewards,
         ),
