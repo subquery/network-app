@@ -15,7 +15,6 @@ import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
-import moment from 'moment';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -62,9 +61,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
         mapAsync(
           (data) =>
             ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
-              data.rewards?.nodes
-                .filter(notEmpty)
-                .sort((a, b) => moment(b.claimedTime).unix() - moment(a.claimedTime).unix()) ?? [],
+              data.rewards?.nodes.filter(notEmpty) ?? [],
             ),
           rewards,
         ),
