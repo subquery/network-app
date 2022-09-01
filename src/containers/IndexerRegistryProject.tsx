@@ -290,7 +290,7 @@ const GET_SPECIFIC_SERVICE_AGREEMENTS = gql`
 
 const GET_REWARDS = gql`
   query GetRewards($address: String!) {
-    rewards(filter: { delegatorAddress: { equalTo: $address } }) {
+    rewards(orderBy: CLAIMED_TIME_DESC, filter: { delegatorAddress: { equalTo: $address } }) {
       nodes {
         id
         delegatorAddress
