@@ -183,7 +183,6 @@ const GetAUSD = () => {
 };
 
 export const Swap: React.VFC = () => {
-  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -196,8 +195,6 @@ export const Swap: React.VFC = () => {
           <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
         </Switch>
       </div>
-
-      <AppTypography className={styles.dataUpdateText}>{t('swap.dataUpdateEvery5Min')}</AppTypography>
     </div>
   );
 };

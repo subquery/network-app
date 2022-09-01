@@ -118,7 +118,7 @@ const TransactionModal = <P, T extends string>({
   }, [successModalText]);
 
   const resetModal = () => {
-    setIsLoading(false);
+    // setIsLoading(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
     onClose && onClose();

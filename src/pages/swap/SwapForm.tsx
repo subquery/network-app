@@ -45,6 +45,7 @@ interface ISwapForm {
   onApproveAllowance?: () => void;
   increaseAllowanceAmount?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
+  onSuccessSwap?: () => void;
 }
 
 interface PairFrom {
@@ -67,6 +68,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onApproveAllowance,
   increaseAllowanceAmount,
   onIncreaseAllowance,
+  onSuccessSwap,
 }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
@@ -158,7 +160,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
           }}
           validateOnMount
         >
-          {({ submitForm, isValid, isSubmitting, setErrors, values, errors, setValues }) => {
+          {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
             const isActionDisabled = !isValid || !orderId;
             const summaryList = [
               {
@@ -210,6 +212,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
                       },
                     ]}
                     onClick={() => onTradeOrder(values[FROM_INPUT_ID])}
+                    onSuccess={() => {
+                      resetForm();
+                      onSuccessSwap && onSuccessSwap();
+                    }}
                     renderContent={(onSubmit, onCancel, isLoading, error) => {
                       if (!!requireTokenApproval) {
                         return (
