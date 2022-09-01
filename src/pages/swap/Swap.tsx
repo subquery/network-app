@@ -117,9 +117,9 @@ const SellAUSD = () => {
           onApproveAllowance={() => aUSDAllowance?.refetch()}
           increaseAllowanceAmount={aUSDSupply}
           onUpdateSwapData={() => {
-            swapTokens.refetch();
-            swapPool.refetch();
-            aUSDBalance.refetch();
+            swapTokens.refetch(true);
+            swapPool.refetch(true);
+            aUSDBalance.refetch(true);
           }}
         />
       );
@@ -147,7 +147,6 @@ const GetAUSD = () => {
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [swapRate, tradeQuota, tokens, sqtBalance, aUSDAmount] = data;
-      console.log('aUSDAmount', aUSDAmount);
 
       if (aUSDAmount === undefined || swapRate === undefined || fetchingOrderId) return <Spinner />;
 
@@ -183,10 +182,10 @@ const GetAUSD = () => {
           onApproveAllowance={() => requireTokenApproval && permissionExchangeAllowance.refetch()}
           contract={ApproveContract.PermissionedExchange}
           onUpdateSwapData={() => {
-            swapTokens.refetch();
-            balance.refetch();
-            aUSDBalance.refetch();
-            tradableQuota.refetch();
+            swapTokens.refetch(true);
+            balance.refetch(true);
+            aUSDBalance.refetch(true);
+            tradableQuota.refetch(true);
           }}
         />
       );
