@@ -100,14 +100,12 @@ export const SwapForm: React.FC<ISwapForm> = ({
     from: Yup.string()
       .required()
       .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
-      .test('isMax', 'From should be smaller than max amount.', (from) =>
-        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
-      )
+      .test('isMax', 'From value is invalid.', (from) => (from ? parseFloat(from) <= parseFloat(pair.fromMax) : false))
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
-      .test('isValid', 'To should be smaller than max amount.', (to) => {
+      .test('isValid', 'To value is invalid.', (to) => {
         if (pair.to === STABLE_TOKEN) {
           return true;
         }

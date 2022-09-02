@@ -6,12 +6,14 @@ import { InputNumber, InputNumberProps, Button } from 'antd';
 import styles from './NumberInput.module.css';
 import { AppTypography } from '../Typography';
 import { BigNumberish } from 'ethers';
+import { isUndefined } from '../../utils';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
   title?: string;
   tooltip?: string;
   description?: string;
+  subDescription?: string;
   unit?: string;
   errorMsg?: string;
   onClickMax?: (amount: number | BigNumberish) => void;
@@ -27,6 +29,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   maxAmount = 0,
   onClickMax,
   description,
+  subDescription,
   errorMsg,
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
@@ -46,12 +49,13 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
-  const maxText =
-    maxAmount > 0
-      ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
-      : undefined;
+  const maxText = !isUndefined(maxAmount)
+    ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
+    : undefined;
   const inputBottomText = maxText ?? description;
-  const InputBottomText = () => <AppTypography className={styles.inputBottomText}>{inputBottomText}</AppTypography>;
+  const DescriptionText = ({ text }: { text: string }) => (
+    <AppTypography className={styles.inputBottomText}>{text}</AppTypography>
+  );
 
   const ErrorText = () => (
     <AppTypography className={styles.inputBottomText} type="danger">
@@ -73,10 +77,12 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         {...inputNumberProps}
         className={styles.inputNumber}
         size="large"
+        status={errorMsg && 'error'}
       />
 
+      {inputBottomText && <DescriptionText text={inputBottomText} />}
+      {subDescription && <DescriptionText text={subDescription} />}
       {errorMsg && <ErrorText />}
-      {inputBottomText && <InputBottomText />}
     </div>
   );
 };
