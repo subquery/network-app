@@ -3,11 +3,10 @@
 
 import { ContractClient, NetworkClient } from '@subql/network-clients';
 import { ContractSDK } from '@subql/contract-sdk';
-// import deploymentDetails from '@subql/contract-sdk/publish/testnet.json';
-import deploymentDetails from '@subql/contract-sdk/publish/moonbase.json';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import * as React from 'react';
 import { useWeb3 } from '../containers';
+import { networkDeploymentDetails } from '../utils';
 
 export function useContractClient(): ContractClient | undefined {
   const [contractClient, setContractClient] = React.useState<ContractClient | undefined>();
@@ -20,7 +19,9 @@ export function useContractClient(): ContractClient | undefined {
   React.useEffect(() => {
     async function getContract() {
       if (signerOrProvider) {
-        const pendingContract = await ContractSDK.create(signerOrProvider, { deploymentDetails });
+        const pendingContract = await ContractSDK.create(signerOrProvider, {
+          deploymentDetails: networkDeploymentDetails,
+        });
         const sortedContractClient = ContractClient.create(pendingContract);
         setContractClient(sortedContractClient);
       }
@@ -45,7 +46,9 @@ export function useNetworkClient(): NetworkClient | undefined {
   React.useEffect(() => {
     async function getNetworkClient() {
       if (signerOrProvider && ipfs) {
-        const pendingContract = await ContractSDK.create(signerOrProvider, { deploymentDetails });
+        const pendingContract = await ContractSDK.create(signerOrProvider, {
+          deploymentDetails: networkDeploymentDetails,
+        });
         const sortedNetworkClient = NetworkClient.create(pendingContract, ipfs);
         setNetworkClient(sortedNetworkClient);
       }

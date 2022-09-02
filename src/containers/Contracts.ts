@@ -5,8 +5,7 @@ import { createContainer, Logger } from './Container';
 import React from 'react';
 import { ContractSDK } from '@subql/contract-sdk';
 import { useWeb3 } from './Web3';
-// import deploymentDetails from '@subql/contract-sdk/publish/testnet.json';
-import deploymentDetails from '@subql/contract-sdk/publish/moonbase.json';
+import { networkDeploymentDetails } from '../utils';
 
 function useContractsImpl(logger: Logger): Promise<ContractSDK> | undefined {
   const [contracts, setContracts] = React.useState<Promise<ContractSDK>>();
@@ -22,7 +21,7 @@ function useContractsImpl(logger: Logger): Promise<ContractSDK> | undefined {
       return;
     }
 
-    const pendingContracts = ContractSDK.create(signerOrProvider, { deploymentDetails });
+    const pendingContracts = ContractSDK.create(signerOrProvider, { deploymentDetails: networkDeploymentDetails });
 
     setContracts(pendingContracts);
 
