@@ -10,7 +10,14 @@ import styles from './Playground.module.css';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
 import { Link } from 'react-router-dom';
 import { useIndexerMetadata } from '../../../hooks';
-import { formatEther, getEncryptStorage, removeStorage, setEncryptStorage, wrapProxyEndpoint } from '../../../utils';
+import {
+  formatEther,
+  getEncryptStorage,
+  removeStorage,
+  setEncryptStorage,
+  TOKEN,
+  wrapProxyEndpoint,
+} from '../../../utils';
 import { POST } from '../../../utils/fetch';
 import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
@@ -22,7 +29,6 @@ import { ONGOING_PLANS } from '../ServiceAgreements/ServiceAgreements';
 import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { Project } from '../ServiceAgreements/ServiceAgreementsTable';
 import moment from 'moment';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
@@ -50,7 +56,7 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
     dataIndex: 'lockedAmount',
     title: i18next.t('serviceAgreements.headers.price').toUpperCase(),
     key: 'price',
-    render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} SQT`} />,
+    render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
   },
 ];
 

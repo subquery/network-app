@@ -6,7 +6,7 @@ import { TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { extractPercentage, formatEther, renderAsync } from '../../../../utils';
+import { extractPercentage, formatEther, renderAsync, TOKEN } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/registry/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
@@ -58,7 +58,7 @@ const Delegation: React.VFC<{
           const ownStake = getOwnStake(data.delegation?.amount, curEra);
           const delegated = getDelegated(totalStake, ownStake);
           const eraValue = delegateType === 'delegated' ? delegated : ownStake;
-          return <TableText content={`${eraValue[fieldKey]} SQT` || '-'} />;
+          return <TableText content={`${eraValue[fieldKey]} ${TOKEN}` || '-'} />;
         },
       })}
     </>
@@ -102,7 +102,7 @@ const getColumns = (
         dataIndex: ['totalStake', 'current'],
         key: 'currentTotalStake',
         width: 40,
-        render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+        render: (value: string) => <TableText content={value ? `${value} ${TOKEN}` : '-'} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),
@@ -113,7 +113,7 @@ const getColumns = (
         dataIndex: ['totalStake', 'after'],
         key: 'currentTotalStake',
         width: 40,
-        render: (value: string) => <TableText content={value ? `${value} SQT` : '-'} />,
+        render: (value: string) => <TableText content={value ? `${value} ${TOKEN}` : '-'} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),

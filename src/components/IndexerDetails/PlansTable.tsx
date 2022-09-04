@@ -10,7 +10,7 @@ import { Table, TableProps } from 'antd';
 import { LazyQueryResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { BigNumber } from '@ethersproject/bignumber';
-import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray } from '../../utils';
+import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
 import { Button, Spinner, Typography } from '@subql/react-ui';
 import TransactionModal from '../TransactionModal';
 import { ContractTransaction } from '@ethersproject/contracts';
@@ -64,7 +64,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
     },
     {
       label: t('plans.headers.price'),
-      value: `${formatEther(plan.price)} SQT`,
+      value: `${formatEther(plan.price)} ${TOKEN}`,
     },
     {
       label: t('plans.headers.period'),
@@ -87,7 +87,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
       value: renderAsync(balance, {
         loading: () => <Spinner />,
         error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,
-        data: (data) => <Typography>{`${formatEther(plan.price)} SQT`}</Typography>,
+        data: (data) => <Typography>{`${formatEther(plan.price)} ${TOKEN}`}</Typography>,
       }),
     },
   ];

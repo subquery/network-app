@@ -9,7 +9,15 @@ import styles from './index.module.css';
 import { DoUndelegate } from '../DoUndelegate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { useDelegations, useEra } from '../../../../containers';
-import { convertStringToNumber, formatEther, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
+import {
+  convertStringToNumber,
+  formatEther,
+  mapAsync,
+  mergeAsync,
+  notEmpty,
+  renderAsync,
+  TOKEN,
+} from '../../../../utils';
 import { TableText } from '../../../../components';
 import clsx from 'clsx';
 
@@ -62,14 +70,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           dataIndex: ['value', 'current'],
           key: 'currentValue',
           width: 60,
-          render: (text: string) => <TableText content={`${text} SQT`} />,
+          render: (text: string) => <TableText content={`${text} ${TOKEN}`} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['value', 'after'],
           key: 'afterValue',
           width: 60,
-          render: (text: string) => <TableText content={`${text} SQT`} />,
+          render: (text: string) => <TableText content={`${text} ${TOKEN}`} />,
         },
       ],
     },

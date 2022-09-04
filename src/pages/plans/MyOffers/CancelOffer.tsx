@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Typography } from '@subql/react-ui';
 import { useContracts } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
-import { convertStringToNumber, formatEther, getCapitalizedStr } from '../../../utils';
+import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';
 import styles from './MyOffers.module.css';
 import { useLocation } from 'react-router';
 import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
@@ -51,15 +51,15 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const cancelOfferSummary = [
     {
       label: t('myOffers.cancel.unSpent'),
-      value: `${unSpent ? `${unSpent} SQT` : '-'} `,
+      value: `${unSpent ? `${unSpent} ${TOKEN}` : '-'} `,
     },
     {
       label: t('myOffers.cancel.cancelFee'),
-      value: `${cancelPenalty ? `${cancelPenalty} SQT` : '-'} `,
+      value: `${cancelPenalty ? `${cancelPenalty} ${TOKEN}` : '-'} `,
     },
     {
       label: t('myOffers.cancel.youWillReceive'),
-      value: `${receive ? `${receive} SQT` : '-'} `,
+      value: `${receive ? `${receive} ${TOKEN}` : '-'} `,
     },
   ];
 

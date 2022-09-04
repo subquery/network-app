@@ -12,7 +12,7 @@ import { Button, Typography } from '@subql/react-ui';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useContracts } from '../../../../containers';
 import assert from 'assert';
-import { convertBigNumberToNumber, formatEther } from '../../../../utils';
+import { convertBigNumberToNumber, formatEther, TOKEN } from '../../../../utils';
 import { SummaryList, TableText } from '../../../../components';
 import styles from './List.module.css';
 import clsx from 'clsx';
@@ -107,7 +107,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
               },
               {
                 label: t('plans.headers.price'),
-                value: `${formatEther(plan.price)} SQT`,
+                value: `${formatEther(plan.price)} ${TOKEN}`,
               },
               {
                 label: t('plans.headers.period'),

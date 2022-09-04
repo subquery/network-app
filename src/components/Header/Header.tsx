@@ -13,7 +13,7 @@ import styles from './Header.module.css';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';
-import { STABLE_TOKEN_ADDRESS } from '../../utils';
+import { STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -126,7 +126,7 @@ const Header: React.VFC = () => {
           type: 'ERC20',
           options: {
             address: testnet.SQToken.address,
-            symbol: 'SQT',
+            symbol: TOKEN,
             decimals: 18,
             // image: 'https://foo.io/token-image.svg',
           },
@@ -141,7 +141,7 @@ const Header: React.VFC = () => {
           type: 'ERC20',
           options: {
             address: STABLE_TOKEN_ADDRESS,
-            symbol: 'aUSD',
+            symbol: STABLE_TOKEN,
             decimals: 12,
           },
         },
@@ -152,9 +152,9 @@ const Header: React.VFC = () => {
   const AccountActions = ({ account }: { account: string }) => {
     const { t } = useTranslation();
     const menu = [
-      { key: 'addToken', label: 'Import SQT to wallet' },
-      { key: 'addStableToken', label: 'Import aUSD to wallet' },
-      { key: 'disconnect', label: 'Disconnect' },
+      { key: 'addToken', label: t('header.importToken') },
+      { key: 'addStableToken', label: t('header.importStableToken') },
+      { key: 'disconnect', label: t('header.disconnect') },
     ];
 
     return (

@@ -18,6 +18,7 @@ import {
   mergeAsync,
   renderAsyncArray,
   isUndefined,
+  TOKEN,
 } from '../../../utils';
 import { useAsyncMemo } from '../../../hooks';
 import { Status } from '../../../__generated__/registry/globalTypes';
@@ -163,8 +164,8 @@ export const CheckList: React.VFC<ICheckList> = ({
         },
         {
           title: t('offerMarket.acceptModal.dailyRewards'),
-          requiredValue: `${REQUIRED_DAILY_REWARD_CAP} SQT`,
-          value: `${dailyRewardCapacity} SQT`,
+          requiredValue: `${REQUIRED_DAILY_REWARD_CAP} ${TOKEN}`,
+          value: `${dailyRewardCapacity} ${TOKEN}`,
           passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCapacity,
           errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },

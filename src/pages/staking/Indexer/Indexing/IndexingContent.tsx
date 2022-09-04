@@ -14,6 +14,7 @@ import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { useWeb3 } from '../../../../containers';
 import { OwnDeployments } from '../OwnDeployments';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
+import { TOKEN } from '../../../../utils';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -52,19 +53,19 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       title: t('indexer.totalStake').toLocaleUpperCase(),
       dataIndex: 'totalStake',
       key: 'totalStake',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
     },
     {
       title: t('indexer.ownStake').toLocaleUpperCase(),
       dataIndex: 'ownStake',
       key: 'ownStake',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
     },
     {
       title: t('indexer.delegated').toLocaleUpperCase(),
       dataIndex: 'totalDelegations',
       key: 'delegated',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
     },
     {
       title: t('indexer.commission').toLocaleUpperCase(),
@@ -77,7 +78,7 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',
       key: 'capacity',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'SQT'} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
     },
   ];
 

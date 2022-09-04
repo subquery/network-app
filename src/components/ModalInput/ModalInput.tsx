@@ -8,6 +8,7 @@ import { useFormik } from 'formik';
 import styles from './ModalInput.module.css';
 import { parseError } from '../../utils/parseError';
 import { NumberInput } from '../NumberInput';
+import { TOKEN } from '../../utils';
 
 /**
  * NOTE:
@@ -38,7 +39,7 @@ export const ModalInput: React.FC<Props> = ({
   submitText,
   onSubmit,
   onError,
-  unit = 'SQT',
+  unit = TOKEN,
   isLoading,
   curAmount,
   showMaxButton,

@@ -48,7 +48,7 @@ const getStats = ({
 
   if (sqtPoolSize) {
     return [
-      { title: t('swap.poolSize'), value: `${sqtPoolSize} kSQT`, tooltip: t('swap.poolSizeTooltip') },
+      { title: t('swap.poolSize'), value: `${sqtPoolSize} ${TOKEN}`, tooltip: t('swap.poolSizeTooltip') },
       curRateStats,
     ];
   }
@@ -56,7 +56,7 @@ const getStats = ({
   return [
     {
       title: t('swap.swappableBalance'),
-      value: `${swappableBalance ?? 0} kSQT`,
+      value: `${swappableBalance ?? 0} ${TOKEN}`,
       tooltip: t('swap.swappableBalanceTooltip'),
     },
     curRateStats,
