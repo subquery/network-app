@@ -11,7 +11,7 @@ import { useAsyncMemo, useEraValue } from '../../../hooks';
 import { currentEraValueToString, EraValue } from '../../../hooks/useEraValue';
 import { useContracts, useWeb3 } from '../../../containers';
 import React from 'react';
-import { newModalStyles, renderAsync } from '../../../utils';
+import { newModalStyles, renderAsync, TOKEN } from '../../../utils';
 import { FTextInput } from '../../../components';
 import ReactModal from 'react-modal';
 
@@ -66,7 +66,7 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
     hasAllowance.refetch();
   };
 
-  const title = `${type} ${action} SQT to this Indexer`;
+  const title = `${type} ${action} ${TOKEN} to this Indexer`;
   const submitText = `${type} ${action}`;
 
   const renderDefault = () => {
@@ -95,7 +95,7 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
         if (allowance?.isZero()) {
           return (
             <Modal
-              title="Approve SQT for staking"
+              title={`Approve ${TOKEN} for staking`}
               submitText="Approve"
               onSubmit={increaseAllowance}
               cancelText="Cancel"
@@ -162,14 +162,14 @@ const OwnDelegation: React.VFC<{ indexerAddress: string }> = ({ indexerAddress }
             <>
               <Typography>{`Your stake (next era): ${
                 eraValue ? currentEraValueToString(eraValue, utils.formatEther) : '0'
-              } SQT`}</Typography>
+              } ${TOKEN}`}</Typography>
               <Button
-                label={`${account === indexerAddress ? 'Stake' : 'Delegate'} SQT`}
+                label={`${account === indexerAddress ? 'Stake' : 'Delegate'} ${TOKEN}`}
                 onClick={displayAddModal}
                 disabled={!account}
               />
               <Button
-                label={`Remove ${account === indexerAddress ? 'Staked' : 'Delegated'} SQT`}
+                label={`Remove ${account === indexerAddress ? 'Staked' : 'Delegated'} ${TOKEN}`}
                 disabled={!account && BigNumber.from(eraValue?.after).isZero()}
                 onClick={displayRemoveModal}
               />

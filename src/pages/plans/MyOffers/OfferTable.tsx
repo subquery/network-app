@@ -29,6 +29,7 @@ import {
   parseError,
   renderAsync,
   renderAsyncArray,
+  TOKEN,
 } from '../../../utils';
 import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
@@ -137,13 +138,13 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
         />
       ),
       width: 200,
-      render: (deposit) => <TableText content={`${formatEther(deposit)} SQT`} />,
+      render: (deposit) => <TableText content={`${formatEther(deposit)} ${TOKEN}`} />,
     },
     {
       dataIndex: 'deposit',
       title: <TableTitle title={i18next.t('myOffers.table.depositAmount')} />,
       render: (deposit, offer) => (
-        <TableText content={`${convertStringToNumber(formatEther(deposit)) * offer.limit} SQT`} />
+        <TableText content={`${convertStringToNumber(formatEther(deposit)) * offer.limit} ${TOKEN}`} />
       ),
     },
     {

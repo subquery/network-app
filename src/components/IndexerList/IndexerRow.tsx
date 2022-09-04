@@ -6,7 +6,7 @@ import { TableCell, TableRow } from '@subql/react-ui/dist/components/Table';
 import * as React from 'react';
 import { useEraValue, useIPFSMetadata } from '../../hooks';
 import { IndexerDetails, indexerMetadataSchema } from '../../models';
-import { AsyncData, mapAsync } from '../../utils';
+import { AsyncData, mapAsync, TOKEN } from '../../utils';
 import { GetIndexers_indexers_nodes as Indexer } from '../../__generated__/registry/GetIndexers';
 import { IndexerName } from '../IndexerDetails/IndexerName';
 
@@ -38,7 +38,7 @@ const IndexerRow: React.FC<Props> = ({ onClick, metadata, indexer }) => {
         <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.id} />
       </TableCell>
       <TableCell>
-        <Typography>{`${stakeString} SQT`}</Typography>
+        <Typography>{`${stakeString} ${TOKEN}`}</Typography>
       </TableCell>
       <TableCell>
         <Typography>{`${commissionString} %`}</Typography>

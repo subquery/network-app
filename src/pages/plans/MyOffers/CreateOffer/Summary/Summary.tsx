@@ -21,6 +21,7 @@ import {
   convertStringToNumber,
   formatSecondsDuration,
   parseError,
+  TOKEN,
 } from '../../../../../utils';
 import { OPEN_OFFERS } from '../../MyOffers';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
@@ -116,11 +117,11 @@ export const Summary: React.VFC = () => {
   const OfferDetailsSummary = [
     {
       label: t('myOffers.step_2.rewardPerIndexer'),
-      value: `${offer?.rewardPerIndexer} SQT`,
+      value: `${offer?.rewardPerIndexer} ${TOKEN}`,
     },
     {
       label: t('myOffers.step_2.totalDeposit'),
-      value: `${offer?.totalDeposit} SQT`,
+      value: `${offer?.totalDeposit} ${TOKEN}`,
     },
     {
       label: t('myOffers.step_2.indexerCap'),

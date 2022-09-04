@@ -12,7 +12,7 @@ import { AiOutlineWarning } from 'react-icons/ai';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
 import { ethers } from 'ethers';
-import { COLORS, convertStringToNumber, formatEther } from '../../../../../utils';
+import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
 import { useSQToken } from '../../../../../containers';
 
 // Can not select days before today + 24 hours, value & validation
@@ -108,7 +108,9 @@ export const OfferDetails: React.VFC = () => {
                   step="0.00001"
                   max={formatEther(balance.data)}
                   status={errors[TOTAL_DEPOSIT] ? 'error' : undefined}
-                  description={balance.data ? `${t('general.balance')}: ${formatEther(balance.data)} SQT ` : undefined}
+                  description={
+                    balance.data ? `${t('general.balance')}: ${formatEther(balance.data)} ${TOKEN} ` : undefined
+                  }
                   errorMsg={errors[TOTAL_DEPOSIT] && t('myOffers.step_2.totalDepositErrorMsg')}
                 />
                 <NumberInput

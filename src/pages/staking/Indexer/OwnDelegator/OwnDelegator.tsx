@@ -7,7 +7,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './OwnDelegator.module.css';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsyncArray } from '../../../../utils';
+import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
 import { useEra, useIndexerDelegators } from '../../../../containers';
 import { TableText } from '../../../../components';
 
@@ -38,12 +38,12 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
         {
           title: t('delegate.currentEra').toUpperCase(),
           dataIndex: ['value', 'current'],
-          render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
+          render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },
         {
           title: t('delegate.nextEra').toUpperCase(),
           dataIndex: ['value', 'after'],
-          render: (value: string | number) => <TableText content={`${value ?? 0} SQT`} />,
+          render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },
       ],
     },
