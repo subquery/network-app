@@ -6,7 +6,7 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../../containers';
-import { convertStringToNumber, formatEther, renderAsync } from '../../../../utils';
+import { convertStringToNumber, formatEther, formatToDecimalPlace, renderAsync } from '../../../../utils';
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../../hooks';
@@ -93,11 +93,10 @@ export const DelegateForm: React.VFC<FormProps> = ({
     maxAmount = indexerDelegation?.after;
   }
 
-  const sortedMaxAmount = convertStringToNumber(
-    formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? 0,
-  );
+  const sortedMaxAmount = formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
 
-  const maxAmountText = `Max available delegation: ${sortedMaxAmount} SQT (next era).`;
+  const maxAmountNumber = convertStringToNumber(sortedMaxAmount);
+  const maxAmountText = `Max available delegation: ${formatToDecimalPlace(maxAmountNumber, 4)} SQT (next era).`;
 
   const summaryList = [
     {
@@ -194,10 +193,20 @@ export const DelegateForm: React.VFC<FormProps> = ({
                     setFieldValue('input', value);
                   },
                   value: values.input,
-
                   disabled: isSubmitting,
+                  precision: 18,
+                  stringMode: true,
                   max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                   min: 0,
+                }}
+                stringMode={true}
+                formatter={(value, info) => {
+                  const valueStr = value?.toString() ?? '';
+                  const valueFloat = convertStringToNumber(valueStr);
+                  if (info.userTyping === false) {
+                    return formatToDecimalPlace(valueFloat, 4).toString();
+                  }
+                  return valueStr;
                 }}
                 maxAmount={account ? sortedMaxAmount : undefined}
                 maxAmountText={maxAmountText}
