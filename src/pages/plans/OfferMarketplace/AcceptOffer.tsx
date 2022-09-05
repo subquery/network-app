@@ -136,7 +136,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
           label: getCapitalizedStr(t('offerMarket.accept')),
           key: 'acceptOffer',
           disabled: offerAccepted,
-          tooltip: offerAccepted ? t('offerMarket.disableAlreadyAcceptedOffer') : undefined,
+          tooltip: offerAccepted ? t('offerMarket.alreadyAcceptedOffer') : undefined,
         },
       ]}
       onClick={handleClick}
