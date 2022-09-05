@@ -73,12 +73,8 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
             return <TableText content={'Your Offer'} />;
           }
 
-          if (!deploymentIndexer || !account) {
+          if (!deploymentIndexer || !account || !acceptedOffers) {
             return <TableText content={'-'} />;
-          }
-
-          if (!acceptedOffers) {
-            return <Spinner />;
           }
 
           return (
