@@ -105,6 +105,7 @@ const ChooseTemplateStep = ({
           onClick={onNextStep}
           disabled={disabled}
           colorScheme="standard"
+          className="defaultButton"
         />
       </div>
     </Form>
@@ -282,6 +283,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
                     loading={isSubmitting}
                     disabled={isSubmitting || (!isValid && values.price <= 0)}
                     colorScheme="standard"
+                    className="defaultButton"
                   />
                 </div>
               </div>

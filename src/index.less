@@ -184,7 +184,8 @@ textarea {
 }
 
 /* For latest design system */
-.txModalButton:hover {
+.defaultButton:hover {
+  background: var(--primary);
   color: white;
 }
 
@@ -200,6 +201,11 @@ textarea {
   padding: 0.6rem;
 }
 
+.errTextBtn:hover {
+  background: none;
+  color: var(--gradient-from);
+}
+
 .disabledTextBtn {
   color: var(--gray500);
   background: none;
@@ -213,6 +219,10 @@ textarea {
 
 .errBtn {
   background: var(--error);
+}
+
+.errBtn:hover {
+  color: black;
 }
 
 .neutralBtn {
