@@ -6,7 +6,7 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../../containers';
-import { convertStringToNumber, formatEther, truncateToDecimalPlace, renderAsync } from '../../../../utils';
+import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../../utils';
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../../hooks';

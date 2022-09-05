@@ -31,7 +31,6 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   description,
   subDescription,
   errorMsg,
-  stringMode = false,
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
@@ -77,7 +76,6 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         {...inputParams}
         {...inputNumberProps}
         className={styles.inputNumber}
-        stringMode={stringMode}
         size="large"
         status={errorMsg && 'error'}
       />
