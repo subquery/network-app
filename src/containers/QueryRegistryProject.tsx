@@ -25,6 +25,7 @@ import { GetProjectVariables, GetProject } from '../__generated__/registry/GetPr
 import { GetProjectDeploymentsVariables, GetProjectDeployments } from '../__generated__/registry/GetProjectDeployments';
 import { GetProjectsVariables, GetProjects } from '../__generated__/registry/GetProjects';
 import { GetDeploymentIndexerVariables, GetDeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexer';
+import { GetAcceptedOffers, GetAcceptedOffersVariables } from '../__generated__/registry/GetAcceptedOffers';
 
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {
@@ -167,6 +168,16 @@ const GET_DEPLOYMENT_PLANS = gql`
   }
 `;
 
+const GET_ACCEPTED_OFFERS = gql`
+  query GetAcceptedOffers($address: String!, $offerId: String!) {
+    acceptedOffers(filter: { indexerId: { equalTo: $address }, offerId: { equalTo: $offerId } }) {
+      nodes {
+        id
+      }
+    }
+  }
+`;
+
 export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject> {
   return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
@@ -185,6 +196,12 @@ export function useDeploymentQuery(params: GetDeploymentVariables): QueryResult<
 
 export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): QueryResult<GetProjectDeployments> {
   return useQuery<GetProjectDeployments, GetProjectDeploymentsVariables>(GET_PROJECT_DEPLOYMENTS, {
+    variables: params,
+  });
+}
+
+export function useAcceptedOffersQuery(params?: GetAcceptedOffersVariables): QueryResult<GetAcceptedOffers> {
+  return useQuery<GetAcceptedOffers, GetAcceptedOffersVariables>(GET_ACCEPTED_OFFERS, {
     variables: params,
   });
 }
