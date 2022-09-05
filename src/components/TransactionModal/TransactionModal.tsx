@@ -206,7 +206,7 @@ const TransactionModal = <P, T extends string>({
                 onClick?.();
                 handleBtnClick(key);
               }}
-              className={variant}
+              className={clsx(variant, !disabled ? 'txModalButton' : '')}
               colorScheme="standard"
               size="medium"
               disabled={disabled || showClock}
