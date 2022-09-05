@@ -6,7 +6,7 @@ import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../../containers';
-import { convertStringToNumber, formatEther, formatToDecimalPlace, renderAsync, TOKEN } from '../../../../utils';
+import { convertStringToNumber, formatEther, truncateToDecimalPlace, renderAsync } from '../../../../utils';
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../../hooks';
@@ -201,8 +201,9 @@ export const DelegateForm: React.VFC<FormProps> = ({
                 formatter={(value, info) => {
                   const valueStr = value?.toString() ?? '';
                   if (info.userTyping === false) {
-                    const valueFloat = convertStringToNumber(valueStr);
-                    return formatToDecimalPlace(valueFloat, 4).toString();
+                    //To remove any trailing zeros
+                    const valueNum = convertStringToNumber(valueStr);
+                    return valueNum.toString();
                   }
                   return valueStr;
                 }}

@@ -7,7 +7,7 @@ export function convertStringToNumber(value: string): number {
   return parseFloat(value);
 }
 
-export function formatToDecimalPlace(value: number, decimalPlaces: number): number {
+export function truncateToDecimalPlace(value: number, decimalPlaces: number): number {
   return Math.trunc(value * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
 }
 
