@@ -209,7 +209,7 @@ const TransactionModal = <P, T extends string>({
                 onClick?.();
                 handleBtnClick(key);
               }}
-              className={variant}
+              className={clsx('defaultButton', variant)}
               colorScheme="standard"
               size="medium"
               disabled={disabled || showClock || isLoading}
