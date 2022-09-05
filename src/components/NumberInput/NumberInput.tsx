@@ -16,7 +16,6 @@ interface NumberInputProps extends InputNumberProps {
   subDescription?: string;
   unit?: string;
   errorMsg?: string;
-  stringMode?: boolean;
   onClickMax?: (amount: number | BigNumberish) => void;
   maxAmount?: number | BigNumberish;
   maxAmountText?: string;

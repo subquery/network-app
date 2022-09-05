@@ -198,11 +198,10 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                   min: 0,
                 }}
-                stringMode={true}
                 formatter={(value, info) => {
                   const valueStr = value?.toString() ?? '';
-                  const valueFloat = convertStringToNumber(valueStr);
                   if (info.userTyping === false) {
+                    const valueFloat = convertStringToNumber(valueStr);
                     return formatToDecimalPlace(valueFloat, 4).toString();
                   }
                   return valueStr;
