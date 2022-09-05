@@ -10,6 +10,7 @@ import { BigNumber } from 'ethers';
 import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
+  useAcceptedOffersQuery,
   useAllOpenOffers,
   useDeploymentIndexerQuery,
   useOwnExpiredOffers,
@@ -25,9 +26,9 @@ import {
   formatEther,
   formatSecondsDuration,
   mapAsync,
+  mergeAsync,
   notEmpty,
   parseError,
-  renderAsync,
   renderAsyncArray,
 } from '../../../utils';
 import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
@@ -48,13 +49,24 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
     deploymentId: offer.deployment?.id ?? '',
   });
 
+  const acceptedOffers = useAcceptedOffersQuery(account ? { address: account, offerId: offer.id } : undefined);
+
+  React.useEffect(() => {
+    acceptedOffers.refetch();
+  }, [acceptedOffers, account]);
+
   return (
     <>
-      {renderAsync(indexerDeployment, {
+      {renderAsyncArray(mergeAsync(indexerDeployment, acceptedOffers), {
         loading: () => <Spinner />,
         error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
-        data: (deployment) => {
-          const deploymentIndexer = deployment.deploymentIndexers?.nodes[0];
+        empty: () => <></>,
+        data: (data) => {
+          const [deployment, acceptedOffers] = data;
+
+          const deploymentIndexer = deployment?.deploymentIndexers?.nodes[0];
+          const acceptedOffersCount = acceptedOffers?.acceptedOffers?.nodes.length ?? 0;
+
           // TODO: filter the project that not indexing
           // TODO: confirm whether to filter status ===  TERMINATED
           if (offer.consumer === account) {
@@ -65,9 +77,14 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
             return <TableText content={'-'} />;
           }
 
+          if (!acceptedOffers) {
+            return <Spinner />;
+          }
+
           return (
             <AcceptOffer
               deployment={deploymentIndexer}
+              offerAccepted={acceptedOffersCount > 0}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />
