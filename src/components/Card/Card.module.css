@@ -22,7 +22,7 @@
   line-height: 18px;
 }
 
-.blackTitle {
+.titleWithCategory {
   margin-top: 0rem;
   color: var(--sq-gray900);
 }

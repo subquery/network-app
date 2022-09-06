@@ -21,7 +21,7 @@ export const Card: React.VFC<CardProps> = ({ category, title, value }) => {
         </Typography>
       )}
       {title && (
-        <Typography variant="medium" className={clsx(styles.title, category && styles.blackTitle)}>
+        <Typography variant="medium" className={clsx(styles.title, category && styles.titleWithCategory)}>
           {title.toUpperCase()}
         </Typography>
       )}
