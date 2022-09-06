@@ -60,13 +60,11 @@ export const MyProfile: React.VFC = () => {
             const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.ownStake.current ?? 0);
             const cards = [
               {
-                category: t('indexer.indexing'),
-                title: t('indexer.totalStakeAmount'),
+                title: t('indexer.stakingAmountTitle'),
                 value: `${s?.totalStake.current ?? 0} ${TOKEN}`,
               },
               {
-                category: t('delegate.delegating'),
-                title: t('delegate.totalDelegation'),
+                title: t('delegate.delegationAmountTitle'),
                 value: `${totalDelegations} ${TOKEN}`,
               },
             ];
@@ -75,7 +73,7 @@ export const MyProfile: React.VFC = () => {
                 <div>{<Address truncated={userId.length > 20} address={userId} size="large" />}</div>
                 <div className={styles.stakingSummary}>
                   {cards.map((card) => (
-                    <Card category={card.category} title={card.title} value={card.value} key={card.category} />
+                    <Card title={card.title} value={card.value} key={card.title} />
                   ))}
                 </div>
               </>

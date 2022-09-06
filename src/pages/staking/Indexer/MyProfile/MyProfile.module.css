@@ -21,7 +21,7 @@
 
 .profile {
   width: 100%;
-  height: 148px;
+  height: 130px;
   display: flex;
 
   justify-content: space-between;
@@ -29,7 +29,7 @@
 }
 
 .stakingSummary {
-  width: 65%;
+  width: 60%;
   height: 100%;
   display: flex;
 }

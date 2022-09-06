@@ -3,7 +3,7 @@
   background: white;
   margin-left: 1rem;
   border-radius: 4px;
-  padding: 1.2rem 1rem;
+  padding: 1rem 1.2rem;
 
   display: flex;
   flex-direction: column;
@@ -16,16 +16,20 @@
 }
 
 .title {
-  margin: 0.2rem 0 1rem 0;
-  color: var(--sq-gray900);
+  margin-top: 1rem;
+  color: var(--sq-gray500);
   font-weight: 600;
   line-height: 18px;
+}
+
+.titleWithCategory {
+  margin-top: 0rem;
+  color: var(--sq-gray900);
 }
 
 .value {
   font-weight: 600;
   color: var(--sq-gray700);
-  margin: 0;
 }
 
 .grayText {
