@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Typography } from '@subql/react-ui';
 import styles from './Card.module.css';
+import clsx from 'clsx';
 
 interface CardProps {
   category?: string;
@@ -14,8 +15,13 @@ interface CardProps {
 export const Card: React.VFC<CardProps> = ({ category, title, value }) => {
   return (
     <div className={styles.card}>
+      {category && (
+        <Typography variant="small" className={styles.category}>
+          {category.toUpperCase()}
+        </Typography>
+      )}
       {title && (
-        <Typography variant="medium" className={styles.title}>
+        <Typography variant="medium" className={clsx(styles.title, category && styles.blackTitle)}>
           {title.toUpperCase()}
         </Typography>
       )}
