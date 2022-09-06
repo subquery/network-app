@@ -14,21 +14,13 @@ interface CardProps {
 export const Card: React.VFC<CardProps> = ({ category, title, value }) => {
   return (
     <div className={styles.card}>
-      <div className={styles.header}>
-        {category && (
-          <Typography variant="small" className={styles.category}>
-            {category.toUpperCase()}
-          </Typography>
-        )}
-
-        {title && (
-          <Typography variant="small" className={styles.title}>
-            {title.toUpperCase()}
-          </Typography>
-        )}
-      </div>
+      {title && (
+        <Typography variant="medium" className={styles.title}>
+          {title.toUpperCase()}
+        </Typography>
+      )}
       {value && (
-        <Typography variant="h5" className={styles.value}>
+        <Typography variant="h4" className={styles.value}>
           {value}
         </Typography>
       )}
