@@ -25,8 +25,6 @@ import styles from './AcceptOffer.module.css';
 import { DeploymentProject } from '../MyOffers/CreateOffer/SelectDeployment';
 import { StepButtons } from '../MyOffers/CreateOffer';
 import { SummaryList } from '../../../components';
-import { GetAcceptedOffers } from '../../../__generated__/registry/GetAcceptedOffers';
-import { QueryResult, OperationVariables } from '@apollo/client';
 
 interface OfferSummaryProps {
   offer: Offer;
@@ -98,17 +96,11 @@ type Props = {
   offer: Offer;
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
-  offerAccepted: boolean;
-  acceptedOffers: QueryResult<GetAcceptedOffers, OperationVariables>;
+  disabled: boolean;
+  onAcceptOffer: any; //TODO: add type
 };
 
-export const AcceptOffer: React.FC<Props> = ({
-  deployment,
-  offer,
-  requiredBlockHeight,
-  offerAccepted,
-  acceptedOffers,
-}) => {
+export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, disabled, onAcceptOffer }) => {
   const [curStep, setCurStep] = React.useState<number>(0);
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -144,11 +136,11 @@ export const AcceptOffer: React.FC<Props> = ({
         {
           label: getCapitalizedStr(t('offerMarket.accept')),
           key: 'acceptOffer',
-          disabled: offerAccepted,
-          tooltip: offerAccepted ? t('offerMarket.alreadyAcceptedOffer') : undefined,
+          disabled: disabled,
+          tooltip: disabled ? t('offerMarket.alreadyAcceptedOffer') : undefined,
         },
       ]}
-      onSuccess={() => acceptedOffers.refetch()}
+      onSuccess={() => onAcceptOffer()}
       onClick={handleClick}
       onClose={() => setCurStep(0)}
       renderContent={(onSubmit, _, isLoading, error) => {

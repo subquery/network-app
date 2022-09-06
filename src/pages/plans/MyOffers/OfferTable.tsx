@@ -76,8 +76,8 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
           return (
             <AcceptOffer
               deployment={deploymentIndexer}
-              offerAccepted={acceptedOffersCount > 0}
-              acceptedOffers={acceptedOffersResult}
+              disabled={acceptedOffersCount > 0}
+              onAcceptOffer={acceptedOffersResult.refetch}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />
