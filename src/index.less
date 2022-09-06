@@ -25,6 +25,11 @@
   --gray900: #1a202c;
 
   --icon-size: 178px;
+
+  /*New colors*/
+  --primary-hover: #69a0e4;
+  --disabled: '#F4F6F8';
+  --error-hover: #f37174;
 }
 
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');
@@ -184,14 +189,16 @@ textarea {
 }
 
 /* For latest design system */
-.defaultButton:hover {
-  background: var(--primary);
-  color: white;
-}
 
 .textBtn {
   background: none;
   color: var(--gradient-to);
+  padding: 0.6rem;
+}
+
+.textBtn:hover {
+  background: none;
+  color: var(--primary-hover);
   padding: 0.6rem;
 }
 
@@ -203,12 +210,18 @@ textarea {
 
 .errTextBtn:hover {
   background: none;
-  color: var(--gradient-from);
+  color: var(--error-hover);
 }
 
 .disabledTextBtn {
-  color: var(--gray500);
+  color: var(--disabled);
   background: none;
+  padding: 0.6rem;
+}
+
+.disabledTextBtn:hover {
+  color: var(--disabled);
+  background: var(--gray200);
   padding: 0.6rem;
 }
 
@@ -217,12 +230,18 @@ textarea {
   background: var(--gradient-to);
 }
 
+.button:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
 .errBtn {
   background: var(--error);
 }
 
 .errBtn:hover {
-  color: black;
+  background: var(--error-hover);
+  color: white;
 }
 
 .neutralBtn {

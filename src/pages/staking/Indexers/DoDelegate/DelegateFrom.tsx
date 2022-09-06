@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/react-ui';
 import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../..
 import * as yup from 'yup';
 import { SummaryList } from '../../../../components';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../../hooks';
-import { Select, Divider } from 'antd';
+import { Select, Divider, Button } from 'antd';
 import styles from './DoDelegate.module.css';
 import clsx from 'clsx';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
@@ -207,12 +207,16 @@ export const DelegateForm: React.VFC<FormProps> = ({
 
             <div className={clsx('flex', 'flex-end', styles.btns)}>
               <Button
-                label={t('delegate.title')}
                 onClick={submitForm}
                 loading={isSubmitting}
                 disabled={!isValid || isSubmitting}
-                colorScheme="standard"
-              />
+                className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
+                type="primary"
+                shape="round"
+                size="large"
+              >
+                {t('delegate.title')}
+              </Button>
             </div>
           </div>
         </Form>

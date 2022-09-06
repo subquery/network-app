@@ -58,7 +58,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
         '';
       return (
         <TransactionModal
-          variant="textBtn"
+          variant={disabled ? 'disabledTextBtn' : 'textBtn'}
           text={modalText}
           actions={[
             {
