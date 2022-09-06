@@ -51,12 +51,6 @@ type FormProps = {
   curEra?: number;
 };
 
-/**
- *
- * TODO: refactor DelegateForm and DoDelegate with latest design change
- * DoDelegate cal indexer's info
- * DelegateForm cal account's info - latest design, should engage a better solution
- */
 export const DelegateForm: React.VFC<FormProps> = ({
   curEra,
   onSubmit,
@@ -75,7 +69,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
-  console.log('indexerDelegation', indexerDelegation);
+
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -93,9 +87,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
     maxAmount = indexerDelegation?.after;
   }
 
-  const sortedMaxAmount = convertStringToNumber(
-    formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? 0,
-  );
+  const sortedMaxAmount = formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
 
   const maxAmountText = `Max available delegation: ${sortedMaxAmount} ${TOKEN} (next era).`;
 
@@ -106,7 +98,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
     },
     {
       label: 'Your delegation',
-      value: ` ${delegatedAmount} SQT`,
+      value: ` ${delegatedAmount} ${TOKEN}`,
     },
   ];
   return (
@@ -194,8 +186,8 @@ export const DelegateForm: React.VFC<FormProps> = ({
                     setFieldValue('input', value);
                   },
                   value: values.input,
-
                   disabled: isSubmitting,
+                  stringMode: true,
                   max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                   min: 0,
                 }}
