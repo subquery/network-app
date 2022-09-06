@@ -25,6 +25,8 @@ import styles from './AcceptOffer.module.css';
 import { DeploymentProject } from '../MyOffers/CreateOffer/SelectDeployment';
 import { StepButtons } from '../MyOffers/CreateOffer';
 import { SummaryList } from '../../../components';
+import { GetAcceptedOffers } from '../../../__generated__/registry/GetAcceptedOffers';
+import { QueryResult, OperationVariables } from '@apollo/client';
 
 interface OfferSummaryProps {
   offer: Offer;
@@ -97,9 +99,16 @@ type Props = {
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
   offerAccepted: boolean;
+  acceptedOffers: QueryResult<GetAcceptedOffers, OperationVariables>;
 };
 
-export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, offerAccepted }) => {
+export const AcceptOffer: React.FC<Props> = ({
+  deployment,
+  offer,
+  requiredBlockHeight,
+  offerAccepted,
+  acceptedOffers,
+}) => {
   const [curStep, setCurStep] = React.useState<number>(0);
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -139,6 +148,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
           tooltip: offerAccepted ? t('offerMarket.alreadyAcceptedOffer') : undefined,
         },
       ]}
+      onSuccess={() => acceptedOffers.refetch()}
       onClick={handleClick}
       onClose={() => setCurStep(0)}
       renderContent={(onSubmit, _, isLoading, error) => {

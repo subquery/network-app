@@ -44,20 +44,16 @@ import { TableTitle } from '../../../components/TableTitle';
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
-  const indexerDeployment = useDeploymentIndexerQuery({
+  const indexerDeploymentResult = useDeploymentIndexerQuery({
     indexerAddress: account ?? '',
     deploymentId: offer.deployment?.id ?? '',
   });
 
-  const acceptedOffers = useAcceptedOffersQuery(account ? { address: account, offerId: offer.id } : undefined);
-
-  React.useEffect(() => {
-    acceptedOffers.refetch();
-  }, [acceptedOffers, account]);
+  const acceptedOffersResult = useAcceptedOffersQuery({ address: account ?? '', offerId: offer.id });
 
   return (
     <>
-      {renderAsyncArray(mergeAsync(indexerDeployment, acceptedOffers), {
+      {renderAsyncArray(mergeAsync(indexerDeploymentResult, acceptedOffersResult), {
         loading: () => <Spinner />,
         error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
         empty: () => <></>,
@@ -81,6 +77,7 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
             <AcceptOffer
               deployment={deploymentIndexer}
               offerAccepted={acceptedOffersCount > 0}
+              acceptedOffers={acceptedOffersResult}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />
