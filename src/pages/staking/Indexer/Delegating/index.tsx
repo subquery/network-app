@@ -3,21 +3,13 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table, TableProps } from 'antd';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.css';
 import { DoUndelegate } from '../DoUndelegate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../../../hooks/useEraValue';
 import { useDelegations, useEra } from '../../../../containers';
-import {
-  convertStringToNumber,
-  formatEther,
-  mapAsync,
-  mergeAsync,
-  notEmpty,
-  renderAsync,
-  TOKEN,
-} from '../../../../utils';
+import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, TOKEN } from '../../../../utils';
 import { TableText } from '../../../../components';
 import clsx from 'clsx';
 
@@ -29,7 +21,6 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   const { t } = useTranslation();
   const delegations = useDelegations({ delegator });
   const { currentEra } = useEra();
-
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
@@ -87,9 +78,12 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
       dataIndex: 'indexerActive',
       key: 'indexerActive',
       width: 60,
-      render: (active: string) => (
-        <TableText content={active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase()} />
-      ),
+      render: (active: string) => {
+        const tagColor = active ? 'success' : 'default';
+        const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
+
+        return <Tag color={tagColor}>{tagText}</Tag>;
+      },
     },
     {
       title: t('indexer.action').toUpperCase(),
