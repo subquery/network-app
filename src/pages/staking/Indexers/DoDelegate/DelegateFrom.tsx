@@ -51,12 +51,6 @@ type FormProps = {
   curEra?: number;
 };
 
-/**
- *
- * TODO: refactor DelegateForm and DoDelegate with latest design change
- * DoDelegate cal indexer's info
- * DelegateForm cal account's info - latest design, should engage a better solution
- */
 export const DelegateForm: React.VFC<FormProps> = ({
   curEra,
   onSubmit,
@@ -75,7 +69,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
-  console.log('indexerDelegation', indexerDelegation);
+
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -104,7 +98,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
     },
     {
       label: 'Your delegation',
-      value: ` ${delegatedAmount} SQT`,
+      value: ` ${delegatedAmount} ${TOKEN}`,
     },
   ];
   return (
@@ -193,19 +187,9 @@ export const DelegateForm: React.VFC<FormProps> = ({
                   },
                   value: values.input,
                   disabled: isSubmitting,
-                  precision: 18,
                   stringMode: true,
                   max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                   min: 0,
-                }}
-                formatter={(value, info) => {
-                  const valueStr = value?.toString() ?? '';
-                  if (info.userTyping === false) {
-                    //To remove any trailing zeros
-                    const valueNum = convertStringToNumber(valueStr);
-                    return valueNum.toString();
-                  }
-                  return valueStr;
                 }}
                 maxAmount={account ? sortedMaxAmount : undefined}
                 maxAmountText={maxAmountText}
