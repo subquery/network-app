@@ -2,11 +2,6 @@
   margin: 1rem 0;
 }
 
-.submitBtn {
-  background: var(--gradient-to);
-  color: white;
-}
-
 .unlockedAmount {
   margin: 1rem 0;
 }

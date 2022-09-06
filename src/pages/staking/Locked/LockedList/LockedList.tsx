@@ -3,14 +3,15 @@
 
 import { Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Table, TableProps } from 'antd';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { convertStringToNumber, formatEther, LOCK_STATUS } from '../../../../utils';
+import { formatEther, LOCK_STATUS, TOKEN } from '../../../../utils';
 import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '../../../../__generated__/registry/GetWithdrawls';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
+import { BigNumber } from 'ethers';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
@@ -38,7 +39,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: t('withdrawals.amount').toUpperCase(),
       dataIndex: 'amount',
       width: 100,
-      render: (value: string) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: string) => <TableText content={`${formatEther(value)} ${TOKEN}`} />,
     },
     {
       title: t('withdrawals.lockedUntil').toUpperCase(),
@@ -50,9 +51,11 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: t('withdrawals.status').toUpperCase(),
       dataIndex: 'lockStatus',
       width: 30,
-      render: (value: LOCK_STATUS) => (
-        <TableText content={value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked')} />
-      ),
+      render: (value: LOCK_STATUS) => {
+        const tagColor = value === LOCK_STATUS.UNLOCK ? 'success' : 'processing';
+        const tagContent = value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked');
+        return <Tag color={tagColor}>{tagContent}</Tag>;
+      },
     },
   ];
 
@@ -61,9 +64,11 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
 
   const headerTitle = `${t('withdrawals.unlockedAsset', { count: unlockedRewards?.length || 0 })}`;
 
-  const availableWithdrawalsAmount = unlockedRewards.reduce((sum, withdrawal) => {
-    return sum + convertStringToNumber(formatEther(withdrawal.amount));
-  }, 0);
+  const withdrawalsAmountBigNumber = unlockedRewards.reduce((sum, withdrawal) => {
+    return sum.add(BigNumber.from(withdrawal.amount));
+  }, BigNumber.from('0'));
+
+  const sortedWithdrawalsAmount = formatEther(withdrawalsAmountBigNumber);
 
   return (
     <div className={styles.container}>
@@ -71,7 +76,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
         <Typography variant="h6" className={styles.title}>
           {headerTitle}
         </Typography>
-        <DoWithdraw unlockedAmount={availableWithdrawalsAmount} disabled={!hasUnlockedRewards} />
+        <DoWithdraw unlockedAmount={sortedWithdrawalsAmount} disabled={!hasUnlockedRewards} />
       </div>
       <Table columns={columns} dataSource={withdrawals} rowKey="idx" />
     </div>

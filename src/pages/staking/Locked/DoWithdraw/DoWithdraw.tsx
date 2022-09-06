@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
-import { Button } from 'antd';
 import * as React from 'react';
 import assert from 'assert';
 import styles from './DoWithdraw.module.css';
@@ -10,9 +9,10 @@ import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import clsx from 'clsx';
+import { Button } from '../../../../components/Button';
 
 interface DoWithdrawProps {
-  unlockedAmount: number;
+  unlockedAmount: string;
   disabled: boolean;
 }
 
@@ -49,13 +49,7 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disable
               </Typography>
               <Typography className={'errorText'}>{error}</Typography>
               <div className={clsx(styles.btnContainer, 'flex-end')}>
-                <Button
-                  onClick={onSubmit}
-                  htmlType="submit"
-                  shape="round"
-                  className={styles.submitBtn}
-                  loading={isLoading}
-                >
+                <Button onClick={onSubmit} loading={isLoading} size="middle">
                   {modalText.submitText}
                 </Button>
               </div>
