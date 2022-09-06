@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Button } from 'antd';
+import { Button, InputNumberProps } from 'antd';
 import { Typography } from '@subql/react-ui';
 import { useFormik } from 'formik';
 import styles from './ModalInput.module.css';
@@ -19,10 +19,10 @@ import { TOKEN } from '../../utils';
 // TODO: percentage input
 // TODO: input validation
 
-interface Props {
+interface Props extends InputNumberProps {
   inputTitle?: string;
   submitText?: string;
-  curAmount?: number;
+  curAmount?: number | string;
   showMaxButton?: boolean;
   inputBottomText?: string;
   failureModalText?: string;
@@ -47,13 +47,13 @@ export const ModalInput: React.FC<Props> = ({
   failureModalText,
   min,
   max,
+  ...inputNumberPros
 }) => {
   const maxInputNumber = curAmount || max;
   const formik = useFormik({
     initialValues: {
       input: 0,
     },
-    // TODO:validate,
     onSubmit: async (values, { resetForm, setErrors }) => {
       const { input } = values;
       try {
@@ -69,12 +69,14 @@ export const ModalInput: React.FC<Props> = ({
   return (
     <form onSubmit={formik.handleSubmit}>
       <NumberInput
+        {...inputNumberPros}
         title={inputTitle}
         unit={unit}
         inputParams={{
           name: 'input',
           id: 'input',
           onChange: (value) => {
+            console.log('value', value);
             formik.setErrors({ input: undefined });
             formik.setFieldValue('input', value);
           },
@@ -102,7 +104,7 @@ export const ModalInput: React.FC<Props> = ({
           size="large"
           className={styles.submitBtn}
           loading={isLoading}
-          disabled={!(formik.values.input > 0) || !!failureModalText}
+          disabled={!(formik.values.input > 0)}
         >
           {submitText || 'Submit'}
         </Button>
