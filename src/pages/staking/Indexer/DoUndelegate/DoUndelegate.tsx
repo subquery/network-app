@@ -8,14 +8,14 @@ import { useTranslation } from 'react-i18next';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
-import { renderAsync } from '../../../../utils';
+import { convertStringToNumber, renderAsync } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useLockPeriod } from '../../../../hooks';
 import moment from 'moment';
 
 interface DoUndelegateProps {
   indexerAddress: string;
-  availableBalance?: number;
+  availableBalance?: string;
 }
 
 export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
@@ -50,6 +50,12 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
     loading: () => <Spinner />,
     data: (data) => {
       const { hasClaimedRewards } = data;
+      const hasBalanceForNextEra = parseEther(availableBalance ?? '0').gt('0');
+      const disabled = !hasClaimedRewards || !hasBalanceForNextEra;
+      const tooltip =
+        (!hasClaimedRewards && t('delegate.invalidUndelegateBeforeRewardCollect')) ||
+        (!hasBalanceForNextEra && t('delegate.nonToUndelegate')) ||
+        '';
       return (
         <TransactionModal
           variant="textBtn"
@@ -58,13 +64,15 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
             {
               label: t('delegate.undelegate'),
               key: 'undelegate',
-              disabled: !hasClaimedRewards,
-              tooltip: !hasClaimedRewards ? t('delegate.invalidUndelegateBeforeRewardCollect') : '',
+              disabled,
+              tooltip,
             },
           ]}
           inputParams={{
             showMaxButton: true,
+            stringMode: true,
             curAmount: availableBalance,
+            max: convertStringToNumber(availableBalance ?? '0'),
           }}
           onClick={handleClick}
           initialCheck={rewardClaimStatus}

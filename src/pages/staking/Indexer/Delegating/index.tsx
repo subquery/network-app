@@ -30,6 +30,8 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   const delegations = useDelegations({ delegator });
   const { currentEra } = useEra();
 
+  console.log('delegations', delegations);
+
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
@@ -37,7 +39,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
         .filter(notEmpty)
         .map((delegation) => ({
           value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
-            convertStringToNumber(formatEther(v ?? 0)),
+            formatEther(v ?? 0),
           ),
           indexer: delegation.indexerId,
           indexerActive: delegation?.indexer?.active,
@@ -47,7 +49,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   );
 
   const columns: TableProps<{
-    value: CurrentEraValue<number>;
+    value: CurrentEraValue<string>;
     indexer: string;
   }>['columns'] = [
     {
