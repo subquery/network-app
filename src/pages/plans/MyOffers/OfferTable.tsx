@@ -10,6 +10,7 @@ import { BigNumber } from 'ethers';
 import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
 import {
+  useAcceptedOffersQuery,
   useAllOpenOffers,
   useDeploymentIndexerQuery,
   useOwnExpiredOffers,
@@ -25,9 +26,9 @@ import {
   formatEther,
   formatSecondsDuration,
   mapAsync,
+  mergeAsync,
   notEmpty,
   parseError,
-  renderAsync,
   renderAsyncArray,
   TOKEN,
 } from '../../../utils';
@@ -44,31 +45,40 @@ import { TableTitle } from '../../../components/TableTitle';
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
-  const indexerDeployment = useDeploymentIndexerQuery({
+  const indexerDeploymentResult = useDeploymentIndexerQuery({
     indexerAddress: account ?? '',
     deploymentId: offer.deployment?.id ?? '',
   });
 
+  const acceptedOffersResult = useAcceptedOffersQuery({ address: account ?? '', offerId: offer.id });
+
   return (
     <>
-      {renderAsync(indexerDeployment, {
+      {renderAsyncArray(mergeAsync(indexerDeploymentResult, acceptedOffersResult), {
         loading: () => <Spinner />,
         error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
-        data: (deployment) => {
-          const deploymentIndexer = deployment.deploymentIndexers?.nodes[0];
+        empty: () => <></>,
+        data: (data) => {
+          const [deployment, acceptedOffers] = data;
+
+          const deploymentIndexer = deployment?.deploymentIndexers?.nodes[0];
+          const acceptedOffersCount = acceptedOffers?.acceptedOffers?.nodes.length ?? 0;
+
           // TODO: filter the project that not indexing
           // TODO: confirm whether to filter status ===  TERMINATED
           if (offer.consumer === account) {
             return <TableText content={'Your Offer'} />;
           }
 
-          if (!deploymentIndexer || !account) {
+          if (!deploymentIndexer || !account || !acceptedOffers) {
             return <TableText content={'-'} />;
           }
 
           return (
             <AcceptOffer
               deployment={deploymentIndexer}
+              disabled={acceptedOffersCount > 0}
+              onAcceptOffer={acceptedOffersResult.refetch}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />

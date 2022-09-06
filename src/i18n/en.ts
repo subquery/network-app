@@ -515,6 +515,7 @@ const en = {
       totalOffer_other: 'Total {{count}} offers',
       accept: 'Accept',
       searchByDeploymentId: 'Search by deployment Id',
+      alreadyAcceptedOffer: 'You have already accepted this offer',
       acceptModal: {
         nonCriteriaData: 'There is no criteria data available',
         moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',

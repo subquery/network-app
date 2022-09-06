@@ -96,9 +96,11 @@ type Props = {
   offer: Offer;
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
+  disabled: boolean;
+  onAcceptOffer: any; //TODO: add type
 };
 
-export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight }) => {
+export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, disabled, onAcceptOffer }) => {
   const [curStep, setCurStep] = React.useState<number>(0);
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -130,7 +132,15 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
       variant="textBtn"
       currentStep={curStep}
       text={text}
-      actions={[{ label: getCapitalizedStr(t('offerMarket.accept')), key: 'acceptOffer' }]}
+      actions={[
+        {
+          label: getCapitalizedStr(t('offerMarket.accept')),
+          key: 'acceptOffer',
+          disabled: disabled,
+          tooltip: disabled ? t('offerMarket.alreadyAcceptedOffer') : undefined,
+        },
+      ]}
+      onSuccess={() => onAcceptOffer()}
       onClick={handleClick}
       onClose={() => setCurStep(0)}
       renderContent={(onSubmit, _, isLoading, error) => {
