@@ -25,6 +25,8 @@ import styles from './AcceptOffer.module.css';
 import { DeploymentProject } from '../MyOffers/CreateOffer/SelectDeployment';
 import { StepButtons } from '../MyOffers/CreateOffer';
 import { SummaryList } from '../../../components';
+import { ApolloQueryResult } from '@apollo/client';
+import { GetAcceptedOffers } from '../../../__generated__/registry/GetAcceptedOffers';
 
 interface OfferSummaryProps {
   offer: Offer;
@@ -97,7 +99,7 @@ type Props = {
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
   disabled: boolean;
-  onAcceptOffer: any; //TODO: add type
+  onAcceptOffer: () => Promise<ApolloQueryResult<GetAcceptedOffers>>;
 };
 
 export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, disabled, onAcceptOffer }) => {
