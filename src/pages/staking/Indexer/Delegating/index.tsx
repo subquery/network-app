@@ -30,7 +30,6 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
   const delegations = useDelegations({ delegator });
   const { currentEra } = useEra();
 
-  console.log('delegations', delegations);
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
