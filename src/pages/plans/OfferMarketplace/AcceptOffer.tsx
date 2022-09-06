@@ -99,7 +99,7 @@ type Props = {
   deployment: DeploymentIndexer;
   requiredBlockHeight: number;
   disabled: boolean;
-  onAcceptOffer: () => Promise<ApolloQueryResult<GetAcceptedOffers>>;
+  onAcceptOffer: () => void;
 };
 
 export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, disabled, onAcceptOffer }) => {
