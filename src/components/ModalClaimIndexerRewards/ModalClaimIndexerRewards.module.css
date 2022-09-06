@@ -1,0 +1,10 @@
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.error {
+  margin: 1rem 0;
+}

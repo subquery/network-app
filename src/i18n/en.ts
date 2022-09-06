@@ -232,6 +232,14 @@ const en = {
       approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',
       confirm: 'Approve on MetaMask',
     },
+    claimIndexerRewards: {
+      title: 'Collect early era’s rewards from this indexer',
+      confirmToProceed: `Sign the transaction to collect all the early era’s rewards from this indexer, this transaction includes claiming the indexer’s early era’s rewards and executing the indexer’s staking changes which are blocked due to the unclaimed era rewards.
+
+      You can undelegate your funds after the transaction is complete.`,
+      confirm: 'Confirm collect',
+      failureCollect: 'Sorry, collect rewards transaction has failed.',
+    },
 
     delegate: {
       title: 'Delegate',

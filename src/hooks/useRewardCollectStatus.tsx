@@ -3,9 +3,9 @@
 
 import { useAsyncMemo } from '.';
 import { useContracts } from '../containers';
-import { AsyncData } from '../utils';
+import { AsyncMemoReturn } from './useAsyncMemo';
 
-export function useRewardCollectStatus(indexer: string): AsyncData<{ hasClaimedRewards: boolean } | undefined> {
+export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasClaimedRewards: boolean } | undefined> {
   const pendingContracts = useContracts();
 
   return useAsyncMemo(async () => {
