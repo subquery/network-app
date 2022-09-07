@@ -15,7 +15,7 @@ export const getTokenApprovalModalText = (token = TOKEN) => ({
   description: i18next.t('tokenApproval.approveToProceed', { token }),
   submitText: i18next.t('tokenApproval.confirm'),
   steps: [i18next.t('general.confirm'), i18next.t('general.confirmOnMetamask')],
-  failureText: `Sorry, SQT token approval has failed.`,
+  failureText: `Sorry, ${token} token approval has failed.`,
 });
 
 export const tokenApprovalModalText = getTokenApprovalModalText();

@@ -5,7 +5,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
 import assert from 'assert';
-import { tokenApprovalModalText, ModalApproveToken } from '../../../../components';
+import {
+  tokenApprovalModalText,
+  ModalApproveToken,
+  claimIndexerRewardsModalText,
+  ModalClaimIndexerRewards,
+} from '../../../../components';
 import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
@@ -20,11 +25,14 @@ enum StakeAction {
 }
 
 const getContentText = (
-  actionType: StakeAction,
+  requireClaimIndexerRewards = false,
   requireTokenApproval = false,
+  actionType: StakeAction,
   t: any,
   lockPeriod: number | undefined,
 ) => {
+  if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
+
   if (actionType === StakeAction.Stake) {
     return requireTokenApproval
       ? tokenApprovalModalText
@@ -69,7 +77,6 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
 
   const curAmount =
     stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : stakeAmountNextEra;
-  const modalText = getContentText(stakeAction, requireTokenApproval, t, lockPeriod.data);
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     const contracts = await pendingContracts;
@@ -90,7 +97,16 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
-      const [canUnstake, rewardClaimStatus] = data;
+      const [canUnstake, indexerRewards] = data;
+      const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
+
+      const modalText = getContentText(
+        requireClaimIndexerRewards,
+        requireTokenApproval,
+        stakeAction,
+        t,
+        lockPeriod.data,
+      );
 
       return (
         <TransactionModal
@@ -100,19 +116,13 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
               label: t('indexer.stake'),
               key: StakeAction.Stake,
               onClick: () => setStakeAction(StakeAction.Stake),
-              disabled: !rewardClaimStatus?.hasClaimedRewards,
-              tooltip: !rewardClaimStatus?.hasClaimedRewards
-                ? t('indexer.disabledStakeBeforeRewardCollect')
-                : undefined,
             },
             {
               label: t('indexer.unstake'),
               key: StakeAction.UnStake,
               onClick: () => setStakeAction(StakeAction.UnStake),
-              disabled: !canUnstake || !rewardClaimStatus?.hasClaimedRewards,
-              tooltip: !rewardClaimStatus?.hasClaimedRewards
-                ? t('indexer.disabledUnstakeBeforeRewardCollect')
-                : undefined,
+              disabled: !canUnstake,
+              tooltip: !canUnstake ? t('indexer.doStake') : undefined,
             },
           ]}
           inputParams={{
@@ -125,11 +135,13 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
           }}
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
-            return (
-              requireTokenApproval && (
-                <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />
-              )
-            );
+            if (requireClaimIndexerRewards) {
+              return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;
+            }
+
+            if (requireTokenApproval && !requireClaimIndexerRewards) {
+              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />;
+            }
           }}
         />
       );
