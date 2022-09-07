@@ -1,0 +1,15 @@
+.container {
+  background: white;
+  padding: 1rem;
+  overflow: scroll;
+}
+
+.indexerListHeader {
+  margin: 1rem 0 2rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.indexerSearch {
+  width: 360px;
+}
