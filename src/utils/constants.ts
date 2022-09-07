@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { STABLE_TOKEN_ADDRESS } from './aUSD';
+import { STABLE_TOKEN_ADDRESS } from './USDC';
 import testnet from '@subql/contract-sdk/publish/moonbase.json';
 
 export const DATE_FORMAT = 'DD/MM/YYYY';
@@ -12,15 +12,15 @@ export enum LOCK_STATUS {
   UNLOCK = 'UNLOCK',
 }
 
-export const STABLE_TOKEN = process.env.REACT_APP_TOKEN ?? 'aUSD';
-export const TOKEN_DECIMAL = 12;
+export const STABLE_TOKEN = process.env.REACT_APP_TOKEN ?? 'USDC';
+export const TOKEN_DECIMAL = 6; // TODO: fix calWithRate
 
 export const networkDeploymentDetails = testnet;
 export const SQT_TOKEN_ADDRESS = testnet.SQToken.address;
 export const TOKEN = process.env.REACT_APP_TOKEN ?? 'kSQT';
 
 export const tokenDecimals: { [key: string]: number } = {
-  [STABLE_TOKEN_ADDRESS]: 12,
+  [STABLE_TOKEN_ADDRESS]: 6,
   [SQT_TOKEN_ADDRESS]: 18,
 };
 

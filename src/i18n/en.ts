@@ -548,7 +548,7 @@ const en = {
     },
     swap: {
       buyKSQT: `${process.env.REACT_APP_STABLE_TOKEN} → ${process.env.REACT_APP_TOKEN}`,
-      sellKSQT: `${process.env.REACT_APP_TOKEN} → aUSD`,
+      sellKSQT: `${process.env.REACT_APP_TOKEN} → ${process.env.REACT_APP_STABLE_TOKEN}`,
       poolSize: `${process.env.REACT_APP_TOKEN} pool size`,
       poolSizeTooltip: `This is the amount of ${process.env.REACT_APP_TOKEN} currently available to be purchased in the liquidity pool`,
       curRate: 'current rate',
@@ -557,8 +557,7 @@ const en = {
       from: 'From',
       to: 'To',
       swappableBalance: 'Your Swappable BALANCE',
-      swappableBalanceTooltip:
-        'This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for aUSD.',
+      swappableBalanceTooltip: `This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for ${process.env.REACT_APP_STABLE_TOKEN}.`,
       approveUSD: `Approve ${process.env.REACT_APP_STABLE_TOKEN}`,
       swapButton: 'Swap',
       walletBalance: 'Wallet Balance',

@@ -16,7 +16,7 @@ export * from './fetchEns';
 export * from './localStorage';
 export * from './colors';
 export * from './constants';
-export * from './aUSD';
+export * from './USDC';
 
 export function truncateAddress(address: string): string {
   if (!address) {
