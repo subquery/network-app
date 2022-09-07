@@ -7,7 +7,7 @@ import styles from './Button.module.css';
 
 interface IButtonProps extends ButtonProps {
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (any: any) => void;
 }
 
 // custom antD button

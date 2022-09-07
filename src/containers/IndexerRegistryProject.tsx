@@ -172,7 +172,7 @@ const GET_DELEGATIONS = gql`
 
 const GET_WITHDRAWLS = gql`
   query GetWithdrawls($delegator: String!, $offset: Int) {
-    withdrawls(filter: { delegator: { equalTo: $delegator }, status: { notEqualTo: CANCELLED } }, offset: $offset) {
+    withdrawls(filter: { delegator: { equalTo: $delegator }, status: { equalTo: ONGOING } }, offset: $offset) {
       nodes {
         id
         index
@@ -463,11 +463,11 @@ export function useAllDelegations(params: GetAllDelegationsVariables): QueryResu
 }
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
-  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 15000 });
+  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 10000 });
 }
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
-  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 15000 });
+  return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 10000 });
 }
 
 export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult<GetPlanTemplates> {
