@@ -42,7 +42,7 @@ const getStats = ({
 }) => {
   const curRateStats = {
     title: t('swap.curRate'),
-    value: `1 ${tokenGet} = ${sqtAUSDRate} ${tokenGive}`,
+    value: sqtAUSDRate > 0 ? `1 ${tokenGet} = ${sqtAUSDRate} ${tokenGive}` : '-',
     tooltip: t('swap.curRateTooltip'),
   };
 
