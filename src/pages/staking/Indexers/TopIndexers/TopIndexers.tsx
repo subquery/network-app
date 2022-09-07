@@ -3,16 +3,35 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './TopIndexers.module.css';
 import { useTopIndexers } from '../../../../containers/QueryTop100Indexers';
+import { getUseQueryFetchMore, renderAsync } from '../../../../utils';
+import { Typography } from 'antd';
+import { IndexerList } from './TopIndexersList';
 
 export const TopIndexers: React.VFC = () => {
   const { t } = useTranslation();
-  const { data } = useTopIndexers();
+  const topIndexers = useTopIndexers();
+
+  // TODO: add pagination
+  const fetchMore = (offset: number) => {
+    getUseQueryFetchMore(topIndexers, { offset });
+  };
 
   return (
-    <>
-      <div className={styles.dataContent}>Top100 Indexers</div>
-    </>
+    <div>
+      {renderAsync(topIndexers, {
+        error: (error) => (
+          <Typography.Text type="danger">{`Error: Failed to get top Indexers: ${error.message}`}</Typography.Text>
+        ),
+        data: (data) => {
+          const topIndexers = data?.topIndexers?.data;
+
+          if (!topIndexers) {
+            return <Typography>{t('topIndexers.nonData')}</Typography>;
+          }
+          return <IndexerList indexers={topIndexers} />;
+        },
+      })}
+    </div>
   );
 };

@@ -239,6 +239,17 @@ const en = {
       confirm: 'Confirm collect',
       failureCollect: 'Sorry, collect rewards transaction has failed.',
     },
+    topIndexers: {
+      nonData: 'There is no data to display',
+      rank: 'indexer ranking',
+      uptime: 'uptime',
+      ownStake: 'own stake',
+      delegated: 'delegated',
+      eraRewardsCollection: 'era reward collection',
+      timeToUpgrade: 'time to upgrade',
+      ssl: 'ssl',
+      socialCredibility: 'social credibility',
+    },
 
     delegate: {
       title: 'Delegate',

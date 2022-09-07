@@ -5,7 +5,6 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEra, useIndexers } from '../../../../containers';
-import styles from './AllIndexers.module.css';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 
@@ -19,32 +18,30 @@ export const AllIndexers: React.VFC = () => {
   };
 
   return (
-    <>
-      <div className={styles.dataContent}>
-        {renderAsync(
-          mapAsync(
-            ([data, curEra]) => ({
-              data: data?.indexers?.nodes.filter(notEmpty),
-              totalCount: data?.indexers?.totalCount,
-              era: curEra?.index,
-            }),
-            mergeAsync(indexers, currentEra),
-          ),
-          {
-            loading: () => <Spinner />,
-            error: (error) => <Typography>{`Error: Failed to get Indexers: ${error.message}`}</Typography>,
-            data: (data) => {
-              if (!data || data?.totalCount === 0) {
-                return <Typography>{`No Indexer available.`}</Typography>;
-              }
+    <div>
+      {renderAsync(
+        mapAsync(
+          ([data, curEra]) => ({
+            data: data?.indexers?.nodes.filter(notEmpty),
+            totalCount: data?.indexers?.totalCount,
+            era: curEra?.index,
+          }),
+          mergeAsync(indexers, currentEra),
+        ),
+        {
+          loading: () => <Spinner />,
+          error: (error) => <Typography>{`Error: Failed to get Indexers: ${error.message}`}</Typography>,
+          data: (data) => {
+            if (!data || data?.totalCount === 0) {
+              return <Typography>{`No Indexer available.`}</Typography>;
+            }
 
-              return (
-                <IndexerList indexers={data.data} totalCount={data.totalCount} onLoadMore={fetchMore} era={data.era} />
-              );
-            },
+            return (
+              <IndexerList indexers={data.data} totalCount={data.totalCount} onLoadMore={fetchMore} era={data.era} />
+            );
           },
-        )}
-      </div>
-    </>
+        },
+      )}
+    </div>
   );
 };
