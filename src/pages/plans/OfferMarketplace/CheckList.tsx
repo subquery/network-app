@@ -144,7 +144,7 @@ export const CheckList: React.VFC<ICheckList> = ({
       if (isUndefined(metadata) || isUndefined(cap)) return <Spinner />;
 
       const latestBlockHeight = metadata?.lastProcessedHeight;
-      const dailyRewardCapacity = convertStringToNumber(formatEther(cap ?? 0));
+      const dailyRewardCap = convertStringToNumber(formatEther(cap ?? 0));
 
       const sortedRequirementCheckList = [
         {
@@ -165,8 +165,8 @@ export const CheckList: React.VFC<ICheckList> = ({
         {
           title: t('offerMarket.acceptModal.dailyRewards'),
           requiredValue: `${REQUIRED_DAILY_REWARD_CAP} ${TOKEN}`,
-          value: `${dailyRewardCapacity} ${TOKEN}`,
-          passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCapacity,
+          value: `${dailyRewardCap} ${TOKEN}`,
+          passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCap,
           errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
       ];
