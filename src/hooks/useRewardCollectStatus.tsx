@@ -16,7 +16,7 @@ export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasCl
     const [currentEra, lastClaimedEra, lastSettledEra] = await Promise.all([
       contracts.eraManager.eraNumber(),
       (await contracts.rewardsDistributor.getRewardInfo(indexer)).lastClaimEra,
-      contracts.rewardsDistributor.getLastSettledEra(indexer),
+      contracts.rewardsStaking.getLastSettledEra(indexer),
     ]);
     const rewardClaimStatus = currentEra.eq(lastClaimedEra.add(1)) && lastSettledEra.lte(lastClaimedEra);
 

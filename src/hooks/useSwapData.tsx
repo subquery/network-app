@@ -59,9 +59,9 @@ export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNum
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const { amountGiveLeft } = await contracts.permissionedExchange.orders(orderId);
+    const { tokenGiveBalance } = await contracts.permissionedExchange.orders(orderId);
 
-    return amountGiveLeft;
+    return tokenGiveBalance;
   }, [pendingContracts, orderId]);
 }
 
