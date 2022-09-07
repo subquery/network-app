@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
+    "@apollo/react-testing": "^4.0.0",
     "@craco/craco": "^6.4.5",
     "@polkadot/util": "^7.8.2",
     "@sentry/react": "^6.19.4",

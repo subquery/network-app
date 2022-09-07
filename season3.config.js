@@ -16,6 +16,7 @@ module.exports = {
       'src/containers/QueryRegistryProject.tsx',
       'src/containers/QueryLeaderboardProject.tsx',
       'src/containers/QuerySwapExchangeProject.tsx',
+      'src/containers/QueryTop100Indexers.tsx',
     ],
   },
 };

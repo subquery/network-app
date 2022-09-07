@@ -5,12 +5,11 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEra, useIndexers } from '../../../../containers';
-import { AppPageHeader } from '../../../../components';
-import styles from './Indexers.module.css';
+import styles from './AllIndexers.module.css';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
-import { IndexerList } from '../IndexerList/IndexerList';
+import { IndexerList } from './IndexerList/IndexerList';
 
-export const Indexers: React.VFC = () => {
+export const AllIndexers: React.VFC = () => {
   const indexers = useIndexers({});
   const { currentEra } = useEra();
   const { t } = useTranslation();
@@ -21,8 +20,6 @@ export const Indexers: React.VFC = () => {
 
   return (
     <>
-      <AppPageHeader title={t('delegate.title')} />
-
       <div className={styles.dataContent}>
         {renderAsync(
           mapAsync(

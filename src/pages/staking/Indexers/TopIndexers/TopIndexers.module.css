@@ -1,0 +1,30 @@
+.grayText {
+  color: var(--gray500);
+}
+
+.container {
+  display: flex;
+  background-color: var(--gray200);
+  width: 100%;
+}
+
+.sidebar {
+  width: 25%;
+}
+
+.content {
+  width: 100%;
+  padding: 1rem 2rem;
+  overflow: scroll;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+}
