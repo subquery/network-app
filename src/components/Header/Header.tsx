@@ -4,8 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
-// import testnet from '@subql/contract-sdk/publish/testnet.json';
-import testnet from '@subql/contract-sdk/publish/moonbase.json';
+
 import { useWeb3 } from '../../containers';
 import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Typography } from '@subql/react-ui';
@@ -13,7 +12,7 @@ import styles from './Header.module.css';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';
-import { STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
+import { SQT_TOKEN_ADDRESS, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -125,9 +124,9 @@ const Header: React.VFC = () => {
         params: {
           type: 'ERC20',
           options: {
-            address: testnet.SQToken.address,
+            address: SQT_TOKEN_ADDRESS,
             symbol: TOKEN,
-            decimals: 18,
+            decimals: tokenDecimals[SQT_TOKEN_ADDRESS],
             // image: 'https://foo.io/token-image.svg',
           },
         },
@@ -142,7 +141,7 @@ const Header: React.VFC = () => {
           options: {
             address: STABLE_TOKEN_ADDRESS,
             symbol: STABLE_TOKEN,
-            decimals: 12,
+            decimals: tokenDecimals[STABLE_TOKEN_ADDRESS],
           },
         },
       });
