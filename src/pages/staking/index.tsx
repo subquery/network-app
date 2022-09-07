@@ -7,9 +7,10 @@ import { BsCashStack, BsPerson } from 'react-icons/bs';
 import { EraProvider } from '../../containers';
 import { Redirect, Route, Switch } from 'react-router';
 import { Indexer } from './Indexer';
-import { Indexers, DelegateIndexer } from './Indexers';
+import { Home as Indexers } from './Indexers';
 import { AppSidebar } from '../../components';
 import { WalletRoute } from '../../WalletRoute';
+import { DelegateIndexer } from './Indexers/DelegateIndexer';
 
 export const ROOT_ROUTE = '/staking';
 export const PROFILE_ROUTE = `${ROOT_ROUTE}/my-profile`;
@@ -35,7 +36,7 @@ export const Staking: React.VFC = () => {
     <EraProvider>
       <AppSidebar list={sidebarList}>
         <Switch>
-          <Route path="/staking/indexers/delegate/:address" component={DelegateIndexer} />
+          <Route path={`${INDEXERS_ROUTE}/delegate/:address`} component={DelegateIndexer} />
           <Route path={INDEXERS_ROUTE} component={Indexers} />
           <WalletRoute path={PROFILE_ROUTE} component={Indexer} />
           <Redirect from={ROOT_ROUTE} to={PROFILE_ROUTE} />

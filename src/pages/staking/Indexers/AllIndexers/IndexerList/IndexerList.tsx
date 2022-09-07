@@ -6,18 +6,18 @@ import { TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { extractPercentage, formatEther, renderAsync, TOKEN } from '../../../../utils';
-import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/registry/GetIndexers';
-import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
-import styles from './IndexerList.module.css';
-import { DoDelegate } from '../DoDelegate';
 import { useHistory } from 'react-router';
 import i18next from 'i18next';
-import { useIndexerCapacity } from '../../../../hooks';
-import { AntDTable, SearchInput, TableText } from '../../../../components';
-import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../hooks/useSortedIndexer';
-import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
+import { extractPercentage, formatEther, renderAsync, TOKEN } from '../../../../../utils';
+import { CurrentEraValue } from '../../../../../hooks/useEraValue';
+import { GetIndexers_indexers_nodes as Indexer } from '../../../../../__generated__/registry/GetIndexers';
+import { useDelegation, useIndexer, useWeb3 } from '../../../../../containers';
+import styles from './IndexerList.module.css';
+import { DoDelegate } from '../../DoDelegate';
+import { useIndexerCapacity } from '../../../../../hooks';
+import { AntDTable, SearchInput, TableText } from '../../../../../components';
+import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../../hooks/useSortedIndexer';
+import { ConnectedIndexer } from '../../../../../components/IndexerDetails/IndexerName';
 
 const Capacity: React.VFC<{ indexer: string; fieldKey: 'current' | 'after' }> = ({ indexer, fieldKey }) => {
   const indexerCapacity = useIndexerCapacity(indexer);
