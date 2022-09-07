@@ -317,7 +317,7 @@ const en = {
         step1: 'Confirm claim',
         description: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexer',
         description_other: 'You are about to claim {{totalUnclaimed}} {{token}} from {{count}} indexers',
-        button: 'Claim all unclaimed rewards',
+        button: 'Claim all rewards',
         submit: 'Confirm Claim',
       },
       totalUnclaimReward: 'You have {{count}} unclaimed reward',

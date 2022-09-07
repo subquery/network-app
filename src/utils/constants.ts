@@ -12,7 +12,7 @@ export enum LOCK_STATUS {
   UNLOCK = 'UNLOCK',
 }
 
-export const STABLE_TOKEN = process.env.REACT_APP_TOKEN ?? 'USDC';
+export const STABLE_TOKEN = process.env.REACT_APP_STABLE_TOKEN ?? 'USDC';
 export const TOKEN_DECIMAL = 6; // TODO: fix calWithRate
 
 export const networkDeploymentDetails = testnet;
