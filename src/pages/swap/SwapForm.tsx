@@ -194,7 +194,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   unit={pair.to}
                   stringMode
                   maxAmount={pair.to === TOKEN ? pair.toMax : undefined}
-                  description={`Current balance: ${pair.toMax}`}
+                  description={`Current balance: ${pair.toMax} ${TOKEN}`}
                   value={values.to}
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
