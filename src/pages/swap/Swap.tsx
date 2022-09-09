@@ -48,7 +48,11 @@ const getStats = ({
 
   if (sqtPoolSize) {
     return [
-      { title: t('swap.poolSize'), value: `${sqtPoolSize} ${TOKEN}`, tooltip: t('swap.poolSizeTooltip') },
+      {
+        title: t('swap.poolSize'),
+        value: `${sqtPoolSize} ${TOKEN}`,
+        tooltip: t('swap.poolSizeTooltip'),
+      },
       curRateStats,
     ];
   }
@@ -88,17 +92,17 @@ const SellAUSD = () => {
 
       const sortedAUSDBalance = aUSDAmount ?? '0';
       const sortedRate = sqtAUSDRate ?? 0;
-      const sortedPoolSize = formatEther(sqtPoolSize, 4) ?? '0';
+      const sortedPoolSize = sqtPoolSize ?? '0';
 
       const pair = {
         from: STABLE_TOKEN,
         fromMax: sortedAUSDBalance,
         to: TOKEN,
-        toMax: sortedPoolSize,
+        toMax: formatEther(sortedPoolSize),
       };
 
       const stats = getStats({
-        sqtPoolSize: sortedPoolSize,
+        sqtPoolSize: formatEther(sortedPoolSize, 4),
         sqtAUSDRate: sortedRate,
         tokenGet: tokens?.tokenGet ?? '',
         tokenGive: tokens?.tokenGive ?? '',
@@ -159,7 +163,7 @@ const GetAUSD = () => {
 
       const pair = {
         from: TOKEN,
-        fromMax: formatEther(fromMax, 4),
+        fromMax: formatEther(fromMax),
         to: STABLE_TOKEN,
         toMax,
       };

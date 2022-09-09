@@ -15,9 +15,18 @@ export function convertBigNumberToNumber(value: BigNumberish | BigInt): number {
   return BigNumber.from(value).toNumber();
 }
 
+export function truncFormatEtherStr(value: string, decimalPlaces = 4): string {
+  const [wholeNumberStr, decimalPlacesStr] = value.split('.');
+  if (!decimalPlacesStr) return wholeNumberStr;
+
+  const subStrLength = decimalPlacesStr.length > decimalPlaces ? decimalPlaces : decimalPlacesStr.length;
+  const sortedDecimalPlaceStr = decimalPlacesStr.substring(0, subStrLength);
+  return wholeNumberStr.concat('.', sortedDecimalPlaceStr);
+}
+
 export function formatEther(value: BigNumberish | BigInt | undefined, toFixed?: number): string {
   const formattedEther = utils.formatEther(BigNumber.from(value ?? 0).toString());
-  return toFixed ? convertStringToNumber(formattedEther).toFixed(toFixed) : formattedEther;
+  return toFixed ? truncFormatEtherStr(formattedEther, toFixed) : formattedEther;
 }
 
 // TODO: should only be number and percentage formatter

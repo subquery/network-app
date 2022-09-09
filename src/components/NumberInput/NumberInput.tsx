@@ -52,7 +52,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const maxText = !isUndefined(maxAmount)
     ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
     : undefined;
-  const inputBottomText = maxText ?? description;
+  const inputBottomText = description ?? maxText;
   const DescriptionText = ({ text }: { text: string }) => (
     <AppTypography className={styles.inputBottomText}>{text}</AppTypography>
   );
