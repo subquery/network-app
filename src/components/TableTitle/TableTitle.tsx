@@ -14,10 +14,17 @@ interface TableTitleProps {
   title?: string;
   className?: string;
   tooltip?: string;
+  noTooltipIcon?: boolean;
   children?: string | React.ReactNode;
 }
 
-export const TableTitle: React.FC<TableTitleProps> = ({ title, children: childrenArg, tooltip, ...props }) => {
+export const TableTitle: React.FC<TableTitleProps> = ({
+  title,
+  children: childrenArg,
+  tooltip,
+  noTooltipIcon,
+  ...props
+}) => {
   const children = childrenArg && typeof childrenArg === 'string' ? childrenArg.toUpperCase() : childrenArg;
   const content = title ? title.toUpperCase() : title;
   return (
@@ -25,7 +32,7 @@ export const TableTitle: React.FC<TableTitleProps> = ({ title, children: childre
       {...props}
       content={content}
       tooltip={tooltip}
-      noTooltipIcon={!tooltip}
+      noTooltipIcon={noTooltipIcon ?? !tooltip}
       tooltipColor={COLORS.gray700}
     >
       {children}

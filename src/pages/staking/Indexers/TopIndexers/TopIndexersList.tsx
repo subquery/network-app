@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
-import { TableProps } from 'antd';
+import { TableProps, Tooltip } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -28,42 +28,90 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.rank')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.rank')}
+        title={i18next.t('topIndexers.rank')}
+      />
+    ),
     dataIndex: 'ranking',
     render: (ranking) => <TableText>{ranking}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.uptime')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.uptime')}
+        title={i18next.t('topIndexers.uptime')}
+      />
+    ),
     dataIndex: 'upTime',
     render: (upTime) => <TableText>{upTime}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.ownStake')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.ownStake')}
+        title={i18next.t('topIndexers.ownStake')}
+      />
+    ),
     dataIndex: 'ownStake',
     render: (ownStake) => <TableText>{ownStake}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.delegated')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.delegated')}
+        title={i18next.t('topIndexers.delegated')}
+      />
+    ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{delegated}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.eraRewardsCollection')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.eraRewardsCollection')}
+        title={i18next.t('topIndexers.eraRewardsCollection')}
+      />
+    ),
     dataIndex: 'eraRewardsCollection',
     render: (eraRewardsCollection) => <TableText>{eraRewardsCollection}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.timeToUpgrade')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.timeToUpgrade')}
+        title={i18next.t('topIndexers.timeToUpgrade')}
+      />
+    ),
     dataIndex: 'timeToUpgrade',
     render: (timeToUpgrade) => <TableText>{timeToUpgrade}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.ssl')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.ssl')}
+        title={i18next.t('topIndexers.ssl')}
+      />
+    ),
     dataIndex: 'enableSSL',
     render: (enableSSL) => <TableText>{enableSSL}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('topIndexers.socialCredibility')} />,
+    title: (
+      <TableTitle
+        noTooltipIcon={true}
+        tooltip={i18next.t('topIndexers.tooltip.socialCredibility')}
+        title={i18next.t('topIndexers.socialCredibility')}
+      />
+    ),
     dataIndex: 'socialCredibility',
     render: (socialCredibility) => <TableText>{socialCredibility}</TableText>,
   },
