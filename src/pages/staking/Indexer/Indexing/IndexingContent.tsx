@@ -14,7 +14,8 @@ import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { useWeb3 } from '../../../../containers';
 import { OwnDeployments } from '../OwnDeployments';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { TOKEN } from '../../../../utils';
+import { isUndefined, TOKEN, truncFormatEtherStr } from '../../../../utils';
+import { BigNumber } from 'ethers';
 
 enum SectionTabs {
   Projects = 'Projects',
@@ -22,15 +23,17 @@ enum SectionTabs {
 }
 
 const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }) => {
+  const getSortedValue = (val: BigNumber | undefined) =>
+    isUndefined(val) ? '-' : `${truncFormatEtherStr(item.current.toString())} ${unit || ''}`;
   return (
     <div key={item.current.toString()}>
-      <Typography>{item?.current !== undefined ? `${item.current} ${unit || ''}` : '-'}</Typography>
+      <Typography>{getSortedValue(item.current)}</Typography>
       <div className={styles.nextItem}>
         <div className={styles.nextIcon}>
           <BsArrowReturnRight />
         </div>
         <Typography className={styles.nextValue} variant="medium">
-          {item?.after !== undefined ? `${item.after} ${unit || ''}` : '-'}
+          {getSortedValue(item?.after)}
         </Typography>
       </div>
     </div>
