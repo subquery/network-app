@@ -21,5 +21,5 @@ export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasCl
     const rewardClaimStatus = currentEra.eq(lastClaimedEra.add(1)) && lastSettledEra.lte(lastClaimedEra);
 
     return { hasClaimedRewards: rewardClaimStatus };
-  }, []);
+  }, [pendingContracts]);
 }
