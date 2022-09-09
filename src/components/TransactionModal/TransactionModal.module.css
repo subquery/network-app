@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  overflow: scroll;
 }
 
 .clock {
@@ -7,9 +8,5 @@
 }
 
 .errorButtonIcon {
-  color: inherit;
-}
-
-.errorTextIcon {
   color: var(--error);
 }

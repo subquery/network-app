@@ -19,6 +19,7 @@ import {
   cidToBytes32,
   convertBigNumberToNumber,
   convertStringToNumber,
+  formatEther,
   formatSecondsDuration,
   parseError,
   TOKEN,
@@ -121,7 +122,7 @@ export const Summary: React.VFC = () => {
     },
     {
       label: t('myOffers.step_2.totalDeposit'),
-      value: `${offer?.totalDeposit} ${TOKEN}`,
+      value: `${formatEther(offer?.totalDeposit)} ${TOKEN}`,
     },
     {
       label: t('myOffers.step_2.indexerCap'),

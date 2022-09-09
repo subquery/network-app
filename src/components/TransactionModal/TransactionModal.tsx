@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import { MdErrorOutline } from 'react-icons/md';
 import { notification, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { LoadingOutlined } from '@ant-design/icons';
 
 export enum NotificationType {
   INFO = 'info',
@@ -39,7 +40,10 @@ export const openNotificationWithIcon = ({
   notification[type]({
     message: title ?? 'Notification',
     description: description,
-    style: { borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}` },
+    style: {
+      borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}`,
+      overflow: 'scroll',
+    },
     duration: type === NotificationType.INFO ? 45 : 30,
   });
 };
@@ -199,33 +203,36 @@ const TransactionModal = <P, T extends string>({
         />
       )}
 
-      {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => (
-        <div className="flex-center" key={key}>
-          <Tooltip title={tooltip}>
-            <Button
-              {...rest}
-              label={label}
-              onClick={() => {
-                onClick?.();
-                handleBtnClick(key);
-              }}
-              className={variant}
-              size="medium"
-              disabled={disabled || showClock || isLoading}
-              loading={isLoading}
-              rightItem={
-                tooltip &&
-                disabled && (
-                  <MdErrorOutline
-                    className={variant.match(/text|Text/) ? styles.errorTextIcon : styles.errorButtonIcon}
-                  />
-                )
-              }
-            />
-          </Tooltip>
-          {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
-        </div>
-      ))}
+      {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => {
+        const isTextButton = variant.match(/text|Text/);
+        const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledBtn') : variant;
+
+        return (
+          <div className="flex-center" key={key}>
+            <Tooltip title={tooltip}>
+              <Button
+                {...rest}
+                label={label}
+                onClick={() => {
+                  onClick?.();
+                  handleBtnClick(key);
+                }}
+                className={sortedStyle}
+                size="medium"
+                disabled={disabled || showClock || isLoading}
+                rightItem={
+                  isLoading ? (
+                    <LoadingOutlined className={sortedStyle} />
+                  ) : (
+                    tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
+                  )
+                }
+              />
+            </Tooltip>
+            {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
+          </div>
+        );
+      })}
     </div>
   );
 };

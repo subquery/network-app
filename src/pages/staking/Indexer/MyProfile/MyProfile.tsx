@@ -11,10 +11,11 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
-import { convertStringToNumber, mergeAsync, renderAsync, TOKEN } from '../../../../utils';
+import { formatEther, mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
+import { parseEther } from 'ethers/lib/utils';
 
 const ROUTE = '/staking/my-profile';
 const INDEXING = `${ROUTE}/indexing`;
@@ -57,15 +58,20 @@ export const MyProfile: React.VFC = () => {
           data: (data) => {
             if (!data) return null;
             const [s, d] = data;
-            const totalDelegations = convertStringToNumber(d?.current ?? '0') - (s?.ownStake.current ?? 0);
+            const sortedTotalStaking = truncFormatEtherStr(`${s?.totalStake.current ?? 0}`);
+            const sortedTotalDelegations = formatEther(
+              parseEther(d?.current ?? '0').sub(parseEther(`${s?.ownStake.current ?? 0}`)),
+              4,
+            );
+
             const cards = [
               {
                 title: t('indexer.stakingAmountTitle'),
-                value: `${s?.totalStake.current ?? 0} ${TOKEN}`,
+                value: `${sortedTotalStaking} ${TOKEN}`,
               },
               {
                 title: t('delegate.delegationAmountTitle'),
-                value: `${totalDelegations} ${TOKEN}`,
+                value: `${sortedTotalDelegations} ${TOKEN}`,
               },
             ];
             return (

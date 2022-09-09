@@ -26,7 +26,7 @@ export const Card: React.VFC<CardProps> = ({ category, title, value }) => {
         </Typography>
       )}
       {value && (
-        <Typography variant="h4" className={styles.value}>
+        <Typography variant="h5" className={styles.value}>
           {value}
         </Typography>
       )}
