@@ -52,6 +52,10 @@ const HeaderLinks = () => {
       title: t('header.swap'),
     },
     {
+      link: 'https://snapshot.org/#/subquerynetwork.eth',
+      title: t('header.governance'),
+    },
+    {
       link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
       title: t('header.documentation'),
     },

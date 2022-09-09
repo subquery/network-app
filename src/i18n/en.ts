@@ -9,6 +9,7 @@ const en = {
       staking: 'Stake & Delegate',
       plans: 'Plan & Offer',
       missions: 'Missions',
+      governance: 'Governance',
       documentation: 'Documentation',
       forum: 'Forum',
       github: 'Github',
