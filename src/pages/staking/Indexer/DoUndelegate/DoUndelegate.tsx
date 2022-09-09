@@ -5,13 +5,29 @@ import * as React from 'react';
 import assert from 'assert';
 import { parseEther } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
-import { convertStringToNumber, renderAsync } from '../../../../utils';
+import { convertStringToNumber, mergeAsync, renderAsync } from '../../../../utils';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useLockPeriod } from '../../../../hooks';
-import moment from 'moment';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
+
+const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | undefined, t: any) => {
+  if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
+
+  return {
+    title: t('delegate.undelegate'),
+    steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
+    description: t('delegate.undelegateValidNextEra', {
+      duration: `${moment.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
+    }),
+    inputTitle: t('delegate.undelegateAmount'),
+    submitText: t('delegate.confirmUndelegate'),
+    failureText: 'Sorry, could not undelegate',
+  };
+};
 
 interface DoUndelegateProps {
   indexerAddress: string;
@@ -24,17 +40,6 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const lockPeriod = useLockPeriod();
 
-  const modalText = {
-    title: t('delegate.undelegate'),
-    steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
-    description: t('delegate.undelegateValidNextEra', {
-      duration: `${moment.duration(lockPeriod.data, 'seconds').as('hours').toPrecision(3)} hours`,
-    }),
-    inputTitle: t('delegate.undelegateAmount'),
-    submitText: t('delegate.confirmUndelegate'),
-    failureText: 'Sorry, could not undelegate',
-  };
-
   const handleClick = async (amount: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
@@ -45,17 +50,17 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
     return pendingTx;
   };
 
-  return renderAsync(rewardClaimStatus, {
+  return renderAsync(mergeAsync(rewardClaimStatus, lockPeriod), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const { hasClaimedRewards } = data;
+      const [indexerRewards, lock] = data;
+      const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
       const hasBalanceForNextEra = parseEther(availableBalance ?? '0').gt('0');
-      const disabled = !hasClaimedRewards || !hasBalanceForNextEra;
-      const tooltip =
-        (!hasClaimedRewards && t('delegate.invalidUndelegateBeforeRewardCollect')) ||
-        (!hasBalanceForNextEra && t('delegate.nonToUndelegate')) ||
-        '';
+      const disabled = !hasBalanceForNextEra;
+      const tooltip = !hasBalanceForNextEra ? t('delegate.nonToUndelegate') : '';
+
+      const modalText = getModalText(requireClaimIndexerRewards, lock, t);
       return (
         <TransactionModal
           variant={disabled ? 'disabledTextBtn' : 'textBtn'}
@@ -75,7 +80,16 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
             max: convertStringToNumber(availableBalance ?? '0'),
           }}
           onClick={handleClick}
-          initialCheck={rewardClaimStatus}
+          renderContent={(onSubmit, _, loading) => {
+            if (requireClaimIndexerRewards) {
+              return (
+                <ModalClaimIndexerRewards
+                  onSuccess={() => rewardClaimStatus.refetch()}
+                  indexer={indexerAddress ?? ''}
+                />
+              );
+            }
+          }}
         />
       );
     },
