@@ -213,15 +213,22 @@ textarea {
   color: var(--error-hover);
 }
 
+.disabledBtn {
+  background: var(--disabled);
+  color: var(--gray200);
+  padding: 0.6rem;
+}
+
 .disabledTextBtn {
-  color: var(--disabled);
+  color: var(--gray500);
   background: none;
   padding: 0.6rem;
 }
 
+.disabledBtn:hover,
 .disabledTextBtn:hover {
-  color: var(--disabled);
-  background: var(--gray200);
+  background: var(--disabled);
+  color: var(--gray400);
   padding: 0.6rem;
 }
 
@@ -238,6 +245,7 @@ textarea {
 
 .errBtn {
   background: var(--error);
+  color: white;
 }
 
 .errBtn:hover {

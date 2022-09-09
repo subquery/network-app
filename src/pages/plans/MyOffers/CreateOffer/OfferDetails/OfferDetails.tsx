@@ -11,9 +11,10 @@ import styles from './OfferDetails.module.css';
 import { AiOutlineWarning } from 'react-icons/ai';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
-import { ethers } from 'ethers';
-import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
+import { BigNumber, ethers } from 'ethers';
+import { COLORS, convertStringToNumber, formatEther, TOKEN, TOKEN_DECIMAL } from '../../../../../utils';
 import { useSQToken } from '../../../../../containers';
+import { parseEther } from 'ethers/lib/utils';
 
 // Can not select days before today + 24 hours, value & validation
 export const EXPIRE_DATE_GAP = 24;
@@ -46,7 +47,7 @@ export const OfferDetails: React.VFC = () => {
 
   const handleSubmitFrom = (offerDetails: any) => {
     const { rewardPerIndexer, indexerCap, minimumIndexedHeight, expireDate } = offerDetails;
-    const totalDeposit = (rewardPerIndexer * indexerCap).toFixed(12);
+    const totalDeposit = parseEther(rewardPerIndexer).mul(BigNumber.from(indexerCap)).toString();
     updateCreateOffer({ ...offer, indexerCap, minimumIndexedHeight, expireDate, rewardPerIndexer, totalDeposit });
     onStepChange(curStep + 1);
   };
@@ -81,11 +82,9 @@ export const OfferDetails: React.VFC = () => {
                   tooltip={t('myOffers.step_2.rewardPerIndexerTooltip')}
                   id={REWARD_PER_INDEXER}
                   defaultValue={rewardPerIndexer}
-                  maxLength={12}
                   onChange={(value) => setFieldValue(REWARD_PER_INDEXER, value)}
                   status={errors[REWARD_PER_INDEXER] ? 'error' : undefined}
                   stringMode
-                  step="0.00001"
                   errorMsg={errors[REWARD_PER_INDEXER] && t('myOffers.step_2.rewardPerIndexerErrorMsg')}
                 />
                 <NumberInput
@@ -105,11 +104,10 @@ export const OfferDetails: React.VFC = () => {
                   disabled={true}
                   value={totalDeposit}
                   stringMode
-                  step="0.00001"
                   max={formatEther(balance.data)}
                   status={errors[TOTAL_DEPOSIT] ? 'error' : undefined}
                   description={
-                    balance.data ? `${t('general.balance')}: ${formatEther(balance.data)} ${TOKEN} ` : undefined
+                    balance.data ? `${t('general.balance')}: ${formatEther(balance.data, 4)} ${TOKEN} ` : undefined
                   }
                   errorMsg={errors[TOTAL_DEPOSIT] && t('myOffers.step_2.totalDepositErrorMsg')}
                 />

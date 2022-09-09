@@ -6,7 +6,6 @@ import { InputNumber, InputNumberProps, Button } from 'antd';
 import styles from './NumberInput.module.css';
 import { AppTypography } from '../Typography';
 import { BigNumberish } from 'ethers';
-import { isUndefined } from '../../utils';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
@@ -49,10 +48,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
-  const maxText = !isUndefined(maxAmount)
-    ? maxAmountText ?? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
-    : undefined;
-  const inputBottomText = description ?? maxText;
+  const maxText =
+    maxAmount > 0 ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}` : undefined;
+  const inputBottomText = description ?? maxAmountText ?? maxText;
   const DescriptionText = ({ text }: { text: string }) => (
     <AppTypography className={styles.inputBottomText}>{text}</AppTypography>
   );
