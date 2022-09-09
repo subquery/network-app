@@ -17,7 +17,7 @@ import {
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
-import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL, tokenDecimals } from '../../utils';
+import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL, tokenDecimals, truncFormatEtherStr } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
 import { parseUnits } from 'ethers/lib/utils';
@@ -183,6 +183,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
+                  description={`Current balance: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
                   onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
@@ -194,7 +195,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   unit={pair.to}
                   stringMode
                   maxAmount={pair.to === TOKEN ? pair.toMax : undefined}
-                  description={`Current balance: ${pair.toMax} ${TOKEN}`}
+                  description={`Current balance: ${truncFormatEtherStr(pair.toMax)} ${pair.to}`}
                   value={values.to}
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
