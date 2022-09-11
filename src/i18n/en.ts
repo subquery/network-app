@@ -250,6 +250,21 @@ const en = {
       timeToUpgrade: 'time to upgrade',
       ssl: 'ssl',
       socialCredibility: 'social credibility',
+      tooltip: {
+        rank: 'A ranking (out of a maxium of 100) that indicates the overall performance of the Indexer. Determined based off the other factors. Higher score is better.',
+        uptime:
+          'Based on the health and availability of the Indexer over the last few Eras. Measures both proof of indexing and query service health checks. Higher score is better.',
+        ownStake: 'The percentage of all staked SQT that is the Indexer’s own SQT. Higher score is better.',
+        delegated:
+          'The percentage of the Indexer’s total delegation that is the Indexer’s own SQT. Higher score is better.',
+        eraRewardsCollection:
+          'How fast and frequently does the Indexer collect rewards on behalf of their delegators. Frequent is better.',
+        timeToUpgrade:
+          'How fast Indexers upgrade their Indexer Services once a new version is released. Higher is better.',
+        ssl: 'If Indexers have enabled SSL on their endpoints. Enabled is better',
+        socialCredibility:
+          'If Indexers have provided a ENS name pointing towards their account address. Enabled is better.',
+      },
     },
 
     delegate: {
