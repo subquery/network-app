@@ -12,6 +12,7 @@ import { useDelegations, useEra } from '../../../../containers';
 import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, TOKEN } from '../../../../utils';
 import { TableText } from '../../../../components';
 import clsx from 'clsx';
+import { parseEther } from 'ethers/lib/utils';
 
 interface Props {
   delegator: string;
@@ -34,7 +35,10 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           indexer: delegation.indexerId,
           indexerActive: delegation?.indexer?.active,
         }))
-        .filter((delegation) => delegation.value.current || delegation.value.after),
+        .filter(
+          (delegation) =>
+            parseEther(delegation.value.current).gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
+        ),
     mergeAsync(delegations, currentEra),
   );
 
