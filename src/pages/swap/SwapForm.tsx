@@ -79,8 +79,8 @@ export const SwapForm: React.FC<ISwapForm> = ({
   };
 
   const initialPairValues: PairFrom = {
-    from: '1',
-    to: calWithRate('1') ?? '0',
+    from: '',
+    to: '',
   };
 
   const updateFieldVal = (
@@ -158,10 +158,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
             actions.setSubmitting(false);
           }}
           enableReinitialize
-          validateOnMount
         >
           {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
-            const isActionDisabled = !isValid || !orderId;
+            const isActionDisabled = !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
             const summaryList = [
               {
                 label: t('swap.from'),
@@ -183,10 +182,11 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
-                  description={`Current balance: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
+                  description={`The maximum swap amount: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
                   onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
+                  placeholder={'1'}
                 />
                 <NumberInput
                   id={TO_INPUT_ID}
@@ -195,11 +195,14 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   unit={pair.to}
                   stringMode
                   maxAmount={pair.to === TOKEN ? pair.toMax : undefined}
-                  description={`Current balance: ${truncFormatEtherStr(pair.toMax)} ${pair.to}`}
+                  description={`${pair.to === TOKEN ? 'Current Pool' : 'Current balance'}: ${truncFormatEtherStr(
+                    pair.toMax,
+                  )} ${pair.to}`}
                   value={values.to}
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(TO_INPUT_ID, value.toString(), setValues, setErrors)}
+                  placeholder={calWithRate('1') ?? '0'}
                 />
 
                 <div className={styles.swapAction}>
