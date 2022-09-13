@@ -17,7 +17,7 @@ import {
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
-import { STABLE_TOKEN, TOKEN, TOKEN_DECIMAL, tokenDecimals, truncFormatEtherStr } from '../../utils';
+import { STABLE_TOKEN, TOKEN, tokenDecimals, truncFormatEtherStr, STABLE_TOKEN_DECIMAL } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
 import { useContracts } from '../../containers';
 import { parseUnits } from 'ethers/lib/utils';
@@ -73,14 +73,16 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
-  const calWithRate = (value: string | number) => {
-    const val = typeof value === 'number' ? value.toString() : value;
-    return (parseFloat(val) * fromRate).toFixed(TOKEN_DECIMAL);
+  const calWithRate = (value: string | number, reverseCal = false): string => {
+    if (fromRate === 0) return '0';
+    const strValue = value.toString();
+    const calValue = reverseCal ? parseFloat(strValue) / fromRate : parseFloat(strValue) * fromRate;
+    return truncFormatEtherStr(calValue.toString(), STABLE_TOKEN_DECIMAL);
   };
 
   const initialPairValues: PairFrom = {
-    from: '1',
-    to: calWithRate('1') ?? '0',
+    from: '',
+    to: '',
   };
 
   const updateFieldVal = (
@@ -90,22 +92,25 @@ export const SwapForm: React.FC<ISwapForm> = ({
     setErrors: (props: any) => void,
   ) => {
     if (!value) return null;
-    const autoUpdateField = fileKey === FROM_INPUT_ID ? TO_INPUT_ID : FROM_INPUT_ID;
+    const isReversedCal = fileKey === TO_INPUT_ID;
+    const autoUpdateField = isReversedCal ? FROM_INPUT_ID : TO_INPUT_ID;
     setErrors({ [fileKey]: undefined });
-    const sortedTo = calWithRate(value);
-    setValues({ [fileKey]: value, [autoUpdateField]: sortedTo });
+    const autoUpdateFieldVal = calWithRate(value, isReversedCal);
+    setValues({ [fileKey]: value, [autoUpdateField]: autoUpdateFieldVal });
   };
 
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
       .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
-      .test('isMax', 'From value is invalid.', (from) => (from ? parseFloat(from) <= parseFloat(pair.fromMax) : false))
+      .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
+        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
+      )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
-      .test('isValid', 'To value is invalid.', (to) => {
+      .test('isValid', `There is not enough ${pair.to} to swap.`, (to) => {
         if (pair.to === STABLE_TOKEN) {
           return true;
         }
@@ -158,10 +163,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
             actions.setSubmitting(false);
           }}
           enableReinitialize
-          validateOnMount
         >
           {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
-            const isActionDisabled = !isValid || !orderId;
+            const isActionDisabled = !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
             const summaryList = [
               {
                 label: t('swap.from'),
@@ -183,10 +187,11 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
-                  description={`Current balance: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
+                  description={`The maximum swap amount: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
                   onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
+                  placeholder={'1'}
                 />
                 <NumberInput
                   id={TO_INPUT_ID}
@@ -195,11 +200,14 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   unit={pair.to}
                   stringMode
                   maxAmount={pair.to === TOKEN ? pair.toMax : undefined}
-                  description={`Current balance: ${truncFormatEtherStr(pair.toMax)} ${pair.to}`}
+                  description={`${pair.to === TOKEN ? 'Current Pool' : 'Current balance'}: ${truncFormatEtherStr(
+                    pair.toMax,
+                  )} ${pair.to}`}
                   value={values.to}
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(TO_INPUT_ID, value.toString(), setValues, setErrors)}
+                  placeholder={calWithRate('1', true) ?? '0'}
                 />
 
                 <div className={styles.swapAction}>
