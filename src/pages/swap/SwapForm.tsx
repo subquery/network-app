@@ -73,10 +73,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
-  const calWithRate = (value: string | number, revertCal = false): string => {
-    if (fromRate <= 0) return '0';
-    const strValue = typeof value === 'number' ? value.toString() : value;
-    const calValue = revertCal ? parseFloat(strValue) / fromRate : parseFloat(strValue) * fromRate;
+  const calWithRate = (value: string | number, reverseCal = false): string => {
+    if (fromRate === 0) return '0';
+    const strValue = value.toString();
+    const calValue = reverseCal ? parseFloat(strValue) / fromRate : parseFloat(strValue) * fromRate;
     return truncFormatEtherStr(calValue.toString(), STABLE_TOKEN_DECIMAL);
   };
 
@@ -92,10 +92,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
     setErrors: (props: any) => void,
   ) => {
     if (!value) return null;
-    const isRevertedCal = fileKey === TO_INPUT_ID;
-    const autoUpdateField = isRevertedCal ? FROM_INPUT_ID : TO_INPUT_ID;
+    const isReversedCal = fileKey === TO_INPUT_ID;
+    const autoUpdateField = isReversedCal ? FROM_INPUT_ID : TO_INPUT_ID;
     setErrors({ [fileKey]: undefined });
-    const autoUpdateFieldVal = calWithRate(value, isRevertedCal);
+    const autoUpdateFieldVal = calWithRate(value, isReversedCal);
     setValues({ [fileKey]: value, [autoUpdateField]: autoUpdateFieldVal });
   };
 
