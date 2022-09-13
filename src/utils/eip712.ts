@@ -19,7 +19,7 @@ const EIP712Domain = [
 const ConsumerMessageType = [
   { name: 'consumer', type: 'address' },
   { name: 'indexer', type: 'address' },
-  { name: 'agreement', type: 'address' },
+  { name: 'agreement', type: 'string' },
   { name: 'timestamp', type: 'uint256' },
   { name: 'deploymentId', type: 'string' },
 ];
