@@ -61,7 +61,13 @@ export const getDeploymentProgress = async ({
     return 0;
   }
 
-  const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
+  let metadata;
+
+  try {
+    metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
+  } catch (error) {
+    metadata = undefined;
+  }
 
   if (!metadata) return 0;
 
