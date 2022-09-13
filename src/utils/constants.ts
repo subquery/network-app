@@ -13,7 +13,6 @@ export enum LOCK_STATUS {
 }
 
 export const STABLE_TOKEN = process.env.REACT_APP_STABLE_TOKEN ?? 'USDC';
-export const TOKEN_DECIMAL = 6; // TODO: fix calWithRate
 
 export const networkDeploymentDetails = testnet;
 export const SQT_TOKEN_ADDRESS = testnet.SQToken.address;

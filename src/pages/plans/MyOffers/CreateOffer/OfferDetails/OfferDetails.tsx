@@ -12,7 +12,7 @@ import { AiOutlineWarning } from 'react-icons/ai';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { NumberInput, AppTypography } from '../../../../../components';
 import { BigNumber, ethers } from 'ethers';
-import { COLORS, convertStringToNumber, formatEther, TOKEN, TOKEN_DECIMAL } from '../../../../../utils';
+import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
 import { useSQToken } from '../../../../../containers';
 import { parseEther } from 'ethers/lib/utils';
 
