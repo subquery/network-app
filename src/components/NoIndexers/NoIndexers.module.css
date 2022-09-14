@@ -8,12 +8,13 @@
 .preContainer {
   padding-bottom: 24px;
   display: flex;
+  gap: 0.5rem;
 }
+
 .search {
   color: var(--gray500);
   height: 10.5px;
   width: 10.5px;
-  padding-right: 8.75px;
 }
 
 .preTitle {

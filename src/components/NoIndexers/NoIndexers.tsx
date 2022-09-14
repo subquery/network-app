@@ -13,18 +13,17 @@ const NoIndexers: React.VFC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.preContainer}>
-        <i className={clsx('bi-search', styles.search)} role="img" aria-label="search" />
         <Typography variant="medium" className={styles.preTitle}>
           {t('noIndexers.preTitle')}
         </Typography>
+        <i className={clsx('bi-search', styles.search)} role="img" aria-label="search" />
       </div>
       <Typography variant="h5" className={styles.title}>
         {t('noIndexers.title')}
       </Typography>
       <Typography variant="medium">
         <Trans i18nKey="noIndexers.subtitle">
-          Learn how to index a subquery <a href={'/'}>here</a>
-          {/*TODO use correct link*/}
+          Learn how to index a subquery <a href={'https://doc.subquery.network/'}>here</a>
         </Trans>
       </Typography>
     </div>
