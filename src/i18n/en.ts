@@ -155,6 +155,8 @@ const en = {
       subtitle: 'To participate in our test network, please start by connecting your wallet first.',
       connectWith: 'Connect With:',
       metamaskDesc: 'Connect with Metamask browser extension',
+      withMetamask: 'Connect with Metamask',
+      withTalisman: 'Connect with Talisman',
     },
     unsupportedNetwork: {
       title: 'Unsupported network',

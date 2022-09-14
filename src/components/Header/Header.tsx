@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, Link } from 'react-router-dom';
 
 import { useWeb3 } from '../../containers';
-import { injectedConntector } from '../../containers/Web3';
 import { Address, Button, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';
 import { SQT_TOKEN_ADDRESS, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
+import { ConnectWalletButton } from '../ConnectWalletButton';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -101,21 +101,8 @@ const HeaderLinks = () => {
 };
 
 const Header: React.VFC = () => {
-  const { account, activate, deactivate } = useWeb3();
+  const { account, deactivate } = useWeb3();
   const { t } = useTranslation();
-
-  const handleConnectWallet = React.useCallback(async () => {
-    if (account) {
-      deactivate();
-      return;
-    }
-
-    try {
-      await activate(injectedConntector);
-    } catch (e) {
-      console.log('Failed to activate wallet', e);
-    }
-  }, [activate, account, deactivate]);
 
   const handleSelected = (key: string) => {
     if (key === 'disconnect') {
@@ -187,18 +174,7 @@ const Header: React.VFC = () => {
           <LinksDropdown />
           <HeaderLinks />
         </div>
-        <div className={styles.right}>
-          {account ? (
-            <AccountActions account={account} />
-          ) : (
-            <Button
-              type="secondary"
-              label={t('header.connectWallet')}
-              onClick={handleConnectWallet}
-              leftItem={<i className={`bi-link-45deg`} role="img" aria-label="link" />}
-            />
-          )}
-        </div>
+        <div className={styles.right}>{account ? <AccountActions account={account} /> : <ConnectWalletButton />}</div>
       </div>
     </div>
   );

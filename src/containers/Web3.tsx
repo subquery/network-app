@@ -5,8 +5,9 @@ import React from 'react';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { NetworkConnector } from '@web3-react/network-connector';
 import { providers } from 'ethers';
+import { NetworkConnector } from '@web3-react/network-connector';
+import { TalismanConnector } from '../utils/TalismanConnector';
 
 const MOONBEAM_NETWORK = 'moonbase-alpha';
 const ACALA_NETWORK = 'acala-testnet';
@@ -32,6 +33,11 @@ const RPC_URLS: Record<number, string> = Object.keys(NETWORKS).reduce((result, c
 }, {});
 
 export const injectedConntector = new InjectedConnector({
+  supportedChainIds: [defaultChainId],
+});
+
+// Talisman wallet connector
+export const talismanConnector = new TalismanConnector({
   supportedChainIds: [defaultChainId],
 });
 
