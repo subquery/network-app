@@ -46,8 +46,8 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
         consumer: account,
         indexer,
         agreement,
-        deploymentId,
         timestamp,
+        deploymentId,
       });
 
       const hash = await library.send('eth_signTypedData_v4', [account, signMsg]);
