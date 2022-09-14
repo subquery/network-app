@@ -78,12 +78,15 @@ const getColumns = (
   account: string,
   era: number | undefined,
   viewIndexerDetail: (url: string) => void,
+  pageStartIndex: number,
 ): TableProps<SortedIndexerListProps>['columns'] => [
   {
     title: '#',
     key: 'idx',
     width: 20,
-    render: (_: string, __: any, index: number) => <Typography variant="medium">{index + 1}</Typography>,
+    render: (_: string, __: any, index: number) => (
+      <Typography variant="medium">{pageStartIndex + index + 1}</Typography>
+    ),
     onCell: (record: SortedIndexerListProps) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
@@ -266,6 +269,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const { account } = useWeb3();
   const history = useHistory();
   const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
+  const [pageStartIndex, setPageStartIndex] = React.useState(0);
 
   /**
    * SearchInput logic
@@ -313,7 +317,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
    * Sort Indexers logic end
    */
 
-  const columns = getColumns(account ?? '', era, viewIndexerDetail);
+  const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
 
   return (
     <div className={styles.container}>
@@ -330,7 +334,9 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
         paginationProps={{
           total: searchedIndexer ? searchedIndexer.length : totalCount,
           onChange: (page, pageSize) => {
-            onLoadMore?.((page - 1) * pageSize);
+            const i = (page - 1) * pageSize;
+            setPageStartIndex(i);
+            onLoadMore?.(i);
           },
         }}
       />
