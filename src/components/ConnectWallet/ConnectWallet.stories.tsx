@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import ConnectWallet from './ConnectWallet';
+import { ConnectWallet } from './ConnectWallet';
 
 export default {
   title: 'ConnectWallet',

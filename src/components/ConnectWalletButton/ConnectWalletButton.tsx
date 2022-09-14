@@ -30,7 +30,7 @@ export const ConnectWalletButton: React.VFC = () => {
 
   const { t } = useTranslation();
 
-  const handleInjectedConnector = React.useCallback(
+  const onNetworkConnect = React.useCallback(
     async (connector: typeof injectedConntector | typeof talismanConnector) => {
       if (account) {
         deactivate();
@@ -47,8 +47,8 @@ export const ConnectWalletButton: React.VFC = () => {
   );
 
   const menuItems = [
-    { label: t('connectWallet.withMetamask'), onClick: () => handleInjectedConnector(injectedConntector) },
-    { label: t('connectWallet.withTalisman'), onClick: () => handleInjectedConnector(talismanConnector) },
+    { label: t('connectWallet.withMetamask'), onClick: () => onNetworkConnect(injectedConntector) },
+    { label: t('connectWallet.withTalisman'), onClick: () => onNetworkConnect(talismanConnector) },
   ];
 
   return (
