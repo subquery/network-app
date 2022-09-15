@@ -6,12 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@subql/react-ui';
 import { Dropdown, Menu, Button as AntdButton } from 'antd';
 import { useWeb3 } from '../../containers';
-import {
-  ALL_SUPPORTED_CONNECTORS,
-  injectedConntector,
-  SUPPORTED_CONNECTORS_TYPE,
-  talismanConnector,
-} from '../../containers/Web3';
+import { ALL_SUPPORTED_CONNECTORS, SUPPORTED_CONNECTORS_TYPE } from '../../containers/Web3';
 import { AppTypography } from '../Typography';
 import styles from './ConnectWalletButton.module.css';
 
@@ -52,7 +47,7 @@ export const ConnectWalletButton: React.VFC = () => {
   );
 
   const menuItems = ALL_SUPPORTED_CONNECTORS.map((connector) => ({
-    label: connector.description ?? '',
+    label: connector.title ?? '',
     onClick: () => onNetworkConnect(connector.connector),
   }));
 
