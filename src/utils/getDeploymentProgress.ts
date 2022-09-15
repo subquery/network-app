@@ -45,7 +45,7 @@ export async function getDeploymentMetadata({
 
   const rawResponse = await fetch(endpoint);
   if (!rawResponse.ok) {
-    throw new Error(`Failed to fetch deployment Metadata from endpoint.`);
+    throw new Error(`Failed to fetch metadata from deployment's Query Service.`);
   }
 
   const response = await rawResponse.json();
