@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Route } from 'react-router';
 import { ConnectWallet } from './components';
 import { useWeb3 } from './containers';
+import { parseError, walletConnectionErrors } from './utils';
 import styles from './WalletRoute.module.css';
 
 export const WalletRoute: React.FC<React.ComponentProps<typeof Route> & { title?: string; subtitle?: string }> = ({
@@ -21,7 +22,7 @@ export const WalletRoute: React.FC<React.ComponentProps<typeof Route> & { title?
 
   React.useEffect(() => {
     if (error) {
-      setErrorAlert(error.message || 'Failed to connect wallet.');
+      setErrorAlert(parseError(error, walletConnectionErrors) || 'Failed to connect wallet.');
     }
   }, [error]);
 
