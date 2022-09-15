@@ -9,7 +9,7 @@ import styles from './AccountActions.module.css';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';
 import { SQT_TOKEN_ADDRESS, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
-import { getConnectorConfig } from '../../containers/Web3';
+import { getConnectorConfig } from '../../utils/getNetworkConnector';
 
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { deactivate, connector } = useWeb3();

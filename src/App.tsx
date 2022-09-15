@@ -7,6 +7,9 @@ import './i18n';
 
 import { Redirect, Route } from 'react-router';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { UnsupportedChainIdError } from '@web3-react/core';
+import clsx from 'clsx';
+import { Button, Typography } from '@subql/react-ui';
 import * as pages from './pages';
 import { Header, Footer } from './components';
 import {
@@ -22,13 +25,14 @@ import {
   SQTokenProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
-import { getConnectorConfig, NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
-import { UnsupportedChainIdError } from '@web3-react/core';
+import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
+
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
-import { Button, Typography } from '@subql/react-ui';
+
 import { WalletRoute } from './WalletRoute';
-import clsx from 'clsx';
+
+import { getConnectorConfig } from './utils/getNetworkConnector';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
