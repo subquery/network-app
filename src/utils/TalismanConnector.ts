@@ -17,7 +17,7 @@ interface TalismanEthereum {
   removeListener?: (method: string, listener: (...args: any[]) => void) => void;
 }
 
-type TalismanWindow = Window &
+export type TalismanWindow = Window &
   typeof globalThis & {
     talismanEth: TalismanEthereum;
   };

@@ -1,0 +1,9 @@
+.downIcon {
+  margin-left: 3px;
+}
+
+.address {
+  padding: 12px;
+  border: 1px solid var(--gradient-to);
+  border-radius: 36px;
+}

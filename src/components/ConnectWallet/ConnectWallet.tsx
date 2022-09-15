@@ -6,12 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/react-ui';
 import styles from './ConnectWallet.module.css';
 import { useWeb3 } from '../../containers';
-import { injectedConntector, talismanConnector } from '../../containers/Web3';
+import { injectedConntector, SUPPORTED_CONNECTORS_TYPE, talismanConnector } from '../../containers/Web3';
 
 type Props = {
   title?: string;
   subTitle?: string;
-  onConnect?: () => void;
 };
 
 const Wallet: React.VFC<{ description?: string; icon: string; onClick?: () => void }> = ({
@@ -42,12 +41,12 @@ const Wallet: React.VFC<{ description?: string; icon: string; onClick?: () => vo
   );
 };
 
-export const ConnectWallet: React.VFC<Props> = ({ title, onConnect }) => {
+export const ConnectWallet: React.VFC<Props> = ({ title, subTitle }) => {
   const { account, activate, deactivate } = useWeb3();
   const { t } = useTranslation();
 
   const onNetworkConnect = React.useCallback(
-    async (connector: typeof injectedConntector | typeof talismanConnector) => {
+    async (connector: SUPPORTED_CONNECTORS_TYPE) => {
       if (account) {
         deactivate();
         return;
@@ -68,7 +67,7 @@ export const ConnectWallet: React.VFC<Props> = ({ title, onConnect }) => {
         {title || t('connectWallet.title')}
       </Typography>
       <Typography variant="body" className={styles.subtitle}>
-        {t('connectWallet.subtitle')}
+        {subTitle || t('connectWallet.subtitle')}
       </Typography>
       <Wallet icon="/static/metamask.png" onClick={() => onNetworkConnect(injectedConntector)} />
       <Wallet

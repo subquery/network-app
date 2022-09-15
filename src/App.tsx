@@ -22,7 +22,7 @@ import {
   SQTokenProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
-import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
+import { getConnectorConfig, NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
 import { UnsupportedChainIdError } from '@web3-react/core';
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
@@ -64,13 +64,17 @@ const Providers: React.FC = ({ children }) => {
 };
 
 const BlockchainStatus: React.FC = ({ children }) => {
-  const { error } = useWeb3();
+  const { error, connector } = useWeb3();
   const { t } = useTranslation();
+  const connectorWindowObj = getConnectorConfig(connector).windowObj;
 
-  const isMetaMask = React.useMemo(() => !!window.ethereum?.isMetaMask, []);
+  const isExtensionInstalled = React.useMemo(
+    () => !!connectorWindowObj?.isMetaMask || !!connectorWindowObj?.isTalisman,
+    [],
+  );
 
   const handleSwitchNetwork = () => {
-    window.ethereum?.send('wallet_addEthereumChain', [NETWORK_CONFIGS[SUPPORTED_NETWORK]]);
+    connectorWindowObj?.send('wallet_addEthereumChain', [NETWORK_CONFIGS[SUPPORTED_NETWORK]]);
   };
 
   if (error instanceof UnsupportedChainIdError) {
@@ -78,7 +82,9 @@ const BlockchainStatus: React.FC = ({ children }) => {
       <div className={['content-width', studioStyles.networkContainer].join(' ')}>
         <p className={studioStyles.networkTitle}>{t('unsupportedNetwork.title')}</p>
         <p className={studioStyles.networkSubtitle}>{t('unsupportedNetwork.subtitle')}</p>
-        {isMetaMask && <Button label={t('unsupportedNetwork.button')} type="primary" onClick={handleSwitchNetwork} />}
+        {isExtensionInstalled && (
+          <Button label={t('unsupportedNetwork.button')} type="primary" onClick={handleSwitchNetwork} />
+        )}
       </div>
     );
   }

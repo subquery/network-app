@@ -5,9 +5,10 @@ import React from 'react';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { AbstractConnector } from '@web3-react/abstract-connector';
 import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
-import { TalismanConnector } from '../utils/TalismanConnector';
+import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
 const MOONBEAM_NETWORK = 'moonbase-alpha';
 const ACALA_NETWORK = 'acala-testnet';
@@ -40,6 +41,35 @@ export const injectedConntector = new InjectedConnector({
 export const talismanConnector = new TalismanConnector({
   supportedChainIds: [defaultChainId],
 });
+
+export type SUPPORTED_CONNECTORS_TYPE = InjectedConnector | TalismanConnector;
+export const SUPPORTED_CONNECTORS: any = {
+  INJECTED: {
+    connector: injectedConntector,
+    windowObj: window.ethereum,
+    title: 'Connect with Metamask',
+    img: '',
+  },
+
+  TALISMAN: {
+    connector: injectedConntector,
+    windowObj: (window as TalismanWindow).talismanEth,
+    title: 'Connect with Talisman',
+    img: '',
+  },
+};
+
+export const getConnectorConfig = (connector: AbstractConnector | undefined) => {
+  const sortedConnecter = Object.keys(SUPPORTED_CONNECTORS).find(
+    (supprotedConnector) => SUPPORTED_CONNECTORS[supprotedConnector].connector === connector,
+  );
+
+  if (sortedConnecter) {
+    return sortedConnecter;
+  }
+
+  return SUPPORTED_CONNECTORS.INJECTED;
+};
 
 const networkConnector = new NetworkConnector({
   urls: RPC_URLS,

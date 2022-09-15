@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@subql/react-ui';
 import { Dropdown, Menu, Button as AntdButton } from 'antd';
 import { useWeb3 } from '../../containers';
-import { injectedConntector, talismanConnector } from '../../containers/Web3';
+import { injectedConntector, SUPPORTED_CONNECTORS_TYPE, talismanConnector } from '../../containers/Web3';
 import { AppTypography } from '../Typography';
 import styles from './ConnectWalletButton.module.css';
 
@@ -31,7 +31,7 @@ export const ConnectWalletButton: React.VFC = () => {
   const { t } = useTranslation();
 
   const onNetworkConnect = React.useCallback(
-    async (connector: typeof injectedConntector | typeof talismanConnector) => {
+    async (connector: SUPPORTED_CONNECTORS_TYPE) => {
       if (account) {
         deactivate();
         return;
