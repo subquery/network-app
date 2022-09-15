@@ -10,8 +10,31 @@ import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIn
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
-interface UseSortedIndexerDeploymentsReturn {
-  indexingProgress?: number | '' | undefined;
+const fetchDeploymentProgress = async (
+  indexer: string,
+  proxyEndpoint: string | undefined,
+  deploymentId: string | undefined,
+) => {
+  const indexingProgressErr = 'Failed to fetch deployment progress. Please check the proxyEndpoint.';
+  if (proxyEndpoint && deploymentId) {
+    try {
+      const indexingProgress = await getDeploymentProgress({
+        proxyEndpoint,
+        deploymentId,
+        indexer,
+      });
+      return { indexingProgress };
+    } catch (error) {
+      return { indexingProgressErr };
+    }
+  }
+
+  return { indexingProgressErr };
+};
+
+export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentIndexer> {
+  indexingProgress?: number | undefined;
+  indexingProgressErr?: string;
   deploymentId?: string;
   projectId?: string;
   projectName?: string;
@@ -19,9 +42,7 @@ interface UseSortedIndexerDeploymentsReturn {
   isOffline?: boolean | undefined;
 }
 
-export function useSortedIndexerDeployments(
-  indexer: string,
-): AsyncData<Array<UseSortedIndexerDeploymentsReturn & Partial<DeploymentIndexer>>> {
+export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
   const pendingContracts = useContracts();
   const indexerDeployments = useIndexerDeploymentsQuery({ indexerAddress: indexer });
@@ -45,18 +66,16 @@ export function useSortedIndexerDeployments(
         const isOffline = deploymentId
           ? await contracts?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer)
           : false;
-        const indexingProgress =
-          proxyEndpoint &&
-          deploymentId &&
-          (await getDeploymentProgress({
-            proxyEndpoint,
-            deploymentId,
-            indexer,
-          }));
+        const { indexingProgress, indexingProgressErr } = await fetchDeploymentProgress(
+          indexer,
+          proxyEndpoint,
+          deploymentId,
+        );
 
         return {
           ...indexerDeployment,
           indexingProgress,
+          indexingProgressErr,
           isOffline,
           deploymentId,
           projectId: indexerDeployment?.deployment?.project?.id,
