@@ -84,9 +84,7 @@ const getColumns = (
     title: '#',
     key: 'idx',
     width: 20,
-    render: (_: string, __: any, index: number) => (
-      <Typography variant="medium">{pageStartIndex + index + 1}</Typography>
-    ),
+    render: (_: string, __: any, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
     onCell: (record: SortedIndexerListProps) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
