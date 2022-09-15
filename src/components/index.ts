@@ -19,11 +19,11 @@ import Banner from './Banner';
 import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
-import ConnectWallet from './ConnectWallet';
 import Copy from './Copy';
 import Status from './Status';
 export { default as IndexerList } from './IndexerList';
 export { default as DelegatorsList } from './DelegatorsList';
+export * from './ConnectWallet';
 export * from './DeploymentInfo';
 export * from './Sidebar';
 export * from './Card';
@@ -67,7 +67,6 @@ export {
   NoIndexers,
   CreateInstructions,
   NewProject,
-  ConnectWallet,
   Copy,
   Status,
 };

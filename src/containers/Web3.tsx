@@ -5,8 +5,9 @@ import React from 'react';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { NetworkConnector } from '@web3-react/network-connector';
 import { providers } from 'ethers';
+import { NetworkConnector } from '@web3-react/network-connector';
+import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
 const MOONBEAM_NETWORK = 'moonbase-alpha';
 const ACALA_NETWORK = 'acala-testnet';
@@ -34,6 +35,38 @@ const RPC_URLS: Record<number, string> = Object.keys(NETWORKS).reduce((result, c
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [defaultChainId],
 });
+
+// Talisman wallet connector
+export const talismanConnector = new TalismanConnector({
+  supportedChainIds: [defaultChainId],
+});
+
+export type SUPPORTED_CONNECTORS_TYPE = InjectedConnector | TalismanConnector;
+export interface SupportedConnectorsReturn {
+  connector: SUPPORTED_CONNECTORS_TYPE;
+  windowObj: any;
+  description?: string;
+  icon?: string;
+}
+export const SUPPORTED_CONNECTORS: { [key: string]: SupportedConnectorsReturn } = {
+  INJECTED: {
+    connector: injectedConntector,
+    windowObj: window.ethereum,
+    description: 'Connect with Metamask',
+    icon: '/static/metamask.png',
+  },
+
+  TALISMAN: {
+    connector: injectedConntector,
+    windowObj: (window as TalismanWindow).talismanEth,
+    description: 'Connect with Talisman',
+    icon: '/static/talisman.svg',
+  },
+};
+
+export const ALL_SUPPORTED_CONNECTORS = Object.keys(SUPPORTED_CONNECTORS).map(
+  (supportConnector) => SUPPORTED_CONNECTORS[supportConnector],
+);
 
 const networkConnector = new NetworkConnector({
   urls: RPC_URLS,
