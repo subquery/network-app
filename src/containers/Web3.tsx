@@ -57,7 +57,7 @@ export const SUPPORTED_CONNECTORS: { [key: string]: SupportedConnectorsReturn } 
   },
 
   TALISMAN: {
-    connector: injectedConntector,
+    connector: talismanConnector,
     windowObj: (window as TalismanWindow).talismanEth,
     description: 'Connect with Talisman',
     icon: '/static/talisman.svg',
