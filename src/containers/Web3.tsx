@@ -45,6 +45,7 @@ export type SUPPORTED_CONNECTORS_TYPE = InjectedConnector | TalismanConnector;
 export interface SupportedConnectorsReturn {
   connector: SUPPORTED_CONNECTORS_TYPE;
   windowObj: any;
+  title?: string;
   description?: string;
   icon?: string;
 }
@@ -52,15 +53,17 @@ export const SUPPORTED_CONNECTORS: { [key: string]: SupportedConnectorsReturn } 
   INJECTED: {
     connector: injectedConntector,
     windowObj: window.ethereum,
-    description: 'Connect with Metamask',
+    title: 'Connect with Metamask',
+    description: 'Connect with Metamask browser extension',
     icon: '/static/metamask.png',
   },
 
   TALISMAN: {
-    connector: injectedConntector,
+    connector: talismanConnector,
     windowObj: (window as TalismanWindow).talismanEth,
-    description: 'Connect with Talisman',
-    icon: '/static/talisman.svg',
+    title: 'Connect with Talisman',
+    description: 'Connect with Talisman browser extension',
+    icon: '/static/talisman.png',
   },
 };
 
