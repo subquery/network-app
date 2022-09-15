@@ -1,14 +1,14 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProgressBar, Spinner, Typography } from '@subql/react-ui';
-import { Table } from 'antd';
+import { ProgressBar, Spinner } from '@subql/react-ui';
+import { Table, TableProps, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { DeploymentInfo, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
-import { useSortedIndexerDeployments } from '../../../../hooks';
+import { useSortedIndexerDeployments, UseSortedIndexerDeploymentsReturn } from '../../../../hooks';
 import { mapAsync, renderAsync } from '../../../../utils';
 import styles from './OwnDeployments.module.css';
 
@@ -21,25 +21,29 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const history = useHistory();
   const indexerDeployments = useSortedIndexerDeployments(indexer);
 
-  const columns = [
+  const columns: TableProps<UseSortedIndexerDeploymentsReturn>['columns'] = [
     {
       title: '',
       dataIndex: 'deploymentId',
       width: '65%',
-      render: (deploymentId: string, record: any) => (
-        <DeploymentInfo deploymentId={deploymentId} project={record.projectMeta} deploymentVersion={record.version} />
+      render: (deploymentId: string, deployment) => (
+        <DeploymentInfo deploymentId={deploymentId} project={deployment.projectMeta} />
       ),
     },
     {
       title: 'PROGRESS',
       dataIndex: 'indexingProgress',
       width: '25%',
-      render: (indexingProgress: number) => <ProgressBar progress={indexingProgress} />,
+      render: (indexingProgress: number, deployment) => {
+        const { indexingProgressErr } = deployment;
+        if (indexingProgressErr) return <Typography.Text type="danger">{indexingProgressErr}</Typography.Text>;
+        return <ProgressBar progress={indexingProgress} />;
+      },
     },
     {
       title: 'STATUS',
       dataIndex: 'status',
-      render: (status: string, deployment: any) => {
+      render: (status: string, deployment) => {
         let sortedStatus = status;
         if (deployment?.isOffline) {
           sortedStatus = 'OFFLINE' as string;
@@ -57,10 +61,12 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
           return d.sort((deployment) => (deployment.isOffline ? 1 : -1));
         }, indexerDeployments),
         {
-          error: (error) => <Typography>{`Failed to get projects: ${error.message}`}</Typography>,
+          error: (error) => (
+            <Typography.Text type="danger">{`Failed to get projects: ${error.message}`}</Typography.Text>
+          ),
           loading: () => <Spinner />,
           data: (data) => {
-            if (!data || data.length === 0) return <Typography> {t('projects.nonDeployments')} </Typography>;
+            if (!data || data.length === 0) return <Typography.Text> {t('projects.nonDeployments')} </Typography.Text>;
 
             return (
               <Table
