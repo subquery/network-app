@@ -231,7 +231,6 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',
-      width: 100,
       render: (_: string, offer: Offer) => {
         return <AcceptButton offer={offer} />;
       },
