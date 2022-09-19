@@ -117,6 +117,7 @@ export const CheckList: React.VFC<ICheckList> = ({
   isLoading,
 }) => {
   const { t } = useTranslation();
+  const [checkListErr, setCheckListErr] = React.useState<string | undefined>(parseError(error));
   const { account: indexer } = useWeb3();
   const contractClient = useContractClient();
 
@@ -126,8 +127,14 @@ export const CheckList: React.VFC<ICheckList> = ({
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
 
   const deploymentMeta = useAsyncMemo(async () => {
-    if (!deploymentId || !proxyEndpoint || !indexer) return null;
-    return await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
+    if (!deploymentId || !proxyEndpoint || !indexer) return { lastProcessedHeight: 0 };
+    try {
+      const metaData = await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
+      return metaData;
+    } catch (error: any) {
+      setCheckListErr(parseError(error));
+      return { lastProcessedHeight: 0 };
+    }
   }, [deploymentId, indexer, proxyEndpoint]);
 
   const dailyRewardCapacity = useAsyncMemo(async () => {
@@ -187,7 +194,7 @@ export const CheckList: React.VFC<ICheckList> = ({
             <RequirementCheck key={requirementCheck.title} {...requirementCheck} />
           ))}
           <Typography.Paragraph>{t('offerMarket.acceptModal.afterAcceptOffer')}</Typography.Paragraph>
-          {error && <Typography.Text type="danger">{error}</Typography.Text>}
+          {checkListErr && <Typography.Text type="danger">{`Error: ${checkListErr}`}</Typography.Text>}
           <div className={clsx(styles.btnContainer, 'flex-end')}>
             <Button
               onClick={onSubmit}
