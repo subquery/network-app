@@ -104,7 +104,7 @@ const getColumns = (
         dataIndex: ['totalStake', 'current'],
         key: 'currentTotalStake',
         width: 40,
-        render: (value: string) => <TokenAmount value={value} />,
+        render: (value) => <TokenAmount value={value} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),
@@ -115,7 +115,7 @@ const getColumns = (
         dataIndex: ['totalStake', 'after'],
         key: 'currentTotalStake',
         width: 40,
-        render: (value: string) => <TokenAmount value={value} />,
+        render: (value) => <TokenAmount value={value} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),
