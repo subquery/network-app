@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ContractClient, NetworkClient } from '@subql/network-clients';
+import { NetworkClient } from '@subql/network-clients';
+import { ContractClient } from '@subql/network-clients/dist/clients/contractClient';
+import { SQNetworks } from '@subql/network-clients/dist/config';
 import { ContractSDK } from '@subql/contract-sdk';
-import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import * as React from 'react';
 import { useWeb3 } from '../containers';
 import { networkDeploymentDetails } from '../utils';
@@ -35,27 +36,15 @@ export function useContractClient(): ContractClient | undefined {
 
 export function useNetworkClient(): NetworkClient | undefined {
   const [networkClient, setNetworkClient] = React.useState<NetworkClient | undefined>();
-  const web3 = useWeb3();
-
-  const signerOrProvider = React.useMemo(() => {
-    return web3.account ? web3.library?.getSigner(web3.account) : web3.library;
-  }, [web3]);
-
-  const ipfs: IPFSHTTPClient = create({ url: process.env.REACT_APP_IPFS_GATEWAY });
 
   React.useEffect(() => {
     async function getNetworkClient() {
-      if (signerOrProvider && ipfs) {
-        const pendingContract = await ContractSDK.create(signerOrProvider, {
-          deploymentDetails: networkDeploymentDetails,
-        });
-        const sortedNetworkClient = NetworkClient.create(pendingContract, ipfs);
-        setNetworkClient(sortedNetworkClient);
-      }
+      const sortedNetworkClient = await NetworkClient.create(SQNetworks.KEPLER);
+      setNetworkClient(sortedNetworkClient);
     }
 
     getNetworkClient();
-  }, [ipfs, signerOrProvider]);
+  }, []);
 
   return networkClient;
 }
