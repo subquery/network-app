@@ -11,13 +11,14 @@ import {
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
 } from '../../../../components';
-import { useIsIndexer, useLockPeriod } from '../../../../hooks';
+import { useAsyncMemo, useIsIndexer, useLockPeriod, useNetworkClient } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
 import { convertStringToNumber, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
+import { BigNumber } from 'ethers';
 
 enum StakeAction {
   Stake = 'stake',
@@ -58,16 +59,20 @@ const getContentText = (
   };
 };
 
-interface IDoStake {
-  stakeAmountNextEra?: number | undefined;
-}
-
-export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
+export const DoStake: React.FC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
+  const [maxUnstakeAmount, setMaxUnstakeAmount] = React.useState<BigNumber>(BigNumber.from(0));
   const pendingContracts = useContracts();
+  const networkClient = useNetworkClient();
+
   const { t } = useTranslation();
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
+
+  useAsyncMemo(async () => {
+    const maxUnstakeAmount = await networkClient?.maxUnstakeAmount(account ?? '');
+    setMaxUnstakeAmount(maxUnstakeAmount ?? BigNumber.from(0));
+  }, [account, networkClient]);
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const isIndexer = useIsIndexer(account);
@@ -75,8 +80,9 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
 
-  const curAmount =
-    stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : stakeAmountNextEra;
+  const curAmount = convertStringToNumber(
+    formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount),
+  );
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     const contracts = await pendingContracts;
