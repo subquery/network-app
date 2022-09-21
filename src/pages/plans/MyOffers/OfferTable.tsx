@@ -30,7 +30,6 @@ import {
   notEmpty,
   parseError,
   renderAsyncArray,
-  TOKEN,
 } from '../../../utils';
 import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { EmptyList } from '../Plans/EmptyList';
@@ -42,6 +41,7 @@ import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
+import { TokenAmount } from '../../../components/TokenAmount';
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
@@ -148,13 +148,13 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
         />
       ),
       width: 200,
-      render: (deposit) => <TableText content={`${formatEther(deposit)} ${TOKEN}`} />,
+      render: (deposit) => <TokenAmount value={formatEther(deposit)} />,
     },
     {
       dataIndex: 'deposit',
       title: <TableTitle title={i18next.t('myOffers.table.depositAmount')} />,
       render: (deposit, offer) => (
-        <TableText content={`${convertStringToNumber(formatEther(deposit)) * offer.limit} ${TOKEN}`} />
+        <TokenAmount value={`${convertStringToNumber(formatEther(deposit)) * offer.limit}`} />
       ),
     },
     {
