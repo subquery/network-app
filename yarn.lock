@@ -119,7 +119,7 @@
     tslib "^2.3.0"
     zen-observable-ts "~1.1.0"
 
-"@apollo/client@latest":
+"@apollo/client@^3.6.9", "@apollo/client@latest":
   version "3.6.9"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.6.9.tgz#ad0ee2e3a3c92dbed4acd6917b6158a492739d94"
   integrity sha512-Y1yu8qa2YeaCUBVuw08x8NHenFi0sw2I3KCu7Kw9mDSu86HmmtHJkCAifKVrN2iPgDTW/BbP3EpSV8/EQCcxZA==
@@ -4784,22 +4784,27 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/contract-sdk@0.10.2-22":
-  version "0.10.2-22"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.10.2-22.tgz#786af9acd1910ecd65c919055ba9c89d7684189e"
-  integrity sha512-aL00pHc+QSmoS9l2bL52dSomL/7E7UMsD+LIpvRWSJ3Fh3UGwkAVlU/HFtbtgcHQgPArH6WdMKRsCqD7bC/gBQ==
+"@subql/contract-sdk@0.10.2-28":
+  version "0.10.2-28"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.10.2-28.tgz#1aa2d5b7867aee68782b5e0b4fa728d643b0fc5e"
+  integrity sha512-fgkNeEbUVLAzikqpuTrQ4RuKQLANQvDDyLcY0MIS3Hk9dsXcf5OrCX9H/b1sne8NZnZhEVIuYmYyNCj6I3GFQA==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
     "@polkadot/ui-keyring" "^2.9.4"
+    solidity-docgen "^0.6.0-beta.25"
 
-"@subql/network-clients@0.1.1-13":
-  version "0.1.1-13"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.1.1-13.tgz#b04255a27b624fbd7e6b1d48be2ec38c2a6382ba"
-  integrity sha512-8gMAE2YPxRhBpTx9Nv4aoMl8y2nu7JMpaqBGDH6yje7O8d5qQSDqbcZ9qLlHLAa215HKnmsZ1LMIRSvjtt+upw==
+"@subql/network-clients@0.2.1-3":
+  version "0.2.1-3"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-3.tgz#3d0abf1aa40124df77519af4ebc2f429251b5b0e"
+  integrity sha512-aRTYEs7MW3AKnjPzs+YMlpVfzMOeU0Cko1tQiVfavjZ1bNw/W4DtId9xFzhNAJ7j0QGGFyKH4kPlOW2NEoAT6g==
   dependencies:
+    "@apollo/client" "^3.6.9"
     axios "^0.27.2"
     buffer "^6.0.3"
+    cross-fetch "^3.1.5"
     ethers "^5.6.8"
+    graphql "^16.5.0"
+    yup "^0.32.11"
 
 "@subql/react-ui@^1.0.1-22":
   version "1.0.1-22"
@@ -8295,6 +8300,13 @@ create-require@^1.1.0:
   resolved "https://registry.npmjs.org/create-require/-/create-require-1.1.1.tgz"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
+cross-fetch@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
+  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
+  dependencies:
+    node-fetch "2.6.7"
+
 cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz"
@@ -10949,6 +10961,11 @@ graphql-ws@^5.8.2:
   version "15.7.2"
   resolved "https://registry.npmjs.org/graphql/-/graphql-15.7.2.tgz"
   integrity sha512-AnnKk7hFQFmU/2I9YSQf3xw44ctnSFCfp3zE0N6W174gqe9fWG/2rKaKxROK7CcI3XtERpjEKFqts8o319Kf7A==
+
+graphql@^16.5.0:
+  version "16.6.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.6.0.tgz#c2dcffa4649db149f6282af726c8c83f1c7c5fdb"
+  integrity sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==
 
 growly@^1.3.0:
   version "1.3.0"
@@ -14258,17 +14275,17 @@ node-dir@^0.1.10:
   dependencies:
     minimatch "^3.0.2"
 
+node-fetch@2.6.7, node-fetch@^2.6.6, node-fetch@^2.6.7:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+  dependencies:
+    whatwg-url "^5.0.0"
+
 node-fetch@^2.6.1:
   version "2.6.5"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.5.tgz"
   integrity sha512-mmlIVHJEu5rnIxgEgez6b9GgWXbkZj5YZ7fx+2r94a2E+Uirsp6HsPTPlomfdHtpt/B0cdKviwkoaM6pyvUOpQ==
-  dependencies:
-    whatwg-url "^5.0.0"
-
-node-fetch@^2.6.6, node-fetch@^2.6.7:
-  version "2.6.7"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
-  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -18100,6 +18117,19 @@ sockjs@^0.3.21:
     uuid "^3.4.0"
     websocket-driver "^0.7.4"
 
+solidity-ast@^0.4.31:
+  version "0.4.35"
+  resolved "https://registry.yarnpkg.com/solidity-ast/-/solidity-ast-0.4.35.tgz#82e064b14dc989338123264bde2235cad751f128"
+  integrity sha512-F5bTDLh3rmDxRmLSrs3qt3nvxJprWSEkS7h2KmuXDx7XTfJ6ZKVTV1rtPIYCqJAuPsU/qa8YUeFn7jdOAZcTPA==
+
+solidity-docgen@^0.6.0-beta.25:
+  version "0.6.0-beta.27"
+  resolved "https://registry.yarnpkg.com/solidity-docgen/-/solidity-docgen-0.6.0-beta.27.tgz#ade25c49a396f3f947083f27f57b80c58f5165d1"
+  integrity sha512-keo7DOwybD7jHv1R7Ka5qlNkwZs0jX7sHtoo890u4NHwPyXovtJCPHkaO/oRRehAgIfdfagFS8uYfDUGnCOpmQ==
+  dependencies:
+    handlebars "^4.7.7"
+    solidity-ast "^0.4.31"
+
 sort-keys@^1.0.0:
   version "1.1.2"
   resolved "https://registry.npmjs.org/sort-keys/-/sort-keys-1.1.2.tgz"
@@ -20525,6 +20555,19 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+yup@^0.32.11:
+  version "0.32.11"
+  resolved "https://registry.yarnpkg.com/yup/-/yup-0.32.11.tgz#d67fb83eefa4698607982e63f7ca4c5ed3cf18c5"
+  integrity sha512-Z2Fe1bn+eLstG8DRR6FTavGD+MeAwyfmouhHsIUgaADz8jvFKbO/fXc2trJKZg+5EBjh4gGm3iU/t3onKlXHIg==
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    "@types/lodash" "^4.14.175"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    nanoclone "^0.2.1"
+    property-expr "^2.0.4"
+    toposort "^2.0.2"
 
 yup@^0.32.9:
   version "0.32.10"

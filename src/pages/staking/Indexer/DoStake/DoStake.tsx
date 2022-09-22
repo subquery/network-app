@@ -14,10 +14,11 @@ import {
 import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertStringToNumber, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
+import { mergeAsync, renderAsyncArray, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
+import { useMaxUnstakeAmount } from '../../../../hooks/useMaxUnstakeAmount';
 
 enum StakeAction {
   Stake = 'stake',
@@ -30,6 +31,7 @@ const getContentText = (
   actionType: StakeAction,
   t: any,
   lockPeriod: number | undefined,
+  maxAmount: string,
 ) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
 
@@ -43,6 +45,7 @@ const getContentText = (
           inputTitle: t('indexer.stakeInputTitle'),
           submitText: t('indexer.confirmStake'),
           failureText: `Sorry, the ${actionType} operation has failed.`,
+          inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
         };
   }
 
@@ -55,28 +58,24 @@ const getContentText = (
     inputTitle: t('indexer.unstakeInputTitle'),
     submitText: t('indexer.confirmUnstake'),
     failureText: `Sorry, the ${actionType} operation has failed.`,
+    inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
   };
 };
 
-interface IDoStake {
-  stakeAmountNextEra?: number | undefined;
-}
-
-export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
+export const DoStake: React.FC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
   const pendingContracts = useContracts();
+
   const { t } = useTranslation();
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
+  const maxUnstakeAmount = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const isIndexer = useIsIndexer(account);
 
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
-
-  const curAmount =
-    stakeAction === StakeAction.Stake ? convertStringToNumber(formatEther(balance.data ?? 0)) : stakeAmountNextEra;
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     const contracts = await pendingContracts;
@@ -92,13 +91,15 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus), {
+  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus, maxUnstakeAmount), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
-      const [canUnstake, indexerRewards] = data;
+      const [canUnstake, indexerRewards, maxUnstakeAmount] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
+      const curAmount = formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount ?? 0);
+      const curAmountTruncated = truncFormatEtherStr(curAmount);
 
       const modalText = getContentText(
         requireClaimIndexerRewards,
@@ -106,6 +107,7 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
         stakeAction,
         t,
         lockPeriod.data,
+        curAmountTruncated,
       );
 
       return (
@@ -127,10 +129,6 @@ export const DoStake: React.FC<IDoStake> = ({ stakeAmountNextEra }) => {
           ]}
           inputParams={{
             showMaxButton: true,
-            inputBottomText:
-              stakeAction === StakeAction.UnStake
-                ? t('indexer.unstakeBalanceNextEra', { amount: curAmount, token: TOKEN })
-                : undefined,
             curAmount,
           }}
           onClick={handleClick}
