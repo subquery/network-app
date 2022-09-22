@@ -67,8 +67,7 @@ export const DoStake: React.FC = () => {
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  const maxUnstakeAmount = useMaxUnstakeAmount(account ?? '');
-
+  const maxUnstakeAmount = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const isIndexer = useIsIndexer(account);
 
