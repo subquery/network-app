@@ -31,6 +31,7 @@ const getContentText = (
   actionType: StakeAction,
   t: any,
   lockPeriod: number | undefined,
+  maxAmount: string,
 ) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
 
@@ -44,6 +45,7 @@ const getContentText = (
           inputTitle: t('indexer.stakeInputTitle'),
           submitText: t('indexer.confirmStake'),
           failureText: `Sorry, the ${actionType} operation has failed.`,
+          inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
         };
   }
 
@@ -56,6 +58,7 @@ const getContentText = (
     inputTitle: t('indexer.unstakeInputTitle'),
     submitText: t('indexer.confirmUnstake'),
     failureText: `Sorry, the ${actionType} operation has failed.`,
+    inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
   };
 };
 
@@ -104,6 +107,7 @@ export const DoStake: React.FC = () => {
         stakeAction,
         t,
         lockPeriod.data,
+        curAmountTruncated,
       );
 
       return (
@@ -125,10 +129,6 @@ export const DoStake: React.FC = () => {
           ]}
           inputParams={{
             showMaxButton: true,
-            inputBottomText:
-              stakeAction === StakeAction.UnStake
-                ? t('indexer.unstakeBalanceNextEra', { amount: curAmountTruncated, token: TOKEN })
-                : undefined,
             curAmount,
           }}
           onClick={handleClick}
