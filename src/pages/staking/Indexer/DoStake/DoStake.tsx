@@ -11,14 +11,14 @@ import {
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
 } from '../../../../components';
-import { useAsyncMemo, useIsIndexer, useLockPeriod, useNetworkClient } from '../../../../hooks';
+import { useIsIndexer, useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { convertStringToNumber, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
+import { mergeAsync, renderAsyncArray, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
-import { BigNumber } from 'ethers';
+import { useMaxUnstakeAmount } from '../../../../hooks/useMaxUnstakeAmount';
 
 enum StakeAction {
   Stake = 'stake',
@@ -61,28 +61,19 @@ const getContentText = (
 
 export const DoStake: React.FC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
-  const [maxUnstakeAmount, setMaxUnstakeAmount] = React.useState<BigNumber>(BigNumber.from(0));
   const pendingContracts = useContracts();
-  const networkClient = useNetworkClient();
 
   const { t } = useTranslation();
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  useAsyncMemo(async () => {
-    const maxUnstakeAmount = await networkClient?.maxUnstakeAmount(account ?? '');
-    setMaxUnstakeAmount(maxUnstakeAmount ?? BigNumber.from(0));
-  }, [account, networkClient]);
+  const maxUnstakeAmount = useMaxUnstakeAmount(account ?? '');
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const isIndexer = useIsIndexer(account);
 
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
-
-  const curAmount = convertStringToNumber(
-    formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount),
-  );
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     const contracts = await pendingContracts;
@@ -98,13 +89,15 @@ export const DoStake: React.FC = () => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus), {
+  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus, maxUnstakeAmount), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
-      const [canUnstake, indexerRewards] = data;
+      const [canUnstake, indexerRewards, maxUnstakeAmount] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
+      const curAmount = formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount ?? 0);
+      const curAmountTruncated = truncFormatEtherStr(curAmount);
 
       const modalText = getContentText(
         requireClaimIndexerRewards,
@@ -135,7 +128,7 @@ export const DoStake: React.FC = () => {
             showMaxButton: true,
             inputBottomText:
               stakeAction === StakeAction.UnStake
-                ? t('indexer.unstakeBalanceNextEra', { amount: curAmount, token: TOKEN })
+                ? t('indexer.unstakeBalanceNextEra', { amount: curAmountTruncated, token: TOKEN })
                 : undefined,
             curAmount,
           }}
