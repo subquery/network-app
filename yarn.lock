@@ -2071,6 +2071,15 @@
     "@ethersproject/logger" "^5.6.0"
     bn.js "^5.2.1"
 
+"@ethersproject/bignumber@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.7.0.tgz#e2f03837f268ba655ffba03a57853e18a18dc9c2"
+  integrity sha512-n1CAdIHRWjSucQO3MC1zPSVgV/6dy/fjL9pMrPP9peL+QxEg9wOsVqwD4+818B6LUEtaXzVHQiuivzRoxPxUGw==
+  dependencies:
+    "@ethersproject/bytes" "^5.7.0"
+    "@ethersproject/logger" "^5.7.0"
+    bn.js "^5.2.1"
+
 "@ethersproject/bytes@5.4.0", "@ethersproject/bytes@^5.4.0":
   version "5.4.0"
   resolved "https://registry.npmjs.org/@ethersproject/bytes/-/bytes-5.4.0.tgz"
@@ -2084,6 +2093,13 @@
   integrity sha512-NwQt7cKn5+ZE4uDn+X5RAXLp46E1chXoaMmrxAyA0rblpxz8t58lVkrHXoRIn0lz1joQElQ8410GqhTqMOwc6g==
   dependencies:
     "@ethersproject/logger" "^5.6.0"
+
+"@ethersproject/bytes@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/bytes/-/bytes-5.7.0.tgz#a00f6ea8d7e7534d6d87f47188af1148d71f155d"
+  integrity sha512-nsbxwgFXWh9NyYWo+U8atvmMsSdKJprTcICAkvbBffT75qDocbuggBU0SJiVK2MuTrp0q+xvLkTnGMPK1+uA9A==
+  dependencies:
+    "@ethersproject/logger" "^5.7.0"
 
 "@ethersproject/constants@5.4.0", "@ethersproject/constants@^5.4.0":
   version "5.4.0"
@@ -2258,6 +2274,11 @@
   version "5.6.0"
   resolved "https://registry.npmjs.org/@ethersproject/logger/-/logger-5.6.0.tgz"
   integrity sha512-BiBWllUROH9w+P21RzoxJKzqoqpkyM1pRnEKG69bulE9TSQD8SAIvTQqIMZmmCO8pUNkgLP1wndX1gKghSpBmg==
+
+"@ethersproject/logger@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.7.0.tgz#6ce9ae168e74fecf287be17062b590852c311892"
+  integrity sha512-0odtFdXu/XHtjQXJYA3u9G0G8btm0ND5Cu8M7i5vhEcE8/HmF4Lbdqanwyv4uQTr2tx6b7fQRmgLrsnpQlmnig==
 
 "@ethersproject/networks@5.4.2", "@ethersproject/networks@^5.4.0":
   version "5.4.2"
@@ -4793,12 +4814,13 @@
     "@polkadot/ui-keyring" "^2.9.4"
     solidity-docgen "^0.6.0-beta.25"
 
-"@subql/network-clients@0.2.1-3":
-  version "0.2.1-3"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-3.tgz#3d0abf1aa40124df77519af4ebc2f429251b5b0e"
-  integrity sha512-aRTYEs7MW3AKnjPzs+YMlpVfzMOeU0Cko1tQiVfavjZ1bNw/W4DtId9xFzhNAJ7j0QGGFyKH4kPlOW2NEoAT6g==
+"@subql/network-clients@0.2.1-5":
+  version "0.2.1-5"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-5.tgz#79a9754572e6314ec68303c03d0b9e172439c7d8"
+  integrity sha512-j/Y5BNpIa0hU5NS0gH9PzVybXxNxDNQqPMJ7m03rG3uDWmxJWqb/n5NRn7oML4PZKmeJCBNHQUgrj2u6Hr+OjQ==
   dependencies:
     "@apollo/client" "^3.6.9"
+    "@ethersproject/bignumber" "^5.7.0"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
