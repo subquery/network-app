@@ -45,7 +45,7 @@ const getContentText = (
           inputTitle: t('indexer.stakeInputTitle'),
           submitText: t('indexer.confirmStake'),
           failureText: `Sorry, the ${actionType} operation has failed.`,
-          inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
+          inputBottomText: t('indexer.maxStakeBalance', { amount: maxAmount, token: TOKEN }),
         };
   }
 

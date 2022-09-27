@@ -12,6 +12,7 @@ import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
+import { TokenAmount } from '../../../../components/TokenAmount';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
@@ -39,7 +40,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
       title: t('withdrawals.amount').toUpperCase(),
       dataIndex: 'amount',
       width: 100,
-      render: (value: string) => <TableText content={`${formatEther(value)} ${TOKEN}`} />,
+      render: (value: string) => <TokenAmount value={formatEther(value)} />,
     },
     {
       title: t('withdrawals.lockedUntil').toUpperCase(),
