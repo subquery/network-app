@@ -11,7 +11,7 @@ import {
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
 } from '../../../../components';
-import { useIsIndexer, useLockPeriod } from '../../../../hooks';
+import { useLockPeriod } from '../../../../hooks';
 import { formatEther, parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
 import { mergeAsync, renderAsyncArray, TOKEN, truncFormatEtherStr } from '../../../../utils';
@@ -72,7 +72,6 @@ export const DoStake: React.FC = () => {
 
   const maxUnstakeAmount = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
-  const isIndexer = useIsIndexer(account);
 
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
@@ -91,12 +90,12 @@ export const DoStake: React.FC = () => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(isIndexer, rewardClaimStatus, maxUnstakeAmount), {
+  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstakeAmount), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
-      const [canUnstake, indexerRewards, maxUnstakeAmount] = data;
+      const [indexerRewards, maxUnstakeAmount] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
       const curAmount = formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount ?? 0);
       const curAmountTruncated = truncFormatEtherStr(curAmount);
@@ -123,8 +122,6 @@ export const DoStake: React.FC = () => {
               label: t('indexer.unstake'),
               key: StakeAction.UnStake,
               onClick: () => setStakeAction(StakeAction.UnStake),
-              disabled: !canUnstake,
-              tooltip: !canUnstake ? t('indexer.doStake') : undefined,
             },
           ]}
           inputParams={{

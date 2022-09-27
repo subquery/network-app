@@ -51,7 +51,6 @@ export const MyProfile: React.VFC = () => {
       <AppPageHeader title={t('indexer.profile')} />
 
       <div className={styles.profile}>
-        {/* TODO CONNECT WALLET HINT */}
         {renderAsync(mergeAsync(sortedIndexer, totalDelegations), {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
