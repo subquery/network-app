@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useRewards, useWeb3 } from '../../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../../utils';
+import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
@@ -15,6 +15,7 @@ import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
+import { TokenAmount } from '../../../../components/TokenAmount';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -41,7 +42,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: t('rewards.amount').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: BigInt) => <TableText content={`${formatEther(amount)} ${TOKEN}`} />,
+      render: (amount: BigInt) => <TokenAmount value={formatEther(amount)} />,
     },
     {
       title: t('rewards.action').toUpperCase(),

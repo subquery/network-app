@@ -13,6 +13,7 @@ import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, TOKEN } from 
 import { TableText } from '../../../../components';
 import clsx from 'clsx';
 import { parseEther } from 'ethers/lib/utils';
+import { TokenAmount } from '../../../../components/TokenAmount';
 
 interface Props {
   delegator: string;
@@ -66,14 +67,14 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
           dataIndex: ['value', 'current'],
           key: 'currentValue',
           width: 60,
-          render: (text: string) => <TableText content={`${text} ${TOKEN}`} />,
+          render: (text: string) => <TokenAmount value={text} />,
         },
         {
           title: t('general.next').toUpperCase(),
           dataIndex: ['value', 'after'],
           key: 'afterValue',
           width: 60,
-          render: (text: string) => <TableText content={`${text} ${TOKEN}`} />,
+          render: (text: string) => <TokenAmount value={text} />,
         },
       ],
     },
