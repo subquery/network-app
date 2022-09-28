@@ -76,7 +76,6 @@ export const ModalInput: React.FC<Props> = ({
           name: 'input',
           id: 'input',
           onChange: (value) => {
-            console.log('value', value);
             formik.setErrors({ input: undefined });
             formik.setFieldValue('input', value);
           },
