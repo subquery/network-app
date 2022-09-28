@@ -70,7 +70,7 @@ export const DoStake: React.FC = () => {
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  const maxUnstakeAmount = useMaxUnstakeAmount(account || '');
+  const maxUnstake = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const { balance, stakingAllowance } = useSQToken();
@@ -90,7 +90,7 @@ export const DoStake: React.FC = () => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstakeAmount), {
+  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstake), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
@@ -128,6 +128,7 @@ export const DoStake: React.FC = () => {
             showMaxButton: true,
             curAmount,
           }}
+          onSuccess={() => (stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch())}
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {
