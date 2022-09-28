@@ -67,7 +67,7 @@ export const SetCommissionRate: React.VFC = () => {
             unit: '%',
           }}
           onClick={handleClick}
-          onSuccess={() => commissionRate.refetch()}
+          onSuccess={() => commissionRate.refetch(true)}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {
               return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;

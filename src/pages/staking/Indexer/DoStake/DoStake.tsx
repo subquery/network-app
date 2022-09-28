@@ -128,7 +128,7 @@ export const DoStake: React.FC = () => {
             showMaxButton: true,
             curAmount,
           }}
-          onSuccess={() => (stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch())}
+          onSuccess={() => (stakeAction === StakeAction.Stake ? balance.refetch(true) : maxUnstake.refetch(true))}
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {
