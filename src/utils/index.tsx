@@ -216,7 +216,7 @@ class Cancelled extends Error {
 
 /**
  *  NOTE: You don't need this.
- *  NOTE: You can Cancelling a Promise with React.useEffect or use swr for data
+ *  NOTE: You can cancel a Promise with React.useEffect or use swr for data
  */
 export class CancellablePromise<T> extends Promise<T> {
   private _isCancelled: false | string = false;

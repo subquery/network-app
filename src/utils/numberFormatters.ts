@@ -30,8 +30,8 @@ export function formatEther(value: BigNumberish | BigInt | undefined, toFixed?: 
 }
 
 // TODO: should only be number and percentage formatter
-export function toPercentage(value: number, divUnit = 100): string {
-  return `${(value / divUnit).toFixed(2)} %`;
+export function toPercentageValue(value: number, divUnit = 100): string {
+  return (value / divUnit).toFixed(2);
 }
 
 export function extractPercentage(value: string): number {

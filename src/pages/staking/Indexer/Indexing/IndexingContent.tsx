@@ -24,7 +24,7 @@ enum SectionTabs {
 
 const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }) => {
   const getSortedValue = (val: BigNumber | undefined) =>
-    isUndefined(val) ? '-' : `${truncFormatEtherStr(item.current.toString())} ${unit || ''}`;
+    isUndefined(val) ? '-' : `${truncFormatEtherStr(val?.toString() ?? '')} ${unit || ''}`;
   return (
     <div key={item.current.toString()}>
       <Typography>{getSortedValue(item.current)}</Typography>
@@ -74,9 +74,8 @@ export const IndexingContent: React.VFC<Props> = ({ tableData, indexer }) => {
       title: t('indexer.commission').toLocaleUpperCase(),
       dataIndex: 'commission',
       key: 'commission',
-      render: (item: CurrentEraValue) => <CurAndNextData item={item} />,
+      render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={'%'} />,
     },
-
     {
       title: t('indexer.capacity').toLocaleUpperCase(),
       dataIndex: 'capacity',

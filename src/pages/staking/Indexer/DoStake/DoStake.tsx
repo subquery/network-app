@@ -12,9 +12,9 @@ import {
   ModalClaimIndexerRewards,
 } from '../../../../components';
 import { useLockPeriod } from '../../../../hooks';
-import { formatEther, parseEther } from '@ethersproject/units';
+import { parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { mergeAsync, renderAsyncArray, TOKEN, truncFormatEtherStr } from '../../../../utils';
+import { formatEther, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
@@ -31,7 +31,7 @@ const getContentText = (
   actionType: StakeAction,
   t: any,
   lockPeriod: number | undefined,
-  maxAmount: string,
+  maxAmount: string | undefined,
 ) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
 
@@ -45,7 +45,7 @@ const getContentText = (
           inputTitle: t('indexer.stakeInputTitle'),
           submitText: t('indexer.confirmStake'),
           failureText: `Sorry, the ${actionType} operation has failed.`,
-          inputBottomText: t('indexer.maxStakeBalance', { amount: maxAmount, token: TOKEN }),
+          inputBottomText: t('indexer.maxStakeBalance', { tokenAmount: maxAmount }),
         };
   }
 
@@ -58,7 +58,7 @@ const getContentText = (
     inputTitle: t('indexer.unstakeInputTitle'),
     submitText: t('indexer.confirmUnstake'),
     failureText: `Sorry, the ${actionType} operation has failed.`,
-    inputBottomText: t('indexer.unstakeBalanceNextEra', { amount: maxAmount, token: TOKEN }),
+    inputBottomText: t('indexer.unstakeBalanceNextEra', { tokenAmount: maxAmount ?? '-' }),
   };
 };
 
@@ -70,7 +70,7 @@ export const DoStake: React.FC = () => {
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  const maxUnstakeAmount = useMaxUnstakeAmount(account || '');
+  const maxUnstake = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const { balance, stakingAllowance } = useSQToken();
@@ -90,15 +90,15 @@ export const DoStake: React.FC = () => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstakeAmount), {
+  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstake), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
       const [indexerRewards, maxUnstakeAmount] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
-      const curAmount = formatEther(stakeAction === StakeAction.Stake ? balance.data ?? 0 : maxUnstakeAmount ?? 0);
-      const curAmountTruncated = truncFormatEtherStr(curAmount);
+      const curAmount = stakeAction === StakeAction.Stake ? balance.data : maxUnstakeAmount;
+      const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
 
       const modalText = getContentText(
         requireClaimIndexerRewards,
@@ -126,8 +126,9 @@ export const DoStake: React.FC = () => {
           ]}
           inputParams={{
             showMaxButton: true,
-            curAmount,
+            curAmount: formatEther(curAmount),
           }}
+          onSuccess={() => (stakeAction === StakeAction.Stake ? balance.refetch(true) : maxUnstake.refetch(true))}
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {

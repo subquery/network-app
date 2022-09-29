@@ -4,10 +4,10 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { useAsyncMemo, useEraValue } from '.';
 import { useContracts, useDelegation, useIndexer } from '../containers';
-import { AsyncData } from '../utils';
+import { AsyncMemoReturn } from './useAsyncMemo';
 import { CurrentEraValue } from './useEraValue';
 
-export function useIndexerCapacity(address: string): AsyncData<CurrentEraValue<BigNumber> | undefined> {
+export function useIndexerCapacity(address: string): AsyncMemoReturn<CurrentEraValue<BigNumber> | undefined> {
   const pendingContracts = useContracts();
   const delegation = useDelegation(address, address);
   const indexerStake = useEraValue(delegation.data?.delegation?.amount);

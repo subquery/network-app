@@ -10,6 +10,7 @@ import { useContracts } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import clsx from 'clsx';
 import { Button } from '../../../../components/Button';
+import { truncFormatEtherStr } from '../../../../utils';
 
 interface DoWithdrawProps {
   unlockedAmount: string;
@@ -45,7 +46,7 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disable
           return (
             <>
               <Typography className={styles.unlockedAmount}>
-                {t('withdrawals.aboutToWithdraw', { amount: unlockedAmount })}
+                {t('withdrawals.aboutToWithdraw', { amount: truncFormatEtherStr(unlockedAmount) })}
               </Typography>
               <Typography className={'errorText'}>{error}</Typography>
               <div className={clsx(styles.btnContainer, 'flex-end')}>

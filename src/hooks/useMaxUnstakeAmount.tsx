@@ -5,11 +5,11 @@ import { BigNumber } from 'ethers';
 import { useAsyncMemo, useNetworkClient } from '.';
 import { AsyncMemoReturn } from './useAsyncMemo';
 
-export function useMaxUnstakeAmount(indexer: string): AsyncMemoReturn<BigNumber> {
+export function useMaxUnstakeAmount(indexer: string): AsyncMemoReturn<BigNumber | undefined> {
   const networkClient = useNetworkClient();
 
   return useAsyncMemo(async () => {
     const maxUnstakeAmount = await networkClient?.maxUnstakeAmount(indexer ?? '');
-    return maxUnstakeAmount ?? BigNumber.from(0);
+    return maxUnstakeAmount;
   }, [indexer, networkClient]);
 }
