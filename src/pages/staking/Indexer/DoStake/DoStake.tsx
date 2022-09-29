@@ -45,7 +45,7 @@ const getContentText = (
           inputTitle: t('indexer.stakeInputTitle'),
           submitText: t('indexer.confirmStake'),
           failureText: `Sorry, the ${actionType} operation has failed.`,
-          inputBottomText: t('indexer.maxStakeBalance', { tokenAmount: maxAmount ?? '-' }),
+          inputBottomText: t('indexer.maxStakeBalance', { tokenAmount: maxAmount }),
         };
   }
 
@@ -98,7 +98,7 @@ export const DoStake: React.FC = () => {
       const [indexerRewards, maxUnstakeAmount] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
       const curAmount = stakeAction === StakeAction.Stake ? balance.data : maxUnstakeAmount;
-      const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : undefined;
+      const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
 
       const modalText = getContentText(
         requireClaimIndexerRewards,
