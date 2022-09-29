@@ -50,7 +50,7 @@ export interface UseSortedIndexerReturn {
   totalStake: CurrentEraValue<number>;
   ownStake: CurrentEraValue<number>;
   totalDelegations: CurrentEraValue<number>;
-  capacity: CurrentEraValue<number>;
+  capacity: CurrentEraValue<string>;
 }
 
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
@@ -84,7 +84,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     const commission = getCommission(indexer.indexer.commission, currentEraValue?.index);
     const totalStake = getTotalStake(indexer.indexer.totalStake, currentEraValue?.index);
     const ownStake = getOwnStake(delegation.delegation?.amount, currentEraValue?.index);
-    const sortedCapacity = mapEraValue(capacity, (v) => convertStringToNumber(formatEther(v ?? 0)));
+    const sortedCapacity = mapEraValue(capacity, (v) => formatEther(v ?? 0));
 
     const totalDelegations = getDelegated(totalStake, ownStake);
 
