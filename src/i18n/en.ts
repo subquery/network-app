@@ -218,7 +218,7 @@ const en = {
       disabledSetCommissionBeforeRewardClaim: `You can't change commission rate until you collect all early era's rewards. Please check the indexer admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
       newRateValidNext2Era: 'Once confirm, the new rate will take 2 full eras to be effective.',
       enterCommissionRate: 'Enter the commission rate',
-      currentRate: 'Current rate',
+      currentRate: 'Current commission rate',
       confirmRate: 'Confirm Rate',
       action: 'action',
       notRegister: 'You haven’t registered as an indexer yet.',
