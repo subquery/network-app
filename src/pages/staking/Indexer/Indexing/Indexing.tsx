@@ -6,7 +6,7 @@ import * as React from 'react';
 import styles from './Indexing.module.css';
 import { useTranslation } from 'react-i18next';
 import { DoStake } from '../DoStake';
-import { mergeAsync, renderAsync } from '../../../../utils';
+import { mergeAsync, renderAsyncArray } from '../../../../utils';
 import { useIsIndexer, useSortedIndexer } from '../../../../hooks';
 import { IndexingContent } from './IndexingContent';
 
@@ -36,8 +36,9 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
 
   return (
     <div className={'contentContainer'}>
-      {renderAsync(mergeAsync(isIndexer, tableData), {
+      {renderAsyncArray(mergeAsync(isIndexer, tableData), {
         loading: () => <Spinner />,
+        empty: () => <Typography>{`No data available`}</Typography>,
         error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
         data: (data) => {
           if (!data) return <></>;

@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Modal as AntDModal, Divider, Typography } from 'antd';
 import { MdOutlineFilter1, MdOutlineFilter2, MdOutlineFilter3 } from 'react-icons/md';
 import styles from './Modal.module.css';
+import Spinner from '../Spinner';
 
 /**
  * NOTE:
@@ -22,6 +23,7 @@ interface ModalProps {
   visible: boolean;
   onCancel: () => void;
   onOk?: () => void;
+  loading?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -33,6 +35,7 @@ export const Modal: React.FC<ModalProps> = ({
   currentStep,
   description,
   content,
+  loading,
 }) => {
   const Title = () => (
     <Typography.Title level={3} className={styles.title}>
@@ -76,6 +79,15 @@ export const Modal: React.FC<ModalProps> = ({
     return <Typography.Text className={styles.description}>{description}</Typography.Text>;
   };
 
+  const sortedContent = loading ? (
+    <Spinner />
+  ) : (
+    <>
+      <Description />
+      {content}
+    </>
+  );
+
   return (
     <AntDModal
       title={<Title />}
@@ -87,8 +99,7 @@ export const Modal: React.FC<ModalProps> = ({
       width={'45%'}
     >
       <Steps />
-      <Description />
-      {content}
+      {sortedContent}
     </AntDModal>
   );
 };

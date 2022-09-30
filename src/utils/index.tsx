@@ -71,7 +71,9 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 }
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
-
+type Data<T> = T | undefined;
+type MergedData<T1, T2, T3, T4, T5, T6> = [Data<T1>, Data<T2>, Data<T3>, Data<T4>, Data<T5>, Data<T6>];
+// NOTE: update mergeAsync returnType when migrate to sdk
 export function mergeAsync<T1, T2, T3, T4, T5, T6>(
   v1: AsyncData<T1>,
   v2: AsyncData<T2>,
@@ -79,11 +81,16 @@ export function mergeAsync<T1, T2, T3, T4, T5, T6>(
   v4?: AsyncData<T4>,
   v5?: AsyncData<T5>,
   v6?: AsyncData<T6>,
-): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined, T4 | undefined, T5 | undefined, T6 | undefined]> {
+): AsyncData<MergedData<T1, T2, T3, T4, T5, T6>> {
+  const mergeT = [v1, v2, v3, v4, v5, v6];
+  const filteredMergeT = mergeT.filter((v) => v);
+  const loading = filteredMergeT.find((v) => v?.loading)?.loading;
+  const error = filteredMergeT.find((v) => v?.error)?.error;
+  const data = filteredMergeT.map((v) => v?.data) as MergedData<T1, T2, T3, T4, T5, T6>;
   return {
-    loading: v1.loading || v2.loading || !!v3?.loading || !!v4?.loading || !!v5?.loading || !!v6?.loading,
-    error: v1.error || v2.error || v3?.error || v4?.error || v5?.error || v6?.error,
-    data: [v1.data, v2.data, v3?.data, v4?.data, v5?.data, v6?.data],
+    loading: !!loading,
+    error,
+    data: data,
   };
 }
 
@@ -133,6 +140,13 @@ export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): Rende
   return null;
 }
 
+/**
+ * NOTE: re-consider scenario -> when one exist while another is undefined
+ * Two solution:
+ * 1) undefined is from loading or actual value, or use null as actual value
+ * 2) when there is value in array, handle by the rest component
+ *
+ */
 export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
   if (data.data !== undefined) {
     try {
@@ -278,4 +292,8 @@ export function getUseQueryFetchMore<TData = any, TVariables = OperationVariable
 
 export function isUndefined(val: unknown): boolean {
   return val === undefined;
+}
+
+export function isNull(val: unknown): boolean {
+  return val === null;
 }
