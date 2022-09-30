@@ -82,6 +82,7 @@ type Props<P, T extends string> = {
   variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
   initialCheck?: AsyncData<unknown>;
   onSuccess?: () => void;
+  loading?: boolean; // status for whole modal (Update at: Sep 22)
 };
 
 const TransactionModal = <P, T extends string>({
@@ -95,6 +96,7 @@ const TransactionModal = <P, T extends string>({
   inputParams,
   variant = 'button',
   initialCheck,
+  loading,
 }: Props<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -185,6 +187,7 @@ const TransactionModal = <P, T extends string>({
             resetModal();
             !isLoading && setShowClock(false);
           }}
+          loading={loading}
           currentStep={currentStep}
           steps={text.steps}
           content={

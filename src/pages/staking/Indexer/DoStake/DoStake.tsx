@@ -14,7 +14,7 @@ import {
 import { useLockPeriod } from '../../../../hooks';
 import { parseEther } from '@ethersproject/units';
 import TransactionModal from '../../../../components/TransactionModal';
-import { formatEther, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
+import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '../../../../utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
@@ -112,6 +112,7 @@ export const DoStake: React.FC = () => {
       return (
         <TransactionModal
           text={modalText}
+          loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeAmount)}
           actions={[
             {
               label: t('indexer.stake'),
@@ -132,11 +133,13 @@ export const DoStake: React.FC = () => {
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {
-              return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;
+              return (
+                <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch(true)} indexer={account ?? ''} />
+              );
             }
 
             if (requireTokenApproval && !requireClaimIndexerRewards) {
-              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />;
+              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch(true)} isLoading={loading} />;
             }
           }}
         />

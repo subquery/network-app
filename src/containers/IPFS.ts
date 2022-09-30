@@ -24,16 +24,16 @@ function useIPFSImpl(
   const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(50));
 
   React.useEffect(() => {
-    logger.l(`Creating ipfs client at: ${gateway}`);
+    // logger.l(`Creating ipfs client at: ${gateway}`);
     ipfs.current = create({ url: gateway });
   }, [gateway, logger]);
 
   const catSingle = async (cid: string): Promise<Uint8Array> => {
-    logger.l(`Getting: ${cid}`);
+    // logger.l(`Getting: ${cid}`);
 
     const result = cache.current.get(cid);
     if (result) {
-      logger.l(`Getting: ${cid}...CACHED`);
+      // logger.l(`Getting: ${cid}...CACHED`);
       return result;
     }
 
