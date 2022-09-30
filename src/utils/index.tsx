@@ -71,7 +71,8 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 }
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
-
+type Data<T> = T | undefined;
+type MergedData<T1, T2, T3, T4, T5, T6> = [Data<T1>, Data<T2>, Data<T3>, Data<T4>, Data<T5>, Data<T6>];
 // NOTE: update mergeAsync returnType when migrate to sdk
 export function mergeAsync<T1, T2, T3, T4, T5, T6>(
   v1: AsyncData<T1>,
@@ -80,19 +81,12 @@ export function mergeAsync<T1, T2, T3, T4, T5, T6>(
   v4?: AsyncData<T4>,
   v5?: AsyncData<T5>,
   v6?: AsyncData<T6>,
-): AsyncData<[T1 | undefined, T2 | undefined, T3 | undefined, T4 | undefined, T5 | undefined, T6 | undefined]> {
+): AsyncData<MergedData<T1, T2, T3, T4, T5, T6>> {
   const mergeT = [v1, v2, v3, v4, v5, v6];
   const filteredMergeT = mergeT.filter((v) => v);
   const loading = filteredMergeT.find((v) => v?.loading)?.loading;
   const error = filteredMergeT.find((v) => v?.error)?.error;
-  const data = filteredMergeT.map((v) => v?.data) as [
-    T1 | undefined,
-    T2 | undefined,
-    T3 | undefined,
-    T4 | undefined,
-    T5 | undefined,
-    T6 | undefined,
-  ];
+  const data = filteredMergeT.map((v) => v?.data) as MergedData<T1, T2, T3, T4, T5, T6>;
   return {
     loading: !!loading,
     error,
