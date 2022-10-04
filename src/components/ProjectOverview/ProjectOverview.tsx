@@ -43,10 +43,6 @@ const ProjectOverview: React.VFC<Props> = ({ metadata, deploymentDescription, cr
           <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
         </div>
       </div>
-
-      <div className={styles.column}>
-        <Detail label={t('projectOverview.deploymentDescription')} value={deploymentDescription || 'N/A'} />
-      </div>
     </div>
   );
 };
