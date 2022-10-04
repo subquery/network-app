@@ -22,7 +22,7 @@
     "@sentry/tracing": "^6.19.4",
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
-    "@subql/contract-sdk": "0.10.2-28",
+    "@subql/contract-sdk": "^0.10.2-34",
     "@subql/network-clients": "0.2.1-5",
     "@subql/react-ui": "^1.0.1-22",
     "@testing-library/jest-dom": "^5.11.4",
