@@ -35,7 +35,6 @@ const ProjectOverview: React.VFC<Props> = ({ metadata, deploymentDescription, cr
   return (
     <div className={styles.container}>
       <div className={styles.column}>
-        <p className={styles.description}>{metadata.description}</p>
         <ExternalLink icon="globe" link={metadata.websiteUrl} />
         <ExternalLink icon="github" link={metadata.codeUrl} />
         <div className={styles.left}>

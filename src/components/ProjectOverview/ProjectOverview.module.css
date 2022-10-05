@@ -1,12 +1,6 @@
 .container {
   display: flex;
   flex-direction: row;
-  /*background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 10px;*/
-  padding-top: 40px;
-  /*margin: 32px;*/
-  /*flex-wrap: wrap;*/
 }
 
 .column {
