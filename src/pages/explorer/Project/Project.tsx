@@ -22,6 +22,7 @@ import { getIndexerMetadata } from '../../../hooks/useIndexerMetadata';
 import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
+import { EmptyList } from '../../plans/Plans/EmptyList';
 
 export const ROUTE = '/explorer/project';
 
@@ -41,6 +42,9 @@ const ProjectInner: React.VFC = () => {
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
   const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId, offset } : undefined);
+  const now = new Date();
+  const specificSA = useSpecificServiceAgreements({ deploymentId: id, now });
+
   const fetchMore = (offset: number) => {
     setOffset(offset);
   };
@@ -135,7 +139,7 @@ const ProjectInner: React.VFC = () => {
   const tabList = [
     { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
     { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
-    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service agreement' },
+    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service Agreement' },
     { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 
@@ -178,9 +182,13 @@ const ProjectInner: React.VFC = () => {
               <Route
                 exact
                 path={`${ROUTE}/:id/service-agreements`}
-                component={() => (
-                  <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
-                )}
+                component={() =>
+                  specificSA ? (
+                    <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
+                  ) : (
+                    <EmptyList i18nKey={'serviceAgreements.projetviewnon'} />
+                  )
+                }
               />
 
               <Route exact path={`${ROUTE}/:id/playground`}>

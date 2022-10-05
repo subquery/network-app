@@ -442,6 +442,7 @@ const en = {
         comingSoon: 'Playground coming soon.',
       },
       non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
+      projetviewnon: 'There are no service agreements for this project yet.. <br> Learn more from <1>here</1>.',
     },
     myOffers: {
       title: 'My offers',
