@@ -116,7 +116,6 @@ const App: React.VFC = () => {
                   subtitle={t('studio.wallet.subTitle')}
                 />
                 <Route component={pages.Staking} path="/staking" />
-                <Route component={pages.Missions} path="/missions" />
                 <WalletRoute component={pages.PlanAndOffer} path="/plans" />
                 <WalletRoute component={pages.Swap} path="/swap" />
                 <Redirect from="/" to="/explorer" />
