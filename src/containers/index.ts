@@ -7,7 +7,6 @@ export { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetadata';
 export { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 export { useContracts, ContractsProvider } from './Contracts';
 export * from './QueryRegistryProject';
-export * from './QueryLeaderboardProject';
 export * from './QueryApolloProvider';
 export { useUserProjects, UserProjectsProvider } from './UserProjects';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
