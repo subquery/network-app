@@ -12,9 +12,7 @@ module.exports = {
     tagName: 'gql',
     excludes: [
       'src/hooks/useApiEndpoint.ts',
-      'src/containers/QueryLeaderboardProject.tsx',
       'src/containers/QuerySwapExchangeProject.tsx',
-      'src/containers/QuerySeason3Project.tsx',
       'src/containers/QueryTop100Indexers.tsx',
     ],
   },

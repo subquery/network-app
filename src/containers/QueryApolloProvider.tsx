@@ -7,9 +7,6 @@ import React from 'react';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
-export const LEADERBOARD_CLIENT = 'leaderboard';
-export const SEASON_3_CLIENT = 'season3';
-
 export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
 const swapLink = getHttpLink(process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT);
 

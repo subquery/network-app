@@ -4,6 +4,5 @@
 export * from './explorer';
 export * from './studio';
 export * from './staking';
-export * from './missions';
 export * from './plans';
 export * from './swap';
