@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - kepler-network
+      - main
 
 jobs:
   build:
