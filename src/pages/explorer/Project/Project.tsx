@@ -135,7 +135,7 @@ const ProjectInner: React.VFC = () => {
   const tabList = [
     { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
     { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
-    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service agreement' },
+    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service Agreement' },
     { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 

@@ -119,7 +119,26 @@
     tslib "^2.3.0"
     zen-observable-ts "~1.1.0"
 
-"@apollo/client@^3.6.9", "@apollo/client@latest":
+"@apollo/client@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.0.tgz#1c26a04488f45b3a4779fa2562e4b706402cb876"
+  integrity sha512-hp4OvrH1ZIQACRYcIrh/C0WFnY7IM7G6nlTpC8DSTEWxfZQ2kvpvDY0I/hYmCs0oAVrg26g3ANEdOzGWTcYbPg==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "@wry/context" "^0.7.0"
+    "@wry/equality" "^0.5.0"
+    "@wry/trie" "^0.3.0"
+    graphql-tag "^2.12.6"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.16.1"
+    prop-types "^15.7.2"
+    response-iterator "^0.2.6"
+    symbol-observable "^4.0.0"
+    ts-invariant "^0.10.3"
+    tslib "^2.3.0"
+    zen-observable-ts "^1.2.5"
+
+"@apollo/client@latest":
   version "3.6.9"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.6.9.tgz#ad0ee2e3a3c92dbed4acd6917b6158a492739d94"
   integrity sha512-Y1yu8qa2YeaCUBVuw08x8NHenFi0sw2I3KCu7Kw9mDSu86HmmtHJkCAifKVrN2iPgDTW/BbP3EpSV8/EQCcxZA==
@@ -4814,12 +4833,12 @@
     "@polkadot/ui-keyring" "^2.9.4"
     solidity-docgen "^0.6.0-beta.25"
 
-"@subql/network-clients@0.2.1-5":
-  version "0.2.1-5"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-5.tgz#79a9754572e6314ec68303c03d0b9e172439c7d8"
-  integrity sha512-j/Y5BNpIa0hU5NS0gH9PzVybXxNxDNQqPMJ7m03rG3uDWmxJWqb/n5NRn7oML4PZKmeJCBNHQUgrj2u6Hr+OjQ==
+"@subql/network-clients@^0.2.1-9":
+  version "0.2.1-10"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-10.tgz#bdaba27a45a9f9f320c71fdeaf6c6539bd7f65f8"
+  integrity sha512-OI+qjbtxkQgMCr6o0U4vxQCeDWzVluPudeKcjxwKrxD0AC5UCKx7b1SqDuvdqSeNSQldji1EXl9KjfMual6FpQ==
   dependencies:
-    "@apollo/client" "^3.6.9"
+    "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
     axios "^0.27.2"
     buffer "^6.0.3"
@@ -4828,9 +4847,9 @@
     graphql "^16.5.0"
     yup "^0.32.11"
 
-"@subql/react-ui@^1.0.1-22":
+"@subql/react-ui@1.0.1-22":
   version "1.0.1-22"
-  resolved "https://registry.npmjs.org/@subql/react-ui/-/react-ui-1.0.1-22.tgz"
+  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-22.tgz#d7497b5e46fb751fced9960cac9cbb5d2604e4bf"
   integrity sha512-YEWvv/MTUoFLe6oaZLyZD6F9gTj/0jEC3qZ9iuY0Ht0B7G18xRhPidWr7bjnkNUb0djuujXnZtiBY17bZ0NSzw==
   dependencies:
     clsx "^1.1.1"
@@ -5775,6 +5794,13 @@
   version "0.6.1"
   resolved "https://registry.npmjs.org/@wry/context/-/context-0.6.1.tgz"
   integrity sha512-LOmVnY1iTU2D8tv4Xf6MVMZZ+juIJ87Kt/plMijjN20NMAXGmH4u8bS1t0uT74cZ5gwpocYueV58YwyI8y+GKw==
+  dependencies:
+    tslib "^2.3.0"
+
+"@wry/context@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.0.tgz#be88e22c0ddf62aeb0ae9f95c3d90932c619a5c8"
+  integrity sha512-LcDAiYWRtwAoSOArfk7cuYvFXytxfVrdX7yxoUmK7pPITLk5jYh2F8knCwS7LjgYL8u1eidPlKKV6Ikqq0ODqQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -17478,6 +17504,11 @@ resolve@^2.0.0-next.3:
   dependencies:
     is-core-module "^2.2.0"
     path-parse "^1.0.6"
+
+response-iterator@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/response-iterator/-/response-iterator-0.2.6.tgz#249005fb14d2e4eeb478a3f735a28fd8b4c9f3da"
+  integrity sha512-pVzEEzrsg23Sh053rmDUvLSkGXluZio0qu8VT6ukrYuvtjVfCbDZH9d6PGXb8HZfzdNZt8feXv/jvUzlhRgLnw==
 
 restore-cursor@^2.0.0:
   version "2.0.0"

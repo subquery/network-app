@@ -441,7 +441,9 @@ const en = {
         tokenExpireIn: 'Token expires in',
         comingSoon: 'Playground coming soon.',
       },
-      non: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
+      non: 'There are no service agreements for this project yet. <br> Learn more from <1>here</1>',
+      nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
+      nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
     },
     myOffers: {
       title: 'My offers',
