@@ -24,10 +24,14 @@ const ServiceAgreements: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
 
-  const Agreements = ({ queryFn }: { queryFn: typeof useServiceAgreements }) => {
+  const Agreements = ({ queryFn, emptyI18nKey }: { queryFn: typeof useServiceAgreements; emptyI18nKey?: string }) => {
     return (
       <div className="contentContainer">
-        <ServiceAgreementsTable queryFn={queryFn} queryParams={{ address: account || '', from: 'serviceAgreement' }} />
+        <ServiceAgreementsTable
+          queryFn={queryFn}
+          queryParams={{ address: account || '' }}
+          emptyI18nKey={emptyI18nKey}
+        />
       </div>
     );
   };
@@ -51,7 +55,7 @@ const ServiceAgreements: React.VFC = () => {
           component={() => (
             <>
               <SaHeader />
-              <Agreements queryFn={useServiceAgreements} />
+              <Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
             </>
           )}
         />
@@ -61,7 +65,7 @@ const ServiceAgreements: React.VFC = () => {
           component={() => (
             <>
               <SaHeader />
-              <Agreements queryFn={useExpiredServiceAgreements} />
+              <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />
             </>
           )}
         />
