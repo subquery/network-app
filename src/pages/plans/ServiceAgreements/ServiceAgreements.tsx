@@ -27,7 +27,7 @@ const ServiceAgreements: React.VFC = () => {
   const Agreements = ({ queryFn }: { queryFn: typeof useServiceAgreements }) => {
     return (
       <div className="contentContainer">
-        <ServiceAgreementsTable queryFn={queryFn} queryParams={{ address: account || '' }} />
+        <ServiceAgreementsTable queryFn={queryFn} queryParams={{ address: account || '', from: 'serviceAgreement' }} />
       </div>
     );
   };

@@ -52,7 +52,7 @@ export const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
 
 interface ServiceAgreementsTableProps {
   queryFn: typeof useServiceAgreements | typeof useSpecificServiceAgreements;
-  queryParams?: { deploymentId?: string; address?: string };
+  queryParams?: { deploymentId?: string; address?: string; from?: string };
 }
 
 export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({ queryFn, queryParams }) => {
@@ -155,6 +155,8 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
+  const nonInfo =
+    queryParams?.from === 'serviceAgreement' ? 'serviceAgreements.non' : 'serviceAgreements.projetViewNon';
   const serviceAgreements = queryFn(sortedParams);
   const [data, setData] = React.useState(serviceAgreements);
 
@@ -185,7 +187,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
-          empty: () => <EmptyList i18nKey={'serviceAgreements.non'} />,
+          empty: () => <EmptyList i18nKey={nonInfo} />,
           data: (data) => {
             return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },
