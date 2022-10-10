@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useTopIndexers } from '../../../../containers/QueryTop100Indexers';
 import { getUseQueryFetchMore, renderAsync } from '../../../../utils';
 import { Typography } from 'antd';
-import { IndexerList } from './TopIndexersList';
+import { TopIndexerList } from './TopIndexersList';
+import { GetTopIndexers_indexerPrograms } from '../../../../__generated__/excellentIndexers/GetTopIndexers';
 
 export const TopIndexers: React.VFC = () => {
   const { t } = useTranslation();
@@ -24,12 +25,12 @@ export const TopIndexers: React.VFC = () => {
           <Typography.Text type="danger">{`Error: Failed to get top Indexers: ${error.message}`}</Typography.Text>
         ),
         data: (data) => {
-          const topIndexers = data?.topIndexers?.data;
+          const topIndexers = data?.indexerPrograms as GetTopIndexers_indexerPrograms[];
 
           if (!topIndexers) {
             return <Typography>{t('topIndexers.nonData')}</Typography>;
           }
-          return <IndexerList indexers={topIndexers} />;
+          return <TopIndexerList indexers={topIndexers} />;
         },
       })}
     </div>

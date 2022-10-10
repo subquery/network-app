@@ -6,16 +6,16 @@ import { TableProps } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { ITopIndexers } from '../../../../containers/QueryTop100Indexers';
 import { AntDTable, SearchInput, TableText } from '../../../../components';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
+
 import { DoDelegate } from '../DoDelegate';
 import { TableTitle } from '../../../../components/TableTitle';
 import { useWeb3 } from '../../../../containers';
 import styles from './TopIndexersList.module.css';
+import { GetTopIndexers_indexerPrograms } from '../../../../__generated__/excellentIndexers/GetTopIndexers';
 
-// : TableProps<ITopIndexers>['columns']
-const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
+const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
     title: '#',
     dataIndex: 'idx',
@@ -24,7 +24,7 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
   },
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,
-    dataIndex: 'indexer',
+    dataIndex: 'id',
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
@@ -35,7 +35,7 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
         title={i18next.t('topIndexers.rank')}
       />
     ),
-    dataIndex: 'ranking',
+    dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking}</TableText>,
   },
   {
@@ -46,8 +46,8 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
         title={i18next.t('topIndexers.uptime')}
       />
     ),
-    dataIndex: 'upTime',
-    render: (upTime) => <TableText>{upTime}</TableText>,
+    dataIndex: 'uptime',
+    render: (upTime) => <TableText>{`${upTime * 100} %`}</TableText>,
   },
   {
     title: (
@@ -57,8 +57,8 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
         title={i18next.t('topIndexers.ownStake')}
       />
     ),
-    dataIndex: 'ownStake',
-    render: (ownStake) => <TableText>{ownStake}</TableText>,
+    dataIndex: 'ownStaked',
+    render: (ownStake) => <TableText>{`${ownStake * 100} %`}</TableText>,
   },
   {
     title: (
@@ -69,7 +69,7 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
       />
     ),
     dataIndex: 'delegated',
-    render: (delegated) => <TableText>{delegated}</TableText>,
+    render: (delegated) => <TableText>{`${delegated * 100} %`}</TableText>,
   },
   {
     title: (
@@ -79,20 +79,22 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
         title={i18next.t('topIndexers.eraRewardsCollection')}
       />
     ),
-    dataIndex: 'eraRewardsCollection',
-    render: (eraRewardsCollection) => <TableText>{eraRewardsCollection}</TableText>,
-  },
-  {
-    title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.timeToUpgrade')}
-        title={i18next.t('topIndexers.timeToUpgrade')}
-      />
+    dataIndex: 'rewardCollection',
+    render: (eraRewardsCollection) => (
+      <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
-    dataIndex: 'timeToUpgrade',
-    render: (timeToUpgrade) => <TableText>{timeToUpgrade}</TableText>,
   },
+  // {
+  //   title: (
+  //     <TableTitle
+  //       noTooltipIcon={true}
+  //       tooltip={i18next.t('topIndexers.tooltip.timeToUpgrade')}
+  //       title={i18next.t('topIndexers.timeToUpgrade')}
+  //     />
+  //   ),
+  //   dataIndex: 'timeToUpgrade',
+  //   render: (timeToUpgrade) => <TableText>{timeToUpgrade}</TableText>,
+  // },
   {
     title: (
       <TableTitle
@@ -101,8 +103,8 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
         title={i18next.t('topIndexers.ssl')}
       />
     ),
-    dataIndex: 'enableSSL',
-    render: (enableSSL) => <TableText>{enableSSL}</TableText>,
+    dataIndex: 'sslEnabled',
+    render: (enableSSL) => <TableText>{i18next.t(enableSSL ? 'general.enabled' : 'general.disabled')}</TableText>,
   },
   {
     title: (
@@ -113,7 +115,9 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
       />
     ),
     dataIndex: 'socialCredibility',
-    render: (socialCredibility) => <TableText>{socialCredibility}</TableText>,
+    render: (socialCredibility) => (
+      <TableText>{i18next.t(socialCredibility ? 'general.enabled' : 'general.disabled')}</TableText>
+    ),
   },
   {
     title: <TableTitle title={i18next.t('indexer.action')} />,
@@ -126,15 +130,15 @@ const getColumns = (account: string): TableProps<ITopIndexers>['columns'] => [
 ];
 
 interface props {
-  indexers: ITopIndexers[];
+  indexers: GetTopIndexers_indexerPrograms[];
   onLoadMore?: (offset: number) => void;
 }
 
-export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
+export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   //   const history = useHistory();
-  console.log('indexers', indexers);
+
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>
       <SearchInput
@@ -158,7 +162,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
 
       <AntDTable
         customPagination
-        tableProps={{ columns, rowKey: 'indexer', dataSource: [...indexers], scroll: { x: 1600 } }}
+        tableProps={{ columns, rowKey: 'id', dataSource: [...indexers] }}
         // paginationProps={{
         //   total: searchedIndexer ? searchedIndexer.length : totalCount,
         //   onChange: (page, pageSize) => {

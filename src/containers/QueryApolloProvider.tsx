@@ -20,12 +20,11 @@ export const QueryApolloProvider: React.FC = (props) => {
     link: ApolloLink.split(
       (operation) => operation.getContext().clientName === SWAP_EXCHANGE_CLIENT,
       swapLink,
-      registryLink,
-      // ApolloLink.split(
-      //   (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
-      //   top100IndexersLink,
-      //   swapLink,
-      // ),
+      ApolloLink.split(
+        (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
+        top100IndexersLink,
+        registryLink,
+      ),
     ),
     cache: new InMemoryCache({
       typePolicies: {
