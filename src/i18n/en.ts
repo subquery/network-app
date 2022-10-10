@@ -623,6 +623,10 @@ const en = {
       blockWithCount: '{{count}} Block',
       blockWithCount_other: '{{count}} Blocks',
       balance: 'Balance',
+      frequent: 'Frequent',
+      infrequent: 'Infrequent',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
     },
     status: {
       success: 'Success!',

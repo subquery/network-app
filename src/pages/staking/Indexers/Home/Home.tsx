@@ -5,11 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Home.module.css';
 import { Redirect, Route, Switch } from 'react-router';
-import { MockedProvider } from '@apollo/react-testing';
 import { AppPageHeader, TabButtons } from '../../../../components';
 import { TopIndexers } from '../TopIndexers';
 import { AllIndexers } from '../AllIndexers';
-import { topIndexersMock } from '../../../../containers/QueryTop100Indexers';
 
 const INDEXERS_ROUTE = `/staking/indexers`;
 const ALL_INDEXERS_ROUTE = `${INDEXERS_ROUTE}/all`;
@@ -33,15 +31,7 @@ export const Home: React.VFC = () => {
         </div>
 
         <Switch>
-          <Route
-            exact
-            path={TOP_INDEXERS_ROUTE}
-            component={() => (
-              <MockedProvider mocks={topIndexersMock}>
-                <TopIndexers />
-              </MockedProvider>
-            )}
-          />
+          <Route exact path={TOP_INDEXERS_ROUTE} component={TopIndexers} />
           <Route exact path={ALL_INDEXERS_ROUTE} component={AllIndexers} />
           <Redirect from={INDEXERS_ROUTE} to={TOP_INDEXERS_ROUTE} />
         </Switch>
