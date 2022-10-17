@@ -209,7 +209,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
               <Button
                 onClick={submitForm}
                 loading={isSubmitting}
-                disabled={!isValid || isSubmitting}
+                disabled={!(values.input > 0) || !isValid || isSubmitting}
                 className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
                 type="primary"
                 shape="round"
