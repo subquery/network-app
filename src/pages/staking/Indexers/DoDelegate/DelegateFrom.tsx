@@ -35,7 +35,7 @@ export const AddressName: React.VFC<{
 };
 
 const delegateSchema = yup.object({
-  input: yup.number().defined(),
+  input: yup.number().defined().moreThan(0),
   delegator: yup.string().optional(),
 });
 
@@ -209,7 +209,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
               <Button
                 onClick={submitForm}
                 loading={isSubmitting}
-                disabled={!(values.input > 0) || !isValid || isSubmitting}
+                disabled={!isValid || isSubmitting}
                 className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
                 type="primary"
                 shape="round"
