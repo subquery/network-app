@@ -35,7 +35,7 @@ export const AddressName: React.VFC<{
 };
 
 const delegateSchema = yup.object({
-  input: yup.number().defined(),
+  input: yup.number().defined().moreThan(0),
   delegator: yup.string().optional(),
 });
 
