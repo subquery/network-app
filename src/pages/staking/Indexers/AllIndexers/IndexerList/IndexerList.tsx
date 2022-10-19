@@ -8,7 +8,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import i18next from 'i18next';
-import { extractPercentage, formatEther, renderAsync } from '../../../../../utils';
+import { extractPercentage, formatEther, getOrderedAccounts, renderAsync } from '../../../../../utils';
 import { CurrentEraValue } from '../../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../../__generated__/registry/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../../containers';
@@ -308,9 +308,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
     return { ...indexer, commission, totalStake };
   });
 
-  const orderedIndexerList = sortedIndexerList.sort((indexerA, indexerB) =>
-    indexerA.id === account ? -1 : indexerB.id === account ? 1 : 0,
-  );
+  const orderedIndexerList = getOrderedAccounts(sortedIndexerList, 'id', account);
 
   /**
    * Sort Indexers logic end
