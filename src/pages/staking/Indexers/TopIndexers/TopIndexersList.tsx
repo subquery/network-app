@@ -14,6 +14,7 @@ import { TableTitle } from '../../../../components/TableTitle';
 import { useWeb3 } from '../../../../containers';
 import styles from './TopIndexersList.module.css';
 import { GetTopIndexers_indexerPrograms } from '../../../../__generated__/excellentIndexers/GetTopIndexers';
+import { getOrderedAccounts } from '../../../../utils';
 
 const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
@@ -37,6 +38,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking}</TableText>,
+    sorter: (a, b) => a.totalPoints - b.totalPoints,
   },
   {
     title: (
@@ -48,6 +50,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{`${upTime * 100} %`}</TableText>,
+    sorter: (a, b) => a.uptime - b.uptime,
   },
   {
     title: (
@@ -59,6 +62,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{`${ownStake * 100} %`}</TableText>,
+    sorter: (a, b) => a.ownStaked - b.ownStaked,
   },
   {
     title: (
@@ -70,6 +74,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{`${delegated * 100} %`}</TableText>,
+    sorter: (a, b) => a.delegated - b.delegated,
   },
   {
     title: (
@@ -83,6 +88,20 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     render: (eraRewardsCollection) => (
       <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
+    filters: [
+      {
+        text: i18next.t('general.frequent'),
+        value: 1,
+      },
+      {
+        text: i18next.t('general.infrequent'),
+        value: 0,
+      },
+    ],
+    onFilter: (value, record) => {
+      if (value === 1) return record.rewardCollection >= value;
+      return record.rewardCollection < 1;
+    },
   },
   // {
   //   title: (
@@ -105,6 +124,20 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'sslEnabled',
     render: (enableSSL) => <TableText>{i18next.t(enableSSL ? 'general.enabled' : 'general.disabled')}</TableText>,
+    filters: [
+      {
+        text: i18next.t('general.enabled'),
+        value: true,
+      },
+      {
+        text: i18next.t('general.disabled'),
+        value: false,
+      },
+    ],
+    onFilter: (value, record) => {
+      if (value) return record.sslEnabled;
+      return !record.sslEnabled;
+    },
   },
   {
     title: (
@@ -118,11 +151,27 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     render: (socialCredibility) => (
       <TableText>{i18next.t(socialCredibility ? 'general.enabled' : 'general.disabled')}</TableText>
     ),
+    filters: [
+      {
+        text: i18next.t('general.enabled'),
+        value: true,
+      },
+      {
+        text: i18next.t('general.disabled'),
+        value: false,
+      },
+    ],
+    onFilter: (value, record) => {
+      if (value) return record.socialCredibility;
+      return !record.socialCredibility;
+    },
   },
   {
     title: <TableTitle title={i18next.t('indexer.action')} />,
-    dataIndex: 'indexer',
+    dataIndex: 'id',
+    align: 'center',
     render: (id: string) => {
+      console.log('id', id);
       if (id === account) return <Typography> - </Typography>;
       return <DoDelegate indexerAddress={id} variant="textBtn" />;
     },
@@ -138,6 +187,8 @@ export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   //   const history = useHistory();
+
+  const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
 
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>
@@ -162,7 +213,7 @@ export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
 
       <AntDTable
         customPagination
-        tableProps={{ columns, rowKey: 'id', dataSource: [...indexers] }}
+        tableProps={{ columns, rowKey: 'id', dataSource: [...orderedIndexerList] }}
         // paginationProps={{
         //   total: searchedIndexer ? searchedIndexer.length : totalCount,
         //   onChange: (page, pageSize) => {
