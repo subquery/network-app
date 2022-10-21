@@ -13,6 +13,7 @@ import { useIndexerMetadata } from '../../../hooks';
 import {
   formatEther,
   getEncryptStorage,
+  parseError,
   removeStorage,
   setEncryptStorage,
   TOKEN,
@@ -68,9 +69,7 @@ export const PlaygroundHeader: React.VFC = () => {
         <Breadcrumb.Item className={styles.title}>
           <Link to={SERVICE_AGREEMENTS}>{t('serviceAgreements.playground.ongoingAgreements')}</Link>
         </Breadcrumb.Item>
-        <Breadcrumb.Item className={styles.title}>
-          {t('serviceAgreements.playground.auctionAndCrowdloan')}
-        </Breadcrumb.Item>
+        <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
       </Breadcrumb>
 
       <CurEra />
@@ -79,6 +78,7 @@ export const PlaygroundHeader: React.VFC = () => {
 };
 
 export const Playground: React.VFC = () => {
+  const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();
   const history = useHistory();
@@ -120,7 +120,8 @@ export const Playground: React.VFC = () => {
    *
    * 1. 401 => require auth for further query
    * 2. 200 => queryable
-   * 3. otherStatusCode => return to serviceAgreementTable
+   * 3. 400 => exceed daily limit
+   * 4. otherStatusCode => return to serviceAgreementTable
    *
    */
   React.useEffect(() => {
@@ -142,10 +143,14 @@ export const Playground: React.VFC = () => {
       if ((response?.status !== 401 && response?.status !== 200) || error) {
         setQueryable(undefined);
         removeStorage(TOKEN_STORAGE_KEY);
+
+        const { error: resError } = await response?.json();
+        const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
+
         openNotificationWithIcon({
           type: NotificationType.ERROR,
-          title: 'Playground query',
-          description: 'There is an issue with playground, please check with indexer.' || error?.message, // TODO: Wording redefine
+          title: t('serviceAgreements.playground.queryTitle'),
+          description: sortedError,
         });
         history.push(ONGOING_PLANS);
       }
@@ -153,7 +158,7 @@ export const Playground: React.VFC = () => {
       setIsCheckingAuth(false);
     };
     initialQuery();
-  }, [TOKEN_STORAGE_KEY, history, queryUrl, sessionToken]);
+  }, [TOKEN_STORAGE_KEY, history, queryUrl, sessionToken, t]);
 
   const requestAuthWhenTokenExpired = React.useCallback(() => {
     setQueryable(false);
@@ -161,10 +166,10 @@ export const Playground: React.VFC = () => {
 
     openNotificationWithIcon({
       type: NotificationType.ERROR,
-      title: 'Playground Query',
-      description: 'The auth token for playground query has expired.',
+      title: t('serviceAgreements.playground.queryTitle'),
+      description: t('serviceAgreements.playground.expiredToken'),
     });
-  }, [TOKEN_STORAGE_KEY]);
+  }, [TOKEN_STORAGE_KEY, t]);
 
   const requireAuth = queryable === false && !isCheckingAuth;
   const showPlayground = queryable && queryUrl && !isCheckingAuth;

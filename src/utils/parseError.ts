@@ -18,16 +18,18 @@ export const errors = [
     error: 'Not registered',
     message: 'Error: Your address has not registered yet.',
   },
+  {
+    error: 'exceed daily',
+    message: `Error: You can not query as you have exceed daily limit.`,
+  },
 ];
 
 const generalErrorMsg = 'Error: unfortunately, something went wrong.';
 
 export function parseError(error: any, errorsMapping = errors): string {
-  const rawErrorMsg = error?.data?.message ?? error?.message;
-
-  if (!rawErrorMsg) return generalErrorMsg;
+  const rawErrorMsg = error?.data?.message ?? error?.message ?? error;
 
   const sortedError = errorsMapping.find((e) => rawErrorMsg.match(e.error));
 
-  return sortedError?.message ?? rawErrorMsg;
+  return sortedError?.message ?? rawErrorMsg ?? generalErrorMsg;
 }
