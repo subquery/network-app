@@ -4833,19 +4833,25 @@
     "@polkadot/ui-keyring" "^2.9.4"
     solidity-docgen "^0.6.0-beta.25"
 
-"@subql/network-clients@^0.2.1-9":
-  version "0.2.1-10"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-10.tgz#bdaba27a45a9f9f320c71fdeaf6c6539bd7f65f8"
-  integrity sha512-OI+qjbtxkQgMCr6o0U4vxQCeDWzVluPudeKcjxwKrxD0AC5UCKx7b1SqDuvdqSeNSQldji1EXl9KjfMual6FpQ==
+"@subql/network-clients@^0.2.1-13":
+  version "0.2.1-13"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.1-13.tgz#f149964ba85d4e38e7a8e00818a9f1c9578e825f"
+  integrity sha512-Wzjywr5kcAltP0UM9Rien4ysk/U4mDl6SC+IphOedzEAi3WCI6Ejhjcsu0dW9Qx99Fa5TShJ7LP5eXGuW5fovw==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
+    "@subql/network-query" "^0.1.1-0"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
     ethers "^5.6.8"
     graphql "^16.5.0"
     yup "^0.32.11"
+
+"@subql/network-query@^0.1.1-0":
+  version "0.1.1-0"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.1.1-0.tgz#87c4c8193d5c2ee349b34a90530b7c78c163475e"
+  integrity sha512-DMRvYYBpfXzYi29SRi0lhjTUcNauk3+69GM26+VSUNTmZbLAuJ7II6HVQRteYRas4TrVVWxsh0tie/XEcKdezA==
 
 "@subql/react-ui@1.0.1-22":
   version "1.0.1-22"
