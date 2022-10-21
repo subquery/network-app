@@ -29,9 +29,12 @@ export function formatEther(value: BigNumberish | BigInt | undefined, toFixed?: 
   return toFixed ? truncFormatEtherStr(formattedEther, toFixed) : formattedEther;
 }
 
-// TODO: should only be number and percentage formatter
-export function toPercentageValue(value: number, divUnit = 100): string {
-  return (value / divUnit).toFixed(2);
+export function divToPercentage(value: number, divUnit = 100, decimalPlaces = 2): string {
+  return (value / divUnit).toFixed(decimalPlaces);
+}
+
+export function mulToPercentage(value: number, mulUnit = 100, decimalPlaces = 2): string {
+  return (value * mulUnit).toFixed(decimalPlaces);
 }
 
 export function extractPercentage(value: string): number {

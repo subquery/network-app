@@ -8,7 +8,7 @@ import {
   convertStringToNumber,
   formatEther,
   mergeAsync,
-  toPercentageValue,
+  divToPercentage,
 } from '../utils';
 import { COMMISSION_DIV_UNIT } from './useCommissionRate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
@@ -18,7 +18,7 @@ export const getCommission = (value: unknown, curEra: number | undefined): Curre
   const commission = parseRawEraValue(value, curEra);
 
   const sortedCommission = mapEraValue(commission, (v) =>
-    toPercentageValue(convertBigNumberToNumber(v ?? 0), COMMISSION_DIV_UNIT),
+    divToPercentage(convertBigNumberToNumber(v ?? 0), COMMISSION_DIV_UNIT),
   );
   return sortedCommission;
 };

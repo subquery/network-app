@@ -14,7 +14,7 @@ import { TableTitle } from '../../../../components/TableTitle';
 import { useWeb3 } from '../../../../containers';
 import styles from './TopIndexersList.module.css';
 import { GetTopIndexers_indexerPrograms } from '../../../../__generated__/excellentIndexers/GetTopIndexers';
-import { getOrderedAccounts } from '../../../../utils';
+import { getOrderedAccounts, mulToPercentage } from '../../../../utils';
 
 const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
@@ -37,7 +37,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'totalPoints',
-    render: (ranking) => <TableText>{ranking}</TableText>,
+    render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
     sorter: (a, b) => a.totalPoints - b.totalPoints,
   },
   {
@@ -49,7 +49,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'uptime',
-    render: (upTime) => <TableText>{`${upTime * 100} %`}</TableText>,
+    render: (upTime) => <TableText>{`${mulToPercentage(upTime)} %`}</TableText>,
     sorter: (a, b) => a.uptime - b.uptime,
   },
   {
@@ -61,7 +61,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'ownStaked',
-    render: (ownStake) => <TableText>{`${ownStake * 100} %`}</TableText>,
+    render: (ownStake) => <TableText>{`${mulToPercentage(ownStake)} %`}</TableText>,
     sorter: (a, b) => a.ownStaked - b.ownStaked,
   },
   {
@@ -73,7 +73,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'delegated',
-    render: (delegated) => <TableText>{`${delegated * 100} %`}</TableText>,
+    render: (delegated) => <TableText>{`${mulToPercentage(delegated)} %`}</TableText>,
     sorter: (a, b) => a.delegated - b.delegated,
   },
   {
