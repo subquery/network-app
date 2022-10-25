@@ -39,6 +39,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
     sorter: (a, b) => a.totalPoints - b.totalPoints,
+    showSorterTooltip: false,
   },
   {
     title: (
@@ -51,6 +52,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{`${mulToPercentage(upTime)} %`}</TableText>,
     sorter: (a, b) => a.uptime - b.uptime,
+    showSorterTooltip: false,
   },
   {
     title: (
@@ -63,6 +65,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{`${mulToPercentage(ownStake)} %`}</TableText>,
     sorter: (a, b) => a.ownStaked - b.ownStaked,
+    showSorterTooltip: false,
   },
   {
     title: (
@@ -75,6 +78,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{`${mulToPercentage(delegated)} %`}</TableText>,
     sorter: (a, b) => a.delegated - b.delegated,
+    showSorterTooltip: false,
   },
   {
     title: (
