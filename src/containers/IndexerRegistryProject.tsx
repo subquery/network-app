@@ -141,7 +141,12 @@ const GET_ALL_DELEGATIONS = gql`
         indexerId
         amount
         indexer {
-          metadata
+          metadata {
+            metadataCID
+            id
+            name
+            url
+          }
         }
       }
     }
@@ -167,7 +172,12 @@ const GET_DELEGATIONS = gql`
         indexerId
         amount
         indexer {
-          metadata
+          metadata {
+            metadataCID
+            id
+            name
+            url
+          }
           active
         }
       }
