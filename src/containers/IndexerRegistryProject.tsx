@@ -36,7 +36,12 @@ import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
     id
-    metadata
+    metadata {
+      metadataCID
+      id
+      name
+      url
+    }
     controller
     commission
     totalStake
