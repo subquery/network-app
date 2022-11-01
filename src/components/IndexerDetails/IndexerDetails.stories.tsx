@@ -47,7 +47,13 @@ NoMetadata.args = {
     status: Status.INDEXING,
     indexer: {
       __typename: 'Indexer',
-      metadata: '',
+      metadata: {
+        __typename: 'IndexerMetadatum',
+        metadataCID: '',
+        id: '',
+        name: '',
+        url: '',
+      },
     },
   },
   metadata: { loading: false, data: undefined },
@@ -74,7 +80,13 @@ LoadingMetadata.args = {
     status: Status.INDEXING,
     indexer: {
       __typename: 'Indexer',
-      metadata: '',
+      metadata: {
+        __typename: 'IndexerMetadatum',
+        metadataCID: '',
+        id: '',
+        name: '',
+        url: '',
+      },
     },
   },
   metadata: { loading: true, data: undefined },
@@ -101,7 +113,13 @@ WithMetadata.args = {
     status: Status.INDEXING,
     indexer: {
       __typename: 'Indexer',
-      metadata: '',
+      metadata: {
+        __typename: 'IndexerMetadatum',
+        metadataCID: '',
+        id: '',
+        name: '',
+        url: '',
+      },
     },
   },
   metadata: {

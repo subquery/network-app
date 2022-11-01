@@ -48,7 +48,7 @@ const IndexerRow: React.FC<Props> = ({ onClick, metadata, indexer }) => {
 };
 
 const ConnectedIndexerRow: React.FC<Omit<Props, 'metadata'>> = (props) => {
-  const asyncMetadata = useIPFSMetadata<IndexerDetails>(props.indexer.metadata);
+  const asyncMetadata = useIPFSMetadata<IndexerDetails>(props.indexer.metadata?.metadataCID);
   const metadata = mapAsync((meta) => indexerMetadataSchema.validateSync(meta), asyncMetadata);
 
   return <IndexerRow {...props} metadata={metadata} />;

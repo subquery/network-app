@@ -33,7 +33,13 @@ Default.args = {
     {
       __typename: 'Indexer',
       id: '0x759Dc965026Ea8D6919451c0B1eaD337bD60ddeD',
-      metadata: bytes32ToCid('0x2dc3357aab66608c90e276670994503108ddc2ba965b7cfe116897b493160761'),
+      metadata: {
+        metadataCID: bytes32ToCid('0x2dc3357aab66608c90e276670994503108ddc2ba965b7cfe116897b493160761'),
+        __typename: 'IndexerMetadatum',
+        id: '',
+        name: '',
+        url: '',
+      },
       controller: null,
       commission: {
         era: 2,
