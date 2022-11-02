@@ -73,7 +73,7 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
         throw new Error(parseError(sortedError));
       }
     } catch (error) {
-      setError(`Request auth token failure: ${parseError(error)}`);
+      setError(parseError(error));
     }
 
     setLoading(false);
