@@ -67,11 +67,11 @@ const ProjectInner: React.VFC = () => {
       (async function fetchMeta() {
         let indexerMeta;
         try {
-          const metadata = await getIndexerMetadata(catSingle, indexer.indexer?.metadata);
+          const { url: indexerEndpoint } = indexer.indexer?.metadata ?? {};
 
-          if (!metadata) return;
+          if (!indexerEndpoint) return;
           indexerMeta = await getDeploymentMetadata({
-            proxyEndpoint: metadata.url,
+            proxyEndpoint: indexerEndpoint,
             deploymentId,
             indexer: indexer.indexerId,
           });

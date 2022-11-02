@@ -36,10 +36,14 @@ import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
     id
-    metadata
     controller
     commission
     totalStake
+    metadata {
+      metadataCID
+      name
+      url
+    }
   }
 `;
 
@@ -136,7 +140,11 @@ const GET_ALL_DELEGATIONS = gql`
         indexerId
         amount
         indexer {
-          metadata
+          metadata {
+            metadataCID
+            name
+            url
+          }
         }
       }
     }
@@ -162,7 +170,11 @@ const GET_DELEGATIONS = gql`
         indexerId
         amount
         indexer {
-          metadata
+          metadata {
+            metadataCID
+            name
+            url
+          }
           active
         }
       }

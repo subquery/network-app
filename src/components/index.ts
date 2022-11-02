@@ -21,8 +21,6 @@ import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
 import Copy from './Copy';
 import Status from './Status';
-export { default as IndexerList } from './IndexerList';
-export { default as DelegatorsList } from './DelegatorsList';
 export * from './ConnectWallet';
 export * from './DeploymentInfo';
 export * from './Sidebar';

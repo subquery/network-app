@@ -95,7 +95,11 @@ const DEPLOYMENT_INDEXER_FIELDS = gql`
     timestamp
     status
     indexer {
-      metadata
+      metadata {
+        metadataCID
+        name
+        url
+      }
     }
   }
 `;
