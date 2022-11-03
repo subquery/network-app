@@ -450,7 +450,7 @@ const GET_SPECIFIC_OPEN_OFFERS = gql`
 `;
 
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
-  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params, pollInterval: 20000 });
+  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params, pollInterval: 15000 });
 }
 
 export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexers> {
@@ -467,7 +467,7 @@ export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): Que
 export function useDelegation(indexer: string, delegator: string): QueryResult<GetDelegation> {
   return useQuery<GetDelegation, GetDelegationVariables>(GET_DELEGATION, {
     variables: { id: `${indexer}:${delegator}` },
-    pollInterval: 20000,
+    pollInterval: 15000,
   });
 }
 export function useAllDelegations(params: GetAllDelegationsVariables): QueryResult<GetAllDelegations> {
@@ -505,6 +505,7 @@ export function useServiceAgreements(
 ): QueryResult<GetOngoingServiceAgreements> {
   return useQuery<GetOngoingServiceAgreements, GetOngoingServiceAgreementsVariables>(GET_SERVICE_AGREEMENTS, {
     variables: params,
+    pollInterval: 20000,
   });
 }
 

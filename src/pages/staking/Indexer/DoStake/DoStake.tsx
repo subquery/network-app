@@ -112,7 +112,8 @@ export const DoStake: React.FC = () => {
       return (
         <TransactionModal
           text={modalText}
-          loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeAmount)}
+          loading={isUndefined(indexerRewards)}
+          // loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeAmount)} // TODO: maxUnstakeAmount from network-client
           actions={[
             {
               label: t('indexer.stake'),
