@@ -39,7 +39,7 @@ export const errors = [
 const generalErrorMsg = 'Error: unfortunately, something went wrong.';
 
 export function parseError(error: any, errorsMapping = errors): string {
-  const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error;
+  const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
   const sortedError = errorsMapping.find((e) => rawErrorMsg.match(e.error));
 
   return sortedError?.message ?? rawErrorMsg ?? generalErrorMsg;
