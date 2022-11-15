@@ -365,6 +365,7 @@ const en = {
         manageMyPlans: 'Manage My Plans',
         myOffers: 'Manage My Offers',
         offerMarketplace: 'Offer Marketplace',
+        myFlexPlans: 'My Flex Plans',
       },
       default: {
         title: 'You can create maximum 5 default plans',
