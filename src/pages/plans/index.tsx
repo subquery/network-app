@@ -9,7 +9,7 @@ import ServiceAgreements from './ServiceAgreements';
 import { Plans } from './Plans';
 import { Marketplace } from './OfferMarketplace';
 import { MyOffers } from './MyOffers';
-import { FlexPlans } from './FlexPlans';
+import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
 
@@ -55,7 +55,7 @@ export const PlanAndOffer: React.VFC = () => {
       <AppSidebar list={sidebarList}>
         <Switch>
           <Route path={SERVICE_AGREEMENTS} component={ServiceAgreements} />
-          <Route path={FLEX_PLANS} component={FlexPlans} />
+          <Route path={FLEX_PLANS} component={MyFlexPlans} />
           <Route path={PLAN_ROUTE} component={Plans} />
           <Route path={OFFER_MARKETPLACE} component={Marketplace} />
           <Route path={MY_OFFERS} component={MyOffers} />

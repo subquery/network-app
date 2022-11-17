@@ -58,10 +58,17 @@ const en = {
       project: {
         tab1: 'Overview',
         tab2: 'Indexers',
-        tab3: 'Playground',
+        tab3: 'Service Agreement',
+        tab4: 'Flex Plan',
+        // tab3: 'Playground',
       },
       home: {
         header: 'SubQuery projects',
+      },
+      flexPlans: {
+        indexer: 'indexer',
+        validityPeriod: 'Validity Period',
+        non: 'There are no flex plans for this project yet.',
       },
     },
     deployment: {
@@ -630,6 +637,7 @@ const en = {
       infrequent: 'Infrequent',
       enabled: 'Enabled',
       disabled: 'Disabled',
+      price: 'price',
     },
     status: {
       success: 'Success!',
