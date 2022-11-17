@@ -1,0 +1,9 @@
+.starContainer {
+  width: 1.5rem;
+}
+
+.star {
+  color: var(--yellow700);
+  width: 1.2rem;
+  height: 1.2rem;
+}

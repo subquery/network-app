@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import styles from './FlexPlans.module.css';
+import styles from './MyFlexPlans.module.css';
 
 const FLEX_PLANS = '/plans/flex-plans';
 export const ONGOING_PLANS = `${FLEX_PLANS}/ongoing`;
@@ -17,7 +17,7 @@ const buttonLinks = [
   { label: 'Closed', link: EXPIRED_PLANS },
 ];
 
-export const FlexPlans: React.VFC = () => {
+export const MyFlexPlans: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
 

@@ -18,12 +18,16 @@ import {
   useSpecificServiceAgreements,
 } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { getIndexerMetadata } from '../../../hooks/useIndexerMetadata';
 import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
+import { FlexPlans } from '../FlexPlans';
 
 export const ROUTE = '/explorer/project';
+const OVERVIEW_PATH = 'overview';
+const INDEXERS_PATH = 'indexers';
+const SA_PATH = 'service-agreements';
+const FLEX_PLANS = 'flex-plans';
 
 const ProjectInner: React.VFC = () => {
   const { id } = useParams<{ id: string }>();
@@ -123,20 +127,21 @@ const ProjectInner: React.VFC = () => {
     });
   };
 
-  const renderPlayground = () => {
-    if (!hasIndexers) {
-      return <Redirect from="/:id" to={`overview`} />;
-    }
+  // const renderPlayground = () => {
+  //   if (!hasIndexers) {
+  //     return <Redirect from="/:id" to={`overview`} />;
+  //   }
 
-    return <div>Coming soon</div>;
-    // return <Playground/>
-  };
+  //   return <div>Coming soon</div>;
+  //   // return <Playground/>
+  // };
 
   const tabList = [
-    { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
-    { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
-    { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service Agreement' },
-    { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
+    { link: `${ROUTE}/${id}/${OVERVIEW_PATH}${history.location.search}`, label: t('explorer.project.tab1') },
+    { link: `${ROUTE}/${id}/${INDEXERS_PATH}${history.location.search}`, label: t('explorer.project.tab2') },
+    { link: `${ROUTE}/${id}/${SA_PATH}${history.location.search}`, label: t('explorer.project.tab3') },
+    { link: `${ROUTE}/${id}/${FLEX_PLANS}${history.location.search}`, label: t('explorer.project.tab4') },
+    // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 
   return renderAsync(asyncProject, {
@@ -164,7 +169,7 @@ const ProjectInner: React.VFC = () => {
           </div>
           <div className={clsx('content-width')}>
             <Switch>
-              <Route exact path={`${ROUTE}/:id/overview`}>
+              <Route exact path={`${ROUTE}/:id/${OVERVIEW_PATH}`}>
                 <ProjectOverview
                   metadata={project.metadata}
                   deploymentDescription={asyncDeploymentMetadata?.data?.description}
@@ -172,21 +177,23 @@ const ProjectInner: React.VFC = () => {
                   updatedAt={project.updatedTimestamp}
                 />
               </Route>
-              <Route exact path={`${ROUTE}/:id/indexers`}>
+              <Route exact path={`${ROUTE}/:id/${INDEXERS_PATH}`}>
                 {renderIndexers()}
               </Route>
               <Route
                 exact
-                path={`${ROUTE}/:id/service-agreements`}
+                path={`${ROUTE}/:id/${SA_PATH}`}
                 component={() => (
                   <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
                 )}
               />
 
-              <Route exact path={`${ROUTE}/:id/playground`}>
+              <Route exact path={`${ROUTE}/:id/${FLEX_PLANS}`} component={FlexPlans} />
+
+              {/* <Route exact path={`${ROUTE}/:id/playground`}>
                 {renderPlayground()}
-              </Route>
-              <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
+              </Route> */}
+              <Redirect from="/:id" to={`${id}/${OVERVIEW_PATH}${history.location.search}`} />
             </Switch>
           </div>
         </div>
