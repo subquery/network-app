@@ -5,21 +5,33 @@ import * as React from 'react';
 import { BigNumber } from 'ethers';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Table, TableProps, Typography } from 'antd';
+import { Space, Table, TableProps, Typography } from 'antd';
 import i18next from 'i18next';
+import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlans } from '../../../hooks';
 import { Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import styles from './FlexPlans.module.css';
 
 // TODO: confirm PRICE / Validity Period with consumer host service
+// TODO: confirm score threadThread with consumer host service
 const columns: TableProps<IIndexerFlexPlans>['columns'] = [
   {
     dataIndex: 'indexer',
     title: <TableTitle>{i18next.t('explorer.flexPlans.indexer')}</TableTitle>,
-    render: (indexer) => <ConnectedIndexer id={indexer} />,
+    render: (indexer, indexerFlexPlans) => {
+      return (
+        <Space className="flex">
+          <div className={styles.starContainer}>
+            {indexerFlexPlans.score >= 150 && <BsStarFill className={styles.star} />}
+          </div>
+          <ConnectedIndexer id={indexer} />
+        </Space>
+      );
+    },
   },
   {
     dataIndex: 'price',
@@ -61,7 +73,9 @@ export const FlexPlans: React.FC = () => {
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
           empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
           data: (data) => {
-            return <Table columns={columns} dataSource={data} rowKey={'id'} />;
+            const orderData = data.sort((dA, dB) => dB.score - dA.score);
+            console.log('orderData', orderData);
+            return <Table columns={columns} dataSource={orderData} rowKey={'id'} />;
           },
         },
       )}
