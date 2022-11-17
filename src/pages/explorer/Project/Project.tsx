@@ -123,20 +123,20 @@ const ProjectInner: React.VFC = () => {
     });
   };
 
-  const renderPlayground = () => {
-    if (!hasIndexers) {
-      return <Redirect from="/:id" to={`overview`} />;
-    }
+  // const renderPlayground = () => {
+  //   if (!hasIndexers) {
+  //     return <Redirect from="/:id" to={`overview`} />;
+  //   }
 
-    return <div>Coming soon</div>;
-    // return <Playground/>
-  };
+  //   return <div>Coming soon</div>;
+  //   // return <Playground/>
+  // };
 
   const tabList = [
     { link: `${ROUTE}/${id}/overview${history.location.search}`, label: t('explorer.project.tab1') },
     { link: `${ROUTE}/${id}/indexers${history.location.search}`, label: t('explorer.project.tab2') },
     { link: `${ROUTE}/${id}/service-agreements${history.location.search}`, label: 'Service Agreement' },
-    { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
+    // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 
   return renderAsync(asyncProject, {
@@ -183,9 +183,9 @@ const ProjectInner: React.VFC = () => {
                 )}
               />
 
-              <Route exact path={`${ROUTE}/:id/playground`}>
+              {/* <Route exact path={`${ROUTE}/:id/playground`}>
                 {renderPlayground()}
-              </Route>
+              </Route> */}
               <Redirect from="/:id" to={`${id}/overview${history.location.search}`} />
             </Switch>
           </div>
