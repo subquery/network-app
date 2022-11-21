@@ -32,6 +32,8 @@ import { GetPlanTemplatesVariables, GetPlanTemplates } from '../__generated__/re
 import { GetRewardsVariables, GetRewards } from '../__generated__/registry/GetRewards';
 import { GetSpecificPlansVariables, GetSpecificPlans } from '../__generated__/registry/GetSpecificPlans';
 import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry/GetWithdrawls';
+import { GetOngoingFlexPlan, GetOngoingFlexPlanVariables } from '../__generated__/registry/GetOngoingFlexPlan';
+import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -449,6 +451,55 @@ const GET_SPECIFIC_OPEN_OFFERS = gql`
   }
 `;
 
+const STATE_CHANNEL_FIELDS = gql`
+  fragment StateChannelFields on StateChannel {
+    id
+    indexer
+    consumer
+    status
+    deploymentId
+    total
+    price
+    spent
+    startTime
+    expiredAt
+    terminatedAt
+  }
+`;
+
+const GET_CONSUMER_ONGOING_FLEX_PLANS = gql`
+  ${STATE_CHANNEL_FIELDS}
+  query GetOngoingFlexPlan($consumer: String!, $now: Datetime!, $offset: Int) {
+    stateChannels(
+      filter: { consumer: { equalTo: $consumer }, expiredAt: { greaterThan: $now }, status: { equalTo: OPEN } }
+      offset: $offset
+    ) {
+      totalCount
+      nodes {
+        ...StateChannelFields
+      }
+    }
+  }
+`;
+
+const GET_CONSUMER_CLOSED_FLEX_PLANS = gql`
+  ${STATE_CHANNEL_FIELDS}
+  query GetClosedFlexPlans($consumer: String!, $now: Datetime!, $offset: Int) {
+    stateChannels(
+      filter: {
+        consumer: { equalTo: $consumer }
+        or: [{ expiredAt: { lessThan: $now }, status: { equalTo: OPEN } }, { status: { notEqualTo: OPEN } }]
+      }
+      offset: $offset
+    ) {
+      totalCount
+      nodes {
+        ...StateChannelFields
+      }
+    }
+  }
+`;
+
 export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
   return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params, pollInterval: 15000 });
 }
@@ -568,4 +619,16 @@ export function useIndexerRewards(params: GetIndexerRewardsVariables): QueryResu
 
 export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator> {
   return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params, pollInterval: 20000 });
+}
+
+export function useConsumerOpenFlexPlans(params: GetOngoingFlexPlanVariables): QueryResult<GetOngoingFlexPlan> {
+  return useQuery<GetOngoingFlexPlan, GetOngoingFlexPlanVariables>(GET_CONSUMER_ONGOING_FLEX_PLANS, {
+    variables: params,
+  });
+}
+
+export function useConsumerClosedFlexPlans(params: GetClosedFlexPlansVariables): QueryResult<GetClosedFlexPlans> {
+  return useQuery<GetClosedFlexPlans, GetClosedFlexPlansVariables>(GET_CONSUMER_CLOSED_FLEX_PLANS, {
+    variables: params,
+  });
 }

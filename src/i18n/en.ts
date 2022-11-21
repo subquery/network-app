@@ -429,6 +429,18 @@ const en = {
         notReadyToBePurchased: `This plan cannot be purchased until the indexer status is 'Ready'`,
       },
     },
+    flexPlans: {
+      project: 'project',
+      indexer: 'indexer',
+      validityPeriod: 'Validity Period',
+      spent: 'spent',
+      channelStatus: 'Channel Status',
+      duration: 'duration',
+      remainDeposit: 'remaining deposit',
+      request: '{{count}} request',
+      request_other: '{{count}} requests',
+      non: 'There are no flex plan list. ',
+    },
     serviceAgreements: {
       headers: {
         project: 'Project',
@@ -621,6 +633,9 @@ const en = {
       back: 'Back',
       active: 'Active',
       inactive: 'Inactive',
+      terminated: 'Terminated',
+      terminating: 'Terminating',
+      completed: 'Completed',
       comingSoon: 'Coming soon.',
       choose: 'choose',
       confirm: 'Confirm',
