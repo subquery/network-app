@@ -5,8 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
 import { AppPageHeader, TabButtons } from '../../../components';
-import { useWeb3 } from '../../../containers';
+import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import styles from './MyFlexPlans.module.css';
+import { MyFlexPlanTable } from './MyFlexPlanTable';
 
 const FLEX_PLANS = '/plans/flex-plans';
 export const ONGOING_PLANS = `${FLEX_PLANS}/ongoing`;
@@ -19,11 +20,6 @@ const buttonLinks = [
 
 export const MyFlexPlans: React.VFC = () => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
-
-  const FlexPlanList = ({ queryFn }: { queryFn: string }) => {
-    return <div className="contentContainer">{queryFn}</div>;
-  };
 
   const Header = () => (
     <>
@@ -38,8 +34,8 @@ export const MyFlexPlans: React.VFC = () => {
     <div>
       <Header />
       <Switch>
-        <Route exact path={ONGOING_PLANS} component={() => <FlexPlanList queryFn="Ongoing Plans" />} />
-        <Route exact path={EXPIRED_PLANS} component={() => <FlexPlanList queryFn="Expired Plans" />} />
+        <Route exact path={ONGOING_PLANS} component={() => <MyFlexPlanTable queryFn={useConsumerOpenFlexPlans} />} />
+        <Route exact path={EXPIRED_PLANS} component={() => <MyFlexPlanTable queryFn={useConsumerClosedFlexPlans} />} />
         <Redirect from={FLEX_PLANS} to={ONGOING_PLANS} />
       </Switch>
     </div>
