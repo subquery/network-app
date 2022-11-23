@@ -6,6 +6,7 @@ import { useContracts, useWeb3 } from '.';
 import { useAsyncMemo } from '../hooks';
 import { createContainer } from './Container';
 
+// TODO: move to client-sdk
 function useSQTokenImpl() {
   const { account } = useWeb3();
   const pendingContracts = useContracts();
@@ -17,6 +18,15 @@ function useSQTokenImpl() {
     assert(account, 'Account not available');
 
     return contracts.sqToken.balanceOf(account);
+  }, [account, pendingContracts]);
+
+  const consumerHostBalance = useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
+
+    assert(contracts, 'Contracts not available');
+    assert(account, 'Account not available');
+
+    return contracts.consumerHost.consumers(account);
   }, [account, pendingContracts]);
 
   const stakingAllowance = useAsyncMemo(async () => {
@@ -57,6 +67,7 @@ function useSQTokenImpl() {
 
   return {
     balance,
+    consumerHostBalance,
     stakingAllowance,
     planAllowance,
     offerAllowance,

@@ -18,6 +18,7 @@ export * from './colors';
 export * from './constants';
 export * from './USDC';
 export * from './getOrderedAccounts';
+export * from './getFlexPlanPrice';
 
 export function truncateAddress(address: string): string {
   if (!address) {

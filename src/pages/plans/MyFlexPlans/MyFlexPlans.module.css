@@ -3,3 +3,14 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.cards {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.balances {
+  display: flex;
+  column-gap: 1rem;
+}

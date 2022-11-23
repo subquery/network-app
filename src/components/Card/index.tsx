@@ -10,11 +10,12 @@ interface CardProps {
   category?: string;
   title?: string;
   value?: string;
+  className?: string;
 }
 
-export const Card: React.VFC<CardProps> = ({ category, title, value }) => {
+export const Card: React.VFC<CardProps> = ({ category, title, value, className }) => {
   return (
-    <div className={styles.card}>
+    <div className={clsx(styles.card, className)}>
       {category && (
         <Typography variant="small" className={styles.category}>
           {category.toUpperCase()}

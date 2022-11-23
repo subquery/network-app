@@ -6,18 +6,16 @@ import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
-import { convertStringToNumber, formatEther, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlans } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 
-// TODO: confirm remaining deposit field
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
   const columns: TableProps<ConsumerFlexPlans>['columns'] = [
     {
@@ -39,12 +37,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
     {
       dataIndex: 'price',
       title: <TableTitle title={i18next.t('flexPlans.price')} />,
-      render: (price, plan) => {
-        const amount = 1000;
-        const sortedPrice = `${convertStringToNumber(formatEther(price, 4)) * amount}`;
-        const sortedRequest = `${amount} requests`;
-        return <TableText content={`${sortedPrice} / ${sortedRequest}`} />;
-      },
+      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
     },
     {
       dataIndex: 'expiredAt',
@@ -103,7 +96,6 @@ interface MyFlexPlanTableProps {
 }
 
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const { pathname } = useLocation();
   const [now, setNow] = React.useState<Date>(moment().toDate());
@@ -123,8 +115,6 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
     });
   };
 
-  console.log('flexPlans', flexPlans);
-
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().toDate());
@@ -136,7 +126,6 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
     <div className="contentContainer">
       {renderAsyncArray(
         mapAsync((d) => {
-          console.log('d', d);
           return d?.stateChannels?.nodes?.filter(notEmpty);
         }, flexPlans),
         {

@@ -4,10 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
-import { AppPageHeader, TabButtons } from '../../../components';
-import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
-import styles from './MyFlexPlans.module.css';
+import { AppPageHeader, Card, TabButtons } from '../../../components';
+import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
+import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
+import styles from './MyFlexPlans.module.css';
 
 const FLEX_PLANS = '/plans/flex-plans';
 export const ONGOING_PLANS = `${FLEX_PLANS}/ongoing`;
@@ -18,18 +19,44 @@ const buttonLinks = [
   { label: 'Closed', link: EXPIRED_PLANS },
 ];
 
-export const MyFlexPlans: React.VFC = () => {
+const BalanceCards = () => {
+  const { t } = useTranslation();
+  const { balance, consumerHostBalance } = useSQToken();
+  const { loading: loadingBalance, data: balanceData } = balance;
+  const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
+  const [billBalance] = billingBalanceData ?? [];
+
+  return (
+    <div className={styles.cards}>
+      <div className={styles.balances}>
+        <Card
+          title={t('flexPlans.billBalance')}
+          value={loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+        />
+        <Card
+          title={t('flexPlans.walletBalance')}
+          value={loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+        />
+      </div>
+    </div>
+  );
+};
+
+const Header = () => {
   const { t } = useTranslation();
 
-  const Header = () => (
+  return (
     <>
       <AppPageHeader title={t('plans.category.myFlexPlans')} />
+      <BalanceCards />
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
       </div>
     </>
   );
+};
 
+export const MyFlexPlans: React.VFC = () => {
   return (
     <div>
       <Header />

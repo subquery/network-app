@@ -439,6 +439,8 @@ const en = {
       remainDeposit: 'remaining deposit',
       request: '{{count}} request',
       request_other: '{{count}} requests',
+      billBalance: 'BILLING BALANCE',
+      walletBalance: 'WALLET BALANCE',
       non: 'There are no flex plan list. ',
     },
     serviceAgreements: {
