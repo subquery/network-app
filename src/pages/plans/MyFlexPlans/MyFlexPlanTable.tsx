@@ -117,8 +117,6 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
     });
   };
 
-  console.log('flexPlans', flexPlans);
-
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().toDate());
@@ -130,7 +128,6 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
     <div className="contentContainer">
       {renderAsyncArray(
         mapAsync((d) => {
-          console.log('d', d);
           return d?.stateChannels?.nodes?.filter(notEmpty);
         }, flexPlans),
         {
