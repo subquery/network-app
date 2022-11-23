@@ -6,7 +6,6 @@ import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
@@ -97,7 +96,6 @@ interface MyFlexPlanTableProps {
 }
 
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const { pathname } = useLocation();
   const [now, setNow] = React.useState<Date>(moment().toDate());

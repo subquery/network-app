@@ -20,6 +20,15 @@ function useSQTokenImpl() {
     return contracts.sqToken.balanceOf(account);
   }, [account, pendingContracts]);
 
+  const consumerHostBalance = useAsyncMemo(async () => {
+    const contracts = await pendingContracts;
+
+    assert(contracts, 'Contracts not available');
+    assert(account, 'Account not available');
+
+    return contracts.consumerHost.consumers(account);
+  }, [account, pendingContracts]);
+
   const stakingAllowance = useAsyncMemo(async () => {
     const contracts = await pendingContracts;
 
@@ -58,6 +67,7 @@ function useSQTokenImpl() {
 
   return {
     balance,
+    consumerHostBalance,
     stakingAllowance,
     planAllowance,
     offerAllowance,

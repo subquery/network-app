@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
-import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
+import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
@@ -21,15 +21,17 @@ const buttonLinks = [
 
 const BalanceCards = () => {
   const { t } = useTranslation();
-  const { balance } = useSQToken();
+  const { balance, consumerHostBalance } = useSQToken();
   const { loading: loadingBalance, data: balanceData } = balance;
+  const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
+  const [billBalance] = billingBalanceData ?? [];
 
   return (
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
           title={t('flexPlans.billBalance')}
-          value={loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          value={loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
         />
         <Card
           title={t('flexPlans.walletBalance')}

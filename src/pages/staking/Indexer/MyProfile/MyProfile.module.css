@@ -29,7 +29,6 @@
 }
 
 .stakingSummary {
-  width: 60%;
   height: 100%;
   display: flex;
   column-gap: 1rem;
