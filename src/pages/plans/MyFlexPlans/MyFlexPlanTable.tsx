@@ -11,13 +11,12 @@ import { useLocation } from 'react-router';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
-import { convertStringToNumber, formatEther, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlans } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 
-// TODO: confirm remaining deposit field
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
   const columns: TableProps<ConsumerFlexPlans>['columns'] = [
     {
@@ -39,12 +38,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
     {
       dataIndex: 'price',
       title: <TableTitle title={i18next.t('flexPlans.price')} />,
-      render: (price, plan) => {
-        const amount = 1000;
-        const sortedPrice = `${convertStringToNumber(formatEther(price, 4)) * amount}`;
-        const sortedRequest = `${amount} requests`;
-        return <TableText content={`${sortedPrice} / ${sortedRequest}`} />;
-      },
+      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
     },
     {
       dataIndex: 'expiredAt',

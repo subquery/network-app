@@ -11,12 +11,12 @@ import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlans } from '../../../hooks';
 import { Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
 
-// TODO: confirm PRICE / Validity Period with consumer host service
+// TODO: confirm Validity Period with consumer host service
 // TODO: confirm score threadThread with consumer host service
 const columns: TableProps<IIndexerFlexPlans>['columns'] = [
   {
@@ -36,12 +36,7 @@ const columns: TableProps<IIndexerFlexPlans>['columns'] = [
   {
     dataIndex: 'price',
     title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
-    render: (price, indexerFlexPlans) => {
-      const sortedPrice = `${formatEther(price, 4)} ${TOKEN}`;
-      const sortedRequest = `${indexerFlexPlans?.max_time} requests`;
-
-      return <TableText content={`${sortedPrice} / ${sortedRequest}`} />;
-    },
+    render: (price) => <TableText content={getFlexPlanPrice(price)} />,
   },
 
   {
