@@ -38,7 +38,11 @@ const columns: TableProps<IIndexerFlexPlans>['columns'] = [
     title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
     render: (price) => <TableText content={getFlexPlanPrice(price)} />,
   },
-
+  {
+    dataIndex: 'max_time',
+    title: <TableTitle>{i18next.t('flexPlans.validityPeriod')}</TableTitle>,
+    render: (max) => <TableText content={max} />,
+  },
   {
     dataIndex: 'id',
     title: <TableTitle>{i18next.t('general.action')}</TableTitle>,
@@ -65,12 +69,11 @@ export const FlexPlans: React.FC = () => {
         mapAsync((d) => d.filter(notEmpty), flexPlans),
         {
           loading: () => <Spinner />,
-          error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
+          error: (e) => <Typography>{`Failed to load flex plan: ${e}`}</Typography>,
           empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
           data: (data) => {
-            const orderData = data.sort((dA, dB) => dB.score - dA.score);
-            console.log('orderData', orderData);
-            return <Table columns={columns} dataSource={orderData} rowKey={'id'} />;
+            console.log('data', data);
+            return <Table columns={columns} dataSource={data} rowKey={'id'} />;
           },
         },
       )}
