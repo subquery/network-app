@@ -5,20 +5,23 @@ import * as React from 'react';
 import { BigNumber } from 'ethers';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Space, Table, TableProps, Typography } from 'antd';
+import { Space, Table, TableProps } from 'antd';
 import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
-import { useIndexerFlexPlans, IIndexerFlexPlans } from '../../../hooks';
-import { Spinner, TableText } from '../../../components';
+import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
+import { AppTypography, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
-import { getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
+import { useSQToken } from '../../../containers';
+import { useTranslation } from 'react-i18next';
+import { PurchaseFlexPlan } from './PurchaseFlexPlan';
 
 // TODO: confirm Validity Period with consumer host service
 // TODO: confirm score threadThread with consumer host service
-const columns: TableProps<IIndexerFlexPlans>['columns'] = [
+const getColumns = (balance: BigNumber | undefined): TableProps<IIndexerFlexPlan>['columns'] => [
   {
     dataIndex: 'indexer',
     title: <TableTitle>{i18next.t('explorer.flexPlans.indexer')}</TableTitle>,
@@ -46,16 +49,19 @@ const columns: TableProps<IIndexerFlexPlans>['columns'] = [
   {
     dataIndex: 'id',
     title: <TableTitle>{i18next.t('general.action')}</TableTitle>,
-    render: (id) => {
-      return <TableText content={'purchase'} />;
+    render: (id, plan) => {
+      return <PurchaseFlexPlan flexPlan={plan} balance={balance} />;
     },
   },
 ];
 
 export const FlexPlans: React.FC = () => {
+  const { t } = useTranslation();
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
+  const { consumerHostBalance } = useSQToken();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
+  const [balance] = consumerHostBalance.data ?? [];
 
   React.useEffect(() => {
     if (!id) {
@@ -69,12 +75,19 @@ export const FlexPlans: React.FC = () => {
         mapAsync((d) => d.filter(notEmpty), flexPlans),
         {
           loading: () => <Spinner />,
-          error: (e) => <Typography>{`Failed to load flex plan: ${e}`}</Typography>,
+          error: (e) => <AppTypography type="danger">{`Failed to load flex plan: ${e}`}</AppTypography>,
           empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
-          data: (data) => {
-            console.log('data', data);
-            return <Table columns={columns} dataSource={data} rowKey={'id'} />;
-          },
+          data: (data) => (
+            <>
+              {balance && (
+                <AppTypography tooltip={t('flexPlans.billingAccountTooltip')} className={styles.billBalance}>
+                  {t('flexPlans.billingAccount', { amount: `${formatEther(balance, 4)} ${TOKEN}` })}
+                </AppTypography>
+              )}
+
+              <Table columns={getColumns(balance)} dataSource={data} rowKey={'id'} />
+            </>
+          ),
         },
       )}
     </>

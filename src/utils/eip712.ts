@@ -17,6 +17,11 @@ const EIP712Domain = [
   { name: 'chainId', type: 'uint256' },
 ];
 
+export const ConsumerHostMessageType = [
+  { name: 'consumer', type: 'address' },
+  { name: 'timestamp', type: 'uint256' },
+];
+
 export const ConsumerSAMessageType = [
   { name: 'consumer', type: 'address' },
   { name: 'indexer', type: 'address' },
