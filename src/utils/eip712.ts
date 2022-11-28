@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Web3Provider } from '@ethersproject/providers';
 import { NETWORKS, SUPPORTED_NETWORK } from '../containers/Web3';
 
-export interface Message {
+export interface SAMessage {
   deploymentId: string;
   timestamp: number;
   indexer: string;
@@ -16,7 +17,12 @@ const EIP712Domain = [
   { name: 'chainId', type: 'uint256' },
 ];
 
-const ConsumerMessageType = [
+export const ConsumerHostMessageType = [
+  { name: 'consumer', type: 'address' },
+  { name: 'timestamp', type: 'uint256' },
+];
+
+export const ConsumerSAMessageType = [
   { name: 'consumer', type: 'address' },
   { name: 'indexer', type: 'address' },
   { name: 'agreement', type: 'string' },
@@ -35,8 +41,8 @@ const domain = {
   chainId: NETWORKS[SUPPORTED_NETWORK].chainId,
 };
 
-export function buildTypedMessage(message: Message): string {
-  const messageType = message.consumer ? ConsumerMessageType : IndexerMessageType;
+export function buildTypedMessage(message: SAMessage): string {
+  const messageType = message.consumer ? ConsumerSAMessageType : IndexerMessageType;
   return JSON.stringify({
     types: {
       EIP712Domain,
@@ -48,7 +54,7 @@ export function buildTypedMessage(message: Message): string {
   });
 }
 
-export function authRequestBody(message: Message, signature: string) {
+export function authSARequestBody(message: SAMessage, signature: string) {
   const { consumer, indexer, agreement, timestamp, deploymentId } = message;
   const baseBody = {
     indexer,
@@ -59,4 +65,32 @@ export function authRequestBody(message: Message, signature: string) {
   };
 
   return consumer ? { ...baseBody, consumer, agreement } : baseBody;
+}
+
+export function withChainIdRequestBody<T>(message: T, signature: string) {
+  return { ...message, signature, chain_id: domain.chainId };
+}
+
+export async function getEip721Signature<T>(
+  message: T,
+  messageType: Array<{ name: string; type: string }>,
+  account: string,
+  library: Web3Provider | undefined,
+): Promise<string | undefined> {
+  if (!library) return;
+
+  const signMsg = JSON.stringify({
+    types: {
+      EIP712Domain,
+      messageType,
+    },
+    primaryType: 'messageType',
+    domain,
+    message,
+  });
+
+  const hash = await library.send('eth_signTypedData_v4', [account, signMsg]);
+  const signature = hash.replace(/^0x/, '') as string;
+
+  return signature;
 }

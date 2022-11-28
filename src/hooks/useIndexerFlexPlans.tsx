@@ -4,7 +4,7 @@
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
-export interface IIndexerFlexPlans {
+export interface IIndexerFlexPlan {
   id: number;
   deployment_id: number;
   indexer_id: number;
@@ -21,8 +21,8 @@ export interface IIndexerFlexPlans {
   updated_at: Date;
 }
 
-export function useIndexerFlexPlans(projectId: string): AsyncData<Array<IIndexerFlexPlans>> {
-  const projectUrl = `${process.env.REACT_APP_CONSUMER_HOST_PROJECT}/${projectId}`;
+export function useIndexerFlexPlans(projectId: string): AsyncData<Array<IIndexerFlexPlan>> {
+  const projectUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/projects/${projectId}`;
 
   return useAsyncMemo(async () => {
     const rawRes = await fetch(projectUrl);

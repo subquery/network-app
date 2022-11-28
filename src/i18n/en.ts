@@ -439,9 +439,24 @@ const en = {
       remainDeposit: 'remaining deposit',
       request: '{{count}} request',
       request_other: '{{count}} requests',
-      billBalance: 'BILLING BALANCE',
+      billBalance: 'Billing Balance',
+      billingAccount: 'The balance of your billing account {{amount}}',
+      billingAccountTooltip:
+        'When you purchase a flex plan, you need to transfer SQT to your billing account from your wallet. The funds are kept in your billing account to allow you to purchase multiple flex plans using the same funds. To view, transfer, or withdraw from your billing account, please visit the My Flex Plan page under Plan & Offer',
       walletBalance: 'WALLET BALANCE',
       non: 'There are no flex plan list. ',
+      purchaseModal: 'Purchase Flex Plan',
+      expectQueryPeriod: 'Expected query period',
+      expectQueryPeriodTooltip:
+        'The number of days that you expect to query, the value needs to be less than the Validity Period.',
+      invalidQueryPeriod: 'Please input a valid query period.',
+      depositAmount: 'Amount to deposit',
+      depositAmountTooltip:
+        'This amount will go towards your flex plan, to avoid affecting query performance, please ensure you have sufficient funds.',
+      invalidDepositAmount: 'Please input a valid deposit.',
+      purchase: 'Purchase',
+      confirmPurchase: 'Confirm Purchase',
+      disabledPurchase: 'Indexer might be offline.',
     },
     serviceAgreements: {
       headers: {
@@ -644,6 +659,7 @@ const en = {
       confirmOnMetamask: 'Confirm On MetaMask',
       confirmCancellation: 'Confirm Cancellation',
       day: 'day',
+      days: 'days',
       day_other: '{{count}} days',
       block: 'Block',
       blocks: 'Blocks',

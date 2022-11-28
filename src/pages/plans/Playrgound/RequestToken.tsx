@@ -8,7 +8,7 @@ import { useWeb3 } from '../../../containers';
 import styles from './Playground.module.css';
 import { parseError } from '../../../utils';
 import { POST } from '../../../utils/fetch';
-import { authRequestBody, buildTypedMessage } from '../../../utils/eip712';
+import { authSARequestBody, ConsumerSAMessageType, getEip721Signature } from '../../../utils/eip712';
 
 interface RequestTokenProps {
   indexer: string;
@@ -42,17 +42,16 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
       const timestamp = new Date().getTime();
       if (!library || !account || !requestTokenUrl) return;
 
-      const signMsg = buildTypedMessage({
+      const signMsg = {
         consumer: account,
         indexer,
         agreement,
         timestamp,
         deploymentId,
-      });
+      };
+      const eip721Signature = await getEip721Signature(signMsg, ConsumerSAMessageType, account, library);
 
-      const hash = await library.send('eth_signTypedData_v4', [account, signMsg]);
-
-      const tokenRequestBody = authRequestBody(
+      const tokenRequestBody = authSARequestBody(
         {
           consumer: account,
           timestamp: timestamp,
@@ -60,7 +59,7 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
           agreement,
           deploymentId,
         },
-        hash.replace(/^0x/, ''),
+        eip721Signature ?? '',
       );
 
       const { response, error } = await POST({ endpoint: requestTokenUrl, requestBody: tokenRequestBody });
