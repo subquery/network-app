@@ -12,7 +12,6 @@ import {
 } from '../utils';
 import { COMMISSION_DIV_UNIT } from './useCommissionRate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
-import { useIndexerCapacity } from './useIndexerCapacity';
 
 export const getCommission = (value: unknown, curEra: number | undefined): CurrentEraValue<string> => {
   const commission = parseRawEraValue(value, curEra);
@@ -35,6 +34,12 @@ export const getOwnStake = (value: unknown, curEra: number | undefined): Current
   return sortedOwnStake;
 };
 
+export const getCapacity = (value: unknown, curEra: number | undefined): CurrentEraValue<number> => {
+  const ownStake = parseRawEraValue(value, curEra);
+  const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
+  return sortedOwnStake;
+};
+
 export const getDelegated = (
   totalStake: CurrentEraValue<number>,
   ownStake: CurrentEraValue<number>,
@@ -50,16 +55,15 @@ export interface UseSortedIndexerReturn {
   totalStake: CurrentEraValue<number>;
   ownStake: CurrentEraValue<number>;
   totalDelegations: CurrentEraValue<number>;
-  capacity: CurrentEraValue<string>;
+  capacity: CurrentEraValue<number>;
 }
 
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
   const { currentEra } = useEra();
   const indexerData = useIndexer({ address: account });
   const indexerDelegation = useDelegation(account, account);
-  const indexerCapacity = useIndexerCapacity(account);
 
-  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation, indexerCapacity);
+  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 
   if (loading) {
     return { loading: true, data: undefined };
@@ -70,9 +74,9 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   }
 
   try {
-    const [currentEraValue, indexer, delegation, capacity] = data;
+    const [currentEraValue, indexer, delegation] = data;
 
-    if (!currentEraValue || !indexer || !delegation || !capacity) {
+    if (!currentEraValue || !indexer || !delegation) {
       throw new Error('Missing expected async data');
     }
 
@@ -83,8 +87,8 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
 
     const commission = getCommission(indexer.indexer.commission, currentEraValue?.index);
     const totalStake = getTotalStake(indexer.indexer.totalStake, currentEraValue?.index);
+    const capacity = getCapacity(indexer.indexer.capacity, currentEraValue?.index);
     const ownStake = getOwnStake(delegation.delegation?.amount, currentEraValue?.index);
-    const sortedCapacity = mapEraValue(capacity, (v) => formatEther(v ?? 0));
 
     const totalDelegations = getDelegated(totalStake, ownStake);
 
@@ -95,7 +99,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
         totalStake,
         ownStake,
         totalDelegations,
-        capacity: sortedCapacity,
+        capacity,
       },
     };
   } catch (e) {

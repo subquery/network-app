@@ -5,7 +5,7 @@ import * as React from 'react';
 import assert from 'assert';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useDelegation, useEra, useSQToken, useWeb3 } from '../../../../containers';
+import { useContracts, useDelegation, useEra, useIndexer, useSQToken, useWeb3 } from '../../../../containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
@@ -18,7 +18,7 @@ import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus
 import { Spinner, Typography } from '@subql/react-ui';
 import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
-import { useIndexerCapacity } from '../../../../hooks';
+import { BigNumber } from 'ethers';
 
 const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: any) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -49,7 +49,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const delegation = useDelegation(account ?? '', indexerAddress);
-  const indexerCapacity = useIndexerCapacity(indexerAddress);
+  const indexer = useIndexer({ address: account ?? '' });
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     const contracts = await pendingContracts;
@@ -64,19 +64,25 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
     return contracts.staking.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra, indexerCapacity), {
+  return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra, indexer), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const [r, d, era, capacity] = data;
+      const [r, d, era, i] = data;
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       const isActionDisabled = !stakingAllowance.data || rewardClaimStatus.loading;
 
       let curDelegatedAmount = 0;
+      let indexerCapacity = BigNumber.from(0);
       if (d?.delegation?.amount) {
         const rawDelegate = parseRawEraValue(d?.delegation?.amount, era?.index);
         const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
         curDelegatedAmount = delegate.current;
+      }
+
+      if (i?.indexer?.capacity) {
+        const rawCapacity = parseRawEraValue(i?.indexer?.capacity, era?.index);
+        indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
       }
 
       const modalText = getModalText(requireClaimIndexerRewards, requireTokenApproval, t);
@@ -112,7 +118,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
                 onCancel={onCancel}
                 indexerAddress={indexerAddress}
                 delegatedAmount={curDelegatedAmount}
-                indexerCapacity={capacity?.after}
+                indexerCapacity={indexerCapacity}
                 error={error}
                 curEra={era?.index}
               />

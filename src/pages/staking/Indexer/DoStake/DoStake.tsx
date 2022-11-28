@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
+import { useContracts, useIndexer, useSQToken, useWeb3 } from '../../../../containers';
 import assert from 'assert';
 import {
   tokenApprovalModalText,
@@ -19,6 +19,9 @@ import moment from 'moment';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useMaxUnstakeAmount } from '../../../../hooks/useMaxUnstakeAmount';
+import { JSONBigInt } from '@subql/network-clients';
+import { jsonBigIntToBigInt } from '../../../../hooks/useEraValue';
+import { BigNumber } from 'ethers';
 
 enum StakeAction {
   Stake = 'stake',
@@ -72,6 +75,7 @@ export const DoStake: React.FC = () => {
 
   const maxUnstake = useMaxUnstakeAmount(account || '');
   const rewardClaimStatus = useRewardCollectStatus(account || '');
+  const indexer = useIndexer({ address: account || '' });
 
   const { balance, stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
@@ -90,14 +94,16 @@ export const DoStake: React.FC = () => {
     }
   };
 
-  return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstake), {
+  return renderAsyncArray(mergeAsync(rewardClaimStatus, indexer), {
     error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {
-      const [indexerRewards, maxUnstakeAmount] = data;
+      const [indexerRewards, indexer] = data;
+      const maxUnstakeAmount = indexer?.indexer?.maxUnstakeAmount as JSONBigInt;
+
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
-      const curAmount = stakeAction === StakeAction.Stake ? balance.data : maxUnstakeAmount;
+      const curAmount = stakeAction === StakeAction.Stake ? balance.data : jsonBigIntToBigInt(maxUnstakeAmount);
       const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
 
       const modalText = getContentText(

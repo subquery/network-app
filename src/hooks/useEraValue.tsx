@@ -33,7 +33,7 @@ export function isEraValue<T = BigNumberish>(value: GraphQL_JSON): value is EraV
   );
 }
 
-function jsonBigIntToBigInt(value: JSONBigInt | BigNumberish): BigNumber {
+export function jsonBigIntToBigInt(value: JSONBigInt | BigNumberish): BigNumber {
   if (isBigNumberish(value)) {
     return BigNumber.from(value);
   }

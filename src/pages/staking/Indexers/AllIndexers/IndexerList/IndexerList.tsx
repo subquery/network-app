@@ -8,34 +8,22 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 import i18next from 'i18next';
-import { extractPercentage, formatEther, getOrderedAccounts, renderAsync } from '../../../../../utils';
+import { extractPercentage, getOrderedAccounts, renderAsync } from '../../../../../utils';
 import { CurrentEraValue } from '../../../../../hooks/useEraValue';
 import { GetIndexers_indexers_nodes as Indexer } from '../../../../../__generated__/registry/GetIndexers';
 import { useDelegation, useIndexer, useWeb3 } from '../../../../../containers';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../../DoDelegate';
-import { useIndexerCapacity } from '../../../../../hooks';
 import { AntDTable, SearchInput, TableText } from '../../../../../components';
-import { getCommission, getDelegated, getOwnStake, getTotalStake } from '../../../../../hooks/useSortedIndexer';
+import {
+  getCapacity,
+  getCommission,
+  getDelegated,
+  getOwnStake,
+  getTotalStake,
+} from '../../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../../components/IndexerDetails/IndexerName';
 import { TokenAmount } from '../../../../../components/TokenAmount';
-
-const Capacity: React.VFC<{ indexer: string; fieldKey: 'current' | 'after' }> = ({ indexer, fieldKey }) => {
-  const indexerCapacity = useIndexerCapacity(indexer);
-  return (
-    <>
-      {renderAsync(indexerCapacity, {
-        error: (error) => (
-          <Typography className="errorText" variant="small">{`Failed to get capacity: ${error.message}`}</Typography>
-        ),
-        loading: () => <Spinner />,
-        data: (data) => {
-          return <TokenAmount value={formatEther(data[fieldKey])} />;
-        },
-      })}
-    </>
-  );
-};
 
 const Delegation: React.VFC<{
   indexer: string;
@@ -69,6 +57,7 @@ const Delegation: React.VFC<{
 interface SortedIndexerListProps {
   commission: CurrentEraValue<string>;
   totalStake: CurrentEraValue<number>;
+  capacity: CurrentEraValue<number>;
   __typename: 'Indexer';
   id: string;
   metadata: string | null;
@@ -220,18 +209,18 @@ const getColumns = (
     children: [
       {
         title: i18next.t('general.current').toUpperCase(),
-        dataIndex: 'id',
+        dataIndex: ['capacity', 'current'],
         width: 40,
-        render: (value: string) => <Capacity indexer={value} fieldKey="current" />,
+        render: (value: string) => <TokenAmount value={value} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),
       },
       {
         title: i18next.t('general.next').toUpperCase(),
-        dataIndex: 'id',
+        dataIndex: ['capacity', 'after'],
         width: 40,
-        render: (value: string) => <Capacity indexer={value} fieldKey="after" />,
+        render: (value: string) => <TokenAmount value={value} />,
         onCell: (record) => ({
           onClick: () => viewIndexerDetail(record.id),
         }),
@@ -303,9 +292,10 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const rawIndexerList = searchedIndexer ?? indexers ?? [];
   const sortedIndexerList = rawIndexerList.map((indexer) => {
     const commission = getCommission(indexer.commission, era);
+    const capacity = getCapacity(indexer.capacity, era);
     const totalStake = getTotalStake(indexer.totalStake, era);
 
-    return { ...indexer, commission, totalStake };
+    return { ...indexer, commission, capacity, totalStake };
   });
 
   const orderedIndexerList = getOrderedAccounts(sortedIndexerList, 'id', account);
