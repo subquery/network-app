@@ -41,6 +41,8 @@ const INDEXER_FIELDS = gql`
     controller
     commission
     totalStake
+    maxUnstakeAmount
+    capacity
     metadata {
       metadataCID
       name
