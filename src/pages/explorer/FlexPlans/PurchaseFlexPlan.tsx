@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { parseEther } from '@ethersproject/units';
 import { Web3Provider } from '@ethersproject/providers';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import moment from 'moment';
-import { BigNumber, ethers } from 'ethers';
-import { Button, Typography } from 'antd';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { Button, Space, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import clsx from 'clsx';
 import { NumberInput } from '../../../components';
@@ -45,7 +46,6 @@ async function requestConsumerHostToken(
     }
 
     const sortedResponse = response && (await response.json());
-    console.log('sortedResponse', sortedResponse);
     return { data: sortedResponse };
   } catch (error) {
     console.error('Failed to request token of consumer host.');
@@ -53,11 +53,39 @@ async function requestConsumerHostToken(
   }
 }
 
+async function purchasePlan(amount: BigNumberish, period: number, deploymentIndexer: number, authToken: string) {
+  try {
+    const purchaseUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/projects`;
+
+    const { response, error } = await POST({
+      endpoint: purchaseUrl,
+      headers: { Authorization: `Bearer ${authToken}` },
+      requestBody: {
+        deployment_indexer: deploymentIndexer,
+        amount,
+        expiration: period,
+      },
+    });
+
+    if (error || !response?.ok) {
+      throw new Error();
+    }
+
+    const sortedResponse = response && (await response.json());
+
+    return { data: sortedResponse };
+  } catch (error) {
+    console.error(`Failed to purchase flex plan. ${error}`);
+    return { error: `Failed to purchase flex plan. ${error}` };
+  }
+}
+
 interface IPurchaseForm {
-  curStep?: number;
-  onStep?: (step: number) => void;
-  onClose?: () => void;
+  currentStep: number;
+  onStep: (step: number) => void;
+  onClose: () => void;
   balance: BigNumber | undefined;
+  deploymentIndexer: number;
 }
 
 const PERIOD_FORM_FIELD = 'period';
@@ -72,21 +100,34 @@ const purchaseFlexPlanSchema = yup.object({
     ),
 });
 
-const PurchaseForm: React.VFC<IPurchaseForm> = ({ curStep, onStep, onClose, balance }) => {
+const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, balance, deploymentIndexer }) => {
+  const [isloading, setIsLoading] = React.useState<boolean>();
+  const [error, setError] = React.useState<string>();
   const { t } = useTranslation();
   const sortedBalance = formatEther(balance ?? '0');
+  const { account, library } = useWeb3();
   const maxDepositAmount = `Billing Balance: ${formatEther(balance ?? '0', 4)} ${TOKEN}`;
+
+  const onSubmit = async (submitData: { period: number; amount: string }) => {
+    const { period, amount } = submitData;
+    const sortedPeriod = period * 24 * 60 * 60; //NOTE: days -> seconds
+    const sortedAmount = parseEther(amount);
+
+    setIsLoading(true);
+    const authToken = await requestConsumerHostToken(account ?? '', library);
+    // TODO: throw Error
+    const purchaseRequest = await purchasePlan(sortedAmount, sortedPeriod, deploymentIndexer, authToken?.data ?? '');
+    setIsLoading(false);
+  };
 
   return (
     <Formik
       initialValues={{
         period: 0,
-        amount: 0,
+        amount: '0',
       }}
       validationSchema={purchaseFlexPlanSchema}
-      onSubmit={(e) => {
-        console.log('submit', e);
-      }}
+      onSubmit={onSubmit}
       validateOnChange
     >
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, errors, resetForm }) => (
@@ -137,19 +178,27 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ curStep, onStep, onClose, bala
             <Typography.Text type="danger">{t('flexPlans.invalidDepositAmount')}</Typography.Text>
           )}
 
-          <div className={clsx('flex', 'flex-end')}>
+          <Space className={clsx('flex', 'flex-end')}>
+            <Button onClick={() => onClose()} type="ghost" shape="round" size="large">
+              {t('general.cancel')}
+            </Button>
             <Button
               onClick={submitForm}
               loading={isSubmitting}
-              disabled={!isValid || isSubmitting || values[PERIOD_FORM_FIELD] <= 0 || values[AMOUNT_FORM_FIELD] <= 0}
+              disabled={
+                !isValid ||
+                isSubmitting ||
+                values[PERIOD_FORM_FIELD] <= 0 ||
+                !parseEther(values[AMOUNT_FORM_FIELD]).isZero
+              }
               className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
               type="primary"
               shape="round"
               size="large"
             >
-              {t('delegate.title')}
+              {t('flexPlans.purchase')}
             </Button>
-          </div>
+          </Space>
         </Form>
       )}
     </Formik>
@@ -163,6 +212,7 @@ interface PurchaseFlexPlaneProps {
 
 // TODO: Improve renderAsync render cache when reloading
 export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, balance }) => {
+  const [curStep, setCurStep] = React.useState<number>(0);
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -178,19 +228,6 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
 
   const flexPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
   const refetchFlexPlans = setTimeout(() => flexPlans.refetch({ consumer: account ?? '', now }), 10000);
-
-  // const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
-  //   const contracts = await pendingContracts;
-  //   assert(contracts, 'Contracts not available');
-
-  //   const delegateAmount = parseEther(input.toString());
-
-  //   if (delegator && delegator !== account) {
-  //     return contracts.staking.redelegate(delegator, indexerAddress, delegateAmount);
-  //   }
-
-  //   return contracts.staking.delegate(indexerAddress, delegateAmount);
-  // };
 
   const modalText = {
     title: t('flexPlans.purchaseModal'),
@@ -212,11 +249,19 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
               tooltip: isIndexerOffline ? t('flexPlans.disabledPurchase') : '',
             },
           ]}
-          // onClick={handleClick}
           renderContent={(onSubmit, onCancel, isLoading, error) => {
-            return <PurchaseForm balance={balance} />;
+            return (
+              <PurchaseForm
+                balance={balance}
+                currentStep={curStep}
+                onStep={setCurStep}
+                onClose={onCancel}
+                deploymentIndexer={flexPlan.id}
+              />
+            );
           }}
           variant={isIndexerOffline ? 'disabledTextBtn' : 'textBtn'}
+          currentStep={curStep}
         />
       );
     },
