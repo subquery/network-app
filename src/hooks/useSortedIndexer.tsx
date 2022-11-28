@@ -36,8 +36,8 @@ export const getOwnStake = (value: unknown, curEra: number | undefined): Current
 
 export const getCapacity = (value: unknown, curEra: number | undefined): CurrentEraValue<number> => {
   const ownStake = parseRawEraValue(value, curEra);
-  const sortedOwnStake = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
-  return sortedOwnStake;
+  const sortedCapacity = mapEraValue(ownStake, (v) => convertStringToNumber(formatEther(v ?? 0)));
+  return sortedCapacity;
 };
 
 export const getDelegated = (
