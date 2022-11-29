@@ -459,13 +459,18 @@ const STATE_CHANNEL_FIELDS = gql`
     indexer
     consumer
     status
-    deploymentId
     total
     price
     spent
     startTime
     expiredAt
     terminatedAt
+    deployment {
+      id
+      project {
+        metadata
+      }
+    }
   }
 `;
 

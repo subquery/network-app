@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "yarn codegen && PORT=3006 craco start",
+    "start": "PORT=3006 craco start",
     "build": "yarn codegen && craco build",
     "codegen": "mkdir -p src/__generated__ && sh ./scripts/codegen.sh",
     "test": "craco test",
