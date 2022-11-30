@@ -21,6 +21,7 @@ interface DropdownProps {
   styleProps?: string;
 }
 
+//TODO: New design comes with dropdown, break change with 5.0
 export const Dropdown: React.VFC<DropdownProps> = ({ menu, menuItem, dropdownContent, handleOnClick, styleProps }) => {
   const menuList = (
     <Menu>

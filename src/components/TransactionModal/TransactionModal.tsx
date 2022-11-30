@@ -85,6 +85,7 @@ type Props<P, T extends string> = {
   loading?: boolean; // status for whole modal (Update at: Sep 22)
 };
 
+// TODO: review successModalText/failureModalText when move to subql-component
 const TransactionModal = <P, T extends string>({
   renderContent,
   text,
@@ -152,8 +153,8 @@ const TransactionModal = <P, T extends string>({
         setSuccessModalText(text.successText || 'Success');
         openNotificationWithIcon({
           type: NotificationType.SUCCESS,
-          title: successModalText ?? 'Success',
-          description: t('status.changeValidIn15s'),
+          title: 'Success',
+          description: text.successText ?? t('status.changeValidIn15s'),
         });
       } else {
         throw new Error(text.failureText);
@@ -162,8 +163,8 @@ const TransactionModal = <P, T extends string>({
       console.error('TxAction error', error);
       openNotificationWithIcon({
         type: NotificationType.ERROR,
-        title: failureModalText ?? 'Failure',
-        description: parseError(error),
+        title: 'Failure',
+        description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,
       });
       setFailureModalText(parseError(error));
       if (rethrow) {

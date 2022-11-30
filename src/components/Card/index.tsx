@@ -11,26 +11,30 @@ interface CardProps {
   title?: string;
   value?: string;
   className?: string;
+  action?: React.ReactNode;
 }
 
-export const Card: React.VFC<CardProps> = ({ category, title, value, className }) => {
+export const Card: React.VFC<CardProps> = ({ category, title, value, className, action }) => {
   return (
-    <div className={clsx(styles.card, className)}>
-      {category && (
-        <Typography variant="small" className={styles.category}>
-          {category.toUpperCase()}
-        </Typography>
-      )}
-      {title && (
-        <Typography variant="medium" className={clsx(styles.title, category && styles.titleWithCategory)}>
-          {title.toUpperCase()}
-        </Typography>
-      )}
-      {value && (
-        <Typography variant="h5" className={styles.value}>
-          {value}
-        </Typography>
-      )}
+    <div className={styles.cardContainer}>
+      <div className={clsx(styles.card, className)}>
+        {category && (
+          <Typography variant="small" className={styles.category}>
+            {category.toUpperCase()}
+          </Typography>
+        )}
+        {title && (
+          <Typography variant="medium" className={clsx(styles.title, category && styles.titleWithCategory)}>
+            {title.toUpperCase()}
+          </Typography>
+        )}
+        {value && (
+          <Typography variant="h5" className={styles.value}>
+            {value}
+          </Typography>
+        )}
+      </div>
+      {action && <>{action}</>}
     </div>
   );
 };

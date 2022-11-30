@@ -24,6 +24,7 @@ export enum ApproveContract {
   PlanManager = 'planManager',
   PurchaseOfferMarket = 'purchaseOfferMarket',
   PermissionedExchange = 'permissionedExchange',
+  ConsumerHost = 'consumerHost',
 }
 
 interface ModalApproveTokenProps {
