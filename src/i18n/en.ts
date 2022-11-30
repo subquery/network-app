@@ -458,6 +458,15 @@ const en = {
       confirmPurchase: 'Confirm Purchase',
       disabledPurchase: 'Indexer might be offline.',
     },
+    myFlexPlans: {
+      claim: {
+        title: 'Claim remainding desposit',
+        description: 'You are about to claim {{remaindingDeposit}} {{token}} from the flex plan',
+        button: 'Claim',
+        submit: 'Confirm claim',
+        failureText: 'Sorry, failed to claim flex plan',
+      },
+    },
     serviceAgreements: {
       headers: {
         project: 'Project',

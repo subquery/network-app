@@ -1,46 +1,52 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, TableProps, Tag, Typography } from 'antd';
+import { TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
 import { useLocation } from 'react-router';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '../../../components/TableTitle';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
-import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlans } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
+import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
-  const columns: TableProps<ConsumerFlexPlans>['columns'] = [
+  const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
-      width: 60,
+      width: 20,
       render: (_, __, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'deploymentId',
+      dataIndex: 'deployment',
+      width: 120,
       title: <TableTitle title={i18next.t('flexPlans.project')} />,
-      render: (deploymentId) => <DeploymentMeta deploymentId={deploymentId} />,
+      render: ({ id, project }) => <DeploymentMeta deploymentId={id} projectMetadata={project.metadata} />,
     },
     {
       dataIndex: 'indexer',
+      width: 50,
       title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
-      render: (indexer) => <TableText content={indexer} />,
+      render: (indexer) => <ConnectedIndexer id={indexer} />,
     },
     {
       dataIndex: 'price',
+      width: 30,
       title: <TableTitle title={i18next.t('flexPlans.price')} />,
       render: (price) => <TableText content={getFlexPlanPrice(price)} />,
     },
     {
       dataIndex: 'expiredAt',
+      width: 30,
       title: (
         <TableTitle title={i18next.t(path === ONGOING_PLANS ? 'flexPlans.validityPeriod' : 'flexPlans.duration')} />
       ),
@@ -50,11 +56,13 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
     },
     {
       dataIndex: 'spent',
+      width: 30,
       title: <TableTitle title={i18next.t('flexPlans.spent')} />,
       render: (spent) => <TableText content={`${formatEther(spent, 4)} ${TOKEN}`} />,
     },
     {
       dataIndex: 'spent',
+      width: 30,
       title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
       render: (spent, plan) => {
         const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
@@ -63,14 +71,15 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
     },
     {
       dataIndex: 'status',
+      width: 30,
       title: <TableTitle title={i18next.t('flexPlans.channelStatus')} />,
       render: (status: ChannelStatus, plan) => {
         if (path === ONGOING_PLANS) {
           return <Tag color="green">{i18next.t('general.active')}</Tag>;
         } else if (status === ChannelStatus.FINALIZED) {
-          return <Tag color="red">{i18next.t('general.completed')}</Tag>;
+          return <Tag color="blue">{i18next.t('general.completed')}</Tag>;
         } else if (status === ChannelStatus.TERMINATING) {
-          return <Tag color="red">{i18next.t('general.terminating')}</Tag>;
+          return <Tag color="yellow">{i18next.t('general.terminating')}</Tag>;
         } else {
           return <Tag color="red">{i18next.t('general.terminated')}</Tag>;
         }
@@ -81,9 +90,12 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
       dataIndex: 'deploymentId',
       fixed: 'right',
       align: 'center',
-      width: 100,
-      render: (deploymentId) => {
-        return <Button>Action</Button>;
+      width: 20,
+      render: (_, plan) => {
+        const { status, expiredAt } = plan;
+        const planUnfinalised = status !== ChannelStatus.FINALIZED && new Date(expiredAt).getTime() < Date.now();
+        if (planUnfinalised) return <ClaimFlexPlan flexPlan={plan} />;
+        return <div>-</div>;
       },
     },
   ];
@@ -141,7 +153,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
                     columns: getColumns(pathname),
                     dataSource: flexPlanList,
                     scroll: { x: 2000 },
-                    rowKey: 'deploymentId',
+                    rowKey: 'expiredAt',
                   }}
                   paginationProps={{
                     total: flexPlans.data?.stateChannels?.totalCount,
