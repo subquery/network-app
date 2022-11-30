@@ -9,6 +9,7 @@ import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from
 import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
+import { BillingAction } from './BillingAction';
 
 const FLEX_PLANS = '/plans/flex-plans';
 export const ONGOING_PLANS = `${FLEX_PLANS}/ongoing`;
@@ -32,6 +33,7 @@ const BalanceCards = () => {
         <Card
           title={t('flexPlans.billBalance').toUpperCase()}
           value={loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+          action={<BillingAction />}
         />
         <Card
           title={t('flexPlans.walletBalance')}

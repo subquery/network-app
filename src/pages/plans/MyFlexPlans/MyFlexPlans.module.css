@@ -22,3 +22,8 @@
   justify-content: flex-end;
   margin-top: 3rem;
 }
+.billingAction {
+  font-size: larger;
+  height: fit-content;
+  padding: 1rem;
+}

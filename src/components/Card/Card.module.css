@@ -1,8 +1,12 @@
-.card {
+.cardContainer {
+  display: flex;
   min-width: 260px;
   min-height: 120px;
   background: white;
   border-radius: 4px;
+}
+
+.card {
   padding: 1rem 1.2rem;
 
   display: flex;

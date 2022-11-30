@@ -457,6 +457,21 @@ const en = {
       purchase: 'Purchase',
       confirmPurchase: 'Confirm Purchase',
       disabledPurchase: 'Indexer might be offline.',
+      transfer: `Transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'} to billing account`,
+      addToken: `Add ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      confirmTransfer: 'Confirm Transfer',
+      transferDescription:
+        'When transferring SQT you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the indexer requests it to be closed. This automation will prevent delays and give you the best user experience.',
+      transferToken: `Transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      failureTransfer: `Sorry, failed to transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      successTransfer: `You have successfully transferred ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      notEnoughToken: `You don't have enough SQT in your wallet.`,
+      withdrawTitle: `Withdraw ${process.env.REACT_APP_TOKEN ?? 'SQT'} to wallet`,
+      withdraw: `Withdraw ${process.env.REACT_APP_TOKEN ?? 'SQT'} to wallet`,
+      withdrawToken: `Withdraw ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      confirmWithdraw: 'Confirm withdraw',
+      failureWithdraw: `Sorry, failed to withdraw ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
+      successWithdraw: `You have successfully withdrawn ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
     },
     myFlexPlans: {
       claim: {
