@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, TableProps, Tag, Typography } from 'antd';
+import { TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 import moment from 'moment';
@@ -12,13 +12,14 @@ import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName
 import { TableTitle } from '../../../components/TableTitle';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
-import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlans } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
+import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
-  const columns: TableProps<ConsumerFlexPlans>['columns'] = [
+  const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
@@ -90,10 +91,10 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
       fixed: 'right',
       align: 'center',
       width: 20,
-      render: (deploymentId, plan) => {
+      render: (_, plan) => {
         const { status, expiredAt } = plan;
         const planUnfinalised = status !== ChannelStatus.FINALIZED && new Date(expiredAt).getTime() < Date.now();
-        if (planUnfinalised) return <Button>Claim</Button>;
+        if (planUnfinalised) return <ClaimFlexPlan flexPlan={plan} />;
         return <div>-</div>;
       },
     },
