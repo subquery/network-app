@@ -39,6 +39,7 @@ interface TerminateFlexPlanProps {
 export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
+  const [error, setError] = React.useState<boolean>();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
 
@@ -69,9 +70,11 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
           <SummaryList
             list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
           />
-          <AppTypography type="danger" className={styles.terminateError}>
-            {'error'}
-          </AppTypography>
+          {error && (
+            <AppTypography type="danger" className={styles.terminateError}>
+              {error}
+            </AppTypography>
+          )}
           <div className={styles.btnContainer}>
             <Button
               onClick={handleOnSubmit}
