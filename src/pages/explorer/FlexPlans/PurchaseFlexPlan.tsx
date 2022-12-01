@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import moment from 'moment';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { Button, Space, Typography } from 'antd';
 import { Form, Formik } from 'formik';
 import clsx from 'clsx';
@@ -19,6 +19,7 @@ import { formatEther, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../
 import TransactionModal from '../../../components/TransactionModal';
 
 import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
+import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 
 async function requestConsumerHostToken(
   account: string,
@@ -46,14 +47,16 @@ async function requestConsumerHostToken(
     }
 
     const sortedResponse = response && (await response.json());
-    return { data: sortedResponse };
+
+    return { data: sortedResponse?.token };
   } catch (error) {
     console.error('Failed to request token of consumer host.');
     return { error: 'Failed to request token of consumer host.' };
   }
 }
 
-async function purchasePlan(amount: BigNumberish, period: number, deploymentIndexer: number, authToken: string) {
+// TODO: period need to consist with indexer-admin & consumer
+async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
   try {
     const purchaseUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/projects`;
 
@@ -63,20 +66,21 @@ async function purchasePlan(amount: BigNumberish, period: number, deploymentInde
       requestBody: {
         deployment_indexer: deploymentIndexer,
         amount,
-        expiration: period,
+        expiration: 3600, //period,
+        signature: '',
       },
     });
 
-    if (error || !response?.ok) {
-      throw new Error();
-    }
-
     const sortedResponse = response && (await response.json());
+
+    if (error || !response?.ok || sortedResponse?.error) {
+      throw new Error(sortedResponse?.error ?? error);
+    }
 
     return { data: sortedResponse };
   } catch (error) {
     console.error(`Failed to purchase flex plan. ${error}`);
-    return { error: `Failed to purchase flex plan. ${error}` };
+    return { error: `${error ?? 'Failed to purchase flex plan.'}` };
   }
 }
 
@@ -86,6 +90,7 @@ interface IPurchaseForm {
   onClose: () => void;
   balance: BigNumber | undefined;
   deploymentIndexer: number;
+  onSuccess: () => void;
 }
 
 const PERIOD_FORM_FIELD = 'period';
@@ -100,8 +105,8 @@ const purchaseFlexPlanSchema = yup.object({
     ),
 });
 
-const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, balance, deploymentIndexer }) => {
-  const [isloading, setIsLoading] = React.useState<boolean>();
+const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIndexer, onSuccess }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
   const { t } = useTranslation();
   const sortedBalance = formatEther(balance ?? '0');
@@ -109,15 +114,39 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, 
   const maxDepositAmount = `Billing Balance: ${formatEther(balance ?? '0', 4)} ${TOKEN}`;
 
   const onSubmit = async (submitData: { period: number; amount: string }) => {
-    const { period, amount } = submitData;
-    const sortedPeriod = period * 24 * 60 * 60; //NOTE: days -> seconds
-    const sortedAmount = parseEther(amount);
+    try {
+      const { period, amount } = submitData;
+      const sortedPeriod = period * 24 * 60 * 60; //NOTE: days -> seconds
+      const sortedAmount = parseEther(amount);
 
-    setIsLoading(true);
-    const authToken = await requestConsumerHostToken(account ?? '', library);
-    // TODO: throw Error
-    const purchaseRequest = await purchasePlan(sortedAmount, sortedPeriod, deploymentIndexer, authToken?.data ?? '');
-    setIsLoading(false);
+      setIsLoading(true);
+      const authToken = await requestConsumerHostToken(account ?? '', library);
+
+      const purchaseRequest = await purchasePlan(
+        sortedAmount.toString(),
+        sortedPeriod,
+        deploymentIndexer,
+        authToken?.data ?? '',
+      );
+
+      const { data, error } = purchaseRequest;
+      if (error) throw Error(error);
+      if (data?.id) {
+        openNotificationWithIcon({
+          type: NotificationType.SUCCESS,
+          title: t('flexPlans.successPurchaseTitle'),
+          description: t('flexPlans.successPurchaseDesc'),
+        });
+        onSuccess();
+        onClose();
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      const errMsg = `Failed to purchase the plan: ${error}`;
+      setIsLoading(false);
+      setError(errMsg);
+    }
   };
 
   return (
@@ -140,6 +169,7 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, 
               name: PERIOD_FORM_FIELD,
               id: PERIOD_FORM_FIELD,
               onChange: (value) => {
+                setError(undefined);
                 setErrors({ [PERIOD_FORM_FIELD]: undefined });
                 setFieldValue(PERIOD_FORM_FIELD, value);
               },
@@ -159,6 +189,7 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, 
               name: AMOUNT_FORM_FIELD,
               id: AMOUNT_FORM_FIELD,
               onChange: (value) => {
+                setError(undefined);
                 setErrors({ [AMOUNT_FORM_FIELD]: undefined });
                 setFieldValue(AMOUNT_FORM_FIELD, value);
               },
@@ -178,13 +209,15 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, 
             <Typography.Text type="danger">{t('flexPlans.invalidDepositAmount')}</Typography.Text>
           )}
 
+          {error && <Typography.Text type="danger">{error}</Typography.Text>}
+
           <Space className={clsx('flex', 'flex-end')}>
             <Button onClick={() => onClose()} type="ghost" shape="round" size="large">
               {t('general.cancel')}
             </Button>
             <Button
               onClick={submitForm}
-              loading={isSubmitting}
+              loading={isSubmitting || isLoading}
               disabled={
                 !isValid ||
                 isSubmitting ||
@@ -208,10 +241,12 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ currentStep, onStep, onClose, 
 interface PurchaseFlexPlaneProps {
   flexPlan: IIndexerFlexPlan;
   balance: BigNumber | undefined;
+  onFetchBalance: () => void;
 }
 
 // TODO: Improve renderAsync render cache when reloading
-export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, balance }) => {
+// TODO: Current need to wait dynamic time for purchase result on chain.
+export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, balance, onFetchBalance }) => {
   const [curStep, setCurStep] = React.useState<number>(0);
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const { t } = useTranslation();
@@ -219,15 +254,11 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
 
   const isIndexerOffline = !!(BigNumber.from(flexPlan.price).isZero() || BigNumber.from(flexPlan.max_time).isZero());
 
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setNow(moment().toDate());
-  //   }, 5000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   const flexPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
-  const refetchFlexPlans = setTimeout(() => flexPlans.refetch({ consumer: account ?? '', now }), 10000);
+  const refetchOnSuccess = () => {
+    flexPlans.refetch({ consumer: account ?? '', now });
+    onFetchBalance();
+  };
 
   const modalText = {
     title: t('flexPlans.purchaseModal'),
@@ -256,6 +287,7 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
                 currentStep={curStep}
                 onStep={setCurStep}
                 onClose={onCancel}
+                onSuccess={refetchOnSuccess}
                 deploymentIndexer={flexPlan.id}
               />
             );

@@ -19,9 +19,13 @@ import { useSQToken } from '../../../containers';
 import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
 
-// TODO: confirm Validity Period with consumer host service
+// TODO: confirm Validity Period with consumer host service -> proposal to be hour
 // TODO: confirm score threadThread with consumer host service
-const getColumns = (balance: BigNumber | undefined): TableProps<IIndexerFlexPlan>['columns'] => [
+// TODO: confirm the UI performance of After purchase: as can purchase repeatly
+const getColumns = (
+  balance: BigNumber | undefined,
+  onFetchBalance: () => void,
+): TableProps<IIndexerFlexPlan>['columns'] => [
   {
     dataIndex: 'indexer',
     title: <TableTitle>{i18next.t('explorer.flexPlans.indexer')}</TableTitle>,
@@ -50,7 +54,7 @@ const getColumns = (balance: BigNumber | undefined): TableProps<IIndexerFlexPlan
     dataIndex: 'id',
     title: <TableTitle>{i18next.t('general.action')}</TableTitle>,
     render: (id, plan) => {
-      return <PurchaseFlexPlan flexPlan={plan} balance={balance} />;
+      return <PurchaseFlexPlan flexPlan={plan} balance={balance} onFetchBalance={onFetchBalance} />;
     },
   },
 ];
@@ -62,6 +66,7 @@ export const FlexPlans: React.FC = () => {
   const { consumerHostBalance } = useSQToken();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
   const [balance] = consumerHostBalance.data ?? [];
+  const onFetchConsumerHostBalance = () => consumerHostBalance.refetch();
 
   React.useEffect(() => {
     if (!id) {
@@ -75,7 +80,7 @@ export const FlexPlans: React.FC = () => {
         mapAsync((d) => d.filter(notEmpty), flexPlans),
         {
           loading: () => <Spinner />,
-          error: (e) => <AppTypography type="danger">{`Failed to load flex plan: ${e}`}</AppTypography>,
+          error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
           empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
           data: (data) => (
             <>
@@ -85,7 +90,7 @@ export const FlexPlans: React.FC = () => {
                 </AppTypography>
               )}
 
-              <Table columns={getColumns(balance)} dataSource={data} rowKey={'id'} />
+              <Table columns={getColumns(balance, onFetchConsumerHostBalance)} dataSource={data} rowKey={'id'} />
             </>
           ),
         },

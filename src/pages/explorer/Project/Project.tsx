@@ -44,7 +44,7 @@ const ProjectInner: React.VFC = () => {
 
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
-  const asyncIndexers = useIndexersQuery(deploymentId ? { deploymentId, offset } : undefined);
+  const asyncIndexers = useIndexersQuery({ deploymentId: deploymentId ?? '', offset });
   const fetchMore = (offset: number) => {
     setOffset(offset);
   };

@@ -25,35 +25,35 @@ const Transfer = ({ action }: { action: TransferAction }) => {
   const getModalText = (action: TransferAction) => {
     if (action === 'Transfer') {
       return {
-        title: t('flexPlans.transfer'),
-        steps: [t('flexPlans.addToken'), t('flexPlans.confirmTransfer')],
-        description: t('flexPlans.transferDescription'),
-        inputTitle: t('flexPlans.confirmTransfer'),
-        submitText: t('flexPlans.confirmTransfer'),
-        failureText: t('flexPlans.failureTransfer'),
-        successText: t('flexPlans.successTransfer'),
+        title: t('myFlexPlans.billing.transfer'),
+        steps: [t('myFlexPlans.billing.addToken'), t('myFlexPlans.billing.confirmTransfer')],
+        description: t('myFlexPlans.billing.transferDescription'),
+        inputTitle: t('myFlexPlans.billing.confirmTransfer'),
+        submitText: t('myFlexPlans.billing.confirmTransfer'),
+        failureText: t('myFlexPlans.billing.failureTransfer'),
+        successText: t('myFlexPlans.billing.successTransfer'),
       };
     }
 
     return {
-      title: t('flexPlans.withdrawToken'),
-      steps: [t('flexPlans.withdrawToken'), t('flexPlans.confirmWithdraw')],
-      inputTitle: t('flexPlans.withdrawTitle'),
+      title: t('myFlexPlans.billing.withdrawToken'),
+      steps: [t('myFlexPlans.billing.withdrawToken'), t('myFlexPlans.billing.confirmWithdraw')],
+      inputTitle: t('myFlexPlans.billing.withdrawTitle'),
       inputBottomText: `Current Billing balance: ${formatEther(sortedConsumerHostBalance, 4)} ${TOKEN}`,
-      submitText: t('flexPlans.withdrawToken'),
-      failureText: t('flexPlans.failureWithdraw'),
-      successText: t('flexPlans.successWithdraw'),
+      submitText: t('myFlexPlans.billing.withdrawToken'),
+      failureText: t('myFlexPlans.billing.failureWithdraw'),
+      successText: t('myFlexPlans.billing.successWithdraw'),
     };
   };
 
   const getActionBtn = (action: TransferAction) => {
     return action === 'Transfer'
       ? {
-          label: t('flexPlans.transferToken'),
+          label: t('myFlexPlans.billing.transferToken'),
           key: 'billingTransfer',
         }
       : {
-          label: t('flexPlans.withdrawToken'),
+          label: t('myFlexPlans.billing.withdrawToken'),
           key: 'billingWithdrawn',
           disabled: !!sortedConsumerHostBalance?.isZero(),
         };
