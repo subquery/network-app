@@ -27,17 +27,27 @@ const BalanceCards = () => {
   const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
   const [billBalance] = billingBalanceData ?? [];
 
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (balanceData && billingBalanceData) {
+        balance.refetch(true);
+        consumerHostBalance.refetch(true);
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
           title={t('flexPlans.billBalance').toUpperCase()}
-          value={loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+          value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
           action={<BillingAction />}
         />
         <Card
           title={t('flexPlans.walletBalance')}
-          value={loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
         />
       </div>
     </div>

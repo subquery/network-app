@@ -27,3 +27,12 @@
   height: fit-content;
   padding: 1rem;
 }
+
+/* Terminate Plan */
+.remainDeposit {
+  margin: 2rem 0;
+}
+
+.terminateError {
+  margin-bottom: 1rem;
+}
