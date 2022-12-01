@@ -27,3 +27,7 @@ export const POST = async ({ endpoint, headers, requestBody }: PostProps): Promi
 
   return { response, error };
 };
+
+export const getAuthReqHeader = (authToken: string): { Authorization: string } => ({
+  Authorization: `Bearer ${authToken}`,
+});

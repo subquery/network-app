@@ -5,18 +5,29 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { BigNumber } from 'ethers';
+import { Web3Provider } from '@ethersproject/providers';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
-import { TOKEN } from '../../../utils';
+import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
+import { requestConsumerHostToken } from '../../explorer/FlexPlans/PurchaseFlexPlan';
+import { useWeb3 } from '../../../containers';
 
-async function terminatePlan(channelId: string) {
+async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
-    const terminateUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/${channelId}/terminate`;
+    const { error, data: consumerToken } = await requestConsumerHostToken(account, library);
 
-    const response = await fetch(terminateUrl);
+    if (error || !consumerToken) {
+      throw new Error('Failed to request user authentication.');
+    }
+
+    const terminateUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/channels/${flexPlanId}/terminate`;
+
+    const response = await fetch(terminateUrl, {
+      headers: { ...getAuthReqHeader(consumerToken) },
+    });
 
     const sortedResponse = response && (await response.json());
 
@@ -39,7 +50,8 @@ interface TerminateFlexPlanProps {
 export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
-  const [error, setError] = React.useState<boolean>();
+  const [error, setError] = React.useState<string>();
+  const { account, library } = useWeb3();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
 
@@ -49,9 +61,15 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
     description: t('myFlexPlans.terminate.terminateDesc'),
   };
 
-  const handleOnSubmit = async () => {
+  const handleOnSubmit = async (onCancel: () => void) => {
     setIsLoading(true);
-    const terminateResult = await terminatePlan(flexPlan.id);
+    const terminateResult = await terminatePlan(flexPlan.id, account ?? '', library);
+    const { error, data } = terminateResult;
+
+    if (error) {
+      setError(`Failed to terminated. ${error}`);
+    }
+
     setIsLoading(false);
   };
 
@@ -65,7 +83,7 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
           key: 'terminate',
         },
       ]}
-      renderContent={() => (
+      renderContent={(onSubmit, onCancel) => (
         <>
           <SummaryList
             list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
@@ -77,7 +95,7 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
           )}
           <div className={styles.btnContainer}>
             <Button
-              onClick={handleOnSubmit}
+              onClick={() => handleOnSubmit(onCancel)}
               htmlType="submit"
               shape="round"
               size="large"

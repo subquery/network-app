@@ -27,15 +27,15 @@ const BalanceCards = () => {
   const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
   const [billBalance] = billingBalanceData ?? [];
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (balanceData && billingBalanceData) {
-        balance.refetch(true);
-        consumerHostBalance.refetch(true);
-      }
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // TODO: confirm whether need this part
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     balance.refetch();
+  //     consumerHostBalance.refetch();
+
+  //   }, 15000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <div className={styles.cards}>
