@@ -133,7 +133,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   React.useEffect(() => {
     const interval = setInterval(() => {
       fetchMoreFlexPlans(); // Cache to avoid re-render
-    }, 30000);
+    }, 15000);
     return () => clearInterval(interval);
   }, []);
 

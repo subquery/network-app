@@ -706,6 +706,7 @@ const en = {
       enabled: 'Enabled',
       disabled: 'Disabled',
       price: 'price',
+      connectAccount: 'Please connect account.',
     },
     status: {
       success: 'Success!',

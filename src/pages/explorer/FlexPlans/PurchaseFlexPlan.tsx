@@ -15,13 +15,13 @@ import clsx from 'clsx';
 import { NumberInput } from '../../../components';
 import { useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { IIndexerFlexPlan } from '../../../hooks';
-import { formatEther, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../../utils';
+import { formatEther, getAuthReqHeader, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../../utils';
 import TransactionModal from '../../../components/TransactionModal';
 
 import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 
-async function requestConsumerHostToken(
+export async function requestConsumerHostToken(
   account: string,
   library: Web3Provider | undefined,
 ): Promise<{ data?: string; error?: string }> {
@@ -62,7 +62,7 @@ async function purchasePlan(amount: string, period: number, deploymentIndexer: n
 
     const { response, error } = await POST({
       endpoint: purchaseUrl,
-      headers: { Authorization: `Bearer ${authToken}` },
+      headers: { ...getAuthReqHeader(authToken) },
       requestBody: {
         deployment_indexer: deploymentIndexer,
         amount,
@@ -253,6 +253,12 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
   const { account } = useWeb3();
 
   const isIndexerOffline = !!(BigNumber.from(flexPlan.price).isZero() || BigNumber.from(flexPlan.max_time).isZero());
+  const isDisabled = !account || isIndexerOffline;
+  const disabledTooltip = isIndexerOffline
+    ? t('flexPlans.disabledPurchase')
+    : !account
+    ? t('general.connectAccount')
+    : '';
 
   const flexPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
   const refetchOnSuccess = () => {
@@ -276,8 +282,8 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
             {
               label: t('flexPlans.purchase'),
               key: 'purchaseFlexPlan',
-              disabled: isIndexerOffline,
-              tooltip: isIndexerOffline ? t('flexPlans.disabledPurchase') : '',
+              disabled: isDisabled,
+              tooltip: disabledTooltip,
             },
           ]}
           renderContent={(onSubmit, onCancel, isLoading, error) => {
