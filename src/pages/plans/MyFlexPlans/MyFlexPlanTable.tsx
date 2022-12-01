@@ -41,7 +41,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS) => {
     {
       dataIndex: 'price',
       width: 30,
-      title: <TableTitle title={i18next.t('flexPlans.price')} />,
+      title: <TableTitle title={i18next.t('general.price')} />,
       render: (price) => <TableText content={getFlexPlanPrice(price)} />,
     },
     {
@@ -114,11 +114,12 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   const sortedParams = { consumer: account ?? '', now };
   const flexPlans = queryFn(sortedParams);
 
-  const fetchMoreFlexPlans = (offset: number) => {
+  const fetchMoreFlexPlans = (offset: number, now?: Date) => {
     flexPlans.fetchMore({
       variables: {
         offset,
         ...sortedParams,
+        now: now ?? sortedParams.now,
       },
       updateQuery: (previous, { fetchMoreResult }) => {
         if (!fetchMoreResult) return previous;
@@ -129,7 +130,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setNow(moment().toDate());
+      fetchMoreFlexPlans(0, moment().toDate()); // Cache to avoid re-render
     }, 30000);
     return () => clearInterval(interval);
   }, []);
