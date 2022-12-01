@@ -13,22 +13,27 @@ import { useContracts } from '../../../containers';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { TOKEN } from '../../../utils';
+import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 
 interface ClaimFlexPlanProps {
   flexPlan: ConsumerFlexPlan;
+  onSuccess: () => void;
 }
 
-export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan }) => {
+export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan, onSuccess }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
 
-  const { id, total, spent } = flexPlan;
-  const remaindingDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
+  const { status, expiredAt, id, total, spent } = flexPlan;
+  const planUnFinalised = status !== ChannelStatus.FINALIZED && new Date(expiredAt).getTime() < Date.now();
+  const isDisabled = !planUnFinalised;
+
+  const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
 
   const claimText = {
     title: t('myFlexPlans.claim.title'),
     steps: [t('general.confirm'), t('general.confirmOnMetamask')],
-    description: t('myFlexPlans.claim.description', { remaindingDeposit, token: TOKEN }),
+    description: t('myFlexPlans.claim.description', { remainDeposit, token: TOKEN }),
     submitText: t('myFlexPlans.claim.submit'),
     failureText: t('myFlexPlans.claim.failureText'),
   };
@@ -44,8 +49,9 @@ export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan }) => {
     <TransactionModal
       variant="textBtn"
       text={claimText}
-      actions={[{ label: 'Claim', key: 'claim' }]}
+      actions={[{ label: 'Claim', key: 'claim', disabled: isDisabled, tooltip: isDisabled ? 'Claimed' : undefined }]}
       onClick={handleClick}
+      onSuccess={onSuccess}
       renderContent={(onSubmit, _, isLoading, error) => (
         <>
           <Typography className={'errorText'}>{error}</Typography>

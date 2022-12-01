@@ -36,7 +36,13 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const Suffix = () => (
     <div className={styles.prefix}>
       {maxAmount > 0 && (
-        <Button shape="round" size="small" type={'primary'} onClick={() => onClickMax && onClickMax(maxAmount)}>
+        <Button
+          shape="round"
+          size="small"
+          type={'primary'}
+          onClick={() => onClickMax && onClickMax(maxAmount)}
+          disabled={inputParams?.disabled}
+        >
           Max
         </Button>
       )}

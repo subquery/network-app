@@ -29,8 +29,10 @@ const BalanceCards = () => {
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      balance.refetch(true);
-      consumerHostBalance.refetch(true);
+      if (balanceData && billingBalanceData) {
+        balance.refetch(true);
+        consumerHostBalance.refetch(true);
+      }
     }, 30000);
     return () => clearInterval(interval);
   }, []);

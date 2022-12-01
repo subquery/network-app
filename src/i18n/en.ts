@@ -485,6 +485,13 @@ const en = {
         submit: 'Confirm claim',
         failureText: 'Sorry, failed to claim flex plan',
       },
+      terminate: {
+        title: 'Terminate',
+        terminatePlan: 'Terminate this plan',
+        terminateDesc: `Are you sure you want to terminate this plan? Once you confirm, the query endpoint will be deactivated and you will be able to claim back the remaining deposit to your billing account. `,
+        remainDeposit: 'Remaining deposit',
+        failure: 'Failed to terminate this plan.',
+      },
     },
     serviceAgreements: {
       headers: {

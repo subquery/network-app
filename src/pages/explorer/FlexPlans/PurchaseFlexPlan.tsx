@@ -42,11 +42,11 @@ async function requestConsumerHostToken(
       requestBody: withChainIdRequestBody(signMsg, eip721Signature),
     });
 
-    if (error || !response?.ok) {
-      throw new Error();
-    }
-
     const sortedResponse = response && (await response.json());
+
+    if (error || !response?.ok || sortedResponse?.error) {
+      throw new Error(sortedResponse?.error ?? error);
+    }
 
     return { data: sortedResponse?.token };
   } catch (error) {
@@ -164,7 +164,7 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIn
           <NumberInput
             title={t('flexPlans.expectQueryPeriod')}
             tooltip={t('flexPlans.expectQueryPeriodTooltip')}
-            unit={getCapitalizedStr(values[PERIOD_FORM_FIELD] > 0 ? t('general.days') : t('general.day'))}
+            unit={getCapitalizedStr(values[PERIOD_FORM_FIELD] > 1 ? t('general.days') : t('general.day'))}
             inputParams={{
               name: PERIOD_FORM_FIELD,
               id: PERIOD_FORM_FIELD,
