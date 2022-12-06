@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Typography } from '@subql/react-ui';
-import { TableProps } from 'antd';
+import { TableProps, Tag } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -127,7 +127,12 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'sslEnabled',
-    render: (enableSSL) => <TableText>{i18next.t(enableSSL ? 'general.enabled' : 'general.disabled')}</TableText>,
+    render: (enableSSL) => {
+      if (enableSSL) {
+        return <Tag color="green">{i18next.t('general.enabled')}</Tag>;
+      }
+      return <Tag>{i18next.t('general.disabled')}</Tag>;
+    },
     filters: [
       {
         text: i18next.t('general.enabled'),
@@ -152,9 +157,12 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'socialCredibility',
-    render: (socialCredibility) => (
-      <TableText>{i18next.t(socialCredibility ? 'general.enabled' : 'general.disabled')}</TableText>
-    ),
+    render: (socialCredibility) => {
+      if (socialCredibility) {
+        return <Tag color="green">{i18next.t('general.enabled')}</Tag>;
+      }
+      return <Tag>{i18next.t('general.disabled')}</Tag>;
+    },
     filters: [
       {
         text: i18next.t('general.enabled'),
