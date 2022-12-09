@@ -459,6 +459,7 @@ const en = {
       disabledPurchase: 'Indexer might be offline.',
       successPurchaseTitle: 'Success',
       successPurchaseDesc: 'You have successfully purchased the plan!',
+      own: 'Created by you',
     },
     myFlexPlans: {
       billing: {

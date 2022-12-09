@@ -5,24 +5,31 @@ import * as React from 'react';
 import { BigNumber } from 'ethers';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Space, Table, TableProps } from 'antd';
+import { Space, Table, TableProps, Typography } from 'antd';
 import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
 import { AppTypography, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
-import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import {
+  formatEther,
+  formatSecondsDuration,
+  getFlexPlanPrice,
+  mapAsync,
+  notEmpty,
+  renderAsyncArray,
+  TOKEN,
+} from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
-import { useSQToken } from '../../../containers';
+import { useSQToken, useWeb3 } from '../../../containers';
 import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
 
-// TODO: confirm Validity Period with consumer host service -> proposal to be hour
 // TODO: confirm score threadThread with consumer host service
-// TODO: confirm the UI performance of After purchase: as can purchase repeatly
 const getColumns = (
+  account: string | null | undefined,
   balance: BigNumber | undefined,
   onFetchBalance: () => void,
 ): TableProps<IIndexerFlexPlan>['columns'] => [
@@ -48,12 +55,15 @@ const getColumns = (
   {
     dataIndex: 'max_time',
     title: <TableTitle>{i18next.t('flexPlans.validityPeriod')}</TableTitle>,
-    render: (max) => <TableText content={max} />,
+    render: (max) => <TableText>{formatSecondsDuration(max)}</TableText>,
   },
   {
-    dataIndex: 'id',
+    dataIndex: 'indexer',
     title: <TableTitle>{i18next.t('general.action')}</TableTitle>,
-    render: (id, plan) => {
+    render: (indexer, plan) => {
+      if (indexer.toLowerCase() === account?.toLowerCase()) {
+        return <AppTypography type="secondary">{i18next.t('flexPlans.own')} </AppTypography>;
+      }
       return <PurchaseFlexPlan flexPlan={plan} balance={balance} onFetchBalance={onFetchBalance} />;
     },
   },
@@ -62,6 +72,7 @@ const getColumns = (
 export const FlexPlans: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { account } = useWeb3();
   const { id } = useParams<{ id: string }>();
   const { consumerHostBalance } = useSQToken();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
@@ -90,7 +101,11 @@ export const FlexPlans: React.FC = () => {
                 </AppTypography>
               )}
 
-              <Table columns={getColumns(balance, onFetchConsumerHostBalance)} dataSource={data} rowKey={'id'} />
+              <Table
+                columns={getColumns(account, balance, onFetchConsumerHostBalance)}
+                dataSource={data}
+                rowKey={'id'}
+              />
             </>
           ),
         },

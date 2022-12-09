@@ -55,7 +55,6 @@ export async function requestConsumerHostToken(
   }
 }
 
-// TODO: period need to consist with indexer-admin & consumer
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
   try {
     const purchaseUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/projects`;
@@ -66,7 +65,7 @@ async function purchasePlan(amount: string, period: number, deploymentIndexer: n
       requestBody: {
         deployment_indexer: deploymentIndexer,
         amount,
-        expiration: 3600, //period,
+        expiration: period,
         signature: '',
       },
     });
