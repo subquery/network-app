@@ -7,11 +7,11 @@ import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
 import { useLocation } from 'react-router';
-import { AntDTable, AppTypography, DeploymentMeta, Spinner, TableText } from '../../../components';
+import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '../../../components/TableTitle';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
-import { formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
@@ -51,8 +51,8 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       title: (
         <TableTitle title={i18next.t(path === ONGOING_PLANS ? 'flexPlans.validityPeriod' : 'flexPlans.duration')} />
       ),
-      render: (expiredAt, plan) => {
-        return <TableText content={expiredAt} />;
+      render: (expiredAt) => {
+        return <TableText content={formatDate(expiredAt)} />;
       },
     },
     {

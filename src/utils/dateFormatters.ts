@@ -9,8 +9,8 @@ export const secondsToDays = (seconds: number): number => {
   return Number.parseFloat(moment.duration(seconds, 'seconds').asDays().toPrecision(4));
 };
 
-export const formatSecondsDuration = (seconds: number): string => {
-  return moment.duration(seconds, 'seconds').format('d [days], h [hrs], m [mins]', {
+export const formatSecondsDuration = (seconds: number, formatStr?: string): string => {
+  return moment.duration(seconds, 'seconds').format(formatStr ?? 'd [days], h [hrs], m [mins]', {
     trim: 'all',
   });
 };
