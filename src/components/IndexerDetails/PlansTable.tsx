@@ -87,7 +87,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
       value: renderAsync(balance, {
         loading: () => <Spinner />,
         error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,
-        data: (data) => <Typography>{`${balance} ${TOKEN}`}</Typography>,
+        data: (data) => <Typography>{`${formatEther(data, 4)} ${TOKEN}`}</Typography>,
       }),
     },
   ];
