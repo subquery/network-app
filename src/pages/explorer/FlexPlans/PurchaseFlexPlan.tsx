@@ -20,6 +20,7 @@ import TransactionModal from '../../../components/TransactionModal';
 
 import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
+import { TransferModal } from '../../plans/MyFlexPlans/BillingAction';
 
 export async function requestConsumerHostToken(
   account: string,
@@ -252,6 +253,8 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
   const { account } = useWeb3();
 
   const isIndexerOffline = !!(BigNumber.from(flexPlan.price).isZero() || BigNumber.from(flexPlan.max_time).isZero());
+  const needsTransfer = balance?.eq(BigNumber.from(0));
+
   const isDisabled = !account || isIndexerOffline;
   const disabledTooltip = isIndexerOffline
     ? t('flexPlans.disabledPurchase')
@@ -273,8 +276,10 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
   return renderAsync(flexPlans, {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
-    data: (data) => {
-      return (
+    data: (data) =>
+      needsTransfer ? (
+        <TransferModal action="Transfer" />
+      ) : (
         <TransactionModal
           text={modalText}
           actions={[
@@ -300,7 +305,6 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
           variant={isIndexerOffline ? 'disabledTextBtn' : 'textBtn'}
           currentStep={curStep}
         />
-      );
-    },
+      ),
   });
 };

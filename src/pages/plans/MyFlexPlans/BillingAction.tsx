@@ -14,7 +14,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { formatEther, TOKEN } from '../../../utils';
 
 type TransferAction = 'Transfer' | 'Withdraw';
-const Transfer = ({ action }: { action: TransferAction }) => {
+export const TransferModal = ({ action }: { action: TransferAction }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const { consumerHostAllowance, balance, consumerHostBalance } = useSQToken();
@@ -107,10 +107,10 @@ export const BillingAction: React.VFC = () => {
   const menuList = (
     <Menu>
       <Menu.Item key={'Transfer'}>
-        <Transfer action="Transfer" />
+        <TransferModal action="Transfer" />
       </Menu.Item>
       <Menu.Item key={'Withdraw'}>
-        <Transfer action="Withdraw" />
+        <TransferModal action="Withdraw" />
       </Menu.Item>
     </Menu>
   );
