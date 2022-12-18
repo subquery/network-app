@@ -5,7 +5,7 @@ import * as React from 'react';
 import { BigNumber } from 'ethers';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Space, Table, TableProps, Typography } from 'antd';
+import { Space, Table, TableProps } from 'antd';
 import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
@@ -16,6 +16,7 @@ import {
   formatSecondsDuration,
   getFlexPlanPrice,
   mapAsync,
+  mergeAsync,
   notEmpty,
   renderAsyncArray,
   TOKEN,
@@ -23,13 +24,23 @@ import {
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
-import { useSQToken, useWeb3 } from '../../../containers';
+import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
 import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
+import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+
+type Data<T> = T | undefined;
+
+function checkIfPurchased(openPlans: Data<GetOngoingFlexPlan>, plan: IIndexerFlexPlan): boolean | undefined {
+  if (openPlans?.stateChannels?.nodes) {
+    return openPlans.stateChannels?.nodes.some((openPlan) => openPlan?.indexer.toLowerCase() === plan.indexer);
+  }
+}
 
 // TODO: confirm score threadThread with consumer host service
 const getColumns = (
   account: string | null | undefined,
+  openPlans: Data<GetOngoingFlexPlan>,
   balance: BigNumber | undefined,
   onFetchBalance: () => void,
 ): TableProps<IIndexerFlexPlan>['columns'] => [
@@ -64,7 +75,18 @@ const getColumns = (
       if (indexer.toLowerCase() === account?.toLowerCase()) {
         return <AppTypography type="secondary">{i18next.t('flexPlans.own')} </AppTypography>;
       }
-      return <PurchaseFlexPlan flexPlan={plan} balance={balance} onFetchBalance={onFetchBalance} />;
+
+      const isPurchased = checkIfPurchased(openPlans, plan);
+      console.log(`${isPurchased} ${plan.indexer}`);
+
+      return (
+        <PurchaseFlexPlan
+          isPurchased={isPurchased ?? false}
+          flexPlan={plan}
+          balance={balance}
+          onFetchBalance={onFetchBalance}
+        />
+      );
     },
   },
 ];
@@ -76,6 +98,8 @@ export const FlexPlans: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { consumerHostBalance } = useSQToken();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
+  const openPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now: new Date('2022-12-12T00:57:21.038Z') });
+
   const [balance] = consumerHostBalance.data ?? [];
   const onFetchConsumerHostBalance = () => consumerHostBalance.refetch();
 
@@ -84,30 +108,34 @@ export const FlexPlans: React.FC = () => {
       history.push('/explorer');
     }
   }, [history, id]);
-
   return (
     <>
       {renderAsyncArray(
-        mapAsync((d) => d.filter(notEmpty), flexPlans),
+        mergeAsync(
+          mapAsync((d) => d.filter(notEmpty), flexPlans),
+          openPlans,
+        ),
         {
           loading: () => <Spinner />,
           error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
           empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
-          data: (data) => (
-            <>
-              {balance && (
-                <AppTypography tooltip={t('flexPlans.billingAccountTooltip')} className={styles.billBalance}>
-                  {t('flexPlans.billingAccount', { amount: `${formatEther(balance, 4)} ${TOKEN}` })}
-                </AppTypography>
-              )}
-
-              <Table
-                columns={getColumns(account, balance, onFetchConsumerHostBalance)}
-                dataSource={data}
-                rowKey={'id'}
-              />
-            </>
-          ),
+          data: (data) => {
+            const [flexPlans, openPlans] = data;
+            return (
+              <>
+                {balance && (
+                  <AppTypography tooltip={t('flexPlans.billingAccountTooltip')} className={styles.billBalance}>
+                    {t('flexPlans.billingAccount', { amount: `${formatEther(balance, 4)} ${TOKEN}` })}
+                  </AppTypography>
+                )}
+                <Table
+                  columns={getColumns(account, openPlans, balance, onFetchConsumerHostBalance)}
+                  dataSource={flexPlans}
+                  rowKey={'id'}
+                />
+              </>
+            );
+          },
         },
       )}
     </>

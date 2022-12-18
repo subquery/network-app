@@ -455,6 +455,7 @@ const en = {
         'This amount will go towards your flex plan, to avoid affecting query performance, please ensure you have sufficient funds.',
       invalidDepositAmount: 'Please input a valid deposit.',
       purchase: 'Purchase',
+      purchased: 'Purchased',
       confirmPurchase: 'Confirm Purchase',
       disabledPurchase: 'Indexer might be offline.',
       successPurchaseTitle: 'Success',

@@ -20,7 +20,7 @@ import TransactionModal from '../../../components/TransactionModal';
 
 import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { TransferModal } from '../../plans/MyFlexPlans/BillingAction';
+import { CryptoExchangeModal } from '../../../components/CryptoExchangeModal';
 
 export async function requestConsumerHostToken(
   account: string,
@@ -241,21 +241,27 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIn
 interface PurchaseFlexPlaneProps {
   flexPlan: IIndexerFlexPlan;
   balance: BigNumber | undefined;
+  isPurchased: boolean;
   onFetchBalance: () => void;
 }
 
 // TODO: Improve renderAsync render cache when reloading
 // TODO: Current need to wait dynamic time for purchase result on chain.
-export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, balance, onFetchBalance }) => {
+export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({
+  flexPlan,
+  balance,
+  isPurchased,
+  onFetchBalance,
+}) => {
   const [curStep, setCurStep] = React.useState<number>(0);
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [now] = React.useState<Date>(moment().toDate());
   const { t } = useTranslation();
   const { account } = useWeb3();
 
   const isIndexerOffline = !!(BigNumber.from(flexPlan.price).isZero() || BigNumber.from(flexPlan.max_time).isZero());
-  const needsTransfer = balance?.eq(BigNumber.from(0));
+  const isZeroBalance = balance?.eq(BigNumber.from(0));
 
-  const isDisabled = !account || isIndexerOffline;
+  const isDisabled = !account || isPurchased || isIndexerOffline;
   const disabledTooltip = isIndexerOffline
     ? t('flexPlans.disabledPurchase')
     : !account
@@ -277,14 +283,14 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({ flexPlan, 
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) =>
-      needsTransfer ? (
-        <TransferModal action="Transfer" />
+      isZeroBalance ? (
+        <CryptoExchangeModal action="Transfer" />
       ) : (
         <TransactionModal
           text={modalText}
           actions={[
             {
-              label: t('flexPlans.purchase'),
+              label: isPurchased ? t('flexPlans.purchased') : t('flexPlans.purchase'),
               key: 'purchaseFlexPlan',
               disabled: isDisabled,
               tooltip: disabledTooltip,
