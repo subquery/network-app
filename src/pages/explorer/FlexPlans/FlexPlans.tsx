@@ -28,6 +28,7 @@ import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containe
 import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
 import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import moment from 'moment';
 
 type Data<T> = T | undefined;
 
@@ -77,7 +78,6 @@ const getColumns = (
       }
 
       const isPurchased = checkIfPurchased(openPlans, plan);
-      console.log(`${isPurchased} ${plan.indexer}`);
 
       return (
         <PurchaseFlexPlan
@@ -98,7 +98,9 @@ export const FlexPlans: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { consumerHostBalance } = useSQToken();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
-  const openPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now: new Date('2022-12-12T00:57:21.038Z') });
+
+  const [now] = React.useState<Date>(moment().toDate());
+  const openPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
 
   const [balance] = consumerHostBalance.data ?? [];
   const onFetchConsumerHostBalance = () => consumerHostBalance.refetch();

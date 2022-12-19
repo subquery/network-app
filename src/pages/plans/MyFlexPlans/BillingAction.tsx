@@ -5,16 +5,16 @@ import * as React from 'react';
 import { MoreOutlined } from '@ant-design/icons';
 import styles from './MyFlexPlans.module.css';
 import { Dropdown, Menu } from 'antd';
-import { CryptoExchangeModal } from '../../../components/CryptoExchangeModal';
+import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 
 export const BillingAction: React.VFC = () => {
   const menuList = (
     <Menu>
       <Menu.Item key={'Transfer'}>
-        <CryptoExchangeModal action="Transfer" />
+        <BillingExchangeModal action="Transfer" />
       </Menu.Item>
       <Menu.Item key={'Withdraw'}>
-        <CryptoExchangeModal action="Withdraw" />
+        <BillingExchangeModal action="Withdraw" />
       </Menu.Item>
     </Menu>
   );

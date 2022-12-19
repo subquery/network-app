@@ -20,7 +20,7 @@ import TransactionModal from '../../../components/TransactionModal';
 
 import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { CryptoExchangeModal } from '../../../components/CryptoExchangeModal';
+import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 
 export async function requestConsumerHostToken(
   account: string,
@@ -284,7 +284,7 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({
     loading: () => <Spinner />,
     data: (data) =>
       isZeroBalance ? (
-        <CryptoExchangeModal action="Transfer" />
+        <BillingExchangeModal action="Transfer" />
       ) : (
         <TransactionModal
           text={modalText}

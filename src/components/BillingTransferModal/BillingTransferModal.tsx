@@ -11,7 +11,7 @@ import TransactionModal from '../TransactionModal';
 
 type TransferAction = 'Transfer' | 'Withdraw';
 
-export const CryptoExchangeModal = ({ action }: { action: TransferAction }) => {
+export const BillingExchangeModal = ({ action }: { action: TransferAction }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const { consumerHostAllowance, balance, consumerHostBalance } = useSQToken();
