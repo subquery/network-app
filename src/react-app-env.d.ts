@@ -3,6 +3,8 @@
 
 /// <reference types="react-scripts" />
 
+import 'vite/client';
+
 interface Window {
   ethereum?: any;
 }

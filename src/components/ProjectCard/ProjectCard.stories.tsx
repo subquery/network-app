@@ -11,7 +11,7 @@ export default {
 } as ComponentMeta<typeof ProjectCard>;
 
 const Template: ComponentStory<typeof ProjectCard> = (args) => (
-  <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+  <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
     <ProjectCard {...args} />
   </IPFSProvider>
 );

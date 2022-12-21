@@ -15,11 +15,11 @@ const tagManagerArgs = {
   gtmId: 'G-DK4PX8F61X',
 };
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = import.meta.env.NODE_ENV === 'production';
 isProd && TagManager.initialize(tagManagerArgs);
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: import.meta.env.SENTRY_DSN,
   integrations: [new BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%

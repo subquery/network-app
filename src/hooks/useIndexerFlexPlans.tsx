@@ -23,7 +23,7 @@ export interface IIndexerFlexPlan {
 }
 
 export function useIndexerFlexPlans(projectId: string): AsyncData<Array<IIndexerFlexPlan>> {
-  const projectUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/projects/${projectId}`;
+  const projectUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/projects/${projectId}`;
 
   return useAsyncMemo(async () => {
     const rawRes = await fetch(projectUrl);

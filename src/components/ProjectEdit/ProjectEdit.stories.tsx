@@ -11,7 +11,7 @@ export default {
 } as ComponentMeta<typeof ProjectEdit>;
 
 const Template: ComponentStory<typeof ProjectEdit> = (args) => (
-  <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+  <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
     <ProjectEdit {...args} />
   </IPFSProvider>
 );

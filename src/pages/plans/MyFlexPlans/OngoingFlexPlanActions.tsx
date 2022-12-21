@@ -24,7 +24,7 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
       throw new Error('Failed to request user authentication.');
     }
 
-    const terminateUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/channels/${flexPlanId}/terminate`;
+    const terminateUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/users/channels/${flexPlanId}/terminate`;
 
     const response = await fetch(terminateUrl, {
       headers: { ...getAuthReqHeader(consumerToken) },
