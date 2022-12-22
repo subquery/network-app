@@ -17,7 +17,7 @@ import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
 import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
-import { TerminateFlexPlan } from './TerminateFlexPlan';
+import { FlexPlanActions } from './FlexPlanActions';
 
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess: () => void) => {
   const columns: TableProps<ConsumerFlexPlan>['columns'] = [
@@ -90,14 +90,14 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       title: <TableTitle title={i18next.t('general.action')} />,
       dataIndex: 'deploymentId',
       fixed: 'right',
-      align: 'center',
-      width: 20,
+      align: 'left',
+      width: 40,
       render: (_, plan) => {
         if (path === EXPIRED_PLANS) {
           return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
         }
 
-        return <TerminateFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
+        return <FlexPlanActions flexPlan={plan} onSuccess={onSuccess} />;
       },
     },
   ];

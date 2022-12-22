@@ -61,13 +61,13 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
   },
 ];
 
-export const PlaygroundHeader: React.VFC = () => {
+export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
       <Breadcrumb separator=">">
         <Breadcrumb.Item className={styles.title}>
-          <Link to={SERVICE_AGREEMENTS}>{t('serviceAgreements.playground.ongoingAgreements')}</Link>
+          <Link to={LINK}>{linkText}</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
       </Breadcrumb>
@@ -176,7 +176,7 @@ export const Playground: React.VFC = () => {
 
   return (
     <div>
-      <PlaygroundHeader />
+      <PlaygroundHeader link={SERVICE_AGREEMENTS} linkText={t('serviceAgreements.playground.ongoingAgreements')} />
 
       <div className={styles.deploymentMetaContainer}>
         <div className={styles.deploymentMeta}>
@@ -199,6 +199,7 @@ export const Playground: React.VFC = () => {
             consumer={serviceAgreement.consumerAddress}
             agreement={serviceAgreement.id}
             requestTokenUrl={requestTokenUrl}
+            tokenType={'ServiceAgreementToken'}
             onRequestToken={(token: string) => {
               setSessionToken(token);
               setEncryptStorage(TOKEN_STORAGE_KEY, token);

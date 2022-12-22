@@ -11,7 +11,7 @@ import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 
-const FLEX_PLANS = '/plans/flex-plans';
+export const FLEX_PLANS = '/plans/flex-plans';
 export const ONGOING_PLANS = `${FLEX_PLANS}/ongoing`;
 export const EXPIRED_PLANS = `${FLEX_PLANS}/closed`;
 
