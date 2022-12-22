@@ -37,25 +37,24 @@ import { BigNumber } from 'ethers';
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
     dataIndex: 'indexer',
-    title: 'INDEXER',
-    key: 'indexer',
+    title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
     render: (indexer: ConsumerFlexPlan['indexer']) => <ConnectedIndexer id={indexer} />,
   },
   {
     dataIndex: 'price',
-    title: 'PRICE',
+    title: <TableTitle title={i18next.t('general.price')} />,
     key: 'price',
     render: (price: ConsumerFlexPlan['price']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
   },
   {
     dataIndex: 'expiredAt',
-    title: 'VALID UNTIL',
+    title: <TableTitle title={i18next.t('flexPlans.validityPeriod')} />,
     key: 'validity',
     render: (expiredAt: ConsumerFlexPlan['expiredAt']) => <TableText content={formatDate(expiredAt)} />,
   },
   {
     dataIndex: 'spent',
-    title: 'SPENT',
+    title: <TableTitle title={i18next.t('flexPlans.spent')} />,
     key: 'spent',
     render: (spent: ConsumerFlexPlan['spent']) => <TableText content={`${formatEther(spent)} ${TOKEN}`} />,
   },

@@ -432,7 +432,7 @@ const en = {
     flexPlans: {
       project: 'project',
       indexer: 'indexer',
-      validityPeriod: 'Validity Period',
+      validityPeriod: 'Valid Until',
       spent: 'spent',
       channelStatus: 'Channel Status',
       duration: 'duration',
