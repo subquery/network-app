@@ -487,6 +487,9 @@ const en = {
         submit: 'Confirm claim',
         failureText: 'Sorry, failed to claim flex plan',
       },
+      playground: {
+        title: 'Playground',
+      },
       terminate: {
         title: 'Terminate',
         terminatePlan: 'Terminate this plan',

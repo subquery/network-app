@@ -12,12 +12,14 @@ import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
-import { requestConsumerHostToken } from '../../explorer/FlexPlans/PurchaseFlexPlan';
 import { useWeb3 } from '../../../containers';
+import { useHistory } from 'react-router';
+import { FLEX_PLANS } from '.';
+import { requestConsumerHostToken } from '../../../utils/playgroundTokens';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
-    const { error, data: consumerToken } = await requestConsumerHostToken(account, library);
+    const { error, token: consumerToken } = await requestConsumerHostToken(account, library);
 
     if (error || !consumerToken) {
       throw new Error('Failed to request user authentication.');
@@ -42,18 +44,19 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
   }
 }
 
-interface TerminateFlexPlanProps {
+interface FlexPlanActionsProps {
   flexPlan: ConsumerFlexPlan;
   onSuccess: () => void;
 }
 
-export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan }) => {
+export const FlexPlanActions: React.VFC<FlexPlanActionsProps> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
   const { account, library } = useWeb3();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
+  const history = useHistory();
 
   const modalText = {
     title: t('myFlexPlans.terminate.terminatePlan'),
@@ -74,26 +77,37 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
   };
 
   return (
-    <TransactionModal
-      variant="errTextBtn"
-      text={modalText}
-      actions={[
-        {
-          label: t('myFlexPlans.terminate.title'),
-          key: 'terminate',
-        },
-      ]}
-      renderContent={(onSubmit, onCancel) => (
-        <>
-          <SummaryList
-            list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
-          />
-          {error && (
-            <AppTypography type="danger" className={styles.terminateError}>
-              {error}
-            </AppTypography>
-          )}
-          <div className={styles.btnContainer}>
+    <div className={styles.actionList}>
+      <Button
+        onClick={() => {
+          history.push(`${FLEX_PLANS}/playground/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
+        }}
+        htmlType="submit"
+        size="middle"
+        type={'link'}
+        loading={isLoading}
+      >
+        {t('myFlexPlans.playground.title')}
+      </Button>
+      <TransactionModal
+        variant="errTextBtn"
+        text={modalText}
+        actions={[
+          {
+            label: t('myFlexPlans.terminate.title'),
+            key: 'terminate',
+          },
+        ]}
+        renderContent={(onSubmit, onCancel) => (
+          <>
+            <SummaryList
+              list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
+            />
+            {error && (
+              <AppTypography type="danger" className={styles.terminateError}>
+                {error}
+              </AppTypography>
+            )}
             <Button
               onClick={() => handleOnSubmit(onCancel)}
               htmlType="submit"
@@ -105,9 +119,9 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
             >
               {t('myFlexPlans.terminate.title')}
             </Button>
-          </div>
-        </>
-      )}
-    />
+          </>
+        )}
+      />
+    </div>
   );
 };
