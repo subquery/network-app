@@ -51,9 +51,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       title: (
         <TableTitle title={i18next.t(path === ONGOING_PLANS ? 'flexPlans.validityPeriod' : 'flexPlans.duration')} />
       ),
-      render: (expiredAt) => {
-        return <TableText content={formatDate(expiredAt)} />;
-      },
+      render: (expiredAt) => <TableText content={formatDate(expiredAt)} />,
     },
     {
       dataIndex: 'spent',

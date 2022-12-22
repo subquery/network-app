@@ -10,6 +10,7 @@ import styles from './FlexPlayground.module.css';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 
 import {
+  formatDate,
   formatEther,
   getEncryptStorage,
   parseError,
@@ -27,9 +28,11 @@ import { GraphQLQuery } from '../Playground/GraphQLQuery';
 import { RequestToken } from '../Playground/RequestToken';
 import { PlaygroundHeader } from '../Playground/Playground';
 import { TableProps } from 'antd';
-import moment from 'moment';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { ONGOING_PLANS } from './MyFlexPlans';
+import { TableTitle } from '../../../components/TableTitle';
+import i18next from 'i18next';
+import { BigNumber } from 'ethers';
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
@@ -45,12 +48,10 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     render: (price: ConsumerFlexPlan['price']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
   },
   {
-    dataIndex: 'validity',
-    title: 'VALIDITY',
+    dataIndex: 'expiredAt',
+    title: 'VALID UNTIL',
     key: 'validity',
-    render: (_, fp: ConsumerFlexPlan) => {
-      return <TableText content={moment(fp.expiredAt).utc(true).fromNow()} />;
-    },
+    render: (expiredAt: ConsumerFlexPlan['expiredAt']) => <TableText content={formatDate(expiredAt)} />,
   },
   {
     dataIndex: 'spent',
@@ -59,10 +60,12 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     render: (spent: ConsumerFlexPlan['spent']) => <TableText content={`${formatEther(spent)} ${TOKEN}`} />,
   },
   {
-    dataIndex: 'channelState',
-    title: 'CHANNEL STATE',
-    key: 'channelState',
-    render: (price: ConsumerFlexPlan['status']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
+    dataIndex: 'spent',
+    title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
+    render: (spent, plan) => {
+      const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
+      return <TableText content={`${formatEther(sortedRemaining, 4)} ${TOKEN}`} />;
+    },
   },
 ];
 
@@ -177,15 +180,13 @@ export const FlexPlayground: React.VFC = () => {
             tokenType={'ConsumerHostToken'}
             onRequestToken={(token: string) => {
               setSessionToken(token);
-              console.log(token);
-              console.log('ere');
               setEncryptStorage(TOKEN_STORAGE_KEY, token);
             }}
           />
         )}
         {showPlayground && (
           <GraphQLQuery
-            queryUrl={queryUrl ?? ''}
+            queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
           />
