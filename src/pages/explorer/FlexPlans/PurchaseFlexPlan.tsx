@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { parseEther } from '@ethersproject/units';
-import { Web3Provider } from '@ethersproject/providers';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
@@ -18,43 +17,9 @@ import { IIndexerFlexPlan } from '../../../hooks';
 import { formatEther, getAuthReqHeader, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../../utils';
 import TransactionModal from '../../../components/TransactionModal';
 
-import { ConsumerHostMessageType, getEip721Signature, withChainIdRequestBody } from '../../../utils/eip712';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
-
-export async function requestConsumerHostToken(
-  account: string,
-  library: Web3Provider | undefined,
-): Promise<{ data?: string; error?: string }> {
-  try {
-    const tokenRequestUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/login`;
-    const timestamp = new Date().getTime();
-
-    const signMsg = {
-      consumer: account,
-      timestamp,
-    };
-    const eip721Signature = await getEip721Signature(signMsg, ConsumerHostMessageType, account, library);
-
-    if (!eip721Signature) throw new Error();
-
-    const { response, error } = await POST({
-      endpoint: tokenRequestUrl,
-      requestBody: withChainIdRequestBody(signMsg, eip721Signature),
-    });
-
-    const sortedResponse = response && (await response.json());
-
-    if (error || !response?.ok || sortedResponse?.error) {
-      throw new Error(sortedResponse?.error ?? error);
-    }
-
-    return { data: sortedResponse?.token };
-  } catch (error) {
-    console.error('Failed to request token of consumer host.');
-    return { error: 'Failed to request token of consumer host.' };
-  }
-}
+import { requestConsumerHostToken } from '../../../utils/playgroundTokens';
 
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
   try {
@@ -126,7 +91,7 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIn
         sortedAmount.toString(),
         sortedPeriod,
         deploymentIndexer,
-        authToken?.data ?? '',
+        authToken?.token ?? '',
       );
 
       const { data, error } = purchaseRequest;

@@ -12,6 +12,7 @@ import { MyOffers } from './MyOffers';
 import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
+import { FlexPlayground } from './MyFlexPlans/FlexPlayground';
 
 export const ROUTE = '/plans';
 export const PLAN_ROUTE = `${ROUTE}/my-plans`;
@@ -55,6 +56,7 @@ export const PlanAndOffer: React.VFC = () => {
       <AppSidebar list={sidebarList}>
         <Switch>
           <Route path={SERVICE_AGREEMENTS} component={ServiceAgreements} />
+          <Route exact path={`${FLEX_PLANS}/playground/:id`} component={FlexPlayground} />
           <Route path={FLEX_PLANS} component={MyFlexPlans} />
           <Route path={PLAN_ROUTE} component={Plans} />
           <Route path={OFFER_MARKETPLACE} component={Marketplace} />

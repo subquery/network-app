@@ -6,9 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../../../containers';
 import styles from './Playground.module.css';
-import { parseError } from '../../../utils';
-import { POST } from '../../../utils/fetch';
-import { authSARequestBody, ConsumerSAMessageType, getEip721Signature } from '../../../utils/eip712';
+import { requestConsumerHostToken, requestServiceAgreementToken } from '../../../utils/playgroundTokens';
 
 interface RequestTokenProps {
   indexer: string;
@@ -16,6 +14,7 @@ interface RequestTokenProps {
   agreement: string;
   deploymentId: string;
   requestTokenUrl: string | undefined;
+  tokenType: 'ConsumerHostToken' | 'ServiceAgreementToken';
   onRequestToken?: (token: string) => void;
 }
 
@@ -25,6 +24,7 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
   agreement,
   deploymentId,
   requestTokenUrl,
+  tokenType,
   onRequestToken,
 }) => {
   const { t } = useTranslation();
@@ -38,43 +38,23 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
 
   const onRequestTokenClick = async () => {
     setLoading(true);
-    try {
-      const timestamp = new Date().getTime();
-      if (!library || !account || !requestTokenUrl) return;
 
-      const signMsg = {
-        consumer: account,
+    let sortedResponse;
+
+    if (tokenType === 'ConsumerHostToken') {
+      sortedResponse = await requestConsumerHostToken(account ?? '', library);
+    } else if (tokenType === 'ServiceAgreementToken') {
+      sortedResponse = await requestServiceAgreementToken(
+        account ?? '',
+        library,
+        requestTokenUrl,
         indexer,
         agreement,
-        timestamp,
         deploymentId,
-      };
-      const eip721Signature = await getEip721Signature(signMsg, ConsumerSAMessageType, account, library);
-
-      const tokenRequestBody = authSARequestBody(
-        {
-          consumer: account,
-          timestamp: timestamp,
-          indexer,
-          agreement,
-          deploymentId,
-        },
-        eip721Signature ?? '',
       );
-
-      const { response, error } = await POST({ endpoint: requestTokenUrl, requestBody: tokenRequestBody });
-
-      const sortedResponse = response && (await response.json());
-      if (response?.ok) {
-        onRequestToken && onRequestToken(sortedResponse?.token);
-      } else {
-        const sortedError = sortedResponse || error;
-        throw new Error(parseError(sortedError));
-      }
-    } catch (error) {
-      setError(parseError(error));
     }
 
+    onRequestToken && onRequestToken(sortedResponse?.token ?? '');
     setLoading(false);
   };
 
