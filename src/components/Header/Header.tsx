@@ -50,6 +50,10 @@ const HeaderLinks = () => {
       title: t('header.swap'),
     },
     {
+      link: '/delegator',
+      title: 'Delegator',
+    },
+    {
       link: 'https://snapshot.org/#/subquerynetwork.eth',
       title: t('header.governance'),
     },

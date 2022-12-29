@@ -33,6 +33,7 @@ import studioStyles from './pages/studio/index.module.css';
 import { WalletRoute } from './WalletRoute';
 
 import { getConnectorConfig } from './utils/getNetworkConnector';
+import { ROUTES } from './utils';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -116,6 +117,7 @@ const App: React.VFC = () => {
                   subtitle={t('studio.wallet.subTitle')}
                 />
                 <Route component={pages.Staking} path="/staking" />
+                <WalletRoute component={pages.Delegator} path={ROUTES.DELEGATOR} />
                 <WalletRoute component={pages.PlanAndOffer} path="/plans" />
                 <WalletRoute component={pages.Swap} path="/swap" />
                 <Redirect from="/" to="/explorer" />
