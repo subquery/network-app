@@ -11,6 +11,7 @@ import styles from './Header.module.css';
 import { Dropdown } from '../Dropdown';
 import { ConnectWalletButton } from '../ConnectWalletButton';
 import { AccountActions } from '../AccountActions';
+import { ROUTES } from '../../utils';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -30,27 +31,27 @@ const HeaderLinks = () => {
 
   const entryLinks = [
     {
-      link: '/explorer',
+      link: ROUTES.EXPLORER,
       title: t('header.explorer'),
     },
     {
-      link: '/studio',
+      link: ROUTES.STUDIO,
       title: t('header.studio'),
     },
     {
-      link: '/staking',
+      link: ROUTES.STAKING,
       title: t('header.staking'),
     },
     {
-      link: '/plans',
+      link: ROUTES.PLANS,
       title: t('header.plans'),
     },
     {
-      link: '/swap',
+      link: ROUTES.SWAP,
       title: t('header.swap'),
     },
     {
-      link: '/delegator',
+      link: ROUTES.DELEGATOR,
       title: 'Delegator',
     },
     {
