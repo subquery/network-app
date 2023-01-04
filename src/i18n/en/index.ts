@@ -5,6 +5,7 @@ import delegatorTranslations from './delegator';
 import agreementTranslations from './agreement';
 import indexerTranslations from './indexer';
 import globalTransaltions from './global';
+import explorerTranslations from './explorer';
 
 export const en = {
   translation: {
@@ -12,6 +13,7 @@ export const en = {
     ...agreementTranslations,
     ...indexerTranslations,
     ...globalTransaltions,
+    ...explorerTranslations,
   },
 };
 
