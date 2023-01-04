@@ -23,6 +23,7 @@ import {
   IndexerRegistryProvider,
   useWeb3,
   SQTokenProvider,
+  EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
@@ -55,9 +56,11 @@ const Providers: React.FC = ({ children }) => {
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
                 <IndexerRegistryProvider>
-                  <SQTokenProvider>
-                    <UserProjectsProvider>{children}</UserProjectsProvider>
-                  </SQTokenProvider>
+                  <EraProvider>
+                    <SQTokenProvider>
+                      <UserProjectsProvider>{children}</UserProjectsProvider>
+                    </SQTokenProvider>
+                  </EraProvider>
                 </IndexerRegistryProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
@@ -109,18 +112,18 @@ const App: React.VFC = () => {
           <div className="Main">
             <BlockchainStatus>
               <Switch>
-                <Route component={pages.Explorer} path="/explorer" />
+                <Route component={pages.Explorer} path={ROUTES.EXPLORER} />
                 <WalletRoute
                   component={pages.Studio}
-                  path="/studio"
+                  path={ROUTES.STUDIO}
                   title={t('studio.wallet.connect')}
                   subtitle={t('studio.wallet.subTitle')}
                 />
-                <Route component={pages.Staking} path="/staking" />
+                <Route component={pages.Staking} path={ROUTES.STAKING} />
                 <WalletRoute component={pages.Delegator} path={ROUTES.DELEGATOR} />
-                <WalletRoute component={pages.PlanAndOffer} path="/plans" />
-                <WalletRoute component={pages.Swap} path="/swap" />
-                <Redirect from="/" to="/explorer" />
+                <WalletRoute component={pages.PlanAndOffer} path={ROUTES.PLANS} />
+                <WalletRoute component={pages.Swap} path={ROUTES.SWAP} />
+                <Redirect from="/" to={ROUTES.EXPLORER} />
               </Switch>
             </BlockchainStatus>
           </div>

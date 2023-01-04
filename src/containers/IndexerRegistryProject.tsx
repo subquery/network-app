@@ -22,6 +22,10 @@ import { GetSpecificOpenOffersVariables, GetSpecificOpenOffers } from '../__gene
 import { GetAllDelegationsVariables, GetAllDelegations } from '../__generated__/registry/GetAllDelegations';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
 import { GetDelegationsVariables, GetDelegations } from '../__generated__/registry/GetDelegations';
+import {
+  GetFilteredDelegationsVariables,
+  GetFilteredDelegations,
+} from '../__generated__/registry/GetFilteredDelegations';
 import { GetDelegatorVariables, GetDelegator } from '../__generated__/registry/GetDelegator';
 import { GetIndexerVariables, GetIndexer } from '../__generated__/registry/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/registry/GetIndexerDelegators';
@@ -167,6 +171,31 @@ const GET_DELEGATOR = gql`
 const GET_DELEGATIONS = gql`
   query GetDelegations($delegator: String!, $offset: Int) {
     delegations(filter: { delegatorId: { equalTo: $delegator } }, offset: $offset) {
+      totalCount
+      nodes {
+        id
+        delegatorId
+        indexerId
+        amount
+        indexer {
+          metadata {
+            metadataCID
+            name
+            url
+          }
+          active
+        }
+      }
+    }
+  }
+`;
+
+const GET_FILTERED_DELEGATIONS = gql`
+  query GetFilteredDelegations($delegator: String!, $filterIndexer: String!, $offset: Int) {
+    delegations(
+      filter: { delegatorId: { equalTo: $delegator }, indexerId: { notEqualTo: $filterIndexer } }
+      offset: $offset
+    ) {
       totalCount
       nodes {
         id
@@ -534,6 +563,12 @@ export function useAllDelegations(params: GetAllDelegationsVariables): QueryResu
 
 export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
   return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 10000 });
+}
+
+export function useFilteredDelegations(params: GetFilteredDelegationsVariables): QueryResult<GetFilteredDelegations> {
+  return useQuery<GetFilteredDelegations, GetFilteredDelegationsVariables>(GET_FILTERED_DELEGATIONS, {
+    variables: params,
+  });
 }
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {

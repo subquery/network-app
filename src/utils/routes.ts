@@ -12,7 +12,14 @@ export const ROUTES = {
 
   STUDIO: '/studio',
 
-  DELEGATOR: '/delegator',
+  SWAP: '/swap',
+
   INDEXER: '/indexer',
-  ALL_INDEXER: '/staking',
+  STAKING: '/staking', //todo: improve
+  ALL_INDEXER: '/all',
+
+  PLANS: '/plans',
+
+  // V2
+  DELEGATOR: '/delegator',
 };
