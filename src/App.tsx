@@ -70,7 +70,7 @@ const Providers: React.FC = ({ children }) => {
 
 const BlockchainStatus: React.FC = ({ children }) => {
   const { error, connector } = useWeb3();
-  const { t } = useTranslation();
+  const { t } = useTranslation('translation');
   const connectorWindowObj = getConnectorConfig(connector).windowObj;
 
   const isExtensionInstalled = React.useMemo(
