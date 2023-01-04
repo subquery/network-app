@@ -23,6 +23,7 @@ import {
   IndexerRegistryProvider,
   useWeb3,
   SQTokenProvider,
+  EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
@@ -55,9 +56,11 @@ const Providers: React.FC = ({ children }) => {
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
                 <IndexerRegistryProvider>
-                  <SQTokenProvider>
-                    <UserProjectsProvider>{children}</UserProjectsProvider>
-                  </SQTokenProvider>
+                  <EraProvider>
+                    <SQTokenProvider>
+                      <UserProjectsProvider>{children}</UserProjectsProvider>
+                    </SQTokenProvider>
+                  </EraProvider>
                 </IndexerRegistryProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
