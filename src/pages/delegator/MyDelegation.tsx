@@ -5,17 +5,18 @@ import * as React from 'react';
 import { Space, Table, TableProps, Tag, Typography } from 'antd';
 import { TFunction, useTranslation } from 'react-i18next';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import clsx from 'clsx';
+import { BigNumber } from 'ethers';
+import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { AppPageHeader, Card, TableText } from '../../components';
 import { COLORS, formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../utils';
 import { useDelegating } from '../../hooks/useDelegating';
-import { useEra, useFilteredDelegations, useWeb3 } from '../../containers';
+import { useEra, useWeb3 } from '../../containers';
 import styles from './MyDelegation.module.css';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../hooks/useEraValue';
 import { parseEther } from 'ethers/lib/utils';
 import { TableTitle } from '../../components/TableTitle';
 import { TokenAmount } from '../../components/TokenAmount';
-import clsx from 'clsx';
-import { BigNumber } from 'ethers';
 import { DoUndelegate } from '../staking/Indexer/DoUndelegate';
 
 // TODO: Move to en.ts once reorg ready
@@ -103,7 +104,10 @@ export const MyDelegation: React.VFC = () => {
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
   console.log('account', account);
 
-  const delegations = useFilteredDelegations({ delegator: account ?? '', filterIndexer: account ?? '' });
+  const delegations = useGetFilteredDelegationsQuery({
+    variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
+  });
+
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
