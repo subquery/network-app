@@ -16,10 +16,17 @@ export const ROUTES = {
 
   INDEXER: '/indexer',
   STAKING: '/staking', //todo: improve
-  ALL_INDEXER: '/all',
+
+  INDEXERS: '/indexers',
+  ALL_INDEXERS: '/indexers/all',
+  TOP_INDEXERS: '/indexers/rank',
 
   PLANS: '/plans',
 
   // V2
-  DELEGATOR: '/delegator',
+  DELEGATOR: '/delegation',
+  DELEGATING_DELEGATOR: '/delegation/delegating',
+  INDEXERS_DELEGATOR: '/delegation/indexers',
+  ALL_INDEXERS_DELEGATOR: '/delegation/indexers/all',
+  TOP_INDEXERS_DELEGATOR: '/delegation/indexers/top',
 };
