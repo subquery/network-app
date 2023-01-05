@@ -6,15 +6,15 @@ import { TableProps, Tag } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { AntDTable, SearchInput, TableText } from '../../../../components';
-import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
+import { AntDTable, SearchInput, TableText } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 
 import { DoDelegate } from '../DoDelegate';
-import { TableTitle } from '../../../../components/TableTitle';
-import { useWeb3 } from '../../../../containers';
+import { TableTitle } from '../../../components/TableTitle';
+import { useWeb3 } from '../../../containers';
 import styles from './TopIndexersList.module.css';
-import { GetTopIndexers_indexerPrograms } from '../../../../__generated__/excellentIndexers/GetTopIndexers';
-import { getOrderedAccounts, mulToPercentage } from '../../../../utils';
+import { GetTopIndexers_indexerPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
+import { getOrderedAccounts, mulToPercentage } from '../../../utils';
 
 const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
@@ -33,7 +33,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       <TableTitle
         noTooltipIcon={true}
         tooltip={i18next.t('topIndexers.tooltip.rank')}
-        title={i18next.t('topIndexers.rank')}
+        title={i18next.t('topIndexers.score')}
       />
     ),
     dataIndex: 'totalPoints',
@@ -183,7 +183,6 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'id',
     align: 'center',
     render: (id: string) => {
-      console.log('id', id);
       if (id === account) return <Typography> - </Typography>;
       return <DoDelegate indexerAddress={id} variant="textBtn" />;
     },

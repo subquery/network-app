@@ -34,6 +34,8 @@ const translation = {
     invalidDelegateBeforeRewardCollect: `This indexer cannot be delegated to until they collect all the early era's rewards. Please contact the indexer to resolve the issue.`,
     invalidUndelegateBeforeRewardCollect: `This indexer cannot be undelegated from until they collect all the early era's rewards. Please contact the indexer to resolve the issue.`,
     nonToUndelegate: `There is 0 ${process.env.REACT_APP_TOKEN} delegating for next era.`,
+    delegationDesc:
+      'View all Indexers you have delegated your kSQT tokens to. In return for delegating, you will earn rewards in kSQT from the rewards pool.',
   },
 
   withdrawals: {

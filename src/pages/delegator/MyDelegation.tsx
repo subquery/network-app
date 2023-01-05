@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Space, Table, TableProps, Tag, Typography } from 'antd';
+import { Table, TableProps, Tag, Typography } from 'antd';
 import { TFunction, useTranslation } from 'react-i18next';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { AppPageHeader, Card, TableText } from '../../components';
-import { COLORS, formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../utils';
+import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../utils';
 import { useDelegating } from '../../hooks/useDelegating';
 import { useEra, useWeb3 } from '../../containers';
 import styles from './MyDelegation.module.css';
@@ -19,18 +18,7 @@ import { TableTitle } from '../../components/TableTitle';
 import { TokenAmount } from '../../components/TokenAmount';
 import { DoUndelegate } from '../staking/Indexer/DoUndelegate';
 
-// TODO: Move to en.ts once reorg ready
-const myDelegationDesc =
-  'View all Indexers you have delegated your kSQT tokens to. In return for delegating, you will earn rewards in kSQT from the rewards pool.';
-
-const MyDelegationDesc = () => (
-  <Space>
-    <AiOutlineInfoCircle className="flex" color={COLORS.primary} /> {myDelegationDesc}
-  </Space>
-);
-
 const getColumns = (
-  delegator: string | undefined,
   t: TFunction<'translation', undefined>,
 ): TableProps<{
   value: CurrentEraValue<string>;
@@ -53,13 +41,13 @@ const getColumns = (
     width: 120,
     children: [
       {
-        title: t('general.current').toUpperCase(),
+        title: <TableTitle title={t('delegate.currentEra')} />,
         dataIndex: ['value', 'current'],
         key: 'currentValue',
         render: (text: string) => <TokenAmount value={text} />,
       },
       {
-        title: t('general.next').toUpperCase(),
+        title: <TableTitle title={t('delegate.nextEra')} />,
         dataIndex: ['value', 'after'],
         key: 'afterValue',
         render: (text: string) => <TokenAmount value={text} />,
@@ -137,7 +125,7 @@ export const MyDelegation: React.VFC = () => {
               <Typography.Title level={3} className={styles.header}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography.Title>
-              <Table columns={getColumns(account ?? '', t)} dataSource={data} rowKey={'indexer'} />
+              <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
             </>
           );
         },
@@ -155,8 +143,7 @@ export const MyDelegation: React.VFC = () => {
 
   return (
     <>
-      <AppPageHeader title={t('delegate.delegating')} />
-      <MyDelegationDesc />
+      <AppPageHeader title={t('delegate.delegating')} desc={t('delegate.delegationDesc')} />
       <DelegatingCard />
       <DelegationList />
     </>

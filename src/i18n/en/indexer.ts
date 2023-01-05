@@ -68,8 +68,9 @@ const translation = {
     failureCollect: 'Sorry, collect rewards transaction has failed.',
   },
   topIndexers: {
+    desc: 'View the top 100 ranked Indexers and all other indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
     nonData: 'There is no data to display',
-    rank: 'indexer ranking',
+    score: 'indexer score',
     uptime: 'uptime',
     ownStake: 'own stake',
     delegated: 'delegated',

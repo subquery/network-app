@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route } from 'react-router';
-import { Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { BsPeople } from 'react-icons/bs';
 import { GiBank } from 'react-icons/gi';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { MyDelegation } from './MyDelegation';
+import { Indexers } from './Indexers';
 
 export const Delegator: React.VFC = () => {
   const { t } = useTranslation();
@@ -17,12 +17,12 @@ export const Delegator: React.VFC = () => {
   const sidebarList = [
     {
       label: t('delegate.delegating'),
-      link: ROUTES.DELEGATOR,
+      link: ROUTES.DELEGATING_DELEGATOR,
       icon: <GiBank />,
     },
     {
       label: t('indexer.indexers'),
-      link: ROUTES.STAKING,
+      link: ROUTES.INDEXERS_DELEGATOR,
       icon: <BsPeople />,
     },
   ];
@@ -30,9 +30,9 @@ export const Delegator: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Switch>
-        <Route path={ROUTES.DELEGATOR} component={MyDelegation} />
-        {/* <Route path={ROUTES.STAKING} component={MyDelegation} /> */}
-        <Redirect from={ROUTES.DELEGATOR} to={ROUTES.DELEGATOR} />
+        <Route path={ROUTES.INDEXERS_DELEGATOR} component={Indexers} />
+        <Route path={ROUTES.DELEGATING_DELEGATOR} component={MyDelegation} />
+        <Redirect from={ROUTES.DELEGATOR} to={ROUTES.DELEGATING_DELEGATOR} />
       </Switch>
     </AppSidebar>
   );
