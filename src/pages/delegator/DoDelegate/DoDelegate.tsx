@@ -19,6 +19,7 @@ import { Spinner, Typography } from '@subql/react-ui';
 import { mapEraValue, parseRawEraValue } from '../../../hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
 import { BigNumber } from 'ethers';
+import { useGetIndexerQuery } from '@subql/react-hooks';
 
 const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: any) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -49,7 +50,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const delegation = useDelegation(account ?? '', indexerAddress);
-  const indexer = useIndexer({ address: account ?? '' });
+  const indexer = useGetIndexerQuery({ variables: { address: account ?? '' } });
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     const contracts = await pendingContracts;

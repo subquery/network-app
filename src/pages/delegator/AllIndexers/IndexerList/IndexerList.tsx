@@ -11,7 +11,7 @@ import i18next from 'i18next';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../../DoDelegate';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { useDelegation, useIndexer, useWeb3 } from '../../../../containers';
+import { useDelegation, useWeb3 } from '../../../../containers';
 import { extractPercentage, getOrderedAccounts, renderAsync } from '../../../../utils';
 import {
   getCapacity,
@@ -25,6 +25,7 @@ import { TokenAmount } from '../../../../components/TokenAmount';
 import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
 import { AntDTable, SearchInput, TableText } from '../../../../components';
 import { TableTitle } from '../../../../components/TableTitle';
+import { useGetIndexerQuery } from '@subql/react-hooks';
 
 const Delegation: React.VFC<{
   indexer: string;
@@ -253,9 +254,10 @@ interface props {
   era?: number;
 }
 
-// TODO: update indexer detail Page once ready
 // TODO: review the solution on sortedIndexerList
 // TODO: review <Delegation>
+// TODO: `useGetIndexerQuery` has been used by indexerList, DoDelegate
+// TODO: update indexer detail Page once ready
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -267,7 +269,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
    * SearchInput logic
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const sortedIndexer = useIndexer({ address: searchIndexer ?? '' });
+  const sortedIndexer = useGetIndexerQuery({ variables: { address: searchIndexer ?? '' } });
 
   const searchedIndexer = React.useMemo(
     () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
