@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Table, TableProps, Tag, Typography } from 'antd';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
@@ -19,7 +19,7 @@ import { TokenAmount } from '../../components/TokenAmount';
 import { DoUndelegate } from '../staking/Indexer/DoUndelegate';
 
 const getColumns = (
-  t: TFunction<'translation', undefined>,
+  t: any,
 ): TableProps<{
   value: CurrentEraValue<string>;
   indexer: string;
