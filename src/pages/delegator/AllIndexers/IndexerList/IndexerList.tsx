@@ -209,7 +209,7 @@ interface props {
   era?: number;
 }
 
-// TODO: `useGetIndexerQuery` has been used by indexerList, DoDelegate
+// TODO: `useGetIndexerQuery` has been used by DoDelegate
 // TODO: update indexer detail Page once ready
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
   const { t } = useTranslation();
