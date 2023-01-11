@@ -282,7 +282,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
 
   const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
   const isLoading =
-    loadingList || sortedIndexer.loading || (orderedIndexerList.length === 0 && totalCount && totalCount > 0);
+    !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0));
 
   return (
     <div className={styles.container}>

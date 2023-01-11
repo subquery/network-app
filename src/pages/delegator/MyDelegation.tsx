@@ -17,6 +17,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { TableTitle } from '../../components/TableTitle';
 import { TokenAmount } from '../../components/TokenAmount';
 import { DoUndelegate } from '../staking/Indexer/DoUndelegate';
+import { SUB_DELEGATIONS } from '../../containers/IndexerRegistryProjectSub';
 
 const getColumns = (
   t: any,
@@ -82,7 +83,6 @@ const getColumns = (
   },
 ];
 
-// TODO: Deal with update after success contract tx -> push notification
 export const MyDelegation: React.VFC = () => {
   const { currentEra } = useEra(); // TODO: Replace when container upgrade
   const { t } = useTranslation();
@@ -90,10 +90,21 @@ export const MyDelegation: React.VFC = () => {
   const delegating = useDelegating(account ?? '');
   const refetchDelegating = () => delegating.refetch(true);
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
-  console.log('account', account);
 
+  const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const delegations = useGetFilteredDelegationsQuery({
-    variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
+    variables: filterParams,
+  });
+
+  delegations.subscribeToMore({
+    document: SUB_DELEGATIONS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        delegations.refetch(filterParams);
+      }
+      return prev;
+    },
   });
 
   const delegationList = mapAsync(
