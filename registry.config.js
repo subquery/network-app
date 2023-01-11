@@ -14,6 +14,7 @@ module.exports = {
       'src/hooks/useApiEndpoint.ts',
       'src/containers/QuerySwapExchangeProject.tsx',
       'src/containers/QueryTop100Indexers.tsx',
+      'src/containers/IndexerRegistryProjectSub.tsx',
     ],
   },
 };

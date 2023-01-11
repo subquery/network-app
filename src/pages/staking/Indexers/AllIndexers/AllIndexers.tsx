@@ -4,6 +4,7 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useEra, useIndexers } from '../../../../containers';
+import { SUB_INDEXERS } from '../../../../containers/IndexerRegistryProjectSub';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 
@@ -14,6 +15,16 @@ export const AllIndexers: React.VFC = () => {
   const fetchMore = (offset: number) => {
     getUseQueryFetchMore(indexers, { offset });
   };
+
+  // indexers.subscribeToMore({
+  //   document: SUB_INDEXERS,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       indexers.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   return (
     <div>

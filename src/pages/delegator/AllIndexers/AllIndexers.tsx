@@ -7,6 +7,7 @@ import { useGetIndexersQuery } from '@subql/react-hooks';
 import { useEra } from '../../../containers';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
+import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
 
 export const AllIndexers: React.VFC = () => {
   const indexers = useGetIndexersQuery();
@@ -15,6 +16,18 @@ export const AllIndexers: React.VFC = () => {
   const fetchMore = (offset: number) => {
     getUseQueryFetchMore(indexers, { offset, first: 10 });
   };
+
+  indexers.subscribeToMore({
+    document: SUB_INDEXERS,
+    updateQuery: (prev, { subscriptionData }) => {
+      console.log('Subscribing....');
+      if (subscriptionData.data) {
+        console.log('subscriptionData.data', subscriptionData.data);
+        indexers.refetch();
+      }
+      return prev;
+    },
+  });
 
   return (
     <div>

@@ -15,6 +15,7 @@ module.exports = {
       'src/containers/IndexerRegistryProject.tsx',
       'src/containers/QueryRegistryProject.tsx',
       'src/containers/QuerySwapExchangeProject.tsx',
+      'src/containers/IndexerRegistryProjectSub.tsx',
     ],
   },
 };
