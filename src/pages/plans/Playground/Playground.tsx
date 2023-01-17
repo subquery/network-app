@@ -22,7 +22,6 @@ import {
 import { POST } from '../../../utils/fetch';
 import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
-import { defaultQuery } from '../../../components/GraphQLPlayground/GraphQLPlayground';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 import { SERVICE_AGREEMENTS } from '..';
@@ -31,6 +30,7 @@ import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
+import { FetcherParams, FetcherOpts, FetcherReturnType } from '@graphiql/toolkit';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -130,7 +130,11 @@ export const Playground: React.VFC = () => {
       if (!queryUrl) return;
 
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
-      const { response, error } = await POST({ endpoint: queryUrl, requestBody: defaultQuery, headers });
+      const { response, error } = await POST({
+        endpoint: queryUrl,
+        requestBody: `{_metadata {indexerHealthy}}`,
+        headers,
+      });
       if (response?.status === 200) {
         setQueryable(true);
       }
@@ -144,7 +148,7 @@ export const Playground: React.VFC = () => {
         setQueryable(undefined);
         removeStorage(TOKEN_STORAGE_KEY);
 
-        const { error: resError } = await response?.json();
+        const { error: resError } = (await response?.json()) || {};
         const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
 
         openNotificationWithIcon({
@@ -211,6 +215,18 @@ export const Playground: React.VFC = () => {
             queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
+            fetcher={async (graphQLParams) => {
+              const headers = {
+                'Content-Type': 'application/json',
+              };
+              const sortedHeaders = sessionToken ? { ...headers, Authorization: `Bearer ${sessionToken}` } : headers;
+              const data = await fetch(queryUrl, {
+                method: 'POST',
+                headers: sortedHeaders,
+                body: JSON.stringify(graphQLParams),
+              });
+              return data.json().catch(() => data.text());
+            }}
           />
         )}
       </div>

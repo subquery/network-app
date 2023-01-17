@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router';
 import { Table } from 'antd';
-import { DeploymentMeta, TableText } from '../../../components';
+import { DeploymentMeta, Spinner, TableText } from '../../../components';
 import styles from './FlexPlayground.module.css';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 
@@ -13,17 +13,15 @@ import {
   formatDate,
   formatEther,
   getEncryptStorage,
-  parseError,
+  getFlexPlanPrice,
   removeStorage,
   setEncryptStorage,
   TOKEN,
   wrapProxyEndpoint,
 } from '../../../utils';
 import { POST } from '../../../utils/fetch';
-import { defaultQuery } from '../../../components/GraphQLPlayground/GraphQLPlayground';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { Spinner } from '@subql/react-ui';
 import { GraphQLQuery } from '../Playground/GraphQLQuery';
 import { RequestToken } from '../Playground/RequestToken';
 import { PlaygroundHeader } from '../Playground/Playground';
@@ -44,7 +42,7 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     dataIndex: 'price',
     title: <TableTitle title={i18next.t('general.price')} />,
     key: 'price',
-    render: (price: ConsumerFlexPlan['price']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
+    render: (price) => <TableText content={getFlexPlanPrice(price)} />,
   },
   {
     dataIndex: 'expiredAt',
@@ -81,25 +79,22 @@ export const FlexPlayground: React.VFC = () => {
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
 
   const { queryUrl, requestTokenUrl } = React.useMemo(() => {
+    const url = process.env.REACT_APP_CONSUMER_HOST_ENDPOINT;
     return {
-      queryUrl: wrapProxyEndpoint(
-        `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/query/${flexPlan?.deployment?.id}?apikey=${sessionToken}`,
-        flexPlan?.indexer,
-      ),
-      requestTokenUrl: wrapProxyEndpoint(`${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/token`, flexPlan?.indexer),
+      queryUrl: `${url}/users/channels/${flexPlan?.id}/playground`,
+      requestTokenUrl: wrapProxyEndpoint(`${url}/token`, flexPlan?.indexer),
     };
-  }, [flexPlan?.deployment, flexPlan?.indexer, sessionToken]);
-
-  //TODO: send request like with purchasePlan
-  //TODO: better handling when it can't ping endpoint
+  }, [flexPlan?.id, flexPlan?.indexer]);
 
   /**
    * Query Graphql
    *
-   * 1. 401 => require auth for further query
-   * 2. 200 => queryable
-   * 3. 400 => exceed daily limit
-   * 4. otherStatusCode => return to serviceAgreementTable
+   * 1. 404 => cannot send request to consumer hosted service
+   * 2  403 => not logged in
+   * 2. 401 => require auth for further query
+   * 3. 200 => queryable
+   * 4. 400 => exceed daily limit
+   * 5. otherStatusCode => return to FlexPlanTable
    *
    */
   React.useEffect(() => {
@@ -108,30 +103,53 @@ export const FlexPlayground: React.VFC = () => {
       if (!queryUrl) return;
 
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
-      const { response, error } = await POST({ endpoint: queryUrl, requestBody: defaultQuery, headers });
-      if (response?.status === 200) {
-        setQueryable(true);
+
+      console.log(sessionToken);
+
+      const { response, error } = await POST({
+        endpoint: queryUrl,
+        headers: headers,
+        requestBody: `{_metadata {indexerHealthy}}`,
+      });
+
+      if (response?.status === 404) {
+        setQueryable(false);
       }
 
-      if (response?.status === 401) {
+      const { status } = response || {};
+      const res = await response?.json();
+      const { code } = res;
+
+      console.log(status);
+      console.log(res);
+      console.log(JSON.stringify(error));
+
+      if (code === 403 || code === 401) {
         setQueryable(false);
         removeStorage(TOKEN_STORAGE_KEY);
       }
 
-      if ((response?.status !== 401 && response?.status !== 200) || error) {
-        setQueryable(undefined);
-        removeStorage(TOKEN_STORAGE_KEY);
-
-        const { error: resError } = await response?.json();
-        const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
-
-        openNotificationWithIcon({
-          type: NotificationType.ERROR,
-          title: t('serviceAgreements.playground.queryTitle'),
-          description: sortedError,
-        });
-        history.push(ONGOING_PLANS);
+      if (status === 200 && !code) {
+        setQueryable(true);
       }
+
+      //TODO: fix token storage so
+
+      // if (error) {
+      //   setQueryable(undefined);
+      //   removeStorage(TOKEN_STORAGE_KEY);
+
+      //   const { error: resError } = res;
+
+      //   const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
+
+      //   openNotificationWithIcon({
+      //     type: NotificationType.ERROR,
+      //     title: t('serviceAgreements.playground.queryTitle'),
+      //     description: sortedError,
+      //   });
+      //   history.push(FLEX_PLANS);
+      // }
 
       setIsCheckingAuth(false);
     };
@@ -188,6 +206,18 @@ export const FlexPlayground: React.VFC = () => {
             queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
+            fetcher={async (graphQLParams) => {
+              const headers = {
+                'Content-Type': 'application/json',
+              };
+              const sortedHeaders = sessionToken ? { ...headers, Authorization: `Bearer ${sessionToken}` } : headers;
+              const data = await fetch(queryUrl, {
+                method: 'POST',
+                headers: sortedHeaders,
+                body: JSON.stringify(graphQLParams.query),
+              });
+              return data.json().catch(() => data.text());
+            }}
           />
         )}
       </div>

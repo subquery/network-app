@@ -5,22 +5,28 @@ import { Tooltip, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import jwt_decode from 'jwt-decode';
-import { GraphQLPlayground } from '../../../components';
+import { GraphiQL } from '@subql/components';
 import styles from './Playground.module.css';
 import Countdown from 'react-countdown';
-
+import type { Fetcher } from '@graphiql/toolkit';
 interface GraphQLQueryProps {
   queryUrl: string;
+  fetcher: Fetcher;
   sessionToken?: string;
   onSessionTokenExpire?: () => void;
 }
 
-export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionToken, onSessionTokenExpire }) => {
+export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({
+  queryUrl,
+  fetcher,
+  sessionToken,
+  onSessionTokenExpire,
+}) => {
   const { t } = useTranslation();
   const decodedToken = sessionToken && (jwt_decode(sessionToken) as any);
 
   return (
-    <div className={styles.playground}>
+    <>
       {sessionToken && (
         <div className={styles.playgroundHeader}>
           <div className={styles.playgroundText}>
@@ -48,7 +54,9 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({ queryUrl, sessionTok
           )}
         </div>
       )}
-      <GraphQLPlayground endpoint={queryUrl} token={sessionToken} />
-    </div>
+      <div className={styles.playgroundContainer}>
+        <GraphiQL url={queryUrl} fetcher={fetcher} />
+      </div>
+    </>
   );
 };
