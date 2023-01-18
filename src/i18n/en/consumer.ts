@@ -101,6 +101,10 @@ const translation = {
     own: 'Created by you',
   },
   myFlexPlans: {
+    description:
+      'Flex Plans are advertised by Indexers on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
+    ongoing: 'Ongoing',
+    closed: 'Closed',
     billing: {
       transfer: `Transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'} to billing account`,
       addToken: `Add ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
@@ -119,11 +123,12 @@ const translation = {
       successWithdraw: `You have successfully withdrawn ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
     },
     claim: {
-      title: 'Claim remainding desposit',
-      description: 'You are about to claim {{remaindingDeposit}} {{token}} from the flex plan',
+      title: 'Claim remaining deposit',
+      description: 'You are about to claim {{remainDeposit}} {{token}} from the flex plan',
       button: 'Claim',
       submit: 'Confirm claim',
       failureText: 'Sorry, failed to claim flex plan',
+      claimed: 'Claimed',
     },
     terminate: {
       title: 'Terminate',

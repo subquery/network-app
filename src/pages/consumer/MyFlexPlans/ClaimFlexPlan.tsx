@@ -26,7 +26,8 @@ export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan, onSucce
 
   const { status, expiredAt, id, total, spent } = flexPlan;
   const planUnFinalised = status !== ChannelStatus.FINALIZED && new Date(expiredAt).getTime() < Date.now();
-  const isDisabled = !planUnFinalised;
+  const hasClaimed = !planUnFinalised;
+  const actionTxt = hasClaimed ? t('myFlexPlans.claim.claimed') : t('myFlexPlans.claim.button');
 
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
 
@@ -49,7 +50,7 @@ export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan, onSucce
     <TransactionModal
       variant="textBtn"
       text={claimText}
-      actions={[{ label: 'Claim', key: 'claim', disabled: isDisabled, tooltip: isDisabled ? 'Claimed' : undefined }]}
+      actions={[{ label: actionTxt, key: 'claim', disabled: hasClaimed }]}
       onClick={handleClick}
       onSuccess={onSuccess}
       renderContent={(onSubmit, _, isLoading, error) => (
