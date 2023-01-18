@@ -52,7 +52,11 @@ const HeaderLinks = () => {
     },
     {
       link: ROUTES.DELEGATOR,
-      title: 'Delegator',
+      title: t('delegate.delegator'),
+    },
+    {
+      link: ROUTES.CONSUMER,
+      title: t('consumer'),
     },
     {
       link: 'https://snapshot.org/#/subquerynetwork.eth',

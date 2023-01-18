@@ -29,4 +29,9 @@ export const ROUTES = {
   INDEXERS_DELEGATOR: '/delegation/indexers',
   ALL_INDEXERS_DELEGATOR: '/delegation/indexers/all',
   TOP_INDEXERS_DELEGATOR: '/delegation/indexers/top',
+
+  CONSUMER: '/consumer',
+  FLEXPLAN_CONSUMER: '/consumer/flex-plans',
+  ONGOING_FLEXPLAN_CONSUMER: '/consumer/flex-plans/ongoing',
+  CLOSED_FLEXPLAN_CONSUMER: '/consumer/flex-plans/closed',
 };

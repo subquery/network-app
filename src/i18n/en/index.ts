@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import delegatorTranslations from './delegator';
-import agreementTranslations from './agreement';
+import consumerTranslations from './consumer';
 import indexerTranslations from './indexer';
 import globalTransaltions from './global';
 import explorerTranslations from './explorer';
@@ -10,7 +10,7 @@ import explorerTranslations from './explorer';
 export const en = {
   translation: {
     ...delegatorTranslations,
-    ...agreementTranslations,
+    ...consumerTranslations,
     ...indexerTranslations,
     ...globalTransaltions,
     ...explorerTranslations,
