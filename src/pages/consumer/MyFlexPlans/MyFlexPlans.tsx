@@ -4,22 +4,25 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, Route, Switch } from 'react-router';
+import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
-import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
+import { useSQToken } from '../../../containers';
 import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
+import i18next from 'i18next';
 
 const FLEX_PLANS = ROUTES.FLEXPLAN_CONSUMER;
 export const ONGOING_PLANS = ROUTES.ONGOING_FLEXPLAN_CONSUMER;
 export const EXPIRED_PLANS = ROUTES.CLOSED_FLEXPLAN_CONSUMER;
 
 const buttonLinks = [
-  { label: 'Ongoing', link: ONGOING_PLANS },
-  { label: 'Closed', link: EXPIRED_PLANS },
+  { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
+  { label: i18next.t('myFlexPlans.closed'), link: EXPIRED_PLANS },
 ];
 
+// TODO: useSQTToken update once Container improve - renovation
 const BalanceCards = () => {
   const { t } = useTranslation();
   const { balance, consumerHostBalance } = useSQToken();
@@ -59,7 +62,7 @@ const Header = () => {
 
   return (
     <>
-      <AppPageHeader title={t('consumer')} />
+      <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
       <BalanceCards />
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
@@ -73,8 +76,16 @@ export const MyFlexPlans: React.VFC = () => {
     <div>
       <Header />
       <Switch>
-        <Route exact path={ONGOING_PLANS} component={() => <MyFlexPlanTable queryFn={useConsumerOpenFlexPlans} />} />
-        <Route exact path={EXPIRED_PLANS} component={() => <MyFlexPlanTable queryFn={useConsumerClosedFlexPlans} />} />
+        <Route
+          exact
+          path={ONGOING_PLANS}
+          component={() => <MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />}
+        />
+        <Route
+          exact
+          path={EXPIRED_PLANS}
+          component={() => <MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />}
+        />
         <Redirect from={FLEX_PLANS} to={ONGOING_PLANS} />
       </Switch>
     </div>

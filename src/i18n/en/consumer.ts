@@ -101,6 +101,10 @@ const translation = {
     own: 'Created by you',
   },
   myFlexPlans: {
+    description:
+      'Flex Plans are advertised by Indexers on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
+    ongoing: 'Ongoing',
+    closed: 'Closed',
     billing: {
       transfer: `Transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'} to billing account`,
       addToken: `Add ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,

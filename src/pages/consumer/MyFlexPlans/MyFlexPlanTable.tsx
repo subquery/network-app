@@ -7,18 +7,18 @@ import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
 import { useLocation } from 'react-router';
+import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '../../../components/TableTitle';
-import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../../plans/Plans/EmptyList';
-
 import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 import { TerminateFlexPlan } from './TerminateFlexPlan';
+import { useWeb3 } from '../../../containers';
 
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess: () => void) => {
   const columns: TableProps<ConsumerFlexPlan>['columns'] = [
@@ -30,7 +30,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
     },
     {
       dataIndex: 'deployment',
-      width: 120,
+      width: 80,
       title: <TableTitle title={i18next.t('flexPlans.project')} />,
       render: ({ id, project }) => <DeploymentMeta deploymentId={id} projectMetadata={project.metadata} />,
     },
@@ -107,15 +107,15 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
 };
 
 interface MyFlexPlanTableProps {
-  queryFn: typeof useConsumerOpenFlexPlans | typeof useConsumerClosedFlexPlans;
+  queryFn: typeof useGetConsumerOngoingFlexPlansQuery | typeof useGetConsumerClosedFlexPlansQuery;
 }
 
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
   const { account } = useWeb3();
   const { pathname } = useLocation();
   const [now, setNow] = React.useState<Date>(moment().toDate());
-  const sortedParams = { consumer: account ?? '', now };
-  const flexPlans = queryFn(sortedParams);
+  const sortedParams = { consumer: account ?? '', now, offset: 0 };
+  const flexPlans = queryFn({ variables: sortedParams });
 
   const fetchMoreFlexPlans = (offset?: number) => {
     flexPlans.fetchMore({
@@ -134,7 +134,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   React.useEffect(() => {
     const interval = setInterval(() => {
       fetchMoreFlexPlans(); // Cache to avoid re-render
-    }, 15000);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
 
