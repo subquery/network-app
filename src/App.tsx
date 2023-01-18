@@ -121,6 +121,7 @@ const App: React.VFC = () => {
                 />
                 <Route component={pages.Staking} path={ROUTES.STAKING} />
                 <WalletRoute component={pages.Delegator} path={ROUTES.DELEGATOR} />
+                <WalletRoute component={pages.Consumer} path={ROUTES.CONSUMER} />
                 <WalletRoute component={pages.PlanAndOffer} path={ROUTES.PLANS} />
                 <WalletRoute component={pages.Swap} path={ROUTES.SWAP} />
                 <Redirect from="/" to={ROUTES.EXPLORER} />

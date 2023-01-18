@@ -8,3 +8,4 @@ export * from './plans';
 export * from './swap';
 
 export * from './delegator';
+export * from './consumer';

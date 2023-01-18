@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const translation = {
+  consumer: 'Consumer',
   plans: {
     category: {
       myServiceAgreement: 'My Service Agreements',
