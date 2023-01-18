@@ -123,11 +123,12 @@ const translation = {
       successWithdraw: `You have successfully withdrawn ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,
     },
     claim: {
-      title: 'Claim remainding desposit',
-      description: 'You are about to claim {{remaindingDeposit}} {{token}} from the flex plan',
+      title: 'Claim remaining deposit',
+      description: 'You are about to claim {{remainDeposit}} {{token}} from the flex plan',
       button: 'Claim',
       submit: 'Confirm claim',
       failureText: 'Sorry, failed to claim flex plan',
+      claimed: 'Claimed',
     },
     terminate: {
       title: 'Terminate',
