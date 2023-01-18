@@ -39,7 +39,6 @@ export * from './TabButton';
 export * from './SummaryList';
 export * from './TableText';
 export * from './SearchInput';
-export * from './GraphQLPlayground';
 export * from './Typography';
 export * from './Table';
 export * from './GlobalBanner';

@@ -15,7 +15,7 @@ import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useHistory } from 'react-router';
 import { FLEX_PLANS } from '.';
-import { requestConsumerHostToken } from '../../../utils/playgroundTokens';
+import { requestConsumerHostToken } from '../../../utils/playground';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {

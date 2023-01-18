@@ -14,6 +14,7 @@ import {
   formatEther,
   getEncryptStorage,
   getFlexPlanPrice,
+  parseError,
   removeStorage,
   setEncryptStorage,
   TOKEN,
@@ -27,10 +28,11 @@ import { RequestToken } from '../Playground/RequestToken';
 import { PlaygroundHeader } from '../Playground/Playground';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { ONGOING_PLANS } from './MyFlexPlans';
+import { FLEX_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 import { TableTitle } from '../../../components/TableTitle';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
+import { defaultQuery, fetcher } from '../../../utils/playground';
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
@@ -87,14 +89,13 @@ export const FlexPlayground: React.VFC = () => {
   }, [flexPlan?.id, flexPlan?.indexer]);
 
   /**
-   * Query Graphql
+   * Query Graphql codes handled
    *
-   * 1. 404 => cannot send request to consumer hosted service
-   * 2  403 => not logged in
+   * 1. 403 => not logged in
    * 2. 401 => require auth for further query
-   * 3. 200 => queryable
-   * 4. 400 => exceed daily limit
-   * 5. otherStatusCode => return to FlexPlanTable
+   * 3. other error codes => display in playground
+   *
+   * Response statuses other than 200: return to previous page
    *
    */
   React.useEffect(() => {
@@ -104,12 +105,10 @@ export const FlexPlayground: React.VFC = () => {
 
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
 
-      console.log(sessionToken);
-
       const { response, error } = await POST({
         endpoint: queryUrl,
         headers: headers,
-        requestBody: `{_metadata {indexerHealthy}}`,
+        requestBody: defaultQuery,
       });
 
       if (response?.status === 404) {
@@ -118,38 +117,26 @@ export const FlexPlayground: React.VFC = () => {
 
       const { status } = response || {};
       const res = await response?.json();
-      const { code } = res;
+      const { code: resCode } = res || {};
 
-      console.log(status);
-      console.log(res);
-      console.log(JSON.stringify(error));
-
-      if (code === 403 || code === 401) {
+      if (resCode === 403 || resCode === 401 || resCode === 1006) {
+        //need new session token
         setQueryable(false);
         removeStorage(TOKEN_STORAGE_KEY);
-      }
-
-      if (status === 200 && !code) {
+      } else if (status === 200) {
         setQueryable(true);
+      } else if (status) {
+        setQueryable(undefined);
+        removeStorage(TOKEN_STORAGE_KEY);
+        const sortedError = error ? parseError(error) : error?.message ?? t('myFlexPlans.playground.error');
+
+        openNotificationWithIcon({
+          type: NotificationType.ERROR,
+          title: t('serviceAgreements.playground.queryTitle'),
+          description: sortedError,
+        });
+        history.push(FLEX_PLANS);
       }
-
-      //TODO: fix token storage so
-
-      // if (error) {
-      //   setQueryable(undefined);
-      //   removeStorage(TOKEN_STORAGE_KEY);
-
-      //   const { error: resError } = res;
-
-      //   const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
-
-      //   openNotificationWithIcon({
-      //     type: NotificationType.ERROR,
-      //     title: t('serviceAgreements.playground.queryTitle'),
-      //     description: sortedError,
-      //   });
-      //   history.push(FLEX_PLANS);
-      // }
 
       setIsCheckingAuth(false);
     };
@@ -206,18 +193,7 @@ export const FlexPlayground: React.VFC = () => {
             queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
-            fetcher={async (graphQLParams) => {
-              const headers = {
-                'Content-Type': 'application/json',
-              };
-              const sortedHeaders = sessionToken ? { ...headers, Authorization: `Bearer ${sessionToken}` } : headers;
-              const data = await fetch(queryUrl, {
-                method: 'POST',
-                headers: sortedHeaders,
-                body: JSON.stringify(graphQLParams.query),
-              });
-              return data.json().catch(() => data.text());
-            }}
+            fetcher={async (graphQLParams) => fetcher(queryUrl, JSON.stringify(graphQLParams.query), sessionToken)}
           />
         )}
       </div>

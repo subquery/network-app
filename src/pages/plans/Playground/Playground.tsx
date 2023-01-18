@@ -30,7 +30,7 @@ import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
-import { FetcherParams, FetcherOpts, FetcherReturnType } from '@graphiql/toolkit';
+import { fetcher } from '../../../utils/playground';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -215,18 +215,7 @@ export const Playground: React.VFC = () => {
             queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
-            fetcher={async (graphQLParams) => {
-              const headers = {
-                'Content-Type': 'application/json',
-              };
-              const sortedHeaders = sessionToken ? { ...headers, Authorization: `Bearer ${sessionToken}` } : headers;
-              const data = await fetch(queryUrl, {
-                method: 'POST',
-                headers: sortedHeaders,
-                body: JSON.stringify(graphQLParams),
-              });
-              return data.json().catch(() => data.text());
-            }}
+            fetcher={async (graphQLParams) => fetcher(queryUrl, JSON.stringify(graphQLParams), sessionToken)}
           />
         )}
       </div>
