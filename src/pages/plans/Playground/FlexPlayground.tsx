@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router';
 import { Table } from 'antd';
 import { DeploymentMeta, Spinner, TableText } from '../../../components';
-import styles from './FlexPlayground.module.css';
+import styles from './Playground.module.css';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 
 import {
@@ -23,12 +23,12 @@ import {
 import { POST } from '../../../utils/fetch';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { GraphQLQuery } from '../Playground/GraphQLQuery';
-import { RequestToken } from '../Playground/RequestToken';
-import { PlaygroundHeader } from '../Playground/Playground';
+import { GraphQLQuery } from './GraphQLQuery';
+import { RequestToken } from './RequestToken';
+import { PlaygroundHeader } from './Playground';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { FLEX_PLANS, ONGOING_PLANS } from './MyFlexPlans';
+import { FLEX_PLANS, ONGOING_PLANS } from '../MyFlexPlans/MyFlexPlans';
 import { TableTitle } from '../../../components/TableTitle';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';

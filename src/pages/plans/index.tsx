@@ -12,7 +12,7 @@ import { MyOffers } from './MyOffers';
 import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
-import { FlexPlayground } from './MyFlexPlans/FlexPlayground';
+import { FlexPlayground } from './Playground/FlexPlayground';
 
 export const ROUTE = '/plans';
 export const PLAN_ROUTE = `${ROUTE}/my-plans`;
