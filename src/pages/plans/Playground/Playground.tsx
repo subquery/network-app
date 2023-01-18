@@ -30,7 +30,7 @@ import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
-import { fetcher } from '../../../utils/playground';
+import { defaultQuery, fetcher } from '../../../utils/playground';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -132,7 +132,7 @@ export const Playground: React.VFC = () => {
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
       const { response, error } = await POST({
         endpoint: queryUrl,
-        requestBody: `{_metadata {indexerHealthy}}`,
+        requestBody: defaultQuery,
         headers,
       });
       if (response?.status === 200) {
@@ -148,7 +148,7 @@ export const Playground: React.VFC = () => {
         setQueryable(undefined);
         removeStorage(TOKEN_STORAGE_KEY);
 
-        const { error: resError } = (await response?.json()) || {};
+        const { error: resError } = await response?.json();
         const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
 
         openNotificationWithIcon({

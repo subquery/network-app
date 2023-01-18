@@ -489,7 +489,7 @@ const en = {
       },
       playground: {
         title: 'Playground',
-        error: 'There is an issue with playground, please check with indexer or consumer host serivce',
+        error: 'There is an issue with playground, please check with indexer or consumer host service provider',
       },
       terminate: {
         title: 'Terminate',
