@@ -95,7 +95,7 @@ const translation = {
     purchase: 'Purchase',
     purchased: 'Purchased',
     confirmPurchase: 'Confirm Purchase',
-    disabledPurchase: 'Indexer might be offline.',
+    disabledPurchaseAsOffline: 'Indexer is offline.',
     successPurchaseTitle: 'Success',
     successPurchaseDesc: 'You have successfully purchased the plan!',
     own: 'Created by you',

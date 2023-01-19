@@ -258,12 +258,12 @@ export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({
   const { t } = useTranslation();
   const { account } = useWeb3();
 
-  const isIndexerOffline = !!(BigNumber.from(flexPlan.price).isZero() || BigNumber.from(flexPlan.max_time).isZero());
+  const isIndexerOffline = !flexPlan.online;
   const isZeroBalance = balance?.eq(BigNumber.from(0));
 
   const isDisabled = !account || isPurchased || isIndexerOffline;
   const disabledTooltip = isIndexerOffline
-    ? t('flexPlans.disabledPurchase')
+    ? t('flexPlans.disabledPurchaseAsOffline')
     : !account
     ? t('general.connectAccount')
     : '';
