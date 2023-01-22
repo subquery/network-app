@@ -62,7 +62,7 @@ export async function requestConsumerHostToken(
       throw new Error(sortedResponse?.error ?? error);
     }
 
-    return sortedResponse;
+    return { data: sortedResponse?.token };
   } catch (error) {
     console.error('Failed to request token of consumer host.');
     return { error: 'Failed to request token of consumer host.' };
