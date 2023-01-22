@@ -34,6 +34,11 @@ interface DoUndelegateProps {
   availableBalance?: string;
 }
 
+/**
+ *
+ * NOTE: USED Under Stake Tab and Delegator Tab(V2)
+ * TODO: review once container upgrade from renovation
+ */
 export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();

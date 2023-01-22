@@ -7,20 +7,14 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import en from './en';
 
-export const resources = {
-  en,
-} as const;
+export const resources = { en };
 
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    debug: true,
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
-    },
-    resources,
-  });
+i18n.use(LanguageDetector).use(initReactI18next).init({
+  debug: true,
+  fallbackLng: 'en',
+  resources,
+  defaultNS: 'translation',
+  returnNull: false,
+});
 
 export default i18n;
