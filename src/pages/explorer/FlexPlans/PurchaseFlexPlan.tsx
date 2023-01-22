@@ -91,7 +91,7 @@ const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIn
         sortedAmount.toString(),
         sortedPeriod,
         deploymentIndexer,
-        authToken?.token ?? '',
+        authToken?.data ?? '',
       );
 
       const { data, error } = purchaseRequest;

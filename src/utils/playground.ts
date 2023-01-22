@@ -38,7 +38,7 @@ export async function fetcher(queryUrl: string, graphqlBody: string, sessionToke
 export async function requestConsumerHostToken(
   account: string,
   library: Web3Provider | undefined,
-): Promise<{ token?: string; error?: string }> {
+): Promise<{ data?: string; error?: string }> {
   try {
     const tokenRequestUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/login`;
     const timestamp = new Date().getTime();
@@ -76,7 +76,7 @@ export async function requestServiceAgreementToken(
   indexer: string,
   agreement: string,
   deploymentId: string,
-): Promise<{ token?: string; error?: string } | undefined> {
+): Promise<{ data?: string; error?: string } | undefined> {
   try {
     const timestamp = new Date().getTime();
     if (!library || !account || !requestTokenUrl) return;

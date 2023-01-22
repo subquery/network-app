@@ -19,7 +19,7 @@ import { requestConsumerHostToken } from '../../../utils/playground';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
-    const { error, token: consumerToken } = await requestConsumerHostToken(account, library);
+    const { error, data: consumerToken } = await requestConsumerHostToken(account, library);
 
     if (error || !consumerToken) {
       throw new Error('Failed to request user authentication.');

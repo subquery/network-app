@@ -54,7 +54,7 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
       );
     }
 
-    onRequestToken && onRequestToken(sortedResponse?.token ?? '');
+    onRequestToken && onRequestToken(sortedResponse?.data ?? '');
     setLoading(false);
   };
 
