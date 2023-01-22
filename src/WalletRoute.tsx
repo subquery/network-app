@@ -3,21 +3,16 @@
 
 import { Toast } from '@subql/react-ui';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Route } from 'react-router';
 import { ConnectWallet } from './components';
 import { useWeb3 } from './containers';
 import { parseError, walletConnectionErrors } from './utils';
 import styles from './WalletRoute.module.css';
 
-export const WalletRoute: React.FC<React.ComponentProps<typeof Route> & { title?: string; subtitle?: string }> = ({
-  title,
-  subtitle,
-  ...rest
-}) => {
+export const WalletRoute: React.VFC<
+  React.ComponentProps<typeof Route> & { title?: string; subtitle?: string; element: React.VFC }
+> = ({ title, subtitle, element: Element }) => {
   const { account, error } = useWeb3();
-  const { t } = useTranslation();
-
   const [errorAlert, setErrorAlert] = React.useState<string>();
 
   React.useEffect(() => {
@@ -35,5 +30,5 @@ export const WalletRoute: React.FC<React.ComponentProps<typeof Route> & { title?
     );
   }
 
-  return <Route {...rest} />;
+  return <Element />;
 };

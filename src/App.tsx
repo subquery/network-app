@@ -5,8 +5,8 @@ import React from 'react';
 import './App.css';
 import './i18n';
 
-import { Redirect, Route } from 'react-router';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import clsx from 'clsx';
 import { Button, Typography } from '@subql/react-ui';
@@ -106,30 +106,33 @@ const App: React.VFC = () => {
   return (
     <Providers>
       <div className="App">
-        <Router>
+        <BrowserRouter>
           <Header />
-
           <div className="Main">
             <BlockchainStatus>
-              <Switch>
-                <Route component={pages.Explorer} path={ROUTES.EXPLORER} />
-                <WalletRoute
-                  component={pages.Studio}
-                  path={ROUTES.STUDIO}
-                  title={t('studio.wallet.connect')}
-                  subtitle={t('studio.wallet.subTitle')}
+              <Routes>
+                <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+                <Route
+                  element={
+                    <WalletRoute
+                      element={pages.Studio}
+                      title={t('studio.wallet.connect')}
+                      subtitle={t('studio.wallet.subTitle')}
+                    />
+                  }
+                  path={`${ROUTES.STUDIO}/*`}
                 />
-                <Route component={pages.Staking} path={ROUTES.STAKING} />
-                <WalletRoute component={pages.Delegator} path={ROUTES.DELEGATOR} />
-                <WalletRoute component={pages.Consumer} path={ROUTES.CONSUMER} />
-                <WalletRoute component={pages.PlanAndOffer} path={ROUTES.PLANS} />
-                <WalletRoute component={pages.Swap} path={ROUTES.SWAP} />
-                <Redirect from="/" to={ROUTES.EXPLORER} />
-              </Switch>
+                <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
+                <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
+                <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
+                <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
+                <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
+                <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
+              </Routes>
             </BlockchainStatus>
           </div>
           <Footer />
-        </Router>
+        </BrowserRouter>
       </div>
     </Providers>
   );
