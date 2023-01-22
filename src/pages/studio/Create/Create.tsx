@@ -36,7 +36,7 @@ const Create: React.VFC = () => {
         const idHex = BigNumber.from(queryId).toHexString();
 
         console.log(`Query created. queryId=${idHex}`);
-        navigate(`${STUDIO_PROJECT_NAV}/${idHex}`);
+        navigate(`/studio/project/${idHex}`);
       } catch (e) {
         if (isEthError(e) && e.code === 4001) {
           setSubmitError(t('errors.transactionRejected'));
