@@ -20,7 +20,7 @@ export const Sidebar: React.VFC<Props> = ({ list }) => {
     <div className={styles.sidebar}>
       {list.map((sidebarItem) => (
         <NavLink
-          className={(isActive) => clsx(styles.navLink, isActive && styles.activeNav)}
+          className={({ isActive }) => clsx(styles.navLink, isActive && styles.activeNav)}
           to={sidebarItem.link}
           key={sidebarItem.link}
         >

@@ -12,7 +12,7 @@ const translation = {
   indexer: {
     title: 'Indexer',
     indexers: 'Indexers',
-    profile: 'My profile',
+    profile: 'My Profile',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
     locked: 'Locked',
