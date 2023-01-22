@@ -5048,7 +5048,11 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
+<<<<<<< HEAD
 "@subql/components@^1.0.1-53":
+=======
+"@subql/components@1.0.1-53":
+>>>>>>> c201470 (update react router version, update walletroute, header and app routes)
   version "1.0.1-53"
   resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-53.tgz#fcfcbf7bde626eaadb29b1f6b67e3a425ec7ec75"
   integrity sha512-W5JUOxmX2iXMfEU4mB18SUcc/q2OrD3A4lgWzzvEjzPKpJ28IKQOvIeR+E9x+6/QYJMmIN9wrm9nMtxPwq+QAQ==
@@ -11348,7 +11352,11 @@ graphiql@^1.8.10:
     markdown-it "^12.2.0"
     set-value "^4.1.0"
 
+<<<<<<< HEAD
 graphql-language-service@5.1.1:
+=======
+graphql-language-service@5.1.1, graphql-language-service@^5.1.0:
+>>>>>>> c201470 (update react router version, update walletroute, header and app routes)
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/graphql-language-service/-/graphql-language-service-5.1.1.tgz#d7b46d46adad3b192489960cc939da7ad8dbf21a"
   integrity sha512-gpaDT9E3+3eWhoqO4C81CGhkzr7Vp2jH/eq+ykoUbgfvMEpqhGTfCeNmrf+S4K/+4WTkAAJBsYT0/ZPZkqe/Hg==
