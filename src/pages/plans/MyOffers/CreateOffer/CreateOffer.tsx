@@ -98,7 +98,6 @@ const steps = [
 ];
 
 export const CreateOffer: React.VFC = () => {
-  const { t } = useTranslation();
   const [offer, setOffer] = React.useState<IOffer>(initialOffer);
   const [curStep, setCurStep] = React.useState<number>(0);
 
@@ -108,8 +107,6 @@ export const CreateOffer: React.VFC = () => {
 
   return (
     <div>
-      <AppPageHeader title={t('myOffers.createOffer')} />
-
       <div className={styles.content}>
         <div className={styles.steps}>
           <Steps current={curStep} labelPlacement="vertical" size="small">

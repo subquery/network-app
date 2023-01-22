@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { CurEra } from '../../../../components';
 import styles from './DelegateIndexer.module.css';
 import { useTranslation } from 'react-i18next';
@@ -20,16 +20,16 @@ type RouteParams = {
 
 export const DelegateIndexer: React.VFC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { address } = useParams<RouteParams>();
 
   React.useEffect(() => {
     if (!address) {
-      history.push(INDEXERS_ROUTE);
+      navigate(INDEXERS_ROUTE);
     }
-  }, [address, history]);
+  }, [address, navigate]);
 
-  const sortedIndexer = useSortedIndexer(address);
+  const sortedIndexer = useSortedIndexer(address ?? '');
 
   return (
     <>
@@ -45,8 +45,8 @@ export const DelegateIndexer: React.VFC = () => {
       </div>
 
       <div className={styles.profile}>
-        <div>{<Address address={address} size="large" />}</div>
-        <DoDelegate indexerAddress={address} />
+        <div>{<Address address={address ?? ''} size="large" />}</div>
+        <DoDelegate indexerAddress={address ?? ''} />
       </div>
 
       <div className={styles.indexing}>
@@ -62,7 +62,7 @@ export const DelegateIndexer: React.VFC = () => {
                     ...data,
                   },
                 ]}
-                indexer={address}
+                indexer={address ?? ''}
               />
             );
           },

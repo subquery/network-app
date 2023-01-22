@@ -8,7 +8,7 @@ import { parseEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { SummaryList } from '../../../../../components';
 import {
   NotificationType,
@@ -32,7 +32,7 @@ import styles from './Summary.module.css';
 export const Summary: React.VFC = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const pendingContracts = useContracts();
   const createOfferContext = React.useContext(CreateOfferContext);
 
@@ -71,7 +71,7 @@ export const Summary: React.VFC = () => {
         description: t('status.txSubmitted'),
       });
 
-      history.push(OPEN_OFFERS);
+      navigate(OPEN_OFFERS);
 
       tx.wait().then(() => {
         openNotificationWithIcon({

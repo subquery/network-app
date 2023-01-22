@@ -6,7 +6,7 @@ import { BigNumber, BigNumberish } from 'ethers';
 import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
@@ -204,11 +204,11 @@ export const Swap: React.VFC = () => {
         <div className={styles.tabs}>
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
-        <Switch>
-          <Route exact path={SWAP_SELL_ROUTE} component={() => <GetAUSD />} />
-          <Route exact path={SWAP_BUY_ROUTE} component={() => <SellAUSD />} />
-          <Redirect from={SWAP_ROUTE} to={SWAP_BUY_ROUTE} />
-        </Switch>
+        <Routes>
+          <Route index path={'buy'} element={<SellAUSD />} />
+          <Route path={'sell'} element={<GetAUSD />} />
+          <Route path={'/'} element={<Navigate replace to={'buy'} />} />
+        </Routes>
       </div>
     </div>
   );

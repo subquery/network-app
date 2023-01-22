@@ -6,7 +6,7 @@ import { TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import i18next from 'i18next';
 import { extractPercentage, getOrderedAccounts, renderAsync } from '../../../../../utils';
 import { CurrentEraValue } from '../../../../../hooks/useEraValue';
@@ -255,8 +255,8 @@ interface props {
 export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const history = useHistory();
-  const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
+  const navigate = useNavigate();
+  const viewIndexerDetail = (id: string) => navigate(`/staking/indexers/delegate/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
 
   /**

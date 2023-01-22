@@ -6,14 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { useExpiredServiceAgreements, useServiceAgreements, useWeb3 } from '../../../containers';
 import styles from './ServiceAgreements.module.css';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
 import { SAPlayground } from '../Playground';
-import { SERVICE_AGREEMENTS } from '..';
 
-export const ONGOING_PLANS = `${SERVICE_AGREEMENTS}/ongoing`;
-export const PLAYGROUND = `${SERVICE_AGREEMENTS}/playground`;
-export const EXPIRED_PLANS = `${SERVICE_AGREEMENTS}/expired`;
+export const ONGOING_PLANS = `ongoing`;
+export const PLAYGROUND = `playground`;
+export const EXPIRED_PLANS = `expired`;
 
 const buttonLinks = [
   { label: 'Ongoing', link: ONGOING_PLANS },
@@ -47,30 +46,19 @@ const ServiceAgreements: React.VFC = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <SAPlayground />} />
+      <SaHeader />
+      <Routes>
+        <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
         <Route
-          exact
           path={ONGOING_PLANS}
-          component={() => (
-            <>
-              <SaHeader />
-              <Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
-            </>
-          )}
+          element={<Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />}
         />
         <Route
-          exact
           path={EXPIRED_PLANS}
-          component={() => (
-            <>
-              <SaHeader />
-              <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />
-            </>
-          )}
+          element={<Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />}
         />
-        <Redirect from={SERVICE_AGREEMENTS} to={ONGOING_PLANS} />
-      </Switch>
+        <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
+      </Routes>
     </div>
   );
 };

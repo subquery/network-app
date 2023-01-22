@@ -3,8 +3,8 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
+import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, ROUTES, TOKEN } from '../../../utils';
@@ -13,13 +13,12 @@ import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 import i18next from 'i18next';
 
-const FLEX_PLANS = ROUTES.FLEXPLAN_CONSUMER;
-export const ONGOING_PLANS = ROUTES.ONGOING_FLEXPLAN_CONSUMER;
-export const EXPIRED_PLANS = ROUTES.CLOSED_FLEXPLAN_CONSUMER;
+export const ONGOING_PLANS = 'ongoing';
+export const EXPIRED_PLANS = 'closed';
 
 const buttonLinks = [
-  { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
-  { label: i18next.t('myFlexPlans.closed'), link: EXPIRED_PLANS },
+  { label: 'Ongoing', link: 'ongoing' },
+  { label: 'Closed', link: 'closed' },
 ];
 
 // TODO: useSQTToken update once Container improve - renovation
@@ -75,19 +74,11 @@ export const MyFlexPlans: React.VFC = () => {
   return (
     <div>
       <Header />
-      <Switch>
-        <Route
-          exact
-          path={ONGOING_PLANS}
-          component={() => <MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />}
-        />
-        <Route
-          exact
-          path={EXPIRED_PLANS}
-          component={() => <MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />}
-        />
-        <Redirect from={FLEX_PLANS} to={ONGOING_PLANS} />
-      </Switch>
+      <Routes>
+        <Route index path={'ongoing'} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
+        <Route path={'closed'} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
+        <Route path={'/'} element={<Navigate replace to={'ongoing'} />} />
+      </Routes>
     </div>
   );
 };

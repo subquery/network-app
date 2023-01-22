@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { FTextInput, ImageInput } from '../../../components';
 import { Button, Typography } from '@subql/react-ui';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import styles from './Create.module.css';
 import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -20,7 +20,7 @@ const Create: React.VFC = () => {
 
   const query = useRouteQuery();
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const createProject = useCreateProject();
 
   const [submitError, setSubmitError] = React.useState<string>();
@@ -34,7 +34,7 @@ const Create: React.VFC = () => {
         const idHex = BigNumber.from(queryId).toHexString();
 
         console.log(`Query created. queryId=${idHex}`);
-        history.push(`/studio/project/${idHex}`);
+        navigate(`/studio/project/${idHex}`);
       } catch (e) {
         if (isEthError(e) && e.code === 4001) {
           setSubmitError(t('errors.transactionRejected'));
@@ -43,7 +43,7 @@ const Create: React.VFC = () => {
         setSubmitError((e as Error).message);
       }
     },
-    [history, createProject, t],
+    [navigate, createProject, t],
   );
 
   return (

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import Modal from 'react-modal';
 import { CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
 import { useUserProjects, useWeb3 } from '../../../containers';
@@ -49,13 +49,13 @@ const Project: React.VFC<{ projectId: string; account: string; onClick?: () => v
 
 const Home: React.VFC = () => {
   const { account } = useWeb3();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
 
   const asyncProjects = useUserProjects();
 
   const handleCreateProject = (name: string) => {
-    history.push(`/studio/create?name=${encodeURI(name)}`);
+    navigate(`/studio/create?name=${encodeURI(name)}`);
   };
 
   const enableCreateModal = () => setShowCreateModal(true);
@@ -87,7 +87,7 @@ const Home: React.VFC = () => {
                 <Project
                   projectId={id.toHexString()}
                   key={id.toHexString()}
-                  onClick={() => history.push(`/studio/project/${id.toHexString()}`)}
+                  onClick={() => navigate(`/studio/project/${id.toHexString()}`)}
                   account={account!}
                 />
               ))}

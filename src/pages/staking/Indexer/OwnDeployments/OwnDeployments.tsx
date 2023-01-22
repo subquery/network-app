@@ -5,7 +5,7 @@ import { ProgressBar, Spinner } from '@subql/react-ui';
 import { Table, TableProps, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DeploymentInfo, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useSortedIndexerDeployments, UseSortedIndexerDeploymentsReturn } from '../../../../hooks';
@@ -18,7 +18,7 @@ interface Props {
 
 export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const indexerDeployments = useSortedIndexerDeployments(indexer);
 
   const columns: TableProps<UseSortedIndexerDeploymentsReturn>['columns'] = [
@@ -77,7 +77,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
                   return {
                     onClick: (event) => {
                       if (record.projectId) {
-                        history.push(`/explorer/project/${record.projectId}/overview`);
+                        navigate(`/explorer/project/${record.projectId}/overview`);
                       }
                     },
                   };

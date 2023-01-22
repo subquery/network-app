@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { EraProvider } from '../../containers';
 import { AppSidebar } from '../../components';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import ServiceAgreements from './ServiceAgreements';
 import { Plans } from './Plans';
 import { Marketplace } from './OfferMarketplace';
@@ -12,14 +12,12 @@ import { MyOffers } from './MyOffers';
 import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
-import { FlexPlayground } from './Playground/FlexPlayground';
 
-export const ROUTE = '/plans';
-export const PLAN_ROUTE = `${ROUTE}/my-plans`;
-export const SERVICE_AGREEMENTS = `${ROUTE}/service-agreements`;
-export const MY_OFFERS = `${ROUTE}/my-offers`;
-export const OFFER_MARKETPLACE = `${ROUTE}/offers`;
-export const FLEX_PLANS = `${ROUTE}/flex-plans`;
+export const PLAN_ROUTE = `my-plans`;
+export const SERVICE_AGREEMENTS = `service-agreements`;
+export const MY_OFFERS = `my-offers`;
+export const OFFER_MARKETPLACE = `offers`;
+export const FLEX_PLANS = `flex-plans`;
 
 export const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();
@@ -54,15 +52,14 @@ export const PlanAndOffer: React.VFC = () => {
   return (
     <EraProvider>
       <AppSidebar list={sidebarList}>
-        <Switch>
-          <Route path={SERVICE_AGREEMENTS} component={ServiceAgreements} />
-          <Route exact path={`${FLEX_PLANS}/playground/:id`} component={FlexPlayground} />
-          <Route path={FLEX_PLANS} component={MyFlexPlans} />
-          <Route path={PLAN_ROUTE} component={Plans} />
-          <Route path={OFFER_MARKETPLACE} component={Marketplace} />
-          <Route path={MY_OFFERS} component={MyOffers} />
-          <Redirect from={ROUTE} to={SERVICE_AGREEMENTS} />
-        </Switch>
+        <Routes>
+          <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements />} />
+          <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
+          <Route path={`${PLAN_ROUTE}/*`} element={<Plans />} />
+          <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
+          <Route path={OFFER_MARKETPLACE} element={<Marketplace />} />
+          <Route path={'/'} element={<Navigate replace to={SERVICE_AGREEMENTS} />} />
+        </Routes>
       </AppSidebar>
     </EraProvider>
   );

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { Default } from './Default';
 import { Create } from './Create';
@@ -10,9 +10,8 @@ import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
 import styles from './Plans.module.css';
 
-const PLAN_ROUTE = '/plans/my-plans';
-const DEFAULT_PLANS = `${PLAN_ROUTE}/default`;
-const SPECIFIC_PLANS = `${PLAN_ROUTE}/specific`;
+const DEFAULT_PLANS = `default`;
+const SPECIFIC_PLANS = `specific`;
 
 const buttonLinks = [
   { label: 'Default', link: DEFAULT_PLANS },
@@ -33,11 +32,11 @@ export const Plans: React.VFC = () => {
         </div>
       </div>
 
-      <Switch>
-        <Route exact path={DEFAULT_PLANS} component={Default} />
-        <Route exact path={SPECIFIC_PLANS} component={Specific} />
-        <Redirect from={PLAN_ROUTE} to={DEFAULT_PLANS} />
-      </Switch>
+      <Routes>
+        <Route path={'default'} element={<Default />} />
+        <Route path={'specific'} element={<Specific />} />
+        <Route path={'/'} element={<Navigate replace to={'default'} />} />
+      </Routes>
     </div>
   );
 };

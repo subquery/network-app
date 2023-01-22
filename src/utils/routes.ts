@@ -9,30 +9,25 @@
  */
 export const ROUTES = {
   EXPLORER: '/explorer',
-
   STUDIO: '/studio',
-
   SWAP: '/swap',
-
-  INDEXER: '/indexer',
   STAKING: '/staking', //todo: improve
-
-  INDEXERS: '/indexers',
-  ALL_INDEXERS: '/indexers/all',
-  TOP_INDEXERS: '/indexers/rank',
-
   PLANS: '/plans',
+  INDEXER: '/indexer',
+
+  INDEXERS: 'indexers',
+  ALL_INDEXERS: 'all',
+  TOP_INDEXERS: 'rank',
 
   // V2
   DELEGATOR: '/delegation',
-  DELEGATING_DELEGATOR: '/delegation/delegating',
-  INDEXERS_DELEGATOR: '/delegation/indexers',
-  ALL_INDEXERS_DELEGATOR: '/delegation/indexers/all',
-  TOP_INDEXERS_DELEGATOR: '/delegation/indexers/top',
+  DELEGATING_DELEGATOR: 'delegating',
+  INDEXERS_DELEGATOR: 'indexers',
+  ALL_INDEXERS_DELEGATOR: 'all',
+  TOP_INDEXERS_DELEGATOR: 'top',
 
   CONSUMER: '/consumer',
-  FLEXPLAN_CONSUMER: '/consumer/flex-plans',
-  ONGOING_FLEXPLAN_CONSUMER: '/consumer/flex-plans/ongoing',
-  CLOSED_FLEXPLAN_CONSUMER: '/consumer/flex-plans/closed',
-  FLEXPLAN_PLAYGROUND_CONSUMER: '/consumer/flex-plans/playground',
+  FLEXPLAN_CONSUMER: 'flex-plans',
+  ONGOING_FLEXPLAN_CONSUMER: 'ongoing',
+  CLOSED_FLEXPLAN_CONSUMER: 'closed',
 };

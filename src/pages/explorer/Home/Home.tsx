@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useProjectMetadata, useProjectsQuery } from '../../../containers';
 import { GetProject_project as Project } from '../../../__generated__/registry/GetProject';
@@ -10,6 +9,7 @@ import { useAsyncMemo, useOnScreen } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import styles from './Home.module.css';
 import { Spinner, ProjectCard } from '../../../components';
+import { useNavigate } from 'react-router';
 
 const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ project, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
@@ -45,7 +45,7 @@ export const Header: React.VFC<{ renderRightItem?: () => React.ReactNode }> = ({
 
 const Home: React.VFC = () => {
   const { data, loading, error, fetchMore } = useProjectsQuery({ offset: 0 });
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const bottom = React.useRef<HTMLDivElement>(null);
   const [endReached, setEndReached] = React.useState<boolean>(false);
@@ -77,7 +77,7 @@ const Home: React.VFC = () => {
               <ProjectItem
                 project={project}
                 key={project.id}
-                onClick={() => history.push(`/explorer/project/${project.id}`)}
+                onClick={() => navigate(`/explorer/project/${project.id}`)}
               />
             ))
           : !loading && <span>No projects</span>}
