@@ -37,7 +37,7 @@ export const MyProfile: React.VFC = () => {
 
   React.useEffect(() => {
     if (!account) {
-      navigate(ROUTES.EXPLORER);
+      navigate(ROUTES.STAKING);
     }
     return;
   }, [account, navigate]);

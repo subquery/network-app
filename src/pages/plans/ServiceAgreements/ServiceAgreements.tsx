@@ -44,6 +44,7 @@ const ServiceAgreements: React.VFC = () => {
 
   return (
     <div>
+<<<<<<< HEAD
       <Routes>
         <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
         <Route
@@ -63,6 +64,18 @@ const ServiceAgreements: React.VFC = () => {
               <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
             </>
           }
+=======
+      <SaHeader />
+      <Routes>
+        <Route path={`${PLAYGROUND}/:saId`} element={<Playground />} />
+        <Route
+          path={ONGOING_PLANS}
+          element={<Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />}
+        />
+        <Route
+          path={EXPIRED_PLANS}
+          element={<Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />}
+>>>>>>> 1776fff (update child routing for all pages)
         />
         <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
       </Routes>

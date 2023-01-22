@@ -80,7 +80,11 @@ const Home: React.VFC = () => {
               <ProjectItem
                 project={project}
                 key={project.id}
+<<<<<<< HEAD
                 onClick={() => navigate(`${PROJECT_NAV}/${project.id}`)}
+=======
+                onClick={() => navigate(`/explorer/project/${project.id}`)}
+>>>>>>> 1776fff (update child routing for all pages)
               />
             ))
           : !loading && <span>No projects</span>}
