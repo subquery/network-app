@@ -8,7 +8,7 @@ import { useExpiredServiceAgreements, useServiceAgreements, useWeb3 } from '../.
 import styles from './ServiceAgreements.module.css';
 import { Redirect, Route, Switch } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { Playground } from '../Playrgound';
+import { SAPlayground } from '../Playground';
 import { SERVICE_AGREEMENTS } from '..';
 
 export const ONGOING_PLANS = `${SERVICE_AGREEMENTS}/ongoing`;
@@ -48,7 +48,7 @@ const ServiceAgreements: React.VFC = () => {
   return (
     <div>
       <Switch>
-        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <Playground />} />
+        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <SAPlayground />} />
         <Route
           exact
           path={ONGOING_PLANS}

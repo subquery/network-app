@@ -10,10 +10,11 @@ import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../.
 import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
-import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { getAuthReqHeader, ROUTES, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
-import { requestConsumerHostToken } from '../../explorer/FlexPlans/PurchaseFlexPlan';
 import { useWeb3 } from '../../../containers';
+import { useHistory } from 'react-router';
+import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
@@ -42,18 +43,19 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
   }
 }
 
-interface TerminateFlexPlanProps {
+interface IOngoingFlexPlanActions {
   flexPlan: ConsumerFlexPlan;
   onSuccess: () => void;
 }
 
-export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan }) => {
+export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
   const { account, library } = useWeb3();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
+  const history = useHistory();
 
   const modalText = {
     title: t('myFlexPlans.terminate.terminatePlan'),
@@ -74,40 +76,52 @@ export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan 
   };
 
   return (
-    <TransactionModal
-      variant="errTextBtn"
-      text={modalText}
-      actions={[
-        {
-          label: t('myFlexPlans.terminate.title'),
-          key: 'terminate',
-        },
-      ]}
-      renderContent={(onSubmit, onCancel) => (
-        <>
-          <SummaryList
-            list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
-          />
-          {error && (
-            <AppTypography type="danger" className={styles.terminateError}>
-              {error}
-            </AppTypography>
-          )}
-          <div className={styles.btnContainer}>
-            <Button
-              onClick={() => handleOnSubmit(onCancel)}
-              htmlType="submit"
-              shape="round"
-              size="large"
-              type={'primary'}
-              danger
-              loading={isLoading}
-            >
-              {t('myFlexPlans.terminate.title')}
-            </Button>
-          </div>
-        </>
-      )}
-    />
+    <div className={styles.actionList}>
+      <Button
+        onClick={() => {
+          history.push(`${ROUTES.FLEXPLAN_PLAYGROUND_CONSUMER}/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
+        }}
+        size="middle"
+        type={'link'}
+        loading={isLoading}
+      >
+        {t('myFlexPlans.playground')}
+      </Button>
+      <TransactionModal
+        variant="errTextBtn"
+        text={modalText}
+        actions={[
+          {
+            label: t('myFlexPlans.terminate.title'),
+            key: 'terminate',
+          },
+        ]}
+        renderContent={(onSubmit, onCancel) => (
+          <>
+            <SummaryList
+              list={[{ label: t('myFlexPlans.terminate.remainDeposit'), value: `${remainDeposit} ${TOKEN}` }]}
+            />
+            {error && (
+              <AppTypography type="danger" className={styles.terminateError}>
+                {error}
+              </AppTypography>
+            )}
+            <div className="flex-end">
+              <Button
+                onClick={() => handleOnSubmit(onCancel)}
+                htmlType="submit"
+                shape="round"
+                size="large"
+                type={'primary'}
+                danger
+                loading={isLoading}
+              >
+                {t('myFlexPlans.terminate.title')}
+              </Button>
+            </div>
+          </>
+        )}
+      />
+    </div>
   );
 };

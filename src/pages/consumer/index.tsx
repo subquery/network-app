@@ -8,6 +8,7 @@ import { BsBookmarkDash } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { MyFlexPlans } from './MyFlexPlans';
+import { FlexPlayground } from '../plans/Playground/FlexPlayground';
 
 export const Consumer: React.VFC = () => {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export const Consumer: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Switch>
+        <Route exact path={`${ROUTES.FLEXPLAN_PLAYGROUND_CONSUMER}/:id`} component={FlexPlayground} />
         <Route path={ROUTES.FLEXPLAN_CONSUMER} component={MyFlexPlans} />
         <Redirect from={ROUTES.CONSUMER} to={ROUTES.FLEXPLAN_CONSUMER} />
       </Switch>

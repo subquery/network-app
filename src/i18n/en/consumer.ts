@@ -105,6 +105,7 @@ const translation = {
       'Flex Plans are advertised by Indexers on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
     ongoing: 'Ongoing',
     closed: 'Closed',
+    playground: 'Playground',
     billing: {
       transfer: `Transfer ${process.env.REACT_APP_TOKEN ?? 'SQT'} to billing account`,
       addToken: `Add ${process.env.REACT_APP_TOKEN ?? 'SQT'}`,

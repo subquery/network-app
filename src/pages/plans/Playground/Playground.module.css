@@ -66,3 +66,9 @@
 .playgroundText {
   width: 30%;
 }
+
+.playgroundContainer {
+  display: flex;
+  height: 60vh;
+  flex-direction: column;
+}

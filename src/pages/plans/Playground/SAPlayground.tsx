@@ -22,7 +22,6 @@ import {
 import { POST } from '../../../utils/fetch';
 import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
-import { defaultQuery } from '../../../components/GraphQLPlayground/GraphQLPlayground';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 import { SERVICE_AGREEMENTS } from '..';
@@ -31,6 +30,7 @@ import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
+import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -61,13 +61,13 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
   },
 ];
 
-export const PlaygroundHeader: React.VFC = () => {
+export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
       <Breadcrumb separator=">">
         <Breadcrumb.Item className={styles.title}>
-          <Link to={SERVICE_AGREEMENTS}>{t('serviceAgreements.playground.ongoingAgreements')}</Link>
+          <Link to={LINK}>{linkText}</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
       </Breadcrumb>
@@ -77,7 +77,7 @@ export const PlaygroundHeader: React.VFC = () => {
   );
 };
 
-export const Playground: React.VFC = () => {
+export const SAPlayground: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();
@@ -130,7 +130,11 @@ export const Playground: React.VFC = () => {
       if (!queryUrl) return;
 
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
-      const { response, error } = await POST({ endpoint: queryUrl, requestBody: defaultQuery, headers });
+      const { response, error } = await POST({
+        endpoint: queryUrl,
+        requestBody: defaultQuery,
+        headers,
+      });
       if (response?.status === 200) {
         setQueryable(true);
       }
@@ -176,7 +180,7 @@ export const Playground: React.VFC = () => {
 
   return (
     <div>
-      <PlaygroundHeader />
+      <PlaygroundHeader link={SERVICE_AGREEMENTS} linkText={t('serviceAgreements.playground.ongoingAgreements')} />
 
       <div className={styles.deploymentMetaContainer}>
         <div className={styles.deploymentMeta}>
@@ -199,6 +203,7 @@ export const Playground: React.VFC = () => {
             consumer={serviceAgreement.consumerAddress}
             agreement={serviceAgreement.id}
             requestTokenUrl={requestTokenUrl}
+            tokenType={'ServiceAgreementToken'}
             onRequestToken={(token: string) => {
               setSessionToken(token);
               setEncryptStorage(TOKEN_STORAGE_KEY, token);
@@ -210,6 +215,7 @@ export const Playground: React.VFC = () => {
             queryUrl={queryUrl}
             sessionToken={sessionToken}
             onSessionTokenExpire={requestAuthWhenTokenExpired}
+            fetcher={async (graphQLParams) => fetcher(queryUrl, JSON.stringify(graphQLParams), sessionToken)}
           />
         )}
       </div>

@@ -34,4 +34,5 @@ export const ROUTES = {
   FLEXPLAN_CONSUMER: '/consumer/flex-plans',
   ONGOING_FLEXPLAN_CONSUMER: '/consumer/flex-plans/ongoing',
   CLOSED_FLEXPLAN_CONSUMER: '/consumer/flex-plans/closed',
+  FLEXPLAN_PLAYGROUND_CONSUMER: '/consumer/flex-plans/playground',
 };
