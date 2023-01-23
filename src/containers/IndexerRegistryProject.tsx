@@ -450,6 +450,14 @@ const GET_OWN_EXPIRED_OFFERS = gql`
   }
 `;
 
+const GET_OWN_OFFER_COUNT = gql`
+  query GetAllOpenOffers {
+    offers(filter: { consumer: { equalTo: $consumer }, reachLimit: { equalTo: false } }) {
+      totalCount
+    }
+  }
+`;
+
 const GET_ALL_OPEN_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetAllOpenOffers($now: Datetime!, $offset: Int) {
@@ -620,6 +628,12 @@ export function useSpecificServiceAgreements(
       variables: params,
     },
   );
+}
+
+export function useOwnOfferCount(params: ge): QueryResult<GetOwnOpenOffers> {
+  return useQuery<GetOwnOpenOffers, GetOwnOpenOffersVariables>(GET_OWN_OFFER_COUNT, {
+    variables: params,
+  });
 }
 
 export function useOwnOpenOffers(params: GetOwnOpenOffersVariables): QueryResult<GetOwnOpenOffers> {

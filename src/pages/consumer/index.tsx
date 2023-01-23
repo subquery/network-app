@@ -21,6 +21,11 @@ export const Consumer: React.VFC = () => {
       link: FLEX_PLANS,
       icon: <BsBookmarkDash />,
     },
+    {
+      label: t('plans.category.myOffers'),
+      link: 'my-offers',
+      icon: <BsBookmarkDash />,
+    },
   ];
 
   return (

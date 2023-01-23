@@ -8,7 +8,7 @@ const translation = {
       myServiceAgreement: 'My Service Agreements',
       myPlan: 'My Plans',
       manageMyPlans: 'Manage My Plans',
-      myOffers: 'Manage My Offers',
+      myOffers: 'My Offers',
       offerMarketplace: 'Offer Marketplace',
       myFlexPlans: 'My Flex Plans',
     },

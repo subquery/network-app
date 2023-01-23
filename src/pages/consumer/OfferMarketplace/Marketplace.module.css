@@ -1,0 +1,14 @@
+.container {
+  height: 100%;
+}
+
+.content {
+  background: white;
+  padding: 2rem;
+  overflow: scroll;
+  min-height: 80%;
+}
+
+.offers {
+  margin: 1rem 0;
+}
