@@ -10,12 +10,11 @@ import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../.
 import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
-import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { getAuthReqHeader, ROUTES, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useHistory } from 'react-router';
-import { FLEX_PLANS } from '.';
-import { requestConsumerHostToken } from '../../../utils/playground';
+import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
@@ -44,12 +43,12 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
   }
 }
 
-interface FlexPlanActionsProps {
+interface IOngoingFlexPlanActions {
   flexPlan: ConsumerFlexPlan;
   onSuccess: () => void;
 }
 
-export const FlexPlanActions: React.VFC<FlexPlanActionsProps> = ({ flexPlan }) => {
+export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
@@ -80,14 +79,13 @@ export const FlexPlanActions: React.VFC<FlexPlanActionsProps> = ({ flexPlan }) =
     <div className={styles.actionList}>
       <Button
         onClick={() => {
-          history.push(`${FLEX_PLANS}/playground/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
+          history.push(`${ROUTES.FLEXPLAN_PLAYGROUND_CONSUMER}/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
         }}
-        htmlType="submit"
         size="middle"
         type={'link'}
         loading={isLoading}
       >
-        {t('myFlexPlans.playground.title')}
+        {t('myFlexPlans.playground')}
       </Button>
       <TransactionModal
         variant="errTextBtn"
@@ -108,17 +106,19 @@ export const FlexPlanActions: React.VFC<FlexPlanActionsProps> = ({ flexPlan }) =
                 {error}
               </AppTypography>
             )}
-            <Button
-              onClick={() => handleOnSubmit(onCancel)}
-              htmlType="submit"
-              shape="round"
-              size="large"
-              type={'primary'}
-              danger
-              loading={isLoading}
-            >
-              {t('myFlexPlans.terminate.title')}
-            </Button>
+            <div className="flex-end">
+              <Button
+                onClick={() => handleOnSubmit(onCancel)}
+                htmlType="submit"
+                shape="round"
+                size="large"
+                type={'primary'}
+                danger
+                loading={isLoading}
+              >
+                {t('myFlexPlans.terminate.title')}
+              </Button>
+            </div>
           </>
         )}
       />

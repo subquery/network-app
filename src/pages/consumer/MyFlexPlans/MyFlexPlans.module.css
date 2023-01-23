@@ -35,3 +35,8 @@
 .terminateError {
   margin-bottom: 1rem;
 }
+
+.actionList {
+  display: flex;
+  align-items: center;
+}

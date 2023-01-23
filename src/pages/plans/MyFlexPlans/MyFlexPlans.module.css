@@ -17,8 +17,7 @@
 
 .actionList {
   display: flex;
-  width: 10em;
-  flex-direction: row;
+  align-items: center;
 }
 
 /* ClaimFlexPlan */

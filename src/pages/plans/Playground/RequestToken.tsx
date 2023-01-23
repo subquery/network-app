@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../../../containers';
 import styles from './Playground.module.css';
-import { requestConsumerHostToken, requestServiceAgreementToken } from '../../../utils/playground';
+import { requestConsumerHostToken, requestServiceAgreementToken } from '../../../utils/playgroundTokenReq';
 
 interface RequestTokenProps {
   indexer: string;

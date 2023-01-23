@@ -105,13 +105,13 @@ export async function requestServiceAgreementToken(
 
     const sortedResponse = response && (await response.json());
     if (response?.ok) {
-      return sortedResponse;
+      return { data: sortedResponse?.token };
     } else {
       const sortedError = sortedResponse || error;
       throw new Error(parseError(sortedError));
     }
   } catch (error) {
-    console.error('Failed to request token for service agreement.');
+    console.error('Request Service Agreement Token.', error);
     return { error: 'Failed to request token for service agreement.' };
   }
 }

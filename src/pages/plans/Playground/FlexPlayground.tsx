@@ -25,14 +25,14 @@ import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 import { GraphQLQuery } from './GraphQLQuery';
 import { RequestToken } from './RequestToken';
-import { PlaygroundHeader } from './Playground';
+import { PlaygroundHeader } from './SAPlayground';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { FLEX_PLANS, ONGOING_PLANS } from '../MyFlexPlans/MyFlexPlans';
 import { TableTitle } from '../../../components/TableTitle';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
-import { defaultQuery, fetcher } from '../../../utils/playground';
+import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {

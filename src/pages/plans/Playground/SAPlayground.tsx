@@ -30,7 +30,7 @@ import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
-import { defaultQuery, fetcher } from '../../../utils/playground';
+import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -77,7 +77,7 @@ export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = (
   );
 };
 
-export const Playground: React.VFC = () => {
+export const SAPlayground: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();

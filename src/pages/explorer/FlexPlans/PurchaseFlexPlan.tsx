@@ -19,7 +19,7 @@ import TransactionModal from '../../../components/TransactionModal';
 
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
-import { requestConsumerHostToken } from '../../../utils/playground';
+import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
 
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
   try {
