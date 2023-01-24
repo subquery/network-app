@@ -10,6 +10,9 @@ import TagManager from 'react-gtm-module';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.less';
+import { Buffer } from 'buffer';
+
+window.Buffer = Buffer;
 
 const tagManagerArgs = {
   gtmId: 'G-DK4PX8F61X',
