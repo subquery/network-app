@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
+    "dev": "vite",
+    "start": "yarn codegen && vite",
+    "build": "yarn codegen && vite build",
     "codegen": "mkdir -p src/__generated__ && sh ./scripts/codegen.sh",
     "prepare": "husky install",
     "storybook": "start-storybook -p 6006 -s public",
@@ -37,6 +38,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.1.9",
     "antd": "^4.21.5",
+    "buffer": "^6.0.3",
     "clsx": "^1.1.1",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.10.8",
@@ -71,6 +73,7 @@
     "typescript": "^4.1.2",
     "vite": "^4.0.2",
     "vite-plugin-env-compatible": "^1.1.1",
+    "vite-tsconfig-paths": "^4.0.5",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.9",
     "zustand": "^4.1.5"

@@ -24,7 +24,18 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "jsx": "react-jsx",
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*", "./dist/*", ""],
+      "__generated__/*": ["src/__generated__"],
+      "components/*": ["src/components/*"],
+      "containers/*": ["src/containers/*"],
+      "hooks/*": ["src/hooks/*"],
+      "i18n/*": ["src/i18n/*"],
+      "pages/*": ["src/pages/*"],
+      "utils/*": ["src/utils/*"],
+    }
   },
   "include": [
     "src",

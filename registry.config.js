@@ -7,7 +7,7 @@ module.exports = {
   client: {
     service: {
       name: 'registry',
-      url: import.meta.env.VITE_QUERY_REGISTRY_PROJECT,
+      url: process.env.VITE_QUERY_REGISTRY_PROJECT,
     },
     tagName: 'gql',
     excludes: [
