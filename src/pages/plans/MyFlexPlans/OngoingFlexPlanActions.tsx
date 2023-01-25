@@ -13,9 +13,8 @@ import { formatEther } from '../../../utils/numberFormatters';
 import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import { useHistory } from 'react-router';
-import { FLEX_PLANS } from '.';
 import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
+import { useNavigate } from 'react-router';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
@@ -56,7 +55,7 @@ export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ fle
   const { account, library } = useWeb3();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const modalText = {
     title: t('myFlexPlans.terminate.terminatePlan'),
@@ -80,7 +79,7 @@ export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ fle
     <div className={styles.actionList}>
       <Button
         onClick={() => {
-          history.push(`${FLEX_PLANS}/playground/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
+          navigate(`/plans/flex-plans/playground/${flexPlan.id}`, { state: flexPlan });
         }}
         size="middle"
         type={'link'}

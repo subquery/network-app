@@ -7,11 +7,10 @@ import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery
 import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useSQToken } from '../../../containers';
-import { formatEther, ROUTES, TOKEN } from '../../../utils';
+import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
-import i18next from 'i18next';
 
 export const ONGOING_PLANS = 'ongoing';
 export const EXPIRED_PLANS = 'closed';

@@ -24,6 +24,7 @@ export const Consumer: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Routes>
+        <Route path={`flex-plans/playground/:id`} element={<FlexPlayground />} />
         <Route path={'flex-plans/*'} element={<MyFlexPlans />} />
         <Route path={'/'} element={<Navigate replace to={'flex-plans'} />} />
       </Routes>
