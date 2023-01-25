@@ -15,10 +15,6 @@ export const ROUTES = {
   PLANS: '/plans',
   INDEXER: '/indexer',
 
-  INDEXERS: 'indexers',
-  ALL_INDEXERS: 'all',
-  TOP_INDEXERS: 'rank',
-
   // V2
   DELEGATOR: '/delegation',
   DELEGATING_DELEGATOR: 'delegating',

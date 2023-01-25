@@ -14,15 +14,18 @@ import { Indexers } from './Indexers';
 export const Delegator: React.VFC = () => {
   const { t } = useTranslation();
 
+  const INDEXERS = 'indexers';
+  const DELEGATING = 'delegating';
+
   const sidebarList = [
     {
       label: t('delegate.delegating'),
-      link: 'delegating',
+      link: DELEGATING,
       icon: <GiBank />,
     },
     {
       label: t('indexer.indexers'),
-      link: 'indexers',
+      link: INDEXERS,
       icon: <BsPeople />,
     },
   ];
@@ -30,8 +33,8 @@ export const Delegator: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Routes>
-        <Route path={'indexers/*'} element={<Indexers />} />
-        <Route path={'delegating'} element={<MyDelegation />} />
+        <Route path={`${INDEXERS}/*`} element={<Indexers />} />
+        <Route path={`${DELEGATING}`} element={<MyDelegation />} />
         <Route path={'/'} element={<Navigate replace to={'delegating'} />} />
       </Routes>
     </AppSidebar>

@@ -12,7 +12,7 @@ import { useSortedIndexer } from '../../../../hooks';
 import { renderAsync } from '../../../../utils';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
-import { INDEXERS_ROUTE } from '../..';
+import { INDEXERS } from '../..';
 
 type RouteParams = {
   address: string;
@@ -25,7 +25,7 @@ export const DelegateIndexer: React.VFC = () => {
 
   React.useEffect(() => {
     if (!address) {
-      navigate(INDEXERS_ROUTE);
+      navigate(INDEXERS);
     }
   }, [address, navigate]);
 
@@ -35,7 +35,7 @@ export const DelegateIndexer: React.VFC = () => {
     <>
       <div className={styles.header}>
         <Breadcrumb separator=">">
-          <Breadcrumb.Item href={INDEXERS_ROUTE} className={styles.title}>
+          <Breadcrumb.Item href={INDEXERS} className={styles.title}>
             {t('indexer.indexers')}
           </Breadcrumb.Item>
           <Breadcrumb.Item className={styles.title}>{t('delegate.viewProfile')}</Breadcrumb.Item>

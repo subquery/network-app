@@ -16,8 +16,8 @@ export const ONGOING_PLANS = 'ongoing';
 export const EXPIRED_PLANS = 'closed';
 
 const buttonLinks = [
-  { label: 'Ongoing', link: 'ongoing' },
-  { label: 'Closed', link: 'closed' },
+  { label: 'Ongoing', link: ONGOING_PLANS },
+  { label: 'Closed', link: EXPIRED_PLANS },
 ];
 
 // TODO: useSQTToken update once Container improve - renovation
@@ -74,8 +74,8 @@ export const MyFlexPlans: React.VFC = () => {
     <div>
       <Header />
       <Routes>
-        <Route index path={'ongoing'} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
-        <Route path={'closed'} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
+        <Route index path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
+        <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
         <Route path={'/'} element={<Navigate replace to={'ongoing'} />} />
       </Routes>
     </div>

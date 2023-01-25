@@ -14,7 +14,6 @@ import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
-import { FLEX_PLANS } from '../..';
 import { useNavigate } from 'react-router';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {

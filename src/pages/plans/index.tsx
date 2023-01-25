@@ -13,7 +13,7 @@ import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
 
-export const PLAN_ROUTE = `my-plans`;
+export const MY_PLANS = `my-plans`;
 export const SERVICE_AGREEMENTS = `service-agreements`;
 export const MY_OFFERS = `my-offers`;
 export const OFFER_MARKETPLACE = `offers`;
@@ -34,7 +34,7 @@ export const PlanAndOffer: React.VFC = () => {
     },
     {
       label: t('plans.category.myPlan'),
-      link: PLAN_ROUTE,
+      link: MY_PLANS,
       icon: <BsFileEarmarkText />,
     },
     {
@@ -55,7 +55,7 @@ export const PlanAndOffer: React.VFC = () => {
         <Routes>
           <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements />} />
           <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
-          <Route path={`${PLAN_ROUTE}/*`} element={<Plans />} />
+          <Route path={`${MY_PLANS}/*`} element={<Plans />} />
           <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
           <Route path={OFFER_MARKETPLACE} element={<Marketplace />} />
           <Route path={'/'} element={<Navigate replace to={SERVICE_AGREEMENTS} />} />

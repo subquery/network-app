@@ -33,8 +33,8 @@ export const Plans: React.VFC = () => {
       </div>
 
       <Routes>
-        <Route path={'default'} element={<Default />} />
-        <Route path={'specific'} element={<Specific />} />
+        <Route path={DEFAULT_PLANS} element={<Default />} />
+        <Route path={SPECIFIC_PLANS} element={<Specific />} />
         <Route path={'/'} element={<Navigate replace to={'default'} />} />
       </Routes>
     </div>

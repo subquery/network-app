@@ -19,6 +19,7 @@ import {
   mergeAsync,
   notEmpty,
   renderAsyncArray,
+  ROUTES,
   TOKEN,
 } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
@@ -107,7 +108,7 @@ export const FlexPlans: React.FC = () => {
 
   React.useEffect(() => {
     if (!id) {
-      navigate('/explorer');
+      navigate(ROUTES.EXPLORER);
     }
   }, [navigate, id]);
   return (

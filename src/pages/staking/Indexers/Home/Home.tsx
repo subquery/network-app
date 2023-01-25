@@ -8,15 +8,15 @@ import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, TabButtons } from '../../../../components';
 import { TopIndexers } from '../TopIndexers';
 import { AllIndexers } from '../AllIndexers';
-import { Tabs } from '@subql/components';
 import { DelegateIndexer } from '../DelegateIndexer';
 
-const ALL_INDEXERS_ROUTE = `all`;
-const TOP_INDEXERS_ROUTE = `top-100`;
+const DELEGATE = 'delegate';
+const ALL_INDEXERS = 'all';
+const TOP_INDEXERS = 'top-100';
 
 const buttonLinks = [
-  { label: 'Top 100', link: TOP_INDEXERS_ROUTE },
-  { label: 'All', link: ALL_INDEXERS_ROUTE },
+  { label: 'Top 100', link: TOP_INDEXERS },
+  { label: 'All', link: ALL_INDEXERS },
 ];
 
 export const Home: React.VFC = () => {
@@ -32,10 +32,10 @@ export const Home: React.VFC = () => {
         </div>
 
         <Routes>
-          <Route path={`delegate/:address`} element={<DelegateIndexer />} />
-          <Route path={TOP_INDEXERS_ROUTE} element={<TopIndexers />} />
-          <Route path={ALL_INDEXERS_ROUTE} element={<AllIndexers />} />
-          <Route path={'/'} element={<Navigate replace to={TOP_INDEXERS_ROUTE} />} />
+          <Route path={`${DELEGATE}/:address`} element={<DelegateIndexer />} />
+          <Route path={TOP_INDEXERS} element={<TopIndexers />} />
+          <Route path={ALL_INDEXERS} element={<AllIndexers />} />
+          <Route path={'/'} element={<Navigate replace to={TOP_INDEXERS} />} />
         </Routes>
       </div>
     </>

@@ -11,12 +11,11 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
-import { formatEther, mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '../../../../utils';
+import { formatEther, mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
 import { parseEther } from 'ethers/lib/utils';
-import { Tabs } from '@subql/components';
 
 const INDEXING = `indexing`;
 const DELEGATING = `delegating`;
@@ -41,7 +40,7 @@ export const MyProfile: React.VFC = () => {
 
   React.useEffect(() => {
     if (!account) {
-      navigate('/staking');
+      navigate(ROUTES.EXPLORER);
     }
     return;
   }, [account, navigate]);

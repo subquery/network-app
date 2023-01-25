@@ -40,9 +40,12 @@ const Project: React.VFC = () => {
     setEditing(false);
   };
 
+  const DETAILS = 'details';
+  const DEPLOYMENTS = 'deployments';
+
   const tabLinks = [
-    { label: t('studio.project.tab1'), link: `details` },
-    { label: t('studio.project.tab2'), link: `deployments` },
+    { label: t('studio.project.tab1'), link: DETAILS },
+    { label: t('studio.project.tab2'), link: DEPLOYMENTS },
   ];
 
   return renderAsync(asyncProject, {
@@ -78,14 +81,14 @@ const Project: React.VFC = () => {
           </div>
           <div className={clsx('content-width', styles.content)}>
             <Routes>
-              <Route path={'details'}>
+              <Route path={DETAILS}>
                 {editing ? (
                   <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
                 ) : (
                   <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
                 )}
               </Route>
-              <Route path={'deployments'}>
+              <Route path={DEPLOYMENTS}>
                 <div className={styles.deployments}>
                   <DeploymentsTab
                     projectId={id ?? ''}

@@ -16,13 +16,13 @@ import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
 
-const SWAP_ROUTE = '/swap';
-const SWAP_SELL_ROUTE = `${SWAP_ROUTE}/sell`; //sell native token
-const SWAP_BUY_ROUTE = `${SWAP_ROUTE}/buy`; //buy native token
+const SWAP = '/swap';
+const SELL = `sell`; //sell native token
+const BUY = `buy`; //buy native token
 
 const buttonLinks = [
-  { label: i18next.t('swap.buyKSQT'), link: SWAP_BUY_ROUTE },
-  { label: i18next.t('swap.sellKSQT'), link: SWAP_SELL_ROUTE },
+  { label: i18next.t('swap.buyKSQT'), link: `${SWAP}/${BUY}` },
+  { label: i18next.t('swap.sellKSQT'), link: `${SWAP}/${SELL}` },
 ];
 
 const getStats = ({
@@ -205,8 +205,8 @@ export const Swap: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
         <Routes>
-          <Route index path={'buy'} element={<SellAUSD />} />
-          <Route path={'sell'} element={<GetAUSD />} />
+          <Route index path={BUY} element={<SellAUSD />} />
+          <Route path={SELL} element={<GetAUSD />} />
           <Route path={'/'} element={<Navigate replace to={'buy'} />} />
         </Routes>
       </div>

@@ -11,8 +11,8 @@ import { Home as Indexers } from './Indexers';
 import { AppSidebar } from '../../components';
 import { WalletRoute } from '../../WalletRoute';
 
-export const PROFILE_ROUTE = `my-profile`;
-export const INDEXERS_ROUTE = `indexers`;
+export const PROFILE = `my-profile`;
+export const INDEXERS = `indexers`;
 
 export const Staking: React.VFC = () => {
   const { t } = useTranslation();
@@ -20,12 +20,12 @@ export const Staking: React.VFC = () => {
   const sidebarList = [
     {
       label: t('indexer.profile'),
-      link: PROFILE_ROUTE,
+      link: PROFILE,
       icon: <BsPerson />,
     },
     {
       label: t('indexer.indexers'),
-      link: INDEXERS_ROUTE,
+      link: INDEXERS,
       icon: <BsCashStack />,
     },
   ];
@@ -34,9 +34,9 @@ export const Staking: React.VFC = () => {
     <EraProvider>
       <AppSidebar list={sidebarList}>
         <Routes>
-          <Route path={`${INDEXERS_ROUTE}/*`} element={<Indexers />} />
-          <Route element={<WalletRoute element={Indexer} />} path={`${PROFILE_ROUTE}/*`} />
-          <Route path={`/`} element={<Navigate replace to={PROFILE_ROUTE} />} />
+          <Route path={`${INDEXERS}/*`} element={<Indexers />} />
+          <Route element={<WalletRoute element={Indexer} />} path={`${PROFILE}/*`} />
+          <Route path={`/`} element={<Navigate replace to={PROFILE} />} />
         </Routes>
       </AppSidebar>
     </EraProvider>

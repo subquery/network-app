@@ -5,18 +5,16 @@ import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, TabButtons } from '../../components';
-import { ROUTES } from '../../utils';
 import { TopIndexers } from './TopIndexers';
 import { AllIndexers } from './AllIndexers';
 import styles from './Indexers.module.css';
-import { Tabs } from '@subql/components';
 
-const allIndexerRoute = 'all';
-const topIndexerRoute = 'top';
+const ALL_INDEXERS = 'all';
+const TOP_INDEXERS = 'top';
 
 const buttonLinks = [
-  { label: 'Top 100', link: topIndexerRoute },
-  { label: 'All', link: allIndexerRoute },
+  { label: 'Top 100', link: TOP_INDEXERS },
+  { label: 'All', link: ALL_INDEXERS },
 ];
 
 export const Indexers: React.VFC = () => {
@@ -30,8 +28,8 @@ export const Indexers: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
         <Routes>
-          <Route index path={'top'} element={<TopIndexers />} />
-          <Route path={'all'} element={<AllIndexers />} />
+          <Route index path={TOP_INDEXERS} element={<TopIndexers />} />
+          <Route path={ALL_INDEXERS} element={<AllIndexers />} />
           <Route path={'/'} element={<Navigate replace to={'top'} />} />
         </Routes>
       </div>
