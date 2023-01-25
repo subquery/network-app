@@ -21,6 +21,8 @@ export const ROUTES = {
   FLEX_PLANS: 'flex-plans',
   MY_PLANS: 'my-plans',
   MY_OFFERS: 'my-offers',
+  DEFAULT_PLANS: 'default',
+  SPECIFIC_PLANS: 'specific',
   OFFER_MARKETPLACE: 'offers',
   PLAYGROUND: 'playground',
   ONGOING_PLANS: 'ongoing',
@@ -32,6 +34,6 @@ export const ROUTES = {
   LOCKED: 'locked',
   DETAILS: 'details',
   DEPLOYMENTS: 'deployments',
-  SELL: 'sell', //sell native token
-  BUY: 'buy', //buy native token
+  SELL: 'sell',
+  BUY: 'buy',
 };

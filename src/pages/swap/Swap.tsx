@@ -206,7 +206,7 @@ export const Swap: React.VFC = () => {
         <Routes>
           <Route index path={BUY} element={<SellAUSD />} />
           <Route path={SELL} element={<GetAUSD />} />
-          <Route path={'/'} element={<Navigate replace to={'buy'} />} />
+          <Route path={'/'} element={<Navigate replace to={BUY} />} />
         </Routes>
       </div>
     </div>

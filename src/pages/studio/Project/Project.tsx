@@ -102,7 +102,7 @@ const Project: React.VFC = () => {
                   />
                 </div>
               </Route>
-              <Route path={'/'} element={<Navigate replace to={'details'} />} />
+              <Route path={'/:id'} element={<Navigate replace to={DETAILS} />} />
             </Routes>
           </div>
         </div>

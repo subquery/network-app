@@ -30,7 +30,7 @@ export const Indexers: React.VFC = () => {
         <Routes>
           <Route index path={TOP_INDEXERS} element={<TopIndexers />} />
           <Route path={ALL_INDEXERS} element={<AllIndexers />} />
-          <Route path={'/'} element={<Navigate replace to={'top'} />} />
+          <Route path={'/'} element={<Navigate replace to={TOP_INDEXERS} />} />
         </Routes>
       </div>
     </>

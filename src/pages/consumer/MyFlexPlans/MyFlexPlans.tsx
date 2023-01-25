@@ -77,7 +77,7 @@ export const MyFlexPlans: React.VFC = () => {
       <Routes>
         <Route index path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
         <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
-        <Route path={'/'} element={<Navigate replace to={'ongoing'} />} />
+        <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
       </Routes>
     </div>
   );

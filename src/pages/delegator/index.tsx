@@ -34,7 +34,7 @@ export const Delegator: React.VFC = () => {
       <Routes>
         <Route path={`${INDEXERS}/*`} element={<Indexers />} />
         <Route path={`${DELEGATING}`} element={<MyDelegation />} />
-        <Route path={'/'} element={<Navigate replace to={'delegating'} />} />
+        <Route path={'/'} element={<Navigate replace to={DELEGATING} />} />
       </Routes>
     </AppSidebar>
   );
