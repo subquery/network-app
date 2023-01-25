@@ -8,6 +8,27 @@
   height: 40px;
 }
 
+.description {
+  margin-top: 1vh;
+}
+
+.infoLink {
+  margin-top: 2vh;
+}
+
+.noOffersContainer {
+  margin: 10vh auto;
+  height: 50vh;
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.noOffersButton {
+  margin: 3vh auto;
+}
+
 /* CancelOffer */
 .btnContainer {
   width: 100%;

@@ -179,6 +179,10 @@ const translation = {
     expiredTooltip:
       'You can find offers that have expired or cancelled without reaching the indexer cap. You can withdraw any unspent balance here',
     createOffer: 'Create an Offer',
+    noOffersTitle: "You haven't created any offers yet",
+    noOffersDescription:
+      'As a consumer, you can create your own offer that will be published to the Offer Marketplace for indexers to accept. Once accepted, a service agreement will be generated and the Indexer will begin indexing the requested data for you.',
+    noOffersInfoLink: 'Learn how to create an offer <1>here</1>',
     non: 'There is no offers available.',
     table: {
       versionDeployment: 'Version - Deployment ID',
