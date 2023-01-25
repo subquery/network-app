@@ -6,9 +6,9 @@ import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { useHistory, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { CurEra } from '@/components';
-import { useSortedIndexer } from '@/hooks';
-import { renderAsync } from '@/utils';
+import { CurEra } from '@components';
+import { useSortedIndexer } from '@hooks';
+import { renderAsync } from '@utils';
 
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
