@@ -11,13 +11,14 @@ import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
+import i18next from 'i18next';
 
 export const ONGOING_PLANS = 'ongoing';
 export const EXPIRED_PLANS = 'closed';
 
 const buttonLinks = [
-  { label: 'Ongoing', link: ONGOING_PLANS },
-  { label: 'Closed', link: EXPIRED_PLANS },
+  { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
+  { label: i18next.t('myFlexPlans.closed'), link: EXPIRED_PLANS },
 ];
 
 // TODO: useSQTToken update once Container improve - renovation
