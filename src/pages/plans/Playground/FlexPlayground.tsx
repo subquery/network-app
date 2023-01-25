@@ -28,12 +28,13 @@ import { RequestToken } from './RequestToken';
 import { PlaygroundHeader } from './SAPlayground';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { ONGOING_PLANS } from '../MyFlexPlans/MyFlexPlans';
 import { TableTitle } from '../../../components/TableTitle';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
-import { FLEX_PLANS } from '..';
+import { ROUTES } from '../../../utils';
+
+const { FLEX_PLANS, ONGOING_PLANS } = ROUTES;
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {

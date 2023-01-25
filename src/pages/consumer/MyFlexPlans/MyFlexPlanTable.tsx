@@ -16,9 +16,11 @@ import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../.
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ClaimFlexPlan } from './ClaimFlexPlan';
-import { EXPIRED_PLANS, ONGOING_PLANS } from './MyFlexPlans';
 import { useWeb3 } from '../../../containers';
 import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
+import { ROUTES } from '../../../utils';
+
+const { EXPIRED_PLANS, ONGOING_PLANS } = ROUTES;
 
 const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess: () => void) => {
   const columns: TableProps<ConsumerFlexPlan>['columns'] = [

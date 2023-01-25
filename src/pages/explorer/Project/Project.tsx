@@ -22,12 +22,9 @@ import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../
 import styles from './Project.module.css';
 import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
 import { FlexPlans } from '../FlexPlans';
+import { ROUTES } from '../../../utils';
 
-export const ROUTE = '/explorer/project';
-const OVERVIEW_PATH = 'overview';
-const INDEXERS_PATH = 'indexers';
-const SA_PATH = 'service-agreements';
-const FLEX_PLANS = 'flex-plans';
+const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
 const ProjectInner: React.VFC = () => {
   const { id } = useParams();
@@ -136,9 +133,9 @@ const ProjectInner: React.VFC = () => {
   // };
 
   const tabList = [
-    { link: `${OVERVIEW_PATH}${location.search}`, label: t('explorer.project.tab1') },
-    { link: `${INDEXERS_PATH}${location.search}`, label: t('explorer.project.tab2') },
-    { link: `${SA_PATH}${location.search}`, label: t('explorer.project.tab3') },
+    { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
+    { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+    { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     { link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') },
     // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
@@ -168,7 +165,7 @@ const ProjectInner: React.VFC = () => {
           <div className={clsx('content-width')}>
             <Routes>
               <Route
-                path={OVERVIEW_PATH}
+                path={OVERVIEW}
                 element={
                   <ProjectOverview
                     metadata={project.metadata}
@@ -178,9 +175,9 @@ const ProjectInner: React.VFC = () => {
                   />
                 }
               />
-              <Route path={INDEXERS_PATH} element={indexerDetails} />
+              <Route path={INDEXERS} element={indexerDetails} />
               <Route
-                path={SA_PATH}
+                path={SERVICE_AGREEMENTS}
                 element={
                   <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
                 }
@@ -189,7 +186,7 @@ const ProjectInner: React.VFC = () => {
               {/* <Route path={`${ROUTE}/:id/playground`}>
                 {renderPlayground()}
               </Route> */}
-              <Route path={'/'} element={<Navigate replace to={`${OVERVIEW_PATH}${location.search}`} />} />
+              <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
             </Routes>
           </div>
         </div>

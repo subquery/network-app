@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
-import { formatEther, TOKEN } from '../../../utils';
+import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 
-export const ONGOING_PLANS = `ongoing`;
-export const EXPIRED_PLANS = `closed`;
+const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
   { label: 'Ongoing', link: ONGOING_PLANS },

@@ -12,12 +12,9 @@ import { MyOffers } from './MyOffers';
 import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
 import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
+import { ROUTES } from '../../utils';
 
-export const MY_PLANS = `my-plans`;
-export const SERVICE_AGREEMENTS = `service-agreements`;
-export const MY_OFFERS = `my-offers`;
-export const OFFER_MARKETPLACE = `offers`;
-export const FLEX_PLANS = `flex-plans`;
+const { MY_PLANS, SERVICE_AGREEMENTS, MY_OFFERS, OFFER_MARKETPLACE, FLEX_PLANS } = ROUTES;
 
 export const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();

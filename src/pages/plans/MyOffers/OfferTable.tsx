@@ -36,12 +36,14 @@ import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
 import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
-import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
+import { ROUTES } from '../../../utils';
+
+const { OFFER_MARKETPLACE } = ROUTES;
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();

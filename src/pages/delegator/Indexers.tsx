@@ -8,9 +8,9 @@ import { AppPageHeader, TabButtons } from '../../components';
 import { TopIndexers } from './TopIndexers';
 import { AllIndexers } from './AllIndexers';
 import styles from './Indexers.module.css';
+import { ROUTES } from '../../utils';
 
-const ALL_INDEXERS = 'all';
-const TOP_INDEXERS = 'top';
+const { TOP_INDEXERS, ALL_INDEXERS } = ROUTES;
 
 const buttonLinks = [
   { label: 'Top 100', link: TOP_INDEXERS },

@@ -15,10 +15,9 @@ import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
+import { ROUTES } from '../../utils';
 
-const SWAP = '/swap';
-const SELL = `sell`; //sell native token
-const BUY = `buy`; //buy native token
+const { SWAP, SELL, BUY } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('swap.buyKSQT'), link: `${SWAP}/${BUY}` },

@@ -11,11 +11,10 @@ import { ROUTES } from '../../utils';
 import { MyDelegation } from './MyDelegation';
 import { Indexers } from './Indexers';
 
+const { INDEXERS, DELEGATING } = ROUTES;
+
 export const Delegator: React.VFC = () => {
   const { t } = useTranslation();
-
-  const INDEXERS = 'indexers';
-  const DELEGATING = 'delegating';
 
   const sidebarList = [
     {

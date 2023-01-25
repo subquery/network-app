@@ -1,29 +1,37 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * Routes Example:
- * - Explorer Root ->  EXPLORER: '/explorer',
- * - Projects within Explorer -> PROJECTS_EXPLORER: '/explorer/projects',
- *
- */
 export const ROUTES = {
+  // ROOT PATHS
   EXPLORER: '/explorer',
   STUDIO: '/studio',
   SWAP: '/swap',
   STAKING: '/staking', //todo: improve
   PLANS: '/plans',
-  INDEXER: '/indexer',
-
-  // V2
   DELEGATOR: '/delegation',
-  DELEGATING_DELEGATOR: 'delegating',
-  INDEXERS_DELEGATOR: 'indexers',
-  ALL_INDEXERS_DELEGATOR: 'all',
-  TOP_INDEXERS_DELEGATOR: 'top',
-
   CONSUMER: '/consumer',
-  FLEXPLAN_CONSUMER: 'flex-plans',
-  ONGOING_FLEXPLAN_CONSUMER: 'ongoing',
-  CLOSED_FLEXPLAN_CONSUMER: 'closed',
+
+  // RELATIVE PATHS
+  OVERVIEW: 'overview',
+  INDEXER: 'indexer',
+  INDEXERS: 'indexers',
+  INDEXING: 'indexing',
+  DELEGATING: 'delegating',
+  DELEGATE: 'delegate',
+  FLEX_PLANS: 'flex-plans',
+  MY_PLANS: 'my-plans',
+  MY_OFFERS: 'my-offers',
+  OFFER_MARKETPLACE: 'offers',
+  PLAYGROUND: 'playground',
+  ONGOING_PLANS: 'ongoing',
+  EXPIRED_PLANS: 'closed',
+  SERVICE_AGREEMENTS: 'service-agreements',
+  ALL_INDEXERS: 'all',
+  TOP_INDEXERS: 'top',
+  REWARDS: 'rewards',
+  LOCKED: 'locked',
+  DETAILS: 'details',
+  DEPLOYMENTS: 'deployments',
+  SELL: 'sell', //sell native token
+  BUY: 'buy', //buy native token
 };

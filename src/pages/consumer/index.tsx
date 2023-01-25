@@ -8,11 +8,12 @@ import { BsBookmarkDash } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
 import { MyFlexPlans } from './MyFlexPlans';
 import { FlexPlayground } from '../plans/Playground/FlexPlayground';
+import { ROUTES } from '../../utils';
+
+const { FLEX_PLANS, PLAYGROUND } = ROUTES;
 
 export const Consumer: React.VFC = () => {
   const { t } = useTranslation();
-  const FLEX_PLANS = 'flex-plans';
-  const PLAYGROUND = `${FLEX_PLANS}/playground`;
 
   const sidebarList = [
     {
@@ -25,7 +26,7 @@ export const Consumer: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Routes>
-        <Route path={`${PLAYGROUND}/:id`} element={<FlexPlayground />} />
+        <Route path={`${FLEX_PLANS}/${PLAYGROUND}/:id`} element={<FlexPlayground />} />
         <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
         <Route path={'/'} element={<Navigate replace to={'flex-plans'} />} />
       </Routes>

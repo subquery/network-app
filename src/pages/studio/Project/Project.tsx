@@ -14,6 +14,9 @@ import { modalStyles, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { ROUTES } from '../../../utils';
+
+const { DETAILS, DEPLOYMENTS } = ROUTES;
 
 const Project: React.VFC = () => {
   const { id } = useParams();
@@ -39,9 +42,6 @@ const Project: React.VFC = () => {
     // TODO call this once tx submitted, but not confirmed
     setEditing(false);
   };
-
-  const DETAILS = 'details';
-  const DEPLOYMENTS = 'deployments';
 
   const tabLinks = [
     { label: t('studio.project.tab1'), link: DETAILS },

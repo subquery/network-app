@@ -9,10 +9,9 @@ import { AppPageHeader, TabButtons } from '../../../../components';
 import { TopIndexers } from '../TopIndexers';
 import { AllIndexers } from '../AllIndexers';
 import { DelegateIndexer } from '../DelegateIndexer';
+import { ROUTES } from '../../../../utils';
 
-const DELEGATE = 'delegate';
-const ALL_INDEXERS = 'all';
-const TOP_INDEXERS = 'top-100';
+const { DELEGATE, TOP_INDEXERS, ALL_INDEXERS } = ROUTES;
 
 const buttonLinks = [
   { label: 'Top 100', link: TOP_INDEXERS },

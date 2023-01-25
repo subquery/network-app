@@ -17,10 +17,7 @@ import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
 import { parseEther } from 'ethers/lib/utils';
 
-const INDEXING = `indexing`;
-const DELEGATING = `delegating`;
-const REWARDS = `rewards`;
-const LOCKED = `locked`;
+const { INDEXING, DELEGATING, REWARDS, LOCKED } = ROUTES;
 
 const buttonLinks = [
   { label: 'Indexing', link: INDEXING },

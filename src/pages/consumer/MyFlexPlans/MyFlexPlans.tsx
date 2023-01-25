@@ -12,9 +12,9 @@ import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 import i18next from 'i18next';
+import { ROUTES } from '../../../utils';
 
-export const ONGOING_PLANS = 'ongoing';
-export const EXPIRED_PLANS = 'closed';
+const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
