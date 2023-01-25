@@ -24,6 +24,8 @@ import {
 } from '../../../../../hooks/useSortedIndexer';
 import { ConnectedIndexer } from '../../../../../components/IndexerDetails/IndexerName';
 import { TokenAmount } from '../../../../../components/TokenAmount';
+import { ROUTES } from '../../../../../utils';
+const { DELEGATE_NAV } = ROUTES;
 
 const Delegation: React.VFC<{
   indexer: string;
@@ -256,7 +258,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const { t } = useTranslation();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`/staking/indexers/delegate/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`${DELEGATE_NAV}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
 
   /**

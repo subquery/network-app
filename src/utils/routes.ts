@@ -36,4 +36,11 @@ export const ROUTES = {
   DEPLOYMENTS: 'deployments',
   SELL: 'sell',
   BUY: 'buy',
+
+  // NAVIGATION LINKS
+  PLAYGROUND_NAV: '/consumer/flex-plans/playground',
+  DELEGATE_NAV: '/staking/indexers/delegate',
+  PROJECT_NAV: '/explorer/project',
+  STUDIO_PROJECT_NAV: '/studio/project',
+  STUDIO_CREATE_NAV: '/studio/create',
 };

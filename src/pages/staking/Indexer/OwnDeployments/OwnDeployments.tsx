@@ -11,6 +11,9 @@ import { deploymentStatus } from '../../../../components/Status/Status';
 import { useSortedIndexerDeployments, UseSortedIndexerDeploymentsReturn } from '../../../../hooks';
 import { mapAsync, renderAsync } from '../../../../utils';
 import styles from './OwnDeployments.module.css';
+import { ROUTES } from '../../../../utils';
+
+const { PROJECT_NAV } = ROUTES;
 
 interface Props {
   indexer: string;
@@ -77,7 +80,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer }) => {
                   return {
                     onClick: (event) => {
                       if (record.projectId) {
-                        navigate(`/explorer/project/${record.projectId}/overview`);
+                        navigate(`${PROJECT_NAV}/${record.projectId}/overview`);
                       }
                     },
                   };

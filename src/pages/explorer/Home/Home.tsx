@@ -10,6 +10,9 @@ import { notEmpty } from '../../../utils';
 import styles from './Home.module.css';
 import { Spinner, ProjectCard } from '../../../components';
 import { useNavigate } from 'react-router';
+import { ROUTES } from '../../../utils';
+
+const { PROJECT_NAV } = ROUTES;
 
 const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ project, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
@@ -77,7 +80,7 @@ const Home: React.VFC = () => {
               <ProjectItem
                 project={project}
                 key={project.id}
-                onClick={() => navigate(`/explorer/project/${project.id}`)}
+                onClick={() => navigate(`${PROJECT_NAV}/${project.id}`)}
               />
             ))
           : !loading && <span>No projects</span>}

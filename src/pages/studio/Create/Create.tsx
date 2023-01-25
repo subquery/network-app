@@ -14,6 +14,8 @@ import { BigNumber } from '@ethersproject/bignumber';
 import Instructions from './Instructions';
 import clsx from 'clsx';
 import { isEthError } from '../../../utils';
+import { ROUTES } from '../../../utils';
+const { STUDIO_PROJECT_NAV } = ROUTES;
 
 const Create: React.VFC = () => {
   const { t } = useTranslation('translation');
@@ -34,7 +36,7 @@ const Create: React.VFC = () => {
         const idHex = BigNumber.from(queryId).toHexString();
 
         console.log(`Query created. queryId=${idHex}`);
-        navigate(`/studio/project/${idHex}`);
+        navigate(`${STUDIO_PROJECT_NAV}/${idHex}`);
       } catch (e) {
         if (isEthError(e) && e.code === 4001) {
           setSubmitError(t('errors.transactionRejected'));

@@ -15,6 +15,9 @@ import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
 import { useNavigate } from 'react-router';
+import { ROUTES } from '../../../utils';
+
+const { PLAYGROUND_NAV } = ROUTES;
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
@@ -79,7 +82,7 @@ export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ fle
     <div className={styles.actionList}>
       <Button
         onClick={() => {
-          navigate(`/consumer/flex-plans/playground/${flexPlan.id}`, { state: flexPlan });
+          navigate(`${PLAYGROUND_NAV}/${flexPlan.id}`, { state: flexPlan });
         }}
         size="middle"
         type={'link'}

@@ -11,6 +11,8 @@ import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 import { Button } from '@subql/react-ui';
+import { ROUTES } from '../../../utils';
+const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
 
 const Project: React.VFC<{ projectId: string; account: string; onClick?: () => void }> = ({
   projectId,
@@ -55,7 +57,7 @@ const Home: React.VFC = () => {
   const asyncProjects = useUserProjects();
 
   const handleCreateProject = (name: string) => {
-    navigate(`/studio/create?name=${encodeURI(name)}`);
+    navigate(`${STUDIO_CREATE_NAV}?name=${encodeURI(name)}`);
   };
 
   const enableCreateModal = () => setShowCreateModal(true);
@@ -87,7 +89,7 @@ const Home: React.VFC = () => {
                 <Project
                   projectId={id.toHexString()}
                   key={id.toHexString()}
-                  onClick={() => navigate(`/studio/project/${id.toHexString()}`)}
+                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${id.toHexString()}`)}
                   account={account!}
                 />
               ))}

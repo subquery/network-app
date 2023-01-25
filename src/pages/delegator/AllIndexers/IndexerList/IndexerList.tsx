@@ -22,6 +22,8 @@ import { TableTitle } from '../../../../components/TableTitle';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 
 import { useNetworkClient } from '../../../../hooks';
+import { ROUTES } from '../../../../utils';
+const { DELEGATE_NAV } = ROUTES;
 
 interface SortedIndexerListProps {
   commission: CurrentEraValue<number>;
@@ -216,7 +218,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`/staking/indexers/delegate/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`${DELEGATE_NAV}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
