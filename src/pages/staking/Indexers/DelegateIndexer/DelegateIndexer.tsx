@@ -12,7 +12,8 @@ import { useSortedIndexer } from '../../../../hooks';
 import { renderAsync } from '../../../../utils';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
-import { INDEXERS } from '../..';
+import { ROUTES } from '../../../../utils';
+const { INDEXERS } = ROUTES;
 
 type RouteParams = {
   address: string;

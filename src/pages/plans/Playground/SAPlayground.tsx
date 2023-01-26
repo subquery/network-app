@@ -24,7 +24,6 @@ import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { ONGOING_PLANS } from '../ServiceAgreements/ServiceAgreements';
 import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -32,7 +31,7 @@ import moment from 'moment';
 import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
 import { ROUTES } from '../../../utils';
 
-const { SERVICE_AGREEMENTS } = ROUTES;
+const { SERVICE_AGREEMENTS, ONGOING_PLANS } = ROUTES;
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {

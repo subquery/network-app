@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/react-ui';
+import { Button, Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -18,9 +18,10 @@ import {
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { EmptyList } from '../Plans/EmptyList';
-import { useLocation } from 'react-router';
-import { ONGOING_PLANS, PLAYGROUND } from './ServiceAgreements';
+import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
+import { ROUTES } from '../../../utils';
+const { ONGOING_PLANS, PLAYGROUND } = ROUTES;
 
 export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }) => {
   const asyncMetadata = useIndexerMetadata(indexer);
@@ -62,6 +63,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   emptyI18nKey,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { account } = useWeb3();
 
@@ -146,14 +148,9 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           </Typography>
         );
       return (
-        <Link
-          to={{
-            pathname: `${PLAYGROUND}/${saId}`,
-            state: { serviceAgreement: sa },
-          }}
-        >
+        <Button onClick={() => navigate(`${PLAYGROUND}/${saId}`, { state: { serviceAgreement: sa } })}>
           {t('serviceAgreements.playground.title')}
-        </Link>
+        </Button>
       );
     },
   };

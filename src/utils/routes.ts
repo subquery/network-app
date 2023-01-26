@@ -19,6 +19,7 @@ export const ROUTES = {
   DELEGATING: 'delegating',
   DELEGATE: 'delegate',
   FLEX_PLANS: 'flex-plans',
+  MY_PROFILE: 'my-profile',
   MY_PLANS: 'my-plans',
   MY_OFFERS: 'my-offers',
   DEFAULT_PLANS: 'default',

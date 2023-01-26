@@ -9,14 +9,12 @@ import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
 import { SAPlayground } from '../Playground';
-
-export const ONGOING_PLANS = `ongoing`;
-export const PLAYGROUND = `playground`;
-export const EXPIRED_PLANS = `expired`;
+import { ROUTES } from '../../../utils';
+const { PLANS, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
-  { label: 'Ongoing', link: ONGOING_PLANS },
-  { label: 'Expired', link: EXPIRED_PLANS },
+  { label: 'Ongoing', link: `${PLANS}/${SERVICE_AGREEMENTS}/${ONGOING_PLANS}` },
+  { label: 'Expired', link: `${PLANS}/${SERVICE_AGREEMENTS}/${EXPIRED_PLANS}` },
 ];
 
 const ServiceAgreements: React.VFC = () => {
@@ -46,16 +44,25 @@ const ServiceAgreements: React.VFC = () => {
 
   return (
     <div>
-      <SaHeader />
       <Routes>
         <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
         <Route
           path={ONGOING_PLANS}
-          element={<Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />}
+          element={
+            <>
+              <SaHeader />
+              <Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
+            </>
+          }
         />
         <Route
           path={EXPIRED_PLANS}
-          element={<Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />}
+          element={
+            <>
+              <SaHeader />
+              <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
+            </>
+          }
         />
         <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
       </Routes>
