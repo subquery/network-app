@@ -24,10 +24,12 @@ import {
   parseError,
   TOKEN,
 } from '../../../../../utils';
-import { OPEN_OFFERS } from '../../MyOffers';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
 import styles from './Summary.module.css';
+import { ROUTES } from '../../../../../utils';
+
+const { OFFER_MARKETPLACE_NAV } = ROUTES;
 
 export const Summary: React.VFC = () => {
   const { t } = useTranslation();
@@ -71,7 +73,7 @@ export const Summary: React.VFC = () => {
         description: t('status.txSubmitted'),
       });
 
-      navigate(OPEN_OFFERS);
+      navigate(OFFER_MARKETPLACE_NAV);
 
       tx.wait().then(() => {
         openNotificationWithIcon({

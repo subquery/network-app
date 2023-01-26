@@ -1,12 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps, Typography as AntDTypography, Tooltip } from 'antd';
+import { Table, TableProps, Typography as AntDTypography, Tooltip, Button } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import { Copy, TableText, VersionDeployment } from '../../../components';
 import { useProjectMetadata, useServiceAgreements, useSpecificServiceAgreements, useWeb3 } from '../../../containers';
@@ -21,7 +20,8 @@ import { EmptyList } from '../Plans/EmptyList';
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
-const { ONGOING_PLANS, PLAYGROUND } = ROUTES;
+
+const { SA_PLAYGROUND_NAV, SA_ONGOING_NAV } = ROUTES;
 
 export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }) => {
   const asyncMetadata = useIndexerMetadata(indexer);
@@ -106,7 +106,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     {
       dataIndex: 'period',
       title:
-        pathname === ONGOING_PLANS
+        pathname === SA_ONGOING_NAV
           ? t('serviceAgreements.headers.expiry').toUpperCase()
           : t('serviceAgreements.headers.expired').toUpperCase(),
       key: 'expiry',
@@ -148,7 +148,11 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           </Typography>
         );
       return (
-        <Button onClick={() => navigate(`${PLAYGROUND}/${saId}`, { state: { serviceAgreement: sa } })}>
+        <Button
+          size="middle"
+          type={'link'}
+          onClick={() => navigate(`${SA_PLAYGROUND_NAV}/${saId}`, { state: { serviceAgreement: sa } })}
+        >
           {t('serviceAgreements.playground.title')}
         </Button>
       );
@@ -160,7 +164,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   const serviceAgreements = queryFn(sortedParams);
   const [data, setData] = React.useState(serviceAgreements);
 
-  const sortedCols = pathname === ONGOING_PLANS ? [...columns, playgroundCol] : columns;
+  const sortedCols = pathname === SA_ONGOING_NAV ? [...columns, playgroundCol] : columns;
 
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {

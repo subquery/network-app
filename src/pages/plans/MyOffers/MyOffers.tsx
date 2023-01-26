@@ -18,11 +18,9 @@ import { Button } from '../../../components/Button';
 import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useSQToken, useWeb3 } from '../../../containers';
 import { OfferTable } from './OfferTable';
 import TransactionModal from '../../../components/TransactionModal';
+import { ROUTES } from '../../../utils';
 
-export const OPEN_OFFERS = `open`;
-export const CLOSE_OFFERS = `close`;
-export const EXPIRED_OFFERS = `expired`;
-export const CREATE_OFFER = `create`;
+const { OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS, CREATE_OFFER } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myOffers.open'), link: OPEN_OFFERS, tooltip: i18next.t('myOffers.openTooltip') },

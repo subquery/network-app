@@ -10,8 +10,9 @@ import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
+import { FlexPlayground } from '../Playground';
 
-const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
+const { ONGOING_PLANS, PLAYGROUND, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
   { label: 'Ongoing', link: ONGOING_PLANS },

@@ -17,11 +17,8 @@ import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
 import { EmptyList } from '../Plans/EmptyList';
 import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
-import { ROUTES } from '../../../utils';
 
-const { EXPIRED_PLANS, ONGOING_PLANS } = ROUTES;
-
-const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess: () => void) => {
+const getColumns = (path: string, onSuccess: () => void) => {
   const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     {
       dataIndex: 'id',
@@ -51,7 +48,9 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       dataIndex: 'expiredAt',
       width: 30,
       title: (
-        <TableTitle title={i18next.t(path === ONGOING_PLANS ? 'flexPlans.validityPeriod' : 'flexPlans.duration')} />
+        <TableTitle
+          title={i18next.t(path === '/plans/flex-plans/ongoing' ? 'flexPlans.validityPeriod' : 'flexPlans.duration')}
+        />
       ),
       render: (expiredAt) => <TableText content={formatDate(expiredAt)} />,
     },
@@ -75,7 +74,7 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       width: 30,
       title: <TableTitle title={i18next.t('flexPlans.channelStatus')} />,
       render: (status: ChannelStatus, plan) => {
-        if (path === ONGOING_PLANS) {
+        if (path === '/plans/flex-plans/ongoing') {
           return <Tag color="green">{i18next.t('general.active')}</Tag>;
         } else if (status === ChannelStatus.FINALIZED) {
           return <Tag color="blue">{i18next.t('general.completed')}</Tag>;
@@ -90,9 +89,9 @@ const getColumns = (path: typeof ONGOING_PLANS | typeof EXPIRED_PLANS, onSuccess
       title: <TableTitle title={i18next.t('general.action')} />,
       dataIndex: 'deploymentId',
       fixed: 'right',
-      width: path === EXPIRED_PLANS ? 20 : 40,
+      width: path === '/plans/flex-plans/closed' ? 20 : 40,
       render: (_, plan) => {
-        if (path === EXPIRED_PLANS) {
+        if (path === '/plans/flex-plans/closed') {
           return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
         }
 

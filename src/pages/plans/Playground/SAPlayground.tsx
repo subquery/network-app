@@ -31,7 +31,7 @@ import moment from 'moment';
 import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
 import { ROUTES } from '../../../utils';
 
-const { SERVICE_AGREEMENTS, ONGOING_PLANS } = ROUTES;
+const { SERVICE_AGREEMENTS, SA_NAV } = ROUTES;
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -94,7 +94,7 @@ export const SAPlayground: React.VFC = () => {
 
   React.useEffect(() => {
     if (!locationState?.serviceAgreement || indexerMetadata?.error || serviceAgreement?.consumerAddress !== account) {
-      navigate(SERVICE_AGREEMENTS);
+      navigate(SA_NAV);
     }
   }, [indexerMetadata, navigate, serviceAgreement?.consumerAddress, account, locationState?.serviceAgreement]);
 
@@ -157,7 +157,7 @@ export const SAPlayground: React.VFC = () => {
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
-        navigate(ONGOING_PLANS);
+        navigate(SA_NAV);
       }
 
       setIsCheckingAuth(false);
