@@ -10,11 +10,14 @@ import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../.
 import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
-import { getAuthReqHeader, ROUTES, TOKEN } from '../../../utils';
+import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import { useHistory } from 'react-router';
 import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
+import { useNavigate } from 'react-router';
+import { ROUTES } from '../../../utils';
+
+const { PLAYGROUND_NAV } = ROUTES;
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {
@@ -55,7 +58,7 @@ export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ fle
   const { account, library } = useWeb3();
   const { total, spent } = flexPlan;
   const remainDeposit = formatEther(BigNumber.from(total).sub(BigNumber.from(spent)), 4);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const modalText = {
     title: t('myFlexPlans.terminate.terminatePlan'),
@@ -79,7 +82,7 @@ export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ fle
     <div className={styles.actionList}>
       <Button
         onClick={() => {
-          history.push(`${ROUTES.FLEXPLAN_PLAYGROUND_CONSUMER}/${flexPlan.id}`, flexPlan as ConsumerFlexPlan);
+          navigate(`${PLAYGROUND_NAV}/${flexPlan.id}`, { state: flexPlan });
         }}
         size="middle"
         type={'link'}

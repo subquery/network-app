@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch, useHistory, useParams } from 'react-router';
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useRoutes } from 'react-router';
 import { NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import {
@@ -22,25 +22,24 @@ import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../
 import styles from './Project.module.css';
 import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
 import { FlexPlans } from '../FlexPlans';
+import { ROUTES } from '../../../utils';
 
-export const ROUTE = '/explorer/project';
-const OVERVIEW_PATH = 'overview';
-const INDEXERS_PATH = 'indexers';
-const SA_PATH = 'service-agreements';
-const FLEX_PLANS = 'flex-plans';
+const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
 const ProjectInner: React.VFC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const query = useRouteQuery();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [offset, setOffset] = React.useState(0);
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
   const { catSingle } = useIPFS();
   const { updateIndexerStatus } = useProjectProgress();
 
-  const asyncProject = useProjectFromQuery(id);
-  const { data: deployments } = useDeploymentsQuery({ projectId: id });
+  const asyncProject = useProjectFromQuery(id ?? '');
+  const { data: deployments } = useDeploymentsQuery({ projectId: id ?? '' });
 
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
@@ -102,30 +101,27 @@ const ProjectInner: React.VFC = () => {
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
 
   const handleChangeVersion = (value: string) => {
-    history.push(`${history.location.pathname}?deploymentId=${value}`);
+    navigate(`${location.pathname}?deploymentId=${value}`);
   };
 
-  const renderIndexers = () => {
-    return renderAsync(asyncIndexers, {
-      loading: () => <Spinner />,
-      error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
-      data: (data) => {
-        if (!indexers?.length) {
-          return <NoIndexers />;
-        }
-
-        return (
-          <IndexerDetails
-            indexers={indexers}
-            deploymentId={deploymentId}
-            totalCount={data?.deploymentIndexers?.totalCount}
-            onLoadMore={fetchMore}
-            offset={offset}
-          />
-        );
-      },
-    });
-  };
+  const indexerDetails = renderAsync(asyncIndexers, {
+    loading: () => <Spinner />,
+    error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
+    data: (data) => {
+      if (!indexers?.length) {
+        return <NoIndexers />;
+      }
+      return (
+        <IndexerDetails
+          indexers={indexers}
+          deploymentId={deploymentId}
+          totalCount={data?.deploymentIndexers?.totalCount}
+          onLoadMore={fetchMore}
+          offset={offset}
+        />
+      );
+    },
+  });
 
   // const renderPlayground = () => {
   //   if (!hasIndexers) {
@@ -137,10 +133,10 @@ const ProjectInner: React.VFC = () => {
   // };
 
   const tabList = [
-    { link: `${ROUTE}/${id}/${OVERVIEW_PATH}${history.location.search}`, label: t('explorer.project.tab1') },
-    { link: `${ROUTE}/${id}/${INDEXERS_PATH}${history.location.search}`, label: t('explorer.project.tab2') },
-    { link: `${ROUTE}/${id}/${SA_PATH}${history.location.search}`, label: t('explorer.project.tab3') },
-    { link: `${ROUTE}/${id}/${FLEX_PLANS}${history.location.search}`, label: t('explorer.project.tab4') },
+    { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
+    { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+    { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
+    { link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') },
     // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
 
@@ -164,37 +160,34 @@ const ProjectInner: React.VFC = () => {
                 onChangeVersion={handleChangeVersion}
               />
             </div>
-
             <TabButtons tabs={tabList} />
           </div>
           <div className={clsx('content-width')}>
-            <Switch>
-              <Route exact path={`${ROUTE}/:id/${OVERVIEW_PATH}`}>
-                <ProjectOverview
-                  metadata={project.metadata}
-                  deploymentDescription={asyncDeploymentMetadata?.data?.description}
-                  createdAt={project.createdTimestamp}
-                  updatedAt={project.updatedTimestamp}
-                />
-              </Route>
-              <Route exact path={`${ROUTE}/:id/${INDEXERS_PATH}`}>
-                {renderIndexers()}
-              </Route>
+            <Routes>
               <Route
-                exact
-                path={`${ROUTE}/:id/${SA_PATH}`}
-                component={() => (
-                  <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
-                )}
+                path={OVERVIEW}
+                element={
+                  <ProjectOverview
+                    metadata={project.metadata}
+                    deploymentDescription={asyncDeploymentMetadata?.data?.description}
+                    createdAt={project.createdTimestamp}
+                    updatedAt={project.updatedTimestamp}
+                  />
+                }
               />
-
-              <Route exact path={`${ROUTE}/:id/${FLEX_PLANS}`} component={FlexPlans} />
-
-              {/* <Route exact path={`${ROUTE}/:id/playground`}>
+              <Route path={INDEXERS} element={indexerDetails} />
+              <Route
+                path={SERVICE_AGREEMENTS}
+                element={
+                  <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
+                }
+              />
+              <Route path={FLEX_PLANS} element={<FlexPlans />} />
+              {/* <Route path={`${ROUTE}/:id/playground`}>
                 {renderPlayground()}
               </Route> */}
-              <Redirect from="/:id" to={`${id}/${OVERVIEW_PATH}${history.location.search}`} />
-            </Switch>
+              <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
+            </Routes>
           </div>
         </div>
       );

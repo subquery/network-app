@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory, useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Table } from 'antd';
 import { DeploymentMeta, Spinner, TableText } from '../../../components';
 import styles from './Playground.module.css';
@@ -28,11 +28,13 @@ import { RequestToken } from './RequestToken';
 import { PlaygroundHeader } from './SAPlayground';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { FLEX_PLANS, ONGOING_PLANS } from '../MyFlexPlans/MyFlexPlans';
 import { TableTitle } from '../../../components/TableTitle';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
+import { ROUTES } from '../../../utils';
+
+const { FLEX_PLANS, ONGOING_PLANS } = ROUTES;
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
@@ -71,12 +73,12 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
 export const FlexPlayground: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const location = useLocation();
-  const history = useHistory();
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = React.useState<boolean>();
   const [queryable, setQueryable] = React.useState<boolean>();
 
-  const flexPlan = location?.state as ConsumerFlexPlan;
+  const flexPlan = state as ConsumerFlexPlan;
   const TOKEN_STORAGE_KEY = `${flexPlan?.id}/${account}`;
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
 
@@ -135,13 +137,13 @@ export const FlexPlayground: React.VFC = () => {
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
-        history.push(FLEX_PLANS);
+        navigate(FLEX_PLANS);
       }
 
       setIsCheckingAuth(false);
     };
     initialQuery();
-  }, [TOKEN_STORAGE_KEY, history, queryUrl, sessionToken, t]);
+  }, [TOKEN_STORAGE_KEY, navigate, queryUrl, sessionToken, t]);
 
   const requestAuthWhenTokenExpired = React.useCallback(() => {
     setQueryable(false);

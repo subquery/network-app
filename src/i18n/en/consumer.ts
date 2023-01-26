@@ -166,7 +166,7 @@ const translation = {
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
   },
   myOffers: {
-    title: 'My offers',
+    title: 'My Offers',
     open: 'Open',
     openTooltip: 'Offers that are still open to indexers to accept',
     closed: 'Closed',

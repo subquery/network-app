@@ -78,7 +78,7 @@ const HeaderLinks = () => {
     if (isInternalLink) {
       return (
         <Typography>
-          <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+          <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
             {text}
           </NavLink>
         </Typography>

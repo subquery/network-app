@@ -2,20 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, TabButtons } from '../../components';
-import { ROUTES } from '../../utils';
 import { TopIndexers } from './TopIndexers';
 import { AllIndexers } from './AllIndexers';
 import styles from './Indexers.module.css';
+import { ROUTES } from '../../utils';
 
-const allIndexerRoute = ROUTES.ALL_INDEXERS_DELEGATOR;
-const topIndexerRoute = ROUTES.TOP_INDEXERS_DELEGATOR;
+const { TOP_INDEXERS, ALL_INDEXERS } = ROUTES;
 
 const buttonLinks = [
-  { label: 'Top 100', link: topIndexerRoute },
-  { label: 'All', link: allIndexerRoute },
+  { label: 'Top 100', link: TOP_INDEXERS },
+  { label: 'All', link: ALL_INDEXERS },
 ];
 
 export const Indexers: React.VFC = () => {
@@ -28,12 +27,11 @@ export const Indexers: React.VFC = () => {
         <div className={styles.tabList}>
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
-
-        <Switch>
-          <Route path={topIndexerRoute} component={TopIndexers} />
-          <Route path={allIndexerRoute} component={AllIndexers} />
-          <Redirect from={ROUTES.INDEXERS_DELEGATOR} to={topIndexerRoute} />
-        </Switch>
+        <Routes>
+          <Route index path={TOP_INDEXERS} element={<TopIndexers />} />
+          <Route path={ALL_INDEXERS} element={<AllIndexers />} />
+          <Route path={'/'} element={<Navigate replace to={TOP_INDEXERS} />} />
+        </Routes>
       </div>
     </>
   );

@@ -3,19 +3,18 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Redirect, Route, Switch } from 'react-router';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
+import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useSQToken } from '../../../containers';
-import { formatEther, ROUTES, TOKEN } from '../../../utils';
+import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 import i18next from 'i18next';
+import { ROUTES } from '../../../utils';
 
-const FLEX_PLANS = ROUTES.FLEXPLAN_CONSUMER;
-export const ONGOING_PLANS = ROUTES.ONGOING_FLEXPLAN_CONSUMER;
-export const EXPIRED_PLANS = ROUTES.CLOSED_FLEXPLAN_CONSUMER;
+const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
@@ -75,19 +74,11 @@ export const MyFlexPlans: React.VFC = () => {
   return (
     <div>
       <Header />
-      <Switch>
-        <Route
-          exact
-          path={ONGOING_PLANS}
-          component={() => <MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />}
-        />
-        <Route
-          exact
-          path={EXPIRED_PLANS}
-          component={() => <MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />}
-        />
-        <Redirect from={FLEX_PLANS} to={ONGOING_PLANS} />
-      </Switch>
+      <Routes>
+        <Route path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
+        <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
+        <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
+      </Routes>
     </div>
   );
 };

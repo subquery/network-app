@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { BsBookmarkDash } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
-import { ROUTES } from '../../utils';
 import { MyFlexPlans } from './MyFlexPlans';
 import { FlexPlayground } from '../plans/Playground/FlexPlayground';
+import { ROUTES } from '../../utils';
+
+const { FLEX_PLANS, PLAYGROUND } = ROUTES;
 
 export const Consumer: React.VFC = () => {
   const { t } = useTranslation();
@@ -16,18 +18,18 @@ export const Consumer: React.VFC = () => {
   const sidebarList = [
     {
       label: t('plans.category.myFlexPlans'),
-      link: ROUTES.FLEXPLAN_CONSUMER,
+      link: FLEX_PLANS,
       icon: <BsBookmarkDash />,
     },
   ];
 
   return (
     <AppSidebar list={sidebarList}>
-      <Switch>
-        <Route exact path={`${ROUTES.FLEXPLAN_PLAYGROUND_CONSUMER}/:id`} component={FlexPlayground} />
-        <Route path={ROUTES.FLEXPLAN_CONSUMER} component={MyFlexPlans} />
-        <Redirect from={ROUTES.CONSUMER} to={ROUTES.FLEXPLAN_CONSUMER} />
-      </Switch>
+      <Routes>
+        <Route path={`${FLEX_PLANS}/${PLAYGROUND}/:id`} element={<FlexPlayground />} />
+        <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
+        <Route path={'/'} element={<Navigate replace to={FLEX_PLANS} />} />
+      </Routes>
     </AppSidebar>
   );
 };

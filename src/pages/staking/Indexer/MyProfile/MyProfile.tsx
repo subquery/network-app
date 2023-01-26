@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { Redirect, Route, Switch, useHistory } from 'react-router';
+import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import { useWeb3 } from '../../../../containers';
 import { Card, AppPageHeader, TabButtons } from '../../../../components';
 import styles from './MyProfile.module.css';
@@ -11,17 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
 import Delegating from '../Delegating';
 import { useSortedIndexer, useUserDelegations } from '../../../../hooks';
-import { formatEther, mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '../../../../utils';
+import { formatEther, mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
 import { parseEther } from 'ethers/lib/utils';
 
-const ROUTE = '/staking/my-profile';
-const INDEXING = `${ROUTE}/indexing`;
-const DELEGATING = `${ROUTE}/delegating`;
-const REWARDS = `${ROUTE}/rewards`;
-const LOCKED = `${ROUTE}/locked`;
+const { INDEXING, DELEGATING, REWARDS, LOCKED } = ROUTES;
 
 const buttonLinks = [
   { label: 'Indexing', link: INDEXING },
@@ -33,7 +29,7 @@ const buttonLinks = [
 export const MyProfile: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const history = useHistory();
+  const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
   const totalDelegations = useUserDelegations(account);
   const ens = useENS(account || '');
@@ -41,10 +37,10 @@ export const MyProfile: React.VFC = () => {
 
   React.useEffect(() => {
     if (!account) {
-      history.push('/staking');
+      navigate(ROUTES.EXPLORER);
     }
     return;
-  }, [account, history]);
+  }, [account, navigate]);
 
   return (
     <>
@@ -92,17 +88,13 @@ export const MyProfile: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
 
-        <Switch>
-          <Route
-            exact
-            path={INDEXING}
-            component={() => <Indexing tableData={sortedIndexer} indexer={account ?? ''} />}
-          />
-          <Route exact path={DELEGATING} component={() => <Delegating delegator={account ?? ''} />} />
-          <Route exact path={REWARDS} component={() => <Rewards delegatorAddress={account ?? ''} />} />
-          <Route exact path={LOCKED} component={Locked} />
-          <Redirect from={ROUTE} to={INDEXING} />
-        </Switch>
+        <Routes>
+          <Route path={INDEXING} element={<Indexing tableData={sortedIndexer} indexer={account ?? ''} />} />
+          <Route path={DELEGATING} element={<Delegating delegator={account ?? ''} />} />
+          <Route path={REWARDS} element={<Rewards delegatorAddress={account ?? ''} />} />
+          <Route path={LOCKED} element={<Locked />} />
+          <Route path={'/'} element={<Navigate replace to={INDEXING} />} />
+        </Routes>
       </div>
     </>
   );

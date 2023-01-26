@@ -4,7 +4,6 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useEra, useIndexers } from '../../../../containers';
-import { SUB_INDEXERS } from '../../../../containers/IndexerRegistryProjectSub';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 

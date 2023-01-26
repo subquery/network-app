@@ -35,13 +35,14 @@ import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/r
 import { EmptyList } from '../Plans/EmptyList';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
-import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
-import { OFFER_MARKETPLACE } from '..';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
+import { ROUTES } from '../../../utils';
+
+const { OPEN_OFFERS_NAV, EXPIRED_OFFERS_NAV, OFFER_MARKETPLACE_NAV } = ROUTES;
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
@@ -89,7 +90,7 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   );
 };
 
-const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connectedAccount?: string | null) => {
+const getColumns = (path: typeof OPEN_OFFERS_NAV | typeof OFFER_MARKETPLACE_NAV, connectedAccount?: string | null) => {
   const idColumns: TableProps<Offer>['columns'] = [
     {
       dataIndex: 'id',
@@ -238,9 +239,9 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
   ];
 
   const columnsMapping = {
-    [OPEN_OFFERS]: [...idColumns, ...generalColumns, ...cancelColumn],
-    [EXPIRED_OFFERS]: [...idColumns, ...generalColumns, ...withdrawColumn],
-    [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns, ...acceptColumn],
+    [OPEN_OFFERS_NAV]: [...idColumns, ...generalColumns, ...cancelColumn],
+    [EXPIRED_OFFERS_NAV]: [...idColumns, ...generalColumns, ...withdrawColumn],
+    [OFFER_MARKETPLACE_NAV]: [...idColumns, ...generalColumns, ...acceptColumn],
   };
 
   return columnsMapping[path] ?? [...idColumns, ...generalColumns];
@@ -338,7 +339,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                 <div>
                   <div className={clsx('flex-between', styles.offerTableHeader)}>
                     <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
-                    {pathname === OFFER_MARKETPLACE && (
+                    {pathname === OFFER_MARKETPLACE_NAV && (
                       <div className={styles.searchDeployment}>
                         <SearchDeployment />
                       </div>

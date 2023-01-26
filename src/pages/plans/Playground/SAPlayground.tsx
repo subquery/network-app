@@ -4,7 +4,7 @@
 import { Breadcrumb, Table, TableProps } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { CurEra, DeploymentMeta, TableText } from '../../../components';
 import styles from './Playground.module.css';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
@@ -24,13 +24,14 @@ import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { SERVICE_AGREEMENTS } from '..';
-import { ONGOING_PLANS } from '../ServiceAgreements/ServiceAgreements';
 import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
 import { defaultQuery, fetcher } from '../../../utils/playgroundTokenReq';
+import { ROUTES } from '../../../utils';
+
+const { SERVICE_AGREEMENTS, SA_NAV } = ROUTES;
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -81,7 +82,7 @@ export const SAPlayground: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [isCheckingAuth, setIsCheckingAuth] = React.useState<boolean>();
   const [queryable, setQueryable] = React.useState<boolean>();
 
@@ -93,9 +94,9 @@ export const SAPlayground: React.VFC = () => {
 
   React.useEffect(() => {
     if (!locationState?.serviceAgreement || indexerMetadata?.error || serviceAgreement?.consumerAddress !== account) {
-      history.push(SERVICE_AGREEMENTS);
+      navigate(SA_NAV);
     }
-  }, [indexerMetadata, history, serviceAgreement?.consumerAddress, account, locationState?.serviceAgreement]);
+  }, [indexerMetadata, navigate, serviceAgreement?.consumerAddress, account, locationState?.serviceAgreement]);
 
   const url = React.useMemo(() => {
     const rawUrl = indexerMetadata.data?.url;
@@ -156,13 +157,13 @@ export const SAPlayground: React.VFC = () => {
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
-        history.push(ONGOING_PLANS);
+        navigate(SA_NAV);
       }
 
       setIsCheckingAuth(false);
     };
     initialQuery();
-  }, [TOKEN_STORAGE_KEY, history, queryUrl, sessionToken, t]);
+  }, [TOKEN_STORAGE_KEY, navigate, queryUrl, sessionToken, t]);
 
   const requestAuthWhenTokenExpired = React.useCallback(() => {
     setQueryable(false);

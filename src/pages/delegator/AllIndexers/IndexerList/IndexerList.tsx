@@ -6,7 +6,7 @@ import { TableProps } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import i18next from 'i18next';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../../DoDelegate';
@@ -22,6 +22,8 @@ import { TableTitle } from '../../../../components/TableTitle';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 
 import { useNetworkClient } from '../../../../hooks';
+import { ROUTES } from '../../../../utils';
+const { DELEGATE_NAV } = ROUTES;
 
 interface SortedIndexerListProps {
   commission: CurrentEraValue<number>;
@@ -215,8 +217,8 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
-  const history = useHistory();
-  const viewIndexerDetail = (id: string) => history.push(`/staking/indexers/delegate/${id}`);
+  const navigate = useNavigate();
+  const viewIndexerDetail = (id: string) => navigate(`${DELEGATE_NAV}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
