@@ -28,11 +28,9 @@ import { OfferTable } from './OfferTable';
 import TransactionModal from '../../../components/TransactionModal';
 import { renderAsync } from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
+import { ROUTES } from '../../../utils';
 
-export const OPEN_OFFERS = `open`;
-export const CLOSE_OFFERS = `close`;
-export const EXPIRED_OFFERS = `expired`;
-export const CREATE_OFFER = `create`;
+const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myOffers.open'), link: '/consumer/my-offers/open', tooltip: i18next.t('myOffers.openTooltip') },
@@ -140,14 +138,14 @@ export const MyOffers: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const match = useMatch('/consumer/my-offers/create');
+  const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const count = useOwnOfferCount({ consumer: account ?? '' });
 
   React.useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', () => {
-        window.location.reload();
-        navigate('/consumer/my-offers');
+      window.ethereum.on('accountsChanged', async () => {
+        await count.refetch();
+        navigate(CONSUMER_OFFERS_NAV);
       });
     }
   });

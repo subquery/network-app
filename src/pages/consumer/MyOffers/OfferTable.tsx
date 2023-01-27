@@ -34,14 +34,15 @@ import {
 import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
-import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
-import { OFFER_MARKETPLACE } from '../..';
 import { EmptyList } from '../../plans/Plans/EmptyList';
+import { ROUTES } from '../../../utils';
+
+const { CONSUMER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
 const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   const { account } = useWeb3();
@@ -89,7 +90,10 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
   );
 };
 
-const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connectedAccount?: string | null) => {
+const getColumns = (
+  path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof CONSUMER_OFFER_MARKETPLACE_NAV,
+  connectedAccount?: string | null,
+) => {
   const idColumns: TableProps<Offer>['columns'] = [
     {
       dataIndex: 'id',
@@ -238,9 +242,9 @@ const getColumns = (path: typeof OPEN_OFFERS | typeof OFFER_MARKETPLACE, connect
   ];
 
   const columnsMapping = {
-    [OPEN_OFFERS]: [...idColumns, ...generalColumns, ...cancelColumn],
-    [EXPIRED_OFFERS]: [...idColumns, ...generalColumns, ...withdrawColumn],
-    [OFFER_MARKETPLACE]: [...idColumns, ...generalColumns, ...acceptColumn],
+    [CONSUMER_OPEN_OFFERS_NAV]: [...idColumns, ...generalColumns, ...cancelColumn],
+    [CONSUMER_EXPIRED_OFFERS_NAV]: [...idColumns, ...generalColumns, ...withdrawColumn],
+    [CONSUMER_OFFER_MARKETPLACE_NAV]: [...idColumns, ...generalColumns, ...acceptColumn],
   };
 
   return columnsMapping[path] ?? [...idColumns, ...generalColumns];
@@ -338,7 +342,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                 <div>
                   <div className={clsx('flex-between', styles.offerTableHeader)}>
                     <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
-                    {pathname === OFFER_MARKETPLACE && (
+                    {pathname === CONSUMER_OFFER_MARKETPLACE_NAV && (
                       <div className={styles.searchDeployment}>
                         <SearchDeployment />
                       </div>

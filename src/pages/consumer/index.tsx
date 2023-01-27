@@ -9,8 +9,9 @@ import { AppSidebar } from '../../components';
 import { MyFlexPlans } from './MyFlexPlans';
 import { FlexPlayground } from './Playground/FlexPlayground';
 import { ROUTES } from '../../utils';
+import { MyOffers } from './MyOffers';
 
-const { FLEX_PLANS, PLAYGROUND } = ROUTES;
+const { FLEX_PLANS, MY_OFFERS, PLAYGROUND } = ROUTES;
 
 export const Consumer: React.VFC = () => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ export const Consumer: React.VFC = () => {
     },
     {
       label: t('plans.category.myOffers'),
-      link: 'my-offers',
+      link: MY_OFFERS,
       icon: <BsBookmarkDash />,
     },
   ];
@@ -33,6 +34,7 @@ export const Consumer: React.VFC = () => {
       <Routes>
         <Route path={`${FLEX_PLANS}/${PLAYGROUND}/:id`} element={<FlexPlayground />} />
         <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
+        <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
         <Route path={'/'} element={<Navigate replace to={FLEX_PLANS} />} />
       </Routes>
     </AppSidebar>

@@ -15,15 +15,7 @@ import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } f
 import { ROUTES } from '../../utils';
 import { FlexPlayground } from './Playground';
 
-<<<<<<< HEAD
 const { MY_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, MY_OFFERS, OFFER_MARKETPLACE, FLEX_PLANS } = ROUTES;
-=======
-export const PLAN_ROUTE = `my-plans`;
-export const SERVICE_AGREEMENTS = `service-agreements`;
-export const MY_OFFERS = `my-offers`;
-export const OFFER_MARKETPLACE = `offers`;
-export const FLEX_PLANS = `flex-plans`;
->>>>>>> 1776fff (update child routing for all pages)
 
 export const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();

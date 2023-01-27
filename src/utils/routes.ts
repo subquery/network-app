@@ -57,4 +57,8 @@ export const ROUTES = {
   PLAYGROUND_NAV: '/consumer/flex-plans/playground',
   CLOSED_PLANS_NAV: '/consumer/flex-plans/closed',
   ONGOING_PLANS_NAV: '/consumer/flex-plans/ongoing',
+  CONSUMER_OFFERS_NAV: '/consumer/my-offers',
+  CONSUMER_OPEN_OFFERS_NAV: '/consumer/my-offers/open',
+  CONSUMER_EXPIRED_OFFERS_NAV: '/consumer/my-offers/expired',
+  CONSUMER_OFFER_MARKETPLACE_NAV: '/consumer/offers',
 };
