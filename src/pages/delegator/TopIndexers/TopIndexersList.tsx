@@ -197,7 +197,6 @@ interface props {
 export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  //   const history = useHistory();
 
   const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
 

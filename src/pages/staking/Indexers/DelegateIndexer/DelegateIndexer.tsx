@@ -4,12 +4,13 @@
 import * as React from 'react';
 import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useHistory, useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CurEra } from '@components';
 import { useSortedIndexer } from '@hooks';
 import { renderAsync } from '@utils';
 
+import styles from './DelegateIndexer.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
 import { ROUTES } from '../../../../utils';
@@ -21,7 +22,7 @@ type RouteParams = {
 
 export const DelegateIndexer: React.VFC = () => {
   const { t } = useTranslation();
-  const navigate = useHistory();
+  const navigate = useNavigate();
   const { address } = useParams<RouteParams>();
 
   React.useEffect(() => {

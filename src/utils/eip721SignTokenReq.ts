@@ -40,7 +40,7 @@ export async function requestConsumerHostToken(
   library: Web3Provider | undefined,
 ): Promise<{ data?: string; error?: string }> {
   try {
-    const tokenRequestUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/login`;
+    const tokenRequestUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/login`;
     const timestamp = new Date().getTime();
 
     const signMsg = {

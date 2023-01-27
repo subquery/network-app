@@ -3,10 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-<<<<<<< HEAD
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
-=======
->>>>>>> 1776fff (update child routing for all pages)
 import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useSQToken } from '../../../containers';
