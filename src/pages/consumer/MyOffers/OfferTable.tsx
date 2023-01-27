@@ -35,12 +35,12 @@ import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/r
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
 import { CancelOffer } from './CancelOffer';
-import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ROUTES } from '../../../utils';
+import { AcceptOffer } from '../../plans/OfferMarketplace/AcceptOffer';
 
 const { CONSUMER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
