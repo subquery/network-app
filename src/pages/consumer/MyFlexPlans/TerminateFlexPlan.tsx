@@ -12,7 +12,7 @@ import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
-import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
+import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 import { useWeb3 } from '../../../containers';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
