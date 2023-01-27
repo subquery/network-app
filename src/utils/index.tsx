@@ -20,7 +20,7 @@ export * from './USDC';
 export * from './getOrderedAccounts';
 export * from './getFlexPlanPrice';
 export * from './routes';
-export * from './playgroundTokenReq';
+export * from './eip721SignTokenReq';
 
 export function truncateAddress(address: string): string {
   if (!address) {

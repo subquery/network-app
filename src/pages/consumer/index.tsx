@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { BsBookmarkDash } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
 import { MyFlexPlans } from './MyFlexPlans';
-import { FlexPlayground } from '../plans/Playground/FlexPlayground';
+import { FlexPlayground } from './Playground/FlexPlayground';
 import { ROUTES } from '../../utils';
 
 const { FLEX_PLANS, PLAYGROUND } = ROUTES;

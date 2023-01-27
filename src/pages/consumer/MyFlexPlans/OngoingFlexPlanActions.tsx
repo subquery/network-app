@@ -13,7 +13,7 @@ import { formatEther } from '../../../utils/numberFormatters';
 import { getAuthReqHeader, TOKEN } from '../../../utils';
 import { AppTypography, SummaryList } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import { requestConsumerHostToken } from '../../../utils/playgroundTokenReq';
+import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../../../utils';
 

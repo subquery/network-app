@@ -18,6 +18,7 @@ export interface RequestTokenProps {
   onRequestToken?: (token: string) => void;
 }
 
+// TODO: extract tokenType to outside
 export const RequestToken: React.FC<RequestTokenProps> = ({
   indexer,
   consumer,

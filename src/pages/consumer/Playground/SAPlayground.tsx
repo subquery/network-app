@@ -1,14 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Breadcrumb, Table, TableProps } from 'antd';
+import { TableProps } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
-import { CurEra, DeploymentMeta, TableText } from '../../../components';
-import styles from './Playground.module.css';
+import { TableText } from '../../../components';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
-import { Link } from 'react-router-dom';
 import { useIndexerMetadata } from '../../../hooks';
 import {
   formatEther,
@@ -20,16 +18,15 @@ import {
   wrapProxyEndpoint,
 } from '../../../utils';
 import { POST } from '../../../utils/fetch';
-import { RequestToken } from './RequestToken';
-import { GraphQLQuery } from './GraphQLQuery';
 import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
-import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';
 import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
 import { ROUTES } from '../../../utils';
+import { AuthPlayground } from './AuthPlayground';
+import { FetcherParams } from 'graphiql';
 
 const { SERVICE_AGREEMENTS, SA_NAV } = ROUTES;
 
@@ -61,22 +58,6 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
     render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
   },
 ];
-
-export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
-  const { t } = useTranslation();
-  return (
-    <div className={styles.header}>
-      <Breadcrumb separator=">">
-        <Breadcrumb.Item className={styles.title}>
-          <Link to={LINK}>{linkText}</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
-      </Breadcrumb>
-
-      <CurEra />
-    </div>
-  );
-};
 
 export const SAPlayground: React.VFC = () => {
   const { t } = useTranslation();
@@ -177,49 +158,39 @@ export const SAPlayground: React.VFC = () => {
   }, [TOKEN_STORAGE_KEY, t]);
 
   const requireAuth = queryable === false && !isCheckingAuth;
-  const showPlayground = queryable && queryUrl && !isCheckingAuth;
+  const showPlayground = !!(queryable && queryUrl && !isCheckingAuth);
 
   return (
-    <div>
-      <PlaygroundHeader link={SERVICE_AGREEMENTS} linkText={t('serviceAgreements.playground.ongoingAgreements')} />
-
-      <div className={styles.deploymentMetaContainer}>
-        <div className={styles.deploymentMeta}>
-          <DeploymentMeta
-            deploymentId={serviceAgreement.deploymentId}
-            projectMetadata={serviceAgreement.deployment?.project?.metadata}
-          />
-        </div>
-        <div className={styles.deploymentTable}>
-          <Table columns={columns} dataSource={[serviceAgreement]} rowKey={'id'} pagination={false} />
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        {isCheckingAuth && <Spinner />}
-        {requireAuth && (
-          <RequestToken
-            deploymentId={serviceAgreement.deploymentId}
-            indexer={serviceAgreement.indexerAddress}
-            consumer={serviceAgreement.consumerAddress}
-            agreement={serviceAgreement.id}
-            requestTokenUrl={requestTokenUrl}
-            tokenType={'ServiceAgreementToken'}
-            onRequestToken={(token: string) => {
-              setSessionToken(token);
-              setEncryptStorage(TOKEN_STORAGE_KEY, token);
-            }}
-          />
-        )}
-        {showPlayground && (
-          <GraphQLQuery
-            queryUrl={queryUrl}
-            sessionToken={sessionToken}
-            onSessionTokenExpire={requestAuthWhenTokenExpired}
-            fetcher={async (graphQLParams) => fetcher(queryUrl, JSON.stringify(graphQLParams), sessionToken)}
-          />
-        )}
-      </div>
-    </div>
+    <AuthPlayground
+      headerLink={SERVICE_AGREEMENTS}
+      headerText={t('serviceAgreements.playground.ongoingAgreements')}
+      deploymentId={serviceAgreement.deploymentId}
+      projectMetadata={serviceAgreement.deployment?.project?.metadata}
+      columns={columns}
+      dataSource={[serviceAgreement]}
+      rowKey={'id'}
+      loading={isCheckingAuth}
+      requireAuth={requireAuth}
+      requestTokenProps={{
+        deploymentId: serviceAgreement.deploymentId,
+        indexer: serviceAgreement.indexerAddress,
+        consumer: serviceAgreement.consumerAddress,
+        agreement: serviceAgreement.id,
+        requestTokenUrl: requestTokenUrl,
+        tokenType: 'ServiceAgreementToken',
+        onRequestToken: (token: string) => {
+          setSessionToken(token);
+          setEncryptStorage(TOKEN_STORAGE_KEY, token);
+        },
+      }}
+      graphqlQueryProps={{
+        queryUrl: queryUrl ?? '',
+        sessionToken: sessionToken,
+        onSessionTokenExpire: requestAuthWhenTokenExpired,
+        fetcher: async (graphQLParams: FetcherParams) =>
+          fetcher(queryUrl ?? '', JSON.stringify(graphQLParams), sessionToken),
+      }}
+      playgroundVisible={showPlayground}
+    />
   );
 };
