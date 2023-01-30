@@ -7,7 +7,7 @@ import { Button, Typography } from 'antd';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
 import styles from './SelectDeployment.module.css';
 import { DeploymentInfo, SearchInput, Spinner } from '../../../../../components';
-import { useDeploymentQuery } from '../../../../../containers';
+import { useGetDeploymentQuery } from '@subql/react-hooks';
 import { useProject } from '../../../../../hooks';
 import { renderAsync, ROUTES } from '../../../../../utils';
 
@@ -70,7 +70,7 @@ export const SelectDeployment: React.VFC = () => {
   const [searchDeployment, setSearchDeployment] = React.useState<string | undefined>(
     createOfferContext?.offer?.deploymentId,
   );
-  const sortedDeployment = useDeploymentQuery({ deploymentId: searchDeployment ?? '' });
+  const sortedDeployment = useGetDeploymentQuery({ variables: { deploymentId: searchDeployment ?? '' } });
   const searchedDeployment = React.useMemo(() => sortedDeployment.data?.deployment, [sortedDeployment]);
 
   const SearchAddress = () => (
