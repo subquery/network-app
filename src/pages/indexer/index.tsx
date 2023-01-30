@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { BsShopWindow } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
+import { Marketplace } from './OfferMarketplace';
 
 const { OFFER_MARKETPLACE } = ROUTES;
 
@@ -24,7 +25,8 @@ export const Indexer: React.VFC = () => {
   return (
     <AppSidebar list={sidebarList}>
       <Routes>
-        <Route path={'/'} element={<>place holder</>} />
+        <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
+        <Route path={'/'} element={<Navigate replace to={OFFER_MARKETPLACE} />} />
       </Routes>
     </AppSidebar>
   );

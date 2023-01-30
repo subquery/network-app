@@ -1,0 +1,27 @@
+.container {
+  height: 100%;
+}
+
+.content {
+  background: white;
+  padding: 2rem;
+  overflow: scroll;
+  min-height: 80%;
+}
+
+.offers {
+  margin: 1rem 0;
+}
+
+.noOffersContainer {
+  margin: 10vh auto;
+  height: 50vh;
+  width: 33vw;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.description {
+  margin-top: 3vh;
+}
