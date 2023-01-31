@@ -16,32 +16,29 @@ import styles from './MyOffers.module.css';
 import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
 import { Button } from '../../../components/Button';
-import {
-  useOwnExpiredOffers,
-  useOwnFinishedOffers,
-  useOwnOfferCount,
-  useOwnOpenOffers,
-  useSQToken,
-  useWeb3,
-} from '../../../containers';
+import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useSQToken, useWeb3 } from '../../../containers';
 import { OfferTable } from './OfferTable';
 import TransactionModal from '../../../components/TransactionModal';
-import { renderAsync } from '@subql/react-hooks';
+import { renderAsync, useGetOfferCountQuery } from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
 import { ROUTES } from '../../../utils';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
 const buttonLinks = [
-  { label: i18next.t('myOffers.open'), link: '/consumer/my-offers/open', tooltip: i18next.t('myOffers.openTooltip') },
+  {
+    label: i18next.t('myOffers.open'),
+    link: `${CONSUMER_OFFERS_NAV}/${OPEN_OFFERS}`,
+    tooltip: i18next.t('myOffers.openTooltip'),
+  },
   {
     label: i18next.t('myOffers.closed'),
-    link: '/consumer/my-offers/close',
+    link: `${CONSUMER_OFFERS_NAV}/${CLOSE_OFFERS}`,
     tooltip: i18next.t('myOffers.closedTooltip'),
   },
   {
     label: i18next.t('myOffers.expired'),
-    link: '/consumer/my-offers/expired',
+    link: `${CONSUMER_OFFERS_NAV}/${EXPIRED_OFFERS}`,
     tooltip: i18next.t('myOffers.expiredTooltip'),
   },
 ];
@@ -74,14 +71,16 @@ export const CheckOfferAllowance: React.VFC = () => {
             <ModalApproveToken
               contract={ApproveContract.PurchaseOfferMarket}
               onSubmit={() => offerAllowance.refetch()}
-              onSuccess={() => navigate('/consumer/my-offers/create')}
+              onSuccess={() => navigate(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`)}
             />
           );
         }}
       />
     );
   } else {
-    return <Button onClick={() => navigate('/consumer/my-offers/create')}>{t('myOffers.createOffer')}</Button>;
+    return (
+      <Button onClick={() => navigate(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`)}>{t('myOffers.createOffer')}</Button>
+    );
   }
 };
 
@@ -139,23 +138,23 @@ export const MyOffers: React.VFC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
-  const count = useOwnOfferCount({ consumer: account ?? '' });
+  const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
 
   React.useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', async () => {
-        await count.refetch();
+        await offers.refetch();
         navigate(CONSUMER_OFFERS_NAV);
       });
     }
   });
 
-  return renderAsync(count, {
+  return renderAsync(offers, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
-    data: (count) => {
+    data: (offers) => {
       const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
-      const { totalCount } = count.offers || {};
+      const { totalCount } = offers.offers || {};
       return (
         <>
           <AppPageHeader title={title} />

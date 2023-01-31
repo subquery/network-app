@@ -38,7 +38,6 @@ import { GetSpecificPlansVariables, GetSpecificPlans } from '../__generated__/re
 import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry/GetWithdrawls';
 import { GetOngoingFlexPlan, GetOngoingFlexPlanVariables } from '../__generated__/registry/GetOngoingFlexPlan';
 import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
-import { GetOfferCount, GetOfferCountVariables } from '../__generated__/registry/GetOfferCount';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
@@ -451,14 +450,6 @@ const GET_OWN_EXPIRED_OFFERS = gql`
   }
 `;
 
-const GET_OFFER_COUNT = gql`
-  query GetOfferCount($consumer: String!) {
-    offers(filter: { consumer: { equalTo: $consumer }, reachLimit: { equalTo: false } }) {
-      totalCount
-    }
-  }
-`;
-
 const GET_ALL_OPEN_OFFERS = gql`
   ${OFFER_FIELDS}
   query GetAllOpenOffers($now: Datetime!, $offset: Int) {
@@ -629,12 +620,6 @@ export function useSpecificServiceAgreements(
       variables: params,
     },
   );
-}
-
-export function useOwnOfferCount(params: GetOfferCountVariables): QueryResult<GetOfferCount> {
-  return useQuery<GetOfferCount, GetOfferCountVariables>(GET_OFFER_COUNT, {
-    variables: params,
-  });
 }
 
 export function useOwnOpenOffers(params: GetOwnOpenOffersVariables): QueryResult<GetOwnOpenOffers> {
