@@ -112,7 +112,7 @@ const App: React.VFC = () => {
           <div className="Main">
             <BlockchainStatus>
               <Routes>
-                <Route element={<pages.Explorer />} path={`${EXPLORER}/*`} />
+                <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
                 <Route
                   element={
                     <WalletRoute
@@ -121,14 +121,14 @@ const App: React.VFC = () => {
                       subtitle={t('studio.wallet.subTitle')}
                     />
                   }
-                  path={`${STUDIO}/*`}
+                  path={`${ROUTES.STUDIO}/*`}
                 />
-                <Route element={<pages.Staking />} path={`${STAKING}/*`} />
-                <Route element={<WalletRoute element={pages.Delegator} />} path={`${DELEGATOR}/*`} />
-                <Route element={<WalletRoute element={pages.Consumer} />} path={`${CONSUMER}/*`} />
-                <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${PLANS}/*`} />
-                <Route element={<WalletRoute element={pages.Swap} />} path={`${SWAP}/*`} />
-                <Route path="/" element={<Navigate replace to={EXPLORER} />} />
+                <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
+                <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
+                <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
+                <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
+                <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
+                <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
               </Routes>
             </BlockchainStatus>
           </div>

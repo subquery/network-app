@@ -1,0 +1,42 @@
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create {
+  height: 40px;
+}
+
+.description {
+  margin-top: 1vh;
+}
+
+.infoLink {
+  margin-top: 2vh;
+}
+
+.noOffersContainer {
+  margin: 10vh auto;
+  height: 50vh;
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.noOffersButton {
+  margin: 3vh auto;
+}
+
+/* CancelOffer */
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.cancelOfferSummary {
+  margin: 2rem 0;
+}
