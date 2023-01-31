@@ -5,6 +5,7 @@ import { useQuery, gql, QueryResult } from '@apollo/client';
 import { GetOrders, GetOrdersVariables } from '../__generated__/swapExchange/GetOrders';
 import { SWAP_EXCHANGE_CLIENT } from './QueryApolloProvider';
 
+// TODO: consumer query from `client sdk`
 const GET_ORDERS = gql`
   query GetOrders($swapFrom: String!, $now: Datetime!) {
     orders(

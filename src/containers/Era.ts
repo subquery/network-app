@@ -7,6 +7,7 @@ import { bnToDate } from '../utils';
 import { createContainer, Logger } from './Container';
 import { useContracts } from './Contracts';
 
+// TODO: remove from provider, can maintain in global states
 type Era = {
   startTime: Date;
   estEndTime: Date;

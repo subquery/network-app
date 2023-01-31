@@ -7,6 +7,7 @@ import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import LRUCache from 'lru-cache';
 import { concatU8A } from '../utils';
 
+// TODO: similar with contract sdk, can maintain the ipfs instance in state
 type InitialState = {
   gateway?: string;
 };

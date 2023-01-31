@@ -39,6 +39,7 @@ import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry
 import { GetOngoingFlexPlan, GetOngoingFlexPlanVariables } from '../__generated__/registry/GetOngoingFlexPlan';
 import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
 
+// TODO: remove this file, we will consume all queries from `client-sdk`
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {
     id

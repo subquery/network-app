@@ -4,6 +4,7 @@
 import React from 'react';
 import { createContainer } from './Container';
 
+// TODO remove this from provider
 function useProjectProgressImpl() {
   const [startBlock, setStartBlock] = React.useState<number>(0);
   const [chainBlockHeight, setChainBlockHeight] = React.useState<number>(0);

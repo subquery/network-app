@@ -9,6 +9,7 @@ import { createContainer, Logger } from './Container';
 import { useQueryRegistry } from './QueryRegistry';
 import { useWeb3 } from './Web3';
 
+// TODO: can be removed
 function useUserProjectsImpl(logger: Logger) {
   const { account } = useWeb3();
   const pendingContracts = useContracts();

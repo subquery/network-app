@@ -6,7 +6,7 @@ import { useContracts, useWeb3 } from '.';
 import { useAsyncMemo } from '../hooks';
 import { createContainer } from './Container';
 
-// TODO: move to client-sdk
+// TODO: maintain the state in redux
 function useSQTokenImpl() {
   const { account } = useWeb3();
   const pendingContracts = useContracts();

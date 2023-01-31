@@ -7,6 +7,7 @@ import { useContracts } from './Contracts';
 import * as React from 'react';
 import { bytes32ToCid, cidToBytes32 } from '../utils';
 
+// TODO: same with indexerRegistry, can be removed
 type QueryDetails = {
   queryId: BigNumber;
   owner: string;

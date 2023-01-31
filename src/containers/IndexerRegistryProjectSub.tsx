@@ -3,6 +3,7 @@
 
 import { gql } from '@apollo/client';
 
+// TODO: remove this as well
 export const SUB_INDEXERS = gql`
   subscription GetIndexers {
     indexers {

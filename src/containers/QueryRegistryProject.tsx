@@ -27,6 +27,7 @@ import { GetProjectsVariables, GetProjects } from '../__generated__/registry/Get
 import { GetDeploymentIndexerVariables, GetDeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexer';
 import { GetAcceptedOffers, GetAcceptedOffersVariables } from '../__generated__/registry/GetAcceptedOffers';
 
+// TODO: need to consume query from `client sdk`
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {
     id

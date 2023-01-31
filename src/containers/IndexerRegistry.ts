@@ -4,6 +4,7 @@
 import { createContainer, Logger } from './Container';
 import { useContracts } from './Contracts';
 
+// TODO: remove from provider
 function useIndexerRegistryImpl(logger: Logger): { getIndexer: (address: string) => Promise<string> } {
   const pendingContracts = useContracts();
 

@@ -5,6 +5,7 @@ import { useQuery, gql, QueryResult } from '@apollo/client';
 import { TOP_100_INDEXERS } from './QueryApolloProvider';
 import { GetTopIndexers } from '../__generated__/excellentIndexers/GetTopIndexers';
 
+// TODO: consumer query from sdk
 const GET_TOP_INDEXERS = gql`
   query GetTopIndexers {
     indexerPrograms {

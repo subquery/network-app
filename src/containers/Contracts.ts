@@ -7,6 +7,7 @@ import { ContractSDK } from '@subql/contract-sdk';
 import { useWeb3 } from './Web3';
 import { networkDeploymentDetails } from '../utils';
 
+// TODO: can remove this provider, init contract when the account is connected. Avoid to use `pendingContracts` and contract sdk as promise.
 function useContractsImpl(logger: Logger): Promise<ContractSDK> | undefined {
   const [contracts, setContracts] = React.useState<Promise<ContractSDK>>();
   const web3 = useWeb3();

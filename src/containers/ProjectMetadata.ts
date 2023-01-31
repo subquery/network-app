@@ -6,6 +6,7 @@ import { NewDeployment, ProjectMetadata, projectMetadataSchema } from '../models
 import { createContainer } from './Container';
 import { useIPFS } from './IPFS';
 
+// TODO: remove this from provider
 function useProjectMetadataImpl() {
   const { ipfs, catSingle } = useIPFS();
 
