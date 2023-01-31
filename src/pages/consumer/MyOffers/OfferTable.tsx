@@ -9,16 +9,7 @@ import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
-import {
-  useAcceptedOffersQuery,
-  useAllOpenOffers,
-  useDeploymentIndexerQuery,
-  useOwnExpiredOffers,
-  useOwnFinishedOffers,
-  useOwnOpenOffers,
-  useSpecificOpenOffers,
-  useWeb3,
-} from '../../../containers';
+import { useDeploymentIndexerQuery, useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
   convertStringToNumber,
@@ -41,6 +32,14 @@ import { TokenAmount } from '../../../components/TokenAmount';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ROUTES } from '../../../utils';
 import { AcceptOffer } from '../../plans/OfferMarketplace/AcceptOffer';
+import {
+  useGetAcceptedOffersQuery,
+  useGetAllOpenOffersQuery,
+  useGetOwnExpiredOffersQuery,
+  useGetOwnFinishedOffersQuery,
+  useGetOwnOpenOffersQuery,
+  useGetSpecificOpenOffersQuery,
+} from '@subql/react-hooks';
 
 const { CONSUMER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
@@ -51,7 +50,7 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
     deploymentId: offer.deployment?.id ?? '',
   });
 
-  const acceptedOffersResult = useAcceptedOffersQuery({ address: account ?? '', offerId: offer.id });
+  const acceptedOffersResult = useGetAcceptedOffersQuery({ variables: { address: account ?? '', offerId: offer.id } });
 
   return (
     <>
@@ -251,7 +250,11 @@ const getColumns = (
 };
 
 interface MyOfferTableProps {
-  queryFn: typeof useOwnOpenOffers | typeof useOwnFinishedOffers | typeof useOwnExpiredOffers | typeof useAllOpenOffers;
+  queryFn:
+    | typeof useGetOwnOpenOffersQuery
+    | typeof useGetOwnFinishedOffersQuery
+    | typeof useGetOwnExpiredOffersQuery
+    | typeof useGetAllOpenOffersQuery;
   queryParams?: { consumer?: string };
   description?: string;
 }
@@ -268,9 +271,14 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
    */
   const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
-  const sortedParams = { consumer: queryParams?.consumer ?? '', now, deploymentId: searchDeploymentId ?? '' };
-  const sortedFn = searchDeploymentId ? useSpecificOpenOffers : queryFn;
-  const sortedOffers = sortedFn(sortedParams);
+  const sortedParams = (offset: number) => ({
+    consumer: queryParams?.consumer ?? '',
+    now,
+    deploymentId: searchDeploymentId ?? '',
+    offset,
+  });
+  const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersQuery : queryFn;
+  const sortedOffers = sortedFn({ variables: sortedParams(0) });
 
   const SearchDeployment = () => (
     <div className={styles.indexerSearch}>

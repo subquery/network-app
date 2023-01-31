@@ -16,10 +16,16 @@ import styles from './MyOffers.module.css';
 import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
 import { Button } from '../../../components/Button';
-import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useSQToken, useWeb3 } from '../../../containers';
+import { useSQToken, useWeb3 } from '../../../containers';
 import { OfferTable } from './OfferTable';
 import TransactionModal from '../../../components/TransactionModal';
-import { renderAsync, useGetOfferCountQuery } from '@subql/react-hooks';
+import {
+  renderAsync,
+  useGetOfferCountQuery,
+  useGetOwnExpiredOffersQuery,
+  useGetOwnFinishedOffersQuery,
+  useGetOwnOpenOffersQuery,
+} from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
 import { ROUTES } from '../../../utils';
 
@@ -98,7 +104,7 @@ export const OfferHeader: React.VFC = () => {
 };
 
 interface MyOfferProps {
-  queryFn: typeof useOwnOpenOffers | typeof useOwnFinishedOffers | typeof useOwnExpiredOffers;
+  queryFn: typeof useGetOwnOpenOffersQuery | typeof useGetOwnFinishedOffersQuery | typeof useGetOwnExpiredOffersQuery;
   description?: string;
 }
 
@@ -159,14 +165,14 @@ export const MyOffers: React.VFC = () => {
         <>
           <AppPageHeader title={title} />
           <Routes>
-            <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useOwnOpenOffers} />} />
+            <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useGetOwnOpenOffersQuery} />} />
             <Route
               path={CLOSE_OFFERS}
-              element={<MyOffer queryFn={useOwnFinishedOffers} description={t('myOffers.closedDescription')} />}
+              element={<MyOffer queryFn={useGetOwnFinishedOffersQuery} description={t('myOffers.closedDescription')} />}
             />
             <Route
               path={EXPIRED_OFFERS}
-              element={<MyOffer queryFn={useOwnExpiredOffers} description={t('myOffers.expiredDescription')} />}
+              element={<MyOffer queryFn={useGetOwnExpiredOffersQuery} description={t('myOffers.expiredDescription')} />}
             />
             <Route
               path={CREATE_OFFER}
