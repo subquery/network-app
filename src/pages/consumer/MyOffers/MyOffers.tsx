@@ -165,7 +165,7 @@ export const MyOffers: React.VFC = () => {
               />
               <Route
                 path={CREATE_OFFER}
-                element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+                element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={'/'} />}
               />
               <Route path={'/'} element={<Navigate replace to={OPEN_OFFERS} />} />
             </Routes>
