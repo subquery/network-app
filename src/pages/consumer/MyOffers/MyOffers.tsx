@@ -148,7 +148,8 @@ export const MyOffers: React.VFC = () => {
       return (
         <>
           <AppPageHeader title={title} />
-          {totalCount > 0 ? (
+          {totalCount <= 0 && <NoOffers />}
+          {totalCount > 0 && (
             <Routes>
               <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useGetOwnOpenOffersQuery} />} />
               <Route
@@ -169,8 +170,6 @@ export const MyOffers: React.VFC = () => {
               />
               <Route path={'/'} element={<Navigate replace to={OPEN_OFFERS} />} />
             </Routes>
-          ) : (
-            <NoOffers />
           )}
         </>
       );
