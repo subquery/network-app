@@ -49,18 +49,6 @@ const buttonLinks = [
   },
 ];
 
-// TODO: For user experiences, maybe can consider have warning notification
-export const TokenAllowanceProtect: React.FC<{ children: JSX.Element }> = ({ children }) => {
-  const { offerAllowance } = useSQToken();
-  const requiresTokenApproval = offerAllowance.data?.isZero();
-
-  if (requiresTokenApproval) {
-    return <Route element={<Navigate replace to={OPEN_OFFERS} />} />;
-  } else {
-    return children;
-  }
-};
-
 export const CheckOfferAllowance: React.VFC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -142,48 +130,48 @@ const NoOffers: React.VFC = () => {
 export const MyOffers: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const navigate = useNavigate();
+  const { offerAllowance } = useSQToken();
+  const requiresTokenApproval = offerAllowance.data?.isZero();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
 
   React.useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', async () => {
-        await offers.refetch();
-        navigate(CONSUMER_OFFERS_NAV);
-      });
-    }
-  });
+    offers.refetch();
+  }, [offers, account]);
 
   return renderAsync(offers, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
       const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
-      const { totalCount } = offers.offers || {};
+      const { totalCount } = offers.offers || { totalCount: 0 };
       return (
         <>
           <AppPageHeader title={title} />
-          <Routes>
-            <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useGetOwnOpenOffersQuery} />} />
-            <Route
-              path={CLOSE_OFFERS}
-              element={<MyOffer queryFn={useGetOwnFinishedOffersQuery} description={t('myOffers.closedDescription')} />}
-            />
-            <Route
-              path={EXPIRED_OFFERS}
-              element={<MyOffer queryFn={useGetOwnExpiredOffersQuery} description={t('myOffers.expiredDescription')} />}
-            />
-            <Route
-              path={CREATE_OFFER}
-              element={
-                <TokenAllowanceProtect>
-                  <CreateOffer />
-                </TokenAllowanceProtect>
-              }
-            />
-            <Route path={'/'} element={totalCount === 0 ? <NoOffers /> : <Navigate replace to={OPEN_OFFERS} />} />
-          </Routes>
+          {totalCount > 0 ? (
+            <Routes>
+              <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useGetOwnOpenOffersQuery} />} />
+              <Route
+                path={CLOSE_OFFERS}
+                element={
+                  <MyOffer queryFn={useGetOwnFinishedOffersQuery} description={t('myOffers.closedDescription')} />
+                }
+              />
+              <Route
+                path={EXPIRED_OFFERS}
+                element={
+                  <MyOffer queryFn={useGetOwnExpiredOffersQuery} description={t('myOffers.expiredDescription')} />
+                }
+              />
+              <Route
+                path={CREATE_OFFER}
+                element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+              />
+              <Route path={'/'} element={<Navigate replace to={OPEN_OFFERS} />} />
+            </Routes>
+          ) : (
+            <NoOffers />
+          )}
         </>
       );
     },
