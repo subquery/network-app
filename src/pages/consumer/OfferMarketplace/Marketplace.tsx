@@ -36,6 +36,7 @@ export const Marketplace: React.VFC = () => {
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
+      console.log(totalCount);
       return (
         <div className={styles.container}>
           {totalCount <= 0 && (
@@ -46,7 +47,11 @@ export const Marketplace: React.VFC = () => {
           )}
           {totalCount > 0 && (
             <>
+<<<<<<< HEAD
               <AppPageHeader title={t('offerMarket.header')} desc={t('consumerOfferMarket.listDescription')} />
+=======
+              <AppPageHeader title={t('offerMarket.header')} desc={t('offerMarket.listDescription')} />
+>>>>>>> 90a5086 (update OfferTable types, update column mappings, updated Marketplace components)
               <OfferTable queryFn={useGetAllOpenOffersQuery} />
             </>
           )}
