@@ -9,7 +9,7 @@ import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { TableProps, Typography } from 'antd';
 import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
-import { useDeploymentIndexerQuery, useWeb3 } from '../../../containers';
+import { useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
   convertStringToNumber,
@@ -22,7 +22,6 @@ import {
   parseError,
   renderAsyncArray,
 } from '../../../utils';
-import { GetOwnOpenOffers_offers_nodes as Offer } from '../../../__generated__/registry/GetOwnOpenOffers';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
 import { CancelOffer } from './CancelOffer';
@@ -31,7 +30,6 @@ import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ROUTES } from '../../../utils';
-import { AcceptOffer } from '../../plans/OfferMarketplace/AcceptOffer';
 import {
   useGetAcceptedOffersQuery,
   useGetAllOpenOffersQuery,
@@ -39,15 +37,20 @@ import {
   useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersQuery,
   useGetSpecificOpenOffersQuery,
+  useGetDeploymentIndexerQuery,
 } from '@subql/react-hooks';
+import { OfferFieldsFragment } from '@subql/network-query';
+import { AcceptOffer } from '../../../components/OfferMarketplace/AcceptOffer';
 
-const { CONSUMER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
+const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
-const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
+const AcceptButton: React.VFC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
   const { account } = useWeb3();
-  const indexerDeploymentResult = useDeploymentIndexerQuery({
-    indexerAddress: account ?? '',
-    deploymentId: offer.deployment?.id ?? '',
+  const indexerDeploymentResult = useGetDeploymentIndexerQuery({
+    variables: {
+      indexerAddress: account ?? '',
+      deploymentId: offer.deployment?.id ?? '',
+    },
   });
 
   const acceptedOffersResult = useGetAcceptedOffersQuery({ variables: { address: account ?? '', offerId: offer.id } });
@@ -90,27 +93,27 @@ const AcceptButton: React.VFC<{ offer: Offer }> = ({ offer }) => {
 };
 
 const getColumns = (
-  path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof CONSUMER_OFFER_MARKETPLACE_NAV,
+  path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
   connectedAccount?: string | null,
 ) => {
-  const idColumns: TableProps<Offer>['columns'] = [
+  const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',
       title: '#',
       width: 60,
-      render: (_: string, __: Offer, idx: number) => <TableText content={idx + 1} />,
+      render: (_: string, __: OfferFieldsFragment, idx: number) => <TableText content={idx + 1} />,
     },
     {
       dataIndex: ['deployment', 'id'],
       title: <TableTitle title={i18next.t('myOffers.table.versionDeployment')} />,
       width: 480,
-      render: (deploymentId: string, offer: Offer) => (
+      render: (deploymentId: string, offer: OfferFieldsFragment) => (
         <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
       ),
     },
   ];
 
-  const generalColumns: TableProps<Offer>['columns'] = [
+  const generalColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
       title: i18next.t('myOffers.table.indexerAmount').toUpperCase(),
       children: [
@@ -200,7 +203,7 @@ const getColumns = (
     },
   ];
 
-  const cancelColumn: TableProps<Offer>['columns'] = [
+  const cancelColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
       title: i18next.t('general.action').toUpperCase(),
       dataIndex: 'id',
@@ -214,27 +217,27 @@ const getColumns = (
     },
   ];
 
-  const withdrawColumn: TableProps<Offer>['columns'] = [
+  const withdrawColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
       title: i18next.t('general.action').toUpperCase(),
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',
       width: 100,
-      render: (id: string, offer: Offer) => {
+      render: (id: string, offer: OfferFieldsFragment) => {
         if (!connectedAccount || offer.withdrawn) return <TableText content="-" />;
         return <CancelOffer offerId={id} />;
       },
     },
   ];
 
-  const acceptColumn: TableProps<Offer>['columns'] = [
+  const acceptColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
       title: i18next.t('offerMarket.accept').toUpperCase(),
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',
-      render: (_: string, offer: Offer) => {
+      render: (_: string, offer: OfferFieldsFragment) => {
         return <AcceptButton offer={offer} />;
       },
     },
@@ -243,7 +246,7 @@ const getColumns = (
   const columnsMapping = {
     [CONSUMER_OPEN_OFFERS_NAV]: [...idColumns, ...generalColumns, ...cancelColumn],
     [CONSUMER_EXPIRED_OFFERS_NAV]: [...idColumns, ...generalColumns, ...withdrawColumn],
-    [CONSUMER_OFFER_MARKETPLACE_NAV]: [...idColumns, ...generalColumns, ...acceptColumn],
+    [INDEXER_OFFER_MARKETPLACE_NAV]: [...idColumns, ...generalColumns, ...acceptColumn],
   };
 
   return columnsMapping[path] ?? [...idColumns, ...generalColumns];
@@ -350,7 +353,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
                 <div>
                   <div className={clsx('flex-between', styles.offerTableHeader)}>
                     <Typography.Title level={3}>{t('offerMarket.totalOffer', { count: totalCount })}</Typography.Title>
-                    {pathname === CONSUMER_OFFER_MARKETPLACE_NAV && (
+                    {pathname === INDEXER_OFFER_MARKETPLACE_NAV && (
                       <div className={styles.searchDeployment}>
                         <SearchDeployment />
                       </div>
