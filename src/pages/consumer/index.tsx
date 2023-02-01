@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { BsBookmarkDash } from 'react-icons/bs';
+import { BsBookmarkDash, BsTags } from 'react-icons/bs';
 import { AppSidebar } from '../../components';
 import { MyFlexPlans } from './MyFlexPlans';
 import { FlexPlayground } from './Playground/FlexPlayground';
@@ -25,7 +25,7 @@ export const Consumer: React.VFC = () => {
     {
       label: t('plans.category.myOffers'),
       link: MY_OFFERS,
-      icon: <BsBookmarkDash />,
+      icon: <BsTags />,
     },
   ];
 
