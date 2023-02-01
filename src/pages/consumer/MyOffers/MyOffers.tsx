@@ -109,10 +109,15 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
 
   return (
     <>
-      <OfferHeader />
-      <div className="contentContainer">
-        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
-      </div>
+      {totalCount <= 0 && <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+      {totalCount > 0 && (
+        <>
+          <OfferHeader />
+          <div className="contentContainer">
+            <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
+          </div>
+        </>
+      )}
     </>
   );
 };
