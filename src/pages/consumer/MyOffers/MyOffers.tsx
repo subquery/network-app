@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
 import {
   AppPageHeader,
   ApproveContract,
@@ -93,17 +93,23 @@ export const OfferHeader: React.VFC = () => {
 
 interface MyOfferProps {
   queryFn: typeof useGetOwnOpenOffersQuery | typeof useGetOwnFinishedOffersQuery | typeof useGetOwnExpiredOffersQuery;
+  totalCount: number;
   description?: string;
 }
 
-const MyOffer: React.FC<MyOfferProps> = ({ queryFn, description }) => {
+const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
   const { account } = useWeb3();
   return (
     <>
-      <OfferHeader />
-      <div className="contentContainer">
-        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
-      </div>
+      {totalCount <= 0 && <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+      {totalCount > 0 && (
+        <>
+          <OfferHeader />
+          <div className="contentContainer">
+            <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
+          </div>
+        </>
+      )}
     </>
   );
 };
@@ -127,12 +133,23 @@ const NoOffers: React.VFC = () => {
   );
 };
 
+export const MyOffersContainer: React.VFC = () => {
+  const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
+  const { t } = useTranslation();
+  const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
+  return (
+    <>
+      <AppPageHeader title={title} />
+      <Outlet />
+    </>
+  );
+};
+
 export const MyOffers: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { offerAllowance } = useSQToken();
   const requiresTokenApproval = offerAllowance.data?.isZero();
-  const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
 
   React.useEffect(() => {
@@ -143,35 +160,41 @@ export const MyOffers: React.VFC = () => {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
-      const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
       const { totalCount } = offers.offers || { totalCount: 0 };
       return (
-        <>
-          <AppPageHeader title={title} />
-          {totalCount <= 0 && <NoOffers />}
-          {totalCount > 0 && (
-            <Routes>
-              <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useGetOwnOpenOffersQuery} />} />
-              <Route
-                path={CLOSE_OFFERS}
-                element={
-                  <MyOffer queryFn={useGetOwnFinishedOffersQuery} description={t('myOffers.closedDescription')} />
-                }
-              />
-              <Route
-                path={EXPIRED_OFFERS}
-                element={
-                  <MyOffer queryFn={useGetOwnExpiredOffersQuery} description={t('myOffers.expiredDescription')} />
-                }
-              />
-              <Route
-                path={CREATE_OFFER}
-                element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={'/'} />}
-              />
-              <Route path={'/'} element={<Navigate replace to={OPEN_OFFERS} />} />
-            </Routes>
-          )}
-        </>
+        <Routes>
+          <Route path={'/'} element={<MyOffersContainer />}>
+            <Route
+              path={OPEN_OFFERS}
+              element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
+            />
+            <Route
+              path={CLOSE_OFFERS}
+              element={
+                <MyOffer
+                  queryFn={useGetOwnFinishedOffersQuery}
+                  description={t('myOffers.closedDescription')}
+                  totalCount={totalCount}
+                />
+              }
+            />
+            <Route
+              path={EXPIRED_OFFERS}
+              element={
+                <MyOffer
+                  queryFn={useGetOwnExpiredOffersQuery}
+                  description={t('myOffers.expiredDescription')}
+                  totalCount={totalCount}
+                />
+              }
+            />
+            <Route
+              path={CREATE_OFFER}
+              element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+            />
+            <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
+          </Route>
+        </Routes>
       );
     },
   });
