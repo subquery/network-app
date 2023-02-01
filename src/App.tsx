@@ -102,7 +102,6 @@ const BlockchainStatus: React.FC = ({ children }) => {
 
 const App: React.VFC = () => {
   const { t } = useTranslation();
-  const { EXPLORER, STUDIO, STAKING, DELEGATOR, CONSUMER, PLANS, SWAP } = ROUTES;
 
   return (
     <Providers>
@@ -124,6 +123,7 @@ const App: React.VFC = () => {
                   path={`${ROUTES.STUDIO}/*`}
                 />
                 <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
+                <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
                 <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
                 <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
                 <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
