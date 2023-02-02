@@ -99,17 +99,20 @@ interface MyOfferProps {
 
 const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
   const { account } = useWeb3();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (totalCount <= 0) {
+      navigate(CONSUMER_OFFERS_NAV);
+    }
+  }, [navigate, totalCount]);
+
   return (
     <>
-      {totalCount <= 0 && <Navigate replace to={CONSUMER_OFFERS_NAV} />}
-      {totalCount > 0 && (
-        <>
-          <OfferHeader />
-          <div className="contentContainer">
-            <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
-          </div>
-        </>
-      )}
+      <OfferHeader />
+      <div className="contentContainer">
+        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
+      </div>
     </>
   );
 };
