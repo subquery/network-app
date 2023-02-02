@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const translation = {
+  delegator: 'Delegator',
   delegate: {
     title: 'Delegate',
     delegating: 'Delegating',

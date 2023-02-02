@@ -34,10 +34,10 @@ const HeaderLinks = () => {
       link: ROUTES.EXPLORER,
       title: t('header.explorer'),
     },
-    {
-      link: ROUTES.STUDIO,
-      title: t('header.studio'),
-    },
+    // {
+    //   link: ROUTES.STUDIO,
+    //   title: t('header.studio'),
+    // },
     {
       link: ROUTES.STAKING,
       title: t('header.staking'),
@@ -47,16 +47,20 @@ const HeaderLinks = () => {
       title: t('header.plans'),
     },
     {
-      link: ROUTES.SWAP,
-      title: t('header.swap'),
-    },
-    {
-      link: ROUTES.DELEGATOR,
-      title: t('delegate.delegator'),
+      link: ROUTES.INDEXER,
+      title: t('indexer.title'),
     },
     {
       link: ROUTES.CONSUMER,
       title: t('consumer'),
+    },
+    {
+      link: ROUTES.DELEGATOR,
+      title: t('delegator'),
+    },
+    {
+      link: ROUTES.SWAP,
+      title: t('header.swap'),
     },
     {
       link: 'https://snapshot.org/#/subquerynetwork.eth',

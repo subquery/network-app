@@ -6,13 +6,10 @@
  * Each routes group should come with ROOT ROUTE & SUB ROUTES
  */
 
-// NOTE: Delegator tab
-const DELEGATOR = {
-  DELEGATOR: '/delegation',
-  DELEGATING: 'delegating',
-  INDEXERS: 'indexers',
-  ALL_INDEXERS: 'all',
-  TOP_INDEXERS: 'top',
+// NOTE: Indexer tab
+const INDEXER = {
+  INDEXER: '/indexer',
+  OFFER_MARKETPLACE: 'offers',
 };
 
 // NOTE: Consumer tab
@@ -30,8 +27,17 @@ const CONSUMER = {
   OFFER_MARKETPLACE: 'offers',
 };
 
+const DELEGATOR = {
+  DELEGATOR: '/delegation',
+  DELEGATING: 'delegating',
+  INDEXERS: 'indexers',
+  ALL_INDEXERS: 'all',
+  TOP_INDEXERS: 'top',
+};
+
 // TODO: Remove or ReOrg the “old” paths once renovation done
 const PATHS = {
+  ...INDEXER,
   ...DELEGATOR,
   ...CONSUMER,
   // ROOT PATHS
@@ -43,7 +49,6 @@ const PATHS = {
 
   // RELATIVE PATHS
   OVERVIEW: 'overview',
-  INDEXER: 'indexer',
   INDEXERS: 'indexers',
   INDEXING: 'indexing',
   DELEGATE: 'delegate',
@@ -82,6 +87,8 @@ const NAV_LINKS = {
   CONSUMER_OPEN_OFFERS_NAV: `${CONSUMER.CONSUMER}/${CONSUMER.MY_OFFERS}/${CONSUMER.OPEN_OFFERS}`,
   CONSUMER_EXPIRED_OFFERS_NAV: `${CONSUMER.CONSUMER}/${CONSUMER.MY_OFFERS}/${CONSUMER.EXPIRED_OFFERS}`,
   CONSUMER_OFFER_MARKETPLACE_NAV: `${CONSUMER.CONSUMER}/${CONSUMER.OFFER_MARKETPLACE}`,
+
+  INDEXER_OFFER_MARKETPLACE_NAV: `${INDEXER.INDEXER}/${INDEXER.OFFER_MARKETPLACE}`,
 };
 
 export const ROUTES = {
