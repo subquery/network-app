@@ -15,11 +15,12 @@ const NoOffers: React.VFC = () => {
   const { t } = useTranslation();
   return (
     <div className={styles.noOffersContainer}>
-      <Typography variant="h5">{t('offerMarket.noOffersTitle')}</Typography>
+      <Typography variant="h5">{t('indexerOfferMarket.noOffersTitle')}</Typography>
       <Typography className={styles.description}>
-        <Trans i18nKey={'offerMarket.indexerNoOffers'}>
+        <Trans i18nKey={'indexerOfferMarket.noOffers'}>
           {t('myOffers.noOffersInfoLink')}
           <a href="/">here</a>
+          {/* TODO: add link */}
         </Trans>
       </Typography>
     </div>
@@ -51,7 +52,7 @@ export const Marketplace: React.VFC = () => {
           )}
           {totalCount > 0 && (
             <>
-              <AppPageHeader title={t('offerMarket.header')} desc={t('offerMarket.listDescription')} />
+              <AppPageHeader title={t('offerMarket.header')} desc={t('indexerOfferMarket.listDescription')} />
               <OfferTable queryFn={useGetAllOpenOffersQuery} />
             </>
           )}

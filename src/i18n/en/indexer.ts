@@ -54,6 +54,13 @@ const translation = {
     amount: ' There are {{count}} indexer.',
     amount_other: ' There are {{count}} indexers.',
   },
+  indexerOfferMarket: {
+    noOffersTitle: 'There are no current offers for you to accept',
+    noOffers:
+      'As an Indexer, you can explore and accept offers here once they have been created by Consumers. Once accepted, the offer will appear under Service Agreements. <br><br> Learn more <1>here<1/>',
+    listDescription:
+      'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
+  },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',
     approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',

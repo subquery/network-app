@@ -272,12 +272,6 @@ const translation = {
   },
   offerMarket: {
     header: 'Offer Marketplace',
-    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
-    noOffersTitle: 'There are no offers here yet',
-    indexerNoOffers:
-      'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an indexer <1>here</1>',
-    consumerNoOffers:
-      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
     viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
     totalOffer: 'Total {{count}} offer',
     totalOffer_other: 'Total {{count}} offers',
@@ -306,6 +300,12 @@ const translation = {
       afterAcceptOffer:
         'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
     },
+  },
+  consumerOfferMarket: {
+    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
+    noOffersTitle: 'There are no offers here yet',
+    noOffers:
+      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
   },
   swap: {
     buyKSQT: `${process.env.REACT_APP_STABLE_TOKEN} → ${process.env.REACT_APP_TOKEN}`,

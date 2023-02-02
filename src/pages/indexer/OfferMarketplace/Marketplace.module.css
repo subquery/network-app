@@ -14,9 +14,9 @@
 }
 
 .noOffersContainer {
-  margin: 10vh auto;
-  height: 50vh;
-  width: 33vw;
+  margin: 15vh auto;
+  height: 45vh;
+  width: 35vw;
   display: flex;
   flex-direction: column;
   text-align: center;

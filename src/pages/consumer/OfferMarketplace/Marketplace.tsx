@@ -15,8 +15,8 @@ const NoOffers: React.VFC = () => {
   const { t } = useTranslation();
   return (
     <div className={styles.noOffersContainer}>
-      <Typography variant="h5">{t('offerMarket.noOffersTitle')}</Typography>
-      <Typography className={styles.description}>{t('offerMarket.consumerNoOffers')}</Typography>
+      <Typography variant="h5">{t('consumerOfferMarket.noOffersTitle')}</Typography>
+      <Typography className={styles.description}>{t('consumerOfferMarket.noOffers')}</Typography>
     </div>
   );
 };
@@ -36,7 +36,6 @@ export const Marketplace: React.VFC = () => {
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
-      console.log(totalCount);
       return (
         <div className={styles.container}>
           {totalCount <= 0 && (
@@ -47,7 +46,7 @@ export const Marketplace: React.VFC = () => {
           )}
           {totalCount > 0 && (
             <>
-              <AppPageHeader title={t('offerMarket.header')} desc={t('offerMarket.listDescription')} />
+              <AppPageHeader title={t('offerMarket.header')} desc={t('consumerOfferMarket.listDescription')} />
               <OfferTable queryFn={useGetAllOpenOffersQuery} />
             </>
           )}
