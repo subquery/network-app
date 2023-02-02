@@ -20,6 +20,7 @@ const NoOffers: React.VFC = () => {
         <Trans i18nKey={'indexerOfferMarket.noOffers'}>
           {t('myOffers.noOffersInfoLink')}
           <a href="/">here</a>
+          {/* TODO: add link */}
         </Trans>
       </Typography>
     </div>
