@@ -7,8 +7,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/react-ui';
 import moment from 'moment';
-import { useContracts, useWeb3 } from '../../containers';
-import TransactionModal from '../../components/TransactionModal';
+import { useContracts, useWeb3 } from '../../../containers';
+import TransactionModal from '../../../components/TransactionModal';
 import {
   convertBigNumberToNumber,
   convertStringToNumber,
@@ -16,14 +16,14 @@ import {
   formatSecondsDuration,
   getCapitalizedStr,
   renderAsync,
-} from '../../utils';
+} from '../../../utils';
 import { CheckList } from './CheckList';
 import styles from './AcceptOffer.module.css';
-import { StepButtons } from '../../pages/plans/MyOffers/CreateOffer';
-import { DeploymentProject } from '../../pages/plans/MyOffers/CreateOffer/SelectDeployment';
-import { SummaryList } from '../SummaryList';
+import { StepButtons } from '../../../pages/plans/MyOffers/CreateOffer';
+import { DeploymentProject } from '../../../pages/plans/MyOffers/CreateOffer/SelectDeployment';
 import { OfferFieldsFragment, DeploymentIndexerFieldsFragment } from '@subql/network-query';
 import { useGetIndexerQuery } from '@subql/react-hooks';
+import { SummaryList } from '../../../components';
 
 interface OfferSummaryProps {
   offer: OfferFieldsFragment;

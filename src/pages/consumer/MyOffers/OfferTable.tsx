@@ -40,7 +40,7 @@ import {
   useGetDeploymentIndexerQuery,
 } from '@subql/react-hooks';
 import { OfferFieldsFragment } from '@subql/network-query';
-import { AcceptOffer } from '../../../components/OfferMarketplace/AcceptOffer';
+import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 

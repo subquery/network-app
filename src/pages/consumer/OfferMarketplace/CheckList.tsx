@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import clsx from 'clsx';
-import { Status as AppStatus, Spinner } from '../../components';
+import { Status as AppStatus, Spinner } from '../../../components';
 import moment from 'moment';
 import {
   getDeploymentMetadata,
@@ -18,13 +18,13 @@ import {
   renderAsyncArray,
   isUndefined,
   TOKEN,
-} from '../../utils';
-import { useAsyncMemo } from '../../hooks';
+} from '../../../utils';
+import { useAsyncMemo } from '../../../hooks';
 import { Status } from '@subql/network-query';
 import styles from './AcceptOffer.module.css';
-import { deploymentStatus } from '../../components/Status/Status';
-import { useContractClient } from '../../hooks';
-import { useWeb3 } from '../../containers';
+import { deploymentStatus } from '../../../components/Status/Status';
+import { useContractClient } from '../../../hooks';
+import { useWeb3 } from '../../../containers';
 
 const RequirementCheckListTitle = () => {
   const titles = ['CRITERIA', 'REQUIRED', 'ACTUAL', 'PASS'];
