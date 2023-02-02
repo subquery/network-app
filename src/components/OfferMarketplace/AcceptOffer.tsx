@@ -17,14 +17,13 @@ import {
   getCapitalizedStr,
   renderAsync,
 } from '../../utils';
-import { useIndexerMetadata } from '../../hooks';
 import { CheckList } from './CheckList';
 import styles from './AcceptOffer.module.css';
 import { StepButtons } from '../../pages/plans/MyOffers/CreateOffer';
 import { DeploymentProject } from '../../pages/plans/MyOffers/CreateOffer/SelectDeployment';
 import { SummaryList } from '../SummaryList';
-import { OfferFieldsFragment } from '@subql/network-query'
-import { DeploymentIndexerFieldsFragment } from '@subql/network-query';
+import { OfferFieldsFragment, DeploymentIndexerFieldsFragment } from '@subql/network-query';
+import { useGetIndexerQuery } from '@subql/react-hooks';
 
 interface OfferSummaryProps {
   offer: OfferFieldsFragment;
@@ -105,7 +104,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
   const { t } = useTranslation();
   const { account } = useWeb3();
   const pendingContracts = useContracts();
-  const indexerMetadata = useIndexerMetadata(account ?? '');
+  const indexerMetadata = useGetIndexerQuery({ variables: { address: account ?? '' } });
 
   const text = {
     title: t('offerMarket.acceptModal.title'),
@@ -145,7 +144,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
       onClose={() => setCurStep(0)}
       renderContent={(onSubmit, _, isLoading, error) => {
         if (curStep === 0) {
-          return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer } />;
+          return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer} />;
         }
         return renderAsync(indexerMetadata, {
           loading: () => <Spinner />,
@@ -156,7 +155,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
             <CheckList
               status={deployment.status}
               deploymentId={deployment.deploymentId}
-              proxyEndpoint={data?.url}
+              proxyEndpoint={data?.indexer?.metadata?.url ?? ''}
               offerId={offer?.id}
               rewardPerIndexer={offer?.deposit.toString()}
               planDuration={offer?.planTemplate?.period.toString()}
