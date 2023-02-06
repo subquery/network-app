@@ -1,0 +1,77 @@
+.nextItem {
+  display: flex;
+}
+
+.nextIcon {
+  height: 100%;
+  margin-right: 6px;
+  color: var(--gray500);
+}
+
+.btns {
+  display: flex;
+  margin: 1rem 0;
+}
+
+.textGroup {
+  margin: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.grayText {
+  color: var(--gray500) !important;
+}
+
+.learnMoreContainer {
+  display: flex;
+}
+
+.learnMoreText {
+  margin-right: 0.5rem;
+}
+
+.learnMoreBtn {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.notIndexerContainer {
+  width: 100%;
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notIndexer {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 1.25rem;
+}
+
+.doStakeContainer {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.doStake {
+  width: 55%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.doStakeTitle {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+.doStakeText {
+  font-size: 16px;
+  line-height: 24px;
+}

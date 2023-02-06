@@ -9,6 +9,7 @@
 // NOTE: Indexer tab
 const INDEXER = {
   INDEXER: '/indexer',
+  MY_STAKING: 'my-staking',
   OFFER_MARKETPLACE: 'offers',
 };
 

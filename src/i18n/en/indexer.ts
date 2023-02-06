@@ -12,7 +12,9 @@ const translation = {
   indexer: {
     title: 'Indexer',
     indexers: 'Indexers',
-    profile: 'My Profile',
+    profile: 'My Profile', // Explorer V1
+    myStaking: 'My Staking',
+    myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
     locked: 'Locked',
@@ -45,8 +47,14 @@ const translation = {
     currentRate: 'Current commission rate',
     confirmRate: 'Confirm Rate',
     action: 'action',
-    notRegister: 'You haven’t registered as an indexer yet.',
+    notRegister: 'You have not registered as an Indexer yet.',
+    notRegisterDesc1:
+      'An Indexer is a SubQuery network participant who is responsible for indexing blockchain data and providing this data to Consumers. ',
+    notRegisterDesc2: `Indexers play a very important role within the SubQuery network. As a data-as-a-service business, an Indexer turns computational and networking power into profits.`,
     doStake: 'You haven’t staked yet. Stake to become an indexer.',
+    doStakeTitle: 'Start staking now to earn as an Indexer',
+    doStakeDesc:
+      'In order to earn rewards from query revenue, Indexers must stake kSQT against a particular SubQuery Project that they are providing the service to.',
     learnMore: 'Learn how to become an indexer',
     topRowData: 'Top row of the data represents the data in current era.',
     secondRowData: 'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',

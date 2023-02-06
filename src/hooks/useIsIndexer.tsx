@@ -13,5 +13,5 @@ export function useIsIndexer(account: string | null | undefined): AsyncData<bool
     assert(contracts, 'Contracts not available');
 
     return await contracts.indexerRegistry.isIndexer(account || '');
-  }, [account]);
+  }, [account, pendingContracts]);
 }
