@@ -1,0 +1,43 @@
+.grayText {
+  color: var(--gray500);
+}
+
+.container {
+  display: flex;
+  background-color: var(--gray200);
+  width: 100%;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 25%;
+}
+
+.content {
+  width: 100%;
+  padding: 1rem 2rem;
+  overflow: scroll;
+}
+
+.profile {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stakingAmount {
+  width: 280px;
+  margin: 1.25rem 0;
+}
+
+.tabList {
+  display: flex;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.line {
+  background: var(--sq-gradient);
+  height: 2px;
+}
