@@ -4,13 +4,13 @@
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { BsPerson, BsShopWindow } from 'react-icons/bs';
+import { MyStaking } from './MyStaking';
+
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { Marketplace } from './OfferMarketplace';
-import { MyStaking } from './MyStaking';
 
-const { OFFER_MARKETPLACE, MY_STAKING } = ROUTES;
+const { MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE } = ROUTES;
 
 export const Indexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -19,12 +19,14 @@ export const Indexer: React.VFC = () => {
     {
       label: t('indexer.myStaking'),
       link: MY_STAKING,
-      icon: <BsPerson />,
+    },
+    {
+      label: t('plans.category.serviceAgreement'),
+      link: SERVICE_AGREEMENTS,
     },
     {
       label: t('plans.category.offerMarketplace'),
       link: OFFER_MARKETPLACE,
-      icon: <BsShopWindow />,
     },
   ];
 
@@ -32,6 +34,8 @@ export const Indexer: React.VFC = () => {
     <AppSidebar list={sidebarList}>
       <Routes>
         <Route path={`${MY_STAKING}/*`} element={<MyStaking />} />
+        <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
+        <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'indexer'} />} />
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
         <Route path={'/'} element={<Navigate replace to={MY_STAKING} />} />
       </Routes>
