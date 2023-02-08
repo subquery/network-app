@@ -28,7 +28,7 @@ import { ROUTES } from '../../../utils';
 import { AuthPlayground } from './AuthPlayground';
 import { FetcherParams } from 'graphiql';
 
-const { SERVICE_AGREEMENTS, SA_NAV } = ROUTES;
+const { CONSUMER_SA_NAV, SA_NAV } = ROUTES;
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -162,7 +162,7 @@ export const SAPlayground: React.VFC = () => {
 
   return (
     <AuthPlayground
-      headerLink={SERVICE_AGREEMENTS}
+      headerLink={CONSUMER_SA_NAV}
       headerText={t('serviceAgreements.playground.ongoingAgreements')}
       deploymentId={serviceAgreement.deploymentId}
       projectMetadata={serviceAgreement.deployment?.project?.metadata}

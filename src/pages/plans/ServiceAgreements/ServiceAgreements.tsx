@@ -35,7 +35,7 @@ const ServiceAgreements: React.VFC = () => {
 
   const SaHeader = () => (
     <>
-      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+      <AppPageHeader title={t('plans.category.serviceAgreement')} />
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
       </div>
