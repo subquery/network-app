@@ -9,6 +9,7 @@ import { MyStaking } from './MyStaking';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { Marketplace } from './OfferMarketplace';
+import ServiceAgreements from '../consumer/ServiceAgreements';
 
 const { MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE } = ROUTES;
 

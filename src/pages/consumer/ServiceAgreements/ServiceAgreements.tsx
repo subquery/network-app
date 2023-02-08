@@ -31,13 +31,6 @@ export type SA_QUERY_FN =
   | typeof useGetConsumerOngoingServiceAgreementsQuery
   | typeof useGetConsumerExpiredServiceAgreementsQuery;
 
-const buttonLinks = (BASE_ROUTE: string) => {
-  return [
-    { label: 'Ongoing', link: `${BASE_ROUTE}/${SERVICE_AGREEMENTS}/${ONGOING_PLANS}` },
-    { label: 'Expired', link: `${BASE_ROUTE}/${SERVICE_AGREEMENTS}/${EXPIRED_PLANS}` },
-  ];
-};
-
 const roleMapping = {
   indexer: {
     BASE_ROUTE: INDEXER,
@@ -49,7 +42,7 @@ const roleMapping = {
     intl: {
       noAgreementsDescription: 'indexerServiceAgreements.noAgreementsDescription',
       noAgreementsInfoLink: 'indexerServiceAgreements.noAgreementsInfoLink',
-      noAgreementsLink: '/',
+      noAgreementsLink: '/', //TODO: add link
     },
   },
   consumer: {
@@ -62,9 +55,16 @@ const roleMapping = {
     intl: {
       noAgreementsDescription: 'consumerServiceAgreements.noAgreementsDescription',
       noAgreementsInfoLink: 'consumerServiceAgreements.noAgreementsInfoLink',
-      noAgreementsLink: '/',
+      noAgreementsLink: '/', //TODO: add link
     },
   },
+};
+
+const buttonLinks = (BASE_ROUTE: string) => {
+  return [
+    { label: 'Ongoing', link: `${BASE_ROUTE}/${SERVICE_AGREEMENTS}/${ONGOING_PLANS}` },
+    { label: 'Expired', link: `${BASE_ROUTE}/${SERVICE_AGREEMENTS}/${EXPIRED_PLANS}` },
+  ];
 };
 
 const NoAgreements: React.VFC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
@@ -118,15 +118,14 @@ const Agreements: React.VFC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18
 
 const ServiceAgreements: React.VFC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { account } = useWeb3();
-  //TODO: improve typing for queryFn
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
   const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;
 
-  const agreements = useTotalCount({ variables: { address: account ?? '' } });
+  const serviceAgreements = useTotalCount({ variables: { address: account ?? '' } });
 
-  return renderAsync(agreements, {
+  return renderAsync(serviceAgreements, {
     loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
+    error: (e) => <Typography>{`Failed to load agreements: ${e}`}</Typography>,
     data: (data) => {
       const totalCount = data?.serviceAgreements?.totalCount ?? 0;
       return (
