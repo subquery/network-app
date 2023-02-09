@@ -165,11 +165,12 @@ const translation = {
     non: 'There are no service agreements for this project yet. <br> Learn more from <1>here</1>',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
-  },
-  consumerServiceAgreements: {
-    noAgreementsDescription:
+    nonConsumerAgreementsDescription:
       'If you create an offer that is accepted by an Indexer OR you purchase a plan advertised by an indexer in the Explorer, it will generate a service agreement which you can track here. <br> <br> If you haven’t created any offers to attract an Indexer yet, you can create your first one under My Offers',
-    noAgreementsInfoLink: 'Learn more <1>here</1>',
+    nonConsumerAgreementsInfoLink: 'Learn more <1>here</1>',
+    nonIndexerAgreementsDescription:
+      'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here. <br><br>  You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace’.',
+    nonIndexerAgreementsInfoLink: 'Learn more <1>here</1>',
   },
   myOffers: {
     title: 'My Offers',

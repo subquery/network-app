@@ -69,11 +69,6 @@ const translation = {
     listDescription:
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
   },
-  indexerServiceAgreements: {
-    noAgreementsDescription:
-      'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here. <br><br>  You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace’.',
-    noAgreementsInfoLink: 'Learn more <1>here</1>',
-  },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',
     approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',

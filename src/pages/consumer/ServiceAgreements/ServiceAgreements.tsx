@@ -40,8 +40,8 @@ const roleMapping = {
       useExpiredAgreements: useGetIndexerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'indexerServiceAgreements.noAgreementsDescription',
-      noAgreementsInfoLink: 'indexerServiceAgreements.noAgreementsInfoLink',
+      noAgreementsDescription: 'serviceAgreements.nonIndexerAgreementsDescription',
+      noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink',
       noAgreementsLink: '/', //TODO: add link
     },
   },
@@ -53,8 +53,8 @@ const roleMapping = {
       useExpiredAgreements: useGetConsumerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'consumerServiceAgreements.noAgreementsDescription',
-      noAgreementsInfoLink: 'consumerServiceAgreements.noAgreementsInfoLink',
+      noAgreementsDescription: 'serviceAgreements.nonConsumerAgreementsDescription',
+      noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink',
       noAgreementsLink: '/', //TODO: add link
     },
   },
