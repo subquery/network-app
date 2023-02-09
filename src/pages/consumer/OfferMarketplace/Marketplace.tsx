@@ -36,7 +36,6 @@ export const Marketplace: React.VFC = () => {
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
-      console.log(totalCount);
       return (
         <div className={styles.container}>
           {totalCount <= 0 && (

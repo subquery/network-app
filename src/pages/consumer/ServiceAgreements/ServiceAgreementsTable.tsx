@@ -7,7 +7,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps, Typography as AntDTypography, Tooltip, Button } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
-import { Copy, TableText, VersionDeployment } from '../../../components';
+import { Copy, VersionDeployment } from '../../../components';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -20,6 +20,7 @@ import { useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { RenderResult } from '@subql/react-hooks/dist/utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
+import { TableTitle, TableText } from '@subql/components';
 
 type SAProject = NonNullable<NonNullable<ServiceAgreementFieldsFragment['deployment']>['project']>;
 
@@ -82,7 +83,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     {
       dataIndex: 'deployment',
       key: 'project',
-      title: t('serviceAgreements.headers.project').toUpperCase(),
+      title: <TableTitle title={t('serviceAgreements.headers.project')} />,
       width: 150,
       render: (deployment: ServiceAgreementFieldsFragment['deployment']) =>
         deployment?.project && <Project project={deployment.project} />,
