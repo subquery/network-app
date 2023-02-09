@@ -11,12 +11,11 @@ import { Copy, VersionDeployment } from '../../../components';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
-import { useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
+import { useAsyncMemo, useGetIndexerQuery, useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { RenderResult } from '@subql/react-hooks/dist/utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
@@ -28,13 +27,13 @@ const { INDEXER_SA_NAV, CONSUMER_SA_NAV, CONSUMER_SA_PLAYGROUND_NAV, CONSUMER_SA
   ROUTES;
 
 export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }): RenderResult => {
-  const asyncMetadata = useIndexerMetadata(indexer);
+  const asyncMetadata = useGetIndexerQuery({ variables: { address: indexer } });
 
   return renderAsync(asyncMetadata, {
     error: () => <Typography>-</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const rawUrl = data?.url;
+      const rawUrl = data?.indexer?.metadata?.url;
       const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexer);
       return (
         <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon}>
