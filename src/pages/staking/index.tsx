@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BsCashStack, BsPerson } from 'react-icons/bs';
 import { EraProvider } from '../../containers';
 import { Navigate, Route, Routes } from 'react-router';
 import { Indexer } from './Indexer';
@@ -21,12 +20,10 @@ export const Staking: React.VFC = () => {
     {
       label: t('indexer.profile'),
       link: MY_PROFILE,
-      icon: <BsPerson />,
     },
     {
       label: t('indexer.indexers'),
       link: INDEXERS,
-      icon: <BsCashStack />,
     },
   ];
 

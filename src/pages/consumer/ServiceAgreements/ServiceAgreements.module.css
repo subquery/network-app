@@ -1,0 +1,42 @@
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create {
+  height: 40px;
+}
+
+.url {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addressCont {
+  display: flex;
+  max-width: 300px;
+}
+
+.copy {
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.description {
+  margin-top: 2vh;
+}
+
+.infoLink {
+  margin-top: 2vh;
+}
+
+.noAgreementsContainer {
+  margin: 10vh auto;
+  height: 50vh;
+  width: 33vw;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}

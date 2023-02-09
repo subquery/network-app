@@ -11,7 +11,7 @@ type Props = {
   list: {
     label: string;
     link: string;
-    icon: React.ReactElement;
+    icon?: React.ReactElement;
   }[];
 };
 
@@ -24,7 +24,7 @@ export const Sidebar: React.VFC<Props> = ({ list }) => {
           to={sidebarItem.link}
           key={sidebarItem.link}
         >
-          {sidebarItem.icon}
+          {sidebarItem?.icon}
           <Typography>{sidebarItem.label}</Typography>
         </NavLink>
       ))}

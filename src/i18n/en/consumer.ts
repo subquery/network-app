@@ -5,7 +5,7 @@ const translation = {
   consumer: 'Consumer',
   plans: {
     category: {
-      myServiceAgreement: 'My Service Agreements',
+      serviceAgreement: 'Service Agreements',
       myPlan: 'My Plans',
       manageMyPlans: 'Manage My Plans',
       myOffers: 'My Offers',
@@ -161,9 +161,16 @@ const translation = {
       queryTitle: 'Playground Query',
       expiredToken: 'The auth token for playground query has expired.',
     },
+    noAgreementsTitle: 'You don’t have any service agreements yet',
     non: 'There are no service agreements for this project yet. <br> Learn more from <1>here</1>',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
+    nonConsumerAgreementsDescription:
+      'If you create an offer that is accepted by an Indexer OR you purchase a plan advertised by an indexer in the Explorer, it will generate a service agreement which you can track here. <br> <br> If you haven’t created any offers to attract an Indexer yet, you can create your first one under My Offers',
+    nonConsumerAgreementsInfoLink: 'Learn more <1>here</1>',
+    nonIndexerAgreementsDescription:
+      'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here. <br><br>  You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace’.',
+    nonIndexerAgreementsInfoLink: 'Learn more <1>here</1>',
   },
   myOffers: {
     title: 'My Offers',
@@ -272,6 +279,12 @@ const translation = {
   },
   offerMarket: {
     header: 'Offer Marketplace',
+    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
+    noOffersTitle: 'There are no offers here yet',
+    indexerNoOffers:
+      'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an indexer <1>here</1>',
+    consumerNoOffers:
+      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
     viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
     totalOffer: 'Total {{count}} offer',
     totalOffer_other: 'Total {{count}} offers',

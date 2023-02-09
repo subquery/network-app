@@ -11,7 +11,6 @@ import { Marketplace } from './OfferMarketplace';
 import { MyOffers } from './MyOffers';
 import { MyFlexPlans } from './MyFlexPlans';
 import { useTranslation } from 'react-i18next';
-import { BsDiagram3, BsFileEarmarkText, BsTags, BsShopWindow, BsBookmarkDash } from 'react-icons/bs';
 import { ROUTES } from '../../utils';
 import { FlexPlayground } from './Playground';
 
@@ -21,29 +20,24 @@ export const PlanAndOffer: React.VFC = () => {
   const { t } = useTranslation();
   const sidebarList = [
     {
-      label: t('plans.category.myServiceAgreement'),
+      label: t('plans.category.serviceAgreement'),
       link: SERVICE_AGREEMENTS,
-      icon: <BsDiagram3 />,
     },
     {
       label: t('plans.category.myFlexPlans'),
       link: FLEX_PLANS,
-      icon: <BsBookmarkDash />,
     },
     {
       label: t('plans.category.myPlan'),
       link: MY_PLANS,
-      icon: <BsFileEarmarkText />,
     },
     {
       label: t('plans.category.myOffers'),
       link: MY_OFFERS,
-      icon: <BsTags />,
     },
     {
       label: t('plans.category.offerMarketplace'),
       link: OFFER_MARKETPLACE,
-      icon: <BsShopWindow />,
     },
   ];
 

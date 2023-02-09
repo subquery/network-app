@@ -9,7 +9,7 @@ type Props = {
   list: {
     label: string;
     link: string;
-    icon: React.ReactElement;
+    icon?: React.ReactElement;
   }[];
   children: React.ReactNode;
 };

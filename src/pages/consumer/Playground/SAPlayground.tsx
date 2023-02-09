@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
 import { TableText } from '../../../components';
 import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
-import { useIndexerMetadata } from '../../../hooks';
 import {
   formatEther,
   getEncryptStorage,
@@ -27,8 +26,9 @@ import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
 import { ROUTES } from '../../../utils';
 import { AuthPlayground } from './AuthPlayground';
 import { FetcherParams } from 'graphiql';
+import { useGetIndexerQuery } from '@subql/react-hooks';
 
-const { SERVICE_AGREEMENTS, SA_NAV } = ROUTES;
+const { CONSUMER_SA_NAV, SA_NAV } = ROUTES;
 
 const columns: TableProps<ServiceAgreement>['columns'] = [
   {
@@ -71,7 +71,7 @@ export const SAPlayground: React.VFC = () => {
   const serviceAgreement = locationState?.serviceAgreement;
   const TOKEN_STORAGE_KEY = `${serviceAgreement?.id}/${account}`;
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
-  const indexerMetadata = useIndexerMetadata(serviceAgreement?.indexerAddress);
+  const indexerMetadata = useGetIndexerQuery({ variables: { address: serviceAgreement?.indexerAddress } });
 
   React.useEffect(() => {
     if (!locationState?.serviceAgreement || indexerMetadata?.error || serviceAgreement?.consumerAddress !== account) {
@@ -80,12 +80,12 @@ export const SAPlayground: React.VFC = () => {
   }, [indexerMetadata, navigate, serviceAgreement?.consumerAddress, account, locationState?.serviceAgreement]);
 
   const url = React.useMemo(() => {
-    const rawUrl = indexerMetadata.data?.url;
+    const rawUrl = indexerMetadata.data?.indexer?.metadata?.url;
     if (rawUrl) {
       const url = new URL(rawUrl);
       return url.toString();
     }
-  }, [indexerMetadata.data?.url]);
+  }, [indexerMetadata.data?.indexer?.metadata?.url]);
 
   const { queryUrl, requestTokenUrl } = React.useMemo(() => {
     if (url) {
@@ -162,7 +162,7 @@ export const SAPlayground: React.VFC = () => {
 
   return (
     <AuthPlayground
-      headerLink={SERVICE_AGREEMENTS}
+      headerLink={CONSUMER_SA_NAV}
       headerText={t('serviceAgreements.playground.ongoingAgreements')}
       deploymentId={serviceAgreement.deploymentId}
       projectMetadata={serviceAgreement.deployment?.project?.metadata}
