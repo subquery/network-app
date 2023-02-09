@@ -174,15 +174,16 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   const serviceAgreements = queryFn({ variables: sortedParams });
   const [data, setData] = React.useState(serviceAgreements);
 
-  const sortedCols = isOngoingPath ? [...columns, playgroundCol] : columns;
+  let roleCol;
 
   if (pathname.startsWith(INDEXER_SA_NAV)) {
-    sortedCols.splice(3, 0, consumerCol);
+    roleCol = consumerCol;
+  } else if (pathname.startsWith(CONSUMER_SA_NAV)) {
+    roleCol = indexerCol;
   }
 
-  if (pathname.startsWith(CONSUMER_SA_NAV)) {
-    sortedCols.splice(3, 0, indexerCol);
-  }
+  const columnsWithRole = roleCol ? [...columns.slice(0, 3), roleCol, ...columns.slice(3)] : columns;
+  const sortedCols = isOngoingPath ? [...columnsWithRole, playgroundCol] : columnsWithRole;
 
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
