@@ -10,6 +10,7 @@ import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { Marketplace } from './OfferMarketplace';
 import ServiceAgreements from '../consumer/ServiceAgreements';
+import { MyDelegators } from './MyDelegators';
 
 const { MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 
