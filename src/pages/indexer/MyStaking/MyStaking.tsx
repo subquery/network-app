@@ -11,8 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { useIsIndexer, useSortedIndexer } from '../../../hooks';
 import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '../../../utils';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
+import { SetCommissionRate } from './SetCommissionRate';
 
-// TODO: mergeAsync issue with array loading
 export const MyStaking: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -46,10 +46,16 @@ export const MyStaking: React.VFC = () => {
 
             return (
               <>
-                <div className={styles.stakingAmount}>
-                  <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
+                <div className={styles.stakingHeader}>
+                  <div className={styles.stakingAmount}>
+                    <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
+                  </div>
+                  <div className={styles.stakingActions}>
+                    <SetCommissionRate />
+                  </div>
                 </div>
-                <Indexing tableData={sortedIndexer} indexer={account ?? ''} />
+
+                <Indexing tableData={s} />
               </>
             );
           },

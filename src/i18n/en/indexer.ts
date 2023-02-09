@@ -42,7 +42,7 @@ const translation = {
     updateCommissionRate: 'Change commission rate',
     setNewCommissionRate: 'Set new commission rate',
     disabledSetCommissionBeforeRewardClaim: `You can't change commission rate until you collect all early era's rewards. Please check the indexer admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
-    newRateValidNext2Era: 'Once confirm, the new rate will take 2 full eras to be effective.',
+    newRateValidNext2Era: 'Once confirmed, the new commission rate will take 2 full eras to take effect.',
     enterCommissionRate: 'Enter the commission rate',
     currentRate: 'Current commission rate',
     confirmRate: 'Confirm Rate',
