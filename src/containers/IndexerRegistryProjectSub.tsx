@@ -20,3 +20,12 @@ export const SUB_DELEGATIONS = gql`
     }
   }
 `;
+
+export const SUB_DELEGATORS = gql`
+  subscription GetDelegators {
+    delegators {
+      id
+      _entity
+    }
+  }
+`;

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableText } from '@subql/components';
+import { TableText, TableTitle } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { Spinner, Typography } from '@subql/react-ui';
 import { Table } from 'antd';
@@ -30,20 +30,20 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
       render: (_: any, record: any, index: number) => <TableText content={index + 1} />,
     },
     {
-      title: t('delegate.delegator').toUpperCase(),
+      title: <TableTitle title={t('delegate.delegator')} />,
       dataIndex: 'delegator',
       render: (delegator: string) => <TableText content={delegator} />,
     },
     {
-      title: t('delegate.amount').toUpperCase(),
+      title: <TableTitle title={t('delegate.amount')} />,
       children: [
         {
-          title: t('delegate.currentEra').toUpperCase(),
+          title: <TableTitle title={t('delegate.currentEra')} />,
           dataIndex: ['value', 'current'],
           render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },
         {
-          title: t('delegate.nextEra').toUpperCase(),
+          title: <TableTitle title={t('delegate.nextEra')} />,
           dataIndex: ['value', 'after'],
           render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },

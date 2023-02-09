@@ -9,6 +9,7 @@ import { useWeb3 } from '../../../containers';
 import styles from './MyDelegators.module.css';
 import { Typography } from '@subql/react-ui';
 import { OwnDelegator } from '../../staking/Indexer/OwnDelegator';
+import { SUB_DELEGATORS } from '../../../containers/IndexerRegistryProjectSub';
 
 const NoOffers: React.VFC = () => {
   const { t } = useTranslation();
@@ -23,32 +24,33 @@ const NoOffers: React.VFC = () => {
 export const MyDelegators: React.VFC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
-  const delegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });
+  const filterParams = { id: account ?? '', offset: 0 };
+  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams });
 
-  React.useEffect(() => {
-    delegators.refetch();
-  }, [delegators, account]);
+  delegators.subscribeToMore({
+    document: SUB_DELEGATORS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        delegators.refetch(filterParams);
+      }
+      return prev;
+    },
+  });
 
   return renderAsync(delegators, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
     data: (offers) => {
-      const totalCount = offers.indexer?.delegations?.nodes?.length || 0;
-
+      const totalCount = offers.indexer?.delegations.totalCount || 0;
       return (
         <div className={styles.container}>
-          {totalCount <= 0 && (
-            <>
-              <AppPageHeader title={t('indexer.myDelegators')} />
-              <NoOffers />
-            </>
-          )}
-          {totalCount > 0 && (
-            <>
-              <AppPageHeader title={t('indexer.myDelegators')} desc={t('indexer.myDelegatorsDescription')} />
-              <OwnDelegator indexer={account ?? ''} />
-            </>
-          )}
+          <AppPageHeader
+            title={t('indexer.myDelegators')}
+            desc={totalCount > 0 ? t('indexer.myDelegatorsDescription') : undefined}
+          />
+          {totalCount <= 0 && <NoOffers />}
+          {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
         </div>
       );
     },
