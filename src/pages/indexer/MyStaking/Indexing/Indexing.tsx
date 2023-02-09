@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { Table, Typography } from 'antd';
@@ -9,12 +8,10 @@ import { BsArrowReturnRight } from 'react-icons/bs';
 import { BigNumber } from 'ethers';
 import clsx from 'clsx';
 import styles from './Indexing.module.css';
-import { DoStake } from '../DoStake';
-import { isUndefined, mergeAsync, renderAsyncArray, TOKEN, truncFormatEtherStr } from '../../../../utils';
-import { useIsIndexer, useSortedIndexer } from '../../../../hooks';
+import { isUndefined, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { TableTitle } from '../../../../components/TableTitle';
-import { useWeb3 } from '../../../../containers';
+import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 
 export const NotRegisteredIndexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -40,8 +37,8 @@ const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }
   const getSortedValue = (val: BigNumber | undefined) =>
     isUndefined(val) ? '-' : `${truncFormatEtherStr(val?.toString() ?? '')} ${unit || ''}`;
   return (
-    <div key={item.current.toString()}>
-      <Typography.Text>{getSortedValue(item.current)}</Typography.Text>
+    <div key={item?.current.toString()}>
+      <Typography.Text>{getSortedValue(item?.current)}</Typography.Text>
       <div className={clsx(styles.nextItem, styles.grayText)}>
         <div className={styles.nextIcon}>
           <BsArrowReturnRight />
@@ -53,13 +50,11 @@ const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }
 };
 
 interface Props {
-  tableData: ReturnType<typeof useSortedIndexer>;
-  indexer: string;
+  tableData: UseSortedIndexerReturn | undefined;
 }
 
-export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
+export const Indexing: React.VFC<Props> = ({ tableData }) => {
   const { t } = useTranslation();
-  const isIndexer = useIsIndexer(indexer);
 
   const columns = [
     {
@@ -88,51 +83,35 @@ export const Indexing: React.VFC<Props> = ({ tableData, indexer }) => {
     },
   ];
 
+  if (!tableData) {
+    return (
+      <div className={styles.doStakeContainer}>
+        <div className={styles.doStake}>
+          <Typography.Text className={styles.doStakeTitle}>{t('indexer.doStakeTitle')}</Typography.Text>
+          <Typography.Text className={styles.doStakeText}>{t('indexer.doStakeDesc')}</Typography.Text>
+          {/* <div className={styles.btns}>
+            <DoStake />
+          </div> */}
+        </div>
+      </div>
+    );
+  }
+
+  const sortedIndexingData = [tableData].map((indexer, idx) => ({ ...indexer, idx }));
+
   return (
-    <div>
-      {renderAsyncArray(mergeAsync(isIndexer, tableData), {
-        loading: () => <Spinner />,
-        empty: () => <Typography>{`No data available`}</Typography>,
-        error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
-        data: (data) => {
-          if (!data) return <></>;
-          const [_, indexingData] = data;
-          if (!indexingData)
-            return (
-              <div className={styles.doStakeContainer}>
-                <div className={styles.doStake}>
-                  <Typography.Text className={styles.doStakeTitle}>{t('indexer.doStakeTitle')}</Typography.Text>
-                  <Typography.Text className={styles.doStakeText}>{t('indexer.doStakeDesc')}</Typography.Text>
-                  {/* <div className={styles.btns}>
-                    <DoStake />
-                  </div> */}
-                </div>
-              </div>
-            );
+    <>
+      <Table columns={columns} dataSource={sortedIndexingData} pagination={false} rowKey={'idx'} />
 
-          const sortedIndexingData = [
-            {
-              ...indexingData,
-            },
-          ].map((indexer, idx) => ({ ...indexer, idx }));
-
-          return (
-            <>
-              <Table columns={columns} dataSource={sortedIndexingData} pagination={false} rowKey={'idx'} />
-
-              <div className={styles.textGroup}>
-                <Typography.Text className={styles.grayText}>{t('indexer.topRowData')}</Typography.Text>
-                <Typography.Text className={styles.grayText}>
-                  <Trans
-                    i18nKey={'indexer.secondRowData'}
-                    components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}
-                  />
-                </Typography.Text>
-              </div>
-            </>
-          );
-        },
-      })}
-    </div>
+      <div className={styles.textGroup}>
+        <Typography.Text className={styles.grayText}>{t('indexer.topRowData')}</Typography.Text>
+        <Typography.Text className={styles.grayText}>
+          <Trans
+            i18nKey={'indexer.secondRowData'}
+            components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}
+          />
+        </Typography.Text>
+      </div>
+    </>
   );
 };

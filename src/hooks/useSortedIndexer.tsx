@@ -1,7 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useDelegation, useEra, useIndexer } from '../containers';
+import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
+import { useEra } from '../containers';
+import { SUB_DELEGATIONS, SUB_INDEXERS } from '../containers/IndexerRegistryProjectSub';
 import {
   AsyncData,
   convertBigNumberToNumber,
@@ -60,8 +62,32 @@ export interface UseSortedIndexerReturn {
 
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
   const { currentEra } = useEra();
-  const indexerData = useIndexer({ address: account });
-  const indexerDelegation = useDelegation(account, account);
+  const indexerQueryParams = { address: account ?? '' };
+  const indexerData = useGetIndexerQuery({ variables: indexerQueryParams });
+  const delegationQueryParams = { id: `${account ?? ''}:${account}` };
+  const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams });
+
+  indexerData.subscribeToMore({
+    document: SUB_INDEXERS,
+    variables: { id: account ?? '' },
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        indexerData.refetch(indexerQueryParams);
+      }
+      return prev;
+    },
+  });
+
+  indexerDelegation.subscribeToMore({
+    document: SUB_DELEGATIONS,
+    variables: delegationQueryParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        indexerDelegation.refetch(delegationQueryParams);
+      }
+      return prev;
+    },
+  });
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 
