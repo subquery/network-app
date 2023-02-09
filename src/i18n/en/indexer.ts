@@ -14,6 +14,9 @@ const translation = {
     indexers: 'Indexers',
     profile: 'My Profile', // Explorer V1
     myStaking: 'My Staking',
+    myDelegators: 'My Delegators',
+    myDelegatorsDescription:
+      'View the list of Delegators that are supporting you and manage your commission rate to attract even more',
     myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
@@ -68,6 +71,10 @@ const translation = {
       'As an Indexer, you can explore and accept offers here once they have been created by Consumers. Once accepted, the offer will appear under Service Agreements. <br><br> Learn more <1>here<1/>',
     listDescription:
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
+  },
+  myDelegators: {
+    nonDelegatorsTitle: 'You don’t have any Delegators yet',
+    nonDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
   },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',

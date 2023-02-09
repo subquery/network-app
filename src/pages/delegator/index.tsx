@@ -4,8 +4,6 @@
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { BsPeople } from 'react-icons/bs';
-import { GiBank } from 'react-icons/gi';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { MyDelegation } from './MyDelegation';
@@ -20,12 +18,10 @@ export const Delegator: React.VFC = () => {
     {
       label: t('delegate.delegating'),
       link: DELEGATING,
-      icon: <GiBank />,
     },
     {
       label: t('indexer.indexers'),
       link: INDEXERS,
-      icon: <BsPeople />,
     },
   ];
 

@@ -10,6 +10,7 @@
 const INDEXER = {
   INDEXER: '/indexer',
   MY_STAKING: 'my-staking',
+  MY_DELEGATORS: 'my-delegators',
   OFFER_MARKETPLACE: 'offers',
   SERVICE_AGREEMENTS: 'service-agreements',
   ONGOING_PLANS: 'ongoing',
