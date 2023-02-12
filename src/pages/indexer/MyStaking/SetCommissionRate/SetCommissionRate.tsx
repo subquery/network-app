@@ -37,7 +37,7 @@ export const SetCommissionRate: React.VFC = () => {
   const handleClick = async (amount: string) => {
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
-    return contracts.staking.setCommissionRate(Math.floor(parseInt(amount, 10) * COMMISSION_DIV_UNIT));
+    return contracts.indexerRegistry.setCommissionRate(Math.floor(parseInt(amount, 10) * COMMISSION_DIV_UNIT));
   };
 
   return renderAsyncArray(mergeAsync(rewardClaimStatus, commissionRate), {
