@@ -83,20 +83,6 @@ export const Indexing: React.VFC<Props> = ({ tableData }) => {
     },
   ];
 
-  if (!tableData) {
-    return (
-      <div className={styles.doStakeContainer}>
-        <div className={styles.doStake}>
-          <Typography.Text className={styles.doStakeTitle}>{t('indexer.doStakeTitle')}</Typography.Text>
-          <Typography.Text className={styles.doStakeText}>{t('indexer.doStakeDesc')}</Typography.Text>
-          {/* <div className={styles.btns}>
-            <DoStake />
-          </div> */}
-        </div>
-      </div>
-    );
-  }
-
   const sortedIndexingData = [tableData].map((indexer, idx) => ({ ...indexer, idx }));
 
   return (
