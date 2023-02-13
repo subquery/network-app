@@ -34,6 +34,10 @@
   align-items: flex-end;
 }
 
+.stakingActions {
+  display: flex;
+}
+
 .stakingAmount {
   width: 280px;
 }
