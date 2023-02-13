@@ -65,6 +65,7 @@ const getContentText = (
   };
 };
 
+// TODO: remove useIndexer and apply useMaxUnstakeAmount
 export const DoStake: React.FC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
   const pendingContracts = useContracts();
@@ -105,6 +106,7 @@ export const DoStake: React.FC = () => {
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
       const curAmount = stakeAction === StakeAction.Stake ? balance.data : jsonBigIntToBigInt(maxUnstakeAmount);
       const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
+      const isMaxUnstakeZero = jsonBigIntToBigInt(maxUnstakeAmount).isZero();
 
       const modalText = getContentText(
         requireClaimIndexerRewards,
@@ -115,23 +117,26 @@ export const DoStake: React.FC = () => {
         curAmountTruncated,
       );
 
+      const stakeButton = {
+        label: t('indexer.stake'),
+        key: StakeAction.Stake,
+        onClick: () => setStakeAction(StakeAction.Stake),
+      };
+
+      const unstakeButton = {
+        label: t('indexer.unstake'),
+        key: StakeAction.UnStake,
+        onClick: () => setStakeAction(StakeAction.UnStake),
+      };
+
+      const actions = isMaxUnstakeZero ? [stakeButton] : [stakeButton, unstakeButton];
+
       return (
         <TransactionModal
           text={modalText}
           loading={isUndefined(indexerRewards)}
           // loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeAmount)} // TODO: maxUnstakeAmount from network-client
-          actions={[
-            {
-              label: t('indexer.stake'),
-              key: StakeAction.Stake,
-              onClick: () => setStakeAction(StakeAction.Stake),
-            },
-            {
-              label: t('indexer.unstake'),
-              key: StakeAction.UnStake,
-              onClick: () => setStakeAction(StakeAction.UnStake),
-            },
-          ]}
+          actions={actions}
           inputParams={{
             showMaxButton: true,
             curAmount: formatEther(curAmount),

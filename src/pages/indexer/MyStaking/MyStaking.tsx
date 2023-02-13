@@ -12,6 +12,7 @@ import { useIsIndexer, useSortedIndexer } from '../../../hooks';
 import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '../../../utils';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
 import { SetCommissionRate } from './SetCommissionRate';
+import { DoStake } from './DoStake';
 
 export const MyStaking: React.VFC = () => {
   const { t } = useTranslation();
@@ -50,9 +51,12 @@ export const MyStaking: React.VFC = () => {
                   <div className={styles.stakingAmount}>
                     <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
                   </div>
-                  <div className={styles.stakingActions}>
-                    <SetCommissionRate />
-                  </div>
+                  {s && (
+                    <div className={styles.stakingActions}>
+                      <DoStake />
+                      <SetCommissionRate />
+                    </div>
+                  )}
                 </div>
 
                 <Indexing tableData={s} />
