@@ -17,6 +17,9 @@ const translation = {
     myDelegatorsDescription:
       'View the list of Delegators that are supporting you and manage your commission rate to attract even more',
     myStaking: 'My Staking',
+    myPlans: 'My Plans',
+    myPlansDescription:
+      'Create and view plans for your indexing service that will be advertised to Consumers to purchase',
     myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
@@ -71,6 +74,10 @@ const translation = {
     nonProjectDesc: `Follow our documentation to help get you set up as an Indexer then head over to the Explorer to find the first project you would like to index.`,
     learnMore: 'Learn how to index a project <1>here</1>',
     description: 'All SubQuery projects you are currently indexing',
+  indexerPlans: {
+    title: 'You haven’t created any plans yet',
+    description:
+      'Create your first plan to advertise your indexing service to Consumers for purchase. <br><br> Learn how to create a plan <1>here</>',
   },
   indexerOfferMarket: {
     noOffersTitle: 'There are no current offers for you to accept',
