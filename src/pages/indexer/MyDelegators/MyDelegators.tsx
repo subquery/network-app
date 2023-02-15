@@ -4,23 +4,22 @@
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, Spinner } from '../../../components';
+import { AppPageHeader, EmptyList, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import styles from './MyDelegators.module.css';
 import { Typography } from '@subql/react-ui';
 import { OwnDelegator } from '../../staking/Indexer/OwnDelegator';
 import { SUB_DELEGATORS } from '../../../containers/IndexerRegistryProjectSub';
 
-const NoOffers: React.VFC = () => {
+const NoDelegator: React.VFC = () => {
   const { t } = useTranslation();
   return (
-    <div className={styles.noDelegatorsContainer}>
-      <Typography variant="h5">{t('myDelegators.nonDelegatorsTitle')}</Typography>
-      <Typography className={styles.description}>{t('myDelegators.nonDelegatorsDescription')}</Typography>
-    </div>
+    <EmptyList title={t('myDelegators.nonDelegatorsTitle')} description={t('myDelegators.nonDelegatorsDescription')} />
   );
 };
 
+// TODO: move NoDelegator to OwnDelegator
+// TODO: pass delegators data to OwnDelegator
 export const MyDelegators: React.VFC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
@@ -49,7 +48,7 @@ export const MyDelegators: React.VFC = () => {
             title={t('indexer.myDelegators')}
             desc={totalCount > 0 ? t('indexer.myDelegatorsDescription') : undefined}
           />
-          {totalCount <= 0 && <NoOffers />}
+          {totalCount <= 0 && <NoDelegator />}
           {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
         </div>
       );

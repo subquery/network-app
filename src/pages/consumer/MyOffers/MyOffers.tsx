@@ -6,12 +6,13 @@ import { Navigate, Outlet, Route, Routes, useMatch, useNavigate } from 'react-ro
 import {
   AppPageHeader,
   ApproveContract,
+  EmptyList,
   ModalApproveToken,
   Spinner,
   TabButtons,
   tokenApprovalModalText,
 } from '../../../components';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import styles from './MyOffers.module.css';
 import i18next from 'i18next';
 import { CreateOffer } from './CreateOffer';
@@ -120,19 +121,16 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
 const NoOffers: React.VFC = () => {
   const { t } = useTranslation();
   return (
-    <div className={styles.noOffersContainer}>
-      <Typography variant="h5">{t('myOffers.noOffersTitle')}</Typography>
-      <Typography className={styles.description}>{t('myOffers.noOffersDescription')}</Typography>
-      <Typography className={styles.infoLink}>
-        <Trans i18nKey={'myOffers.noOffersInfoLink'}>
-          {t('myOffers.noOffersInfoLink')}
-          <a href="/">here</a>
-        </Trans>
-      </Typography>
+    <EmptyList
+      title={t('myOffers.noOffersTitle')}
+      description={t('myOffers.noOffersDescription')}
+      infoI18nKey={'myOffers.noOffersInfoLink'}
+      infoLinkDesc={t('myOffers.noOffersInfoLink')}
+    >
       <div className={styles.noOffersButton}>
         <CheckOfferAllowance />
       </div>
-    </div>
+    </EmptyList>
   );
 };
 
