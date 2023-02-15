@@ -4056,10 +4056,17 @@
     react-jazzicon "^0.1.3"
     react-router-dom "^6.4.2"
 
+<<<<<<< HEAD
 "@subql/contract-sdk@^0.10.4-2":
   version "0.10.4-5"
   resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.10.4-5.tgz#378d0e9ccd13f4c011e8f350e341015c17c53a6e"
   integrity sha512-Q6r4VyWTCv2pI6HbJF0naYMAD/lNa4ij/aHd0d3pcKmRkfTiw0a6BSQcB9Jv2KS1o2ApCA2LeQ26GtisO8HU3g==
+=======
+"@subql/contract-sdk@0.11.1-4":
+  version "0.11.1-4"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.11.1-4.tgz#119f0ab66070c48e74e06eaca93e15c5d2ac33a5"
+  integrity sha512-d55GvhZYNRRI6yeV6bjM+685JxS0DnT4V2k/XYbFu9wn6z9JR8ap9NFGzGnWvPFRxa6Iq4wGBiktJjxUbqr/bA==
+>>>>>>> 1781a79 (update contract-sdk, update contract call methods)
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 

@@ -21,7 +21,7 @@
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
     "@subql/components": "1.0.1-53",
-    "@subql/contract-sdk": "^0.10.4-2",
+    "@subql/contract-sdk": "0.11.1-4",
     "@subql/network-clients": "^0.2.1-22",
     "@subql/network-query": "^0.1.1-19",
     "@subql/react-hooks": "^0.1.1-21",

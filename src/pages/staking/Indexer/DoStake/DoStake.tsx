@@ -88,9 +88,9 @@ export const DoStake: React.FC = () => {
 
     const formattedAmount = parseEther(amount.toString());
     if (stakeAction === StakeAction.Stake) {
-      return contracts.staking.stake(account, formattedAmount);
+      return contracts.stakingManager.stake(account, formattedAmount);
     } else {
-      return contracts.staking.unstake(account, formattedAmount);
+      return contracts.stakingManager.unstake(account, formattedAmount);
     }
   };
 
