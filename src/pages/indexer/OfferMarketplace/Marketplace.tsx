@@ -23,6 +23,7 @@ const NoOffers: React.VFC = () => {
   );
 };
 
+// TODO: review OfferTable vs NoOffers to avoid extra render
 export const Marketplace: React.VFC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
