@@ -1,0 +1,18 @@
+.emptyListContainer {
+  margin: 15vh auto;
+  width: 35vw;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.description {
+  margin-top: 1vh;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+.infoLink {
+  margin-top: 2vh;
+}

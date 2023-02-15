@@ -116,7 +116,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
         loading: () => <Spinner />,
         error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
         data: (data) => {
-          if (!data || data.length === 0) return <Typography variant="h6">{t('delegate.noDelegating')}</Typography>;
+          if (!data || data.length === 0) return <Typography variant="h6">{t('delegate.nonDelegating')}</Typography>;
           return (
             <>
               <Typography variant="h6" className={styles.header}>

@@ -12,24 +12,19 @@ import { isUndefined, TOKEN, truncFormatEtherStr } from '../../../../utils';
 import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { TableTitle } from '../../../../components/TableTitle';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
+import { EmptyList } from '../../../../components';
 
 export const NotRegisteredIndexer: React.VFC = () => {
   const { t } = useTranslation();
-  return (
-    <div className={styles.notIndexerContainer}>
-      <div className={styles.notIndexer}>
-        <Typography.Title level={3}>{t('indexer.notRegister')}</Typography.Title>
 
-        <Typography.Text>{t('indexer.notRegisterDesc1')}</Typography.Text>
-        <Typography.Text>{t('indexer.notRegisterDesc2')}</Typography.Text>
-        <div className={styles.learnMoreContainer}>
-          <Typography.Text className={styles.learnMoreText}>{t('indexer.learnMore')}</Typography.Text>
-          <a href="https://doc.subquery.network/" target="blank" className={styles.learnMoreBtn}>
-            {t('indexer.here')}
-          </a>
-        </div>
-      </div>
-    </div>
+  return (
+    <EmptyList
+      title={t('indexer.notRegister')}
+      description={[t('indexer.notRegisterDesc1'), t('indexer.notRegisterDesc2')]}
+      infoI18nKey={'indexer.learnMore'}
+      infoLinkDesc={t('general.learnMore')}
+      infoLink="https://doc.subquery.network/"
+    ></EmptyList>
   );
 };
 

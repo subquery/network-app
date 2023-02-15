@@ -58,7 +58,7 @@ const translation = {
     doStakeTitle: 'Start staking now to earn as an Indexer',
     doStakeDesc:
       'In order to earn rewards from query revenue, Indexers must stake kSQT against a particular SubQuery Project that they are providing the service to.',
-    learnMore: 'Learn how to become an indexer',
+    learnMore: 'Learn how to become an indexer <1>here<1>',
     topRowData: 'Top row of the data represents the data in current era.',
     secondRowData: 'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
     here: 'here',

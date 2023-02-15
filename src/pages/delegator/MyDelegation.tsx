@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
-import { AppPageHeader, Card, TableText } from '../../components';
-import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../utils';
+import { AppPageHeader, Button, Card, EmptyList, TableText } from '../../components';
+import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '../../utils';
 import { useDelegating } from '../../hooks/useDelegating';
 import { useEra, useWeb3 } from '../../containers';
 import styles from './MyDelegation.module.css';
@@ -126,22 +126,33 @@ export const MyDelegation: React.VFC = () => {
   );
 
   const DelegationList = () => (
-    <div className="contentContainer">
+    <>
       {renderAsync(delegationList, {
         error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
         data: (data) => {
-          if (!data || data.length === 0) return <Typography.Title>{t('delegate.noDelegating')}</Typography.Title>;
+          if (!data || data.length === 0) {
+            return (
+              <EmptyList
+                title={t('delegate.nonDelegating')}
+                description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
+              >
+                <div className={styles.doDelegate}>
+                  <Button href={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</Button>
+                </div>
+              </EmptyList>
+            );
+          }
           return (
-            <>
+            <div className="contentContainer">
               <Typography.Title level={3} className={styles.header}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography.Title>
               <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
-            </>
+            </div>
           );
         },
       })}
-    </div>
+    </>
   );
 
   const DelegatingCard = () => {

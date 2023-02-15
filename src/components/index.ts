@@ -44,6 +44,7 @@ export * from './Table';
 export * from './GlobalBanner';
 export * from './Stat';
 export * from './Button';
+export * from './EmptyList';
 
 export {
   Header,
