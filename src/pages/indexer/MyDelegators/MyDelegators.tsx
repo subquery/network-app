@@ -18,7 +18,8 @@ const NoDelegator: React.VFC = () => {
   );
 };
 
-// TODO: move NoDelegator to OwnDelegator
+// TODO: move NoDelegator to OwnDelegator for indexer details consideration
+// TODO: OwnDelegator -> OwnDelegatorTable
 // TODO: pass delegators data to OwnDelegator
 export const MyDelegators: React.VFC = () => {
   const { account } = useWeb3();
