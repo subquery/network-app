@@ -10,7 +10,7 @@ import { FlexPlayground } from './Playground/FlexPlayground';
 import { ROUTES } from '../../utils';
 import { MyOffers } from './MyOffers';
 import { Marketplace } from './OfferMarketplace';
-import ServiceAgreements from './ServiceAgreements';
+import { ServiceAgreements } from './ServiceAgreements';
 import { SAPlayground } from './Playground';
 
 const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE } = ROUTES;

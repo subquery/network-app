@@ -9,7 +9,7 @@ import { MyStaking } from './MyStaking';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { Marketplace } from './OfferMarketplace';
-import ServiceAgreements from '../consumer/ServiceAgreements';
+import { ServiceAgreements } from '../consumer/ServiceAgreements';
 import { MyDelegators } from './MyDelegators';
 import { MyProjects } from './MyProjects';
 

@@ -7,7 +7,7 @@
 }
 
 .description {
-  margin-top: 1vh;
+  margin-top: 1.25rem;
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
@@ -24,5 +24,7 @@
 }
 
 .content {
-  margin: 1rem 0;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
 }
