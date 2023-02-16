@@ -18,6 +18,7 @@ import styles from './List.module.css';
 import clsx from 'clsx';
 import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { last } from 'ramda';
+import { TableTitle } from '@subql/components';
 
 type Props = {
   data: Plan[];
@@ -54,13 +55,13 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
     {
       dataIndex: 'price',
       key: 'price',
-      title: t('plans.headers.price').toUpperCase(),
+      title: <TableTitle title={t('plans.headers.price')} />,
       render: (value: BigInt) => <TableText content={`${formatEther(value)} SQT`} />,
     },
     {
       dataIndex: 'planTemplate',
       key: 'period',
-      title: t('plans.headers.period').toUpperCase(),
+      title: <TableTitle title={t('plans.headers.period')} />,
       render: (value: PlanTemplate) => (
         <TableText content={formatSecondsDuration(convertBigNumberToNumber(value.period))} />
       ),
@@ -68,7 +69,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
     {
       dataIndex: 'planTemplate',
       key: 'dailyReqCap',
-      title: t('plans.headers.dailyReqCap').toUpperCase(),
+      title: <TableTitle title={t('plans.headers.dailyReqCap')} />,
       align: 'center',
       render: (value: PlanTemplate) => (
         <TableText content={t('plans.default.query', { count: convertBigNumberToNumber(value.dailyReqCap) })} />
@@ -77,7 +78,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
     {
       dataIndex: 'planTemplate',
       key: 'rateLimit',
-      title: t('plans.headers.rateLimit').toUpperCase(),
+      title: <TableTitle title={t('plans.headers.rateLimit')} />,
       align: 'center',
       render: (value: PlanTemplate) => (
         <TableText content={`${convertBigNumberToNumber(value.rateLimit)} ${t('plans.default.requestPerMin')}`} />
@@ -86,7 +87,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
     {
       dataIndex: 'id',
       key: 'action',
-      title: t('plans.headers.action').toUpperCase(),
+      title: <TableTitle title={t('plans.headers.action')} />,
       width: 50,
       align: 'center',
       render: (id: string, plan: Plan) => (
