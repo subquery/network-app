@@ -13,10 +13,10 @@ const translation = {
     title: 'Indexer',
     indexers: 'Indexers',
     profile: 'My Profile', // Explorer V1
-    myStaking: 'My Staking',
     myDelegators: 'My Delegators',
     myDelegatorsDescription:
       'View the list of Delegators that are supporting you and manage your commission rate to attract even more',
+    myStaking: 'My Staking',
     myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
@@ -65,6 +65,13 @@ const translation = {
     amount: ' There are {{count}} indexer.',
     amount_other: ' There are {{count}} indexers.',
   },
+  myProjects: {
+    title: 'My Projects',
+    nonProjects: `You haven’t indexed any projects yet`,
+    nonProjectDesc: `Follow our documentation to help get you set up as an Indexer then head over to the Explorer to find the first project you would like to index.`,
+    learnMore: 'Learn how to index a project <1>here</1>',
+    description: 'All SubQuery projects you are currently indexing',
+  },
   indexerOfferMarket: {
     noOffersTitle: 'There are no current offers for you to accept',
     noOffers:
@@ -81,6 +88,7 @@ const translation = {
     approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',
     confirm: 'Approve on MetaMask',
   },
+
   claimIndexerRewards: {
     title: 'Collect early era’s rewards from this indexer',
     confirmToProceed: `Sign the transaction to collect all the early era’s rewards from this indexer, this transaction includes claiming the indexer’s early era’s rewards and executing the indexer’s staking changes which are blocked due to the unclaimed era rewards.

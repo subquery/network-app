@@ -42,6 +42,7 @@ export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentInd
   isOffline?: boolean | undefined;
 }
 
+// TODO: apply with query hook
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
   const pendingContracts = useContracts();

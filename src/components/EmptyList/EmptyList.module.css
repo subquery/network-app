@@ -16,3 +16,13 @@
 .infoLink {
   margin-top: 2vh;
 }
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.content {
+  margin: 1rem 0;
+}

@@ -37,6 +37,7 @@ const translation = {
     price: 'price',
     connectAccount: 'Please connect account.',
     learnMoreHere: 'Learn more <1>here</1>',
+    progress: 'progress',
   },
   status: {
     success: 'Success!',

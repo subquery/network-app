@@ -127,9 +127,7 @@ const NoOffers: React.VFC = () => {
       infoI18nKey={'myOffers.noOffersInfoLink'}
       infoLinkDesc={t('myOffers.noOffersInfoLink')}
     >
-      <div className={styles.noOffersButton}>
-        <CheckOfferAllowance />
-      </div>
+      <CheckOfferAllowance />
     </EmptyList>
   );
 };

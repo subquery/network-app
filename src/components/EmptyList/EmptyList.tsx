@@ -26,7 +26,7 @@ export const EmptyList: React.VFC<IEmptyList> = ({
   const sortedDescriptions = Array.isArray(description) ? description : [description];
   return (
     <div className={styles.emptyListContainer}>
-      <Typography variant="h5">{title}</Typography>
+      <Typography className={styles.title}>{title}</Typography>
       <div className={styles.description}>
         {sortedDescriptions.map((description) => (
           <Typography>{description}</Typography>
@@ -43,7 +43,7 @@ export const EmptyList: React.VFC<IEmptyList> = ({
         </Typography>
       )}
 
-      {children}
+      {children && <div className={styles.content}>{children}</div>}
     </div>
   );
 };

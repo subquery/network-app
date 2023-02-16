@@ -9,7 +9,6 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import styles from './AppPageHeader.module.css';
 import { CurEra } from '../CurEra';
 import { COLORS } from '../../utils';
-import { useTranslation } from 'react-i18next';
 
 type Props = {
   title: string | React.ReactNode;
@@ -17,7 +16,6 @@ type Props = {
 };
 
 export const AppPageHeader: React.VFC<Props> = ({ title, desc }) => {
-  const { t } = useTranslation();
   return (
     <>
       <div className={styles.header}>
