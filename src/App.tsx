@@ -107,32 +107,37 @@ const App: React.VFC = () => {
     <Providers>
       <div className="App">
         <BrowserRouter>
-          <Header />
           <div className="Main">
-            <BlockchainStatus>
-              <Routes>
-                <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
-                <Route
-                  element={
-                    <WalletRoute
-                      element={pages.Studio}
-                      title={t('studio.wallet.connect')}
-                      subtitle={t('studio.wallet.subTitle')}
-                    />
-                  }
-                  path={`${ROUTES.STUDIO}/*`}
-                />
-                <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
-                <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
-                <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
-                <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
-                <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
-                <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
-                <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
-              </Routes>
-            </BlockchainStatus>
+            <div className="Header">
+              <Header />
+            </div>
+
+            <div className="Content">
+              <BlockchainStatus>
+                <Routes>
+                  <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+                  <Route
+                    element={
+                      <WalletRoute
+                        element={pages.Studio}
+                        title={t('studio.wallet.connect')}
+                        subtitle={t('studio.wallet.subTitle')}
+                      />
+                    }
+                    path={`${ROUTES.STUDIO}/*`}
+                  />
+                  <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
+                  <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
+                  <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
+                  <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
+                  <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
+                  <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
+                  <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
+                </Routes>
+              </BlockchainStatus>
+            </div>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </BrowserRouter>
       </div>
     </Providers>
