@@ -13,7 +13,7 @@ import { Select, TableProps, Radio, Table } from 'antd';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
+import { useContracts, useWeb3 } from '../../../../containers';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -29,6 +29,7 @@ import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
 import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
+import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
@@ -299,7 +300,7 @@ export const Create: React.FC = () => {
   const { t } = useTranslation();
   const [curStep, setCurStep] = React.useState<number>(0);
   const pendingContracts = useContracts();
-  const templates = usePlanTemplates({});
+  const templates = useGetPlanTemplatesQuery({});
 
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     const contracts = await pendingContracts;
