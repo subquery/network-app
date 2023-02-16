@@ -10,6 +10,7 @@
 const INDEXER = {
   INDEXER: '/indexer',
   MY_STAKING: 'my-staking',
+  MY_PROJECTS: 'my-projects',
   MY_DELEGATORS: 'my-delegators',
   OFFER_MARKETPLACE: 'offers',
   SERVICE_AGREEMENTS: 'service-agreements',
@@ -107,4 +108,8 @@ const NAV_LINKS = {
 export const ROUTES = {
   ...PATHS,
   ...NAV_LINKS,
+};
+
+export const URLS = {
+  HOW_TO_INDEX_PROJECTS: 'https://academy.subquery.network/subquery_network/testnet/indexers/index-project.html',
 };

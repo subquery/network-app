@@ -136,9 +136,7 @@ export const MyDelegation: React.VFC = () => {
                 title={t('delegate.nonDelegating')}
                 description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
               >
-                <div className={styles.doDelegate}>
-                  <Button href={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</Button>
-                </div>
+                <Button href={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</Button>
               </EmptyList>
             );
           }
