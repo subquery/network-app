@@ -23,13 +23,14 @@ import {
   notEmpty,
   renderAsync,
 } from '../../../../utils';
-import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/registry/GetPlanTemplates';
 import { SummaryList, TableText } from '../../../../components';
 import { useSortedIndexerDeployments } from '../../../../hooks';
 import styles from './Create.module.css';
 import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { NumberInput } from '../../../../components/NumberInput';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
+import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
+import { TableTitle } from '@subql/components';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
@@ -42,26 +43,26 @@ export const getPlanTemplateColumns = (
   },
   {
     dataIndex: 'period',
-    title: i18next.t('plans.headers.period').toUpperCase(),
+    title: <TableTitle title={i18next.t('plans.headers.period').toUpperCase()} />,
     render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
   },
   {
     dataIndex: 'dailyReqCap',
-    title: i18next.t('plans.headers.dailyReqCap').toUpperCase(),
+    title: <TableTitle title={i18next.t('plans.headers.dailyReqCap').toUpperCase()} />,
     render: (dailyReqCap: string) => (
       <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
     ),
   },
   {
     dataIndex: 'rateLimit',
-    title: i18next.t('plans.headers.rateLimit').toUpperCase(),
+    title: <TableTitle title={i18next.t('plans.headers.rateLimit').toUpperCase()} />,
     render: (rateLimit: string) => (
       <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
     ),
   },
   {
-    title: i18next.t('general.choose').toUpperCase(),
     dataIndex: 'id',
+    title: <TableTitle title={i18next.t('general.choose').toUpperCase()} />,
     render: (id: string, template: Template, idx: number) => (
       <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
     ),
