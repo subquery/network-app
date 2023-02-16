@@ -15,8 +15,8 @@ const translation = {
     connectWallet: 'Connect',
     hosted: 'Frontier (Testnet)',
     swap: 'Swap',
-    importToken: `Import ${process.env.REACT_APP_TOKEN} to wallet`,
-    importStableToken: `Import ${process.env.REACT_APP_STABLE_TOKEN} to wallet`,
+    importToken: `Import ${import.meta.env.VITE_TOKEN} to wallet`,
+    importStableToken: `Import ${import.meta.env.VITE_STABLE_TOKEN} to wallet`,
     disconnect: 'Disconnect',
   },
   globalBanner: {

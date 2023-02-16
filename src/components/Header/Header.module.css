@@ -32,7 +32,7 @@
   text-decoration: none;
   margin: 0 1vw;
   display: flex;
-  color: var(--gray700);
+  color: var(--sq-gray-400);
 }
 
 .navLink:hover {

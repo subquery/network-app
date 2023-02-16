@@ -4,12 +4,13 @@
 import * as React from 'react';
 import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useNavigate, useParams } from 'react-router';
-import { CurEra } from '../../../../components';
-import styles from './DelegateIndexer.module.css';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useSortedIndexer } from '../../../../hooks';
-import { renderAsync } from '../../../../utils';
+import { CurEra } from '@components';
+import { useSortedIndexer } from '@hooks';
+import { renderAsync } from '@utils';
+
+import styles from './DelegateIndexer.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
 import { ROUTES } from '../../../../utils';

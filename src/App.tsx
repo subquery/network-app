@@ -49,7 +49,7 @@ const ErrorFallback = ({ error, componentStack, resetError }: any) => {
 
 const Providers: React.FC = ({ children }) => {
   return (
-    <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+    <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
         <Web3Provider>
           <ContractsProvider>

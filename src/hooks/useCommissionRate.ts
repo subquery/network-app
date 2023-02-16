@@ -15,7 +15,7 @@ export function useCommissionRate(account: string | null | undefined): AsyncMemo
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    const rate = await contracts.staking.commissionRates(account || '');
+    const rate = await contracts.indexerRegistry.commissionRates(account || '');
     return rate.valueAfter.div(COMMISSION_DIV_UNIT);
   }, []);
 }

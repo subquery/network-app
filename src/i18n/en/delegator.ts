@@ -21,7 +21,7 @@ const translation = {
     confirmDelegate: 'Confirm Delegation',
     undelegateValidNextEra:
       'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. ',
-    undelegateAmount: `Enter the amount of ${process.env.REACT_APP_TOKEN} you want to undelegate`,
+    undelegateAmount: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to undelegate`,
     confirmUndelegate: 'Confirm Undelegation',
     delegateFailure: 'Sorry, the delegation has failed.',
     delegateSuccess: 'Success! Your delegation has been completed.',
@@ -36,7 +36,7 @@ const translation = {
     totalAmount_other: 'You have {{count}} current delegations',
     invalidDelegateBeforeRewardCollect: `This indexer cannot be delegated to until they collect all the early era's rewards. Please contact the indexer to resolve the issue.`,
     invalidUndelegateBeforeRewardCollect: `This indexer cannot be undelegated from until they collect all the early era's rewards. Please contact the indexer to resolve the issue.`,
-    nonToUndelegate: `There is 0 ${process.env.REACT_APP_TOKEN} delegating for next era.`,
+    nonToUndelegate: `There is 0 ${import.meta.env.VITE_TOKEN} delegating for next era.`,
     delegationDesc:
       'View all Indexers you have delegated your kSQT tokens to. In return for delegating, you will earn rewards in kSQT from the rewards pool.',
   },
@@ -54,9 +54,9 @@ const translation = {
     withdrawToken: 'Withdraw all unlocked assets',
     withdraw: 'Withdraw',
     confirm: 'Confirm withdrawal amount',
-    enterWithdrawAmount: `Enter the amount of ${process.env.REACT_APP_TOKEN} you want to withdraw`,
+    enterWithdrawAmount: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to withdraw`,
     confirmWithdraw: 'Confirm Withdrawal',
-    aboutToWithdraw: `You are about to withdraw {{amount}} ${process.env.REACT_APP_TOKEN}.`,
+    aboutToWithdraw: `You are about to withdraw {{amount}} ${import.meta.env.VITE_TOKEN}.`,
   },
 
   projects: {

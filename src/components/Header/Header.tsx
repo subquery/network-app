@@ -77,7 +77,7 @@ const HeaderLinks = () => {
   ];
 
   const renderLink = (to: string, text: string) => {
-    const isInternalLink = !to.startsWith('http');
+    const isInternalLink = !to.startsWith('https');
 
     if (isInternalLink) {
       return (
@@ -97,7 +97,7 @@ const HeaderLinks = () => {
         rel="noreferrer"
         type="link"
         label={text}
-        colorScheme="standard"
+        colorScheme="neutral"
       />
     );
   };

@@ -16,6 +16,7 @@ import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
 import { parseEther } from 'ethers/lib/utils';
+import { Tabs } from '@subql/components';
 
 const { INDEXING, DELEGATING, REWARDS, LOCKED } = ROUTES;
 

@@ -23,7 +23,7 @@ import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
   try {
-    const purchaseUrl = `${process.env.REACT_APP_CONSUMER_HOST_ENDPOINT}/users/projects`;
+    const purchaseUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/users/projects`;
 
     const { response, error } = await POST({
       endpoint: purchaseUrl,
