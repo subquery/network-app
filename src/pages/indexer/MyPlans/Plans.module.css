@@ -1,4 +1,5 @@
 .tabs {
+  margin-top: 2vh;
   display: flex;
   justify-content: space-between;
   align-items: center;

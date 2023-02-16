@@ -15,6 +15,7 @@ export const NoPlans: React.VFC = () => {
       <Typography className={styles.description}>
         <Trans i18nKey={'indexerPlans.description'}>
           {t('indexerPlans.description')}
+          {/*TODO: add link */}
           <a href="/">here</a>
         </Trans>
       </Typography>

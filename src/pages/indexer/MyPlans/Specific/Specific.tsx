@@ -33,7 +33,7 @@ const Specific: React.FC = () => {
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load specific plans: ${e}`}</Typography>,
-          empty: () => <NoPlans i18nKey={'plans.specific.nonPlans'} />,
+          empty: () => <NoPlans />,
           data: (deployments) => {
             return (
               <>
