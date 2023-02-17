@@ -79,7 +79,7 @@ export const FlexPlayground: React.VFC = () => {
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
 
   const { queryUrl, requestTokenUrl } = React.useMemo(() => {
-    const url = process.env.REACT_APP_CONSUMER_HOST_ENDPOINT;
+    const url = process.env.VITE_CONSUMER_HOST_ENDPOINT;
     return {
       queryUrl: `${url}/users/channels/${flexPlan?.id}/playground`,
       requestTokenUrl: wrapProxyEndpoint(`${url}/token`, flexPlan?.indexer),
