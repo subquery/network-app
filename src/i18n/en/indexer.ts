@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+const TOKEN = import.meta.env.VITE_TOKEN;
+
 const translation = {
   era: {
     currentEra: 'Current Era',
@@ -36,14 +38,14 @@ const translation = {
     enterStakeAmount: 'Enter Staking Amount',
     confirmOnMetamask: 'Confirm On MetaMask',
     stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
-    stakeInputTitle: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to stake`,
+    stakeInputTitle: `Enter the amount of ${TOKEN} you want to stake`,
     confirmStake: 'Confirm Stake',
     enterUnstakeAmount: 'Enter Unstake Amount',
     maxStakeBalance: `Available stake amount: {{tokenAmount}} ${process.env.REACT_APP_TOKEN}`,
     unstakeBalanceNextEra: `Available unstake amount: {{tokenAmount}} ${process.env.REACT_APP_TOKEN}`,
     unstakeValidNextEra:
       'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
-    unstakeInputTitle: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to unstake`,
+    unstakeInputTitle: `Enter the amount of ${TOKEN} you want to unstake`,
     confirmUnstake: 'Confirm Unstake',
     updateCommissionRate: 'Change commission rate',
     setNewCommissionRate: 'Set new commission rate',

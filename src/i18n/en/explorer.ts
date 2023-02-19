@@ -1,6 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+const TOKEN = import.meta.env.VITE_TOKEN;
+const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN;
+
 const translation = {
   header: {
     explorer: 'Explorer',
@@ -15,8 +18,8 @@ const translation = {
     connectWallet: 'Connect',
     hosted: 'Frontier (Testnet)',
     swap: 'Swap',
-    importToken: `Import ${import.meta.env.VITE_TOKEN} to wallet`,
-    importStableToken: `Import ${import.meta.env.VITE_STABLE_TOKEN} to wallet`,
+    importToken: `Import ${TOKEN} to wallet`,
+    importStableToken: `Import ${STABLE_TOKEN} to wallet`,
     disconnect: 'Disconnect',
   },
   globalBanner: {
