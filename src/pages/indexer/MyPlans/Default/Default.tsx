@@ -4,11 +4,11 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3 } from '../../../../containers';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
+import { useWeb3 } from '@containers';
+import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import List from '../List';
-import { NoPlans } from '../NoPlans';
 import { useGetPlansQuery } from '@subql/react-hooks';
+import { EmptyList } from '@components';
 
 export const Default: React.VFC = () => {
   const { account } = useWeb3();
@@ -22,7 +22,13 @@ export const Default: React.VFC = () => {
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Error loading plans: ${e}`}</Typography>,
-          empty: () => <NoPlans />,
+          empty: () => (
+            <EmptyList
+              title={t('indexerPlans.title')}
+              description={t('indexerPlans.description')}
+              infoI18nKey={'indexerPlans.learnMore'}
+            />
+          ),
           data: (data) => <List data={data} onRefresh={plans.refetch} title={t('plans.default.title')} />,
         },
       )}

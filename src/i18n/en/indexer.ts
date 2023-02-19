@@ -74,10 +74,11 @@ const translation = {
     nonProjectDesc: `Follow our documentation to help get you set up as an Indexer then head over to the Explorer to find the first project you would like to index.`,
     learnMore: 'Learn how to index a project <1>here</1>',
     description: 'All SubQuery projects you are currently indexing',
+  },
   indexerPlans: {
     title: 'You haven’t created any plans yet',
-    description:
-      'Create your first plan to advertise your indexing service to Consumers for purchase. <br><br> Learn how to create a plan <1>here</>',
+    description: 'Create your first plan to advertise your indexing service to Consumers for purchase.',
+    learnMore: 'Learn how to create a plan <1>here</>',
   },
   indexerOfferMarket: {
     noOffersTitle: 'There are no current offers for you to accept',
@@ -87,8 +88,8 @@ const translation = {
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
   },
   myDelegators: {
-    nonDelegatorsTitle: 'You don’t have any Delegators yet',
-    nonDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
+    noDelegatorsTitle: 'You don’t have any Delegators yet',
+    noDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
   },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',

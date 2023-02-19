@@ -4,13 +4,12 @@
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeploymentMeta } from '../../../../components';
-import { useWeb3 } from '../../../../containers';
-import { mapAsync, notEmpty, renderAsyncArray } from '../../../../utils';
-import List from '../List';
-import { NoPlans } from '../NoPlans';
+import { DeploymentMeta, EmptyList } from '@components';
+import { useWeb3 } from '@containers';
+import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import styles from './Specific.module.css';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
+import List from '../List';
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
@@ -33,7 +32,13 @@ const Specific: React.FC = () => {
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load specific plans: ${e}`}</Typography>,
-          empty: () => <NoPlans />,
+          empty: () => (
+            <EmptyList
+              title={t('indexerPlans.title')}
+              description={t('indexerPlans.description')}
+              infoI18nKey={'indexerPlans.learnMore'}
+            />
+          ),
           data: (deployments) => {
             return (
               <>

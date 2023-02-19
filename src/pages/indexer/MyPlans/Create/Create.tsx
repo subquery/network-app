@@ -12,8 +12,8 @@ import clsx from 'clsx';
 import { Select, TableProps, Radio, Table } from 'antd';
 import * as yup from 'yup';
 import { constants } from 'ethers';
-import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, useWeb3 } from '../../../../containers';
+import TransactionModal from '@components/TransactionModal';
+import { useContracts, useWeb3 } from '@containers';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -22,12 +22,12 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
-} from '../../../../utils';
-import { SummaryList, TableText } from '../../../../components';
-import { useSortedIndexerDeployments } from '../../../../hooks';
+} from '@utils';
+import { SummaryList, TableText } from '@components';
+import { useSortedIndexerDeployments } from '@hooks';
 import styles from './Create.module.css';
-import { formatSecondsDuration } from '../../../../utils/dateFormatters';
-import { NumberInput } from '../../../../components/NumberInput';
+import { formatSecondsDuration } from '@utils/dateFormatters';
+import { NumberInput } from '@components/NumberInput';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
 import { TableTitle } from '@subql/components';
