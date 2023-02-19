@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppPageHeader, TabButtons } from '../../../components';
+import { AppPageHeader, TabButtons } from '@components';
 import { Default } from './Default';
 import { Create } from './Create';
 import Specific from './Specific';
