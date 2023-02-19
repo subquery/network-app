@@ -8,9 +8,9 @@ import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEra } from '../../../containers';
-import { mapEraValue, parseRawEraValue } from '../../../hooks/useEraValue';
-import { TOKEN, mapAsync, convertStringToNumber, mergeAsync } from '../../../utils';
+import { useEra } from '@containers';
+import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { TOKEN, mapAsync, convertStringToNumber, mergeAsync } from '@utils';
 import styles from './OwnDelegator.module.css';
 
 interface Props {

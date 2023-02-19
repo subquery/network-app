@@ -9,7 +9,7 @@ import { Create } from './Create';
 import Specific from './Specific';
 import { useTranslation } from 'react-i18next';
 import styles from './Plans.module.css';
-import { ROUTES } from '../../../utils';
+import { ROUTES } from '@utils';
 
 const { DEFAULT_PLANS, SPECIFIC_PLANS } = ROUTES;
 

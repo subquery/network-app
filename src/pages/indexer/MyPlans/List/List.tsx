@@ -3,20 +3,19 @@
 
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
-import {
-  GetPlans_plans_nodes as Plan,
-  GetPlans_plans_nodes_planTemplate as PlanTemplate,
-} from '../../../../__generated__/registry/GetPlans';
 import { useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/react-ui';
-import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts } from '../../../../containers';
+import { GetPlans_plans_nodes as Plan } from '@__generated__/registry/GetPlans';
+//TODO: replace with correct fragment
+import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
+import TransactionModal from '@components/TransactionModal';
+import { useContracts } from '@containers';
 import assert from 'assert';
-import { convertBigNumberToNumber, formatEther, TOKEN } from '../../../../utils';
-import { SummaryList, TableText } from '../../../../components';
+import { convertBigNumberToNumber, formatEther, TOKEN } from '@utils';
+import { SummaryList, TableText } from '@components';
 import styles from './List.module.css';
 import clsx from 'clsx';
-import { formatSecondsDuration } from '../../../../utils/dateFormatters';
+import { formatSecondsDuration } from '@utils/dateFormatters';
 import { last } from 'ramda';
 import { TableTitle } from '@subql/components';
 
@@ -56,7 +55,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       dataIndex: 'price',
       key: 'price',
       title: <TableTitle title={t('plans.headers.price')} />,
-      render: (value: BigInt) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
     },
     {
       dataIndex: 'planTemplate',
