@@ -31,6 +31,7 @@ import { NumberInput } from '@components/NumberInput';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
 import { TableTitle } from '@subql/components';
+import { SUB_PLAN_TEMPLATES } from '@containers/IndexerRegistryProjectSub';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
@@ -301,7 +302,17 @@ export const Create: React.FC = () => {
   const { t } = useTranslation();
   const [curStep, setCurStep] = React.useState<number>(0);
   const pendingContracts = useContracts();
-  const templates = useGetPlanTemplatesQuery({});
+  const templates = useGetPlanTemplatesQuery();
+
+  templates.subscribeToMore({
+    document: SUB_PLAN_TEMPLATES,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        templates.refetch();
+      }
+      return prev;
+    },
+  });
 
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     const contracts = await pendingContracts;
