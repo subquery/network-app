@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+const TOKEN = import.meta.env.VITE_TOKEN;
+
 const translation = {
   era: {
     currentEra: 'Current Era',
@@ -17,6 +19,9 @@ const translation = {
     myDelegatorsDescription:
       'View the list of Delegators that are supporting you and manage your commission rate to attract even more',
     myStaking: 'My Staking',
+    myPlans: 'My Plans',
+    myPlansDescription:
+      'Create and view plans for your indexing service that will be advertised to Consumers to purchase',
     myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
@@ -33,14 +38,14 @@ const translation = {
     enterStakeAmount: 'Enter Staking Amount',
     confirmOnMetamask: 'Confirm On MetaMask',
     stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
-    stakeInputTitle: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to stake`,
+    stakeInputTitle: `Enter the amount of ${TOKEN} you want to stake`,
     confirmStake: 'Confirm Stake',
     enterUnstakeAmount: 'Enter Unstake Amount',
     maxStakeBalance: `Available stake amount: {{tokenAmount}} ${process.env.REACT_APP_TOKEN}`,
     unstakeBalanceNextEra: `Available unstake amount: {{tokenAmount}} ${process.env.REACT_APP_TOKEN}`,
     unstakeValidNextEra:
       'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
-    unstakeInputTitle: `Enter the amount of ${import.meta.env.VITE_TOKEN} you want to unstake`,
+    unstakeInputTitle: `Enter the amount of ${TOKEN} you want to unstake`,
     confirmUnstake: 'Confirm Unstake',
     updateCommissionRate: 'Change commission rate',
     setNewCommissionRate: 'Set new commission rate',
@@ -72,6 +77,11 @@ const translation = {
     learnMore: 'Learn how to index a project <1>here</1>',
     description: 'All SubQuery projects you are currently indexing',
   },
+  indexerPlans: {
+    title: 'You haven’t created any plans yet',
+    description: 'Create your first plan to advertise your indexing service to Consumers for purchase.',
+    learnMore: 'Learn how to create a plan <1>here</>',
+  },
   indexerOfferMarket: {
     noOffersTitle: 'There are no current offers for you to accept',
     noOffers:
@@ -80,8 +90,8 @@ const translation = {
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
   },
   myDelegators: {
-    nonDelegatorsTitle: 'You don’t have any Delegators yet',
-    nonDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
+    noDelegatorsTitle: 'You don’t have any Delegators yet',
+    noDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
   },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',

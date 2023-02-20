@@ -12,6 +12,7 @@ const INDEXER = {
   MY_STAKING: 'my-staking',
   MY_PROJECTS: 'my-projects',
   MY_DELEGATORS: 'my-delegators',
+  MY_PLANS: 'my-plans',
   OFFER_MARKETPLACE: 'offers',
   SERVICE_AGREEMENTS: 'service-agreements',
   ONGOING_PLANS: 'ongoing',

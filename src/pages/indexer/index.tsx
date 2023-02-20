@@ -12,8 +12,9 @@ import { Marketplace } from './OfferMarketplace';
 import { ServiceAgreements } from '../consumer/ServiceAgreements';
 import { MyDelegators } from './MyDelegators';
 import { MyProjects } from './MyProjects';
+import { Plans } from './MyPlans';
 
-const { MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS, MY_PROJECTS } = ROUTES;
+const { MY_PROJECTS, MY_PLANS, MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 
 export const Indexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -36,6 +37,10 @@ export const Indexer: React.VFC = () => {
       link: SERVICE_AGREEMENTS,
     },
     {
+      label: t('indexer.myPlans'),
+      link: MY_PLANS,
+    },
+    {
       label: t('plans.category.offerMarketplace'),
       link: OFFER_MARKETPLACE,
     },
@@ -48,6 +53,7 @@ export const Indexer: React.VFC = () => {
         <Route path={`${MY_DELEGATORS}/*`} element={<MyDelegators />} />
         <Route path={`${MY_PROJECTS}/*`} element={<MyProjects />} />
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
+        <Route path={`${MY_PLANS}/*`} element={<Plans />} />
         <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'indexer'} />} />
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
         <Route path={'/'} element={<Navigate replace to={MY_STAKING} />} />

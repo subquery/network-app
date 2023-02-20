@@ -4,17 +4,17 @@
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, Spinner } from '../../../components';
-import { useWeb3 } from '../../../containers';
+import { AppPageHeader, EmptyList, Spinner } from '@components';
+import { useWeb3 } from '@containers';
 import styles from './MyDelegators.module.css';
 import { Typography } from '@subql/react-ui';
 import { OwnDelegator } from './OwnDelegator';
-import { SUB_DELEGATORS } from '../../../containers/IndexerRegistryProjectSub';
+import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 
-const NoDelegator: React.VFC = () => {
+const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <EmptyList title={t('myDelegators.nonDelegatorsTitle')} description={t('myDelegators.nonDelegatorsDescription')} />
+    <EmptyList title={t('myDelegators.noDelegatorsTitle')} description={t('myDelegators.noDelegatorsDescription')} />
   );
 };
 

@@ -29,3 +29,12 @@ export const SUB_DELEGATORS = gql`
     }
   }
 `;
+
+export const SUB_PLAN_TEMPLATES = gql`
+  subscription GetPlanTemplates {
+    planTemplates {
+      id
+      _entity
+    }
+  }
+`;

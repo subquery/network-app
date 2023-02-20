@@ -1,6 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+const TOKEN = import.meta.env.VITE_TOKEN;
+const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN;
+
 const translation = {
   consumer: 'Consumer',
   plans: {
@@ -107,21 +110,21 @@ const translation = {
     closed: 'Closed',
     playground: 'Playground',
     billing: {
-      transfer: `Transfer ${import.meta.env.VITE_TOKEN ?? 'SQT'} to billing account`,
-      addToken: `Add ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
+      transfer: `Transfer ${TOKEN ?? 'SQT'} to billing account`,
+      addToken: `Add ${TOKEN ?? 'SQT'}`,
       confirmTransfer: 'Confirm Transfer',
       transferDescription:
         'When transferring SQT you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the indexer requests it to be closed. This automation will prevent delays and give you the best user experience.',
-      transferToken: `Transfer ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
-      failureTransfer: `Sorry, failed to transfer ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
-      successTransfer: `You have successfully transferred ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
+      transferToken: `Transfer ${TOKEN ?? 'SQT'}`,
+      failureTransfer: `Sorry, failed to transfer ${TOKEN ?? 'SQT'}`,
+      successTransfer: `You have successfully transferred ${TOKEN ?? 'SQT'}`,
       notEnoughToken: `You don't have enough SQT in your wallet.`,
-      withdrawTitle: `Withdraw ${import.meta.env.VITE_TOKEN ?? 'SQT'} to wallet`,
-      withdraw: `Withdraw ${import.meta.env.VITE_TOKEN ?? 'SQT'} to wallet`,
-      withdrawToken: `Withdraw ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
+      withdrawTitle: `Withdraw ${TOKEN ?? 'SQT'} to wallet`,
+      withdraw: `Withdraw ${TOKEN ?? 'SQT'} to wallet`,
+      withdrawToken: `Withdraw ${TOKEN ?? 'SQT'}`,
       confirmWithdraw: 'Confirm withdraw',
-      failureWithdraw: `Sorry, failed to withdraw ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
-      successWithdraw: `You have successfully withdrawn ${import.meta.env.VITE_TOKEN ?? 'SQT'}`,
+      failureWithdraw: `Sorry, failed to withdraw ${TOKEN ?? 'SQT'}`,
+      successWithdraw: `You have successfully withdrawn ${TOKEN ?? 'SQT'}`,
     },
     claim: {
       title: 'Claim remaining deposit',
@@ -273,7 +276,7 @@ const translation = {
     withdraw: {
       title: 'withdraw',
       modalTitle: 'Withdraw from the offer',
-      description: `You are about to withdraw {{bigNumAmount}} ${import.meta.env.VITE_TOKEN} from this offer to your wallet`,
+      description: `You are about to withdraw {{bigNumAmount}} ${TOKEN} from this offer to your wallet`,
       failureText: 'Sorry, failed to withdraw offer',
     },
   },
@@ -308,7 +311,7 @@ const translation = {
       blockHeight: 'Block height',
       blockHeightError: 'Your project is currently behind the minimum blockheight.',
       dailyRewards: 'Daily Rewards',
-      dailyRewardsError: `Please stake more ${import.meta.env.VITE_TOKEN} or get more delegation to increase daily reward capacity.`,
+      dailyRewardsError: `Please stake more ${TOKEN} or get more delegation to increase daily reward capacity.`,
       failureText: 'Failed to accept offer',
       afterAcceptOffer:
         'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
@@ -321,18 +324,18 @@ const translation = {
       'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
   },
   swap: {
-    buyKSQT: `${import.meta.env.VITE_STABLE_TOKEN} → ${import.meta.env.VITE_TOKEN}`,
-    sellKSQT: `${import.meta.env.VITE_TOKEN} → ${import.meta.env.VITE_STABLE_TOKEN}`,
-    poolSize: `${import.meta.env.VITE_TOKEN} pool size`,
-    poolSizeTooltip: `This is the amount of ${import.meta.env.VITE_TOKEN} currently available to be purchased in the liquidity pool`,
+    buyKSQT: `${STABLE_TOKEN} → ${TOKEN}`,
+    sellKSQT: `${TOKEN} → ${STABLE_TOKEN}`,
+    poolSize: `${TOKEN} pool size`,
+    poolSizeTooltip: `This is the amount of ${TOKEN} currently available to be purchased in the liquidity pool`,
     curRate: 'current rate',
     curRateTooltip: 'The token rate will remain fixed in Kepler network before mainnet is launched',
     dataUpdateEvery5Min: 'Data is updated every 5 minutes',
     from: 'From',
     to: 'To',
     swappableBalance: 'Your Swappable BALANCE',
-    swappableBalanceTooltip: `This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for ${import.meta.env.VITE_STABLE_TOKEN}.`,
-    approveUSD: `Approve ${import.meta.env.VITE_STABLE_TOKEN}`,
+    swappableBalanceTooltip: `This is calculated by the total rewards you’ve claimed minus the amount you’ve swapped for ${STABLE_TOKEN}.`,
+    approveUSD: `Approve ${STABLE_TOKEN}`,
     swapButton: 'Swap',
     walletBalance: 'Wallet Balance',
     noOrderInPool: 'There is no available order in pool currently.',
