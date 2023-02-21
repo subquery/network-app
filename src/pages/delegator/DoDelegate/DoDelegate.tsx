@@ -59,10 +59,10 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
     const delegateAmount = parseEther(input.toString());
 
     if (delegator && delegator !== account) {
-      return contracts.staking.redelegate(delegator, indexerAddress, delegateAmount);
+      return contracts.stakingManager.redelegate(delegator, indexerAddress, delegateAmount);
     }
 
-    return contracts.staking.delegate(indexerAddress, delegateAmount);
+    return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
   return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra, indexer), {

@@ -45,11 +45,11 @@ const ChangeDelegationModal: React.FC<{ indexerAddress: string; onClose: () => v
 
     const tx = await (account === indexerAddress
       ? type === 'add'
-        ? contracts.staking.stake(account, ether)
-        : contracts.staking.unstake(account, ether)
+        ? contracts.stakingManager.stake(account, ether)
+        : contracts.stakingManager.unstake(account, ether)
       : type === 'add'
-      ? contracts.staking.delegate(indexerAddress, ether)
-      : contracts.staking.undelegate(indexerAddress, ether));
+      ? contracts.stakingManager.delegate(indexerAddress, ether)
+      : contracts.stakingManager.undelegate(indexerAddress, ether));
 
     await tx.wait();
     onClose();

@@ -32,7 +32,7 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disable
     const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
-    return contracts.staking.widthdraw();
+    return contracts.stakingManager.widthdraw();
   };
 
   return (

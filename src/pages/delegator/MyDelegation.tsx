@@ -28,29 +28,31 @@ const getColumns = (
   {
     title: '#',
     key: 'idx',
-    width: 30,
+    width: 50,
     render: (_: string, __: any, index: number) => <TableText content={index + 1} />,
   },
   {
     title: <TableTitle title={t('indexer.title')} />,
     dataIndex: 'indexer',
-    width: 30,
+    width: 250,
     render: (text: string) => <TableText content={text} />,
   },
   {
     title: <TableTitle title={t('delegate.yourDelegateAmount')} />,
-    width: 120,
+    width: 200,
     children: [
       {
         title: <TableTitle title={t('delegate.currentEra')} />,
         dataIndex: ['value', 'current'],
         key: 'currentValue',
+        width: 100,
         render: (text: string) => <TokenAmount value={text} />,
       },
       {
         title: <TableTitle title={t('delegate.nextEra')} />,
         dataIndex: ['value', 'after'],
         key: 'afterValue',
+        width: 100,
         render: (text: string) => <TokenAmount value={text} />,
       },
     ],
@@ -59,7 +61,7 @@ const getColumns = (
     title: <TableTitle title={t('general.status')} />,
     dataIndex: 'indexerActive',
     key: 'indexerActive',
-    width: 60,
+    width: 100,
     render: (active: string) => {
       const tagColor = active ? 'success' : 'default';
       const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
@@ -72,7 +74,7 @@ const getColumns = (
     dataIndex: 'indexer',
     key: 'operation',
     fixed: 'right',
-    width: 65,
+    width: 100,
     render: (id: string, record) => {
       if ((record?.value?.after ?? 0) === 0) {
         return <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>;

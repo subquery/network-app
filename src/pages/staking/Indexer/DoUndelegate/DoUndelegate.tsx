@@ -50,7 +50,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(amount.toString());
-    const pendingTx = contracts.staking.undelegate(indexerAddress, delegateAmount);
+    const pendingTx = contracts.stakingManager.undelegate(indexerAddress, delegateAmount);
 
     return pendingTx;
   };
