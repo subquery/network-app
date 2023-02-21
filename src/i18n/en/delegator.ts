@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const TOKEN = import.meta.env.VITE_TOKEN;
+import { TOKEN } from '@utils/constants';
 
 const translation = {
   delegator: 'Delegator',

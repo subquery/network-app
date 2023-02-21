@@ -4,14 +4,16 @@
 import * as React from 'react';
 import { Menu, Dropdown as AntdDropdown } from 'antd';
 import { Typography } from '@subql/react-ui';
-import styles from './Dropdown.module.css';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
+import styles from './Dropdown.module.css';
 
-export type keyPair = {
+interface keyPair {
   key: string;
   label: string;
-};
+  icon?: React.ReactNode;
+  onClick?: (key: string) => void;
+}
 
 interface DropdownProps {
   menu: Array<keyPair>;
@@ -22,15 +24,23 @@ interface DropdownProps {
 }
 
 //TODO: New design comes with dropdown, break change with 5.0
-export const Dropdown: React.VFC<DropdownProps> = ({ menu, menuItem, dropdownContent, handleOnClick, styleProps }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ menu, menuItem, dropdownContent, handleOnClick, styleProps }) => {
   const menuList = (
-    <Menu>
-      {menu.map((menu) => (
-        <Menu.Item key={menu.key} onClick={() => handleOnClick && handleOnClick(menu.key)}>
-          {typeof menuItem === 'string' || !menuItem ? <Typography>{menu.label}</Typography> : menuItem}
-        </Menu.Item>
-      ))}
-    </Menu>
+    <Menu
+      items={menu.map((menu, index) => ({
+        key: index,
+        label: (
+          <div
+            key={index}
+            onClick={() => (menu.onClick ? menu.onClick(menu?.key) : handleOnClick && handleOnClick(menu?.key))}
+            className={styles.menuItem}
+          >
+            {typeof menuItem === 'string' || !menuItem ? <Typography>{menu?.label}</Typography> : <>{menuItem}</>}
+          </div>
+        ),
+        icon: menu.icon,
+      }))}
+    />
   );
 
   return (

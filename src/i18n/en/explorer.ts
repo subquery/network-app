@@ -1,8 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const TOKEN = import.meta.env.VITE_TOKEN;
-const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN;
+import { STABLE_TOKEN, TOKEN } from '@utils/constants';
 
 const translation = {
   header: {
@@ -21,6 +20,7 @@ const translation = {
     importToken: `Import ${TOKEN} to wallet`,
     importStableToken: `Import ${STABLE_TOKEN} to wallet`,
     disconnect: 'Disconnect',
+    walletBalance: `Wallet Balance: {{balance}} ${TOKEN}`,
   },
   globalBanner: {
     title: 'Season 3 Frontier Testnet has started 🔥',

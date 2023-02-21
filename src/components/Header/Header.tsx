@@ -111,9 +111,8 @@ const HeaderLinks = () => {
   );
 };
 
-const Header: React.VFC = () => {
+export const Header: React.FC = () => {
   const { account } = useWeb3();
-  const { t } = useTranslation();
 
   return (
     <div className={styles.header}>
@@ -133,5 +132,3 @@ const Header: React.VFC = () => {
     </div>
   );
 };
-
-export default Header;
