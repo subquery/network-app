@@ -42,8 +42,6 @@ export const MyStaking: React.VFC = () => {
 
             if (indexer === undefined && !s) return <Spinner />;
             if (!indexer && !s) return <NotRegisteredIndexer />;
-            console.log('s', s);
-            console.log('indexer', indexer);
 
             const sortedTotalStaking = truncFormatEtherStr(`${s?.totalStake.current ?? 0}`);
 
