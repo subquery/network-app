@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Header from './Header';
 import Footer from './Footer';
 import ImageInput from './ImageInput';
 import FTextInput from './FTextInput';
@@ -21,6 +20,7 @@ import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
 import Copy from './Copy';
 import Status from './Status';
+export * from './Header';
 export * from './ConnectWallet';
 export * from './DeploymentInfo';
 export * from './Sidebar';
@@ -48,7 +48,6 @@ export * from './EmptyList';
 export * from './Description';
 
 export {
-  Header,
   Footer,
   ImageInput,
   FTextInput,

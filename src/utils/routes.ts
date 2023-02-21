@@ -42,11 +42,17 @@ const DELEGATOR = {
   TOP_INDEXERS: 'top',
 };
 
+const MY_ACCOUNT = {
+  MY_ACCOUNT: '/my-account',
+  REWARDS: 'rewards',
+};
+
 // TODO: Remove or ReOrg the “old” paths once renovation done
 const PATHS = {
   ...INDEXER,
   ...DELEGATOR,
   ...CONSUMER,
+  ...MY_ACCOUNT,
   // ROOT PATHS
   EXPLORER: '/explorer',
   STUDIO: '/studio',
@@ -104,6 +110,8 @@ const NAV_LINKS = {
   INDEXER_SA_NAV: `${INDEXER.INDEXER}/${INDEXER.SERVICE_AGREEMENTS}`,
   INDEXER_SA_ONGOING_NAV: `${INDEXER.INDEXER}/${INDEXER.SERVICE_AGREEMENTS}/${INDEXER.ONGOING_PLANS}`,
   INDEXER_OFFER_MARKETPLACE_NAV: `${INDEXER.INDEXER}/${INDEXER.OFFER_MARKETPLACE}`,
+
+  MY_ACCOUNT_REWARDS_NAV: `${MY_ACCOUNT.MY_ACCOUNT}/${MY_ACCOUNT.REWARDS}`,
 };
 
 export const ROUTES = {
