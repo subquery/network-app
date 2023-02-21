@@ -29,7 +29,7 @@ export const EmptyList: React.VFC<IEmptyList> = ({
       <Typography className={styles.title}>{title}</Typography>
       <div className={styles.description}>
         {sortedDescriptions.map((description) => (
-          <Typography>{description}</Typography>
+          <Typography key={description}>{description}</Typography>
         ))}
       </div>
       {infoI18nKey && (
