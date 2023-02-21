@@ -19,6 +19,8 @@ export * from './constants';
 export * from './USDC';
 export * from './getOrderedAccounts';
 export * from './getFlexPlanPrice';
+export * from './routes';
+export * from './eip721SignTokenReq';
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -89,10 +91,11 @@ export function mergeAsync<T1, T2, T3, T4, T5, T6>(
   const loading = filteredMergeT.find((v) => v?.loading)?.loading;
   const error = filteredMergeT.find((v) => v?.error)?.error;
   const data = filteredMergeT.map((v) => v?.data) as MergedData<T1, T2, T3, T4, T5, T6>;
+
   return {
     loading: !!loading,
     error,
-    data: data,
+    data,
   };
 }
 
@@ -150,7 +153,7 @@ export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): Rende
  *
  */
 export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
-  if (data.data !== undefined) {
+  if (data.data?.findIndex((d) => d === undefined) === -1) {
     try {
       if (data.data === null || (Array.isArray(data.data) && !data.data.length)) {
         return handlers.empty();

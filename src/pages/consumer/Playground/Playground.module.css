@@ -1,0 +1,74 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.errorText {
+  margin: 1rem 0;
+}
+
+.content {
+  background: white;
+  min-height: 560px;
+  border-radius: 4px;
+  padding: 1.6rem;
+  margin: 1rem 0;
+}
+
+/* RequestToken */
+.requestToken {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 5rem 0;
+}
+
+.requestTokenBtn {
+  margin: 1rem 0;
+  background: var(--gradient-to) !important;
+}
+
+/* playground */
+.deploymentMetaContainer {
+  background: white;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow: scroll;
+}
+
+.deploymentMeta {
+  border: 1px solid var(--gray300);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.deploymentTable {
+  margin-bottom: 1rem;
+}
+
+.playgroundHeader {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.playgroundText {
+  width: 30%;
+}
+
+.playgroundContainer {
+  display: flex;
+  height: 60vh;
+  flex-direction: column;
+}

@@ -11,7 +11,7 @@ type Props = {
   list: {
     label: string;
     link: string;
-    icon: React.ReactElement;
+    icon?: React.ReactElement;
   }[];
 };
 
@@ -20,11 +20,11 @@ export const Sidebar: React.VFC<Props> = ({ list }) => {
     <div className={styles.sidebar}>
       {list.map((sidebarItem) => (
         <NavLink
-          className={(isActive) => clsx(styles.navLink, isActive && styles.activeNav)}
+          className={({ isActive }) => clsx(styles.navLink, isActive && styles.activeNav)}
           to={sidebarItem.link}
           key={sidebarItem.link}
         >
-          {sidebarItem.icon}
+          {sidebarItem?.icon}
           <Typography>{sidebarItem.label}</Typography>
         </NavLink>
       ))}

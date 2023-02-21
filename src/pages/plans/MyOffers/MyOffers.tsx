@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
 import {
   AppPageHeader,
   ApproveContract,
@@ -18,12 +18,9 @@ import { Button } from '../../../components/Button';
 import { useOwnExpiredOffers, useOwnFinishedOffers, useOwnOpenOffers, useSQToken, useWeb3 } from '../../../containers';
 import { OfferTable } from './OfferTable';
 import TransactionModal from '../../../components/TransactionModal';
+import { ROUTES } from '../../../utils';
 
-const OFFERS_ROUTE = '/plans/my-offers';
-export const OPEN_OFFERS = `${OFFERS_ROUTE}/open`;
-export const CLOSE_OFFERS = `${OFFERS_ROUTE}/close`;
-export const EXPIRED_OFFERS = `${OFFERS_ROUTE}/expired`;
-export const CREATE_OFFER = `${OFFERS_ROUTE}/create`;
+const { OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS, CREATE_OFFER } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myOffers.open'), link: OPEN_OFFERS, tooltip: i18next.t('myOffers.openTooltip') },
@@ -37,7 +34,7 @@ export const TokenAllowanceProtect: React.FC<{ children: JSX.Element }> = ({ chi
   const requiresTokenApproval = offerAllowance.data?.isZero();
 
   if (requiresTokenApproval) {
-    return <Redirect to={OPEN_OFFERS} />;
+    return <Route element={<Navigate replace to={OPEN_OFFERS} />} />;
   } else {
     return children;
   }
@@ -45,7 +42,7 @@ export const TokenAllowanceProtect: React.FC<{ children: JSX.Element }> = ({ chi
 
 export const CheckOfferAllowance: React.VFC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { offerAllowance } = useSQToken();
   const requiresTokenApproval = offerAllowance.data?.isZero();
 
@@ -59,24 +56,21 @@ export const CheckOfferAllowance: React.VFC = () => {
             <ModalApproveToken
               contract={ApproveContract.PurchaseOfferMarket}
               onSubmit={() => offerAllowance.refetch()}
-              onSuccess={() => history.push(CREATE_OFFER)}
+              onSuccess={() => navigate(CREATE_OFFER)}
             />
           );
         }}
       />
     );
   } else {
-    return <Button onClick={() => history.push(CREATE_OFFER)}>{t('myOffers.createOffer')}</Button>;
+    return <Button onClick={() => navigate(CREATE_OFFER)}>{t('myOffers.createOffer')}</Button>;
   }
 };
 
-export const OfferHeader: React.VFC = () => {
-  const { t } = useTranslation();
-
+export const OfferHeader: React.VFC<{ title: string }> = ({ title }) => {
   return (
     <>
-      <AppPageHeader title={t('myOffers.title')} />
-
+      <AppPageHeader title={title} />
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
         <div className={styles.create}>
@@ -96,7 +90,6 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, description }) => {
   const { account } = useWeb3();
   return (
     <>
-      <OfferHeader />
       <div className="contentContainer">
         <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
       </div>
@@ -106,30 +99,35 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, description }) => {
 
 export const MyOffers: React.VFC = () => {
   const { t } = useTranslation();
+  const match = useMatch('/plans/my-offers/create');
 
   return (
-    <Switch>
-      <Route exact path={OPEN_OFFERS} component={() => <MyOffer queryFn={useOwnOpenOffers} />} />
-      <Route
-        exact
-        path={CLOSE_OFFERS}
-        component={() => <MyOffer queryFn={useOwnFinishedOffers} description={t('myOffers.closedDescription')} />}
-      />
-      <Route
-        exact
-        path={EXPIRED_OFFERS}
-        component={() => <MyOffer queryFn={useOwnExpiredOffers} description={t('myOffers.expiredDescription')} />}
-      />
-      <Route
-        exact
-        path={CREATE_OFFER}
-        component={() => (
-          <TokenAllowanceProtect>
-            <CreateOffer />
-          </TokenAllowanceProtect>
-        )}
-      />
-      <Redirect from={OFFERS_ROUTE} to={OPEN_OFFERS} />
-    </Switch>
+    <>
+      {match?.pathname ? (
+        <AppPageHeader title={t('myOffers.createOffer')} />
+      ) : (
+        <OfferHeader title={t('myOffers.title')} />
+      )}
+      <Routes>
+        <Route path={OPEN_OFFERS} element={<MyOffer queryFn={useOwnOpenOffers} />} />
+        <Route
+          path={CLOSE_OFFERS}
+          element={<MyOffer queryFn={useOwnFinishedOffers} description={t('myOffers.closedDescription')} />}
+        />
+        <Route
+          path={EXPIRED_OFFERS}
+          element={<MyOffer queryFn={useOwnExpiredOffers} description={t('myOffers.expiredDescription')} />}
+        />
+        <Route
+          path={CREATE_OFFER}
+          element={
+            <TokenAllowanceProtect>
+              <CreateOffer />
+            </TokenAllowanceProtect>
+          }
+        />
+        <Route path={'/'} element={<Navigate replace to={OPEN_OFFERS} />} />
+      </Routes>
+    </>
   );
 };

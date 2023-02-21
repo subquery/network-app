@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Redirect, Route, Switch, useParams } from 'react-router';
+import { Navigate, Route, Routes, useParams } from 'react-router';
 import Modal from 'react-modal';
 import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, TabButtons } from '../../../components';
 import { Button } from '@subql/react-ui';
@@ -14,17 +14,20 @@ import { modalStyles, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { ROUTES } from '../../../utils';
+
+const { DETAILS, DEPLOYMENTS } = ROUTES;
 
 const Project: React.VFC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { account } = useWeb3();
-  const asyncProject = useProject(id);
+  const asyncProject = useProject(id ?? '');
   const { t } = useTranslation();
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [editing, setEditing] = React.useState<boolean>(false);
-  const createDeployment = useCreateDeployment(id);
-  const updateMetadata = useUpdateProjectMetadata(id);
+  const createDeployment = useCreateDeployment(id ?? '');
+  const updateMetadata = useUpdateProjectMetadata(id ?? '');
 
   const handleSubmitCreate = async (details: NewDeploymentParams) => {
     await createDeployment(details);
@@ -41,8 +44,8 @@ const Project: React.VFC = () => {
   };
 
   const tabLinks = [
-    { label: t('studio.project.tab1'), link: `/studio/project/${id}/details` },
-    { label: t('studio.project.tab2'), link: `/studio/project/${id}/deployments` },
+    { label: t('studio.project.tab1'), link: DETAILS },
+    { label: t('studio.project.tab2'), link: DEPLOYMENTS },
   ];
 
   return renderAsync(asyncProject, {
@@ -55,7 +58,7 @@ const Project: React.VFC = () => {
       }
 
       if (project.owner !== account) {
-        return <Redirect to="/studio" />;
+        return <Route element={<Navigate replace to="studio" />} />;
       }
 
       return (
@@ -77,18 +80,18 @@ const Project: React.VFC = () => {
             </div>
           </div>
           <div className={clsx('content-width', styles.content)}>
-            <Switch>
-              <Route exact path={`/studio/project/:id/details`}>
+            <Routes>
+              <Route path={DETAILS}>
                 {editing ? (
                   <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
                 ) : (
                   <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
                 )}
               </Route>
-              <Route exact path={`/studio/project/:id/deployments`}>
+              <Route path={DEPLOYMENTS}>
                 <div className={styles.deployments}>
                   <DeploymentsTab
-                    projectId={id}
+                    projectId={id ?? ''}
                     currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
                   />
                   <Button
@@ -99,8 +102,8 @@ const Project: React.VFC = () => {
                   />
                 </div>
               </Route>
-              <Redirect from="/:id" to={`${id}/details`} />
-            </Switch>
+              <Route path={'/:id'} element={<Navigate replace to={DETAILS} />} />
+            </Routes>
           </div>
         </div>
       );

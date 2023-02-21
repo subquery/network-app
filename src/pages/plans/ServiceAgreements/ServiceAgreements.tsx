@@ -6,18 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { AppPageHeader, TabButtons } from '../../../components';
 import { useExpiredServiceAgreements, useServiceAgreements, useWeb3 } from '../../../containers';
 import styles from './ServiceAgreements.module.css';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { Playground } from '../Playrgound';
-import { SERVICE_AGREEMENTS } from '..';
-
-export const ONGOING_PLANS = `${SERVICE_AGREEMENTS}/ongoing`;
-export const PLAYGROUND = `${SERVICE_AGREEMENTS}/playground`;
-export const EXPIRED_PLANS = `${SERVICE_AGREEMENTS}/expired`;
+import { SAPlayground } from '../Playground';
+import { ROUTES } from '../../../utils';
+const { PLANS, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 
 const buttonLinks = [
-  { label: 'Ongoing', link: ONGOING_PLANS },
-  { label: 'Expired', link: EXPIRED_PLANS },
+  { label: 'Ongoing', link: `${PLANS}/${SERVICE_AGREEMENTS}/${ONGOING_PLANS}` },
+  { label: 'Expired', link: `${PLANS}/${SERVICE_AGREEMENTS}/${EXPIRED_PLANS}` },
 ];
 
 const ServiceAgreements: React.VFC = () => {
@@ -38,7 +35,7 @@ const ServiceAgreements: React.VFC = () => {
 
   const SaHeader = () => (
     <>
-      <AppPageHeader title={t('plans.category.myServiceAgreement')} />
+      <AppPageHeader title={t('plans.category.serviceAgreement')} />
       <div className={styles.tabs}>
         <TabButtons tabs={buttonLinks} whiteTab />
       </div>
@@ -47,30 +44,28 @@ const ServiceAgreements: React.VFC = () => {
 
   return (
     <div>
-      <Switch>
-        <Route exact path={`${PLAYGROUND}/:saId`} component={() => <Playground />} />
+      <Routes>
+        <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
         <Route
-          exact
           path={ONGOING_PLANS}
-          component={() => (
+          element={
             <>
               <SaHeader />
               <Agreements queryFn={useServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
             </>
-          )}
+          }
         />
         <Route
-          exact
           path={EXPIRED_PLANS}
-          component={() => (
+          element={
             <>
               <SaHeader />
-              <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonExpired'} />
+              <Agreements queryFn={useExpiredServiceAgreements} emptyI18nKey={'serviceAgreements.nonOngoing'} />
             </>
-          )}
+          }
         />
-        <Redirect from={SERVICE_AGREEMENTS} to={ONGOING_PLANS} />
-      </Switch>
+        <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
+      </Routes>
     </div>
   );
 };

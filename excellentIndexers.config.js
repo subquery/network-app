@@ -7,7 +7,7 @@ module.exports = {
   client: {
     service: {
       name: 'top100Indexers',
-      url: process.env.REACT_APP_TOP_100_INDEXERS,
+      url: process.env.VITE_TOP_100_INDEXERS,
     },
     tagName: 'gql',
     excludes: [
@@ -15,6 +15,7 @@ module.exports = {
       'src/containers/IndexerRegistryProject.tsx',
       'src/containers/QueryRegistryProject.tsx',
       'src/containers/QuerySwapExchangeProject.tsx',
+      'src/containers/IndexerRegistryProjectSub.tsx',
     ],
   },
 };

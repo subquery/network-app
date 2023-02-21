@@ -4,18 +4,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Home.module.css';
-import { Redirect, Route, Switch } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, TabButtons } from '../../../../components';
 import { TopIndexers } from '../TopIndexers';
 import { AllIndexers } from '../AllIndexers';
+import { DelegateIndexer } from '../DelegateIndexer';
+import { ROUTES } from '../../../../utils';
 
-const INDEXERS_ROUTE = `/staking/indexers`;
-const ALL_INDEXERS_ROUTE = `${INDEXERS_ROUTE}/all`;
-const TOP_INDEXERS_ROUTE = `${INDEXERS_ROUTE}/top-100`;
+const { DELEGATE, TOP_INDEXERS, ALL_INDEXERS } = ROUTES;
 
 const buttonLinks = [
-  { label: 'Top 100', link: TOP_INDEXERS_ROUTE },
-  { label: 'All', link: ALL_INDEXERS_ROUTE },
+  { label: 'Top 100', link: TOP_INDEXERS },
+  { label: 'All', link: ALL_INDEXERS },
 ];
 
 export const Home: React.VFC = () => {
@@ -30,11 +30,12 @@ export const Home: React.VFC = () => {
           <TabButtons tabs={buttonLinks} whiteTab />
         </div>
 
-        <Switch>
-          <Route exact path={TOP_INDEXERS_ROUTE} component={TopIndexers} />
-          <Route exact path={ALL_INDEXERS_ROUTE} component={AllIndexers} />
-          <Redirect from={INDEXERS_ROUTE} to={TOP_INDEXERS_ROUTE} />
-        </Switch>
+        <Routes>
+          <Route path={`${DELEGATE}/:address`} element={<DelegateIndexer />} />
+          <Route path={TOP_INDEXERS} element={<TopIndexers />} />
+          <Route path={ALL_INDEXERS} element={<AllIndexers />} />
+          <Route path={'/'} element={<Navigate replace to={TOP_INDEXERS} />} />
+        </Routes>
       </div>
     </>
   );

@@ -5,8 +5,8 @@ import React from 'react';
 import './App.css';
 import './i18n';
 
-import { Redirect, Route } from 'react-router';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import clsx from 'clsx';
 import { Button, Typography } from '@subql/react-ui';
@@ -23,6 +23,7 @@ import {
   IndexerRegistryProvider,
   useWeb3,
   SQTokenProvider,
+  EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
@@ -33,6 +34,7 @@ import studioStyles from './pages/studio/index.module.css';
 import { WalletRoute } from './WalletRoute';
 
 import { getConnectorConfig } from './utils/getNetworkConnector';
+import { ROUTES } from './utils';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -47,16 +49,18 @@ const ErrorFallback = ({ error, componentStack, resetError }: any) => {
 
 const Providers: React.FC = ({ children }) => {
   return (
-    <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+    <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
         <Web3Provider>
           <ContractsProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
                 <IndexerRegistryProvider>
-                  <SQTokenProvider>
-                    <UserProjectsProvider>{children}</UserProjectsProvider>
-                  </SQTokenProvider>
+                  <EraProvider>
+                    <SQTokenProvider>
+                      <UserProjectsProvider>{children}</UserProjectsProvider>
+                    </SQTokenProvider>
+                  </EraProvider>
                 </IndexerRegistryProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
@@ -69,7 +73,7 @@ const Providers: React.FC = ({ children }) => {
 
 const BlockchainStatus: React.FC = ({ children }) => {
   const { error, connector } = useWeb3();
-  const { t } = useTranslation();
+  const { t } = useTranslation('translation');
   const connectorWindowObj = getConnectorConfig(connector).windowObj;
 
   const isExtensionInstalled = React.useMemo(
@@ -96,34 +100,46 @@ const BlockchainStatus: React.FC = ({ children }) => {
   return <>{children}</>;
 };
 
-const App: React.VFC = () => {
+const App: React.FC = () => {
   const { t } = useTranslation();
 
   return (
     <Providers>
       <div className="App">
-        <Router>
-          <Header />
-
+        <BrowserRouter>
           <div className="Main">
-            <BlockchainStatus>
-              <Switch>
-                <Route component={pages.Explorer} path="/explorer" />
-                <WalletRoute
-                  component={pages.Studio}
-                  path="/studio"
-                  title={t('studio.wallet.connect')}
-                  subtitle={t('studio.wallet.subTitle')}
-                />
-                <Route component={pages.Staking} path="/staking" />
-                <WalletRoute component={pages.PlanAndOffer} path="/plans" />
-                <WalletRoute component={pages.Swap} path="/swap" />
-                <Redirect from="/" to="/explorer" />
-              </Switch>
-            </BlockchainStatus>
+            <div className="Header">
+              <Header />
+            </div>
+
+            <div className="Content">
+              <BlockchainStatus>
+                <Routes>
+                  <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+                  <Route
+                    element={
+                      <WalletRoute
+                        element={pages.Studio}
+                        title={t('studio.wallet.connect')}
+                        subtitle={t('studio.wallet.subTitle')}
+                      />
+                    }
+                    path={`${ROUTES.STUDIO}/*`}
+                  />
+                  <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
+                  <Route element={<WalletRoute element={pages.MyAccount} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
+                  <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
+                  <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
+                  <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
+                  <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
+                  <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
+                  <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
+                </Routes>
+              </BlockchainStatus>
+            </div>
           </div>
-          <Footer />
-        </Router>
+          {/* <Footer /> */}
+        </BrowserRouter>
       </div>
     </Providers>
   );

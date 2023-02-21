@@ -11,6 +11,7 @@ import styles from './Header.module.css';
 import { Dropdown } from '../Dropdown';
 import { ConnectWalletButton } from '../ConnectWalletButton';
 import { AccountActions } from '../AccountActions';
+import { ROUTES } from '../../utils';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
@@ -30,23 +31,35 @@ const HeaderLinks = () => {
 
   const entryLinks = [
     {
-      link: '/explorer',
+      link: ROUTES.EXPLORER,
       title: t('header.explorer'),
     },
+    // {
+    //   link: ROUTES.STUDIO,
+    //   title: t('header.studio'),
+    // },
     {
-      link: '/studio',
-      title: t('header.studio'),
-    },
-    {
-      link: '/staking',
+      link: ROUTES.STAKING,
       title: t('header.staking'),
     },
     {
-      link: '/plans',
+      link: ROUTES.PLANS,
       title: t('header.plans'),
     },
     {
-      link: '/swap',
+      link: ROUTES.INDEXER,
+      title: t('indexer.title'),
+    },
+    {
+      link: ROUTES.CONSUMER,
+      title: t('consumer'),
+    },
+    {
+      link: ROUTES.DELEGATOR,
+      title: t('delegator'),
+    },
+    {
+      link: ROUTES.SWAP,
       title: t('header.swap'),
     },
     {
@@ -64,12 +77,12 @@ const HeaderLinks = () => {
   ];
 
   const renderLink = (to: string, text: string) => {
-    const isInternalLink = !to.startsWith('http');
+    const isInternalLink = !to.startsWith('https');
 
     if (isInternalLink) {
       return (
         <Typography>
-          <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+          <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
             {text}
           </NavLink>
         </Typography>
@@ -84,7 +97,7 @@ const HeaderLinks = () => {
         rel="noreferrer"
         type="link"
         label={text}
-        colorScheme="standard"
+        colorScheme="neutral"
       />
     );
   };
@@ -98,9 +111,8 @@ const HeaderLinks = () => {
   );
 };
 
-const Header: React.VFC = () => {
+export const Header: React.FC = () => {
   const { account } = useWeb3();
-  const { t } = useTranslation();
 
   return (
     <div className={styles.header}>
@@ -120,5 +132,3 @@ const Header: React.VFC = () => {
     </div>
   );
 };
-
-export default Header;

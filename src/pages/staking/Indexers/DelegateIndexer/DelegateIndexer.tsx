@@ -4,15 +4,17 @@
 import * as React from 'react';
 import { Breadcrumb } from 'antd';
 import { Address, Spinner, Typography } from '@subql/react-ui';
-import { useHistory, useParams } from 'react-router';
-import { CurEra } from '../../../../components';
-import styles from './DelegateIndexer.module.css';
+import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { useSortedIndexer } from '../../../../hooks';
-import { renderAsync } from '../../../../utils';
+import { CurEra } from '@components';
+import { useSortedIndexer } from '@hooks';
+import { renderAsync } from '@utils';
+
+import styles from './DelegateIndexer.module.css';
 import { DoDelegate } from '../DoDelegate';
 import { IndexingContent } from '../../Indexer/Indexing/IndexingContent';
-import { INDEXERS_ROUTE } from '../..';
+import { ROUTES } from '../../../../utils';
+const { INDEXERS } = ROUTES;
 
 type RouteParams = {
   address: string;
@@ -20,22 +22,22 @@ type RouteParams = {
 
 export const DelegateIndexer: React.VFC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { address } = useParams<RouteParams>();
 
   React.useEffect(() => {
     if (!address) {
-      history.push(INDEXERS_ROUTE);
+      navigate(INDEXERS);
     }
-  }, [address, history]);
+  }, [address, navigate]);
 
-  const sortedIndexer = useSortedIndexer(address);
+  const sortedIndexer = useSortedIndexer(address ?? '');
 
   return (
     <>
       <div className={styles.header}>
         <Breadcrumb separator=">">
-          <Breadcrumb.Item href={INDEXERS_ROUTE} className={styles.title}>
+          <Breadcrumb.Item href={INDEXERS} className={styles.title}>
             {t('indexer.indexers')}
           </Breadcrumb.Item>
           <Breadcrumb.Item className={styles.title}>{t('delegate.viewProfile')}</Breadcrumb.Item>
@@ -45,8 +47,8 @@ export const DelegateIndexer: React.VFC = () => {
       </div>
 
       <div className={styles.profile}>
-        <div>{<Address address={address} size="large" />}</div>
-        <DoDelegate indexerAddress={address} />
+        <div>{<Address address={address ?? ''} size="large" />}</div>
+        <DoDelegate indexerAddress={address ?? ''} />
       </div>
 
       <div className={styles.indexing}>
@@ -62,7 +64,7 @@ export const DelegateIndexer: React.VFC = () => {
                     ...data,
                   },
                 ]}
-                indexer={address}
+                indexer={address ?? ''}
               />
             );
           },

@@ -16,7 +16,7 @@ export default {
 const Template: ComponentStory<typeof Row> = (args) => {
   const { t } = useTranslation();
   return (
-    <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+    <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>

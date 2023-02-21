@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { BigNumber } from 'ethers';
 import { useParams } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Space, Table, TableProps } from 'antd';
 import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
@@ -19,6 +19,7 @@ import {
   mergeAsync,
   notEmpty,
   renderAsyncArray,
+  ROUTES,
   TOKEN,
 } from '../../../utils';
 import { EmptyList } from '../../plans/Plans/EmptyList';
@@ -93,7 +94,7 @@ const getColumns = (
 
 export const FlexPlans: React.FC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { account } = useWeb3();
   const { id } = useParams<{ id: string }>();
   const { consumerHostBalance } = useSQToken();
@@ -107,9 +108,9 @@ export const FlexPlans: React.FC = () => {
 
   React.useEffect(() => {
     if (!id) {
-      history.push('/explorer');
+      navigate(ROUTES.EXPLORER);
     }
-  }, [history, id]);
+  }, [navigate, id]);
   return (
     <>
       {renderAsyncArray(

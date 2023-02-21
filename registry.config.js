@@ -7,13 +7,14 @@ module.exports = {
   client: {
     service: {
       name: 'registry',
-      url: process.env.REACT_APP_QUERY_REGISTRY_PROJECT,
+      url: process.env.VITE_QUERY_REGISTRY_PROJECT,
     },
     tagName: 'gql',
     excludes: [
       'src/hooks/useApiEndpoint.ts',
       'src/containers/QuerySwapExchangeProject.tsx',
       'src/containers/QueryTop100Indexers.tsx',
+      'src/containers/IndexerRegistryProjectSub.tsx',
     ],
   },
 };

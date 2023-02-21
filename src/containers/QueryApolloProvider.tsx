@@ -1,19 +1,27 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
-import { offsetLimitPagination } from '@apollo/client/utilities';
 import React from 'react';
+import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
+import { offsetLimitPagination, getMainDefinition } from '@apollo/client/utilities';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
 export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
-const swapLink = getHttpLink(process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT);
+const swapLink = getHttpLink(import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT);
 
 export const TOP_100_INDEXERS = 'top100Indexers';
-const top100IndexersLink = getHttpLink(process.env.REACT_APP_TOP_100_INDEXERS);
+const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
-const registryLink = getHttpLink(process.env.REACT_APP_QUERY_REGISTRY_PROJECT);
+const registryLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
+
+const registrySubLink = new WebSocketLink({
+  uri: import.meta.env.VITE_SUBSCRIPTION_REGISTRY_PROJECT ?? '',
+  options: {
+    reconnect: true,
+  },
+});
 
 export const QueryApolloProvider: React.FC = (props) => {
   const client = new ApolloClient({
@@ -23,7 +31,14 @@ export const QueryApolloProvider: React.FC = (props) => {
       ApolloLink.split(
         (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
         top100IndexersLink,
-        registryLink,
+        ApolloLink.split(
+          ({ query }) => {
+            const definition = getMainDefinition(query);
+            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+          },
+          registrySubLink,
+          registryLink,
+        ),
       ),
     ),
     cache: new InMemoryCache({

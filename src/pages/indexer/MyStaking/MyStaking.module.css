@@ -1,0 +1,54 @@
+.grayText {
+  color: var(--gray500);
+}
+
+.container {
+  display: flex;
+  background-color: var(--gray200);
+  width: 100%;
+  min-height: 100%;
+}
+
+.sidebar {
+  width: 25%;
+}
+
+.content {
+  width: 100%;
+  padding: 1rem 2rem;
+  overflow: scroll;
+}
+
+.profile {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.stakingHeader {
+  margin: 1.25rem 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.stakingActions {
+  display: flex;
+}
+
+.stakingAmount {
+  width: 280px;
+}
+
+.tabList {
+  display: flex;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.line {
+  background: var(--sq-gradient);
+  height: 2px;
+}

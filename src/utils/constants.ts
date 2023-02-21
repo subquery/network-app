@@ -12,11 +12,11 @@ export enum LOCK_STATUS {
   UNLOCK = 'UNLOCK',
 }
 
-export const STABLE_TOKEN = process.env.REACT_APP_STABLE_TOKEN ?? 'USDC';
+export const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN ?? 'USDC';
 
 export const networkDeploymentDetails = testnet;
 export const SQT_TOKEN_ADDRESS = testnet.SQToken.address;
-export const TOKEN = process.env.REACT_APP_TOKEN ?? 'kSQT';
+export const TOKEN = import.meta.env.VITE_TOKEN ?? 'kSQT';
 
 export const tokenDecimals: { [key: string]: number } = {
   [STABLE_TOKEN_ADDRESS]: 6,

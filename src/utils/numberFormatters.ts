@@ -33,8 +33,10 @@ export function divToPercentage(value: number, divUnit = 100, decimalPlaces = 2)
   return (value / divUnit).toFixed(decimalPlaces);
 }
 
-export function mulToPercentage(value: number, mulUnit = 100, decimalPlaces = 2): string {
-  return (value * mulUnit).toFixed(decimalPlaces);
+export function mulToPercentage(value: number | string, mulUnit = 100, decimalPlaces = 2): string {
+  const sortedValue = typeof value === 'string' ? convertStringToNumber(value) : value;
+
+  return `${(sortedValue * mulUnit).toFixed(decimalPlaces)} %`;
 }
 
 export function extractPercentage(value: string): number {

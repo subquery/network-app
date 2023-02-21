@@ -7,7 +7,7 @@ module.exports = {
   client: {
     service: {
       name: 'swapExchange',
-      url: process.env.REACT_APP_QUERY_SWAP_EXCHANGE_PROJECT,
+      url: process.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT,
     },
     tagName: 'gql',
     excludes: [
@@ -15,6 +15,7 @@ module.exports = {
       'src/containers/IndexerRegistryProject.tsx',
       'src/containers/QueryRegistryProject.tsx',
       'src/containers/QueryTop100Indexers.tsx',
+      'src/containers/IndexerRegistryProjectSub.tsx',
     ],
   },
 };

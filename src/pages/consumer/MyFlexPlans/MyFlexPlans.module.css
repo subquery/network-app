@@ -1,0 +1,42 @@
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cards {
+  margin: 1.5rem 0;
+  display: flex;
+}
+
+.balances {
+  display: flex;
+  column-gap: 1rem;
+}
+
+/* ClaimFlexPlan */
+.btnContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3rem;
+}
+.billingAction {
+  font-size: larger;
+  height: fit-content;
+  padding: 1rem;
+}
+
+/* Terminate Plan */
+.remainDeposit {
+  margin: 2rem 0;
+}
+
+.terminateError {
+  margin-bottom: 1rem;
+}
+
+.actionList {
+  display: flex;
+  align-items: center;
+}

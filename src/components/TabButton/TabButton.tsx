@@ -20,7 +20,7 @@ export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, to
   return (
     <NavLink
       to={link}
-      className={(isActive) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
+      className={({ isActive }) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
       replace
     >
       <AppTypography

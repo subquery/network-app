@@ -11,9 +11,11 @@ import TransactionModal from '../../../components/TransactionModal';
 import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';
 import styles from './MyOffers.module.css';
 import { useLocation } from 'react-router';
-import { EXPIRED_OFFERS, OPEN_OFFERS } from './MyOffers';
 import { useContractClient } from '../../../hooks';
 import { SummaryList } from '../../../components';
+import { ROUTES } from '../../../utils';
+
+const { EXPIRED_OFFERS_NAV, OPEN_OFFERS_NAV } = ROUTES;
 
 type Props = {
   offerId: string;
@@ -35,7 +37,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
         const unSpent = await contractClient.cancelOfferUnspentBalance(offer);
         setUnSpent(formatEther(unSpent));
 
-        if (pathname === OPEN_OFFERS) {
+        if (pathname === OPEN_OFFERS_NAV) {
           const cancelPenalty = await contractClient.cancelOfferPenaltyFee(offer);
           setCancelPenalty(formatEther(cancelPenalty));
           if (cancelPenalty && unSpent) {
@@ -85,7 +87,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
     failureText: t('myOffers.withdraw.failureText'),
   };
 
-  const isExpiredPath = pathname === EXPIRED_OFFERS;
+  const isExpiredPath = pathname === EXPIRED_OFFERS_NAV;
   const buttonVariant = isExpiredPath ? 'textBtn' : 'errTextBtn';
   const text = isExpiredPath ? withdrawText : cancelText;
   const actionBtnLabel = isExpiredPath ? t('myOffers.withdraw.title') : t('general.cancel');
@@ -106,7 +108,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
           <>
-            {pathname === OPEN_OFFERS && <CancelOfferSummary />}
+            {pathname === OPEN_OFFERS_NAV && <CancelOfferSummary />}
             <Typography className={'errorText'}>{error}</Typography>
             <div className={styles.btnContainer}>
               <Button

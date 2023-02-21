@@ -50,7 +50,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'uptime',
-    render: (upTime) => <TableText>{`${mulToPercentage(upTime)} %`}</TableText>,
+    render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
     sorter: (a, b) => a.uptime - b.uptime,
     showSorterTooltip: false,
   },
@@ -63,7 +63,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'ownStaked',
-    render: (ownStake) => <TableText>{`${mulToPercentage(ownStake)} %`}</TableText>,
+    render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
     sorter: (a, b) => a.ownStaked - b.ownStaked,
     showSorterTooltip: false,
   },
@@ -76,7 +76,7 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       />
     ),
     dataIndex: 'delegated',
-    render: (delegated) => <TableText>{`${mulToPercentage(delegated)} %`}</TableText>,
+    render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
     sorter: (a, b) => a.delegated - b.delegated,
     showSorterTooltip: false,
   },
@@ -198,7 +198,6 @@ interface props {
 export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  //   const history = useHistory();
 
   const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
 

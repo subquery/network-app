@@ -11,7 +11,7 @@ export default {
 } as ComponentMeta<typeof IPFSImage>;
 
 const Template: ComponentStory<typeof IPFSImage> = (args) => (
-  <IPFSProvider initialState={{ gateway: process.env.REACT_APP_IPFS_GATEWAY }}>
+  <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
     <IPFSImage {...args} style={{ height: '100px' }} />
   </IPFSProvider>
 );
