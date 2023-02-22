@@ -5,18 +5,18 @@ import * as React from 'react';
 import assert from 'assert';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useEra, useSQToken, useWeb3 } from '../../../containers';
+import { useContracts, useEra, useSQToken, useWeb3 } from '@containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
-} from '../../../components';
-import TransactionModal from '../../../components/TransactionModal';
-import { convertStringToNumber, mergeAsync, renderAsync } from '../../../utils';
-import { useRewardCollectStatus } from '../../../hooks/useRewardCollectStatus';
+} from '@components';
+import TransactionModal from '@components/TransactionModal';
+import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
-import { mapEraValue, parseRawEraValue } from '../../../hooks/useEraValue';
+import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
 import { BigNumber } from 'ethers';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
@@ -50,7 +50,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const delegation = useGetDelegationQuery({ variables: { id: `${account ?? ''}:${indexerAddress}` } });
-  const indexer = useGetIndexerQuery({ variables: { address: account ?? '' } });
+  const indexer = useGetIndexerQuery({ variables: { address: indexerAddress ?? '' } });
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     const contracts = await pendingContracts;
@@ -73,6 +73,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       const isActionDisabled = !stakingAllowance.data || rewardClaimStatus.loading;
 
+      console.log(i);
       let curDelegatedAmount = 0;
       let indexerCapacity = BigNumber.from(0);
       if (d?.delegation?.amount) {
