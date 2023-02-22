@@ -3,25 +3,24 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useIndexer, useSQToken, useWeb3 } from '../../../../containers';
+import { useContracts, useIndexer, useSQToken, useWeb3 } from '@containers';
 import assert from 'assert';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
-} from '../../../../components';
-import { useLockPeriod } from '../../../../hooks';
+} from '@components';
+import { useLockPeriod } from '@hooks';
 import { parseEther } from '@ethersproject/units';
-import TransactionModal from '../../../../components/TransactionModal';
-import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '../../../../utils';
+import TransactionModal from '@components/TransactionModal';
+import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
 import moment from 'moment';
-import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
+import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
-import { useMaxUnstakeAmount } from '../../../../hooks/useMaxUnstakeAmount';
+import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { JSONBigInt } from '@subql/network-clients';
-import { jsonBigIntToBigInt } from '../../../../hooks/useEraValue';
-import { BigNumber } from 'ethers';
+import { jsonBigIntToBigInt } from '@hooks/useEraValue';
 
 enum StakeAction {
   Stake = 'stake',

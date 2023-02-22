@@ -12,8 +12,8 @@ import clsx from 'clsx';
 import { Select, TableProps, Radio, Table } from 'antd';
 import * as yup from 'yup';
 import { constants } from 'ethers';
-import TransactionModal from '../../../../components/TransactionModal';
-import { useContracts, usePlanTemplates, useWeb3 } from '../../../../containers';
+import TransactionModal from '@components/TransactionModal';
+import { useContracts, useWeb3 } from '@containers';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -22,22 +22,23 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
-} from '../../../../utils';
-import { GetPlanTemplates_planTemplates_nodes as Template } from '../../../../__generated__/registry/GetPlanTemplates';
-import { SummaryList, TableText } from '../../../../components';
-import { useSortedIndexerDeployments } from '../../../../hooks';
+} from '@utils';
+import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
+import { SummaryList, TableText } from '@components';
+import { useSortedIndexerDeployments } from '@hooks';
 import styles from './Create.module.css';
-import { formatSecondsDuration } from '../../../../utils/dateFormatters';
-import { NumberInput } from '../../../../components/NumberInput';
+import { formatSecondsDuration } from '@utils/dateFormatters';
+import { NumberInput } from '@components/NumberInput';
+import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 
 export const getPlanTemplateColumns = (
-  onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
+  onChooseTemplate: (templateId: string, idx: number, template: PlanTemplate) => void,
   selectedTemplateId?: string,
-): TableProps<Template>['columns'] => [
+): TableProps<PlanTemplate>['columns'] => [
   {
     title: '#',
     dataIndex: 'id',
-    render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
+    render: (_: string, __: PlanTemplate, idx: number) => <TableText content={idx + 1} />,
   },
   {
     dataIndex: 'period',
@@ -61,7 +62,7 @@ export const getPlanTemplateColumns = (
   {
     title: i18next.t('general.choose').toUpperCase(),
     dataIndex: 'id',
-    render: (id: string, template: Template, idx: number) => (
+    render: (id: string, template: PlanTemplate, idx: number) => (
       <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
     ),
   },
@@ -77,7 +78,7 @@ const ChooseTemplateStep = ({
   selectedTemplateId: string;
   onChooseTemplate: (templateId: string, idx: number) => void;
   onNextStep?: () => void;
-  templates: Array<Template>;
+  templates: Array<PlanTemplate>;
   disabled?: boolean;
 }) => {
   const { t } = useTranslation();
@@ -165,7 +166,7 @@ const planSchema = yup.object({
 type PlanFormData = yup.Asserts<typeof planSchema>;
 
 type FormProps = {
-  templates: Array<Template>;
+  templates: Array<PlanTemplate>;
   onSubmit: (data: PlanFormData) => void | Promise<void>;
   onCancel: () => void;
   curStep: number;
@@ -299,7 +300,7 @@ export const Create: React.FC = () => {
   const { t } = useTranslation();
   const [curStep, setCurStep] = React.useState<number>(0);
   const pendingContracts = useContracts();
-  const templates = usePlanTemplates({});
+  const templates = useGetPlanTemplatesQuery({});
 
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     const contracts = await pendingContracts;
