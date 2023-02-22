@@ -73,7 +73,6 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       const isActionDisabled = !stakingAllowance.data || rewardClaimStatus.loading;
 
-      console.log(i);
       let curDelegatedAmount = 0;
       let indexerCapacity = BigNumber.from(0);
       if (d?.delegation?.amount) {
