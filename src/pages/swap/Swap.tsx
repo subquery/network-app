@@ -10,10 +10,17 @@ import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, Spinner, TabButtons } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
-import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
+import {
+  formatEther,
+  mergeAsync,
+  renderAsyncArray,
+  SQT_TOKEN_ADDRESS,
+  STABLE_TOKEN,
+  STABLE_TOKEN_ADDRESS,
+  TOKEN,
+} from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
-import { SQToken } from '@subql/contract-sdk/publish/kepler.json';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
 import { ROUTES } from '../../utils';
 
@@ -74,7 +81,7 @@ const SellAUSD = () => {
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
-  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQToken.address ?? '');
+  const { orderId, loading: fetchingOrderId } = useSwapOrderId(SQT_TOKEN_ADDRESS ?? '');
 
   const swapRate = useSwapRate(orderId);
   const swapPool = useSwapPool(orderId);
