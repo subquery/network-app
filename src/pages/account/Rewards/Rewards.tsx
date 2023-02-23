@@ -15,7 +15,7 @@ import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '../../../components';
 import { BigNumber } from 'ethers';
-import { TokenAmount } from '../../../components/TokenAmount';
+import { TokenAmount } from '@components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
