@@ -20,11 +20,12 @@ const translation = {
       'View the list of Delegators that are supporting you and manage your commission rate to attract even more',
     myStaking: 'My Staking',
     myPlans: 'My Plans',
+    myProfile: 'My Profile',
     myPlansDescription:
       'Create and view plans for your indexing service that will be advertised to Consumers to purchase',
     myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
     stakingAmountTitle: 'You are staking',
-    rewards: 'Rewards',
+    rewards: 'Claim Rewards',
     locked: 'Locked',
     totalStake: 'total stake',
     ownStake: 'own stake',

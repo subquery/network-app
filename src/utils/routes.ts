@@ -34,6 +34,7 @@ const CONSUMER = {
   OFFER_MARKETPLACE: 'offers',
 };
 
+// NOTE: Delegator tab
 const DELEGATOR = {
   DELEGATOR: '/delegation',
   DELEGATING: 'delegating',

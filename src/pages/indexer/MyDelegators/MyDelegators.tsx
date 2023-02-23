@@ -41,8 +41,8 @@ export const MyDelegators: React.VFC = () => {
   return renderAsync(delegators, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
-    data: (offers) => {
-      const totalCount = offers.indexer?.delegations.totalCount || 0;
+    data: (delegators) => {
+      const totalCount = delegators.indexer?.delegations.totalCount || 0;
       return (
         <div className={styles.container}>
           <AppPageHeader

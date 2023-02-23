@@ -1,0 +1,61 @@
+.page {
+  background-color: var(--gray100);
+  width: 100%;
+}
+
+.container {
+  flex-direction: column;
+  width: 70%;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+.statsTiles {
+  display: flex;
+  height: 25vh;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--gray300);
+  column-gap: 1rem;
+  justify-content: space-between;
+}
+
+.myDelegators {
+  height: 50vh;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid var(--gray300);
+}
+
+.delegatorHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header,
+.accountContainer {
+  display: flex;
+  height: 15vh;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accountContainer > * {
+  margin: auto;
+}
+
+.account {
+  padding-left: 1rem;
+}
+
+.link {
+  padding-top: 5px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0 1rem 0;
+}
