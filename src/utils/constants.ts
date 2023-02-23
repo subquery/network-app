@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { STABLE_TOKEN_ADDRESS } from './USDC';
-import testnet from '@subql/contract-sdk/publish/moonbase.json';
+import testnet from '@subql/contract-sdk/publish/kepler.json';
 
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_WITH_TIME_FORMAT = 'DD/MM/YYYY hh:mm:ss A';
