@@ -5,7 +5,7 @@ import { Spinner } from '@subql/react-ui';
 import { Table, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GetPlanTemplates_planTemplates_nodes as PlanTemplate } from '../../../../../__generated__/registry/GetPlanTemplates';
+import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsync } from '../../../../../utils';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
