@@ -16,12 +16,12 @@ import {
 } from '@subql/react-hooks';
 import { EmptyList } from '@components';
 import { OwnDelegator } from '@pages/staking/Indexer/OwnDelegator';
-import { formatEther, mergeAsync, truncFormatEtherStr } from '@utils';
+import { Data, formatEther, mergeAsync, truncFormatEtherStr } from '@utils';
 import { Link } from 'react-router-dom';
 import { useSortedIndexer } from '@hooks';
 import { BigNumber } from 'ethers';
 import { jsonBigIntToBigInt } from '@hooks/useEraValue';
-import { WithdrawalStatus } from '@subql/network-query';
+import { GetDelegationsQuery, WithdrawalStatus } from '@subql/network-query';
 import { AccountHeader } from './Header';
 
 type statNumber = string | undefined;
@@ -40,28 +40,52 @@ const NoDelegator: React.FC = () => {
   );
 };
 
-const cards: { title: string; key: keyof Stats; link: string }[] = [
+const cards: { title: string; key: keyof Stats; link: string; tooltip: string }[] = [
   {
     title: 'You are Delegating',
     key: 'Delegating',
     link: '/',
+    tooltip: 'The amount of kSQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
   },
   {
     title: 'You are Staking',
     key: 'Staking',
     link: '/',
+    tooltip: 'The amount of kSQT that you have staked against projects you are indexing in the SubQuery Network',
   },
   {
     title: 'Your Rewards',
     key: 'Rewards',
     link: '/',
+    tooltip: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
   },
   {
     title: 'Withdrawn',
     key: 'Withdrawn',
     link: '/',
+    tooltip: 'The amount of kSQT that you have undelegated or unstaked',
   },
 ];
+
+function getTotalDelegating(d: Data<GetDelegationsQuery>, account: string) {
+  return formatEther(
+    d?.delegations?.nodes.reduce((accumulator, currentValue) => {
+      const amount =
+        currentValue?.indexerId !== account ? jsonBigIntToBigInt(currentValue?.amount.valueAfter) : BigNumber.from(0);
+      return accumulator.add(amount);
+    }, BigNumber.from(0)),
+  );
+}
+
+//TODO: add fragments so can better type this
+function reduceTotal(nodes: any) {
+  return formatEther(
+    nodes?.nodes.reduce(
+      (accumulator: any, currentValue: { amount: unknown }) => accumulator.add(BigNumber.from(currentValue?.amount)),
+      BigNumber.from(0),
+    ),
+  );
+}
 
 export const MyAccount: React.FC = () => {
   const { account } = useWeb3();
@@ -86,35 +110,11 @@ export const MyAccount: React.FC = () => {
       const [iD, d, i, r, w] = data;
       const totalCount = iD?.indexer?.delegations.totalCount || 0;
 
-      const totalDelegating =
-        d &&
-        formatEther(
-          d.delegations?.nodes.reduce((accumulator, currentValue) => {
-            const amount =
-              currentValue?.indexerId !== account
-                ? jsonBigIntToBigInt(currentValue?.amount.valueAfter)
-                : BigNumber.from(0);
-            return accumulator.add(amount);
-          }, BigNumber.from(0)),
-        );
-
-      const totalRewards =
-        r &&
-        formatEther(
-          r.rewards?.nodes.reduce(
-            (accumulator, currentValue) => accumulator.add(BigNumber.from(currentValue?.amount)),
-            BigNumber.from(0),
-          ),
-        );
-      const totalWithdrawn =
-        w &&
-        formatEther(
-          w.withdrawls?.nodes.reduce(
-            (accumulator, currentValue) => accumulator.add(BigNumber.from(currentValue?.amount)),
-            BigNumber.from(0),
-          ),
-        );
+      const totalDelegating = getTotalDelegating(d, account ?? '');
+      const totalRewards = reduceTotal(r?.rewards);
+      const totalWithdrawn = reduceTotal(w?.withdrawls);
       const totalStaking = i && truncFormatEtherStr(i?.totalStake?.current?.toString());
+      //TODO: add subscription
 
       const cardStats: Stats = {
         Delegating: totalDelegating,
@@ -123,19 +123,18 @@ export const MyAccount: React.FC = () => {
         Withdrawn: totalWithdrawn,
       };
 
-      //TODO: add subscription
-
       return (
         <div className={styles.page}>
           <div className={styles.container}>
             <AccountHeader />
             <div className={styles.statsTiles}>
-              {cards.map(({ title, key, link }) => (
+              {cards.map(({ title, key, link, tooltip }) => (
                 <Card
                   description={cardStats[key] ?? '-'}
                   title={title}
                   titleTooltipIcon={<InfoCircleOutlined />}
                   action={action(link)}
+                  titleTooltip={tooltip}
                 />
               ))}
             </div>

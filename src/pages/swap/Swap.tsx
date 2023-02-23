@@ -13,7 +13,7 @@ import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '../../utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
-import { SQToken } from '@subql/contract-sdk/publish/moonbase.json';
+import { SQToken } from '@subql/contract-sdk/publish/kepler.json';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
 import { ROUTES } from '../../utils';
 
