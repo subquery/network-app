@@ -128,9 +128,9 @@ const InitProvider: React.VFC = () => {
   return null;
 };
 
-export const Web3Provider: React.FC = (props) => (
+export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Web3ReactProvider getLibrary={getLibrary}>
     <InitProvider />
-    {props.children}
+    {children}
   </Web3ReactProvider>
 );
