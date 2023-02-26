@@ -18,7 +18,7 @@ import {
 } from '../../../utils';
 import { POST } from '../../../utils/fetch';
 import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import moment from 'moment';

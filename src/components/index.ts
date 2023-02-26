@@ -46,6 +46,7 @@ export * from './Stat';
 export * from './Button';
 export * from './EmptyList';
 export * from './Description';
+export * from './Notification';
 
 export {
   Footer,

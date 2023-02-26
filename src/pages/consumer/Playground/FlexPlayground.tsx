@@ -19,7 +19,7 @@ import {
 } from '../../../utils';
 import { POST } from '../../../utils/fetch';
 import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '../../../components/TableTitle';
