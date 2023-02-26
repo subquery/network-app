@@ -40,6 +40,6 @@
 }
 
 .submitBtn:disabled {
-  background: var(--gray500) !important;
-  color: var(--gray700);
+  background: var(--gray300) !important;
+  color: var(--gray500) !important;
 }

@@ -23,7 +23,7 @@ import { POST } from '../../../utils/fetch';
 import { RequestToken } from './RequestToken';
 import { GraphQLQuery } from './GraphQLQuery';
 import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { Spinner } from '@subql/react-ui';
 import i18next from 'i18next';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
