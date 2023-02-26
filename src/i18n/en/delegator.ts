@@ -66,9 +66,11 @@ const translation = {
     nonDeployments: 'No deployed projects available.',
   },
   rewards: {
-    none: 'No rewards available.',
+    none: `You don't have any rewards.`,
     indexer: 'Indexer',
     amount: 'Amount',
+    description:
+      'View and claim your rewards earned by participating in the SubQuery Network through delegating or staking',
     action: 'Action',
     claim: {
       title: 'Claim Rewards',
