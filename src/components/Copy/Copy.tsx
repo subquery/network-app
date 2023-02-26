@@ -19,6 +19,7 @@ type Props = {
   className?: string;
   iconClassName?: string;
   iconSize?: number;
+  children?: React.ReactNode;
 };
 
 const Copy: React.FC<Props> = ({ value, className, iconClassName, children, iconSize }) => {

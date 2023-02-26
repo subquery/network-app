@@ -8,8 +8,9 @@ import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { MyDelegation } from './MyDelegation';
 import { Indexers } from './Indexers';
+import { IndexerDetails } from './IndexerDetails/IndexerDetails';
 
-const { INDEXERS, DELEGATING } = ROUTES;
+const { INDEXERS, INDEXER, DELEGATING } = ROUTES;
 
 export const Delegator: React.VFC = () => {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export const Delegator: React.VFC = () => {
     <AppSidebar list={sidebarList}>
       <Routes>
         <Route path={`${INDEXERS}/*`} element={<Indexers />} />
+        <Route path={`${INDEXER}/:id`} element={<IndexerDetails />} />
         <Route path={`${DELEGATING}`} element={<MyDelegation />} />
         <Route path={'/'} element={<Navigate replace to={DELEGATING} />} />
       </Routes>

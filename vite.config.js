@@ -10,6 +10,9 @@ export default defineConfig({
   server: {
     port: 3006,
   },
+  resolve: {
+    mainFields: [],
+  },
   css: {
     preprocessorOptions: {
         less: {

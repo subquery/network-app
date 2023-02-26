@@ -37,6 +37,7 @@ const CONSUMER = {
 const DELEGATOR = {
   DELEGATOR: '/delegation',
   DELEGATING: 'delegating',
+  INDEXER: 'indexer',
   INDEXERS: 'indexers',
   ALL_INDEXERS: 'all',
   TOP_INDEXERS: 'top',

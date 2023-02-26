@@ -13,6 +13,7 @@ import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { TableTitle } from '../../../../components/TableTitle';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { EmptyList } from '../../../../components';
+import { F } from 'ramda';
 
 export const NotRegisteredIndexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -46,10 +47,18 @@ const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }
 
 interface Props {
   tableData: UseSortedIndexerReturn | undefined;
+  showDelegated: boolean;
 }
 
-export const Indexing: React.VFC<Props> = ({ tableData }) => {
+export const Indexing: React.VFC<Props> = ({ tableData, showDelegated = false }) => {
   const { t } = useTranslation();
+
+  const delegatedColumn = {
+    title: <TableTitle title={'delegated'} />,
+    dataIndex: 'totalDelegations',
+    key: 'delegated',
+    render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
+  };
 
   const columns = [
     {
@@ -77,6 +86,10 @@ export const Indexing: React.VFC<Props> = ({ tableData }) => {
       render: (item: CurrentEraValue) => <CurAndNextData item={item} unit={TOKEN} />,
     },
   ];
+
+  if (showDelegated) {
+    columns.push(delegatedColumn);
+  }
 
   const sortedIndexingData = [tableData].map((indexer, idx) => ({ ...indexer, idx }));
 

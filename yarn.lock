@@ -4075,21 +4075,21 @@
     react-jazzicon "^0.1.3"
     react-router-dom "^6.4.2"
 
-"@subql/contract-sdk@^0.11.1-10":
+"@subql/contract-sdk@^0.11.1-12":
   version "0.11.1-12"
   resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.11.1-12.tgz#59e55bc457822d4dea1bc7a25b8f6b5229f796c4"
   integrity sha512-7dQyGJz/AJNdBAeN8wSWQ3Pp78KhUg8gmwKWENxfenLUCuWNZQ87Nym7l/5yb//0GCREWPLz+lipDKcQztN2gA==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@^0.2.3-1":
-  version "0.2.3-1"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.3-1.tgz#639e42d9dfcdbf619cfb878898c33335854c0902"
-  integrity sha512-Ui6ftfdQcqlLP0Yg2dCX/a0Z2L5kysCt5SGdQNbJv7ew36wNPqCeIk1Yw2BZnZOsawkIiFACsuvSZyq7PIj2ZQ==
+"@subql/network-clients@^0.2.3-2":
+  version "0.2.3-2"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.2.3-2.tgz#73811d877bd0e50cbe83337b4ba6f42b0dbdd27a"
+  integrity sha512-Wd04BRctvKAqKN9vUuvzfT8k2EDInEcT0hv4j2ta+VNXfQRFTaiNExRnKjr3Ojz9xrA2YTkk/FSl/GwEIuE26Q==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
-    "@subql/network-query" "0.1.3-0"
+    "@subql/network-query" "0.1.3-1"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
@@ -4103,10 +4103,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@0.1.3-0":
-  version "0.1.3-0"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.1.3-0.tgz#5515e73b11b9b2a1c9aef8af5adf5a9b706040b2"
-  integrity sha512-mQjq11vmoXttpr1XXCtilDQFqq+k2ExKC4DtmMwpn9RaBgnhLat+xN4RfjIiIkcv+wJnEC8ahLTAa6KPrNJcqA==
+"@subql/network-query@0.1.3-1":
+  version "0.1.3-1"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.1.3-1.tgz#8565c6817557b6bb46ccc838fa38e5e36a2ecb79"
+  integrity sha512-kyxQk7dV/kz8u1eRFmgjMgv2O+Y8ZZdQUba3E4uOjfov9f/3DCcI2wHcnkGdOPWPUWtGr32M/4R0duZkjYLGSw==
   dependencies:
     graphql "^16.5.0"
 
