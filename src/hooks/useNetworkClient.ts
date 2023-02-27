@@ -39,7 +39,7 @@ export function useNetworkClient(): NetworkClient | undefined {
 
   React.useEffect(() => {
     async function getNetworkClient() {
-      const client = await NetworkClient.create(SQNetworks.KEPLER);
+      const client = await NetworkClient.create(SQNetworks.TESTNET);
       setNetworkClient(client);
     }
 

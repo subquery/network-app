@@ -77,7 +77,7 @@ export const IndexerDetails = () => {
       })}
       <div className={styles.container}>
         <div className={styles.delegatorHeader}>
-          <Typography variant="h6">{'My Delegators'}</Typography>
+          <Typography variant="h6">{t('indexer.myDelegators')}</Typography>
         </div>
         {renderAsync(indexerDelegators, {
           loading: () => <Spinner />,
@@ -93,7 +93,7 @@ export const IndexerDetails = () => {
         })}
       </div>
       <div className={styles.container}>
-        <Typography variant="h6">{'My Projects'}</Typography>
+        <Typography variant="h6">{t('myProjects.title')}</Typography>
         <OwnDeployments indexer={account ?? ''} />
       </div>
     </>

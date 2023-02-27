@@ -13,7 +13,6 @@ import { CurrentEraValue } from '../../../../hooks/useEraValue';
 import { TableTitle } from '../../../../components/TableTitle';
 import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
 import { EmptyList } from '../../../../components';
-import { F } from 'ramda';
 
 export const NotRegisteredIndexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -47,7 +46,7 @@ const CurAndNextData = ({ item, unit }: { item: CurrentEraValue; unit?: string }
 
 interface Props {
   tableData: UseSortedIndexerReturn | undefined;
-  showDelegated: boolean;
+  showDelegated?: boolean;
 }
 
 export const Indexing: React.VFC<Props> = ({ tableData, showDelegated = false }) => {
