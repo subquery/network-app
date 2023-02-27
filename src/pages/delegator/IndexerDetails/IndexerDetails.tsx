@@ -59,9 +59,9 @@ export const IndexerDetails = () => {
       <div className={styles.navHeader}>
         <Breadcrumb separator=">">
           <Breadcrumb.Item className={styles.title}>
-            <NavLink to={`${DELEGATOR}/${INDEXERS}`}>Indexers</NavLink>
+            <NavLink to={`${DELEGATOR}/${INDEXERS}`}>{t('indexer.indexers')}</NavLink>
           </Breadcrumb.Item>
-          <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
+          <Breadcrumb.Item className={styles.title}>{t('delegate.viewProfile')}</Breadcrumb.Item>
         </Breadcrumb>
         <CurEra />
       </div>
