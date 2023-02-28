@@ -3,11 +3,9 @@
 
 import { useSortedIndexer } from '@hooks';
 import { Indexing } from '@pages/indexer/MyStaking/Indexing';
-import { OwnDeployments } from '@pages/staking/Indexer/OwnDeployments';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsync, ROUTES, truncateAddress } from '@utils';
 import { t } from 'i18next';
-import { OwnDelegator } from '@pages/staking/Indexer/OwnDelegator';
 import { useParams } from 'react-router-dom';
 import { Copy, CurEra, EmptyList } from '@components';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +16,8 @@ import { DoUndelegate } from '@pages/staking/Indexer/DoUndelegate';
 import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { Breadcrumb } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
+import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 
