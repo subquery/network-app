@@ -1,7 +1,7 @@
-name: Kepler-Dev
+name: PR - Build
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     branches:
       - main
 
