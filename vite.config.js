@@ -29,6 +29,7 @@ export default defineConfig({
     'process.env': process.env,
   },
   build: {
+    minify: false,
     sourcemap: false,
     rollupOptions: {
       maxParallelFileOps: 2,
