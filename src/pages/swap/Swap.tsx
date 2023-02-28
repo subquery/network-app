@@ -7,9 +7,9 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { ApproveContract, Spinner, TabButtons } from '../../components';
-import { useSQToken, useWeb3 } from '../../containers';
-import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
+import { ApproveContract, Spinner, TabButtons } from '@components';
+import { useSQToken, useWeb3 } from '@containers';
+import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '@hooks/useSwapData';
 import {
   formatEther,
   mergeAsync,
@@ -18,11 +18,11 @@ import {
   STABLE_TOKEN,
   STABLE_TOKEN_ADDRESS,
   TOKEN,
-} from '../../utils';
+  ROUTES,
+} from '@utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
-import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '../../hooks/useASUDContract';
-import { ROUTES } from '../../utils';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
 
 const { SWAP, SELL, BUY } = ROUTES;
 
