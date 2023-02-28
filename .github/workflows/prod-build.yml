@@ -30,7 +30,7 @@ jobs:
       - name: Deploy Prod
         uses: reggionick/s3-deploy@v3
         with:
-          folder: build
+          folder: dist
           bucket: kepler.subquery.network
           bucket-region: ap-southeast-2
           invalidation: /*
