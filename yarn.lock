@@ -4096,24 +4096,17 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-query@0.1.1-19", "@subql/network-query@^0.1.1-19":
-  version "0.1.1-19"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.1.1-19.tgz#f3934d31415746f12cf9d3b7c7464e5328c89ed0"
-  integrity sha512-+NfpM5hD4HhQZ5haAvkZi42gDchIV3zTqWZ1NrsSy85lxTuBLk8zM8/eS0pGQm7D+qEPHg7sPnqOHybo7HDOkQ==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/network-query@0.1.3-1":
+"@subql/network-query@0.1.3-1", "@subql/network-query@^0.1.3-1":
   version "0.1.3-1"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.1.3-1.tgz#8565c6817557b6bb46ccc838fa38e5e36a2ecb79"
   integrity sha512-kyxQk7dV/kz8u1eRFmgjMgv2O+Y8ZZdQUba3E4uOjfov9f/3DCcI2wHcnkGdOPWPUWtGr32M/4R0duZkjYLGSw==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@^0.1.1-21":
-  version "0.1.1-21"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.1.1-21.tgz#f41388610e779a12bad2a9d4ee6bdf0cad501afc"
-  integrity sha512-M66DVZ+NQYCtzRuGctDFoHx76dpE8f55IY8MaGiumCoFN1zDPV5Hjww/HfQhAU5dPbY2LcOCDmJ1h3F3DVszhw==
+"@subql/react-hooks@^0.1.3-1":
+  version "0.1.3-1"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.1.3-1.tgz#439ed62bfc5926d458f8490dbab323773dcd794a"
+  integrity sha512-Y2InPXsW8rN6yM4L3nt1VFAykJmK0YywwQySua7fpDg0K7hPmBRBPCGjDMDwSCNuuV5LMW1cT6BH5EUnGSsFew==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
