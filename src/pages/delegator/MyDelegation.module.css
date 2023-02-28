@@ -6,3 +6,12 @@
 .doDelegate {
   margin: 1rem 0;
 }
+
+.sqCard {
+  min-width: 210px;
+}
+.sqCard p {
+  width: 100%;
+  font-weight: 600;
+  color: var(--sq-gray700);
+}

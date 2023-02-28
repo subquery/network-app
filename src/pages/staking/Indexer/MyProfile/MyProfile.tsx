@@ -5,7 +5,8 @@ import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import { useWeb3 } from '../../../../containers';
-import { Card, AppPageHeader, TabButtons } from '../../../../components';
+import { AppPageHeader, TabButtons } from '../../../../components';
+import { Card, Tabs } from '@subql/components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
@@ -16,7 +17,8 @@ import Rewards from '../Rewards/Rewards';
 import { Locked } from '../../Locked/Home/Locked';
 import { useENS } from '../../../../hooks/useEns';
 import { parseEther } from 'ethers/lib/utils';
-import { Tabs } from '@subql/components';
+
+import clsx from 'clsx';
 
 const { INDEXING, DELEGATING, REWARDS, LOCKED } = ROUTES;
 
@@ -75,7 +77,7 @@ export const MyProfile: React.VFC = () => {
                 <div>{<Address truncated={userId.length > 20} address={userId} size="large" />}</div>
                 <div className={styles.stakingSummary}>
                   {cards.map((card) => (
-                    <Card title={card.title} value={card.value} key={card.title} />
+                    <Card className={styles.sqCard} title={card.title} description={card.value} key={card.title} />
                   ))}
                 </div>
               </>
@@ -85,8 +87,8 @@ export const MyProfile: React.VFC = () => {
       </div>
 
       <div>
-        <div className={styles.tabList}>
-          <TabButtons tabs={buttonLinks} whiteTab />
+        <div className={clsx(styles.tabList, styles.myTab)}>
+          <Tabs tabs={buttonLinks} />
         </div>
 
         <Routes>

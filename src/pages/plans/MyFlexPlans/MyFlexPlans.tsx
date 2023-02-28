@@ -4,13 +4,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, Card, TabButtons } from '../../../components';
+import { AppPageHeader, TabButtons } from '../../../components';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
 import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
-import { FlexPlayground } from '../Playground';
+import { Card } from '@subql/components';
+import clsx from 'clsx';
 
 const { ONGOING_PLANS, PLAYGROUND, EXPIRED_PLANS } = ROUTES;
 
@@ -40,13 +41,15 @@ const BalanceCards = () => {
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
+          className={styles.sqcrd}
           title={t('flexPlans.billBalance').toUpperCase()}
-          value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
-          action={<BillingAction />}
+          description={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+          titleTooltipIcon={<BillingAction />}
         />
         <Card
+          className={styles.sqcrd}
           title={t('flexPlans.walletBalance')}
-          value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          description={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
         />
       </div>
     </div>

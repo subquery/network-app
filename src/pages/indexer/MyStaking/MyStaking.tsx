@@ -5,7 +5,8 @@ import * as React from 'react';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '../../../containers';
-import { Card, AppPageHeader } from '../../../components';
+import { AppPageHeader } from '../../../components';
+import { Card } from '@subql/components';
 import styles from './MyStaking.module.css';
 import { useTranslation } from 'react-i18next';
 import { useIsIndexer, useSortedIndexer } from '../../../hooks';
@@ -49,7 +50,11 @@ export const MyStaking: React.VFC = () => {
               <>
                 <div className={styles.stakingHeader}>
                   <div className={styles.stakingAmount}>
-                    <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
+                    <Card
+                      className={styles.sqCard}
+                      title={t('indexer.stakingAmountTitle')}
+                      description={`${sortedTotalStaking} ${TOKEN}`}
+                    />
                   </div>
                   {s && (
                     <div className={styles.stakingActions}>

@@ -5,7 +5,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, Card, TabButtons } from '../../../components';
+import { AppPageHeader } from '../../../components';
+import { Card, Tabs } from '@subql/components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
@@ -13,6 +14,7 @@ import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
 import i18next from 'i18next';
 import { ROUTES } from '../../../utils';
+import clsx from 'clsx';
 
 const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
 
@@ -43,13 +45,15 @@ const BalanceCards = () => {
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
+          className={styles.sqCard}
           title={t('flexPlans.billBalance').toUpperCase()}
-          value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
-          action={<BillingAction />}
+          description={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+          titleTooltipIcon={<BillingAction />}
         />
         <Card
+          className={styles.sqCard}
           title={t('flexPlans.walletBalance')}
-          value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          description={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
         />
       </div>
     </div>
@@ -63,8 +67,8 @@ const Header = () => {
     <>
       <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
       <BalanceCards />
-      <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
+      <div className={clsx(styles.myTab, styles.tabs)}>
+        <Tabs tabs={buttonLinks} />
       </div>
     </>
   );

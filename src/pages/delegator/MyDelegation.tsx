@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
-import { AppPageHeader, Button, Card, EmptyList, TableText } from '../../components';
+import { AppPageHeader, Button, EmptyList, TableText } from '../../components';
+import { Card } from '@subql/components';
 import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '../../utils';
 import { useDelegating } from '../../hooks/useDelegating';
 import { useEra, useWeb3 } from '../../containers';
@@ -158,7 +159,7 @@ export const MyDelegation: React.VFC = () => {
   const DelegatingCard = () => {
     return (
       <div className={styles.delegatingCard}>
-        <Card title={t('delegate.delegationAmountTitle')} value={delegatingAmount} />
+        <Card className={styles.sqCard} title={t('delegate.delegationAmountTitle')} description={delegatingAmount} />
       </div>
     );
   };

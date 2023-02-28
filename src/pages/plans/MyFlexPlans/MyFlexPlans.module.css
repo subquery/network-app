@@ -42,3 +42,12 @@
 .terminateError {
   margin-bottom: 1rem;
 }
+
+.sqcrd {
+  min-width: 210px;
+}
+.sqcrd p {
+  width: 100%;
+  font-weight: 600;
+  color: var(--sq-gray700);
+}

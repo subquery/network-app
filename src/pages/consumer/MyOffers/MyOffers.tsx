@@ -29,6 +29,8 @@ import {
 } from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
 import { ROUTES } from '../../../utils';
+import { Tabs } from '@subql/components';
+import clsx from 'clsx';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
@@ -82,8 +84,8 @@ export const CheckOfferAllowance: React.VFC = () => {
 export const OfferHeader: React.VFC = () => {
   return (
     <>
-      <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
+      <div className={clsx(styles.tabs, styles.myTab)}>
+        <Tabs tabs={buttonLinks} />
         <div className={styles.create}>
           <CheckOfferAllowance />
         </div>
