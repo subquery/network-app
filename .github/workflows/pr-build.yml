@@ -26,15 +26,3 @@ jobs:
       - name: Build
         # Disable CI flag so linter warnings aren't treaded as errors
         run: CI=false yarn build
-
-      - name: Deploy Dev
-        uses: reggionick/s3-deploy@v3
-        with:
-          folder: build
-          bucket: kepler.thechaindata.com
-          bucket-region: ap-southeast-2
-          invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
-          delete-removed: false
-          no-cache: true
-          private: true
