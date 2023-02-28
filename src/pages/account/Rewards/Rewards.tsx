@@ -14,7 +14,7 @@ import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { AppPageHeader, TableText } from '../../../components';
 import { BigNumber } from 'ethers';
-import { TokenAmount } from '../../../components/TokenAmount';
+import { TokenAmount } from '@components/TokenAmount';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;

@@ -75,7 +75,7 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
 }
 
 export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
-type Data<T> = T | undefined;
+export type Data<T> = T | undefined;
 type MergedData<T1, T2, T3, T4, T5, T6> = [Data<T1>, Data<T2>, Data<T3>, Data<T4>, Data<T5>, Data<T6>];
 // NOTE: update mergeAsync returnType when migrate to sdk
 export function mergeAsync<T1, T2, T3, T4, T5, T6>(

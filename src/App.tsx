@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { Button, Typography } from '@subql/react-ui';
 import * as pages from './pages';
 import { Header, Footer } from './components';
+import styles from './App.module.css';
 import {
   Web3Provider,
   IPFSProvider,
@@ -47,7 +48,7 @@ const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   );
 };
 
-const Providers: React.FC = ({ children }) => {
+const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
@@ -71,7 +72,7 @@ const Providers: React.FC = ({ children }) => {
   );
 };
 
-const BlockchainStatus: React.FC = ({ children }) => {
+const BlockchainStatus: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { error, connector } = useWeb3();
   const { t } = useTranslation('translation');
   const connectorWindowObj = getConnectorConfig(connector).windowObj;
@@ -127,7 +128,7 @@ const App: React.FC = () => {
                     path={`${ROUTES.STUDIO}/*`}
                   />
                   <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
-                  <Route element={<WalletRoute element={pages.MyAccount} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
+                  <Route element={<WalletRoute element={pages.Account} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
                   <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
                   <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
                   <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
