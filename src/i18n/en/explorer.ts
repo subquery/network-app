@@ -79,7 +79,7 @@ const translation = {
       version: 'Version',
       description: 'Description',
       deploymentId: 'Deployment ID',
-      explainer: 'You can get a deployment id by running `subqul publish` from the command line',
+      explainer: 'You can get a deployment id by running `subql publish` from the command line',
       submit: 'Deploy New Version',
     },
   },
