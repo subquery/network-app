@@ -4063,10 +4063,10 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/components@1.0.1-53":
-  version "1.0.1-53"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-53.tgz#fcfcbf7bde626eaadb29b1f6b67e3a425ec7ec75"
-  integrity sha512-W5JUOxmX2iXMfEU4mB18SUcc/q2OrD3A4lgWzzvEjzPKpJ28IKQOvIeR+E9x+6/QYJMmIN9wrm9nMtxPwq+QAQ==
+"@subql/components@1.0.1-63":
+  version "1.0.1-63"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-63.tgz#a3f7fdce9b3cefedebbd088ee82c3e67b50deed7"
+  integrity sha512-s4izDrVuHxZzOz0hSUSfAoGq3nVEGhz6OUr5rsrz5b1FfpdZRv5+1fYud915aD85H/QcMV36iLA0GyfWpHYyvQ==
   dependencies:
     antd "5.0.2"
     clsx "^1.2.1"
@@ -4118,7 +4118,7 @@
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.1.1-19"
+    "@subql/network-query" "0.1.3-1"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 
@@ -11793,7 +11793,7 @@ mobx@^5.15.7:
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.15.7.tgz#b9a5f2b6251f5d96980d13c78e9b5d8d4ce22665"
   integrity sha512-wyM3FghTkhmC+hQjyPGGFdpehrcX1KOXsDuERhfK2YbJemkUhEB+6wzEN639T21onxlfYBmriA1PFnvxTUhcKw==
 
-moment-duration-format@^2.3.2:
+moment-duration-format@2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/moment-duration-format/-/moment-duration-format-2.3.2.tgz#5fa2b19b941b8d277122ff3f87a12895ec0d6212"
   integrity sha512-cBMXjSW+fjOb4tyaVHuaVE/A5TqkukDWiOfxxAjY+PEqmmBQlLwn+8OzwPiG3brouXKY5Un4pBjAeB6UToXHaQ==

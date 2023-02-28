@@ -1,39 +1,5 @@
-.text {
-  color: var(--gray600) !important;
-}
-
 .steps {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  overflow: scroll;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gray500);
-}
-
-.stepNoIcon {
-  align-self: center;
-  margin-right: 6px;
-  font-size: 20px;
-}
-
-.activeStep {
-  color: var(--gradient-to) !important;
-}
-
-.line {
-  width: 3px;
-  border: 1px solid red;
-}
-
-.divider {
-  width: 10%;
-  margin: 0 10px;
+  margin: 1.25rem 0;
 }
 
 .title {

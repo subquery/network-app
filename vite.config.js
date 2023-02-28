@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { defineConfig } from "vite";
-import eslint from 'vite-plugin-eslint'
+import { defineConfig } from 'vite';
+import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
@@ -15,17 +15,17 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-        less: {
-          modifyVars: { '@primary-color': '#4388dd', '@text-color': '#454f58', '@text-color-secondary': '#919eab' },    
-          javascriptEnabled: true,
-          additionalData: '@root-entry-name: default;',
-        },
+      less: {
+        modifyVars: { '@primary-color': '#4388dd', '@text-color': '#454f58', '@text-color-secondary': '#919eab' },
+        javascriptEnabled: true,
+        additionalData: '@root-entry-name: default;',
+      },
     },
     modules: {
       localIdentName: '[local]_[hash:base64:5]',
     },
   },
   define: {
-    'process.env': process.env
-  }
-})
+    'process.env': process.env,
+  },
+});

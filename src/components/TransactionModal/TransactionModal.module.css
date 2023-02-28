@@ -2,10 +2,6 @@
   display: flex;
 }
 
-.clock {
-  margin-left: 6px;
-}
-
 .errorButtonIcon {
   color: var(--error);
 }

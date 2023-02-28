@@ -10,10 +10,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { SummaryList } from '../../../../../components';
-import {
-  NotificationType,
-  openNotificationWithIcon,
-} from '../../../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { useContracts } from '../../../../../containers';
 import {
   cidToBytes32,
@@ -31,7 +28,7 @@ import { ROUTES } from '../../../../../utils';
 
 const { OFFER_MARKETPLACE_NAV } = ROUTES;
 
-export const Summary: React.VFC = () => {
+export const Summary: React.FC = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();

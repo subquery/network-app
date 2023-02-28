@@ -10,10 +10,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { SummaryList } from '../../../../../components';
-import {
-  NotificationType,
-  openNotificationWithIcon,
-} from '../../../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { useContracts } from '../../../../../containers';
 import {
   cidToBytes32,

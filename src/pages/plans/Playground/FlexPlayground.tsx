@@ -22,7 +22,7 @@ import {
 } from '../../../utils';
 import { POST } from '../../../utils/fetch';
 import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '../../../components/TransactionModal/TransactionModal';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { GraphQLQuery } from './GraphQLQuery';
 import { RequestToken } from './RequestToken';
 import { PlaygroundHeader } from './SAPlayground';

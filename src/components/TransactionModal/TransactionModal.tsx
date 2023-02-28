@@ -4,49 +4,15 @@
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/react-ui';
 import * as React from 'react';
-import { CgSandClock } from 'react-icons/cg';
-import { AsyncData, COLORS, parseError } from '../../utils';
+import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import styles from './TransactionModal.module.css';
-import clsx from 'clsx';
 import { MdErrorOutline } from 'react-icons/md';
-import { notification, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { LoadingOutlined } from '@ant-design/icons';
-
-export enum NotificationType {
-  INFO = 'info',
-  SUCCESS = 'success',
-  ERROR = 'error',
-}
-
-const borderColorMapping = {
-  [NotificationType.INFO]: COLORS.primary,
-  [NotificationType.SUCCESS]: COLORS.success,
-  [NotificationType.ERROR]: COLORS.error,
-};
-interface NotificationProps {
-  type?: NotificationType;
-  title?: string;
-  description?: string;
-}
-
-export const openNotificationWithIcon = ({
-  type = NotificationType.INFO,
-  title,
-  description,
-}: NotificationProps): void => {
-  notification[type]({
-    message: title ?? 'Notification',
-    description: description,
-    style: {
-      borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}`,
-      overflow: 'scroll',
-    },
-    duration: type === NotificationType.INFO ? 45 : 30,
-  });
-};
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
@@ -102,7 +68,6 @@ const TransactionModal = <P, T extends string>({
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
-  const [showClock, setShowClock] = React.useState<boolean>(false);
   const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
   const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
 
@@ -117,7 +82,6 @@ const TransactionModal = <P, T extends string>({
     if (successModalText) {
       const timeoutId = setTimeout(() => {
         setSuccessModalText(undefined);
-        setShowClock(false);
       }, 2500);
 
       return () => clearTimeout(timeoutId);
@@ -125,15 +89,12 @@ const TransactionModal = <P, T extends string>({
   }, [successModalText]);
 
   const resetModal = () => {
-    // setIsLoading(false);
     setShowModal(undefined);
     setFailureModalText(undefined);
     onClose && onClose();
-    !isLoading && !successModalText && setShowClock(false);
   };
 
   const handleBtnClick = (key: T) => {
-    setShowClock(true);
     setShowModal(key);
   };
 
@@ -186,7 +147,6 @@ const TransactionModal = <P, T extends string>({
           visible={modalVisible}
           onCancel={() => {
             resetModal();
-            !isLoading && setShowClock(false);
           }}
           loading={loading}
           currentStep={currentStep}
@@ -223,7 +183,7 @@ const TransactionModal = <P, T extends string>({
                 }}
                 className={sortedStyle}
                 size="medium"
-                disabled={disabled || showClock || isLoading}
+                disabled={disabled || isLoading}
                 rightItem={
                   isLoading ? (
                     <LoadingOutlined className={sortedStyle} />
@@ -233,7 +193,6 @@ const TransactionModal = <P, T extends string>({
                 }
               />
             </Tooltip>
-            {showClock && <CgSandClock className={clsx('grayText', styles.clock)} size={18} />}
           </div>
         );
       })}
