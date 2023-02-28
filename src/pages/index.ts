@@ -10,4 +10,4 @@ export * from './swap';
 export * from './indexer';
 export * from './delegator';
 export * from './consumer';
-export * from './account';
+export * from './myAccount';

@@ -15,7 +15,7 @@ type Props = {
   }[];
 };
 
-export const Sidebar: React.FC<Props> = ({ list }) => {
+export const Sidebar: React.VFC<Props> = ({ list }) => {
   return (
     <div className={styles.sidebar}>
       {list.map((sidebarItem) => (

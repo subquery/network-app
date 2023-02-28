@@ -30,7 +30,6 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
 
   const handleDisconnect = () => deactivate();
   const handleNavRewards = () => navigate(ROUTES.MY_ACCOUNT_REWARDS_NAV);
-  const handleNavAccount = () => navigate(ROUTES.MY_ACCOUNT);
   const handleAddToken = () => {
     sortedWindowObj?.request({
       method: 'wallet_watchAsset',
@@ -64,7 +63,6 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
     { key: 'walletBalance', label: t('header.walletBalance', { balance: formatEther(balance.data, 4) }) },
     { key: 'addToken', label: t('header.importToken'), onClick: handleAddToken },
     { key: 'addStableToken', label: t('header.importStableToken'), onClick: handleAddStableToken },
-    { key: 'myProfile', label: t('indexer.myProfile'), onClick: handleNavAccount },
     { key: 'rewards', label: t('indexer.rewards'), onClick: handleNavRewards },
     { key: 'disconnect', label: t('header.disconnect'), icon: <BsBoxArrowLeft />, onClick: handleDisconnect },
   ];
