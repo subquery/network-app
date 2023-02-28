@@ -13,7 +13,7 @@ import { DoDelegate } from '../DoDelegate';
 import { TableTitle } from '@components/TableTitle';
 import { useWeb3 } from '@containers';
 import styles from './TopIndexersList.module.css';
-import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers';
+import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
 import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
 import { useNavigate } from 'react-router-dom';
 const { DELEGATOR, INDEXER } = ROUTES;
