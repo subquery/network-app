@@ -9,11 +9,7 @@ import { useWeb3 } from './containers';
 import { parseError, walletConnectionErrors } from './utils';
 import styles from './WalletRoute.module.css';
 
-interface WalletRouteProps {
-  title?: string;
-  subtitle?: string;
-  element: React.VFC;
-}
+type WalletRouteProps = React.ComponentProps<typeof Route> & { title?: string; subtitle?: string; element: React.VFC };
 
 export const WalletRoute: React.VFC<WalletRouteProps> = ({ title, subtitle, element: Element }) => {
   const { account, error } = useWeb3();

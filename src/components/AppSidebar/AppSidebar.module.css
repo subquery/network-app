@@ -5,12 +5,11 @@
 }
 
 .sidebar {
-  width: 22%;
+  width: 25%;
 }
 
 .content {
   width: 100%;
   padding: 2rem;
   overflow: scroll;
-  background-color: #fbfcfe;
 }
