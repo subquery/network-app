@@ -18,6 +18,7 @@ import { NavLink } from 'react-router-dom';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 import { DoUndelegate } from '../DoUndelegate';
+import { useWeb3 } from '@containers';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 
@@ -29,6 +30,8 @@ const NoDelegator: React.FC = () => {
 };
 
 export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
+  const { account: connectedAccount } = useWeb3();
+  const canDelegate = connectedAccount !== account;
   return (
     <div className={styles.header}>
       <div className={styles.accountContainer}>
@@ -41,10 +44,12 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
           </Copy>
         </div>
       </div>
-      <div className={styles.delegateActions}>
-        <DoDelegate indexerAddress={account} />
-        <DoUndelegate indexerAddress={account} />
-      </div>
+      {canDelegate && (
+        <div className={styles.delegateActions}>
+          <DoDelegate indexerAddress={account} />
+          <DoUndelegate indexerAddress={account} />
+        </div>
+      )}
     </div>
   );
 };

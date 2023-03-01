@@ -8,11 +8,12 @@ import { BsArrowReturnRight } from 'react-icons/bs';
 import { BigNumber } from 'ethers';
 import clsx from 'clsx';
 import styles from './Indexing.module.css';
-import { isUndefined, TOKEN, truncFormatEtherStr } from '../../../../utils';
-import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { TableTitle } from '../../../../components/TableTitle';
-import { UseSortedIndexerReturn } from '../../../../hooks/useSortedIndexer';
-import { EmptyList } from '../../../../components';
+import { EmptyList } from '@components';
+import { CurrentEraValue } from '@subql/network-clients';
+import { isUndefined } from '@polkadot/util';
+import { TOKEN, truncFormatEtherStr } from '@utils';
+import { UseSortedIndexerReturn } from '@hooks/useSortedIndexer';
+import { TableTitle } from '@subql/components';
 
 export const NotRegisteredIndexer: React.VFC = () => {
   const { t } = useTranslation();
@@ -86,15 +87,12 @@ export const Indexing: React.VFC<Props> = ({ tableData, showDelegated = false })
     },
   ];
 
-  if (showDelegated) {
-    columns.push(delegatedColumn);
-  }
-
+  const sortedColumns = showDelegated ? [...columns, delegatedColumn] : columns;
   const sortedIndexingData = [tableData].map((indexer, idx) => ({ ...indexer, idx }));
 
   return (
     <>
-      <Table columns={columns} dataSource={sortedIndexingData} pagination={false} rowKey={'idx'} />
+      <Table columns={sortedColumns} dataSource={sortedIndexingData} pagination={false} rowKey={'idx'} />
 
       <div className={styles.textGroup}>
         <Typography.Text className={styles.grayText}>{t('indexer.topRowData')}</Typography.Text>
