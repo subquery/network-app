@@ -8,36 +8,16 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
+import { networks } from '@subql/contract-sdk';
 
-const MOONBEAM_NETWORK = 'moonbase-alpha';
-const ACALA_NETWORK = 'acala-testnet';
-const MUMBAI_NETWORK = 'mumbai-testnet';
+export const defaultChainId = parseInt(networks.testnet.chainId, 16);
 
-export const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
-  [MOONBEAM_NETWORK]: {
-    chainId: 1287,
-    rpc: 'https://moonbeam-alpha.api.onfinality.io/public',
-  },
-  [ACALA_NETWORK]: {
-    chainId: 595,
-    rpc: 'https://acala-mandala-adapter.api.onfinality.io/public',
-  },
-  [MUMBAI_NETWORK]: {
-    chainId: 80001,
-    rpc: 'https://rpc-mumbai.maticvigil.com/',
-  },
+export const RPC_URLS: Record<number, string> = {
+  80001: 'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
+  137: 'https://polygon-rpc.com/',
 };
-export const SUPPORTED_NETWORK = MUMBAI_NETWORK;
-const defaultChainId = NETWORKS[SUPPORTED_NETWORK].chainId;
 
-const RPC_URLS: Record<number, string> = Object.keys(NETWORKS).reduce((result, curNetwork) => {
-  const network = NETWORKS[curNetwork];
-  if (network) {
-    return { ...result, [network.chainId]: network.rpc };
-  }
-
-  return result;
-}, {});
+export const SUPPORTED_NETWORK = 'testnet';
 
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [defaultChainId],
@@ -82,42 +62,6 @@ const networkConnector = new NetworkConnector({
   urls: RPC_URLS,
   defaultChainId,
 });
-
-export const NETWORK_CONFIGS = {
-  [MOONBEAM_NETWORK]: {
-    chainId: `0x${Number(1287).toString(16)}`,
-    chainName: 'Moonbase Alpha',
-    nativeCurrency: {
-      name: 'DEV',
-      symbol: 'DEV',
-      decimals: 18,
-    },
-    rpcUrls: [RPC_URLS[1287]],
-    blockExplorerUrls: ['https://moonbase.moonscan.io/'],
-  },
-  [ACALA_NETWORK]: {
-    chainId: `0x${Number(595).toString(16)}`,
-    chainName: 'Acala Testnet',
-    nativeCurrency: {
-      name: 'ACA',
-      symbol: 'ACA',
-      decimals: 18,
-    },
-    rpcUrls: [RPC_URLS[595]],
-    blockExplorerUrls: ['https://blockscout.mandala.acala.network/'],
-  },
-  [MUMBAI_NETWORK]: {
-    chainId: `0x${Number(1287).toString(16)}`,
-    chainName: 'Polygon Mumbai',
-    nativeCurrency: {
-      name: 'DEV',
-      symbol: 'DEV',
-      decimals: 18,
-    },
-    rpcUrls: [RPC_URLS[80001]],
-    blockExplorerUrls: ['https://polygonscan.com/'],
-  },
-};
 
 function getLibrary(provider: providers.ExternalProvider): providers.Web3Provider {
   // Acala would use https://github.com/AcalaNetwork/bodhi.js here

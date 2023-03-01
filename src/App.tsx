@@ -11,7 +11,7 @@ import { UnsupportedChainIdError } from '@web3-react/core';
 import clsx from 'clsx';
 import { Button, Typography } from '@subql/react-ui';
 import * as pages from './pages';
-import { Header, Footer } from './components';
+import { Header } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -26,7 +26,6 @@ import {
   EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
-import { NETWORK_CONFIGS, SUPPORTED_NETWORK } from './containers/Web3';
 
 // TODO move styles
 import studioStyles from './pages/studio/index.module.css';
@@ -35,6 +34,7 @@ import { WalletRoute } from './WalletRoute';
 
 import { getConnectorConfig } from './utils/getNetworkConnector';
 import { ROUTES } from './utils';
+import { networks } from '@subql/contract-sdk';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -81,8 +81,9 @@ const BlockchainStatus: React.FC = ({ children }) => {
     [],
   );
 
+  // TODO: should switch specific network basing on the current env: `dev` | `kepler` | `mainnet`
   const handleSwitchNetwork = () => {
-    connectorWindowObj?.send('wallet_addEthereumChain', [NETWORK_CONFIGS[SUPPORTED_NETWORK]]);
+    connectorWindowObj?.send('wallet_addEthereumChain', networks.testnet);
   };
 
   if (error instanceof UnsupportedChainIdError) {

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Web3Provider } from '@ethersproject/providers';
-import { NETWORKS, SUPPORTED_NETWORK } from '../containers/Web3';
+import { defaultChainId } from '../containers/Web3';
 
 export interface SAMessage {
   deploymentId: string;
@@ -38,7 +38,7 @@ const IndexerMessageType = [
 
 const domain = {
   name: 'Subquery',
-  chainId: NETWORKS[SUPPORTED_NETWORK].chainId,
+  chainId: defaultChainId,
 };
 
 export function buildTypedMessage(message: SAMessage): string {

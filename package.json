@@ -21,10 +21,10 @@
     "@subql/common": "^0.21.3-0",
     "@subql/common-substrate": "^0.3.2-0",
     "@subql/components": "1.0.1-63",
-    "@subql/contract-sdk": "^0.12.1-3",
-    "@subql/network-clients": "^0.3.1-2",
+    "@subql/contract-sdk": "0.12.1-5",
+    "@subql/network-clients": "^0.3.1-4",
     "@subql/network-query": "^0.3.1-0",
-    "@subql/react-hooks": "^0.3.1-1",
+    "@subql/react-hooks": "^0.3.1-3",
     "@subql/react-ui": "1.0.1-22",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -145,9 +145,6 @@
     "*.{css,md}": "prettier --write"
   },
   "resolutions": {
-    "@acala-network/api": "2.0.2-2",
-    "@acala-network/bodhi": "1.0.2-0",
-    "@acala-network/contracts": "1.0.22",
     "ipfs-http-client": "53.0.1",
     "@polkadot/x-global": "7.9.2"
   }
