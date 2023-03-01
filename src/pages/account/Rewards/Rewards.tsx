@@ -5,7 +5,7 @@ import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
 import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useWeb3 } from '../../../containers';
+import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import {
   GetRewards_rewards_nodes as Reward,

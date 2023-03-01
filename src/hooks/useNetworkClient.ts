@@ -5,8 +5,8 @@ import { NetworkClient } from '@subql/network-clients';
 import { ContractClient } from '@subql/network-clients/dist/clients/contractClient';
 import { ContractSDK } from '@subql/contract-sdk';
 import * as React from 'react';
-import { useWeb3 } from '../containers';
-import { NETWORK, networkDeploymentDetails } from '../utils';
+import { useWeb3 } from '@containers';
+import { NETWORK, networkDeploymentDetails } from '@utils';
 
 export function useContractClient(): ContractClient | undefined {
   const [contractClient, setContractClient] = React.useState<ContractClient | undefined>();
