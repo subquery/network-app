@@ -25,16 +25,16 @@ import { useDelegating } from '@hooks/useDelegating';
 
 type statNumber = string | undefined;
 
-interface Stats {
-  Delegating: statNumber;
-  Staking: statNumber;
-  Rewards: statNumber;
-  Withdrawn: statNumber;
+interface StatKey {
+  delegating: statNumber;
+  staking: statNumber;
+  rewards: statNumber;
+  withdrawn: statNumber;
 }
 
 interface CardProps {
   title: string;
-  key: keyof Stats;
+  key: keyof StatKey;
   link: string;
   tooltip: string;
 }
@@ -49,25 +49,25 @@ const NoDelegator: React.FC = () => {
 const cards: CardProps[] = [
   {
     title: t('account.title.delegating'),
-    key: 'Delegating',
+    key: 'delegating',
     link: '/',
     tooltip: t('account.tooltip.delegating'),
   },
   {
     title: t('account.title.staking'),
-    key: 'Staking',
+    key: 'staking',
     link: '/',
     tooltip: t('account.tooltip.staking'),
   },
   {
     title: t('account.title.rewards'),
-    key: 'Rewards',
+    key: 'rewards',
     link: '/',
     tooltip: t('account.tooltip.rewards'),
   },
   {
     title: t('account.title.withdrawn'),
-    key: 'Withdrawn',
+    key: 'withdrawn',
     link: '/',
     tooltip: t('account.tooltip.withdrawn'),
   },
@@ -86,8 +86,8 @@ function reduceTotal(nodes: any) {
 export const MyAccount: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const action = (link: string) => ({
-    label: t('account.viewDetails'),
+  const action = (link: string, key: string) => ({
+    label: t(`account.linkText.${key}`),
     onClick: () => navigate(link),
   });
 
@@ -112,11 +112,11 @@ export const MyAccount: React.FC = () => {
       const totalStaking = i && truncFormatEtherStr(i?.totalStake?.current?.toString());
       //TODO: add subscription
 
-      const cardStats: Stats = {
-        Delegating: totalDelegating,
-        Staking: totalStaking,
-        Rewards: totalRewards,
-        Withdrawn: totalWithdrawn,
+      const cardStats: StatKey = {
+        delegating: totalDelegating,
+        staking: totalStaking,
+        rewards: totalRewards,
+        withdrawn: totalWithdrawn,
       };
 
       return (
@@ -130,7 +130,7 @@ export const MyAccount: React.FC = () => {
                   description={cardStats[key] ?? '-'}
                   title={title}
                   titleTooltipIcon={<InfoCircleOutlined />}
-                  action={action(link)}
+                  action={action(link, key)}
                   titleTooltip={tooltip}
                 />
               ))}

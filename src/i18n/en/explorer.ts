@@ -43,7 +43,12 @@ const translation = {
       rewards: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
       withdrawn: 'The amount of kSQT that you have undelegated or unstaked',
     },
-    viewDetails: 'View Details',
+    linkText: {
+      delegating: 'Delegate to an Indexer',
+      staking: 'Start Staking',
+      rewards: 'View Rewards',
+      withdrawn: 'View Withdrawn',
+    },
   },
   footer: {
     title: 'Join The Future',
