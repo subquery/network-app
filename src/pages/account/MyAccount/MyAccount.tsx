@@ -16,7 +16,6 @@ import {
 import { EmptyList } from '@components';
 import { OwnDelegator } from '@pages/staking/Indexer/OwnDelegator';
 import { formatEther, mergeAsync, truncFormatEtherStr } from '@utils';
-import { Link } from 'react-router-dom';
 import { useSortedIndexer } from '@hooks';
 import { BigNumber } from 'ethers';
 import { WithdrawalStatus } from '@subql/network-query';
@@ -88,7 +87,7 @@ export const MyAccount: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const action = (link: string) => ({
-    label: 'View Details',
+    label: t('account.viewDetails'),
     onClick: () => navigate(link),
   });
 
@@ -139,9 +138,9 @@ export const MyAccount: React.FC = () => {
             <div className={styles.myDelegators}>
               <div className={styles.delegatorHeader}>
                 <Typography variant="h5">{t('indexer.myDelegators')}</Typography>
-                <Typography variant="medium">
+                {/* <Typography variant="medium">
                   <Link to={'/'}>{t('account.viewDetails')}</Link>
-                </Typography>
+                </Typography> */}
               </div>
               {totalCount <= 0 && <NoDelegator />}
               {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
