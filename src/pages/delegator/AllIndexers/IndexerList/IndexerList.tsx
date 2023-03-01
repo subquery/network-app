@@ -10,20 +10,20 @@ import { useNavigate } from 'react-router';
 import i18next from 'i18next';
 import styles from './IndexerList.module.css';
 import { DoDelegate } from '../../DoDelegate';
-import { CurrentEraValue } from '../../../../hooks/useEraValue';
-import { useWeb3 } from '../../../../containers';
-import { formatEther, getOrderedAccounts, mulToPercentage } from '../../../../utils';
+import { CurrentEraValue } from '@hooks/useEraValue';
+import { useWeb3 } from '@containers';
+import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 
-import { GetIndexers_indexers_nodes as Indexer } from '../../../../__generated__/registry/GetIndexers';
-import { TokenAmount } from '../../../../components/TokenAmount';
-import { ConnectedIndexer } from '../../../../components/IndexerDetails/IndexerName';
-import { AntDTable, SearchInput, TableText } from '../../../../components';
-import { TableTitle } from '../../../../components/TableTitle';
+import { GetIndexers_indexers_nodes as Indexer } from '@__generated__/registry/GetIndexers';
+import { TokenAmount } from '@components/TokenAmount';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { AntDTable, SearchInput, TableText } from '@components';
+import { TableTitle } from '@components/TableTitle';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 
-import { useNetworkClient } from '../../../../hooks';
-import { ROUTES } from '../../../../utils';
-const { DELEGATE_NAV } = ROUTES;
+import { useNetworkClient } from '@hooks';
+import { ROUTES } from '@utils';
+const { DELEGATOR, INDEXER } = ROUTES;
 
 interface SortedIndexerListProps {
   commission: CurrentEraValue<number>;
@@ -65,7 +65,6 @@ const getColumns = (
       {
         title: <TableTitle title={i18next.t('general.current')} />,
         dataIndex: ['totalStake', 'current'],
-
         width: 40,
         render: (value) => <TokenAmount value={formatEther(value, 4)} />,
         onCell: (record) => ({
@@ -218,7 +217,7 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`${DELEGATE_NAV}/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`${DELEGATOR}/${INDEXER}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();

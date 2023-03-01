@@ -38,7 +38,7 @@ export const getPlanTemplateColumns = (
   {
     title: '#',
     dataIndex: 'id',
-    render: (_: string, __: PlanTemplate, idx: number) => <TableText content={idx + 1} />,
+    render: (idx: number) => <TableText content={idx + 1} />,
   },
   {
     dataIndex: 'period',
@@ -114,7 +114,6 @@ const ChooseTemplateStep = ({
 };
 
 const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (deploymentId: string) => void }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
 

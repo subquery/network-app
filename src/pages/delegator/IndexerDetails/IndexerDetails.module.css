@@ -1,0 +1,45 @@
+.container {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid var(--gray300);
+}
+
+.delegatorHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header,
+.accountContainer {
+  display: flex;
+  height: 12vh;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.account {
+  padding-left: 1rem;
+}
+
+.link {
+  padding-top: 5px;
+}
+
+.delegateActions {
+  display: flex;
+}

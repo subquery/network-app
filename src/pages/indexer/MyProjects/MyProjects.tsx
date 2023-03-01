@@ -8,7 +8,7 @@ import { useWeb3 } from '../../../containers';
 import { OwnDeployments } from './OwnDeployments';
 import { ROUTES, URLS } from '../../../utils';
 
-const NoDeployment: React.VFC = () => {
+export const NoDeployment: React.VFC = () => {
   const { t } = useTranslation();
 
   return (

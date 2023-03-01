@@ -6,22 +6,30 @@ import { TableProps, Tag } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { AntDTable, SearchInput, TableText } from '../../../components';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { AntDTable, SearchInput, TableText } from '@components';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 
 import { DoDelegate } from '../DoDelegate';
-import { TableTitle } from '../../../components/TableTitle';
-import { useWeb3 } from '../../../containers';
+import { TableTitle } from '@components/TableTitle';
+import { useWeb3 } from '@containers';
 import styles from './TopIndexersList.module.css';
-import { GetTopIndexers_indexerPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
-import { getOrderedAccounts, mulToPercentage } from '../../../utils';
+import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
+import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
+import { useNavigate } from 'react-router-dom';
+const { DELEGATOR, INDEXER } = ROUTES;
 
-const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
+const getColumns = (
+  account: string,
+  viewIndexerDetail: (url: string) => void,
+): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
     title: '#',
     dataIndex: 'idx',
     width: 20,
     render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
   },
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,
@@ -38,6 +46,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
+    onCell: () => ({
+      onClick: () => viewIndexerDetail(account),
+    }),
     sorter: (a, b) => a.totalPoints - b.totalPoints,
     showSorterTooltip: false,
   },
@@ -51,6 +62,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     sorter: (a, b) => a.uptime - b.uptime,
     showSorterTooltip: false,
   },
@@ -64,6 +78,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     sorter: (a, b) => a.ownStaked - b.ownStaked,
     showSorterTooltip: false,
   },
@@ -77,6 +94,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     sorter: (a, b) => a.delegated - b.delegated,
     showSorterTooltip: false,
   },
@@ -92,6 +112,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     render: (eraRewardsCollection) => (
       <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     filters: [
       {
         text: i18next.t('general.frequent'),
@@ -133,6 +156,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     filters: [
       {
         text: i18next.t('general.enabled'),
@@ -163,6 +189,9 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
+    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+      onClick: () => viewIndexerDetail(record.id),
+    }),
     filters: [
       {
         text: i18next.t('general.enabled'),
@@ -197,6 +226,8 @@ interface props {
 export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const navigate = useNavigate();
+  const viewIndexerDetail = (id: string) => navigate(`${DELEGATOR}/${INDEXER}/${id}`);
 
   const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
 
@@ -213,7 +244,7 @@ export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
     </div>
   );
 
-  const columns = getColumns(account ?? '');
+  const columns = getColumns(account ?? '', viewIndexerDetail);
 
   return (
     <div className={styles.container}>

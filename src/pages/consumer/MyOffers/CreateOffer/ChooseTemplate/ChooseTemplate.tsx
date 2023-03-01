@@ -7,9 +7,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
-import { mapAsync, notEmpty, renderAsync } from '../../../../../utils';
+import { mapAsync, notEmpty, renderAsync } from '@utils';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
-import { getPlanTemplateColumns } from '../../../../plans/Plans/Create';
+import { getPlanTemplateColumns } from '@pages/plans/Plans/Create';
 
 export const ChooseTemplate: React.FC = () => {
   const { t } = useTranslation();
