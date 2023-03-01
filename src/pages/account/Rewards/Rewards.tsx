@@ -7,11 +7,7 @@ import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '@utils';
-import {
-  GetRewards_rewards_nodes as Reward,
-  GetRewards_unclaimedRewards_nodes as UnclaimedReward,
-} from '@__generated__/registry/GetRewards';
-//TODO: add fragment for these two.
+import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query'
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { TableText } from '@components';
