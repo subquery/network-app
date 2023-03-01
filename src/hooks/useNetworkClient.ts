@@ -3,11 +3,10 @@
 
 import { NetworkClient } from '@subql/network-clients';
 import { ContractClient } from '@subql/network-clients/dist/clients/contractClient';
-import { SQNetworks } from '@subql/network-clients/dist/config';
 import { ContractSDK } from '@subql/contract-sdk';
 import * as React from 'react';
 import { useWeb3 } from '../containers';
-import { networkDeploymentDetails } from '../utils';
+import { NETWORK, networkDeploymentDetails } from '../utils';
 
 export function useContractClient(): ContractClient | undefined {
   const [contractClient, setContractClient] = React.useState<ContractClient | undefined>();
@@ -39,7 +38,7 @@ export function useNetworkClient(): NetworkClient | undefined {
 
   React.useEffect(() => {
     async function getNetworkClient() {
-      const client = await NetworkClient.create(SQNetworks.TESTNET);
+      const client = await NetworkClient.create(NETWORK);
       setNetworkClient(client);
     }
 

@@ -3,6 +3,7 @@
 
 import { STABLE_TOKEN_ADDRESS } from './USDC';
 import testnet from '@subql/contract-sdk/publish/testnet.json';
+import { SQNetworks } from '@subql/network-clients';
 
 export const DATE_FORMAT = 'DD/MM/YYYY';
 export const DATE_WITH_TIME_FORMAT = 'DD/MM/YYYY hh:mm:ss A';
@@ -15,6 +16,7 @@ export enum LOCK_STATUS {
 export const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN ?? 'USDC';
 
 export const networkDeploymentDetails = testnet;
+export const NETWORK = SQNetworks.TESTNET;
 export const SQT_TOKEN_ADDRESS = testnet.SQToken.address;
 export const TOKEN = import.meta.env.VITE_TOKEN ?? 'kSQT';
 

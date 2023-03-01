@@ -30,6 +30,21 @@ const translation = {
     seasonEndDescription:
       'The incentivised phase of the SubQuery Frontier Network has finished, get ready for the Kepler Network',
   },
+  account: {
+    title: {
+      delegating: 'You are Delegating',
+      staking: 'You are Staking',
+      rewards: 'Your Rewards',
+      withdrawn: 'Withdrawn',
+    },
+    tooltip: {
+      delegating: 'The amount of kSQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
+      staking: 'The amount of kSQT that you have staked against projects you are indexing in the SubQuery Network',
+      rewards: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
+      withdrawn: 'The amount of kSQT that you have undelegated or unstaked',
+    },
+    viewDetails: 'View Details',
+  },
   footer: {
     title: 'Join The Future',
     copyright: 'SubQuery © ',
