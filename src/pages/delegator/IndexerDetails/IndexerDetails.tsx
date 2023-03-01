@@ -12,12 +12,12 @@ import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
 import ReactJazzicon from 'react-jazzicon';
 import { DoDelegate } from '../DoDelegate';
-import { DoUndelegate } from '@pages/staking/Indexer/DoUndelegate';
 import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { Breadcrumb } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
+import { DoUndelegate } from '../DoUndelegate';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 

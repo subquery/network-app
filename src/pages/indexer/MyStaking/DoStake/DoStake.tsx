@@ -4,21 +4,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import assert from 'assert';
-import { useContracts, useSQToken, useWeb3 } from '../../../../containers';
+import { useContracts, useSQToken, useWeb3 } from '@containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
   claimIndexerRewardsModalText,
   ModalClaimIndexerRewards,
-} from '../../../../components';
-import { useLockPeriod } from '../../../../hooks';
+} from '@components';
+import { useLockPeriod } from '@hooks';
 import { parseEther } from '@ethersproject/units';
-import TransactionModal from '../../../../components/TransactionModal';
-import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '../../../../utils';
+import TransactionModal from '@components/TransactionModal';
+import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
 import moment from 'moment';
-import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
+import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/react-ui';
-import { useMaxUnstakeAmount } from '../../../../hooks/useMaxUnstakeAmount';
+import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 
 enum StakeAction {
   Stake = 'stake',

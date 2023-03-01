@@ -7,17 +7,17 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
-import { AppPageHeader, Button, Card, EmptyList, TableText } from '../../components';
-import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '../../utils';
-import { useDelegating } from '../../hooks/useDelegating';
-import { useEra, useWeb3 } from '../../containers';
+import { AppPageHeader, Button, Card, EmptyList, TableText } from '@components';
+import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '@utils';
+import { useDelegating } from '@hooks/useDelegating';
+import { useEra, useWeb3 } from '@containers';
 import styles from './MyDelegation.module.css';
-import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '../../hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { parseEther } from 'ethers/lib/utils';
-import { TableTitle } from '../../components/TableTitle';
-import { TokenAmount } from '../../components/TokenAmount';
-import { DoUndelegate } from '../staking/Indexer/DoUndelegate';
-import { SUB_DELEGATIONS } from '../../containers/IndexerRegistryProjectSub';
+import { TableTitle } from '@components/TableTitle';
+import { TokenAmount } from '@components/TokenAmount';
+import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
+import { DoUndelegate } from './DoUndelegate';
 
 const getColumns = (
   t: any,
