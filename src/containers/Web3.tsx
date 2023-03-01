@@ -11,6 +11,8 @@ import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
 const MOONBEAM_NETWORK = 'moonbase-alpha';
 const ACALA_NETWORK = 'acala-testnet';
+const MUMBAI_NETWORK = 'mumbai-testnet';
+
 export const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
   [MOONBEAM_NETWORK]: {
     chainId: 1287,
@@ -20,9 +22,14 @@ export const NETWORKS: { [key: string]: { chainId: number; rpc: string } } = {
     chainId: 595,
     rpc: 'https://acala-mandala-adapter.api.onfinality.io/public',
   },
+  [MUMBAI_NETWORK]: {
+    chainId: 80001,
+    rpc: 'https://rpc-mumbai.maticvigil.com/',
+  },
 };
-export const SUPPORTED_NETWORK = MOONBEAM_NETWORK;
+export const SUPPORTED_NETWORK = MUMBAI_NETWORK;
 const defaultChainId = NETWORKS[SUPPORTED_NETWORK].chainId;
+
 const RPC_URLS: Record<number, string> = Object.keys(NETWORKS).reduce((result, curNetwork) => {
   const network = NETWORKS[curNetwork];
   if (network) {
@@ -99,6 +106,17 @@ export const NETWORK_CONFIGS = {
     rpcUrls: [RPC_URLS[595]],
     blockExplorerUrls: ['https://blockscout.mandala.acala.network/'],
   },
+  [MUMBAI_NETWORK]: {
+    chainId: `0x${Number(1287).toString(16)}`,
+    chainName: 'Polygon Mumbai',
+    nativeCurrency: {
+      name: 'DEV',
+      symbol: 'DEV',
+      decimals: 18,
+    },
+    rpcUrls: [RPC_URLS[80001]],
+    blockExplorerUrls: ['https://polygonscan.com/'],
+  },
 };
 
 function getLibrary(provider: providers.ExternalProvider): providers.Web3Provider {
@@ -128,7 +146,7 @@ const InitProvider: React.VFC = () => {
   return null;
 };
 
-export const Web3Provider: React.FC = (props) => (
+export const Web3Provider: React.FC<{ children: React.ReactNode }> = (props) => (
   <Web3ReactProvider getLibrary={getLibrary}>
     <InitProvider />
     {props.children}
