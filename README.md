@@ -10,8 +10,6 @@
 ### Data feed
 
 - [Subquery-network-subql-project](https://project.subquery.network/project/subquery/subquery-network-subql-project)
-- [Subquery Network Leaderboard Season 3](https://project.subquery.network/project/subquery/subquery-network-leaderboard-season-3)
-- [Subquery Network Leaderboard Season 2](https://project.subquery.network/project/subquery/leaderboard-s2)
 - [Leader-board-tracking Repo](https://bitbucket.org/onfinalitydev/leader-board-tracking/src/master/)
 
 ### Forum

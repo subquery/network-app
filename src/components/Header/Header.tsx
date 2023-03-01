@@ -38,14 +38,14 @@ const HeaderLinks = () => {
     //   link: ROUTES.STUDIO,
     //   title: t('header.studio'),
     // },
-    {
-      link: ROUTES.STAKING,
-      title: t('header.staking'),
-    },
-    {
-      link: ROUTES.PLANS,
-      title: t('header.plans'),
-    },
+    // {
+    //   link: ROUTES.STAKING,
+    //   title: t('header.staking'),
+    // },
+    // {
+    //   link: ROUTES.PLANS,
+    //   title: t('header.plans'),
+    // },
     {
       link: ROUTES.INDEXER,
       title: t('indexer.title'),
