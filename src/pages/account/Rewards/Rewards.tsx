@@ -6,14 +6,15 @@ import * as React from 'react';
 import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import {
   GetRewards_rewards_nodes as Reward,
   GetRewards_unclaimedRewards_nodes as UnclaimedReward,
-} from '../../../__generated__/registry/GetRewards';
+} from '@__generated__/registry/GetRewards';
+//TODO: add fragment for these two.
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
-import { TableText } from '../../../components';
+import { TableText } from '@components';
 import { BigNumber } from 'ethers';
 import { TokenAmount } from '@components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
