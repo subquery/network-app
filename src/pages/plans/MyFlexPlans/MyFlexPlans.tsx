@@ -4,14 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, TabButtons } from '../../../components';
+import { AppPageHeader, Card, Tabs } from '../../../components';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useSQToken } from '../../../containers';
 import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
-import { Card } from '@subql/components';
-import clsx from 'clsx';
 
 const { ONGOING_PLANS, PLAYGROUND, EXPIRED_PLANS } = ROUTES;
 
@@ -41,13 +39,11 @@ const BalanceCards = () => {
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
-          className={styles.sqcrd}
           title={t('flexPlans.billBalance').toUpperCase()}
           description={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
           titleTooltipIcon={<BillingAction />}
         />
         <Card
-          className={styles.sqcrd}
           title={t('flexPlans.walletBalance')}
           description={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
         />
@@ -64,7 +60,7 @@ const Header = () => {
       <AppPageHeader title={t('plans.category.myFlexPlans')} />
       <BalanceCards />
       <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
+        <Tabs tabs={buttonLinks} />
       </div>
     </>
   );

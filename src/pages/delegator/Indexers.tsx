@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, TabButtons } from '../../components';
+import { AppPageHeader, Tabs } from '../../components';
 import { TopIndexers } from './TopIndexers';
 import { AllIndexers } from './AllIndexers';
 import styles from './Indexers.module.css';
@@ -25,7 +25,7 @@ export const Indexers: React.VFC = () => {
       <AppPageHeader title={t('indexer.indexers')} desc={t('topIndexers.desc')} />
       <div>
         <div className={styles.tabList}>
-          <TabButtons tabs={buttonLinks} whiteTab />
+          <Tabs tabs={buttonLinks} />
         </div>
         <Routes>
           <Route index path={TOP_INDEXERS} element={<TopIndexers />} />

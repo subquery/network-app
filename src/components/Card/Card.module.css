@@ -1,41 +1,8 @@
-.cardContainer {
-  display: flex;
-  min-width: 260px;
-  min-height: 120px;
-  background: white;
-  border-radius: 4px;
+.sqCard {
+  min-width: 210px;
 }
-
-.card {
-  padding: 1rem 1.2rem;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.category {
-  color: var(--sq-gray500);
-  line-height: 18px;
-}
-
-.title {
-  margin-top: 1rem;
-  color: var(--sq-gray500);
-  font-weight: 600;
-  line-height: 18px;
-}
-
-.titleWithCategory {
-  margin-top: 0rem;
-  color: var(--sq-gray900);
-}
-
-.value {
+.sqCard p {
+  width: 100%;
   font-weight: 600;
   color: var(--sq-gray700);
-}
-
-.grayText {
-  color: var(--gray500);
 }

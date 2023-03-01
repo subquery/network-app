@@ -5,8 +5,7 @@ import * as React from 'react';
 import { Address, Spinner, Typography } from '@subql/react-ui';
 import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import { useWeb3 } from '../../../../containers';
-import { AppPageHeader, TabButtons } from '../../../../components';
-import { Card, Tabs } from '@subql/components';
+import { AppPageHeader, Card, Tabs } from '../../../../components';
 import styles from './MyProfile.module.css';
 import { useTranslation } from 'react-i18next';
 import { Indexing } from '../Indexing/Indexing';
@@ -77,7 +76,7 @@ export const MyProfile: React.VFC = () => {
                 <div>{<Address truncated={userId.length > 20} address={userId} size="large" />}</div>
                 <div className={styles.stakingSummary}>
                   {cards.map((card) => (
-                    <Card className={styles.sqCard} title={card.title} description={card.value} key={card.title} />
+                    <Card title={card.title} description={card.value} key={card.title} />
                   ))}
                 </div>
               </>
@@ -87,7 +86,7 @@ export const MyProfile: React.VFC = () => {
       </div>
 
       <div>
-        <div className={clsx(styles.tabList, styles.myTab)}>
+        <div className={styles.tabList}>
           <Tabs tabs={buttonLinks} />
         </div>
 

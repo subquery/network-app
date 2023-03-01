@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import Modal from 'react-modal';
-import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, TabButtons } from '../../../components';
+import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, Tabs } from '../../../components';
 import { Button } from '@subql/react-ui';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
@@ -75,7 +75,7 @@ const Project: React.VFC = () => {
             <div className="content-width">
               <ProjectHeader project={project} />
               <div className={styles.tabContainer}>
-                <TabButtons tabs={tabLinks} />
+                <Tabs tabs={tabLinks} subNav />
               </div>
             </div>
           </div>

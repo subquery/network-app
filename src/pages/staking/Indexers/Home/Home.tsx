@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Home.module.css';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, TabButtons } from '../../../../components';
+import { AppPageHeader, Tabs } from '../../../../components';
 import { TopIndexers } from '../TopIndexers';
 import { AllIndexers } from '../AllIndexers';
 import { DelegateIndexer } from '../DelegateIndexer';
@@ -27,7 +27,7 @@ export const Home: React.VFC = () => {
 
       <div>
         <div className={styles.tabList}>
-          <TabButtons tabs={buttonLinks} whiteTab />
+          <Tabs tabs={buttonLinks} />
         </div>
 
         <Routes>

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { AppPageHeader, TabButtons } from '../../../components';
+import { AppPageHeader, Tabs } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
@@ -103,7 +103,7 @@ const Agreements: React.VFC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18
       <AppPageHeader title={t('plans.category.serviceAgreement')} />
 
       <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
+        <Tabs tabs={buttonLinks(BASE_ROUTE)} />
       </div>
       <div className="contentContainer">
         <ServiceAgreementsTable

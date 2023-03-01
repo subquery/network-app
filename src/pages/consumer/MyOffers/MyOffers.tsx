@@ -9,8 +9,8 @@ import {
   EmptyList,
   ModalApproveToken,
   Spinner,
-  TabButtons,
   tokenApprovalModalText,
+  Tabs,
 } from '../../../components';
 import { useTranslation } from 'react-i18next';
 import styles from './MyOffers.module.css';
@@ -29,7 +29,6 @@ import {
 } from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
 import { ROUTES } from '../../../utils';
-import { Tabs } from '@subql/components';
 import clsx from 'clsx';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
@@ -84,7 +83,7 @@ export const CheckOfferAllowance: React.VFC = () => {
 export const OfferHeader: React.VFC = () => {
   return (
     <>
-      <div className={clsx(styles.tabs, styles.myTab)}>
+      <div className={styles.tabs}>
         <Tabs tabs={buttonLinks} />
         <div className={styles.create}>
           <CheckOfferAllowance />

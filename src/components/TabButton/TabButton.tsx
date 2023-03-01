@@ -6,46 +6,19 @@ import { NavLink, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import styles from './TabButton.module.css';
 import { AppTypography } from '..';
+import { Tabs as SqTabs, TabsPros as SqTabsProps } from '@subql/components';
 
-interface TabButtonProps {
-  label: string;
-  link: string;
-  whiteTab?: boolean;
-  tooltip?: string;
+interface TabsProps extends SqTabsProps {
+  subNav: boolean;
 }
-
-export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, tooltip }) => {
-  const { pathname } = useLocation();
-
-  return (
-    <NavLink
-      to={link}
-      className={({ isActive }) => clsx(styles.tab, isActive && styles.tabSelected, whiteTab && styles.whiteTab)}
-      replace
-    >
-      <AppTypography
-        className={clsx(whiteTab && styles.whiteTabLabel)}
-        type={pathname === link ? undefined : 'secondary'}
-        tooltip={tooltip}
-        noTooltipIcon
-      >
-        {label}
-      </AppTypography>
-    </NavLink>
-  );
-};
-
-interface TabButtonsProps {
-  tabs: Array<TabButtonProps>;
-  whiteTab?: boolean;
-}
-
-export const TabButtons: React.VFC<TabButtonsProps> = ({ tabs, whiteTab }) => {
-  return (
-    <div className={clsx(styles.tabContainer, whiteTab && styles.whiteTabContainer)}>
-      {tabs.map((tab) => (
-        <TabButton key={tab.link} {...tab} whiteTab={whiteTab} />
-      ))}
+export const Tabs: React.FC<TabsProps> = ({ subNav, ...props }) => {
+  return subNav ? (
+    <div className={styles.subTab}>
+      <SqTabs tabs={props.tabs}></SqTabs>
+    </div>
+  ) : (
+    <div className={styles.myTab}>
+      <SqTabs tabs={props.tabs}></SqTabs>
     </div>
   );
 };

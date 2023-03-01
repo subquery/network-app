@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppPageHeader, TabButtons } from '../../../components';
+import { AppPageHeader, Tabs } from '../../../components';
 import { Default } from './Default';
 import { Create } from './Create';
 import Specific from './Specific';
@@ -26,7 +26,7 @@ export const Plans: React.VFC = () => {
       <AppPageHeader title={t('plans.category.manageMyPlans')} />
 
       <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
+        <Tabs tabs={buttonLinks} />
         <div className={styles.create}>
           <Create />
         </div>

@@ -5,8 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader } from '../../../components';
-import { Card, Tabs } from '@subql/components';
+import { AppPageHeader, Card, Tabs } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
@@ -45,13 +44,11 @@ const BalanceCards = () => {
     <div className={styles.cards}>
       <div className={styles.balances}>
         <Card
-          className={styles.sqCard}
           title={t('flexPlans.billBalance').toUpperCase()}
           description={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
           titleTooltipIcon={<BillingAction />}
         />
         <Card
-          className={styles.sqCard}
           title={t('flexPlans.walletBalance')}
           description={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
         />
@@ -67,7 +64,7 @@ const Header = () => {
     <>
       <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
       <BalanceCards />
-      <div className={clsx(styles.myTab, styles.tabs)}>
+      <div className={styles.tabs}>
         <Tabs tabs={buttonLinks} />
       </div>
     </>

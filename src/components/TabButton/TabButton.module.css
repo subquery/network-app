@@ -1,41 +1,35 @@
-.tabContainer {
+.subTab a {
+  font-size: 18px;
+  line-height: 28px;
+  margin-right: 12px;
+  text-decoration: none;
+  border-image: var(--sq-gradient) 1;
+}
+.subTab:hover {
+  text-decoration: none;
+}
+.subTab .ant-space-align-center {
   display: flex;
 }
-.whiteTabContainer {
-  background: white;
-  padding: 1rem 1rem 0 1rem;
-}
 
-.tab {
+.myTab > div {
+  background: white;
+}
+.myTab a {
+  padding: 1rem 1rem 0 1rem;
   font-size: 18px;
   line-height: 28px;
   margin-right: 32px;
   padding-bottom: 1rem;
   text-decoration: none;
-  color: var(--gray700);
-}
-
-.tab:hover {
-  text-decoration: none;
-}
-
-.tabSelected {
-  border-bottom: 2px solid;
-  border-image: var(--sq-gradient) 1;
-}
-
-.tabContainer {
-  display: flex;
-}
-
-.whiteTab {
   background: white;
   min-width: 6rem;
   margin: 0 0.6rem;
   text-align: center;
   width: 100%;
+  border-image: var(--sq-gradient) 1;
 }
-
-.whiteTabLabel {
-  font-size: 18px;
+.myTab .ant-space-align-center {
+  display: block;
+  width: 100%;
 }

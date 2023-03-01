@@ -3,13 +3,7 @@
 
 import * as React from 'react';
 import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
-import {
-  AppPageHeader,
-  ApproveContract,
-  ModalApproveToken,
-  TabButtons,
-  tokenApprovalModalText,
-} from '../../../components';
+import { AppPageHeader, ApproveContract, ModalApproveToken, Tabs, tokenApprovalModalText } from '../../../components';
 import { useTranslation } from 'react-i18next';
 import styles from './MyOffers.module.css';
 import i18next from 'i18next';
@@ -72,7 +66,7 @@ export const OfferHeader: React.VFC<{ title: string }> = ({ title }) => {
     <>
       <AppPageHeader title={title} />
       <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
+        <Tabs tabs={buttonLinks} />
         <div className={styles.create}>
           <CheckOfferAllowance />
         </div>

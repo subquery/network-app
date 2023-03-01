@@ -7,7 +7,7 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { ApproveContract, Spinner, TabButtons } from '../../components';
+import { ApproveContract, Spinner, Tabs } from '../../components';
 import { useSQToken, useWeb3 } from '../../containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '../../hooks/useSwapData';
 import {
@@ -208,7 +208,7 @@ export const Swap: React.VFC = () => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.tabs}>
-          <TabButtons tabs={buttonLinks} whiteTab />
+          <Tabs tabs={buttonLinks} />
         </div>
         <Routes>
           <Route index path={BUY} element={<SellAUSD />} />

@@ -52,12 +52,3 @@
   background: var(--sq-gradient);
   height: 2px;
 }
-
-.sqCard {
-  min-width: 210px;
-}
-.sqCard p {
-  width: 100%;
-  font-weight: 600;
-  color: var(--sq-gray700);
-}

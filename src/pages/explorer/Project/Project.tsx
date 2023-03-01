@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useRoutes } from 'react-router';
-import { NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
+import { NoIndexers, ProjectHeader, ProjectOverview, Spinner, Tabs } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import {
   ProjectProgressProvider,
@@ -160,7 +160,7 @@ const ProjectInner: React.VFC = () => {
                 onChangeVersion={handleChangeVersion}
               />
             </div>
-            <TabButtons tabs={tabList} />
+            <Tabs tabs={tabList} subNav />
           </div>
           <div className={clsx('content-width')}>
             <Routes>
