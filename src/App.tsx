@@ -34,7 +34,7 @@ import { WalletRoute } from './WalletRoute';
 
 import { getConnectorConfig } from './utils/getNetworkConnector';
 import { ROUTES } from './utils';
-import { networks } from '@subql/contract-sdk';
+import { handleSwitchNetwork } from '@containers/Web3';
 
 const ErrorFallback = ({ error, componentStack, resetError }: any) => {
   return (
@@ -80,11 +80,6 @@ const BlockchainStatus: React.FC = ({ children }) => {
     () => !!connectorWindowObj?.isMetaMask || !!connectorWindowObj?.isTalisman,
     [],
   );
-
-  // TODO: should switch specific network basing on the current env: `dev` | `kepler` | `mainnet`
-  const handleSwitchNetwork = () => {
-    connectorWindowObj?.send('wallet_addEthereumChain', networks.testnet);
-  };
 
   if (error instanceof UnsupportedChainIdError) {
     return (
