@@ -96,3 +96,30 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = (props) => 
     {props.children}
   </Web3ReactProvider>
 );
+
+export const ethMethods = {
+  requestAccount: 'eth_requestAccounts',
+  switchChain: 'wallet_switchEthereumChain',
+  addChain: 'wallet_addEthereumChain',
+};
+
+export const handleSwitchNetwork = async () => {
+  if (!window?.ethereum) return;
+
+  try {
+    await window.ethereum.request({
+      method: ethMethods.switchChain,
+      params: [{ chainId: `0x${Number(defaultChainId).toString(16)}` }],
+    });
+  } catch (e: any) {
+    console.log('e:', e);
+    if (e?.code === 4902) {
+      await window.ethereum.request({
+        method: ethMethods.addChain,
+        params: [networks.testnet],
+      });
+    } else {
+      console.log('Switch Ethereum network failed', e);
+    }
+  }
+};
