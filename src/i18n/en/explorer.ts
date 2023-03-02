@@ -30,6 +30,26 @@ const translation = {
     seasonEndDescription:
       'The incentivised phase of the SubQuery Frontier Network has finished, get ready for the Kepler Network',
   },
+  account: {
+    title: {
+      delegating: 'You are Delegating',
+      staking: 'You are Staking',
+      rewards: 'Your Rewards',
+      withdrawn: 'Withdrawn',
+    },
+    tooltip: {
+      delegating: 'The amount of kSQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
+      staking: 'The amount of kSQT that you have staked against projects you are indexing in the SubQuery Network',
+      rewards: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
+      withdrawn: 'The amount of kSQT that you have undelegated or unstaked',
+    },
+    linkText: {
+      delegating: 'Delegate to an Indexer',
+      staking: 'Start Staking',
+      rewards: 'View Rewards',
+      withdrawn: 'View Withdrawn',
+    },
+  },
   footer: {
     title: 'Join The Future',
     copyright: 'SubQuery © ',
@@ -79,7 +99,7 @@ const translation = {
       version: 'Version',
       description: 'Description',
       deploymentId: 'Deployment ID',
-      explainer: 'You can get a deployment id by running `subqul publish` from the command line',
+      explainer: 'You can get a deployment id by running `subql publish` from the command line',
       submit: 'Deploy New Version',
     },
   },
