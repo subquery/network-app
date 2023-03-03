@@ -1,0 +1,20 @@
+.rewardsContainer {
+  width: 100%;
+  padding: 1rem 4rem;
+}
+
+.rewardsList {
+  margin: 2rem 0;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.unClaimedText {
+  color: var(--primary);
+}
+
+.header {
+  margin-bottom: 2rem;
+}
