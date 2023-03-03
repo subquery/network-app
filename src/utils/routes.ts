@@ -8,7 +8,7 @@
 
 // NOTE: Indexer tab
 const INDEXER = {
-  INDEXER: '/indexer',
+  INDEXER: 'indexer',
   MY_STAKING: 'my-staking',
   MY_PROJECTS: 'my-projects',
   MY_DELEGATORS: 'my-delegators',
@@ -20,7 +20,7 @@ const INDEXER = {
 
 // NOTE: Consumer tab
 const CONSUMER = {
-  CONSUMER: '/consumer',
+  CONSUMER: 'consumer',
   FLEX_PLANS: 'flex-plans',
   SERVICE_AGREEMENTS: 'service-agreements',
   PLAYGROUND: 'playground',
@@ -35,9 +35,8 @@ const CONSUMER = {
 };
 
 const DELEGATOR = {
-  DELEGATOR: '/delegation',
+  DELEGATOR: 'delegator',
   DELEGATING: 'delegating',
-  INDEXER: 'indexer',
   INDEXERS: 'indexers',
   ALL_INDEXERS: 'all',
   TOP_INDEXERS: 'top',
@@ -46,6 +45,7 @@ const DELEGATOR = {
 const MY_ACCOUNT = {
   MY_ACCOUNT: '/my-account',
   REWARDS: 'rewards',
+  WITHDRAWN: 'withdrawn',
 };
 
 // TODO: Remove or ReOrg the “old” paths once renovation done
