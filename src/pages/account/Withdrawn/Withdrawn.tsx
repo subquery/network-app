@@ -17,21 +17,18 @@ const WithdrawnSubRoutes = () => {
       <Breadcrumb.Item href={ROUTES.MY_ACCOUNT_NAV} className={styles.title}>
         {t('indexer.indexers')}
       </Breadcrumb.Item>
-      <Breadcrumb.Item className={styles.title}>{'Withdrawn'}</Breadcrumb.Item>
+      <Breadcrumb.Item className={styles.title}>{t('withdrawals.headerTitle')}</Breadcrumb.Item>
     </Breadcrumb>
   );
 };
 
 export const Withdrawn: React.FC<{ delegator: string }> = () => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.rewardsContainer}>
       <WithdrawnSubRoutes />
-      <AppPageHeader
-        title={'Withdrawn'}
-        desc={
-          'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.'
-        }
-      />
+      <AppPageHeader title={t('withdrawals.headerTitle')} desc={t('withdrawals.headerDesc')} />
       <Locked />
     </div>
   );
