@@ -47,6 +47,7 @@ export * from './Button';
 export * from './EmptyList';
 export * from './Description';
 export * from './Notification';
+export * from './WalletRoute';
 
 export {
   Footer,

@@ -7,8 +7,8 @@ import './i18n';
 
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import * as pages from './pages';
-import { ChainStatus, Header } from './components';
+import { Explorer, Studio, Staking, Account, Indexer, Delegator, Consumer, PlanAndOffer, Swap } from './pages';
+import { ChainStatus, Header, WalletRoute } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -22,8 +22,8 @@ import {
   EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
-import { WalletRoute } from './WalletRoute';
 import { ROUTES } from './utils';
+
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
@@ -63,24 +63,24 @@ const App: React.FC = () => {
             <div className="Content">
               <ChainStatus>
                 <Routes>
-                  <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+                  <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
                   <Route
                     element={
                       <WalletRoute
-                        element={pages.Studio}
+                        element={<Studio />}
                         title={t('studio.wallet.connect')}
                         subtitle={t('studio.wallet.subTitle')}
                       />
                     }
                     path={`${ROUTES.STUDIO}/*`}
                   />
-                  <Route element={<pages.Staking />} path={`${ROUTES.STAKING}/*`} />
-                  <Route element={<WalletRoute element={pages.Account} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
-                  <Route element={<WalletRoute element={pages.Indexer} />} path={`${ROUTES.INDEXER}/*`} />
-                  <Route element={<WalletRoute element={pages.Delegator} />} path={`${ROUTES.DELEGATOR}/*`} />
-                  <Route element={<WalletRoute element={pages.Consumer} />} path={`${ROUTES.CONSUMER}/*`} />
-                  <Route element={<WalletRoute element={pages.PlanAndOffer} />} path={`${ROUTES.PLANS}/*`} />
-                  <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
+                  <Route element={<Staking />} path={`${ROUTES.STAKING}/*`} />
+                  <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
+                  <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
+                  <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />
+                  <Route element={<WalletRoute element={<Consumer />} />} path={`${ROUTES.CONSUMER}/*`} />
+                  <Route element={<WalletRoute element={<PlanAndOffer />} />} path={`${ROUTES.PLANS}/*`} />
+                  <Route element={<WalletRoute element={<Swap />} />} path={`${ROUTES.SWAP}/*`} />
                   <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
                 </Routes>
               </ChainStatus>
