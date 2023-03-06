@@ -184,7 +184,7 @@ const ConnectedRow: React.VFC<
     assert(deploymentId, 'DeploymentId not provided');
     assert(planId, 'planId not provided');
 
-    return contracts.planManager.acceptPlan(indexer, cidToBytes32(deploymentId), planId);
+    return contracts.planManager.acceptPlan(planId, cidToBytes32(deploymentId));
   };
 
   const progressInfo = useAsyncMemo(async () => {
