@@ -190,7 +190,7 @@ const translation = {
   },
   unsupportedNetwork: {
     title: 'Unsupported network',
-    subtitle: 'Please switch networks to use the Studio',
+    subtitle: 'Please switch {{supportNetwork}} to use SubQuery Explorer.',
     button: 'Switch Network',
   },
   indexerProgress: {

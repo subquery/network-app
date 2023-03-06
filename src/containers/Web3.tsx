@@ -12,6 +12,7 @@ import { networks } from '@subql/contract-sdk';
 import { useWeb3Store } from 'src/stores';
 
 export const defaultChainId = parseInt(networks.testnet.chainId, 16);
+export const ECOSYSTEM_NETWORK = networks.testnet.chainName;
 
 export const RPC_URLS: Record<number, string> = {
   80001: 'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',

@@ -1,0 +1,38 @@
+.container {
+  background: var(--sq-background-gradient);
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  min-height: 30vh;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.switchContainer {
+  height: 100%;
+  align-items: stretch;
+  margin: 1rem 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.description {
+  font-size: 18px;
+}
