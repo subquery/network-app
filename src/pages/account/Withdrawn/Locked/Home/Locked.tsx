@@ -9,6 +9,7 @@ import { useWeb3, useWithdrawls } from '@containers';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
 import { LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
 import { LockedList } from '../LockedList';
+import styles from './Locked.module.css';
 
 export const Locked: React.VFC = () => {
   const { t } = useTranslation();
@@ -17,7 +18,7 @@ export const Locked: React.VFC = () => {
   const lockPeriod = useLockPeriod();
 
   return (
-    <div className={'contentContainer'}>
+    <div className={styles.withdrawnContainer}>
       {renderAsyncArray(
         mapAsync(
           ([withdrawlsResult, lockPeriod]) =>

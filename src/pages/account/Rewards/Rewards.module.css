@@ -18,3 +18,12 @@
 .header {
   margin-bottom: 2rem;
 }
+
+.rewardsContainer {
+  width: 100%;
+  padding: 1rem 4rem;
+}
+
+.rewardsList {
+  margin: 1rem 0;
+}
