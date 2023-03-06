@@ -6,7 +6,6 @@ import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/react-ui';
 import { GetPlans_plans_nodes as Plan } from '@__generated__/registry/GetPlans';
-//TODO: replace with correct fragment
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import TransactionModal from '@components/TransactionModal';
 import { useContracts } from '@containers';

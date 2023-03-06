@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
@@ -94,10 +94,10 @@ const InitProvider: React.FC = () => {
   return null;
 };
 
-export const Web3Provider: React.FC<{ children: React.ReactNode }> = (props) => (
+export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => (
   <Web3ReactProvider getLibrary={getLibrary}>
     <InitProvider />
-    {props.children}
+    {children}
   </Web3ReactProvider>
 );
 
