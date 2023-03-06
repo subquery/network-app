@@ -7,11 +7,8 @@ import './i18n';
 
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { UnsupportedChainIdError } from '@web3-react/core';
-import clsx from 'clsx';
-import { Button } from '@subql/react-ui';
 import * as pages from './pages';
-import { Header } from './components';
+import { ChainStatus, Header } from './components';
 import {
   Web3Provider,
   IPFSProvider,
@@ -21,18 +18,12 @@ import {
   QueryApolloProvider,
   UserProjectsProvider,
   IndexerRegistryProvider,
-  useWeb3,
   SQTokenProvider,
   EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { WalletRoute } from './WalletRoute';
-
-import { getConnectorConfig } from './utils/getNetworkConnector';
 import { ROUTES } from './utils';
-import { handleSwitchNetwork } from '@containers/Web3';
-import { useWeb3Store } from './stores';
-
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
@@ -57,49 +48,8 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-const BlockchainStatus: React.FC<PropsWithChildren> = ({ children }) => {
-  const { ethWindowObj } = useWeb3Store();
-  const { error, connector } = useWeb3();
-  const { t } = useTranslation('translation');
-  const connectorWindowObj = getConnectorConfig(connector).windowObj;
-
-  console.log('ethWindowObj BlockchainStatus', ethWindowObj);
-
-  const isExtensionInstalled = React.useMemo(
-    () => !!connectorWindowObj?.isMetaMask || !!connectorWindowObj?.isTalisman,
-    [],
-  );
-
-  if (error instanceof UnsupportedChainIdError) {
-    return (
-      <div className={clsx('content-width', 'switchNetwork')}>
-        <div className={'switchNetworkContent'}>
-          <h3 className={'switchNetworkTitle'}>{t('unsupportedNetwork.title')}</h3>
-          {isExtensionInstalled && (
-            <Button
-              label={t('unsupportedNetwork.button')}
-              type="primary"
-              onClick={() => handleSwitchNetwork(ethWindowObj)}
-            />
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-};
-
 const App: React.FC = () => {
-  const { setAccount, setError } = useWeb3Store();
   const { t } = useTranslation();
-
-  const { account, error } = useWeb3();
-
-  React.useEffect(() => {
-    setAccount(account);
-    setError(error);
-  }, [account, setAccount, error, setError]);
 
   return (
     <Providers>
@@ -111,7 +61,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="Content">
-              <BlockchainStatus>
+              <ChainStatus>
                 <Routes>
                   <Route element={<pages.Explorer />} path={`${ROUTES.EXPLORER}/*`} />
                   <Route
@@ -133,7 +83,7 @@ const App: React.FC = () => {
                   <Route element={<WalletRoute element={pages.Swap} />} path={`${ROUTES.SWAP}/*`} />
                   <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
                 </Routes>
-              </BlockchainStatus>
+              </ChainStatus>
             </div>
           </div>
           {/* <Footer /> */}

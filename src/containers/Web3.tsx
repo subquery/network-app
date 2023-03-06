@@ -126,3 +126,27 @@ export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
     }
   }
 };
+
+export const useConnectNetwork = () => {
+  const { account, activate, deactivate } = useWeb3();
+  const { setEthWindowObj } = useWeb3Store();
+  const onNetworkConnect = React.useCallback(
+    async (connector: SupportedConnectorsReturn) => {
+      console.log('onNetworkConnect', connector.windowObj);
+      if (account) {
+        deactivate();
+        return;
+      }
+
+      try {
+        setEthWindowObj(connector.windowObj);
+        await activate(connector.connector);
+      } catch (e) {
+        console.log('Failed to activate wallet', e);
+      }
+    },
+    [account, deactivate, setEthWindowObj, activate],
+  );
+
+  return { onNetworkConnect };
+};
