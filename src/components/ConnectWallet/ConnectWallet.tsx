@@ -41,7 +41,7 @@ const Wallet: React.VFC<{ description?: string; icon: string; onClick?: () => vo
   );
 };
 
-export const ConnectWallet: React.VFC<Props> = ({ title, subTitle }) => {
+export const ConnectWallet: React.FC<Props> = ({ title, subTitle }) => {
   const { account, activate, deactivate } = useWeb3();
   const { t } = useTranslation();
   const onNetworkConnect = React.useCallback(
@@ -69,7 +69,7 @@ export const ConnectWallet: React.VFC<Props> = ({ title, subTitle }) => {
         {subTitle || t('connectWallet.subtitle')}
       </Typography>
       {ALL_SUPPORTED_CONNECTORS.map((supportConnector) => {
-        const { description, icon, connector } = supportConnector;
+        const { description, icon, connector, windowObj } = supportConnector;
         return (
           <Wallet
             key={description}

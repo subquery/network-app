@@ -25,7 +25,7 @@ const getMenu = (menuItems: Array<{ label: string; onClick: () => void }>) => {
   );
 };
 
-export const ConnectWalletButton: React.VFC = () => {
+export const ConnectWalletButton: React.FC = () => {
   const { account, activate, deactivate } = useWeb3();
 
   const { t } = useTranslation();

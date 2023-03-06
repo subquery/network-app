@@ -9,6 +9,7 @@ import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 import { networks } from '@subql/contract-sdk';
+import { useWeb3Store } from 'src/stores';
 
 export const defaultChainId = parseInt(networks.testnet.chainId, 16);
 
@@ -70,18 +71,20 @@ function getLibrary(provider: providers.ExternalProvider): providers.Web3Provide
 
 export const useWeb3 = (): Web3ReactContextInterface<providers.Web3Provider> => useWeb3React();
 
-const InitProvider: React.VFC = () => {
+const InitProvider: React.FC = () => {
   const { activate } = useWeb3();
+  const { setIsInitialAccount } = useWeb3Store();
 
   const activateInitialConnector = React.useCallback(async () => {
-    if (await injectedConntector.isAuthorized()) {
-      activate(injectedConntector);
-
-      return;
+    setIsInitialAccount(true);
+    const isInjectedConnectorAuthorized = await injectedConntector.isAuthorized();
+    if (isInjectedConnectorAuthorized) {
+      await activate(injectedConntector);
+    } else {
+      await activate(networkConnector);
     }
-
-    activate(networkConnector);
-  }, [activate]);
+    setIsInitialAccount(false);
+  }, [activate, setIsInitialAccount]);
 
   React.useEffect(() => {
     activateInitialConnector();
@@ -103,18 +106,18 @@ export const ethMethods = {
   addChain: 'wallet_addEthereumChain',
 };
 
-export const handleSwitchNetwork = async () => {
-  if (!window?.ethereum) return;
+export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
+  if (!ethWindowObj) return;
 
   try {
-    await window.ethereum.request({
+    await ethWindowObj.request({
       method: ethMethods.switchChain,
       params: [{ chainId: `0x${Number(defaultChainId).toString(16)}` }],
     });
   } catch (e: any) {
     console.log('e:', e);
     if (e?.code === 4902) {
-      await window.ethereum.request({
+      await ethWindowObj.request({
         method: ethMethods.addChain,
         params: [networks.testnet],
       });

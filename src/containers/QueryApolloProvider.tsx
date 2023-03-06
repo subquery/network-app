@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination, getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
@@ -23,7 +23,7 @@ const registrySubLink = new WebSocketLink({
   },
 });
 
-export const QueryApolloProvider: React.FC = (props) => {
+export const QueryApolloProvider: React.FC<PropsWithChildren> = (props) => {
   const client = new ApolloClient({
     link: ApolloLink.split(
       (operation) => operation.getContext().clientName === SWAP_EXCHANGE_CLIENT,

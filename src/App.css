@@ -17,3 +17,24 @@
   width: 100%;
   padding: 2rem;
 }
+
+.switchNetwork {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.switchNetworkContent {
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.switchNetworkTitle {
+  margin: 2rem 0;
+  font-size: 36px;
+  font-weight: 600;
+}
