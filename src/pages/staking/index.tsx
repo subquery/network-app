@@ -7,8 +7,7 @@ import { EraProvider } from '../../containers';
 import { Navigate, Route, Routes } from 'react-router';
 import { Indexer } from './Indexer';
 import { Home as Indexers } from './Indexers';
-import { AppSidebar } from '../../components';
-import { WalletRoute } from '../../WalletRoute';
+import { AppSidebar, WalletRoute } from '../../components';
 import { ROUTES } from '../../utils';
 
 const { MY_PROFILE, INDEXERS } = ROUTES;
@@ -32,7 +31,7 @@ export const Staking: React.VFC = () => {
       <AppSidebar list={sidebarList}>
         <Routes>
           <Route path={`${INDEXERS}/*`} element={<Indexers />} />
-          <Route element={<WalletRoute element={Indexer} />} path={`${MY_PROFILE}/*`} />
+          <Route element={<WalletRoute element={<Indexer />} />} path={`${MY_PROFILE}/*`} />
           <Route path={`/`} element={<Navigate replace to={MY_PROFILE} />} />
         </Routes>
       </AppSidebar>

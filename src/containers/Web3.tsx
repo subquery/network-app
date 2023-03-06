@@ -9,8 +9,10 @@ import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 import { networks } from '@subql/contract-sdk';
+import { useWeb3Store } from 'src/stores';
 
 export const defaultChainId = parseInt(networks.testnet.chainId, 16);
+export const ECOSYSTEM_NETWORK = networks.testnet.chainName;
 
 export const RPC_URLS: Record<number, string> = {
   80001: 'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
@@ -70,18 +72,20 @@ function getLibrary(provider: providers.ExternalProvider): providers.Web3Provide
 
 export const useWeb3 = (): Web3ReactContextInterface<providers.Web3Provider> => useWeb3React();
 
-const InitProvider: React.VFC = () => {
+const InitProvider: React.FC = () => {
   const { activate } = useWeb3();
+  const { setIsInitialAccount } = useWeb3Store();
 
   const activateInitialConnector = React.useCallback(async () => {
-    if (await injectedConntector.isAuthorized()) {
-      activate(injectedConntector);
-
-      return;
+    setIsInitialAccount(true);
+    const isInjectedConnectorAuthorized = await injectedConntector.isAuthorized();
+    if (isInjectedConnectorAuthorized) {
+      await activate(injectedConntector);
+    } else {
+      await activate(networkConnector);
     }
-
-    activate(networkConnector);
-  }, [activate]);
+    setIsInitialAccount(false);
+  }, [activate, setIsInitialAccount]);
 
   React.useEffect(() => {
     activateInitialConnector();
@@ -103,18 +107,18 @@ export const ethMethods = {
   addChain: 'wallet_addEthereumChain',
 };
 
-export const handleSwitchNetwork = async () => {
-  if (!window?.ethereum) return;
+export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
+  if (!ethWindowObj) return;
 
   try {
-    await window.ethereum.request({
+    await ethWindowObj.request({
       method: ethMethods.switchChain,
       params: [{ chainId: `0x${Number(defaultChainId).toString(16)}` }],
     });
   } catch (e: any) {
     console.log('e:', e);
     if (e?.code === 4902) {
-      await window.ethereum.request({
+      await ethWindowObj.request({
         method: ethMethods.addChain,
         params: [networks.testnet],
       });
@@ -122,4 +126,28 @@ export const handleSwitchNetwork = async () => {
       console.log('Switch Ethereum network failed', e);
     }
   }
+};
+
+export const useConnectNetwork = () => {
+  const { account, activate, deactivate } = useWeb3();
+  const { setEthWindowObj } = useWeb3Store();
+  const onNetworkConnect = React.useCallback(
+    async (connector: SupportedConnectorsReturn) => {
+      console.log('onNetworkConnect', connector.windowObj);
+      if (account) {
+        deactivate();
+        return;
+      }
+
+      try {
+        setEthWindowObj(connector.windowObj);
+        await activate(connector.connector);
+      } catch (e) {
+        console.log('Failed to activate wallet', e);
+      }
+    },
+    [account, deactivate, setEthWindowObj, activate],
+  );
+
+  return { onNetworkConnect };
 };

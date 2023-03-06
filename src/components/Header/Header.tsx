@@ -9,9 +9,9 @@ import { useWeb3 } from '../../containers';
 import { Button, Typography } from '@subql/react-ui';
 import styles from './Header.module.css';
 import { Dropdown } from '../Dropdown';
-import { ConnectWalletButton } from '../ConnectWalletButton';
 import { AccountActions } from '../AccountActions';
 import { ROUTES } from '../../utils';
+import { ConnectWalletButton } from '@components/ConnectWallet';
 
 const LinksDropdown = () => {
   const { t } = useTranslation();
