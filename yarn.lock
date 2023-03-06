@@ -3794,10 +3794,10 @@
     react-jazzicon "^0.1.3"
     react-router-dom "^6.4.2"
 
-"@subql/contract-sdk@0.12.1-5":
-  version "0.12.1-5"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.12.1-5.tgz#77985ab5c1299efd185d1b9c26d62ac6aa1e7799"
-  integrity sha512-B/KztkQXeTiiWBZG41a2HoNI506kgBBpcY+0ZWeKnAaptcaHi3sKHFR3wIdDmNGh5FGi3dVNc3ijFXYncMa++w==
+"@subql/contract-sdk@^0.12.3-0":
+  version "0.12.3-0"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.12.3-0.tgz#b8e4d912f37fe47f30079aba4c3b18110f1e930e"
+  integrity sha512-xc4Md5ZO3WkZRM9iCL0uw19BS7xCUEc1jAEJlc0anY4NXCi3ncnvhvLOIhurRvdtpK5gZwiiZospeUVLrdujqA==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
