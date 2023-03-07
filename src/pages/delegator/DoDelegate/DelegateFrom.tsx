@@ -97,7 +97,7 @@ export const DelegateForm: React.VFC<FormProps> = ({
       value: <ConnectedIndexer id={indexerAddress} />,
     },
     {
-      label: 'Your delegation (next)',
+      label: 'Your delegation',
       value: ` ${delegatedAmount} ${TOKEN}`,
     },
   ];
