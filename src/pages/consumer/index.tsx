@@ -46,7 +46,7 @@ export const Consumer: React.VFC = () => {
         <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
         <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
-        <Route path={'/'} element={<Navigate replace to={SERVICE_AGREEMENTS} />} />
+        <Route path={'/'} element={<Navigate replace to={FLEX_PLANS} />} />
       </Routes>
     </AppSidebar>
   );

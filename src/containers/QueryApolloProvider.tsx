@@ -23,7 +23,7 @@ const registrySubLink = new WebSocketLink({
   },
 });
 
-export const QueryApolloProvider: React.FC<PropsWithChildren> = (props) => {
+export const QueryApolloProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const client = new ApolloClient({
     link: ApolloLink.split(
       (operation) => operation.getContext().clientName === SWAP_EXCHANGE_CLIENT,
@@ -52,5 +52,5 @@ export const QueryApolloProvider: React.FC<PropsWithChildren> = (props) => {
     }),
   });
 
-  return <ApolloProvider client={client}>{props.children}</ApolloProvider>;
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };

@@ -22,6 +22,9 @@ import { WithdrawalStatus } from '@subql/network-query';
 import { AccountHeader } from './Header';
 import { t } from 'i18next';
 import { useDelegating } from '@hooks/useDelegating';
+import { ROUTES } from '@utils';
+
+const { INDEXER, INDEXERS, DELEGATOR, MY_STAKING, MY_ACCOUNT, REWARDS, WITHDRAWN } = ROUTES;
 
 type statNumber = string | undefined;
 
@@ -50,25 +53,25 @@ const cards: CardProps[] = [
   {
     title: t('account.title.delegating'),
     key: 'delegating',
-    link: '/',
+    link: `/${DELEGATOR}/${INDEXERS}`,
     tooltip: t('account.tooltip.delegating'),
   },
   {
     title: t('account.title.staking'),
     key: 'staking',
-    link: '/',
+    link: `/${INDEXER}/${MY_STAKING}`,
     tooltip: t('account.tooltip.staking'),
   },
   {
     title: t('account.title.rewards'),
     key: 'rewards',
-    link: '/',
+    link: `/${MY_ACCOUNT}/${REWARDS}`,
     tooltip: t('account.tooltip.rewards'),
   },
   {
     title: t('account.title.withdrawn'),
     key: 'withdrawn',
-    link: '/',
+    link: `/${MY_ACCOUNT}/${WITHDRAWN}`,
     tooltip: t('account.tooltip.withdrawn'),
   },
 ];

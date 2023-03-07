@@ -224,10 +224,9 @@ interface props {
 }
 
 export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`${DELEGATOR}/${INDEXER}/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
 
   const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
 

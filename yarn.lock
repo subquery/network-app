@@ -3815,10 +3815,17 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-query@0.3.1-0", "@subql/network-query@^0.3.1-0":
+"@subql/network-query@0.3.1-0":
   version "0.3.1-0"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.1-0.tgz#84175686205cd2db4e5c93a4f55a935432545c7a"
   integrity sha512-pYSpIpKVsPTrkhmD8uNEYheAZ/IAI5nQDI5YKixgwWR7sVRi5Xv3JBWQ1/jr7T3/hmDfraZlSSBaoJSZ0PwTFA==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/network-query@^0.3.1-1":
+  version "0.3.1-1"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.1-1.tgz#5c43e41978b89b8ec400719434267a3a808f2b63"
+  integrity sha512-EFpARda3yMbt/oRZycuOpFFyEh/sUr5nfyfteEnAvQWynOmla6eri50se/9mgfosxFhOEIPiNk50zKw7WzsZkQ==
   dependencies:
     graphql "^16.5.0"
 
