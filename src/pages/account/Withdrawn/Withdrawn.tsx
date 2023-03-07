@@ -8,7 +8,7 @@ import { ROUTES } from '../../../utils';
 import styles from './Withdrawn.module.css';
 import { AppPageHeader } from '../../../components';
 import { Locked } from './Locked';
-import { BreadcrumbNav } from '@components/BreadcrumbNav/BreadcrumbNav';
+import { BreadcrumbNav } from '@components';
 
 export const Withdrawn: React.FC<{ delegator: string }> = () => {
   const { t } = useTranslation();

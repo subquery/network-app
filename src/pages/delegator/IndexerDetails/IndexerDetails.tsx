@@ -17,7 +17,7 @@ import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 import { DoUndelegate } from '../DoUndelegate';
 import { useWeb3 } from '@containers';
-import { BreadcrumbNav } from '@components/BreadcrumbNav/BreadcrumbNav';
+import { BreadcrumbNav } from '@components';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 

@@ -15,7 +15,7 @@ import { BigNumber } from 'ethers';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
 import { TableTitle } from '@subql/components';
-import { BreadcrumbNav } from '@components/BreadcrumbNav/BreadcrumbNav';
+import { BreadcrumbNav } from '@components';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;

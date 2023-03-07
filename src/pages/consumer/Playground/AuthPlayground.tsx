@@ -10,7 +10,7 @@ import { RequestToken, RequestTokenProps } from './RequestToken';
 import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
 import { Spinner } from '@subql/react-ui';
 import { ColumnsType } from 'antd/lib/table';
-import { BreadcrumbNav } from '@components/BreadcrumbNav/BreadcrumbNav';
+import { BreadcrumbNav } from '@components';
 
 export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();
