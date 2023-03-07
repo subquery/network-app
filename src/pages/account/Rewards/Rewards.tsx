@@ -7,7 +7,7 @@ import { Breadcrumb, Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
-import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query'
+import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
 import ClaimRewards from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { AppPageHeader, TableText } from '../../../components';
@@ -15,23 +15,11 @@ import { BigNumber } from 'ethers';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
 import { TableTitle } from '@subql/components';
+import { BreadcrumbNav } from '@components/BreadcrumbNav/BreadcrumbNav';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
 }
-
-// TODO: Confirm with design team for component level
-const RewardsSubRoutes = () => {
-  const { t } = useTranslation('translation');
-  return (
-    <Breadcrumb separator=">">
-      <Breadcrumb.Item href={ROUTES.MY_ACCOUNT_NAV} className={styles.title}>
-        {t('indexer.indexers')}
-      </Breadcrumb.Item>
-      <Breadcrumb.Item className={styles.title}>{t('rewards.claim.title')}</Breadcrumb.Item>
-    </Breadcrumb>
-  );
-};
 
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
@@ -70,7 +58,11 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
 
   return (
     <div className={styles.rewardsContainer}>
-      <RewardsSubRoutes />
+      <BreadcrumbNav
+        BACKLINK={`/${ROUTES.MY_ACCOUNT_NAV}`}
+        backLinkText={t('indexer.indexers')}
+        childText={t('rewards.claim.title')}
+      />
       <AppPageHeader title={t('rewards.claim.title')} desc={t('rewards.description')} />
 
       <div className={styles.rewardsList}>
