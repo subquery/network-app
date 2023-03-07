@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Breadcrumb } from 'antd';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './BreadcrumbNav.module.css';
 
 interface BreadcrumbProps {
@@ -15,7 +15,7 @@ export const BreadcrumbNav: React.FC<BreadcrumbProps> = ({ BACKLINK, backLinkTex
   return (
     <Breadcrumb separator="/">
       <Breadcrumb.Item className={styles.title}>
-        <Link to={BACKLINK}>{backLinkText}</Link>
+        <NavLink to={BACKLINK}>{backLinkText}</NavLink>
       </Breadcrumb.Item>
       <Breadcrumb.Item className={styles.title}>{childText}</Breadcrumb.Item>
     </Breadcrumb>
