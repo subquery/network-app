@@ -38,3 +38,12 @@ export const SUB_PLAN_TEMPLATES = gql`
     }
   }
 `;
+
+export const SUB_WITHDRAWALS = gql`
+  subscription GetPlanTemplates {
+    planTemplates {
+      id
+      _entity
+    }
+  }
+`;

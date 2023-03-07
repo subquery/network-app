@@ -18,6 +18,7 @@ import { TableText, TableTitle } from '@subql/components';
 import { t } from 'i18next';
 import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
 import { DoWithdraw } from '../DoWithdraw';
+import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
@@ -60,10 +61,20 @@ const columns: TableProps<SortedWithdrawals>['columns'] = [
 export const Locked: React.VFC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const withdrawals = useGetWithdrawlsQuery({
-    variables: { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 },
-  });
+  const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };
+  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
   const lockPeriod = useLockPeriod();
+
+  withdrawals.subscribeToMore({
+    document: SUB_WITHDRAWALS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        withdrawals.refetch(filterParams);
+      }
+      return prev;
+    },
+  });
 
   return (
     <div className={styles.withdrawnContainer}>

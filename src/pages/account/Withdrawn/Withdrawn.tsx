@@ -8,26 +8,18 @@ import { ROUTES } from '../../../utils';
 import styles from './Withdrawn.module.css';
 import { AppPageHeader } from '../../../components';
 import { Locked } from './Locked';
-
-// TODO: Confirm with design team for component level
-const WithdrawnSubRoutes = () => {
-  const { t } = useTranslation();
-  return (
-    <Breadcrumb separator=">">
-      <Breadcrumb.Item href={ROUTES.MY_ACCOUNT_NAV} className={styles.title}>
-        {t('indexer.indexers')}
-      </Breadcrumb.Item>
-      <Breadcrumb.Item className={styles.title}>{t('withdrawals.headerTitle')}</Breadcrumb.Item>
-    </Breadcrumb>
-  );
-};
+import { BreadcrumbNav } from '@components';
 
 export const Withdrawn: React.FC<{ delegator: string }> = () => {
   const { t } = useTranslation();
 
   return (
     <div className={styles.rewardsContainer}>
-      <WithdrawnSubRoutes />
+      <BreadcrumbNav
+        backLink={`/${ROUTES.MY_ACCOUNT_NAV}`}
+        backLinkText={t('indexer.indexers')}
+        childText={t('withdrawals.headerTitle')}
+      />
       <AppPageHeader title={t('withdrawals.headerTitle')} desc={t('withdrawals.headerDesc')} />
       <Locked />
     </div>

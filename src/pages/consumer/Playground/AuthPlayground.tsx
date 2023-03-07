@@ -1,28 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Breadcrumb, Table } from 'antd';
+import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CurEra, DeploymentMeta } from '../../../components';
 import styles from './Playground.module.css';
-import { Link } from 'react-router-dom';
 import { RequestToken, RequestTokenProps } from './RequestToken';
 import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
 import { Spinner } from '@subql/react-ui';
 import { ColumnsType } from 'antd/lib/table';
+import { BreadcrumbNav } from '@components';
 
 export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
-      <Breadcrumb separator=">">
-        <Breadcrumb.Item className={styles.title}>
-          <Link to={LINK}>{linkText}</Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className={styles.title}>{t('serviceAgreements.playground.title')}</Breadcrumb.Item>
-      </Breadcrumb>
-
+      <BreadcrumbNav backLink={LINK} backLinkText={linkText} childText={t('serviceAgreements.playground.title')} />
       <CurEra />
     </div>
   );

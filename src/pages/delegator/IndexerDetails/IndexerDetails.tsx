@@ -13,12 +13,11 @@ import styles from './IndexerDetails.module.css';
 import ReactJazzicon from 'react-jazzicon';
 import { DoDelegate } from '../DoDelegate';
 import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
-import { Breadcrumb } from 'antd';
-import { NavLink } from 'react-router-dom';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 import { DoUndelegate } from '../DoUndelegate';
 import { useWeb3 } from '@containers';
+import { BreadcrumbNav } from '@components';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 
@@ -62,12 +61,11 @@ export const IndexerDetails = () => {
   return (
     <>
       <div className={styles.navHeader}>
-        <Breadcrumb separator=">">
-          <Breadcrumb.Item className={styles.title}>
-            <NavLink to={`/${DELEGATOR}/${INDEXERS}`}>{t('indexer.indexers')}</NavLink>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item className={styles.title}>{t('delegate.viewProfile')}</Breadcrumb.Item>
-        </Breadcrumb>
+        <BreadcrumbNav
+          backLink={`/${DELEGATOR}/${INDEXERS}`}
+          backLinkText={t('indexer.indexers')}
+          childText={t('delegate.viewProfile')}
+        />
         <CurEra />
       </div>
       <AccountHeader account={account ?? ''} />
