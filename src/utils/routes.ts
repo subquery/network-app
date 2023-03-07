@@ -43,7 +43,7 @@ const DELEGATOR = {
 };
 
 const MY_ACCOUNT = {
-  MY_ACCOUNT: '/my-account',
+  MY_ACCOUNT: 'my-account',
   REWARDS: 'rewards',
   WITHDRAWN: 'withdrawn',
 };
