@@ -78,7 +78,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
       if (d?.delegation?.amount) {
         const rawDelegate = parseRawEraValue(d?.delegation?.amount, era?.index);
         const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
-        curDelegatedAmount = delegate.current;
+        curDelegatedAmount = delegate.after ?? 0;
       }
 
       if (i?.indexer?.capacity) {
