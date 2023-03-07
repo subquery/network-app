@@ -65,13 +65,13 @@ const cards: CardProps[] = [
   {
     title: t('account.title.rewards'),
     key: 'rewards',
-    link: `${MY_ACCOUNT}/${REWARDS}`,
+    link: `/${MY_ACCOUNT}/${REWARDS}`,
     tooltip: t('account.tooltip.rewards'),
   },
   {
     title: t('account.title.withdrawn'),
     key: 'withdrawn',
-    link: `${MY_ACCOUNT}/${WITHDRAWN}`,
+    link: `/${MY_ACCOUNT}/${WITHDRAWN}`,
     tooltip: t('account.tooltip.withdrawn'),
   },
 ];
