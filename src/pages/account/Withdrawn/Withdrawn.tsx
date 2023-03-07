@@ -16,7 +16,7 @@ export const Withdrawn: React.FC<{ delegator: string }> = () => {
   return (
     <div className={styles.rewardsContainer}>
       <BreadcrumbNav
-        BACKLINK={`/${ROUTES.MY_ACCOUNT_NAV}`}
+        backLink={`/${ROUTES.MY_ACCOUNT_NAV}`}
         backLinkText={t('indexer.indexers')}
         childText={t('withdrawals.headerTitle')}
       />

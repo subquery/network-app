@@ -62,7 +62,7 @@ export const IndexerDetails = () => {
     <>
       <div className={styles.navHeader}>
         <BreadcrumbNav
-          BACKLINK={`/${DELEGATOR}/${INDEXERS}`}
+          backLink={`/${DELEGATOR}/${INDEXERS}`}
           backLinkText={t('indexer.indexers')}
           childText={t('delegate.viewProfile')}
         />

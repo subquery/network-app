@@ -16,7 +16,7 @@ export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = (
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
-      <BreadcrumbNav BACKLINK={LINK} backLinkText={linkText} childText={t('serviceAgreements.playground.title')} />
+      <BreadcrumbNav backLink={LINK} backLinkText={linkText} childText={t('serviceAgreements.playground.title')} />
       <CurEra />
     </div>
   );

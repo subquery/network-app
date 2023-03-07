@@ -6,16 +6,16 @@ import { NavLink } from 'react-router-dom';
 import styles from './BreadcrumbNav.module.css';
 
 interface BreadcrumbProps {
-  BACKLINK: string;
+  backLink: string;
   backLinkText: string;
   childText: string;
 }
 
-export const BreadcrumbNav: React.FC<BreadcrumbProps> = ({ BACKLINK, backLinkText, childText }) => {
+export const BreadcrumbNav: React.FC<BreadcrumbProps> = ({ backLink, backLinkText, childText }) => {
   return (
     <Breadcrumb separator="/">
       <Breadcrumb.Item className={styles.title}>
-        <NavLink to={BACKLINK}>{backLinkText}</NavLink>
+        <NavLink to={backLink}>{backLinkText}</NavLink>
       </Breadcrumb.Item>
       <Breadcrumb.Item className={styles.title}>{childText}</Breadcrumb.Item>
     </Breadcrumb>
