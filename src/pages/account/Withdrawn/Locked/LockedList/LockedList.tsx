@@ -6,8 +6,7 @@ import * as React from 'react';
 import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { formatEther, LOCK_STATUS } from '@utils';
-import { GetWithdrawls_withdrawls_nodes as Withdrawls } from '@__generated__/registry/GetWithdrawls';
-//TODO: add fragment
+import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
 import styles from './LockedList.module.css';
 import { DoWithdraw } from '../DoWithdraw';
 import moment from 'moment';
