@@ -93,7 +93,12 @@ export const VersionDeployment: React.VFC<{ deployment: ServiceAgreement['deploy
 
   return (
     <TableText
-      content={<Copy value={deployment?.id}> {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`}</Copy>}
+      content={
+        <Copy value={deployment?.id} position={'flex-start'}>
+          {' '}
+          {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`}
+        </Copy>
+      }
     />
   );
 };

@@ -73,12 +73,12 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       const isActionDisabled = !stakingAllowance.data || rewardClaimStatus.loading;
 
-      let curDelegatedAmount = 0;
+      let afterDelegatedAmount = 0;
       let indexerCapacity = BigNumber.from(0);
       if (d?.delegation?.amount) {
         const rawDelegate = parseRawEraValue(d?.delegation?.amount, era?.index);
         const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
-        curDelegatedAmount = delegate.current;
+        afterDelegatedAmount = delegate.after ?? 0;
       }
 
       if (i?.indexer?.capacity) {
@@ -118,7 +118,7 @@ export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant
                 onSubmit={onSubmit}
                 onCancel={onCancel}
                 indexerAddress={indexerAddress}
-                delegatedAmount={curDelegatedAmount}
+                delegatedAmount={afterDelegatedAmount}
                 indexerCapacity={indexerCapacity}
                 error={error}
                 curEra={era?.index}

@@ -25,7 +25,7 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
       <div className={styles.indexerText}>
         {name && <Typography>{name}</Typography>}
         <div>
-          <Copy value={address} className={styles.copy} iconClassName={styles.copyIcon}>
+          <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
             <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
               {fullAddress ? address : truncateAddress(address)}
             </Typography>

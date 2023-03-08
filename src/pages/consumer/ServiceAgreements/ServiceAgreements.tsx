@@ -3,13 +3,12 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { AppPageHeader, TabButtons } from '../../../components';
-import { useWeb3 } from '../../../containers';
+import { AppPageHeader, TabButtons } from '@components';
+import { useWeb3 } from '@containers';
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { SAPlayground } from '../Playground';
-import { ROUTES } from '../../../utils';
+import { ROUTES } from '@utils';
 import {
   renderAsync,
   useGetConsumerServiceAgreementsCountQuery,
@@ -20,6 +19,7 @@ import {
   useGetConsumerExpiredServiceAgreementsQuery,
 } from '@subql/react-hooks';
 import { Spinner, Typography } from '@subql/react-ui';
+import { SAPlayground } from '../Playground';
 
 const { CONSUMER, INDEXER, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 
@@ -33,7 +33,7 @@ export type SA_QUERY_FN =
 
 const roleMapping = {
   indexer: {
-    BASE_ROUTE: INDEXER,
+    BASE_ROUTE: `/${INDEXER}`,
     hooks: {
       useTotalCount: useGetIndexerServiceAgreementsCountQuery,
       useOngoingAgreements: useGetIndexerOngoingServiceAgreementsQuery,
@@ -46,7 +46,7 @@ const roleMapping = {
     },
   },
   consumer: {
-    BASE_ROUTE: CONSUMER,
+    BASE_ROUTE: `/${CONSUMER}`,
     hooks: {
       useTotalCount: useGetConsumerServiceAgreementsCountQuery,
       useOngoingAgreements: useGetConsumerOngoingServiceAgreementsQuery,
