@@ -15,7 +15,7 @@ import {
 } from '@subql/react-hooks';
 import { EmptyList } from '@components';
 import { OwnDelegator } from '@pages/staking/Indexer/OwnDelegator';
-import { formatEther, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
+import { formatEther, mergeAsync, truncFormatEtherStr } from '@utils';
 import { useSortedIndexer } from '@hooks';
 import { BigNumber } from 'ethers';
 import { WithdrawalStatus } from '@subql/network-query';
@@ -83,7 +83,6 @@ function reduceTotal(nodes: any) {
       (accumulator: any, currentValue: { amount: unknown }) => accumulator.add(BigNumber.from(currentValue?.amount)),
       BigNumber.from(0),
     ),
-    4,
   );
 }
 
@@ -109,10 +108,12 @@ export const MyAccount: React.FC = () => {
     data: (data) => {
       const [iD, d, i, r, w] = data;
       const totalCount = iD?.indexer?.delegations.totalCount || 0;
-      const totalDelegating = formatEther(d, 4);
+
+      const totalDelegating = formatEther(d);
       const totalRewards = reduceTotal(r?.rewards);
       const totalWithdrawn = reduceTotal(w?.withdrawls);
-      const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
+      const totalStaking = i && truncFormatEtherStr(i?.totalStake?.current?.toString());
+      //TODO: add subscription
 
       const cardStats: StatKey = {
         delegating: totalDelegating,
@@ -129,12 +130,11 @@ export const MyAccount: React.FC = () => {
               {cards.map(({ title, key, link, tooltip }) => (
                 <Card
                   key={key}
-                  description={`${cardStats[key]} ${TOKEN}` ?? '-'}
+                  description={cardStats[key] ?? '-'}
                   title={title}
                   titleTooltipIcon={<InfoCircleOutlined />}
                   action={action(link, key)}
                   titleTooltip={tooltip}
-                  className={styles.statTile}
                 />
               ))}
             </div>
