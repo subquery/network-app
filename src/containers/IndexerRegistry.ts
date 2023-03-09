@@ -14,7 +14,7 @@ function useIndexerRegistryImpl(logger: Logger): { getIndexer: (address: string)
 
     const contracts = await pendingContracts;
 
-    return await contracts.indexerRegistry.metadataByIndexer(address);
+    return await contracts.indexerRegistry.metadata(address);
   };
 
   return {
