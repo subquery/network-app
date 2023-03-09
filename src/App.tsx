@@ -23,6 +23,7 @@ import {
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
+import { Footer } from '@subql/components';
 
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -63,7 +64,15 @@ const App: React.FC = () => {
             <div className="Content">
               <ChainStatus>
                 <Routes>
-                  <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+                  <Route
+                    element={
+                      <div className="fullWidth">
+                        <Explorer />
+                        <Footer simple />
+                      </div>
+                    }
+                    path={`${ROUTES.EXPLORER}/*`}
+                  />
                   <Route
                     element={
                       <WalletRoute
@@ -86,9 +95,6 @@ const App: React.FC = () => {
               </ChainStatus>
             </div>
           </div>
-          {/* <div>
-            <Footer simple />
-          </div> */}
         </BrowserRouter>
       </div>
     </Providers>

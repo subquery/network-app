@@ -6,7 +6,7 @@ import { Route, Routes } from 'react-router';
 import Home from './Home';
 import { Project } from './Project';
 
-export const Explorer: React.VFC = () => {
+export const Explorer: React.FC = () => {
   return (
     <Routes>
       <Route path={`project/:id/*`} element={<Project />} />
