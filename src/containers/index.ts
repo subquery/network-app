@@ -12,6 +12,5 @@ export { useUserProjects, UserProjectsProvider } from './UserProjects';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
 export { useEra, EraProvider } from './Era';
 export * from './IndexerRegistryProject';
-export * from './QuerySwapExchangeProject';
 export * from './SQToken';
 export * from './ProjectProgress';

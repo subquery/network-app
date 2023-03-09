@@ -9,6 +9,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
 export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
+export const clientContext = { context: { clientName: SWAP_EXCHANGE_CLIENT } };
 const swapLink = getHttpLink(import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT);
 
 export const TOP_100_INDEXERS = 'top100Indexers';

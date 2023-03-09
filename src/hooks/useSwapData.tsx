@@ -6,10 +6,11 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
-import { useContracts, useOrders } from '../containers';
+import { clientContext, SWAP_EXCHANGE_CLIENT, useContracts } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { useGetOrdersQuery } from '@subql/react-hooks';
 
 export function formatToken(value: BigNumberish, unit = 18): number {
   return convertStringToNumber(formatUnits(value, unit));
@@ -87,7 +88,7 @@ export function useSwapOrderId(swapFrom: string): { orderId: string | undefined;
   const mountedRef = React.useRef(true);
   const [orderId, setOrderId] = React.useState<string>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
-  const { data, loading } = useOrders({ swapFrom: swapFrom, now });
+  const { data, loading } = useGetOrdersQuery({ variables: { swapFrom: swapFrom, now }, ...clientContext });
 
   React.useEffect(() => {
     const order = data?.orders?.nodes[0];
