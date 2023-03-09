@@ -134,6 +134,7 @@ export const MyAccount: React.FC = () => {
                   titleTooltipIcon={<InfoCircleOutlined />}
                   action={action(link, key)}
                   titleTooltip={tooltip}
+                  className={styles.statTile}
                 />
               ))}
             </div>
