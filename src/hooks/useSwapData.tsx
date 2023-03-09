@@ -6,7 +6,7 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
-import { clientContext, SWAP_EXCHANGE_CLIENT, useContracts } from '../containers';
+import { clientContext, useContracts } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
 import { BigNumberish } from '@ethersproject/bignumber';
