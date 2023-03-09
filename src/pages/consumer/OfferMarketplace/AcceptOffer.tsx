@@ -31,7 +31,7 @@ interface OfferSummaryProps {
   curStep: number;
 }
 
-const OfferSummary: React.VFC<OfferSummaryProps> = ({ offer, onNext, curStep }) => {
+const OfferSummary: React.FC<OfferSummaryProps> = ({ offer, onNext, curStep }) => {
   const { t } = useTranslation();
 
   const offerSummary = [

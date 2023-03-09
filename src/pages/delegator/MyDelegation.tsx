@@ -143,12 +143,12 @@ export const MyDelegation: React.VFC = () => {
             );
           }
           return (
-            <div className="contentContainer">
+            <>
               <Typography.Title level={3} className={styles.header}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography.Title>
               <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
-            </div>
+            </>
           );
         },
       })}

@@ -26,24 +26,26 @@ export const EmptyList: React.VFC<IEmptyList> = ({
   const sortedDescriptions = Array.isArray(description) ? description : [description];
   return (
     <div className={styles.emptyListContainer}>
-      <Typography className={styles.title}>{title}</Typography>
-      <div className={styles.description}>
-        {sortedDescriptions.map((description) => (
-          <Typography key={description}>{description}</Typography>
-        ))}
-      </div>
-      {infoI18nKey && (
-        <Typography className={styles.infoLink}>
-          <Trans i18nKey={infoI18nKey}>
-            {infoLinkDesc}
-            <a href={infoLink ?? '/'} target={'_blank'} rel="noreferrer">
-              here
-            </a>
-          </Trans>
-        </Typography>
-      )}
+      <div className={styles.emptyListContent}>
+        <Typography className={styles.title}>{title}</Typography>
+        <div className={styles.description}>
+          {sortedDescriptions.map((description) => (
+            <Typography key={description}>{description}</Typography>
+          ))}
+        </div>
+        {infoI18nKey && (
+          <Typography className={styles.infoLink}>
+            <Trans i18nKey={infoI18nKey}>
+              {infoLinkDesc}
+              <a href={infoLink ?? '/'} target={'_blank'} rel="noreferrer">
+                here
+              </a>
+            </Trans>
+          </Typography>
+        )}
 
-      {children && <div className={styles.content}>{children}</div>}
+        {children && <div className={styles.content}>{children}</div>}
+      </div>
     </div>
   );
 };

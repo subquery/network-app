@@ -5,11 +5,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem 0;
+  height: 100%;
+
+  position: absolute;
 }
 
 .content {
-  width: 50vw;
+  width: 50%;
   min-height: 50vh;
   background: white;
   border-radius: 8px;
@@ -26,4 +28,9 @@
 .dataUpdateText {
   font-size: 16px;
   margin: 1rem;
+}
+
+.footer {
+  position: relative;
+  bottom: -4rem;
 }

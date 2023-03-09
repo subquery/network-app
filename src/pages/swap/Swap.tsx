@@ -23,6 +23,7 @@ import {
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
+import { Footer } from '@subql/components';
 
 const { SWAP, SELL, BUY } = ROUTES;
 
@@ -203,7 +204,7 @@ const GetAUSD = () => {
   });
 };
 
-export const Swap: React.VFC = () => {
+export const Swap: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -215,6 +216,9 @@ export const Swap: React.VFC = () => {
           <Route path={SELL} element={<GetAUSD />} />
           <Route path={'/'} element={<Navigate replace to={BUY} />} />
         </Routes>
+      </div>
+      <div className={styles.footer}>
+        <Footer simple />
       </div>
     </div>
   );
