@@ -10,6 +10,7 @@ import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import styles from './Specific.module.css';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
 import List from '../List';
+import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
@@ -17,6 +18,16 @@ const Specific: React.FC = () => {
 
   // TODO find a way to query indexed projects that only have plans
   const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' } });
+
+  specificPlans.subscribeToMore({
+    document: SUB_PLANS,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        specificPlans.refetch();
+      }
+      return prev;
+    },
+  });
 
   return (
     <div className={'contentContainer'}>

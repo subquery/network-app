@@ -47,3 +47,21 @@ export const SUB_WITHDRAWALS = gql`
     }
   }
 `;
+
+export const SUB_OFFERS = gql`
+  subscription GetOffers {
+    offers {
+      id
+      _entity
+    }
+  }
+`;
+
+export const SUB_PLANS = gql`
+  subscription GetOffers {
+    plans {
+      id
+      _entity
+    }
+  }
+`;

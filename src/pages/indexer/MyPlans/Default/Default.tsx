@@ -9,11 +9,22 @@ import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
 import List from '../List';
 import { useGetPlansQuery } from '@subql/react-hooks';
 import { EmptyList } from '@components';
+import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
 
-export const Default: React.VFC = () => {
+export const Default: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
   const plans = useGetPlansQuery({ variables: { address: account ?? '' } });
+
+  plans.subscribeToMore({
+    document: SUB_PLANS,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        plans.refetch();
+      }
+      return prev;
+    },
+  });
 
   return (
     <div className={'contentContainer'}>
