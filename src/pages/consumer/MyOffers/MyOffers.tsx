@@ -29,6 +29,7 @@ import {
 } from '@subql/react-hooks';
 import { Typography } from '@subql/react-ui';
 import { ROUTES } from '../../../utils';
+import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
@@ -50,7 +51,7 @@ const buttonLinks = [
   },
 ];
 
-export const CheckOfferAllowance: React.VFC = () => {
+export const CheckOfferAllowance: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { offerAllowance } = useSQToken();
@@ -79,7 +80,7 @@ export const CheckOfferAllowance: React.VFC = () => {
   }
 };
 
-export const OfferHeader: React.VFC = () => {
+export const OfferHeader: React.FC = () => {
   return (
     <>
       <div className={styles.tabs}>
@@ -118,7 +119,7 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
   );
 };
 
-const NoOffers: React.VFC = () => {
+const NoOffers: React.FC = () => {
   const { t } = useTranslation();
   return (
     <EmptyList
@@ -132,7 +133,7 @@ const NoOffers: React.VFC = () => {
   );
 };
 
-export const MyOffersContainer: React.VFC = () => {
+export const MyOffersContainer: React.FC = () => {
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const { t } = useTranslation();
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
@@ -144,16 +145,24 @@ export const MyOffersContainer: React.VFC = () => {
   );
 };
 
-export const MyOffers: React.VFC = () => {
+export const MyOffers: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { offerAllowance } = useSQToken();
   const requiresTokenApproval = offerAllowance.data?.isZero();
   const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
 
-  React.useEffect(() => {
-    offers.refetch();
-  }, [offers, account]);
+  offers.subscribeToMore({
+    document: SUB_OFFERS,
+    updateQuery: (prev, { subscriptionData }) => {
+      console.log('Subscribing....');
+      if (subscriptionData.data) {
+        console.log('subscriptionData.data', subscriptionData.data);
+        offers.refetch();
+      }
+      return prev;
+    },
+  });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,

@@ -70,7 +70,7 @@ const Header = () => {
   );
 };
 
-export const MyFlexPlans: React.VFC = () => {
+export const MyFlexPlans: React.FC = () => {
   return (
     <div>
       <Header />

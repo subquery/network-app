@@ -116,8 +116,6 @@ const Agreements: React.FC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18n
   );
 };
 
-//TODO: Avoid twice render on data query
-//TODO: AppPageHeader render twice
 export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { account } = useWeb3();
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
