@@ -155,9 +155,7 @@ export const MyOffers: React.FC = () => {
   offers.subscribeToMore({
     document: SUB_OFFERS,
     updateQuery: (prev, { subscriptionData }) => {
-      console.log('Subscribing....');
       if (subscriptionData.data) {
-        console.log('subscriptionData.data', subscriptionData.data);
         offers.refetch();
       }
       return prev;

@@ -22,9 +22,7 @@ const Specific: React.FC = () => {
   specificPlans.subscribeToMore({
     document: SUB_PLANS,
     updateQuery: (prev, { subscriptionData }) => {
-      console.log('Subscribing....');
       if (subscriptionData.data) {
-        console.log('subscriptionData.data', subscriptionData.data);
         specificPlans.refetch();
       }
       return prev;

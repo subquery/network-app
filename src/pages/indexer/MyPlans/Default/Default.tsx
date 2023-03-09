@@ -19,9 +19,7 @@ export const Default: React.FC = () => {
   plans.subscribeToMore({
     document: SUB_PLANS,
     updateQuery: (prev, { subscriptionData }) => {
-      console.log('Subscribing....');
       if (subscriptionData.data) {
-        console.log('subscriptionData.data', subscriptionData.data);
         plans.refetch();
       }
       return prev;

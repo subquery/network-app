@@ -20,9 +20,7 @@ export const AllIndexers: React.VFC = () => {
   indexers.subscribeToMore({
     document: SUB_INDEXERS,
     updateQuery: (prev, { subscriptionData }) => {
-      console.log('Subscribing....');
       if (subscriptionData.data) {
-        console.log('subscriptionData.data', subscriptionData.data);
         indexers.refetch();
       }
       return prev;
