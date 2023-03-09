@@ -4,6 +4,7 @@
 import * as React from 'react';
 import styles from './AppSidebar.module.css';
 import { Sidebar } from '../Sidebar';
+import { Footer } from '@subql/components';
 
 type Props = {
   list: {
@@ -14,13 +15,18 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const AppSidebar: React.VFC<Props> = ({ list, children }) => {
+export const AppSidebar: React.FC<Props> = ({ list, children }) => {
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
         <Sidebar list={list} />
       </div>
-      <div className={styles.content}>{children}</div>
+      <div className={styles.content}>
+        <div className={styles.mainContent}>{children}</div>
+        <div className={styles.footer}>
+          <Footer simple />
+        </div>
+      </div>
     </div>
   );
 };

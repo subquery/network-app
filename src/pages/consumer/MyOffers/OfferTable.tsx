@@ -44,7 +44,7 @@ import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
-const AcceptButton: React.VFC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
+const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
   const { account } = useWeb3();
   const indexerDeploymentResult = useGetDeploymentIndexerQuery({
     variables: {
@@ -96,6 +96,8 @@ const getColumns = (
   path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
   connectedAccount?: string | null,
 ) => {
+  console.log('path', path);
+
   const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',

@@ -23,9 +23,9 @@
     "@ctrl/tinycolor" "^3.4.0"
 
 "@ant-design/cssinjs@^1.0.0":
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/@ant-design/cssinjs/-/cssinjs-1.5.6.tgz#9eb60822a307339d729624533205209c99429062"
-  integrity sha512-1S7LUPC9BMyQ/CUYgzfePJJwEfsbVHJe3Tpd9zhujTxRM/6LYpN9N4FTaPHVqpnPazm0S2vG0WBkh2T5Erwuug==
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@ant-design/cssinjs/-/cssinjs-1.6.1.tgz#334706fe18dd14f319918d701931d92ecacda7e5"
+  integrity sha512-35+1e5h1HzPt7d7NjXTG5yg/OQY85YcOIpb3peB3/eKri7+0mW9c+WZB3In7yMscBzvxQREOR5pxNDbqMcI42w==
   dependencies:
     "@babel/runtime" "^7.11.1"
     "@emotion/hash" "^0.8.0"
@@ -1965,9 +1965,9 @@
     meros "^1.1.4"
 
 "@graphiql/toolkit@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.8.0.tgz#f778baaab36be7fa7c9c07e8161a3334fc2c23ec"
-  integrity sha512-DbMFhEKejpPzB6k8W3Mj+Rl8geXiw49USDF9Wdi06EEk1XLVh1iebDqveYY+4lViITsV4+BeGikxlqi8umfP4g==
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.8.2.tgz#ad7de51d0dbc7ba917ba2eb55a848c9c6857ad55"
+  integrity sha512-FGtXBYTzcPuwfpaC+0BGeriLD6kwTdcF5xugGvjutk5J93Dgy2vw+SkBdbi1QGzz/jooETi1kEtFeDuWTzIG7Q==
   dependencies:
     "@n1ru4l/push-pull-async-iterable-iterator" "^3.1.0"
     meros "^1.1.4"
@@ -2807,6 +2807,11 @@
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.3.2.tgz#58cd2bd25df2acc16c628e1b6f6150ea6c7455bc"
   integrity sha512-t54ONhl/h75X94SWsHGQ4G/ZrCEguKSRQr7DrjTciJXW0YU1QhlwYeycvK5JgkzlxmvrK7wq1NB/PLtHxoiDcA==
+
+"@remix-run/router@1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.3.3.tgz#d6d531d69c0fa3a44fda7dc00b20d49b44549164"
+  integrity sha512-YRHie1yQEj0kqqCTCJEfHqYSSNlZQ696QJG+MMiW4mxSl9I0ojz/eRhJS4fs88Z5i6D1SmoF9d3K99/QOhI8/w==
 
 "@rollup/pluginutils@^4.2.1":
   version "4.2.1"
@@ -3782,10 +3787,10 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/components@1.0.1-63":
-  version "1.0.1-63"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-63.tgz#a3f7fdce9b3cefedebbd088ee82c3e67b50deed7"
-  integrity sha512-s4izDrVuHxZzOz0hSUSfAoGq3nVEGhz6OUr5rsrz5b1FfpdZRv5+1fYud915aD85H/QcMV36iLA0GyfWpHYyvQ==
+"@subql/components@1.0.1-69":
+  version "1.0.1-69"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-69.tgz#94b687cdf792a9bf6f62acfbe5c8454dadf1c81d"
+  integrity sha512-K6aUeaxUIQtp/3KsjbGKoaO4c+98O5TNbuhjFMJFf4sVz2Y4CXXAFysoY2N2qmyu6ch8uRbEVcDxTDuvdaBlpQ==
   dependencies:
     antd "5.0.2"
     clsx "^1.2.1"
@@ -6492,11 +6497,11 @@ codemirror-graphql@^1.3.2:
     graphql-language-service "^5.0.6"
 
 codemirror-graphql@^2.0.2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-2.0.3.tgz#bcd8ee0ca769ff8ff479449dbf090c95e3eb27f4"
-  integrity sha512-T58f+XQVKE6/6goAADJfu56wPRcdF2RUZMHITUol6h6Uo1KKUmknV4muKNFOl6GM15BjBraysF6HATp4oY6kyA==
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-2.0.4.tgz#2062056846f26d4b95af20cb37d633b6f1052c00"
+  integrity sha512-u68lfUJv4hESfIZLJUGSWU2+txNrfoT29EEMxNksDBPXjnF41Ivpp/r8rxJBXigNcDOBmjMfKfs1J4L0Jggwrg==
   dependencies:
-    graphql-language-service "5.1.1"
+    graphql-language-service "5.1.2"
 
 codemirror@^5.65.3:
   version "5.65.12"
@@ -9028,7 +9033,15 @@ graphiql@^1.8.10:
     graphql-language-service "^5.0.6"
     markdown-it "^12.2.0"
 
-graphql-language-service@5.1.1, graphql-language-service@^5.0.6, graphql-language-service@^5.1.0:
+graphql-language-service@5.1.2, graphql-language-service@^5.1.0:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/graphql-language-service/-/graphql-language-service-5.1.2.tgz#f76dbe5f6c9bd8266bad26d64eb8e309c147a801"
+  integrity sha512-oeuztbvd7fwKWZ/GCp0voqgctdIL4BDjTkd/phz1jEyH+pfj6inJWKKIkUJPW5ebWHx+mFsZ00wdE6tiCvW2fA==
+  dependencies:
+    nullthrows "^1.0.0"
+    vscode-languageserver-types "^3.17.1"
+
+graphql-language-service@^5.0.6:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/graphql-language-service/-/graphql-language-service-5.1.1.tgz#d7b46d46adad3b192489960cc939da7ad8dbf21a"
   integrity sha512-gpaDT9E3+3eWhoqO4C81CGhkzr7Vp2jH/eq+ykoUbgfvMEpqhGTfCeNmrf+S4K/+4WTkAAJBsYT0/ZPZkqe/Hg==
@@ -13484,7 +13497,7 @@ react-remove-scroll@^2.4.3:
     use-callback-ref "^1.3.0"
     use-sidecar "^1.1.2"
 
-react-router-dom@^6.0.0, react-router-dom@^6.4.2, react-router-dom@^6.7.0:
+react-router-dom@^6.0.0, react-router-dom@^6.7.0:
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.8.1.tgz#7e136b67d9866f55999e9a8482c7008e3c575ac9"
   integrity sha512-67EXNfkQgf34P7+PSb6VlBuaacGhkKn3kpE51+P6zYSG2kiRoumXEL6e27zTa9+PGF2MNXbgIUHTVlleLbIcHQ==
@@ -13492,12 +13505,27 @@ react-router-dom@^6.0.0, react-router-dom@^6.4.2, react-router-dom@^6.7.0:
     "@remix-run/router" "1.3.2"
     react-router "6.8.1"
 
+react-router-dom@^6.4.2:
+  version "6.8.2"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.8.2.tgz#a6654a3400be9aafd504d7125573568921b78b57"
+  integrity sha512-N/oAF1Shd7g4tWy+75IIufCGsHBqT74tnzHQhbiUTYILYF0Blk65cg+HPZqwC+6SqEyx033nKqU7by38v3lBZg==
+  dependencies:
+    "@remix-run/router" "1.3.3"
+    react-router "6.8.2"
+
 react-router@6.8.1, react-router@^6.0.0, react-router@^6.7.0:
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.8.1.tgz#e362caf93958a747c649be1b47cd505cf28ca63e"
   integrity sha512-Jgi8BzAJQ8MkPt8ipXnR73rnD7EmZ0HFFb7jdQU24TynGW1Ooqin2KVDN9voSC+7xhqbbCd2cjGUepb6RObnyg==
   dependencies:
     "@remix-run/router" "1.3.2"
+
+react-router@6.8.2:
+  version "6.8.2"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.8.2.tgz#98f83582a73f316a3287118b440f0cee30ed6f33"
+  integrity sha512-lF7S0UmXI5Pd8bmHvMdPKI4u4S5McxmHnzJhrYi9ZQ6wE+DA8JN5BzVC5EEBuduWWDaiJ8u6YhVOCmThBli+rw==
+  dependencies:
+    "@remix-run/router" "1.3.3"
 
 react-sizeme@^3.0.1:
   version "3.0.2"

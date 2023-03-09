@@ -67,7 +67,7 @@ const buttonLinks = (BASE_ROUTE: string) => {
   ];
 };
 
-export const NoAgreements: React.VFC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
+export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { t } = useTranslation();
   const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
 
@@ -90,7 +90,7 @@ export const NoAgreements: React.VFC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE })
   );
 };
 
-const Agreements: React.VFC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18nKey?: string }> = ({
+const Agreements: React.FC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18nKey?: string }> = ({
   queryFn,
   BASE_ROUTE,
   emptyI18nKey,
@@ -116,10 +116,9 @@ const Agreements: React.VFC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18
   );
 };
 
-//TODO: No Agreements handle in Agreements component,
 //TODO: Avoid twice render on data query
 //TODO: AppPageHeader render twice
-export const ServiceAgreements: React.VFC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
+export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { account } = useWeb3();
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
   const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;

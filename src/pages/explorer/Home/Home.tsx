@@ -33,7 +33,7 @@ const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ pr
 };
 
 // TODO move to components
-export const Header: React.VFC<{ renderRightItem?: () => React.ReactNode }> = ({ renderRightItem }) => {
+export const Header: React.FC<{ renderRightItem?: () => React.ReactNode }> = ({ renderRightItem }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
@@ -46,7 +46,7 @@ export const Header: React.VFC<{ renderRightItem?: () => React.ReactNode }> = ({
   );
 };
 
-const Home: React.VFC = () => {
+const Home: React.FC = () => {
   const { data, loading, error, fetchMore } = useProjectsQuery({ offset: 0 });
   const navigate = useNavigate();
 

@@ -1,9 +1,12 @@
 .emptyListContainer {
-  margin: 15vh auto;
-  width: 35vw;
   display: flex;
   flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.emptyListContent {
+  width: 35%;
 }
 
 .description {

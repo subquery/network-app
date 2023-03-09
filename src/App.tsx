@@ -86,7 +86,9 @@ const App: React.FC = () => {
               </ChainStatus>
             </div>
           </div>
-          {/* <Footer /> */}
+          {/* <div>
+            <Footer simple />
+          </div> */}
         </BrowserRouter>
       </div>
     </Providers>
