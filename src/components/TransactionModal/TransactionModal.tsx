@@ -169,7 +169,7 @@ const TransactionModal = <P, T extends string>({
 
       {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => {
         const isTextButton = variant.match(/text|Text/);
-        const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledBtn') : variant;
+        const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
 
         return (
           <div className="flex-center" key={key}>
