@@ -23,7 +23,7 @@ interface NumberInputProps extends InputNumberProps {
 export const NumberInput: React.FC<NumberInputProps> = ({
   title,
   tooltip,
-  unit = 'SQT',
+  unit = 'kSQT',
   maxAmountText,
   maxAmount = 0,
   onClickMax,
