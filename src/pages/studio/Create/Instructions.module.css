@@ -23,11 +23,9 @@
 }
 
 .content {
-  font-family: Assistant;
   font-size: 16px;
   line-height: 24px;
 
-  /* or 150% */
   letter-spacing: 0.3px;
   color: var(--gray700);
 }
