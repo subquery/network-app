@@ -4,7 +4,7 @@
 import { useWeb3 } from '@containers';
 import styles from './MyAccount.module.css';
 import { useTranslation } from 'react-i18next';
-import { Card, Spinner, Typography } from '@subql/components';
+import { Card, Footer, Spinner, Typography } from '@subql/components';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import {
@@ -122,32 +122,30 @@ export const MyAccount: React.FC = () => {
       };
 
       return (
-        <div className={styles.page}>
-          <div className={styles.container}>
-            <AccountHeader />
-            <div className={styles.statsTiles}>
-              {cards.map(({ title, key, link, tooltip }) => (
-                <Card
-                  key={key}
-                  description={`${cardStats[key]} ${TOKEN}` ?? '-'}
-                  title={title}
-                  titleTooltipIcon={<InfoCircleOutlined />}
-                  action={action(link, key)}
-                  titleTooltip={tooltip}
-                  className={styles.statTile}
-                />
-              ))}
-            </div>
-            <div className={styles.myDelegators}>
-              <div className={styles.delegatorHeader}>
-                <Typography variant="h5">{t('indexer.myDelegators')}</Typography>
-                {/* <Typography variant="medium">
+        <div className={styles.container}>
+          <AccountHeader />
+          <div className={styles.statsTiles}>
+            {cards.map(({ title, key, link, tooltip }) => (
+              <Card
+                key={key}
+                description={`${cardStats[key]} ${TOKEN}` ?? '-'}
+                title={title}
+                titleTooltipIcon={<InfoCircleOutlined />}
+                action={action(link, key)}
+                titleTooltip={tooltip}
+                className={styles.statTile}
+              />
+            ))}
+          </div>
+          <div className={styles.myDelegators}>
+            <div className={styles.delegatorHeader}>
+              <Typography variant="h5">{t('indexer.myDelegators')}</Typography>
+              {/* <Typography variant="medium">
                   <Link to={'/'}>{t('account.viewDetails')}</Link>
                 </Typography> */}
-              </div>
-              {totalCount <= 0 && <NoDelegator />}
-              {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
             </div>
+            {totalCount <= 0 && <NoDelegator />}
+            {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
           </div>
         </div>
       );

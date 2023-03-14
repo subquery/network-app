@@ -59,7 +59,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   return (
     <div className={styles.rewardsContainer}>
       <BreadcrumbNav
-        backLink={`/${ROUTES.MY_ACCOUNT_NAV}`}
+        backLink={`${ROUTES.MY_ACCOUNT_NAV}`}
         backLinkText={t('indexer.indexers')}
         childText={t('rewards.claim.title')}
       />

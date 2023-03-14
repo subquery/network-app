@@ -7,11 +7,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import styles from './Marketplace.module.css';
 import { Typography } from '@subql/react-ui';
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
 
-const NoOffers: React.VFC = () => {
+const NoOffers: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -23,8 +22,8 @@ const NoOffers: React.VFC = () => {
   );
 };
 
-// TODO: review OfferTable vs NoOffers to avoid extra render
-export const Marketplace: React.VFC = () => {
+// TODO: consumer-indexer-offerMarketplace should be a shared component
+export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
   const { account } = useWeb3();
@@ -39,20 +38,20 @@ export const Marketplace: React.VFC = () => {
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
+
+      if (totalCount <= 0) {
+        return (
+          <div>
+            <AppPageHeader title={t('offerMarket.header')} />
+            <NoOffers />
+          </div>
+        );
+      }
+
       return (
-        <div className={styles.container}>
-          {totalCount <= 0 && (
-            <>
-              <AppPageHeader title={t('offerMarket.header')} />
-              <NoOffers />
-            </>
-          )}
-          {totalCount > 0 && (
-            <>
-              <AppPageHeader title={t('offerMarket.header')} desc={t('indexerOfferMarket.listDescription')} />
-              <OfferTable queryFn={useGetAllOpenOffersQuery} />
-            </>
-          )}
+        <div>
+          <AppPageHeader title={t('offerMarket.header')} desc={t('consumerOfferMarket.listDescription')} />
+          <OfferTable queryFn={useGetAllOpenOffersQuery} />
         </div>
       );
     },

@@ -1,18 +1,21 @@
-.container {
-  width: 100%;
-  background: var(--gray200);
+.swap {
   display: flex;
+  background-color: var(--gray100);
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+}
+
+.container {
+  margin: auto;
+  width: 50%;
+  display: flex;
 }
 
 .content {
-  width: 50%;
-  min-height: 50vh;
+  min-height: 60vh;
+  width: 100%;
   background: white;
   border-radius: 8px;
-  margin: 1rem 0;
   padding: 2rem;
 }
 

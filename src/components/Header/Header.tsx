@@ -2,133 +2,170 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { NavLink, Link } from 'react-router-dom';
 import clsx from 'clsx';
-import { useWeb3 } from '../../containers';
-import { Button, Typography } from '@subql/react-ui';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { Space, Divider } from 'antd';
 import styles from './Header.module.css';
-import { Dropdown } from '../Dropdown';
-import { AccountActions } from '../AccountActions';
-import { ROUTES } from '../../utils';
+import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components/dist/common';
+import { AccountActions } from '@components/AccountActions';
 import { ConnectWalletButton } from '@components/ConnectWallet';
+import { useWeb3 } from '@containers';
 
-const LinksDropdown = () => {
-  const { t } = useTranslation();
-  const menu = [
-    { key: 'https://explorer.subquery.network', label: 'Explorer' },
-    { key: 'https://project.subquery.network', label: 'Projects' },
-    { key: 'https://github.com/subquery/subql', label: 'Github' },
-  ];
+export interface AppLink {
+  label: string;
+  link: string;
+}
 
-  const handleOnClick = (key: string) => (window.location.href = key);
+export interface DetailedLink {
+  label: string;
+  description: string;
+  link: string;
+}
 
-  return <Dropdown menu={menu} handleOnClick={handleOnClick} dropdownContent={t('header.hosted')} />;
+export interface DropdownLink {
+  label: string;
+  links: DetailedLink[];
+}
+
+export interface AppNavigation {
+  label: string;
+  link?: string;
+  dropdown?: AppLink[];
+}
+
+const isExternalLink = (to: string) => to.startsWith('https') || to.startsWith('http');
+
+const renderLink = (to: string, label: string) => {
+  if (!isExternalLink(to)) {
+    return (
+      <Typography>
+        <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+          {label}
+        </NavLink>
+      </Typography>
+    );
+  }
+
+  return (
+    <Button
+      href={to}
+      target="_blank"
+      className={styles.navLink}
+      rel="noreferrer"
+      type="link"
+      label={label}
+      colorScheme="neutral"
+    />
+  );
 };
 
-const HeaderLinks = () => {
-  const { t } = useTranslation();
-
-  const entryLinks = [
-    {
-      link: ROUTES.EXPLORER,
-      title: t('header.explorer'),
-    },
-    // {
-    //   link: ROUTES.STUDIO,
-    //   title: t('header.studio'),
-    // },
-    // {
-    //   link: ROUTES.STAKING,
-    //   title: t('header.staking'),
-    // },
-    // {
-    //   link: ROUTES.PLANS,
-    //   title: t('header.plans'),
-    // },
-    {
-      link: ROUTES.INDEXER,
-      title: t('indexer.title'),
-    },
-    {
-      link: ROUTES.CONSUMER,
-      title: t('consumer'),
-    },
-    {
-      link: ROUTES.DELEGATOR,
-      title: t('delegator'),
-    },
-    {
-      link: ROUTES.SWAP,
-      title: t('header.swap'),
-    },
-    {
-      link: 'https://snapshot.org/#/subquerynetwork.eth',
-      title: t('header.governance'),
-    },
-    {
-      link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
-      title: t('header.documentation'),
-    },
-    {
-      link: 'https://forum.subquery.network/c/season-3/6',
-      title: t('header.forum'),
-    },
-  ];
-
-  const renderLink = (to: string, text: string) => {
-    const isInternalLink = !to.startsWith('https');
-
-    if (isInternalLink) {
-      return (
-        <Typography>
-          <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
-            {text}
-          </NavLink>
-        </Typography>
-      );
-    }
-
-    return (
-      <Button
-        href={to}
-        target="_blank"
-        className={styles.navLink}
-        rel="noreferrer"
-        type="link"
-        label={text}
-        colorScheme="neutral"
+export interface LeftHeaderProps {
+  leftElement?: React.ReactNode;
+  dropdownLinks?: DropdownLink;
+  showDivider?: boolean;
+}
+const LeftHeader = ({ leftElement, dropdownLinks, showDivider }: LeftHeaderProps) => {
+  const sortedDropdownLinks = !leftElement && dropdownLinks && (
+    <div className={clsx(styles.leftElement, styles.headerHeight)} id="leftHeader">
+      <Dropdown
+        label={dropdownLinks.label}
+        LeftLabelIcon={<img src={'/static/appIcon.svg'} alt="SubQuery Apps" />}
+        menuitem={dropdownLinks.links.map((label, key) => ({
+          key,
+          label: <MenuWithDesc title={label.label} description={label.description} className={styles.dropMenu} />,
+        }))}
+        active
+        menuClassName={styles.menuOverlay}
+        onMenuItemClick={({ key }) => {
+          window.open(dropdownLinks.links[parseInt(key)]?.link ?? '/', '_blank');
+        }}
+        getPopupContainer={() => document.getElementById('leftHeader') as HTMLElement}
       />
-    );
-  };
+    </div>
+  );
+
+  return (
+    <Space>
+      <>{leftElement}</>
+      <>{sortedDropdownLinks}</>
+      {showDivider && <Divider type="vertical" />}
+    </Space>
+  );
+};
+
+export interface MiddleHeaderProps {
+  middleElement?: React.ReactNode;
+  appNavigation?: AppNavigation[];
+}
+const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
+  const navigate = useNavigate();
+
+  const sortedAppNavigation = !middleElement && appNavigation && (
+    <Space className={clsx(styles.flexCenter, styles.headerHeight)}>
+      {appNavigation.map((nav) => {
+        if (nav.dropdown) {
+          const dropdownMenu = nav.dropdown.map((menu) => ({ key: menu.link, label: menu.label }));
+          return (
+            <div key={nav.link} className={clsx(styles.appDropdown, styles.headerHeight)}>
+              <Dropdown
+                menuitem={dropdownMenu}
+                label={nav.label}
+                onMenuItemClick={({ key }) => {
+                  if (isExternalLink(key)) {
+                    window.open(key, '_blank');
+                  } else {
+                    navigate(key);
+                  }
+                }}
+              />
+            </div>
+          );
+        }
+        return <div key={nav.link}>{renderLink(nav.link ?? '/', nav.label)}</div>;
+      })}
+    </Space>
+  );
 
   return (
     <>
-      {entryLinks.map((headerLink) => {
-        return <div key={headerLink.link}>{renderLink(headerLink.link, headerLink.title)}</div>;
-      })}
+      <>{middleElement}</>
+      <>{sortedAppNavigation}</>
     </>
   );
 };
 
-export const Header: React.FC = () => {
+export interface HeaderProps {
+  logoLink?: string;
+  dropdownLinks?: DropdownLink;
+  appNavigation?: AppNavigation[];
+  leftElement?: React.ReactElement;
+  middleElement?: React.ReactElement;
+  rightElement?: React.ReactElement;
+  className?: string;
+}
+
+export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  logoLink,
+  dropdownLinks,
+  appNavigation,
+  leftElement,
+  middleElement,
+  rightElement,
+  className,
+}) => {
   const { account } = useWeb3();
-
   return (
-    <div className={styles.header}>
-      <div className={styles.inner}>
-        <div className={styles.left}>
-          <div className={styles.logo}>
-            <Link to="/">
-              <img src="/static/kepler-logo.svg" className={styles.logoImg} alt="SubQuery logo" />
-            </Link>
-          </div>
-
-          <LinksDropdown />
-          <HeaderLinks />
+    <div className={clsx(styles.header, styles.flexCenter, rightElement && styles.justifyBetween, className)}>
+      <div className={clsx(styles.flexCenter, styles.headerHeight)}>
+        <div>
+          <a href={logoLink ?? '/'}>
+            <img src={'/static/logo.png'} alt="SubQuery Logo" width={140} />
+          </a>
         </div>
-        <div className={styles.right}>{account ? <AccountActions account={account} /> : <ConnectWalletButton />}</div>
+        <LeftHeader leftElement={leftElement} dropdownLinks={dropdownLinks} showDivider />
+        <MiddleHeader middleElement={middleElement} appNavigation={appNavigation} />
       </div>
+      <div className={styles.right}>{account ? <AccountActions account={account} /> : <ConnectWalletButton />}</div>
     </div>
   );
 };

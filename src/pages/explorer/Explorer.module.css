@@ -1,0 +1,10 @@
+.account {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.page {
+  position: relative;
+  height: 100%;
+}
