@@ -23,7 +23,6 @@ import {
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
-import { Footer } from '@subql/components';
 import { t } from 'i18next';
 
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -123,14 +122,7 @@ const App: React.FC = () => {
             <div className="Content">
               <ChainStatus>
                 <Routes>
-                  <Route
-                    element={
-                      <div className="fullWidth">
-                        <Explorer />
-                      </div>
-                    }
-                    path={`${ROUTES.EXPLORER}/*`}
-                  />
+                  <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
                   <Route
                     element={
                       <WalletRoute
