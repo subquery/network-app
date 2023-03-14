@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Breadcrumb } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../../utils';
 import styles from './Withdrawn.module.css';
@@ -16,7 +15,7 @@ export const Withdrawn: React.FC<{ delegator: string }> = () => {
   return (
     <div className={styles.rewardsContainer}>
       <BreadcrumbNav
-        backLink={`/${ROUTES.MY_ACCOUNT_NAV}`}
+        backLink={`${ROUTES.MY_ACCOUNT_NAV}`}
         backLinkText={t('indexer.indexers')}
         childText={t('withdrawals.headerTitle')}
       />

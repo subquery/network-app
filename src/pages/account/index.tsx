@@ -8,16 +8,23 @@ import { ROUTES } from '@utils';
 import { MyAccount } from './MyAccount';
 import { Rewards } from './Rewards/Rewards';
 import { Withdrawn } from './Withdrawn/Withdrawn';
+import { Footer } from '@subql/components';
+import styles from './Account.module.css';
 
 const { REWARDS, WITHDRAWN } = ROUTES;
 
-export const Account: React.VFC = () => {
+export const Account: React.FC = () => {
   const { account } = useWeb3();
   return (
-    <Routes>
-      <Route path={REWARDS} element={<Rewards delegator={account ?? ''} />} />
-      <Route path={WITHDRAWN} element={<Withdrawn delegator={account ?? ''} />} />
-      <Route path={'/'} element={<MyAccount />} />
-    </Routes>
+    <div className={styles.account}>
+      <div className={styles.page}>
+        <Routes>
+          <Route path={REWARDS} element={<Rewards delegator={account ?? ''} />} />
+          <Route path={WITHDRAWN} element={<Withdrawn delegator={account ?? ''} />} />
+          <Route path={'/'} element={<MyAccount />} />
+        </Routes>
+      </div>
+      <Footer simple />
+    </div>
   );
 };
