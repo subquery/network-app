@@ -24,6 +24,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
 import { Footer } from '@subql/components';
+import { t } from 'i18next';
 
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -49,6 +50,63 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
+const externalAppLinks = [
+  {
+    label: t('header.externalExplorer.title'),
+    description: t('header.externalExplorer.description'),
+    link: 'https://explorer.subquery.network/',
+  },
+  {
+    label: t('header.managedService.title'),
+    description: t('header.managedService.description'),
+    link: 'https://managedservice.subquery.network/',
+  },
+];
+
+const entryLinks = [
+  {
+    link: ROUTES.EXPLORER,
+    label: t('header.explorer'),
+  },
+  // {
+  //   link: ROUTES.STUDIO,
+  //   label: t('header.studio'),
+  // },
+  {
+    link: ROUTES.INDEXER,
+    label: t('indexer.title'),
+  },
+  {
+    link: ROUTES.CONSUMER,
+    label: t('consumer'),
+  },
+  {
+    link: ROUTES.DELEGATOR,
+    label: t('delegator'),
+  },
+  {
+    link: ROUTES.SWAP,
+    label: t('header.swap'),
+  },
+  {
+    link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
+    label: t('header.documentation'),
+  },
+  {
+    label: t('header.ecosystem'),
+    dropdown: [
+      {
+        link: 'https://forum.subquery.network/c/season-3/6',
+        label: t('header.forum'),
+      },
+      {
+        link: 'https://snapshot.org/#/subquerynetwork.eth',
+        label: t('header.governance'),
+      },
+    ],
+  },
+];
+
 const App: React.FC = () => {
   const { t } = useTranslation();
 
@@ -58,7 +116,8 @@ const App: React.FC = () => {
         <BrowserRouter>
           <div className="Main">
             <div className="Header">
-              <Header />
+              {/* TODO: replace with component from ui library */}
+              <Header appNavigation={entryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
             </div>
 
             <div className="Content">
