@@ -10,11 +10,12 @@
 }
 
 .mainContent {
-  min-height: 90vh;
+  min-height: 85%;
 }
 
 .content {
-  width: 1500px;
-  margin: auto;
+  height: 100%;
+  flex-grow: 1;
   padding: 0 2rem;
+  overflow: hidden;
 }
