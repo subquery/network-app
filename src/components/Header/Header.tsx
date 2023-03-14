@@ -39,7 +39,7 @@ const renderLink = (to: string, label: string) => {
   if (!isExternalLink(to)) {
     return (
       <Typography>
-        <NavLink to={to} className={(isActive) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
+        <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
           {label}
         </NavLink>
       </Typography>
