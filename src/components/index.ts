@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import Footer from './Footer';
 import ImageInput from './ImageInput';
 import FTextInput from './FTextInput';
 import IPFSImage from './IPFSImage';

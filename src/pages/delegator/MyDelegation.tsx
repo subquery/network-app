@@ -85,7 +85,7 @@ const getColumns = (
   },
 ];
 
-export const MyDelegation: React.VFC = () => {
+export const MyDelegation: React.FC = () => {
   const { currentEra } = useEra(); // TODO: Replace when container upgrade
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -103,7 +103,7 @@ export const MyDelegation: React.VFC = () => {
     variables: filterParams,
     updateQuery: (prev, { subscriptionData }) => {
       if (subscriptionData.data) {
-        delegations.refetch(filterParams);
+        delegations.refetch();
       }
       return prev;
     },

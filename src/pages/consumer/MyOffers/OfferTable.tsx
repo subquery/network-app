@@ -319,12 +319,11 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
     });
   };
 
-  // TODO: share same pattern with saTable agreement, think of reusable
-  // NOTE: Every 5min to query wit a new timestamp
+  // NOTE: Every 1min to query wit a new timestamp
   React.useEffect(() => {
     const interval = setInterval(() => {
       setNow(moment().toDate());
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
