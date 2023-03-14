@@ -1,21 +1,24 @@
-.container {
-  width: 100%;
-  background: var(--gray-canvas);
+.swap {
   display: flex;
+  background-color: var(--gray100);
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  width: 100%;
+}
 
-  position: absolute;
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  height: 90vh;
+  width: 50%;
+  display: flex;
 }
 
 .content {
-  width: 50%;
-  min-height: 50vh;
+  margin-top: 10vh;
+  height: 65vh;
+  width: 100%;
   background: white;
   border-radius: 8px;
-
   padding: 2rem;
 }
 

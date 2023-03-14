@@ -206,20 +206,20 @@ const GetAUSD = () => {
 
 export const Swap: React.FC = () => {
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <div className={styles.tabs}>
-          <TabButtons tabs={buttonLinks} whiteTab />
+    <div className={styles.swap}>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <div className={styles.tabs}>
+            <TabButtons tabs={buttonLinks} whiteTab />
+          </div>
+          <Routes>
+            <Route index path={BUY} element={<SellAUSD />} />
+            <Route path={SELL} element={<GetAUSD />} />
+            <Route path={'/'} element={<Navigate replace to={BUY} />} />
+          </Routes>
         </div>
-        <Routes>
-          <Route index path={BUY} element={<SellAUSD />} />
-          <Route path={SELL} element={<GetAUSD />} />
-          <Route path={'/'} element={<Navigate replace to={BUY} />} />
-        </Routes>
       </div>
-      <div className={styles.footer}>
-        <Footer simple />
-      </div>
+      <Footer simple />
     </div>
   );
 };
