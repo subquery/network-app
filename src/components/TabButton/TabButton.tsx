@@ -14,7 +14,7 @@ interface TabButtonProps {
   tooltip?: string;
 }
 
-export const TabButton: React.VFC<TabButtonProps> = ({ label, link, whiteTab, tooltip }) => {
+export const TabButton: React.FC<TabButtonProps> = ({ label, link, whiteTab, tooltip }) => {
   const { pathname } = useLocation();
 
   return (
@@ -40,7 +40,7 @@ interface TabButtonsProps {
   whiteTab?: boolean;
 }
 
-export const TabButtons: React.VFC<TabButtonsProps> = ({ tabs, whiteTab }) => {
+export const TabButtons: React.FC<TabButtonsProps> = ({ tabs, whiteTab }) => {
   return (
     <div className={clsx(styles.tabContainer, whiteTab && styles.whiteTabContainer)}>
       {tabs.map((tab) => (
