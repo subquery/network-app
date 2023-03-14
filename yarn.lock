@@ -3783,9 +3783,9 @@
     semver "^7.3.5"
 
 "@subql/components@^1.0.1-70":
-  version "1.0.1-70"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-70.tgz#23cc5b980a26915902f45fe5fe9a9cac589ab222"
-  integrity sha512-Pf+jDbDjjhnPuCuS5vexeJ2ckRVPIDcb1x37sUM8i1fhICsb6+nmefXLxVdiEd0DuEfq1KYcbQBfPqTnSiZanA==
+  version "1.0.1-71"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-71.tgz#60a9d7e7761d81ae709520b9a017e15fd169041a"
+  integrity sha512-x8mipxS9LQIOdgnTD5f8dj3UNGBHOGtOJV/v2H2no30hpGowDyBsAg579v/97ZK3nWrHe/DblHhXVq62ltCsJQ==
   dependencies:
     antd "5.0.2"
     clsx "^1.2.1"

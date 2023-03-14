@@ -127,7 +127,6 @@ const App: React.FC = () => {
                     element={
                       <div className="fullWidth">
                         <Explorer />
-                        <Footer simple />
                       </div>
                     }
                     path={`${ROUTES.EXPLORER}/*`}

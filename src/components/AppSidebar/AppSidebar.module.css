@@ -6,6 +6,7 @@
 
 .sidebar {
   min-width: 220px;
+  padding-left: 10px;
 }
 
 .mainContent {
