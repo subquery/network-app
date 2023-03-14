@@ -21,6 +21,7 @@
 
 .statTile {
   flex: 1;
+  overflow: hidden;
 }
 
 .myDelegators {

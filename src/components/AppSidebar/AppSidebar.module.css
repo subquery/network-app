@@ -1,19 +1,18 @@
 .container {
   display: flex;
-  background-color: var(--gray200);
+  background-color: var(--gray-canvas);
   width: 100%;
 }
 
 .sidebar {
-  width: 25%;
+  min-width: 220px;
 }
 
 .mainContent {
-  min-height: 80%;
+  min-height: 90vh;
 }
 
 .content {
   width: 100%;
   padding: 0 2rem;
-  overflow: scroll;
 }

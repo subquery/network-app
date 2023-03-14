@@ -23,9 +23,7 @@ export const AppSidebar: React.FC<Props> = ({ list, children }) => {
       </div>
       <div className={styles.content}>
         <div className={styles.mainContent}>{children}</div>
-        <div className={styles.footer}>
-          <Footer simple />
-        </div>
+        <Footer simple />
       </div>
     </div>
   );
