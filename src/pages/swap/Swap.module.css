@@ -6,16 +6,13 @@
 }
 
 .container {
-  margin-left: auto;
-  margin-right: auto;
-  height: 90vh;
+  margin: auto;
   width: 50%;
   display: flex;
 }
 
 .content {
-  margin-top: 10vh;
-  height: 65vh;
+  min-height: 60vh;
   width: 100%;
   background: white;
   border-radius: 8px;
