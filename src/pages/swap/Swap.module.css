@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  background: var(--gray200);
+  background: var(--gray-canvas);
   display: flex;
   flex-direction: column;
   justify-content: center;
