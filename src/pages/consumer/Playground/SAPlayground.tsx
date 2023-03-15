@@ -114,7 +114,7 @@ export const SAPlayground: React.VFC = () => {
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
       const { response, error } = await POST({
         endpoint: queryUrl,
-        requestBody: defaultQuery,
+        requestBody: { query: defaultQuery },
         headers,
       });
       if (response?.status === 200) {
