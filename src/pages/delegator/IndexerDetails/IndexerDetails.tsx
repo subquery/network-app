@@ -4,7 +4,7 @@
 import { useSortedIndexer } from '@hooks';
 import { Indexing } from '@pages/indexer/MyStaking/Indexing';
 import { Spinner, Typography } from '@subql/components';
-import { renderAsync, ROUTES, truncateAddress } from '@utils';
+import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, truncateAddress } from '@utils';
 import { t } from 'i18next';
 import { useParams } from 'react-router-dom';
 import { Copy, CurEra, EmptyList } from '@components';
@@ -12,12 +12,15 @@ import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
 import ReactJazzicon from 'react-jazzicon';
 import { DoDelegate } from '../DoDelegate';
-import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { useGetFilteredDelegationsQuery, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 import { DoUndelegate } from '../DoUndelegate';
-import { useWeb3 } from '@containers';
+import { useEra, useWeb3 } from '@containers';
 import { BreadcrumbNav } from '@components';
+import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
+import { mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
+import { parseEther } from 'ethers/lib/utils';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 
@@ -30,7 +33,47 @@ const NoDelegator: React.FC = () => {
 
 export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
+  const { currentEra } = useEra();
   const canDelegate = connectedAccount !== account;
+  const filterParams = { delegator: connectedAccount ?? '', filterIndexer: connectedAccount ?? '', offset: 0 };
+  const delegations = useGetFilteredDelegationsQuery({
+    variables: filterParams,
+  });
+
+  delegations.subscribeToMore({
+    document: SUB_DELEGATIONS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        delegations.refetch();
+      }
+      return prev;
+    },
+  });
+
+  const delegationList = mapAsync(
+    ([delegations, era]) =>
+      delegations?.delegations?.nodes
+        .filter(notEmpty)
+        .map((delegation) => ({
+          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
+            formatEther(v ?? 0),
+          ),
+          indexer: delegation.indexerId,
+        }))
+        .filter(
+          (delegation) =>
+            parseEther(delegation.value.current).gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
+        ),
+    mergeAsync(delegations, currentEra),
+  );
+
+  const getMydelegating = delegationList.data
+    ?.filter((delegation) => delegation.indexer === account)
+    .find((delegation) => delegation.value?.after);
+
+  const nextEraValue = getMydelegating?.value?.after;
+
   return (
     <div className={styles.header}>
       <div className={styles.accountContainer}>
@@ -46,7 +89,7 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
       {canDelegate && (
         <div className={styles.delegateActions}>
           <DoDelegate indexerAddress={account} />
-          <DoUndelegate indexerAddress={account} />
+          <DoUndelegate indexerAddress={account} availableBalance={nextEraValue} variant={'button'} />
         </div>
       )}
     </div>

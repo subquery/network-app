@@ -32,6 +32,7 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
 interface DoUndelegateProps {
   indexerAddress: string;
   availableBalance?: string;
+  variant?: 'button' | 'textBtn';
 }
 
 /**
@@ -39,7 +40,7 @@ interface DoUndelegateProps {
  * NOTE: USED Under Stake Tab and Delegator Tab(V2)
  * TODO: review once container upgrade from renovation
  */
-export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, availableBalance }) => {
+export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance, variant }) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
@@ -68,7 +69,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, avai
       const modalText = getModalText(requireClaimIndexerRewards, lock, t);
       return (
         <TransactionModal
-          variant={disabled ? 'disabledTextBtn' : 'textBtn'}
+          variant={disabled ? 'disabledTextBtn' : variant ? 'button' : 'textBtn'}
           text={modalText}
           actions={[
             {
