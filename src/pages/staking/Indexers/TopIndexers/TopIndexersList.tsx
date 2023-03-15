@@ -183,7 +183,6 @@ const getColumns = (account: string): TableProps<GetTopIndexers_indexerPrograms>
     dataIndex: 'id',
     align: 'center',
     render: (id: string) => {
-      console.log('id', id);
       if (id === account) return <Typography> - </Typography>;
       return <DoDelegate indexerAddress={id} variant="textBtn" />;
     },

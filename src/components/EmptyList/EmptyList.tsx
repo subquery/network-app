@@ -15,7 +15,7 @@ interface IEmptyList {
   children?: React.ReactNode;
 }
 
-export const EmptyList: React.VFC<IEmptyList> = ({
+export const EmptyList: React.FC<IEmptyList> = ({
   title,
   description,
   infoI18nKey,

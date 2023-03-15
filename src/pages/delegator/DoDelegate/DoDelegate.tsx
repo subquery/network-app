@@ -41,7 +41,7 @@ interface DoDelegateProps {
   variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
 }
 
-export const DoDelegate: React.VFC<DoDelegateProps> = ({ indexerAddress, variant }) => {
+export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();

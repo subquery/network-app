@@ -50,7 +50,6 @@ export * from './WalletRoute';
 export * from './BreadcrumbNav';
 
 export {
-  Footer,
   ImageInput,
   FTextInput,
   IPFSImage,
