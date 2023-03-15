@@ -3782,7 +3782,7 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/components@^1.0.1-70":
+"@subql/components@1.0.1-71":
   version "1.0.1-71"
   resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-71.tgz#60a9d7e7761d81ae709520b9a017e15fd169041a"
   integrity sha512-x8mipxS9LQIOdgnTD5f8dj3UNGBHOGtOJV/v2H2no30hpGowDyBsAg579v/97ZK3nWrHe/DblHhXVq62ltCsJQ==

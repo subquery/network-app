@@ -31,7 +31,7 @@
 }
 
 .activeNav {
-  color: var(--gray900);
+  color: var(--gray800);
 }
 
 .activeNav > p,
