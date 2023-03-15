@@ -19,11 +19,13 @@ type Props = {
 };
 
 export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress, onAddressClick }) => {
+  const asyncEns = useENS(address);
+  const sortedName = asyncEns.data ?? name;
   return (
     <div className={styles.indexer}>
       <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
       <div className={styles.indexerText}>
-        {name && <Typography>{name}</Typography>}
+        {sortedName && <Typography>{sortedName}</Typography>}
         <div>
           <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
             <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
@@ -36,17 +38,16 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
   );
 };
 
-export const ConnectedIndexer: React.VFC<{
+export const ConnectedIndexer: React.FC<{
   id: string;
   account?: string | null;
   onAddressClick?: (id: string) => void;
 }> = ({ id, account, onAddressClick }) => {
   const asyncMetadata = useIndexerMetadata(id);
-  const asyncEns = useENS(id);
 
   return (
     <IndexerName
-      name={id === account ? 'You' : asyncEns.data ?? asyncMetadata.data?.name}
+      name={id === account ? 'You' : asyncMetadata.data?.name}
       image={asyncMetadata.data?.image}
       address={id}
       onAddressClick={onAddressClick}

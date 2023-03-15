@@ -12,7 +12,6 @@ export * from './getDeploymentProgress';
 export * from './getTrimmedStr';
 export * from './useDebounce';
 export * from './fetch';
-export * from './fetchEns';
 export * from './localStorage';
 export * from './colors';
 export * from './constants';

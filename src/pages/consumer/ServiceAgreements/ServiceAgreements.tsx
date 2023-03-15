@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { AppPageHeader, TabButtons } from '@components';
+import { AppPageHeader, EmptyList, TabButtons } from '@components';
 import { useWeb3 } from '@containers';
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
@@ -40,7 +40,10 @@ const roleMapping = {
       useExpiredAgreements: useGetIndexerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'serviceAgreements.nonIndexerAgreementsDescription',
+      noAgreementsDescription: [
+        'serviceAgreements.nonIndexerAgreementsDescription_0',
+        'serviceAgreements.nonIndexerAgreementsDescription_1',
+      ],
       noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink',
       noAgreementsLink: '/', //TODO: add link
     },
@@ -53,7 +56,10 @@ const roleMapping = {
       useExpiredAgreements: useGetConsumerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'serviceAgreements.nonConsumerAgreementsDescription',
+      noAgreementsDescription: [
+        'serviceAgreements.nonConsumerAgreementsDescription_0',
+        'serviceAgreements.nonConsumerAgreementsDescription_1',
+      ],
       noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink',
       noAgreementsLink: '/', //TODO: add link
     },
@@ -72,46 +78,60 @@ export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) 
   const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
 
   return (
-    <>
-      <AppPageHeader title={t('plans.category.serviceAgreement')} />
-      <div className={styles.noAgreementsContainer}>
-        <Typography variant="h5">{t('serviceAgreements.noAgreementsTitle')}</Typography>
-        <Typography className={styles.description}>
-          <Trans i18nKey={noAgreementsDescription} />
-        </Typography>
-        <Typography className={styles.infoLink}>
-          <Trans i18nKey={noAgreementsInfoLink}>
-            {t(noAgreementsInfoLink)}
-            <a href={noAgreementsLink}>here</a>
-          </Trans>
-        </Typography>
-      </div>
-    </>
+    <div className={styles.noAgreementsContainer}>
+      <Typography variant="h5">{t('serviceAgreements.noAgreementsTitle')}</Typography>
+      <Typography className={styles.description}>
+        <Trans i18nKey={noAgreementsDescription} />
+      </Typography>
+      <Typography className={styles.infoLink}>
+        <Trans i18nKey={noAgreementsInfoLink}>
+          {t(noAgreementsInfoLink)}
+          <a href={noAgreementsLink}>here</a>
+        </Trans>
+      </Typography>
+    </div>
   );
 };
 
-const Agreements: React.FC<{ queryFn: SA_QUERY_FN; BASE_ROUTE: string; emptyI18nKey?: string }> = ({
-  queryFn,
-  BASE_ROUTE,
-  emptyI18nKey,
-}) => {
+const Agreements: React.FC<{
+  queryFn: SA_QUERY_FN;
+  BASE_ROUTE: string;
+  emptyI18nKey?: string;
+  totalCount: number;
+  userRole: USER_ROLE;
+}> = ({ queryFn, BASE_ROUTE, emptyI18nKey, totalCount, userRole }) => {
   const { account } = useWeb3();
   const { t } = useTranslation();
+  const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[userRole].intl;
 
   return (
     <>
       <AppPageHeader title={t('plans.category.serviceAgreement')} />
 
-      <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
-      </div>
-      <div className="contentContainer">
-        <ServiceAgreementsTable
-          queryFn={queryFn}
-          queryParams={{ address: account || '' }}
-          emptyI18nKey={emptyI18nKey}
+      {totalCount <= 0 && (
+        <EmptyList
+          title={t('serviceAgreements.noAgreementsTitle')}
+          description={noAgreementsDescription.map((tKey) => t(tKey))}
+          infoI18nKey={noAgreementsInfoLink}
+          infoLinkDesc={t(noAgreementsInfoLink)}
+          infoLink={noAgreementsLink}
         />
-      </div>
+      )}
+
+      {totalCount > 0 && (
+        <>
+          <div className={styles.tabs}>
+            <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
+          </div>
+          <div className="contentContainer">
+            <ServiceAgreementsTable
+              queryFn={queryFn}
+              queryParams={{ address: account || '' }}
+              emptyI18nKey={emptyI18nKey}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };
@@ -138,6 +158,8 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
                 queryFn={useOngoingAgreements}
                 BASE_ROUTE={BASE_ROUTE}
                 emptyI18nKey={'serviceAgreements.nonOngoing'}
+                totalCount={totalCount}
+                userRole={USER_ROLE}
               />
             }
           />
@@ -148,13 +170,12 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
                 queryFn={useExpiredAgreements}
                 BASE_ROUTE={BASE_ROUTE}
                 emptyI18nKey={'serviceAgreements.nonOngoing'}
+                totalCount={totalCount}
+                userRole={USER_ROLE}
               />
             }
           />
-          <Route
-            path={'/'}
-            element={totalCount <= 0 ? <NoAgreements USER_ROLE={USER_ROLE} /> : <Navigate replace to={ONGOING_PLANS} />}
-          />
+          <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
         </Routes>
       );
     },
