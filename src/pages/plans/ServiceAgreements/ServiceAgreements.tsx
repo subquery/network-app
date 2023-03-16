@@ -8,7 +8,6 @@ import { useExpiredServiceAgreements, useServiceAgreements, useWeb3 } from '../.
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { SAPlayground } from '../Playground';
 import { ROUTES } from '../../../utils';
 const { PLANS, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 
@@ -45,7 +44,6 @@ const ServiceAgreements: React.VFC = () => {
   return (
     <div>
       <Routes>
-        <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
         <Route
           path={ONGOING_PLANS}
           element={

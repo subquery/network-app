@@ -106,7 +106,7 @@ export const FlexPlayground: React.VFC = () => {
       const { response, error } = await POST({
         endpoint: queryUrl,
         headers: headers,
-        requestBody: defaultQuery,
+        requestBody: { query: defaultQuery },
       });
 
       if (response?.status === 404) {
