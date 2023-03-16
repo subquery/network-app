@@ -12,7 +12,11 @@ import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
 import ReactJazzicon from 'react-jazzicon';
 import { DoDelegate } from '../DoDelegate';
-import { useGetFilteredDelegationsQuery, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import {
+  useGetFilteredDelegationsQuery,
+  useGetIndexerDelegatorsQuery,
+  useGetFilteredDelegationQuery,
+} from '@subql/react-hooks';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
 import { DoUndelegate } from '../DoUndelegate';
@@ -35,8 +39,8 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
   const { currentEra } = useEra();
   const canDelegate = connectedAccount !== account;
-  const filterParams = { delegator: connectedAccount ?? '', filterIndexer: connectedAccount ?? '', offset: 0 };
-  const delegations = useGetFilteredDelegationsQuery({
+  const filterParams = { delegator: connectedAccount ?? '', indexer: account ?? '', offset: 0 };
+  const delegations = useGetFilteredDelegationQuery({
     variables: filterParams,
   });
 
@@ -59,7 +63,6 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
           value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
             formatEther(v ?? 0),
           ),
-          indexer: delegation.indexerId,
         }))
         .filter(
           (delegation) =>
@@ -68,11 +71,7 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
     mergeAsync(delegations, currentEra),
   );
 
-  const getMydelegating = delegationList.data
-    ?.filter((delegation) => delegation.indexer === account)
-    .find((delegation) => delegation.value?.after);
-
-  const nextEraValue = getMydelegating?.value?.after;
+  const nextEraValue = delegationList.data?.find((delegation) => delegation.value?.after)?.value.after;
 
   return (
     <div className={styles.header}>

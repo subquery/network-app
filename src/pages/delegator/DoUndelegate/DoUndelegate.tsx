@@ -40,7 +40,11 @@ interface DoUndelegateProps {
  * NOTE: USED Under Stake Tab and Delegator Tab(V2)
  * TODO: review once container upgrade from renovation
  */
-export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, availableBalance, variant }) => {
+export const DoUndelegate: React.VFC<DoUndelegateProps> = ({
+  indexerAddress,
+  availableBalance,
+  variant = 'textBtn',
+}) => {
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
@@ -69,7 +73,7 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({ indexerAddress, ava
       const modalText = getModalText(requireClaimIndexerRewards, lock, t);
       return (
         <TransactionModal
-          variant={disabled ? 'disabledTextBtn' : variant ? 'button' : 'textBtn'}
+          variant={disabled ? 'disabledTextBtn' : variant}
           text={modalText}
           actions={[
             {
