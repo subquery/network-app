@@ -31,6 +31,7 @@ const NoDelegator: React.FC = () => {
 export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
   const canDelegate = connectedAccount !== account;
+
   return (
     <div className={styles.header}>
       <div className={styles.accountContainer}>
@@ -46,7 +47,7 @@ export const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
       {canDelegate && (
         <div className={styles.delegateActions}>
           <DoDelegate indexerAddress={account} />
-          <DoUndelegate indexerAddress={account} />
+          <DoUndelegate indexerAddress={account} variant={'button'} />
         </div>
       )}
     </div>

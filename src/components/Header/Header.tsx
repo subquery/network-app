@@ -102,11 +102,11 @@ const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
 
   const sortedAppNavigation = !middleElement && appNavigation && (
     <Space className={clsx(styles.flexCenter, styles.headerHeight)}>
-      {appNavigation.map((nav) => {
+      {appNavigation.map((nav, idx) => {
         if (nav.dropdown) {
           const dropdownMenu = nav.dropdown.map((menu) => ({ key: menu.link, label: menu.label }));
           return (
-            <div key={nav.link} className={clsx(styles.appDropdown, styles.headerHeight)}>
+            <div key={idx} className={clsx(styles.appDropdown, styles.headerHeight)}>
               <Dropdown
                 menuitem={dropdownMenu}
                 label={nav.label}
@@ -121,7 +121,7 @@ const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
             </div>
           );
         }
-        return <div key={nav.link}>{renderLink(nav.link ?? '/', nav.label)}</div>;
+        return <div key={idx}>{renderLink(nav.link ?? '/', nav.label)}</div>;
       })}
     </Space>
   );
