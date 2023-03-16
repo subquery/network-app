@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, Card, TabButtons } from '../../../components';
-import { Card as AppCard } from '@subql/components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
@@ -47,10 +46,12 @@ const BalanceCards = () => {
           title={t('flexPlans.billBalance').toUpperCase()}
           value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
           action={<BillingAction />}
+          className={styles.SCard}
         />
         <Card
           title={t('flexPlans.walletBalance')}
           value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          className={styles.SCard}
         />
       </div>
     </div>

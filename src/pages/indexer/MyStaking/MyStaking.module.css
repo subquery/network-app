@@ -53,3 +53,8 @@
   background: var(--sq-gradient);
   height: 2px;
 }
+
+.SCard {
+  flex: 1;
+  overflow: hidden;
+}

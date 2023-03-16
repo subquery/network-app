@@ -42,3 +42,8 @@
 .terminateError {
   margin-bottom: 1rem;
 }
+
+.SCard {
+  flex: 1;
+  overflow: hidden;
+}

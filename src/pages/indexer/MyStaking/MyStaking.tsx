@@ -49,7 +49,11 @@ export const MyStaking: React.VFC = () => {
               <>
                 <div className={styles.stakingHeader}>
                   <div className={styles.stakingAmount}>
-                    <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
+                    <Card
+                      title={t('indexer.stakingAmountTitle')}
+                      value={`${sortedTotalStaking} ${TOKEN}`}
+                      className={styles.SCard}
+                    />
                   </div>
                   {s && (
                     <div className={styles.stakingActions}>
