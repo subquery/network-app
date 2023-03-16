@@ -79,7 +79,7 @@ const getColumns = (
       if ((record?.value?.after ?? 0) === 0) {
         return <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>;
       } else {
-        return <DoUndelegate indexerAddress={id} availableBalance={record.value.after} />;
+        return <DoUndelegate indexerAddress={id} />;
       }
     },
   },
@@ -90,7 +90,6 @@ export const MyDelegation: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const delegating = useDelegating(account ?? '');
-  const refetchDelegating = () => delegating.refetch(true);
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
 
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };

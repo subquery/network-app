@@ -4,11 +4,15 @@
 import * as React from 'react';
 import assert from 'assert';
 import { parseEther } from 'ethers/lib/utils';
+import { useWeb3 } from '@containers';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useContracts } from '@containers';
 import TransactionModal from '@components/TransactionModal';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
+import { useGetDelegationQuery } from '@subql/react-hooks';
+import { formatEther } from '@utils';
+import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useLockPeriod } from '@hooks';
@@ -31,7 +35,6 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
 
 interface DoUndelegateProps {
   indexerAddress: string;
-  availableBalance?: string;
   variant?: 'button' | 'textBtn';
 }
 
@@ -40,15 +43,25 @@ interface DoUndelegateProps {
  * NOTE: USED Under Stake Tab and Delegator Tab(V2)
  * TODO: review once container upgrade from renovation
  */
-export const DoUndelegate: React.VFC<DoUndelegateProps> = ({
-  indexerAddress,
-  availableBalance,
-  variant = 'textBtn',
-}) => {
+export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, variant = 'textBtn' }) => {
+  const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
   const pendingContracts = useContracts();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const lockPeriod = useLockPeriod();
+  const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
+  const delegation = useGetDelegationQuery({ variables: filterParams });
+
+  delegation.subscribeToMore({
+    document: SUB_DELEGATIONS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        delegation.refetch();
+      }
+      return prev;
+    },
+  });
 
   const handleClick = async (amount: string) => {
     const contracts = await pendingContracts;
@@ -60,12 +73,13 @@ export const DoUndelegate: React.VFC<DoUndelegateProps> = ({
     return pendingTx;
   };
 
-  return renderAsync(mergeAsync(rewardClaimStatus, lockPeriod), {
+  return renderAsync(mergeAsync(rewardClaimStatus, lockPeriod, delegation), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const [indexerRewards, lock] = data;
+      const [indexerRewards, lock, targetDelegation] = data;
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
+      const availableBalance = formatEther(targetDelegation?.delegation?.amount?.valueAfter?.value ?? '0');
       const hasBalanceForNextEra = parseEther(availableBalance ?? '0').gt('0');
       const disabled = !hasBalanceForNextEra;
       const tooltip = !hasBalanceForNextEra ? t('delegate.nonToUndelegate') : '';
