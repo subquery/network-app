@@ -158,7 +158,7 @@ export const MyDelegation: React.FC = () => {
   const DelegatingCard = () => {
     return (
       <div className={styles.delegatingCard}>
-        <Card title={t('delegate.delegationAmountTitle')} value={delegatingAmount} className={styles.SCard} />
+        <Card title={t('delegate.delegationAmountTitle')} value={delegatingAmount} />
       </div>
     );
   };

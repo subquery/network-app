@@ -18,7 +18,12 @@ interface CardProps {
 export const Card: React.VFC<CardProps> = ({ category, title, value, className, action }) => {
   return (
     <div className={styles.cardContainer}>
-      <SQCard title={title} description={value} customDropdown={action} className={className}></SQCard>
+      <SQCard
+        title={title}
+        description={value}
+        customDropdown={action}
+        className={clsx(className, styles.sCard)}
+      ></SQCard>
     </div>
   );
 };

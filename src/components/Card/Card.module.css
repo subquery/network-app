@@ -39,3 +39,7 @@
 .grayText {
   color: var(--gray500);
 }
+.sCard {
+  flex: 1;
+  overflow: hidden;
+}

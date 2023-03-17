@@ -40,7 +40,3 @@
   display: flex;
   align-items: center;
 }
-.SCard {
-  flex: 1;
-  overflow: hidden;
-}

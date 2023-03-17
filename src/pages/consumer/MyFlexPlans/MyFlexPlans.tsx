@@ -46,12 +46,10 @@ const BalanceCards = () => {
           title={t('flexPlans.billBalance').toUpperCase()}
           value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
           action={<BillingAction />}
-          className={styles.SCard}
         />
         <Card
           title={t('flexPlans.walletBalance')}
           value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
-          className={styles.SCard}
         />
       </div>
     </div>
