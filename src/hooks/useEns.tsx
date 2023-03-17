@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useAsyncMemo } from './useAsyncMemo';
-import { AsyncData, fetchEns } from '../utils';
+import { AsyncData } from '../utils';
+import { useWeb3Store } from 'src/stores';
 
-export function useENS(address: string): AsyncData<string | undefined> {
+export function useENS(address: string): AsyncData<string | undefined | null> {
+  const { ethProvider } = useWeb3Store();
   return useAsyncMemo(async () => {
-    if (!address) return undefined;
+    if (!address || !ethProvider) return undefined;
 
-    const ens = await fetchEns(address);
+    const ens = await ethProvider.lookupAddress(address);
     return ens;
   }, [address]);
 }

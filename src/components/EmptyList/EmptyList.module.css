@@ -2,19 +2,21 @@
   padding-top: 4rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   text-align: center;
 }
 
 .emptyListContent {
-  width: 35%;
+  width: 50%;
 }
 
 .description {
-  margin-top: 1.25rem;
+  margin: 1.5rem auto;
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
+  width: 70%;
 }
 
 .infoLink {
