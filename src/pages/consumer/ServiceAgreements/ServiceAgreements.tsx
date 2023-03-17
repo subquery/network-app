@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { AppPageHeader, TabButtons } from '@components';
+import { AppPageHeader, EmptyList, TabButtons } from '@components';
 import { useWeb3 } from '@containers';
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
@@ -20,6 +20,7 @@ import {
 } from '@subql/react-hooks';
 import { Spinner, Typography } from '@subql/react-ui';
 import { SAPlayground } from '../Playground';
+import { t } from 'i18next';
 
 const { CONSUMER, INDEXER, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 
@@ -40,9 +41,12 @@ const roleMapping = {
       useExpiredAgreements: useGetIndexerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'serviceAgreements.nonIndexerAgreementsDescription',
+      noAgreementsDescription: [
+        t('serviceAgreements.nonIndexerAgreementsDesc1'),
+        t('serviceAgreements.nonIndexerAgreementsDesc2'),
+      ],
       noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink',
-      noAgreementsLink: '/', //TODO: add link
+      noAgreementsLink: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
     },
   },
   consumer: {
@@ -53,9 +57,12 @@ const roleMapping = {
       useExpiredAgreements: useGetConsumerExpiredServiceAgreementsQuery,
     },
     intl: {
-      noAgreementsDescription: 'serviceAgreements.nonConsumerAgreementsDescription',
+      noAgreementsDescription: [
+        t('serviceAgreements.nonConsumerAgreementsDesc1'),
+        t('serviceAgreements.nonConsumerAgreementsDesc2'),
+      ],
       noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink',
-      noAgreementsLink: '/', //TODO: add link
+      noAgreementsLink: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
     },
   },
 };
@@ -68,13 +75,19 @@ const buttonLinks = (BASE_ROUTE: string) => {
 };
 
 export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
-  const { t } = useTranslation();
   const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
 
   return (
     <>
       <AppPageHeader title={t('plans.category.serviceAgreement')} />
-      <div className={styles.noAgreementsContainer}>
+      <EmptyList
+        title={t('serviceAgreements.noAgreementsTitle')}
+        description={noAgreementsDescription}
+        infoI18nKey={noAgreementsInfoLink}
+        infoLink={noAgreementsLink}
+      />
+
+      {/* <div className={styles.noAgreementsContainer}>
         <Typography variant="h5">{t('serviceAgreements.noAgreementsTitle')}</Typography>
         <Typography className={styles.description}>
           <Trans i18nKey={noAgreementsDescription} />
@@ -85,7 +98,7 @@ export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) 
             <a href={noAgreementsLink}>here</a>
           </Trans>
         </Typography>
-      </div>
+      </div> */}
     </>
   );
 };
@@ -120,7 +133,7 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
   const { account } = useWeb3();
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
   const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;
-
+  const { t } = useTranslation();
   const serviceAgreements = useTotalCount({ variables: { address: account ?? '' } });
 
   return renderAsync(serviceAgreements, {
@@ -128,6 +141,8 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
     error: (e) => <Typography>{`Failed to load agreements: ${e}`}</Typography>,
     data: (data) => {
       const totalCount = data?.serviceAgreements?.totalCount ?? 0;
+      const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
+
       return (
         <Routes>
           <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />

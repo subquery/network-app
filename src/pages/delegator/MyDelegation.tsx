@@ -18,6 +18,7 @@ import { TableTitle } from '@components/TableTitle';
 import { TokenAmount } from '@components/TokenAmount';
 import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { DoUndelegate } from './DoUndelegate';
+import { NavLink } from 'react-router-dom';
 
 const getColumns = (
   t: any,
@@ -138,7 +139,9 @@ export const MyDelegation: React.FC = () => {
                 title={t('delegate.nonDelegating')}
                 description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
               >
-                <Button href={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</Button>
+                <Button>
+                  <NavLink to={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</NavLink>
+                </Button>
               </EmptyList>
             );
           }
