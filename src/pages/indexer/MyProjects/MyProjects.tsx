@@ -7,6 +7,7 @@ import { AppPageHeader, EmptyList, Button } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { OwnDeployments } from './OwnDeployments';
 import { ROUTES, URLS } from '../../../utils';
+import { NavLink } from 'react-router-dom';
 
 export const NoDeployment: React.VFC = () => {
   const { t } = useTranslation();
@@ -18,7 +19,9 @@ export const NoDeployment: React.VFC = () => {
       infoI18nKey={'myProjects.learnMore'}
       infoLink={URLS.HOW_TO_INDEX_PROJECTS}
     >
-      <Button href={ROUTES.EXPLORER}>{t('delegate.title')}</Button>
+      <Button>
+        <NavLink to={ROUTES.EXPLORER}>{t('header.explorer')}</NavLink>
+      </Button>
     </EmptyList>
   );
 };
