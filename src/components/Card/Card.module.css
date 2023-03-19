@@ -40,6 +40,6 @@
   color: var(--gray500);
 }
 .sCard {
-  flex: 1;
-  overflow: hidden;
+  width: 100%;
+  overflow: scroll;
 }
