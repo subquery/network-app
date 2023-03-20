@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Typography } from '@subql/react-ui';
 import styles from './Card.module.css';
 import clsx from 'clsx';
+import { Card as SQCard } from '@subql/components';
 
 interface CardProps {
   category?: string;
@@ -17,24 +18,12 @@ interface CardProps {
 export const Card: React.VFC<CardProps> = ({ category, title, value, className, action }) => {
   return (
     <div className={styles.cardContainer}>
-      <div className={clsx(styles.card, className)}>
-        {category && (
-          <Typography variant="small" className={styles.category}>
-            {category.toUpperCase()}
-          </Typography>
-        )}
-        {title && (
-          <Typography variant="medium" className={clsx(styles.title, category && styles.titleWithCategory)}>
-            {title.toUpperCase()}
-          </Typography>
-        )}
-        {value && (
-          <Typography variant="h5" className={styles.value}>
-            {value}
-          </Typography>
-        )}
-      </div>
-      {action && <>{action}</>}
+      <SQCard
+        title={title}
+        description={value}
+        customDropdown={action}
+        className={clsx(className, styles.sCard)}
+      ></SQCard>
     </div>
   );
 };

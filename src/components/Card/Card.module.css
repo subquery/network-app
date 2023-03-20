@@ -39,3 +39,7 @@
 .grayText {
   color: var(--gray500);
 }
+.sCard {
+  width: 100%;
+  overflow: scroll;
+}

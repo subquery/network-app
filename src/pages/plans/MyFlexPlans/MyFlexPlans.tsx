@@ -10,7 +10,6 @@ import { formatEther, ROUTES, TOKEN } from '../../../utils';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 import styles from './MyFlexPlans.module.css';
 import { BillingAction } from './BillingAction';
-import { FlexPlayground } from '../Playground';
 
 const { ONGOING_PLANS, PLAYGROUND, EXPIRED_PLANS } = ROUTES;
 
