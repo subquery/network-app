@@ -8,7 +8,7 @@ import { useWeb3 } from '@containers';
 import styles from './ServiceAgreements.module.css';
 import { Navigate, Route, Routes } from 'react-router';
 import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { ROUTES } from '@utils';
+import { ROUTES, URLS } from '@utils';
 import {
   renderAsync,
   useGetConsumerServiceAgreementsCountQuery,
@@ -46,7 +46,7 @@ const roleMapping = {
         'serviceAgreements.nonIndexerAgreementsDescription_1',
       ],
       noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink',
-      noAgreementsLink: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
+      noAgreementsLink: URLS.PLANS_OFFERS,
     },
   },
   consumer: {
@@ -62,7 +62,7 @@ const roleMapping = {
         t('serviceAgreements.nonConsumerAgreementsDescription_1'),
       ],
       noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink',
-      noAgreementsLink: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
+      noAgreementsLink: URLS.PLANS_OFFERS,
     },
   },
 };

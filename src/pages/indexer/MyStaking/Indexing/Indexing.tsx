@@ -11,7 +11,7 @@ import styles from './Indexing.module.css';
 import { EmptyList } from '@components';
 import { CurrentEraValue } from '@subql/network-clients';
 import { isUndefined } from '@polkadot/util';
-import { TOKEN, truncFormatEtherStr } from '@utils';
+import { TOKEN, truncFormatEtherStr, URLS } from '@utils';
 import { UseSortedIndexerReturn } from '@hooks/useSortedIndexer';
 import { TableTitle } from '@subql/components';
 
@@ -24,7 +24,7 @@ export const NotRegisteredIndexer: React.VFC = () => {
       description={[t('indexer.notRegisterDesc1'), t('indexer.notRegisterDesc2')]}
       infoI18nKey={'indexer.learnMore'}
       infoLinkDesc={t('general.learnMore')}
-      infoLink="https://doc.subquery.network/"
+      infoLink={URLS.INDEXER}
     ></EmptyList>
   );
 };

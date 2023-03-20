@@ -123,4 +123,6 @@ export const ROUTES = {
 
 export const URLS = {
   HOW_TO_INDEX_PROJECTS: 'https://academy.subquery.network/subquery_network/testnet/indexers/index-project.html',
+  INDEXER: 'https://academy.subquery.network/subquery_network/indexers.html',
+  PLANS_OFFERS: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
 };
