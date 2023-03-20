@@ -4,7 +4,7 @@
 import { useWeb3 } from '@containers';
 import styles from './MyAccount.module.css';
 import { useTranslation } from 'react-i18next';
-import { Card, Footer, Spinner, Typography } from '@subql/components';
+import { Card, Spinner, Typography } from '@subql/components';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
 import {
@@ -107,8 +107,8 @@ export const MyAccount: React.FC = () => {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
     data: (data) => {
-      const [iD, d, i, r, w] = data;
-      const totalCount = iD?.indexer?.delegations.totalCount || 0;
+      const [idexerDelagation, d, i, r, w] = data;
+      const totalCount = idexerDelagation?.indexer?.delegations.totalCount || 0;
       const totalDelegating = formatEther(d, 4);
       const totalRewards = reduceTotal(r?.rewards);
       const totalWithdrawn = reduceTotal(w?.withdrawls);

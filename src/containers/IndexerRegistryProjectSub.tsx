@@ -65,3 +65,12 @@ export const SUB_PLANS = gql`
     }
   }
 `;
+
+export const SUB_REWARDS = gql`
+  subscription GetOffers {
+    rewards {
+      id
+      _entity
+    }
+  }
+`;
