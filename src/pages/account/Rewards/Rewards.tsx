@@ -3,7 +3,7 @@
 
 import { Spinner, Typography } from '@subql/react-ui';
 import * as React from 'react';
-import { Breadcrumb, Table, TableProps, Tag } from 'antd';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
@@ -16,6 +16,7 @@ import { TokenAmount } from '../../../components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
 import { TableTitle } from '@subql/components';
 import { BreadcrumbNav } from '@components';
+import { SUB_REWARDS } from '@containers/IndexerRegistryProjectSub';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -23,8 +24,20 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
-  const rewards = useGetRewardsQuery({ variables: { address: delegator } });
+  const filterParams = { address: delegator };
+  const rewards = useGetRewardsQuery({ variables: filterParams });
   const { t } = useTranslation();
+
+  rewards.subscribeToMore({
+    document: SUB_REWARDS,
+    variables: filterParams,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        rewards.refetch();
+      }
+      return prev;
+    },
+  });
 
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
