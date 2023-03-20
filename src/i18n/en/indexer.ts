@@ -23,7 +23,7 @@ const translation = {
     myProfile: 'My Profile',
     myPlansDescription:
       'Create and view plans for your indexing service that will be advertised to Consumers to purchase',
-    myStakingDesc: 'Manage the SQT that you are staking as an Indexer to different SubQuery projects.',
+    myStakingDesc: `Manage the ${TOKEN} that you are staking as an Indexer to different SubQuery projects.`,
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
     locked: 'Locked',
@@ -123,7 +123,7 @@ const translation = {
       rank: 'A ranking (out of a maxium of 100) that indicates the overall performance of the Indexer. Determined based off the other factors. Higher score is better.',
       uptime:
         'Based on the health and availability of the Indexer over the last few Eras. Measures both proof of indexing and query service health checks. Higher score is better.',
-      ownStake: 'The percentage of all staked SQT that is the Indexer’s own SQT. Higher score is better.',
+      ownStake: `The percentage of all staked ${TOKEN} that is the Indexer’s own SQT. Higher score is better.`,
       delegated:
         'The percentage of the Indexer’s total delegation that is the Indexer’s own SQT. Higher score is better.',
       eraRewardsCollection:

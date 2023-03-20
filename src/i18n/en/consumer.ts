@@ -81,8 +81,7 @@ const translation = {
     request_other: '{{count}} requests',
     billBalance: 'Billing Balance',
     billingAccount: 'The balance of your billing account {{amount}}',
-    billingAccountTooltip:
-      'When you purchase a flex plan, you need to transfer SQT to your billing account from your wallet. The funds are kept in your billing account to allow you to purchase multiple flex plans using the same funds. To view, transfer, or withdraw from your billing account, please visit the My Flex Plan page under Plan & Offer',
+    billingAccountTooltip: `When you purchase a flex plan, you need to transfer ${TOKEN} to your billing account from your wallet. The funds are kept in your billing account to allow you to purchase multiple flex plans using the same funds. To view, transfer, or withdraw from your billing account, please visit the My Flex Plan page under Plan & Offer`,
     walletBalance: 'WALLET BALANCE',
     non: 'There are no flex plan list. ',
     purchaseModal: 'Purchase Flex Plan',
@@ -112,12 +111,11 @@ const translation = {
       transfer: `Transfer ${TOKEN ?? 'kSQT'} to billing account`,
       addToken: `Add ${TOKEN ?? 'kSQT'}`,
       confirmTransfer: 'Confirm Transfer',
-      transferDescription:
-        'When transferring SQT you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the indexer requests it to be closed. This automation will prevent delays and give you the best user experience.',
+      transferDescription: `When transferring ${TOKEN} you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the indexer requests it to be closed. This automation will prevent delays and give you the best user experience.`,
       transferToken: `Transfer ${TOKEN ?? 'kSQT'}`,
       failureTransfer: `Sorry, failed to transfer ${TOKEN ?? 'kSQT'}`,
       successTransfer: `You have successfully transferred ${TOKEN ?? 'kSQT'}`,
-      notEnoughToken: `You don't have enough SQT in your wallet.`,
+      notEnoughToken: `You don't have enough ${TOKEN} in your wallet.`,
       withdrawTitle: `Withdraw ${TOKEN ?? 'kSQT'} to wallet`,
       withdraw: `Withdraw ${TOKEN ?? 'kSQT'} to wallet`,
       withdrawToken: `Withdraw ${TOKEN ?? 'kSQT'}`,
@@ -167,6 +165,7 @@ const translation = {
     non: 'There are no service agreements for this project yet. <br> Learn more from <1>here</1>',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
+
     nonConsumerAgreementsDescription_0:
       'If you create an offer that is accepted by an Indexer OR you purchase a plan advertised by an indexer in the Explorer, it will generate a service agreement which you can track here. ',
     nonConsumerAgreementsDescription_1:

@@ -4,17 +4,17 @@
 import * as React from 'react';
 import { Spinner, Typography } from '@subql/react-ui';
 import { useNavigate } from 'react-router';
-import { useWeb3 } from '../../../containers';
-import { Card, AppPageHeader } from '../../../components';
+import { useWeb3 } from '@containers';
+import { Card, AppPageHeader, Description } from '@components';
 import styles from './MyStaking.module.css';
 import { useTranslation } from 'react-i18next';
-import { useIsIndexer, useSortedIndexer } from '../../../hooks';
-import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '../../../utils';
+import { useIsIndexer, useSortedIndexer } from '@hooks';
+import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '@utils';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
 import { SetCommissionRate } from './SetCommissionRate';
 import { DoStake } from './DoStake';
 
-export const MyStaking: React.VFC = () => {
+export const MyStaking: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const MyStaking: React.VFC = () => {
 
   return (
     <>
-      <AppPageHeader title={t('indexer.myStaking')} desc={t('indexer.myStakingDesc')} />
+      <AppPageHeader title={t('indexer.myStaking')} />
 
       <div className={styles.profile}>
         {renderAsync(mergeAsync(sortedIndexer, isIndexer), {
@@ -47,6 +47,7 @@ export const MyStaking: React.VFC = () => {
 
             return (
               <>
+                <Description desc={t('indexer.myStakingDesc')} />
                 <div className={styles.stakingHeader}>
                   <div className={styles.stakingAmount}>
                     <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />

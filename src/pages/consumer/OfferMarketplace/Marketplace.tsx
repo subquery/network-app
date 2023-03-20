@@ -5,21 +5,10 @@ import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, Spinner } from '../../../components';
+import { AppPageHeader, EmptyList, Spinner } from '@components';
 import { useWeb3 } from '../../../containers';
-import styles from './Marketplace.module.css';
 import { Typography } from '@subql/react-ui';
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
-
-const NoOffers: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <div className={styles.noOffersContainer}>
-      <Typography variant="h5">{t('consumerOfferMarket.noOffersTitle')}</Typography>
-      <Typography className={styles.description}>{t('consumerOfferMarket.noOffers')}</Typography>
-    </div>
-  );
-};
 
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
@@ -41,7 +30,7 @@ export const Marketplace: React.FC = () => {
         return (
           <div>
             <AppPageHeader title={t('offerMarket.header')} />
-            <NoOffers />
+            <EmptyList title={t('consumerOfferMarket.noOffersTitle')} description={t('consumerOfferMarket.noOffers')} />
           </div>
         );
       }
