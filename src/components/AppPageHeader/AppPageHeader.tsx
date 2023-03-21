@@ -8,14 +8,15 @@ import { Space } from 'antd';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import styles from './AppPageHeader.module.css';
 import { CurEra } from '../CurEra';
-import { COLORS } from '../../utils';
+import { COLORS } from '@utils';
 
 type Props = {
   title: string | React.ReactNode;
-  desc?: string;
+  desc?: string | Array<string>;
 };
 
 export const AppPageHeader: React.VFC<Props> = ({ title, desc }) => {
+  const sortedDescriptions = Array.isArray(desc) ? desc : [desc];
   return (
     <>
       <div className={styles.header}>
@@ -31,9 +32,18 @@ export const AppPageHeader: React.VFC<Props> = ({ title, desc }) => {
       </div>
 
       {desc && (
-        <Space>
-          <AiOutlineInfoCircle className="flex" color={COLORS.primary} /> {desc}
-        </Space>
+        <div className={styles.desc}>
+          <div className={styles.icon}>
+            <AiOutlineInfoCircle color={COLORS.primary} />
+          </div>
+          <div>
+            {sortedDescriptions.map((description) => (
+              <Typography variant="medium" key={description}>
+                {description}
+              </Typography>
+            ))}
+          </div>
+        </div>
       )}
     </>
   );

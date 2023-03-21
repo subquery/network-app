@@ -60,6 +60,7 @@ const translation = {
       rewards: 'View Rewards',
       withdrawn: 'View Withdrawn',
     },
+    viewDetails: 'View Details',
   },
   footer: {
     title: 'Join The Future',

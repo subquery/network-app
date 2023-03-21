@@ -77,9 +77,9 @@ const cards: CardProps[] = [
 ];
 
 //TODO: add fragments so can better type this
-function reduceTotal(nodes: any) {
+function reduceTotal(rewards: any) {
   return formatEther(
-    nodes?.nodes.reduce(
+    rewards?.reduce(
       (accumulator: any, currentValue: { amount: unknown }) => accumulator.add(BigNumber.from(currentValue?.amount)),
       BigNumber.from(0),
     ),
@@ -105,13 +105,13 @@ export const MyAccount: React.FC = () => {
 
   return renderAsync(mergeAsync(indexerDelegators, delegating, sortedIndexer, rewards, withdrawals), {
     loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
+    error: (e) => <Typography>{`Failed to load account details: ${e}`}</Typography>,
     data: (data) => {
       const [idexerDelagation, d, i, r, w] = data;
-      const totalCount = idexerDelagation?.indexer?.delegations.totalCount || 0;
+      const totalCount = idexerDelagation?.indexer?.delegations?.totalCount || 0;
       const totalDelegating = formatEther(d, 4);
-      const totalRewards = reduceTotal(r?.rewards);
-      const totalWithdrawn = reduceTotal(w?.withdrawls);
+      const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
+      const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
       const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
       const cardStats: StatKey = {
@@ -142,7 +142,7 @@ export const MyAccount: React.FC = () => {
               <Typography variant="h5">{t('indexer.myDelegators')}</Typography>
               {/* <Typography variant="medium">
                   <Link to={'/'}>{t('account.viewDetails')}</Link>
-                </Typography> */}
+              </Typography> */}
             </div>
             {totalCount <= 0 && <NoDelegator />}
             {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}

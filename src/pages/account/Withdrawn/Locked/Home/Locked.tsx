@@ -19,6 +19,7 @@ import { t } from 'i18next';
 import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
 import { DoWithdraw } from '../DoWithdraw';
 import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
+import { Empty } from 'antd';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
@@ -31,25 +32,31 @@ const dateFormat = 'MMMM Do YY, h:mm:ss a';
 const columns: TableProps<SortedWithdrawals>['columns'] = [
   {
     title: '#',
-    width: 30,
+    width: '10%',
     render: (t, r, index) => <TableText content={index + 1} />,
   },
   {
     title: <TableTitle title={t('withdrawals.amount')} />,
     dataIndex: 'amount',
-    width: 100,
+    width: '25%',
     render: (value: string) => <TokenAmount value={formatEther(value)} />,
+  },
+  {
+    title: <TableTitle title={t('withdrawals.type')} />,
+    dataIndex: 'type',
+    width: '25%',
+    render: (value: string) => <TableText>{value}</TableText>,
   },
   {
     title: <TableTitle title={t('withdrawals.lockedUntil')} />,
     dataIndex: 'endAt',
-    width: 80,
+    width: '25%',
     render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
   },
   {
     title: <TableTitle title={t('withdrawals.status')} />,
     dataIndex: 'lockStatus',
-    width: 30,
+    width: '15%',
     render: (value: LOCK_STATUS) => {
       const tagColor = value === LOCK_STATUS.UNLOCK ? 'success' : 'processing';
       const tagContent = value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked');
@@ -64,6 +71,9 @@ export const Locked: React.VFC = () => {
   const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };
   const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
   const lockPeriod = useLockPeriod();
+  const emptyListText = {
+    emptyText: <Empty description={t('withdrawals.noWithdrawals')} image={Empty.PRESENTED_IMAGE_SIMPLE} />,
+  };
 
   withdrawals.subscribeToMore({
     document: SUB_WITHDRAWALS,
@@ -92,8 +102,9 @@ export const Locked: React.VFC = () => {
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
           loading: () => <Spinner />,
-          empty: () => <Typography variant="h6">{t('withdrawals.noWithdrawals')}</Typography>,
+          empty: () => <Table columns={columns} locale={emptyListText} />,
           data: (data) => {
+            const sortedData = data.sort((a, b) => moment(b.endAt).unix() - moment(a.endAt).unix());
             const unlockedRewards = data.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
             const hasUnlockedRewards = unlockedRewards?.length > 0;
             const withdrawalsAmountBigNumber = unlockedRewards.reduce((sum, withdrawal) => {
@@ -111,7 +122,7 @@ export const Locked: React.VFC = () => {
                   </Typography>
                   <DoWithdraw unlockedAmount={sortedWithdrawalsAmount} disabled={!hasUnlockedRewards} />
                 </div>
-                <Table columns={columns} dataSource={data} rowKey="idx" />
+                <Table columns={columns} dataSource={sortedData} rowKey="idx" />
               </div>
             );
           },

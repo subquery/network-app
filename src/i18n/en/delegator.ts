@@ -45,12 +45,15 @@ const translation = {
 
   withdrawals: {
     headerTitle: 'Withdrawn',
-    headerDesc:
-      'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.',
+    headerDesc_1:
+      'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal.',
+    headerDesc_2:
+      'During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.',
     unlockedAsset: 'You can withdraw {{count}} unlocked Asset.',
     unlockedAsset_other: 'You can withdraw {{count}} unlocked Assets.',
     amount: 'amount',
     startAt: 'start at',
+    type: 'type',
     lockedUntil: 'locked until',
     status: 'status',
     locked: 'Locked',

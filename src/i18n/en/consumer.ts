@@ -66,7 +66,7 @@ const translation = {
       failToLoadBalance: 'Failed to load balance.',
       noPlansForPurchase: 'There is no plan available to purchase.',
       failureFetchPlans: 'Failed to get plans for indexer',
-      notReadyToBePurchased: `This plan cannot be purchased until the indexer status is 'Ready'`,
+      notReadyToBePurchased: `This plan cannot be purchased until the Indexer status is 'Ready'`,
     },
   },
   flexPlans: {
@@ -111,7 +111,7 @@ const translation = {
       transfer: `Transfer ${TOKEN ?? 'kSQT'} to billing account`,
       addToken: `Add ${TOKEN ?? 'kSQT'}`,
       confirmTransfer: 'Confirm Transfer',
-      transferDescription: `When transferring ${TOKEN} you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the indexer requests it to be closed. This automation will prevent delays and give you the best user experience.`,
+      transferDescription: `When transferring ${TOKEN} you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the Indexer requests it to be closed. This automation will prevent delays and give you the best user experience.`,
       transferToken: `Transfer ${TOKEN ?? 'kSQT'}`,
       failureTransfer: `Sorry, failed to transfer ${TOKEN ?? 'kSQT'}`,
       successTransfer: `You have successfully transferred ${TOKEN ?? 'kSQT'}`,
@@ -167,7 +167,7 @@ const translation = {
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
 
     nonConsumerAgreementsDescription_0:
-      'If you create an offer that is accepted by an Indexer OR you purchase a plan advertised by an indexer in the Explorer, it will generate a service agreement which you can track here. ',
+      'If you (as a Consumer) create an offer that is accepted by an Indexer OR you (as a Consumer) purchase a plan advertised by an Indexer in the Explorer, a service agreement will be generated which can be tracked here.',
     nonConsumerAgreementsDescription_1:
       'If you haven’t created any offers to attract an Indexer yet, you can create your first one under My Offers',
     nonConsumerAgreementsInfoLink: 'Learn more <1>here</1>',
@@ -180,39 +180,41 @@ const translation = {
   myOffers: {
     title: 'My Offers',
     open: 'Open',
-    openTooltip: 'Offers that are still open to indexers to accept',
+    openTooltip: 'Offers that are still open to Indexers to accept',
     closed: 'Closed',
-    closedTooltip: 'Offers that have reached the indexer cap and can no longer be accepted',
-    closedDescription: 'Here you can find the offers that have reached indexer cap',
+    closedTooltip: 'Offers that have reached the Indexer cap and can no longer be accepted',
+    closedDescription: 'Here you can find the offers that have reached Indexer cap',
     expired: 'Expired',
     expiredDescription:
       'Here you can find the expired offers which did not reach the required number of indexers. \n  You can withdraw your unspent balance from these offers.',
     expiredUnspent: 'You can withdraw your unspent balance from these offers.',
     expiredTooltip:
-      'You can find offers that have expired or cancelled without reaching the indexer cap. You can withdraw any unspent balance here',
+      'You can find offers that have expired or cancelled without reaching the Indexer cap. You can withdraw any unspent balance here',
     createOffer: 'Create an Offer',
     noOffersTitle: "You haven't created any offers yet",
-    noOffersDescription:
-      'As a consumer, you can create your own offer that will be published to the Offer Marketplace for indexers to accept. Once accepted, a service agreement will be generated and the Indexer will begin indexing the requested data for you.',
+    noOffersDesc_1:
+      'As a consumer, you can create your own offer that will be published to the Offer Marketplace for Indexers to accept.',
+    noOffersDesc_2:
+      'Once accepted, a service agreement will be generated and the Indexer will begin indexing the requested data for you',
     noOffersInfoLink: 'Learn how to create an offer <1>here</1>',
     non: 'There is no offers available.',
     table: {
       versionDeployment: 'Version - Deployment ID',
       indexerAmount: 'No. of indexers',
       accepted: 'Accepted',
-      acceptedTooltip: 'This is the number of indexers that have already accepted this offer',
+      acceptedTooltip: 'This is the number of Indexers that have already accepted this offer',
       cap: 'Cap',
-      capTooltip: 'This is the maximum number of indexers that can accept this offers',
+      capTooltip: 'This is the maximum number of Indexers that can accept this offer',
       dailyRewardsPerIndexer: 'Daily Rewards Per indexer',
-      dailyRewardsPerIndexerTooltip: 'This is the daily amount a indexer will receive from accepting the offer',
+      dailyRewardsPerIndexerTooltip: 'This is the daily amount a Indexer will receive from accepting the offer',
       totalRewardsPerIndexer: 'Total Rewards per indexer',
       totalRewardsPerIndexerTooltip:
-        'This is the total amount a indexer will receive from accepting the offer. This amount is calculated as the daily rewards per indexer multiplied by the period.',
+        'This is the total amount an Indexer will receive from accepting the offer. This amount is calculated as the daily rewards per Indexer multiplied by the period.',
       depositAmount: 'Total deposit',
       period: 'Period',
-      periodTooltip: 'This is the duration the indexer who has accepted this offer will be receiving their rewards for',
+      periodTooltip: 'This is the duration the Indexer who has accepted this offer will be receiving their rewards for',
       minIndexedHeight: 'min indexed height',
-      minIndexedHeightTooltip: 'Only the indexer that has indexed to this block height or above can accept this offer',
+      minIndexedHeightTooltip: 'Only Indexers that have indexed to this block height or above can accept this offer',
       expired: 'Expire',
       unspendBalance: 'Unspent balance',
       amount: 'Amount',
@@ -238,24 +240,24 @@ const translation = {
     step_2: {
       title: 'Step 3: Set the details for your offer',
       rewardPerIndexer: 'Total rewards per indexer',
-      rewardPerIndexerTooltip: 'This is the total amount a indexer will receive from accepting the offer.',
+      rewardPerIndexerTooltip: 'This is the total amount a Indexer will receive from accepting the offer.',
       rewardPerIndexerErrorMsg: 'Please put a valid reward for an indexer.',
       indexerCap: 'Indexer cap',
       indexerCapWithCount_one: '{{count}} Indexer',
       indexerCapWithCount_other: '{{count}} Indexers',
-      indexerCapTooltip: 'This is the maximum number of indexers that can accept this offers',
-      indexerCapErrorMsg: 'Please put a valid indexer cap.',
+      indexerCapTooltip: 'This is the maximum number of Indexers that can accept this offers',
+      indexerCapErrorMsg: 'Please put a valid Indexer cap.',
       totalDeposit: 'Required deposit',
-      totalDepositTooltip: `This amount is calculated as the rewards per indexer multiplied by the indexer cap that you have stated above. \n
+      totalDepositTooltip: `This amount is calculated as the rewards per Indexer multiplied by the Indexer cap that you have stated above. \n
       You will need to deposit this amount when you confirm the creation of this offer on MetaMask. Any unspent balance can be withdrawn when the offer expires or if you cancel the offer prior to expiration`,
       totalDepositErrorMsg: 'Not enough balance. Lower the numbers set up above or deposit more to the wallet.',
       minimumIndexedHeight: 'Minimum indexed height',
       minimumIndexedHeightTooltip:
-        'Only the indexer that has indexed to this block height or above can accept this offer.',
+        'Only Indexers that have indexed to this block height or above can accept this offer.',
       minimumIndexedHeightErrorMsg: 'Please put a valid block height.',
       expireDate: 'Expiration time',
       expireDateTooltip:
-        'Indexer cannot accept this offer after the expiration time. However, the indexer that have already accepted the offer will not be affected.',
+        'Indexer cannot accept this offer after the expiration time. However, the Indexer that have already accepted the offer will not be affected.',
       cancelWarning:
         'Cancelling an offer before it expires will result in 10% of the unspent balance being charged as a cancellation fee.',
     },
@@ -287,7 +289,7 @@ const translation = {
     listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
     noOffersTitle: 'There are no offers here yet',
     indexerNoOffers:
-      'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an indexer <1>here</1>',
+      'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Indexer <1>here</1>',
     consumerNoOffers:
       'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
     viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
@@ -309,14 +311,14 @@ const translation = {
       indexingStatus: 'Indexing progress',
       indexingStatusError: 'Your project needs to be 100% indexed.',
       projectStatus: 'Project status',
-      projectStatusError: 'You can announce ‘Ready’ for the project from the indexer admin app.',
+      projectStatusError: 'You can announce ‘Ready’ for the project from the Indexer admin app.',
       blockHeight: 'Block height',
       blockHeightError: 'Your project is currently behind the minimum blockheight.',
       dailyRewards: 'Daily Rewards',
       dailyRewardsError: `Please stake more ${TOKEN} or get more delegation to increase daily reward capacity.`,
       failureText: 'Failed to accept offer',
       afterAcceptOffer:
-        'By accepting the offer, a service agreement will be created between you and the consumer after you confirm on MetaMask.',
+        'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on MetaMask.',
     },
   },
   consumerOfferMarket: {
