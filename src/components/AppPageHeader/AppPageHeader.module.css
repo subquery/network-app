@@ -14,5 +14,11 @@
 }
 
 .desc {
-  max-width: 70rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.icon {
+  padding-top: 0.125rem;
 }

@@ -19,7 +19,10 @@ export const Withdrawn: React.FC<{ delegator: string }> = () => {
         backLinkText={t('indexer.indexers')}
         childText={t('withdrawals.headerTitle')}
       />
-      <AppPageHeader title={t('withdrawals.headerTitle')} desc={t('withdrawals.headerDesc')} />
+      <AppPageHeader
+        title={t('withdrawals.headerTitle')}
+        desc={[t('withdrawals.headerDesc_1'), t('withdrawals.headerDesc_2')]}
+      />
       <Locked />
     </div>
   );
