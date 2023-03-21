@@ -127,7 +127,7 @@ const getColumns = (
             />
           ),
           dataIndex: 'accepted',
-          width: 100,
+          width: 150,
           render: (accepted: number) => <TableText content={accepted} />,
         },
         {
@@ -135,7 +135,7 @@ const getColumns = (
             <TableTitle title={i18next.t('myOffers.table.cap')} tooltip={i18next.t('myOffers.table.capTooltip')} />
           ),
           dataIndex: 'limit',
-          width: 100,
+          width: 150,
           render: (limit: number) => <TableText content={limit} />,
         },
       ],

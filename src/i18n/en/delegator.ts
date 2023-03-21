@@ -51,6 +51,7 @@ const translation = {
     unlockedAsset_other: 'You can withdraw {{count}} unlocked Assets.',
     amount: 'amount',
     startAt: 'start at',
+    type: 'type',
     lockedUntil: 'locked until',
     status: 'status',
     locked: 'Locked',
