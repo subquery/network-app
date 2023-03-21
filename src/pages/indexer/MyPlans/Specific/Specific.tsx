@@ -49,7 +49,7 @@ const Specific: React.FC = () => {
               title={t('indexerPlans.title')}
               description={t('indexerPlans.description')}
               infoI18nKey={'indexerPlans.learnMore'}
-              infoLink={URLS.PLAN_OFFERS}
+              infoLink={URLS.PLANS_OFFERS}
             />
           ),
           data: (deployments) => {
