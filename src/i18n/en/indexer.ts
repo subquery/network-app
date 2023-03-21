@@ -26,6 +26,7 @@ const translation = {
     myStakingDesc: `Manage the ${TOKEN} that you are staking as an Indexer to different SubQuery projects.`,
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
+    withdrawn: 'Withdrawn',
     locked: 'Locked',
     totalStake: 'total stake',
     ownStake: 'own stake',

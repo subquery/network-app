@@ -30,6 +30,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
 
   const handleDisconnect = () => deactivate();
   const handleNavRewards = () => navigate(ROUTES.MY_ACCOUNT_REWARDS_NAV);
+  const handleNavWithdrawn = () => navigate(ROUTES.MY_ACCOUNT_WITHDRAWN_NAV);
   const handleNavAccount = () => navigate(ROUTES.MY_ACCOUNT);
   const handleAddToken = () => {
     sortedWindowObj?.request({
@@ -66,6 +67,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
     { key: 'addStableToken', label: t('header.importStableToken'), onClick: handleAddStableToken },
     { key: 'myProfile', label: t('indexer.myProfile'), onClick: handleNavAccount },
     { key: 'rewards', label: t('indexer.rewards'), onClick: handleNavRewards },
+    { key: 'withdrawn', label: t('indexer.withdrawn'), onClick: handleNavWithdrawn },
     { key: 'disconnect', label: t('header.disconnect'), icon: <BsBoxArrowLeft />, onClick: handleDisconnect },
   ];
 
