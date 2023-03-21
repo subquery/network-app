@@ -49,12 +49,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer, emptyList, desc }) =
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'status',
       render: (status: string, deployment) => {
-        let sortedStatus = status;
-        if (deployment?.isOffline) {
-          sortedStatus = 'OFFLINE' as string;
-        }
-
-        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+        return <Status text={status} color={deploymentStatus[status]} />;
       },
     },
   ];
