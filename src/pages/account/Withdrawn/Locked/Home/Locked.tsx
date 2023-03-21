@@ -52,7 +52,6 @@ const columns: TableProps<SortedWithdrawals>['columns'] = [
     dataIndex: 'endAt',
     width: '25%',
     render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
-    sorter: (a, b) => moment(a.endAt).unix() - moment(b.endAt).unix(),
   },
   {
     title: <TableTitle title={t('withdrawals.status')} />,
@@ -105,6 +104,7 @@ export const Locked: React.VFC = () => {
           loading: () => <Spinner />,
           empty: () => <Table columns={columns} locale={emptyListText} />,
           data: (data) => {
+            const sortedData = data.sort((a, b) => moment(b.endAt).unix() - moment(a.endAt).unix());
             const unlockedRewards = data.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
             const hasUnlockedRewards = unlockedRewards?.length > 0;
             const withdrawalsAmountBigNumber = unlockedRewards.reduce((sum, withdrawal) => {
@@ -122,7 +122,7 @@ export const Locked: React.VFC = () => {
                   </Typography>
                   <DoWithdraw unlockedAmount={sortedWithdrawalsAmount} disabled={!hasUnlockedRewards} />
                 </div>
-                <Table columns={columns} dataSource={data} rowKey="idx" />
+                <Table columns={columns} dataSource={sortedData} rowKey="idx" />
               </div>
             );
           },
