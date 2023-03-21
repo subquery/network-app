@@ -14,7 +14,13 @@ import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <EmptyList title={t('myDelegators.noDelegatorsTitle')} description={t('myDelegators.noDelegatorsDescription')} />
+    <EmptyList
+      title={t('myDelegators.noDelegatorsTitle')}
+      description={t('myDelegators.noDelegatorsDescription')}
+      infoI18nKey={t('myDelegators.noDelegatorsInfoLink')}
+      infoLinkDesc={t('myDelegators.noDelegatorsInfoLink')}
+      infoLink={'https://academy.subquery.network/subquery_network/delegators.html'}
+    />
   );
 };
 

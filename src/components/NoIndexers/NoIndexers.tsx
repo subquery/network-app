@@ -23,7 +23,10 @@ const NoIndexers: React.VFC = () => {
       </Typography>
       <Typography variant="medium">
         <Trans i18nKey="noIndexers.subtitle">
-          Learn how to index a subquery <a href={'https://doc.subquery.network/'}>here</a>
+          Learn how to index a subquery project{' '}
+          <a href={'https://academy.subquery.network/subquery_network/indexers.html'} target="_blank" rel="noreferrer">
+            here
+          </a>
         </Trans>
       </Typography>
     </div>

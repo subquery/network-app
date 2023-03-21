@@ -7,19 +7,26 @@ import { Trans, useTranslation } from 'react-i18next';
 
 interface EmptyListProps {
   i18nKey?: any;
+  link?: string;
 }
 
 // TODO: make it more general for all possible scenarios.
-export const EmptyList: React.VFC<EmptyListProps> = ({ i18nKey }) => {
+export const EmptyList: React.VFC<EmptyListProps> = ({ i18nKey, link }) => {
   const { t } = useTranslation();
 
   return (
     <Typography>
       <Trans i18nKey={i18nKey ?? 'plans.default.createPlans'}>
         {t(i18nKey ?? 'plans.default.createPlans')}
-        <a href="https://doc.subquery.network/" target="_blank" rel="noreferrer">
-          here
-        </a>
+        {link ? (
+          <a href={link} target="_blank" rel="noreferrer">
+            here
+          </a>
+        ) : (
+          <a href="https://doc.subquery.network/" target="_blank" rel="noreferrer">
+            here
+          </a>
+        )}
       </Trans>
     </Typography>
   );
