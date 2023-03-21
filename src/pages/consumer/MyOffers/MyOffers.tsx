@@ -124,9 +124,10 @@ const NoOffers: React.FC = () => {
   return (
     <EmptyList
       title={t('myOffers.noOffersTitle')}
-      description={t('myOffers.noOffersDescription')}
+      description={[t('myOffers.noOffersDesc_1'), t('myOffers.noOffersDesc_2')]}
       infoI18nKey={'myOffers.noOffersInfoLink'}
       infoLinkDesc={t('myOffers.noOffersInfoLink')}
+      infoLink={'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers'}
     >
       <CheckOfferAllowance />
     </EmptyList>

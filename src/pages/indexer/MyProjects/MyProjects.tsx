@@ -3,13 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, Button } from '../../../components';
-import { useWeb3 } from '../../../containers';
+import { AppPageHeader, EmptyList } from '@components';
+import { useWeb3 } from '@containers';
 import { OwnDeployments } from './OwnDeployments';
-import { ROUTES, URLS } from '../../../utils';
-import { NavLink } from 'react-router-dom';
+import { URLS } from '@utils';
 
-export const NoDeployment: React.VFC = () => {
+export const NoDeployment: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -18,11 +17,7 @@ export const NoDeployment: React.VFC = () => {
       description={t('myProjects.nonProjectDesc')}
       infoI18nKey={'myProjects.learnMore'}
       infoLink={URLS.HOW_TO_INDEX_PROJECTS}
-    >
-      <Button>
-        <NavLink to={ROUTES.EXPLORER}>{t('header.explorer')}</NavLink>
-      </Button>
-    </EmptyList>
+    />
   );
 };
 

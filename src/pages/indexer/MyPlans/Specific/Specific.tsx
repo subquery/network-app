@@ -48,6 +48,7 @@ const Specific: React.FC = () => {
               title={t('indexerPlans.title')}
               description={t('indexerPlans.description')}
               infoI18nKey={'indexerPlans.learnMore'}
+              infoLink={'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers'}
             />
           ),
           data: (deployments) => {
