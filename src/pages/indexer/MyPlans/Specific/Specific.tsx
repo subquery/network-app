@@ -11,6 +11,7 @@ import styles from './Specific.module.css';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
 import List from '../List';
 import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
+import { URLS } from '@utils';
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ const Specific: React.FC = () => {
               title={t('indexerPlans.title')}
               description={t('indexerPlans.description')}
               infoI18nKey={'indexerPlans.learnMore'}
-              infoLink={'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers'}
+              infoLink={URLS.PLAN_OFFERS}
             />
           ),
           data: (deployments) => {
