@@ -111,7 +111,7 @@ export const MyAccount: React.FC = () => {
       const totalCount = idexerDelagation?.indexer?.delegations?.totalCount || 0;
       const totalDelegating = formatEther(d, 4);
       const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
-      const totalWithdrawn = reduceTotal([w?.withdrawls?.nodes].flat());
+      const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
       const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
       const cardStats: StatKey = {
