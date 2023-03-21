@@ -31,9 +31,11 @@ export const AppPageHeader: React.VFC<Props> = ({ title, desc }) => {
       </div>
 
       {desc && (
-        <Space>
-          <AiOutlineInfoCircle className="flex" color={COLORS.primary} /> {desc}
-        </Space>
+        <div className={styles.desc}>
+          <Space>
+            <AiOutlineInfoCircle className="flex" color={COLORS.primary} /> {desc}
+          </Space>
+        </div>
       )}
     </>
   );

@@ -12,3 +12,7 @@
 .title {
   font-weight: 600;
 }
+
+.desc {
+  max-width: 70rem;
+}
