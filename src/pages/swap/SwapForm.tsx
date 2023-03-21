@@ -126,8 +126,8 @@ export const SwapForm: React.FC<ISwapForm> = ({
         title: t('swap.confirmSwap'),
         steps: [t('swap.reviewSwap'), t('indexer.confirmOnMetamask')],
         submitText: t('general.confirm'),
-        failureText: t('swap.swapSuccess'),
-        successText: t('swap.swapFailure'),
+        failureText: t('swap.swapFailure'),
+        successText: t('swap.swapSuccess'),
       };
 
   const onTradeOrder = async (amount: string) => {
