@@ -14,7 +14,6 @@ import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
 import ProjectCard from './ProjectCard';
 import Banner from './Banner';
-import NoIndexers from './NoIndexers';
 import CreateInstructions from './CreateInstructions';
 import NewProject from './NewProject';
 import Copy from './Copy';
@@ -63,7 +62,6 @@ export {
   IndexerProgress,
   Spinner,
   Banner,
-  NoIndexers,
   CreateInstructions,
   NewProject,
   Copy,

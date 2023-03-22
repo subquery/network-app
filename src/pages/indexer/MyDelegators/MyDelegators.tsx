@@ -10,11 +10,18 @@ import styles from './MyDelegators.module.css';
 import { Typography } from '@subql/react-ui';
 import { OwnDelegator } from './OwnDelegator';
 import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
+import { URLS } from '@utils';
 
 const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <EmptyList title={t('myDelegators.noDelegatorsTitle')} description={t('myDelegators.noDelegatorsDescription')} />
+    <EmptyList
+      title={t('myDelegators.noDelegatorsTitle')}
+      description={t('myDelegators.noDelegatorsDescription')}
+      infoI18nKey={t('myDelegators.noDelegatorsInfoLink')}
+      infoLinkDesc={t('myDelegators.noDelegatorsInfoLink')}
+      infoLink={URLS.DELEGATOR}
+    />
   );
 };
 

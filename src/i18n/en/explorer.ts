@@ -116,9 +116,9 @@ const translation = {
     },
   },
   noIndexers: {
-    preTitle: 'no indexers available',
+    description: 'no indexers available',
     title: 'Start indexing this project',
-    subtitle: 'Learn how to index a SubQuery <1>here</1>',
+    subtitle: 'Learn how to index a SubQuery project ',
   },
   indexers: {
     head: {
@@ -202,7 +202,7 @@ const translation = {
   },
   unsupportedNetwork: {
     title: 'Unsupported network',
-    subtitle: 'Please switch {{supportNetwork}} to use SubQuery Explorer.',
+    subtitle: 'Please switch to {{supportNetwork}} to use SubQuery Explorer.',
     button: 'Switch Network',
   },
   indexerProgress: {

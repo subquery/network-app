@@ -93,7 +93,9 @@ const translation = {
   },
   myDelegators: {
     noDelegatorsTitle: 'You don’t have any Delegators yet',
-    noDelegatorsDescription: 'Once Delegators have delegated their kSQT to you, they will appear here.',
+    noDelegatorsDescription:
+      'Once Delegators have delegated their kSQT to you, they will appear here. First you need to register as an Indexer and begin indexing SubQuery projects, Delegators can then delegate their kSQT to you to earn rewards. Delegators are more likely to delegate their kSQT to high performing Indexers and Consumers will be attracted to Indexers with more kSQT delegated as it indicates they are reliable.',
+    noDelegatorsInfoLink: 'Learn more about Delegators ',
   },
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',

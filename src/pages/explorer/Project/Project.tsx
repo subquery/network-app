@@ -6,8 +6,9 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useRoutes } from 'react-router';
-import { NoIndexers, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
+import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
+import { URLS } from '@utils';
 import {
   ProjectProgressProvider,
   useDeploymentsQuery,
@@ -25,6 +26,19 @@ import { FlexPlans } from '../FlexPlans';
 import { ROUTES } from '../../../utils';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
+
+const NoIndexers: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <EmptyList
+      title={t('noIndexers.title')}
+      description={t('noIndexers.description')}
+      infoLinkDesc={t('noIndexers.subtitle')}
+      infoI18nKey={t('noIndexers.subtitle')}
+      infoLink={URLS.INDEXER}
+    />
+  );
+};
 
 const ProjectInner: React.VFC = () => {
   const { id } = useParams();
