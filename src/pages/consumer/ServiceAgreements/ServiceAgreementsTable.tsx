@@ -46,7 +46,7 @@ export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymen
   });
 };
 
-export const Project: React.VFC<{ project: SAProject }> = ({ project }) => {
+export const Project: React.FC<{ project: SAProject }> = ({ project }) => {
   const { getMetadataFromCid } = useProjectMetadata();
 
   const metadata = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project.metadata, getMetadataFromCid]);
@@ -89,7 +89,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     },
     {
       dataIndex: 'deployment',
-      title: t('serviceAgreements.headers.deployment').toUpperCase(),
+      title: <TableTitle title={t('serviceAgreements.headers.deployment')} />,
       key: 'deployment',
       width: 200,
       render: (deployment: ServiceAgreementFieldsFragment['deployment']) => (
@@ -98,9 +98,12 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     },
     {
       dataIndex: 'period',
-      title: isOngoingPath
-        ? t('serviceAgreements.headers.expiry').toUpperCase()
-        : t('serviceAgreements.headers.expired').toUpperCase(),
+      title: (
+        <TableTitle
+          title={isOngoingPath ? t('serviceAgreements.headers.expiry') : t('serviceAgreements.headers.expired')}
+        />
+      ),
+
       key: 'expiry',
       width: 160,
       render: (_, sa: ServiceAgreementFieldsFragment) => {
@@ -109,7 +112,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     },
     {
       dataIndex: 'indexerAddress',
-      title: t('indexers.head.url').toUpperCase(),
+      title: <TableTitle title={t('indexers.head.url')} />,
       key: 'indexer',
       width: 200,
       ellipsis: true,
@@ -119,7 +122,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
     },
     {
       dataIndex: 'lockedAmount',
-      title: t('serviceAgreements.headers.price').toUpperCase(),
+      title: <TableTitle title={t('serviceAgreements.headers.price')} />,
       key: 'price',
       width: 100,
       render: (price: ServiceAgreementFieldsFragment['lockedAmount']) => (
@@ -129,7 +132,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   ];
 
   const playgroundCol = {
-    title: t('indexer.action').toUpperCase(),
+    title: <TableTitle title={t('indexer.action')} />,
     dataIndex: 'id',
     key: 'operation',
     fixed: 'right' as FixedType,
@@ -155,7 +158,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
 
   const indexerCol = {
     dataIndex: 'indexerAddress',
-    title: t('serviceAgreements.headers.indexer').toUpperCase(),
+    title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
     key: 'indexer',
     width: 200,
     render: (indexer: ServiceAgreementFieldsFragment['indexerAddress']) => <ConnectedIndexer id={indexer} />,
@@ -163,7 +166,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
 
   const consumerCol = {
     dataIndex: 'consumerAddress',
-    title: t('serviceAgreements.headers.consumer').toUpperCase(),
+    title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
     key: 'consumer',
     width: 200,
     render: (consumer: ServiceAgreementFieldsFragment['consumerAddress']) => <ConnectedIndexer id={consumer} />,
