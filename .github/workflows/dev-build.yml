@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         # Disable CI flag so linter warnings aren't treaded as errors
-        run: CI=false yarn build
+        run: CI=false yarn build:dev
 
       - name: Deploy Dev
         uses: reggionick/s3-deploy@v3
