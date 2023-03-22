@@ -210,12 +210,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
-          empty: () => (
-            <EmptyList
-              i18nKey={emptyI18nKey || 'serviceAgreements.non'}
-              link="https://academy.subquery.network/subquery_network/kepler/consumers.html#how-to-make-a-use-of-your-purchased-plan-and-indexed-data"
-            />
-          ),
+          empty: () => <EmptyList i18nKey={emptyI18nKey || 'serviceAgreements.non'} />,
           data: (data) => {
             return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },

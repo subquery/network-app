@@ -34,6 +34,7 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
             {isExtensionInstalled && (
               <Button
                 label={t('unsupportedNetwork.button')}
+                className={styles.button}
                 type="primary"
                 onClick={() => handleSwitchNetwork(ethWindowObj)}
               />

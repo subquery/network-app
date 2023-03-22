@@ -162,7 +162,8 @@ const translation = {
       expiredToken: 'The auth token for playground query has expired.',
     },
     noAgreementsTitle: 'You don’t have any service agreements yet',
-    non: 'There are no service agreements for this project yet. <br> Learn more <1>here</1>',
+    non: 'There are no service agreements for this project yet.',
+    learnLink: 'Learn more ',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
 

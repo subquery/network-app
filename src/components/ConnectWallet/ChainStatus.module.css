@@ -36,3 +36,7 @@
 .description {
   font-size: 18px;
 }
+
+.button {
+  margin: 1rem;
+}

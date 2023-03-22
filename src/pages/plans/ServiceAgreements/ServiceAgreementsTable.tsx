@@ -7,16 +7,23 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps, Typography as AntDTypography, Tooltip, Button } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
-import { Copy, TableText, VersionDeployment } from '../../../components';
+import { Copy, TableText, VersionDeployment, EmptyList } from '../../../components';
 import { useProjectMetadata, useServiceAgreements, useSpecificServiceAgreements, useWeb3 } from '../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
+import {
+  DocumentsAddress,
+  formatEther,
+  mapAsync,
+  notEmpty,
+  renderAsync,
+  renderAsyncArray,
+  wrapProxyEndpoint,
+} from '../../../utils';
 import {
   GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement,
   GetOngoingServiceAgreements_serviceAgreements_nodes_deployment_project as SAProject,
 } from '../../../__generated__/registry/GetOngoingServiceAgreements';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
-import { EmptyList } from '../Plans/EmptyList';
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
@@ -193,8 +200,10 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
           empty: () => (
             <EmptyList
-              i18nKey={emptyI18nKey || 'serviceAgreements.non'}
-              link="https://academy.subquery.network/subquery_network/kepler/consumers.html#how-to-make-a-use-of-your-purchased-plan-and-indexed-data"
+              title={t(emptyI18nKey || 'serviceAgreements.non')}
+              infoLinkDesc={t('serviceAgreements.learnLink')}
+              infoI18nKey={t('serviceAgreements.learnLink')}
+              infoLink={DocumentsAddress.LearnServiceAgreementsDoc}
             />
           ),
           data: (data) => {

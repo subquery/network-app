@@ -115,9 +115,9 @@ const translation = {
     },
   },
   noIndexers: {
-    preTitle: 'no indexers available',
+    description: 'no indexers available',
     title: 'Start indexing this project',
-    subtitle: 'Learn how to index a SubQuery project <1>here</1>',
+    subtitle: 'Learn how to index a SubQuery project ',
   },
   indexers: {
     head: {
