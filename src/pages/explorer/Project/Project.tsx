@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useRoutes } from 'react-router';
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { DocumentsAddress } from '@utils';
+import { URLS } from '@utils';
 import {
   ProjectProgressProvider,
   useDeploymentsQuery,
@@ -35,7 +35,7 @@ const NoIndexers: React.FC = () => {
       description={t('noIndexers.description')}
       infoLinkDesc={t('noIndexers.subtitle')}
       infoI18nKey={t('noIndexers.subtitle')}
-      infoLink={DocumentsAddress.LearnIndexerDoc}
+      infoLink={URLS.INDEXER}
     />
   );
 };

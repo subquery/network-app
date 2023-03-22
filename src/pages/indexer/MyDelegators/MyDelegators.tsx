@@ -10,6 +10,7 @@ import styles from './MyDelegators.module.css';
 import { Typography } from '@subql/react-ui';
 import { OwnDelegator } from './OwnDelegator';
 import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
+import { URLS } from '@utils';
 
 const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ const NoDelegator: React.FC = () => {
       description={t('myDelegators.noDelegatorsDescription')}
       infoI18nKey={t('myDelegators.noDelegatorsInfoLink')}
       infoLinkDesc={t('myDelegators.noDelegatorsInfoLink')}
-      infoLink={'https://academy.subquery.network/subquery_network/delegators.html'}
+      infoLink={URLS.DELEGATOR}
     />
   );
 };

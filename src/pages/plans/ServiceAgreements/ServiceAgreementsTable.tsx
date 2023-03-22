@@ -10,12 +10,12 @@ import { FixedType } from 'rc-table/lib/interface';
 import { Copy, TableText, VersionDeployment, EmptyList } from '../../../components';
 import { useProjectMetadata, useServiceAgreements, useSpecificServiceAgreements, useWeb3 } from '../../../containers';
 import {
-  DocumentsAddress,
   formatEther,
   mapAsync,
   notEmpty,
   renderAsync,
   renderAsyncArray,
+  URLS,
   wrapProxyEndpoint,
 } from '../../../utils';
 import {
@@ -203,7 +203,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
               title={t(emptyI18nKey || 'serviceAgreements.non')}
               infoLinkDesc={t('serviceAgreements.learnLink')}
               infoI18nKey={t('serviceAgreements.learnLink')}
-              infoLink={DocumentsAddress.LearnServiceAgreementsDoc}
+              infoLink={URLS.LEARN_SERVICE_AGREEMENTS_DOC}
             />
           ),
           data: (data) => {

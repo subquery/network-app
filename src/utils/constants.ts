@@ -29,8 +29,3 @@ export const tokenNames: { [key: string]: string } = {
   [STABLE_TOKEN_ADDRESS]: STABLE_TOKEN,
   [SQT_TOKEN_ADDRESS]: TOKEN,
 };
-
-export enum DocumentsAddress {
-  LearnIndexerDoc = 'https://academy.subquery.network/subquery_network/indexers.html',
-  LearnServiceAgreementsDoc = 'https://academy.subquery.network/subquery_network/kepler/consumers.html#how-to-make-a-use-of-your-purchased-plan-and-indexed-data',
-}
