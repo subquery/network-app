@@ -14,6 +14,7 @@ import styles from './OwnDeployments.module.css';
 import { ROUTES } from '../../../../utils';
 import { TableTitle } from '@subql/components';
 import { Description } from '../../../../components/Description/Description';
+import { getDeployStatus } from '@utils/getIndexerStatus';
 
 const { PROJECT_NAV } = ROUTES;
 
@@ -49,7 +50,8 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer, emptyList, desc }) =
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'status',
       render: (status: string, deployment) => {
-        return <Status text={status} color={deploymentStatus[status]} />;
+        const sortedStatus = getDeployStatus(status, deployment);
+        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
       },
     },
   ];

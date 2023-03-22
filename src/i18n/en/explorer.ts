@@ -128,6 +128,9 @@ const translation = {
       url: 'Query URL',
       plans: 'Plans',
     },
+    tooltip: {
+      status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',
+    },
   },
   create: {
     title: 'Create your first SubQuery project',

@@ -16,7 +16,12 @@ import {
   renderAsync,
   wrapProxyEndpoint,
 } from '../../utils';
-import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
+import {
+  useAsyncMemo,
+  useIndexerMetadata,
+  useSortedIndexerDeployments,
+  UseSortedIndexerDeploymentsReturn,
+} from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Spinner } from '@subql/react-ui';
@@ -33,6 +38,7 @@ import styles from './IndexerDetails.module.css';
 import { Status as DeploymentStatus } from '../../__generated__/registry/globalTypes';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { getDeployStatus } from '@utils/getIndexerStatus';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -44,10 +50,12 @@ type Props = {
   } | null>;
 } & PlansTableProps;
 
-export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plansTableProps }) => {
+export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, deploymentId, ...plansTableProps }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
+  const indexerDeployments = useSortedIndexerDeployments(indexer.indexerId);
+  const currentDeployment = indexerDeployments.data?.find((i) => i.deploymentId === deploymentId);
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
   const rowData = [
@@ -75,9 +83,13 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, ...plan
         </>
       ),
     },
+
     {
       width: '15%',
-      render: () => <Status text={indexer.status} color={deploymentStatus[indexer.status] ?? undefined} />,
+      render: () => {
+        const sortedStatus = getDeployStatus(indexer.status, currentDeployment as UseSortedIndexerDeploymentsReturn);
+        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+      },
     },
     {
       width: '30%',
@@ -217,6 +229,7 @@ const ConnectedRow: React.VFC<
       balance={balance}
       planManagerAllowance={planAllowance}
       progressInfo={progressInfo}
+      deploymentId={deploymentId}
     />
   );
 };
