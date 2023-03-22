@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  background-color: var(--gray-canvas);
+  background-color: white;
   width: 100%;
 }
 
