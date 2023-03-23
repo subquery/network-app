@@ -47,6 +47,7 @@ export * from './Description';
 export * from './Notification';
 export * from './WalletRoute';
 export * from './BreadcrumbNav';
+export * from './StepButton';
 
 export {
   ImageInput,

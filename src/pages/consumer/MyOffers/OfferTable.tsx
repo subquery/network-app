@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { TableProps, Typography } from 'antd';
-import { AntDTable, DeploymentMeta, SearchInput, TableText } from '../../../components';
+import { AntDTable, DeploymentMeta, EmptyList, SearchInput, TableText } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
@@ -28,7 +28,6 @@ import { CancelOffer } from './CancelOffer';
 import clsx from 'clsx';
 import { TableTitle } from '../../../components/TableTitle';
 import { TokenAmount } from '../../../components/TokenAmount';
-import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ROUTES } from '../../../utils';
 import {
   useGetAcceptedOffersQuery,
@@ -344,7 +343,7 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
         {
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load offers: ${e}`}</Typography.Text>,
-          empty: () => <EmptyList i18nKey={'myOffers.non'} />,
+          empty: () => <EmptyList description={'myOffers.non'} />,
           data: (offerList) => {
             return (
               <div>
