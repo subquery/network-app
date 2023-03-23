@@ -19,11 +19,11 @@ import {
 } from '../../../utils';
 import { CheckList } from './CheckList';
 import styles from './AcceptOffer.module.css';
-import { StepButtons } from '../../../pages/plans/MyOffers/CreateOffer';
-import { DeploymentProject } from '../../../pages/plans/MyOffers/CreateOffer/SelectDeployment';
 import { OfferFieldsFragment, DeploymentIndexerFieldsFragment } from '@subql/network-query';
 import { useGetIndexerQuery } from '@subql/react-hooks';
-import { SummaryList } from '../../../components';
+import { DeploymentInfo, SummaryList } from '../../../components';
+import { StepButtons } from '@components/StepButton';
+import { useProject } from '@hooks';
 
 interface OfferSummaryProps {
   offer: OfferFieldsFragment;
@@ -87,6 +87,39 @@ const OfferSummary: React.FC<OfferSummaryProps> = ({ offer, onNext, curStep }) =
           }}
         />
       </div>
+    </div>
+  );
+};
+
+export const DeploymentProject: React.VFC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
+  title,
+  projectId,
+  deploymentVersion,
+}) => {
+  const { t } = useTranslation();
+  const asyncProject = useProject(projectId);
+  return (
+    <div className={styles.deploymentInfoContainer}>
+      <Typography.Title level={5}>{title ?? t('myOffers.step_0.selectedId')}</Typography.Title>
+      {renderAsync(asyncProject, {
+        loading: () => <Spinner />,
+        error: (error) => <p>{`Failed to load project: ${error.message}`}</p>,
+        data: (project) => {
+          if (!project) {
+            return <></>;
+          }
+
+          return (
+            <div className={styles.deploymentInfo}>
+              <DeploymentInfo
+                deploymentId={project.deploymentId}
+                project={project.metadata}
+                deploymentVersion={deploymentVersion}
+              />
+            </div>
+          );
+        },
+      })}
     </div>
   );
 };

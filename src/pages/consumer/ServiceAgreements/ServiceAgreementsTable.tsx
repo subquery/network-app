@@ -7,14 +7,13 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { Table, TableProps, Typography as AntDTypography, Tooltip, Button } from 'antd';
 import { FixedType } from 'rc-table/lib/interface';
-import { Copy, VersionDeployment } from '../../../components';
+import { Copy, EmptyList, VersionDeployment } from '../../../components';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
-import { EmptyList } from '../../plans/Plans/EmptyList';
 import { useAsyncMemo, useGetIndexerQuery, useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { RenderResult } from '@subql/react-hooks/dist/utils';
@@ -213,7 +212,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
-          empty: () => <EmptyList i18nKey={emptyI18nKey || 'serviceAgreements.non'} />,
+          empty: () => <EmptyList description={t('serviceAgreements.non')} />,
           data: (data) => {
             return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },

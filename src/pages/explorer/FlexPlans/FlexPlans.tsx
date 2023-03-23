@@ -9,7 +9,7 @@ import { Space, Table, TableProps } from 'antd';
 import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
-import { AppTypography, Spinner, TableText } from '../../../components';
+import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { TableTitle } from '../../../components/TableTitle';
 import {
   formatEther,
@@ -22,7 +22,6 @@ import {
   ROUTES,
   TOKEN,
 } from '../../../utils';
-import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
 import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
@@ -121,7 +120,7 @@ export const FlexPlans: React.FC = () => {
         {
           loading: () => <Spinner />,
           error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
-          empty: () => <EmptyList i18nKey={'explorer.flexPlans.non'} />,
+          empty: () => <EmptyList description={'explorer.flexPlans.non'} />,
           data: (data) => {
             const [flexPlans, openPlans] = data;
             return (

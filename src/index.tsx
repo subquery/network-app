@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import TagManager from 'react-gtm-module';
-import App from './App';
+import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.less';
 import { Buffer } from 'buffer';

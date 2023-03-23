@@ -7,7 +7,7 @@ import { Typography } from '@subql/react-ui';
 import styles from './EmptyList.module.css';
 
 interface IEmptyList {
-  title: string;
+  title?: string;
   description?: string | Array<string>;
   infoI18nKey?: string;
   infoLinkDesc?: string;
@@ -27,7 +27,7 @@ export const EmptyList: React.FC<IEmptyList> = ({
   return (
     <div className={styles.emptyListContainer}>
       <div className={styles.emptyListContent}>
-        <Typography className={styles.title}>{title}</Typography>
+        {title && <Typography className={styles.title}>{title}</Typography>}
         <div className={styles.description}>
           {sortedDescriptions.map((description) => (
             <Typography key={description}>{description}</Typography>

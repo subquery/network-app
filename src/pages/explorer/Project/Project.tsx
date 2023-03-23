@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useRoutes } from 'react-router';
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { URLS } from '@utils';
@@ -16,14 +16,15 @@ import {
   useIPFS,
   useProjectMetadata,
   useProjectProgress,
-  useSpecificServiceAgreements,
 } from '../../../containers';
 import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
-import { ServiceAgreementsTable } from '../../plans/ServiceAgreements/ServiceAgreementsTable';
+
 import { FlexPlans } from '../FlexPlans';
 import { ROUTES } from '../../../utils';
+import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
+import { useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
@@ -193,7 +194,10 @@ const ProjectInner: React.VFC = () => {
               <Route
                 path={SERVICE_AGREEMENTS}
                 element={
-                  <ServiceAgreementsTable queryFn={useSpecificServiceAgreements} queryParams={{ deploymentId }} />
+                  <ServiceAgreementsTable
+                    queryFn={useGetSpecificServiceAgreementsQuery}
+                    queryParams={{ deploymentId }}
+                  />
                 }
               />
               <Route path={FLEX_PLANS} element={<FlexPlans />} />

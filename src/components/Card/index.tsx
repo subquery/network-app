@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Typography } from '@subql/react-ui';
 import styles from './Card.module.css';
 import clsx from 'clsx';
 import { Card as SQCard } from '@subql/components';
