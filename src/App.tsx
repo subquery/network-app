@@ -7,7 +7,7 @@ import './i18n';
 
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { Explorer, Studio, Staking, Account, Indexer, Delegator, Consumer, PlanAndOffer, Swap } from './pages';
+import { Explorer, Studio, Account, Indexer, Delegator, Consumer, Swap } from './pages';
 import { ChainStatus, Header, WalletRoute } from './components';
 import {
   Web3Provider,
@@ -106,7 +106,7 @@ const entryLinks = [
   },
 ];
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -133,12 +133,10 @@ const App: React.FC = () => {
                     }
                     path={`${ROUTES.STUDIO}/*`}
                   />
-                  <Route element={<Staking />} path={`${ROUTES.STAKING}/*`} />
                   <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
                   <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
                   <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />
                   <Route element={<WalletRoute element={<Consumer />} />} path={`${ROUTES.CONSUMER}/*`} />
-                  <Route element={<WalletRoute element={<PlanAndOffer />} />} path={`${ROUTES.PLANS}/*`} />
                   <Route element={<WalletRoute element={<Swap />} />} path={`${ROUTES.SWAP}/*`} />
                   <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
                 </Routes>
@@ -150,5 +148,3 @@ const App: React.FC = () => {
     </Providers>
   );
 };
-
-export default App;

@@ -14,7 +14,6 @@ import {
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
 import { EmptyList } from '@components';
-import { OwnDelegator } from '@pages/staking/Indexer/OwnDelegator';
 import { formatEther, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
 import { useSortedIndexer } from '@hooks';
 import { BigNumber } from 'ethers';
@@ -23,6 +22,7 @@ import { AccountHeader } from './Header';
 import { t } from 'i18next';
 import { useDelegating } from '@hooks/useDelegating';
 import { ROUTES } from '@utils';
+import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 
 const { INDEXER, INDEXERS, DELEGATOR, MY_STAKING, MY_ACCOUNT, REWARDS, WITHDRAWN } = ROUTES;
 

@@ -9,7 +9,7 @@ import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsync } from '@utils';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
-import { getPlanTemplateColumns } from '@pages/plans/Plans/Create';
+import { getPlanTemplateColumns } from '@pages/indexer/MyPlans/Create';
 
 export const ChooseTemplate: React.FC = () => {
   const { t } = useTranslation();

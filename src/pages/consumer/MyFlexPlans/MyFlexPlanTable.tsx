@@ -8,17 +8,17 @@ import moment from 'moment';
 import * as React from 'react';
 import { useLocation } from 'react-router';
 import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
-import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
+import { AntDTable, DeploymentMeta, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '@subql/components';
 import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
-import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { useWeb3 } from '../../../containers';
 import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
 import { ROUTES } from '../../../utils';
+import { useTranslation } from 'react-i18next';
 
 const { ONGOING_PLANS_NAV, CLOSED_PLANS_NAV } = ROUTES;
 
@@ -114,6 +114,7 @@ interface MyFlexPlanTableProps {
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
   const { account } = useWeb3();
   const { pathname } = useLocation();
+  const { t } = useTranslation();
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: account ?? '', now, offset: 0 };
   const flexPlans = queryFn({ variables: sortedParams });
@@ -148,7 +149,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         {
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load flex plans: ${e}`}</Typography.Text>,
-          empty: () => <EmptyList i18nKey={'flexPlans.non'} />,
+          empty: () => <EmptyList title={t('flexPlans.non')} />,
           data: (flexPlanList) => {
             return (
               <div>
