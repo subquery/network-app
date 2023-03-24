@@ -28,7 +28,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const rewards = useGetRewardsQuery({ variables: filterParams });
   const { t } = useTranslation();
   const emptyListText = {
-    emptyText: <Empty description={t('withdrawals.noWithdrawals')} image={Empty.PRESENTED_IMAGE_SIMPLE} />,
+    emptyText: <Empty description={t('withdrawals.noRewards')} image={Empty.PRESENTED_IMAGE_SIMPLE} />,
   };
 
   rewards.subscribeToMore({
@@ -44,7 +44,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
 
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       key: 'idx',
       render: (t, r, index) => <TableText content={index + 1} />,
     },

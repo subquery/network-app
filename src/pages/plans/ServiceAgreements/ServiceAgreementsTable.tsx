@@ -27,6 +27,7 @@ import { useAsyncMemo, useIndexerMetadata } from '../../../hooks';
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
+import { TableTitle } from '@subql/components';
 
 const { SA_PLAYGROUND_NAV, SA_ONGOING_NAV } = ROUTES;
 
@@ -77,7 +78,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   const columns: TableProps<ServiceAgreement>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 40,
       render: (text: string, _: ServiceAgreement, idx: number) => <TableText content={idx + 1} />,
     },

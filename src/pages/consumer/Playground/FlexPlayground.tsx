@@ -22,7 +22,7 @@ import { useWeb3 } from '../../../containers';
 import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { TableProps } from 'antd';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { TableTitle } from '../../../components/TableTitle';
+import { TableTitle } from '@subql/components';
 import i18next from 'i18next';
 import { BigNumber } from 'ethers';
 import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';

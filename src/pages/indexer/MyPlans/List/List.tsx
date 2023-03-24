@@ -46,7 +46,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const columns: TableProps<Plan>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 30,
       render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
     },

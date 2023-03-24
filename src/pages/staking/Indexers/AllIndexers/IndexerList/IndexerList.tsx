@@ -25,6 +25,7 @@ import {
 import { ConnectedIndexer } from '../../../../../components/IndexerDetails/IndexerName';
 import { TokenAmount } from '../../../../../components/TokenAmount';
 import { ROUTES } from '../../../../../utils';
+import { TableTitle } from '@subql/components';
 const { DELEGATE_NAV } = ROUTES;
 
 const Delegation: React.VFC<{
@@ -73,7 +74,7 @@ const getColumns = (
   pageStartIndex: number,
 ): TableProps<SortedIndexerListProps>['columns'] => [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     key: 'idx',
     width: 20,
     render: (_: string, __: any, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,

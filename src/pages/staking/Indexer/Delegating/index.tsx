@@ -14,6 +14,7 @@ import { TableText } from '../../../../components';
 import clsx from 'clsx';
 import { parseEther } from 'ethers/lib/utils';
 import { TokenAmount } from '../../../../components/TokenAmount';
+import { TableTitle } from '@subql/components';
 
 interface Props {
   delegator: string;
@@ -48,7 +49,7 @@ export const Delegator: React.VFC<Props> = ({ delegator }) => {
     indexer: string;
   }>['columns'] = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 30,
       render: (text: string, record: any, index: number) => <TableText content={index + 1} />,

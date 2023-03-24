@@ -24,7 +24,7 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
 
   const columns = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 30,
       render: (_: any, record: any, index: number) => <TableText content={index + 1} />,

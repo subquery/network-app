@@ -26,7 +26,7 @@ import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
 import { CancelOffer } from './CancelOffer';
 import clsx from 'clsx';
-import { TableTitle } from '../../../components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { EmptyList } from '../../plans/Plans/EmptyList';
 import { ROUTES } from '../../../utils';
@@ -101,7 +101,7 @@ const getColumns = (
   const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 60,
       render: (_: string, __: OfferFieldsFragment, idx: number) => <TableText content={idx + 1} />,
     },
@@ -117,7 +117,7 @@ const getColumns = (
 
   const generalColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
-      title: i18next.t('myOffers.table.indexerAmount').toUpperCase(),
+      title: <TableTitle title={i18next.t('myOffers.table.indexerAmount').toUpperCase()} />,
       children: [
         {
           title: (
@@ -207,7 +207,7 @@ const getColumns = (
 
   const cancelColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
-      title: i18next.t('general.action').toUpperCase(),
+      title: <TableTitle title={i18next.t('general.action').toUpperCase()} />,
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',
@@ -221,7 +221,7 @@ const getColumns = (
 
   const withdrawColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
-      title: i18next.t('general.action').toUpperCase(),
+      title: <TableTitle title={i18next.t('general.action').toUpperCase()} />,
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',
@@ -235,7 +235,7 @@ const getColumns = (
 
   const acceptColumn: TableProps<OfferFieldsFragment>['columns'] = [
     {
-      title: i18next.t('offerMarket.accept').toUpperCase(),
+      title: <TableTitle title={i18next.t('offerMarket.accept').toUpperCase()} />,
       dataIndex: 'id',
       fixed: 'right',
       align: 'center',

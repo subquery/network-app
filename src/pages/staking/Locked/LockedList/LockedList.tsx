@@ -13,6 +13,7 @@ import moment from 'moment';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
 import { TokenAmount } from '../../../../components/TokenAmount';
+import { TableTitle } from '@subql/components';
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
@@ -31,7 +32,7 @@ export const LockedList: React.VFC<props> = ({ withdrawals }) => {
 
   const columns: TableProps<SortedWithdrawals>['columns'] = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 30,
 
       render: (t, r, index) => <TableText content={index + 1} />,

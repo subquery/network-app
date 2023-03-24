@@ -10,6 +10,7 @@ import { mapEraValue, parseRawEraValue } from '../../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, mapAsync, mergeAsync, renderAsyncArray, TOKEN } from '../../../../utils';
 import { useEra, useIndexerDelegators } from '../../../../containers';
 import { TableText } from '../../../../components';
+import { TableTitle } from '@subql/components';
 
 interface Props {
   indexer: string;
@@ -22,26 +23,26 @@ export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
 
   const columns = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 30,
       render: (_: any, record: any, index: number) => <TableText content={index + 1} />,
     },
     {
-      title: t('delegate.delegator').toUpperCase(),
+      title: <TableTitle title={t('delegate.delegator').toUpperCase()} />,
       dataIndex: 'delegator',
       render: (delegator: string) => <TableText content={delegator} />,
     },
     {
-      title: t('delegate.amount').toUpperCase(),
+      title: <TableTitle title={t('delegate.amount').toUpperCase()} />,
       children: [
         {
-          title: t('delegate.currentEra').toUpperCase(),
+          title: <TableTitle title={t('delegate.currentEra').toUpperCase()} />,
           dataIndex: ['value', 'current'],
           render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },
         {
-          title: t('delegate.nextEra').toUpperCase(),
+          title: <TableTitle title={t('delegate.nextEra').toUpperCase()} />,
           dataIndex: ['value', 'after'],
           render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
         },

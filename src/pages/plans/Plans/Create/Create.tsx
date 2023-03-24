@@ -30,13 +30,14 @@ import styles from './Create.module.css';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { NumberInput } from '@components/NumberInput';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
+import { TableTitle } from '@subql/components';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: PlanTemplate) => void,
   selectedTemplateId?: string,
 ): TableProps<PlanTemplate>['columns'] => [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     dataIndex: 'id',
     render: (idx: number) => <TableText content={idx + 1} />,
   },

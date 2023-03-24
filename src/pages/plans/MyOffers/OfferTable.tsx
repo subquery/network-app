@@ -38,7 +38,7 @@ import styles from './OfferTable.module.css';
 import { CancelOffer } from './CancelOffer';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import clsx from 'clsx';
-import { TableTitle } from '../../../components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { TokenAmount } from '../../../components/TokenAmount';
 import { ROUTES } from '../../../utils';
 
@@ -94,7 +94,7 @@ const getColumns = (path: typeof OPEN_OFFERS_NAV | typeof OFFER_MARKETPLACE_NAV,
   const idColumns: TableProps<Offer>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 60,
       render: (_: string, __: Offer, idx: number) => <TableText content={idx + 1} />,
     },

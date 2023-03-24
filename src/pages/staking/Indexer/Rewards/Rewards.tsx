@@ -16,6 +16,7 @@ import styles from './Rewards.module.css';
 import { TableText } from '../../../../components';
 import { BigNumber } from 'ethers';
 import { TokenAmount } from '../../../../components/TokenAmount';
+import { TableTitle } from '@subql/components';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;
@@ -28,7 +29,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
 
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
-      title: '#',
+      title: <TableTitle title={'#'} />,
       key: 'idx',
       render: (t, r, index) => <TableText content={index + 1} />,
     },
@@ -42,7 +43,7 @@ const Rewards: React.VFC<{ delegatorAddress: string }> = ({ delegatorAddress }) 
       title: t('rewards.amount').toUpperCase(),
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount: BigInt) => <TokenAmount value={formatEther(amount)} />,
+      render: (amount: bigint) => <TokenAmount value={formatEther(amount)} />,
     },
     {
       title: t('rewards.action').toUpperCase(),

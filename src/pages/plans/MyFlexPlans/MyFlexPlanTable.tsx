@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useLocation } from 'react-router';
 import { AntDTable, DeploymentMeta, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { TableTitle } from '../../../components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { useConsumerClosedFlexPlans, useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
@@ -22,7 +22,7 @@ const getColumns = (path: string, onSuccess: () => void) => {
   const columns: TableProps<ConsumerFlexPlan>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 20,
       render: (_, __, idx: number) => <TableText content={idx + 1} />,
     },

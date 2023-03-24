@@ -75,7 +75,7 @@ export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
   const columns: TableProps<ServiceAgreementFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 40,
       render: (text: string, _: ServiceAgreementFieldsFragment, idx: number) => <TableText content={idx + 1} />,
     },

@@ -18,7 +18,7 @@ import { GetIndexers_indexers_nodes as Indexer } from '@__generated__/registry/G
 import { TokenAmount } from '@components/TokenAmount';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { AntDTable, SearchInput, TableText } from '@components';
-import { TableTitle } from '@components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 
 import { useNetworkClient } from '@hooks';
@@ -36,172 +36,6 @@ interface SortedIndexerListProps {
   metadata: string | null;
   controller: string | null;
 }
-
-const getColumns = (
-  account: string,
-  era: number | undefined,
-  viewIndexerDetail: (url: string) => void,
-  pageStartIndex: number,
-): TableProps<SortedIndexerListProps>['columns'] => [
-  {
-    title: '#',
-    key: 'idx',
-    width: 20,
-    render: (_: string, __: any, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
-    onCell: (record: SortedIndexerListProps) => ({
-      onClick: () => viewIndexerDetail(record.address),
-    }),
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.title')} />,
-    dataIndex: 'address',
-    width: 80,
-    render: (val: string) =>
-      val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.totalStake')} />,
-    children: [
-      {
-        title: <TableTitle title={i18next.t('general.current')} />,
-        dataIndex: ['totalStake', 'current'],
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-        sorter: (a, b) => a.totalStake.current - b.totalStake.current,
-      },
-      {
-        title: <TableTitle title={i18next.t('general.next')} />,
-        dataIndex: ['totalStake', 'after'],
-
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-        sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.ownStake')} />,
-
-    children: [
-      {
-        title: <TableTitle title={i18next.t('general.current')} />,
-        dataIndex: ['ownStake', 'current'],
-
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-      {
-        title: <TableTitle title={i18next.t('general.next')} />,
-        dataIndex: ['ownStake', 'after'],
-
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.delegated')} />,
-    children: [
-      {
-        title: <TableTitle title={i18next.t('general.current')} />,
-        dataIndex: ['delegated', 'current'],
-
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-      {
-        title: <TableTitle title={i18next.t('general.next')} />,
-        dataIndex: ['delegated', 'after'],
-
-        width: 40,
-        render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.commission')} />,
-    children: [
-      {
-        title: <TableTitle title={i18next.t('general.current')} />,
-        dataIndex: ['commission', 'current'],
-
-        width: 40,
-        render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-        sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
-      },
-      {
-        title: <TableTitle title={i18next.t('general.next')} />,
-        dataIndex: ['commission', 'after'],
-
-        width: 40,
-        render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-        sorter: (a, b) => (a.commission.after ?? 0) - (b?.commission?.after ?? 0),
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.capacity')} />,
-    children: [
-      {
-        title: <TableTitle title={i18next.t('general.current')} />,
-        dataIndex: ['capacity', 'current'],
-        width: 40,
-        render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-      {
-        title: <TableTitle title={i18next.t('general.next')} />,
-        dataIndex: ['capacity', 'after'],
-        width: 40,
-        render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
-        onCell: (record) => ({
-          onClick: () => viewIndexerDetail(record.address),
-        }),
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={i18next.t('indexer.action')} />,
-    dataIndex: 'address',
-    fixed: 'right' as FixedType,
-    width: 40,
-    align: 'center',
-    render: (id: string) => {
-      if (id === account) return <Typography> - </Typography>;
-      return (
-        <div className={'flex-start'}>
-          <DoDelegate indexerAddress={id} variant="textBtn" />
-        </div>
-      );
-    },
-  },
-];
 
 interface props {
   indexers?: Indexer[];
@@ -280,7 +114,172 @@ export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount
   /**
    * Sort Indexers logic end
    */
+  const getColumns = (
+    account: string,
+    era: number | undefined,
+    viewIndexerDetail: (url: string) => void,
+    pageStartIndex: number,
+  ): TableProps<SortedIndexerListProps>['columns'] => [
+    {
+      title: <TableTitle title={'#'} />,
+      key: 'idx',
+      width: 20,
+      render: (_: string, __: any, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
+      onCell: (record: SortedIndexerListProps) => ({
+        onClick: () => viewIndexerDetail(record.address),
+      }),
+    },
+    {
+      //'t('indexer.title')'
+      title: <TableTitle title={t('indexer.title')} />,
+      dataIndex: 'address',
+      width: 80,
+      render: (val: string) =>
+        val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
+    },
+    {
+      title: <TableTitle title={t('indexer.totalStake')} />,
+      children: [
+        {
+          title: <TableTitle title={t('general.current')} />,
+          dataIndex: ['totalStake', 'current'],
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+          sorter: (a, b) => a.totalStake.current - b.totalStake.current,
+        },
+        {
+          title: <TableTitle title={t('general.next')} />,
+          dataIndex: ['totalStake', 'after'],
 
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+          sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('indexer.ownStake')} />,
+
+      children: [
+        {
+          title: <TableTitle title={t('general.current')} />,
+          dataIndex: ['ownStake', 'current'],
+
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+        {
+          title: <TableTitle title={t('general.next')} />,
+          dataIndex: ['ownStake', 'after'],
+
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('indexer.delegated')} />,
+      children: [
+        {
+          title: <TableTitle title={t('general.current')} />,
+          dataIndex: ['delegated', 'current'],
+
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+        {
+          title: <TableTitle title={t('general.next')} />,
+          dataIndex: ['delegated', 'after'],
+
+          width: 40,
+          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('indexer.commission')} />,
+      children: [
+        {
+          title: <TableTitle title={t('general.current')} />,
+          dataIndex: ['commission', 'current'],
+
+          width: 40,
+          render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+          sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
+        },
+        {
+          title: <TableTitle title={t('general.next')} />,
+          dataIndex: ['commission', 'after'],
+
+          width: 40,
+          render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+          sorter: (a, b) => (a.commission.after ?? 0) - (b?.commission?.after ?? 0),
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('indexer.capacity')} />,
+      children: [
+        {
+          title: <TableTitle title={t('general.current')} />,
+          dataIndex: ['capacity', 'current'],
+          width: 40,
+          render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+        {
+          title: <TableTitle title={t('general.next')} />,
+          dataIndex: ['capacity', 'after'],
+          width: 40,
+          render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
+          onCell: (record) => ({
+            onClick: () => viewIndexerDetail(record.address),
+          }),
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('indexer.action')} />,
+      dataIndex: 'address',
+      fixed: 'right' as FixedType,
+      width: 40,
+      align: 'center',
+      render: (id: string) => {
+        if (id === account) return <Typography> - </Typography>;
+        return (
+          <div className={'flex-start'}>
+            <DoDelegate indexerAddress={id} variant="textBtn" />
+          </div>
+        );
+      },
+    },
+  ];
   const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
   const isLoading =
     !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0));

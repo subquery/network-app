@@ -14,7 +14,7 @@ import { useEra, useWeb3 } from '@containers';
 import styles from './MyDelegation.module.css';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { parseEther } from 'ethers/lib/utils';
-import { TableTitle } from '@components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { TokenAmount } from '@components/TokenAmount';
 import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { DoUndelegate } from './DoUndelegate';
@@ -27,7 +27,7 @@ const getColumns = (
   indexer: string;
 }>['columns'] => [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     key: 'idx',
     width: 50,
     render: (_: string, __: any, index: number) => <TableText content={index + 1} />,

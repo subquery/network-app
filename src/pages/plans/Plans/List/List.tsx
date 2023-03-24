@@ -18,6 +18,7 @@ import styles from './List.module.css';
 import clsx from 'clsx';
 import { formatSecondsDuration } from '../../../../utils/dateFormatters';
 import { last } from 'ramda';
+import { TableTitle } from '@subql/components';
 
 type Props = {
   data: Plan[];
@@ -47,7 +48,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const columns: TableProps<Plan>['columns'] = [
     {
       dataIndex: 'id',
-      title: '#',
+      title: <TableTitle title={'#'} />,
       width: 30,
       render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
     },
@@ -55,7 +56,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       dataIndex: 'price',
       key: 'price',
       title: t('plans.headers.price').toUpperCase(),
-      render: (value: BigInt) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
     },
     {
       dataIndex: 'planTemplate',
