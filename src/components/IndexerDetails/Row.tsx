@@ -16,12 +16,7 @@ import {
   renderAsync,
   wrapProxyEndpoint,
 } from '../../utils';
-import {
-  useAsyncMemo,
-  useIndexerMetadata,
-  useSortedIndexerDeployments,
-  UseSortedIndexerDeploymentsReturn,
-} from '../../hooks';
+import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Spinner } from '@subql/react-ui';
@@ -35,10 +30,11 @@ import { BsPlusSquare, BsDashSquare, BsInfoSquare } from 'react-icons/bs';
 import { Typography } from 'antd';
 import Copy from '../Copy';
 import styles from './IndexerDetails.module.css';
-import { Status as DeploymentStatus } from '../../__generated__/registry/globalTypes';
+import { Status as DeploymentStatus } from '@subql/network-query';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { getDeployStatus } from '@utils/getIndexerStatus';
+import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -50,12 +46,12 @@ type Props = {
   } | null>;
 } & PlansTableProps;
 
-export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, deploymentId, ...plansTableProps }) => {
+export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deploymentId, ...plansTableProps }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
-  const indexerDeployments = useSortedIndexerDeployments(indexer.indexerId);
-  const currentDeployment = indexerDeployments.data?.find((i) => i.deploymentId === deploymentId);
+
+  const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
 
   const toggleShowPlans = () => setShowPlans((show) => !show);
   const rowData = [
@@ -87,8 +83,14 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, deploym
     {
       width: '15%',
       render: () => {
-        const sortedStatus = getDeployStatus(indexer.status, currentDeployment as UseSortedIndexerDeploymentsReturn);
-        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+        return renderAsync(isOfflineDeploymentOnContract, {
+          error: (error) => <Typography>{error?.toString()}</Typography>,
+          loading: () => <Spinner />,
+          data: (data) => {
+            const sortedStatus = getDeploymentStatus(indexer.status, data);
+            return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+          },
+        });
       },
     },
     {
@@ -145,7 +147,7 @@ export const Row: React.VFC<Props> = ({ indexer, metadata, progressInfo, deploym
   );
 };
 
-const ConnectedRow: React.VFC<
+const ConnectedRow: React.FC<
   Omit<
     Props,
     'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance' | 'planManagerAllowance' | 'progressInfo'

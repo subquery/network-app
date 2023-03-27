@@ -74,22 +74,19 @@ export const useWeb3 = (): Web3ReactContextInterface<providers.Web3Provider> => 
 
 const InitProvider: React.FC = () => {
   const { activate } = useWeb3();
-  const { setIsInitialAccount } = useWeb3Store();
-
-  const activateInitialConnector = React.useCallback(async () => {
-    setIsInitialAccount(true);
-    const isInjectedConnectorAuthorized = await injectedConntector.isAuthorized();
-    if (isInjectedConnectorAuthorized) {
-      await activate(injectedConntector);
-    } else {
-      await activate(networkConnector);
-    }
-    setIsInitialAccount(false);
-  }, [activate, setIsInitialAccount]);
 
   React.useEffect(() => {
+    async function activateInitialConnector() {
+      const isInjectedConnectorAuthorized = await injectedConntector.isAuthorized();
+      if (isInjectedConnectorAuthorized) {
+        await activate(injectedConntector);
+      } else {
+        await activate(networkConnector);
+      }
+    }
+
     activateInitialConnector();
-  }, [activateInitialConnector]);
+  }, [activate]);
 
   return null;
 };
