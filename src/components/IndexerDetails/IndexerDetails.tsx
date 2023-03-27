@@ -12,6 +12,7 @@ import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
 import { SearchInput } from '../SearchInput';
 import { Typography } from '@subql/react-ui';
+import { TableTitle } from '@subql/components';
 
 type Props = {
   indexers: readonly DeploymentIndexer[];
@@ -55,27 +56,27 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
   const columns: TableProps<any>['columns'] = [
     {
       width: '20%',
-      title: t('indexers.head.indexers'),
+      title: <TableTitle title={t('indexers.head.indexers')} />,
       dataIndex: 'indexer',
     },
     {
       width: '30%',
-      title: t('indexers.head.progress'),
+      title: <TableTitle title={t('indexers.head.progress')} />,
       dataIndex: 'progress',
     },
     {
       width: '15%',
-      title: t('indexers.head.status'),
+      title: <TableTitle title={t('indexers.head.status')} tooltip={t('indexers.tooltip.status')} />,
       dataIndex: 'status',
     },
     {
       width: '30%',
-      title: t('indexers.head.url'),
+      title: <TableTitle title={t('indexers.head.url')} />,
       dataIndex: 'status',
     },
     {
       width: '5%',
-      title: t('indexers.head.plans'),
+      title: <TableTitle title={t('indexers.head.plans')} />,
       dataIndex: 'plans',
     },
   ];

@@ -38,7 +38,7 @@ export const getPlanTemplateColumns = (
   selectedTemplateId?: string,
 ): TableProps<Template>['columns'] => [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     dataIndex: 'id',
     render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
   },

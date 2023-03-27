@@ -3,6 +3,7 @@
 
 import { ethers } from 'ethers';
 import { create } from 'zustand';
+import { ContractSDK } from '@subql/contract-sdk';
 
 /**
  *
@@ -21,14 +22,21 @@ interface Web3Store {
   setIsInitialAccount: (isInitialAccount: boolean) => void;
 
   ethProvider?: ethers.providers.JsonRpcProvider;
+
+  contract?: ContractSDK;
+  setContract: (contracts: ContractSDK) => void;
 }
 
 const ethProviderJsonRPC = 'https://rpc.ankr.com/eth';
 export const useWeb3Store = create<Web3Store>()((set) => ({
   ethWindowObj: window?.ethereum,
+
   isInitialAccount: false,
   ethProvider: new ethers.providers.JsonRpcProvider(ethProviderJsonRPC),
   setIsInitialAccount: (isInitialAccount: boolean) => set((state) => ({ ...state, isInitialAccount })),
+
   setEthWindowObj: (ethWindowObj: any) => set((state) => ({ ...state, ethWindowObj })),
   setError: (error: Error) => set((state) => ({ ...state, error })),
+
+  setContract: (contract: ContractSDK | undefined) => set((state) => ({ ...state, contract })),
 }));

@@ -59,6 +59,7 @@ const translation = {
     locked: 'Locked',
     unlocked: 'Unlocked',
     noWithdrawals: 'No withdrawals available.',
+    noRewards: 'No rewards available.',
     withdrawToken: 'Withdraw all unlocked Assets',
     withdraw: 'Withdraw',
     confirm: 'Confirm withdrawal amount',

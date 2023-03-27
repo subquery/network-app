@@ -24,25 +24,29 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
 import { t } from 'i18next';
+import { AppInitProvider } from '@containers/AppInitialProvider';
 
+// TODO: Remove ContractProvider, ERAProvider, SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
         <Web3Provider>
-          <ContractsProvider>
-            <ProjectMetadataProvider>
-              <QueryRegistryProvider>
-                <IndexerRegistryProvider>
-                  <EraProvider>
-                    <SQTokenProvider>
-                      <UserProjectsProvider>{children}</UserProjectsProvider>
-                    </SQTokenProvider>
-                  </EraProvider>
-                </IndexerRegistryProvider>
-              </QueryRegistryProvider>
-            </ProjectMetadataProvider>
-          </ContractsProvider>
+          <AppInitProvider>
+            <ContractsProvider>
+              <ProjectMetadataProvider>
+                <QueryRegistryProvider>
+                  <IndexerRegistryProvider>
+                    <EraProvider>
+                      <SQTokenProvider>
+                        <UserProjectsProvider>{children}</UserProjectsProvider>
+                      </SQTokenProvider>
+                    </EraProvider>
+                  </IndexerRegistryProvider>
+                </QueryRegistryProvider>
+              </ProjectMetadataProvider>
+            </ContractsProvider>
+          </AppInitProvider>
         </Web3Provider>
       </QueryApolloProvider>
     </IPFSProvider>

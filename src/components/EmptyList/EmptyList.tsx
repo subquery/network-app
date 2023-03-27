@@ -29,8 +29,8 @@ export const EmptyList: React.FC<IEmptyList> = ({
       <div className={styles.emptyListContent}>
         {title && <Typography className={styles.title}>{title}</Typography>}
         <div className={styles.description}>
-          {sortedDescriptions.map((description) => (
-            <Typography key={description}>{description}</Typography>
+          {sortedDescriptions.map((description, idx) => (
+            <Typography key={idx}>{description}</Typography>
           ))}
         </div>
         {infoI18nKey && (

@@ -31,7 +31,7 @@ const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
 const columns: TableProps<SortedWithdrawals>['columns'] = [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     width: '10%',
     render: (t, r, index) => <TableText content={index + 1} />,
   },

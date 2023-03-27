@@ -10,7 +10,7 @@ import i18next from 'i18next';
 import { BsStarFill } from 'react-icons/bs';
 import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
-import { TableTitle } from '../../../components/TableTitle';
+import { TableTitle } from '@subql/components';
 import {
   formatEther,
   formatSecondsDuration,

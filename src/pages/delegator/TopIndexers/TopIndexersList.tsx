@@ -10,7 +10,7 @@ import { AntDTable, SearchInput, TableText } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 
 import { DoDelegate } from '../DoDelegate';
-import { TableTitle } from '@components/TableTitle';
+import { TableTitle } from '@subql/components';
 import { useWeb3 } from '@containers';
 import styles from './TopIndexersList.module.css';
 import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
@@ -23,7 +23,7 @@ const getColumns = (
   viewIndexerDetail: (url: string) => void,
 ): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
   {
-    title: '#',
+    title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
     width: 20,
     render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
@@ -37,13 +37,7 @@ const getColumns = (
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
-    title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.rank')}
-        title={i18next.t('topIndexers.score')}
-      />
-    ),
+    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.score')} />,
     dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
     onCell: () => ({
@@ -53,13 +47,7 @@ const getColumns = (
     showSorterTooltip: false,
   },
   {
-    title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.uptime')}
-        title={i18next.t('topIndexers.uptime')}
-      />
-    ),
+    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
     onCell: (record: GetTopIndexers_indexerPrograms) => ({
@@ -69,13 +57,7 @@ const getColumns = (
     showSorterTooltip: false,
   },
   {
-    title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.ownStake')}
-        title={i18next.t('topIndexers.ownStake')}
-      />
-    ),
+    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ownStake')} title={i18next.t('topIndexers.ownStake')} />,
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
     onCell: (record: GetTopIndexers_indexerPrograms) => ({
@@ -86,11 +68,7 @@ const getColumns = (
   },
   {
     title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.delegated')}
-        title={i18next.t('topIndexers.delegated')}
-      />
+      <TableTitle tooltip={i18next.t('topIndexers.tooltip.delegated')} title={i18next.t('topIndexers.delegated')} />
     ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
@@ -103,7 +81,6 @@ const getColumns = (
   {
     title: (
       <TableTitle
-        noTooltipIcon={true}
         tooltip={i18next.t('topIndexers.tooltip.eraRewardsCollection')}
         title={i18next.t('topIndexers.eraRewardsCollection')}
       />
@@ -142,13 +119,7 @@ const getColumns = (
   //   render: (timeToUpgrade) => <TableText>{timeToUpgrade}</TableText>,
   // },
   {
-    title: (
-      <TableTitle
-        noTooltipIcon={true}
-        tooltip={i18next.t('topIndexers.tooltip.ssl')}
-        title={i18next.t('topIndexers.ssl')}
-      />
-    ),
+    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ssl')} title={i18next.t('topIndexers.ssl')} />,
     dataIndex: 'sslEnabled',
     render: (enableSSL) => {
       if (enableSSL) {
@@ -177,7 +148,6 @@ const getColumns = (
   {
     title: (
       <TableTitle
-        noTooltipIcon={true}
         tooltip={i18next.t('topIndexers.tooltip.socialCredibility')}
         title={i18next.t('topIndexers.socialCredibility')}
       />
