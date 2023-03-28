@@ -1,7 +1,10 @@
 .tabs {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+}
+
+.content {
+  margin-top: 2rem;
 }
 
 .create {

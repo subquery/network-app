@@ -1,14 +1,9 @@
 .header {
   width: 100%;
   display: flex;
-  padding-left: 2rem;
-  padding-right: 1rem;
   justify-content: space-between;
   box-shadow: inset 0px -1px 0px rgba(26, 32, 44, 0.06);
-}
-
-.headerHeight {
-  height: 80px;
+  padding: 1rem 1.25rem;
 }
 
 .justifyBetween {
