@@ -21,7 +21,8 @@
 
 .tabSelected {
   border-bottom: 2px solid;
-  border-image: var(--sq-gradient) 1;
+  border-color: var(--primary);
+  /* border-image: var(--sq-gradient) 1; */
 }
 
 .tabContainer {
