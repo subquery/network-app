@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import clsx from 'clsx';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { Space } from 'antd';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import styles from './AppPageHeader.module.css';

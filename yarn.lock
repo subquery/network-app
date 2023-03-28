@@ -3917,15 +3917,6 @@
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 
-"@subql/react-ui@1.0.1-22":
-  version "1.0.1-22"
-  resolved "https://registry.yarnpkg.com/@subql/react-ui/-/react-ui-1.0.1-22.tgz#d7497b5e46fb751fced9960cac9cbb5d2604e4bf"
-  integrity sha512-YEWvv/MTUoFLe6oaZLyZD6F9gTj/0jEC3qZ9iuY0Ht0B7G18xRhPidWr7bjnkNUb0djuujXnZtiBY17bZ0NSzw==
-  dependencies:
-    clsx "^1.1.1"
-    eslint-plugin-react "^7.27.1"
-    react-jazzicon "^0.1.3"
-
 "@subql/types@0.14.1-0":
   version "0.14.1-0"
   resolved "https://registry.yarnpkg.com/@subql/types/-/types-0.14.1-0.tgz#c7cd1ee2d05c26a56e02a9d04fed0532f950564a"

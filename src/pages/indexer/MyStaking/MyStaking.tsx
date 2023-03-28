@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '@containers';
 import { Card, AppPageHeader, Description } from '@components';

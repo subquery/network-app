@@ -17,7 +17,7 @@ import TransactionModal from '@components/TransactionModal';
 import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
 import moment from 'moment';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 
 enum StakeAction {

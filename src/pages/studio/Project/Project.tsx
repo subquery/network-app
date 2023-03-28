@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router';
 import Modal from 'react-modal';
 import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, TabButtons } from '../../../components';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
 import { useWeb3 } from '../../../containers';

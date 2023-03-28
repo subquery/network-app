@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ContractTransaction } from '@ethersproject/contracts';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import * as React from 'react';
 import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';

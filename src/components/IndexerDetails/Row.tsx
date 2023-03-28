@@ -19,7 +19,7 @@ import {
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import Status from '../Status';
-import { Spinner } from '@subql/react-ui';
+import { Spinner } from '@subql/components';
 import { deploymentStatus } from '../Status/Status';
 import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/registry/GetDeploymentPlans';

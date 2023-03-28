@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button, Typography } from '@subql/react-ui';
+import { Button, Typography } from '@subql/components';
 import styles from './CreateInstructions.module.css';
 
 const Instruction: React.VFC<{ step: 1 | 2 | 3 | 4 }> = ({ step }) => {

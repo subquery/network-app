@@ -5,7 +5,7 @@ import assert from 'assert';
 import { Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { useContracts } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';

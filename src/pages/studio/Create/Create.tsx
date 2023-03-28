@@ -6,7 +6,7 @@ import { Formik, Form } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { FTextInput, ImageInput } from '../../../components';
-import { Button, Typography } from '@subql/react-ui';
+import { Button, Typography } from '@subql/components';
 import { useNavigate } from 'react-router';
 import styles from './Create.module.css';
 import { useCreateProject, useRouteQuery } from '../../../hooks';

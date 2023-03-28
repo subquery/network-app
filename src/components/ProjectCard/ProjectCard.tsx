@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Address } from '@subql/react-ui';
+import { Address } from '@subql/components';
 import * as React from 'react';
 import { ProjectWithMetadata } from '../../models';
 import IPFSImage from '../IPFSImage';

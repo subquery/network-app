@@ -3,7 +3,7 @@
 
 import { ConnectWallet } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
-import { Spinner, Toast } from '@subql/react-ui';
+import { Spinner, Toast } from '@subql/components';
 import { parseError, walletConnectionErrors } from '@utils';
 import React from 'react';
 import { Route } from 'react-router';

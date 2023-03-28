@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import styles from './Instructions.module.css';
 
 const Instructions: React.VFC = () => {

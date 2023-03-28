@@ -1,9 +1,9 @@
 .tabContainer {
   display: flex;
+  margin: 0.5rem 0;
 }
 .whiteTabContainer {
   background: white;
-  padding: 1rem 1rem 0 1rem;
 }
 
 .tab {
@@ -21,7 +21,7 @@
 
 .tabSelected {
   border-bottom: 2px solid;
-  border-image: var(--sq-gradient) 1;
+  border-color: var(--primary);
 }
 
 .tabContainer {

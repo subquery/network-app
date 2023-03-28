@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';

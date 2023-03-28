@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import { Dropdown, Menu, Button as AntdButton } from 'antd';
 import { ALL_SUPPORTED_CONNECTORS, useConnectNetwork } from '../../containers/Web3';
 import { AppTypography } from '../Typography';

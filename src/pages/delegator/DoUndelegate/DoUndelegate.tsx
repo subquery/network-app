@@ -14,7 +14,7 @@ import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther } from '@utils';
 import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { useLockPeriod } from '@hooks';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components';
 

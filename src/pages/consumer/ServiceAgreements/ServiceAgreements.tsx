@@ -18,7 +18,7 @@ import {
   useGetConsumerOngoingServiceAgreementsQuery,
   useGetConsumerExpiredServiceAgreementsQuery,
 } from '@subql/react-hooks';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { SAPlayground } from '../Playground';
 import { t } from 'i18next';
 

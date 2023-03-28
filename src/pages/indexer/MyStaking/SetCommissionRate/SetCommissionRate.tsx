@@ -8,7 +8,7 @@ import { useContracts, useWeb3 } from '../../../../containers';
 import TransactionModal from '../../../../components/TransactionModal';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
 

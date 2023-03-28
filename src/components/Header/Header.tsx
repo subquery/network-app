@@ -156,7 +156,7 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   const { account } = useWeb3();
   return (
     <div className={clsx(styles.header, styles.flexCenter, rightElement && styles.justifyBetween, className)}>
-      <div className={clsx(styles.flexCenter, styles.headerHeight)}>
+      <div className={clsx(styles.flexCenter)}>
         <div>
           <a href={logoLink ?? '/'}>
             <img src={'/static/logo.png'} alt="SubQuery Logo" width={140} />

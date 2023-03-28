@@ -3,11 +3,11 @@
 
 import { Copy, CurEra } from '@components';
 import { useWeb3 } from '@containers';
-import { truncateAddress } from '@subql/react-ui/dist/components/Address/Address';
 import { Typography } from '@subql/components';
 import styles from './MyAccount.module.css';
 import ReactJazzicon from 'react-jazzicon';
 import { Link } from 'react-router-dom';
+import { truncateAddress } from '@utils';
 
 export const AccountHeader: React.FC = () => {
   const { account } = useWeb3();

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { parseEther } from '@ethersproject/units';
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Button, Spinner, Typography } from '@subql/components';
 import assert from 'assert';
 import { Formik, Form } from 'formik';
 import * as React from 'react';

@@ -5,7 +5,7 @@ import assert from 'assert';
 import { Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@subql/react-ui';
+import { Spinner } from '@subql/components';
 import moment from 'moment';
 import { useContracts, useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';

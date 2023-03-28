@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../components/TransactionModal';
 import { useContracts } from '../../../containers';
 import styles from './ClaimRewards.module.css';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { TOKEN } from '../../../utils';
 
 type Props = {

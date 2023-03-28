@@ -27,9 +27,10 @@ import {
   useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersQuery,
 } from '@subql/react-hooks';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { ROUTES, URLS } from '@utils';
 import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
+import clsx from 'clsx';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
@@ -110,12 +111,12 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
   }, [navigate, totalCount]);
 
   return (
-    <>
+    <div className={styles.content}>
       <OfferHeader />
       <div className="contentContainer">
         <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
       </div>
-    </>
+    </div>
   );
 };
 

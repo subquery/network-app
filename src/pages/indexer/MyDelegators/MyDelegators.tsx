@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList, Spinner } from '@components';
 import { useWeb3 } from '@containers';
 import styles from './MyDelegators.module.css';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { OwnDelegator } from './OwnDelegator';
 import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 import { URLS } from '@utils';
