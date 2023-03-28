@@ -11,7 +11,7 @@ import { LazyQueryResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
-import { Button, Spinner, Typography } from '@subql/react-ui';
+import { Button, Spinner, Typography } from '@subql/components';
 import TransactionModal from '../TransactionModal';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { IndexerDetails } from '../../models';
@@ -169,7 +169,7 @@ export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, 
       key: 'price',
       title: t('plans.headers.price'),
       align: 'center',
-      render: (value: BigInt) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
     },
     {
       dataIndex: 'planTemplate',

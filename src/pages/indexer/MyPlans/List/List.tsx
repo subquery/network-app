@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Button, Typography } from '@subql/react-ui';
+import { Button, Typography } from '@subql/components';
 import { GetPlans_plans_nodes as Plan } from '@__generated__/registry/GetPlans';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import TransactionModal from '@components/TransactionModal';

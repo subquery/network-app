@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
 import { useGetIndexersQuery } from '@subql/react-hooks';
 import { useEra } from '../../../containers';

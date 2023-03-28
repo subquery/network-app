@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Typography } from '@subql/react-ui';
 import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 import clsx from 'clsx';
+import { Typography } from '@subql/components';
 
 type Props = {
   list: {
@@ -25,7 +25,7 @@ export const Sidebar: React.FC<Props> = ({ list }) => {
           key={sidebarItem.link}
         >
           {sidebarItem?.icon}
-          <Typography>{sidebarItem.label}</Typography>
+          <Typography className={styles.label}>{sidebarItem.label}</Typography>
         </NavLink>
       ))}
     </div>

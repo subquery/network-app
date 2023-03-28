@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Menu, Dropdown as AntdDropdown } from 'antd';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
 import styles from './Dropdown.module.css';

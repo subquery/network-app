@@ -10,7 +10,7 @@ import { useProject } from '../../../hooks';
 import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import { ROUTES } from '../../../utils';
 const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
 

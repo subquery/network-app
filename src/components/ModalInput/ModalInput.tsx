@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Button, InputNumberProps } from 'antd';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { useFormik } from 'formik';
 import styles from './ModalInput.module.css';
 import { parseError } from '../../utils/parseError';

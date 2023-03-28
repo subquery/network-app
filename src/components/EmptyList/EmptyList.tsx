@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Trans } from 'react-i18next';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import styles from './EmptyList.module.css';
 
 interface IEmptyList {

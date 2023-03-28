@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { ProgressBar } from '@subql/react-ui';
+import { ProgressBar } from '@subql/components';
 import styles from './IndexerProgress.module.css';
 
 type Status = {

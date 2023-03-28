@@ -8,7 +8,7 @@ import { CurEra, DeploymentMeta } from '../../../components';
 import styles from './Playground.module.css';
 import { RequestToken, RequestTokenProps } from './RequestToken';
 import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
-import { Spinner } from '@subql/react-ui';
+import { Spinner } from '@subql/components';
 import { ColumnsType } from 'antd/lib/table';
 import { BreadcrumbNav } from '@components';
 

@@ -15,7 +15,7 @@ import {
 import TransactionModal from '@components/TransactionModal';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
 import { BigNumber } from 'ethers';

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectWithMetadata } from '../../models';
 import Detail from '../Detail';
-import { Address, Typography } from '@subql/react-ui';
+import { Address, Typography } from '@subql/components';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
 import { Dropdown } from '../Dropdown';

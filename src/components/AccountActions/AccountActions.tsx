@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSQToken, useWeb3 } from '../../containers';
-import { Address } from '@subql/react-ui';
+import { Address } from '@subql/components';
 import styles from './AccountActions.module.css';
 import { AiOutlineDown } from 'react-icons/ai';
 import { Dropdown } from '../Dropdown';

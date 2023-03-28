@@ -4,7 +4,7 @@
 import * as React from 'react';
 import styles from './IndexerDetails.module.css';
 import { useTranslation } from 'react-i18next';
-import { ProgressBar, Typography } from '@subql/react-ui';
+import { ProgressBar, Typography } from '@subql/components';
 
 const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBlock: number }> = ({
   startBlock = 0,

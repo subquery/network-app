@@ -5,7 +5,7 @@ import * as React from 'react';
 import { parseEther } from '@ethersproject/units';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@subql/react-ui';
+import { Spinner } from '@subql/components';
 import moment from 'moment';
 import { BigNumber, ethers } from 'ethers';
 import { Button, Space, Typography } from 'antd';

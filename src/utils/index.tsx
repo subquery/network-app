@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { OperationVariables, QueryResult } from '@apollo/client';
-import { Spinner } from '@subql/react-ui';
+import { Spinner } from '@subql/components';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 export * from './numberFormatters';
 export * from './stringFormatters';

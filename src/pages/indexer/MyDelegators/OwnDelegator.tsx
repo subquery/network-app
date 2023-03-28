@@ -3,7 +3,7 @@
 
 import { TableText, TableTitle } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
-import { Spinner, Typography } from '@subql/react-ui';
+import { Spinner, Typography } from '@subql/components';
 import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 import * as React from 'react';

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProgressBar, Spinner } from '@subql/react-ui';
+import { ProgressBar, Spinner } from '@subql/components';
 import { Table, TableProps, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';

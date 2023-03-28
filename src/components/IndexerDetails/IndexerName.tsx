@@ -6,7 +6,7 @@ import styles from './IndexerDetails.module.css';
 import { truncateAddress } from '../../utils';
 import IPFSImage from '../IPFSImage';
 import Copy from '../Copy';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { useIndexerMetadata } from '../../hooks';
 import { useENS } from '../../hooks/useEns';
 

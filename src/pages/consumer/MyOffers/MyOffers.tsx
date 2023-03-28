@@ -27,7 +27,7 @@ import {
   useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersQuery,
 } from '@subql/react-hooks';
-import { Typography } from '@subql/react-ui';
+import { Typography } from '@subql/components';
 import { ROUTES, URLS } from '@utils';
 import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 

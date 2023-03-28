@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Typography } from '@subql/react-ui';
+import { Button, Typography } from '@subql/components';
 import styles from './ConnectWallet.module.css';
 import { ALL_SUPPORTED_CONNECTORS, useConnectNetwork } from '../../containers/Web3';
 

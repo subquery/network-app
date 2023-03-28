@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@subql/react-ui';
+import { Button } from '@subql/components';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { useWeb3Store } from 'src/stores';
 import { getConnectorConfig } from '@utils/getNetworkConnector';
