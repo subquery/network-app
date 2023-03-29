@@ -149,7 +149,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         {
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load flex plans: ${e}`}</Typography.Text>,
-          empty: () => <EmptyList title={t('flexPlans.non')} />,
+          empty: () => <EmptyList title={t('flexPlans.non')} description={t('myFlexPlans.description')} />,
           data: (flexPlanList) => {
             return (
               <div>

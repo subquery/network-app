@@ -3,7 +3,7 @@
   height: 100%;
   padding-top: 1rem;
   padding-left: 0.5rem;
-  background: var(--gray100);
+  background: var(--sidebar-background);
   border-right: 1px solid var(--gray300);
 
   display: flex;
@@ -17,7 +17,7 @@
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
-  color: var(--gray500);
+  color: var(--gray800);
   row-gap: 0.5rem;
   padding: 1rem;
 }
@@ -27,7 +27,9 @@
 }
 
 .activeNav {
-  color: var(--gray800);
+  color: var(--sq-primary-blue);
+  background: var(--sidebar-background-hover);
+  width: 100%;
 }
 
 .activeNav > p,
