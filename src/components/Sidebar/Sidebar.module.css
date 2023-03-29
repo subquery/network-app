@@ -3,7 +3,7 @@
   height: 100%;
   padding-top: 1rem;
   padding-left: 0.5rem;
-  background: #f9fbff;
+  background: var(--sidebar-background);
   border-right: 1px solid var(--gray300);
 
   display: flex;
@@ -28,7 +28,7 @@
 
 .activeNav {
   color: var(--sq-primary-blue);
-  background: rgba(67, 136, 221, 0.1);
+  background: var(--sidebar-background-hover);
   width: 100%;
 }
 
