@@ -21,6 +21,7 @@ import {
   notEmpty,
   parseError,
   renderAsyncArray,
+  URLS,
 } from '../../../utils';
 import { useLocation } from 'react-router';
 import styles from './OfferTable.module.css';
@@ -343,7 +344,15 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
         {
           loading: () => <Spinner />,
           error: (e) => <Typography.Text type="danger">{`Failed to load offers: ${e}`}</Typography.Text>,
-          empty: () => <EmptyList description={'myOffers.non'} />,
+          empty: () => (
+            <EmptyList
+              title={t('myOffers.noOffersTitle')}
+              description={[t('myOffers.noOffersDesc_1'), t('myOffers.noOffersDesc_2')]}
+              infoI18nKey={'myOffers.noOffersInfoLink'}
+              infoLinkDesc={t('myOffers.noOffersInfoLink')}
+              infoLink={URLS.PLANS_OFFERS}
+            />
+          ),
           data: (offerList) => {
             return (
               <div>

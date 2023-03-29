@@ -22,6 +22,9 @@
 .infoLink {
   margin-top: 2vh;
 }
+.infoLink a {
+  color: var(--primary);
+}
 
 .title {
   font-size: 24px;
