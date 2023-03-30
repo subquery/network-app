@@ -15,7 +15,7 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
   const { t } = useTranslation();
 
   const maxProgress = React.useMemo(
-    () => Number(Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1)),
+    () => Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1),
     [startBlock, currentBlock, targetBlock],
   );
 
