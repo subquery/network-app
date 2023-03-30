@@ -26,7 +26,7 @@ export const SummaryList: React.VFC<SummaryListProps> = ({ title, list }) => {
             {typeof list.value === 'string' ? (
               <Typography className={styles.value}>{list.value}</Typography>
             ) : (
-              <>{list.value}</>
+              <div className={styles.indexer}>{list.value}</div>
             )}
           </div>
         ))}

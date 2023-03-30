@@ -5,6 +5,7 @@ import * as React from 'react';
 import styles from './IndexerDetails.module.css';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar, Typography } from '@subql/components';
+import { truncateToDecimalPlace } from '@utils';
 
 const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBlock: number }> = ({
   startBlock = 0,
@@ -22,7 +23,7 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 
   return (
     <div className={styles.progress}>
-      <ProgressBar progress={maxProgress} className={styles.progressBar} />
+      <ProgressBar progress={truncateToDecimalPlace(maxProgress, 2)} className={styles.progressBar} />
       <Typography variant="medium" className={styles.behind}>
         {blocksBehind > 0 ? t('indexerProgress.blocks', { count: blocksBehind }) : t('indexerProgress.projectSynced')}
       </Typography>

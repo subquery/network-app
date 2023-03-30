@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { DeploymentInfo, Status } from '../../../../components';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useSortedIndexerDeployments, UseSortedIndexerDeploymentsReturn } from '../../../../hooks';
-import { renderAsync } from '../../../../utils';
+import { renderAsync, truncateToDecimalPlace } from '../../../../utils';
 import styles from './OwnDeployments.module.css';
 import { ROUTES } from '../../../../utils';
 import { TableTitle } from '@subql/components';
@@ -43,7 +43,7 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer, emptyList, desc }) =
       render: (indexingProgress: number, deployment) => {
         const { indexingProgressErr } = deployment;
         if (indexingProgressErr) return <Typography.Text type="danger">{indexingProgressErr}</Typography.Text>;
-        return <ProgressBar progress={indexingProgress} />;
+        return <ProgressBar progress={truncateToDecimalPlace(indexingProgress, 2)} className={styles.progress} />;
       },
     },
     {

@@ -48,7 +48,7 @@
 
 .progressBar {
   width: 100%;
-  /* max-width: 315px; */
+  max-width: 315px;
 }
 
 .behind {
