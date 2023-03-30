@@ -9,14 +9,18 @@
 .listItem {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin: 5px 0;
 }
 
 .label {
   color: var(--gray500);
-  width: 50%;
 }
 
 .value {
-  width: 50%;
+  margin-left: 8px;
+}
+
+.indexer {
+  margin-left: 8px;
 }
