@@ -7,7 +7,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from '@subql/components';
 import moment from 'moment';
-import { useContracts, useWeb3 } from '../../../containers';
+import { useWeb3 } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import {
   convertBigNumberToNumber,
@@ -24,6 +24,7 @@ import { useGetIndexerQuery } from '@subql/react-hooks';
 import { DeploymentInfo, SummaryList } from '../../../components';
 import { StepButtons } from '@components/StepButton';
 import { useProject } from '@hooks';
+import { useWeb3Store } from 'src/stores';
 
 interface OfferSummaryProps {
   offer: OfferFieldsFragment;
@@ -136,7 +137,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
   const [curStep, setCurStep] = React.useState<number>(0);
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const indexerMetadata = useGetIndexerQuery({ variables: { address: account ?? '' } });
 
   const text = {
@@ -151,7 +152,6 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
   };
 
   const handleClick = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     // TODO: update the root when api ready

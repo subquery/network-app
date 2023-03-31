@@ -4,6 +4,7 @@
 import { ethers } from 'ethers';
 import { create } from 'zustand';
 import { ContractSDK } from '@subql/contract-sdk';
+import { ContractClient } from '@subql/network-clients';
 
 /**
  *
@@ -23,8 +24,10 @@ interface Web3Store {
 
   ethProvider?: ethers.providers.JsonRpcProvider;
 
-  contract?: ContractSDK;
-  setContract: (contracts: ContractSDK) => void;
+  contracts?: ContractSDK;
+  setContracts: (contracts: ContractSDK) => void;
+  contractClient?: ContractClient;
+  setContractClient: (contracts: ContractClient) => void;
 }
 
 const ethProviderJsonRPC = 'https://rpc.ankr.com/eth';
@@ -38,5 +41,7 @@ export const useWeb3Store = create<Web3Store>()((set) => ({
   setEthWindowObj: (ethWindowObj: any) => set((state) => ({ ...state, ethWindowObj })),
   setError: (error: Error) => set((state) => ({ ...state, error })),
 
-  setContract: (contract: ContractSDK | undefined) => set((state) => ({ ...state, contract })),
+  setContracts: (contracts: ContractSDK | undefined) => set((state) => ({ ...state, contracts })),
+
+  setContractClient: (contractClient: ContractClient | undefined) => set((state) => ({ ...state, contractClient })),
 }));

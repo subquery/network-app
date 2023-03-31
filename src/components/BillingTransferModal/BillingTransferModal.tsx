@@ -4,7 +4,8 @@
 import { assert } from '@polkadot/util';
 import { parseEther } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useSQToken } from '../../containers';
+import { useWeb3Store } from 'src/stores';
+import { useSQToken } from '../../containers';
 import { formatEther, TOKEN } from '../../utils';
 import { ModalApproveToken, ApproveContract } from '../ModalApproveToken';
 import TransactionModal from '../TransactionModal';
@@ -13,7 +14,7 @@ type TransferAction = 'Transfer' | 'Withdraw';
 
 export const BillingExchangeModal = ({ action }: { action: TransferAction }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const { consumerHostAllowance, balance, consumerHostBalance } = useSQToken();
   const sortedBalance = balance.data;
   const sortedConsumerHostBalance = consumerHostBalance.data?.balance;
@@ -61,7 +62,6 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
   };
 
   const handleClick = async (amount: string) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
     const sortedAmount = parseEther(amount.toString());
 

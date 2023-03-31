@@ -20,7 +20,6 @@ export * from './useLockPeriod';
 export * from './useUserDelegations';
 export * from './useIsIndexer';
 export * from './useSortedIndexerDeployments';
-export * from './usePendingStakeChange';
 export * from './useNetworkClient';
 export * from './useSwapData';
 export * from './useIndexerFlexPlans';

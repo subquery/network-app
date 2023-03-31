@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect } from 'react';
+import { useWeb3Store } from 'src/stores';
 import { useAsyncMemo } from '../hooks';
 import { bnToDate } from '../utils';
 import { createContainer, Logger } from './Container';
-import { useContracts } from './Contracts';
 
 type Era = {
   startTime: Date;
@@ -19,15 +19,15 @@ export function canStartNewEra(era: Era): boolean {
 }
 
 function useEraImpl(logger: Logger) {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const { refetch, ...currentEra } = useAsyncMemo(async () => {
-    if (!pendingContracts) {
+    if (!contracts) {
       logger.w('contracts not available');
       return;
     }
 
-    const { eraManager } = await pendingContracts;
+    const { eraManager } = contracts;
 
     const [period, index, startTime] = await Promise.all([
       eraManager.eraPeriod(),
@@ -43,15 +43,15 @@ function useEraImpl(logger: Logger) {
     };
 
     return era;
-  }, [pendingContracts, logger]);
+  }, [contracts, logger]);
 
   const initEra = async () => {
-    if (!pendingContracts) {
+    if (!contracts) {
       logger.w('contracts not available');
       return;
     }
 
-    const { eraManager } = await pendingContracts;
+    const { eraManager } = contracts;
 
     const tx = await eraManager.startNewEra();
 
@@ -61,8 +61,6 @@ function useEraImpl(logger: Logger) {
   };
 
   const subNewEra = useCallback(async () => {
-    const contracts = await pendingContracts;
-
     if (!contracts) return () => undefined;
 
     const filter = contracts.eraManager.filters.NewEraStart();
@@ -74,7 +72,7 @@ function useEraImpl(logger: Logger) {
     return () => {
       return contracts.eraManager.off(filter, handler);
     };
-  }, [pendingContracts, refetch]);
+  }, [contracts, refetch]);
 
   useEffect(() => {
     let unsub: () => void;

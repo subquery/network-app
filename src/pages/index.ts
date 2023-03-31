@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './explorer';
-export * from './studio';
+// export * from './studio';
 export * from './swap';
 
 export * from './indexer';

@@ -10,10 +10,10 @@ export function useDeploymentStatusOnContract(
   indexer: string,
   deploymentId: string | undefined,
 ): AsyncMemoReturn<boolean> {
-  const { contract } = useWeb3Store();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
-    assert(contract, 'Contracts not available');
+    assert(contracts, 'Contracts not available');
 
-    return await getIsOfflineDeploymentOnContract(indexer, deploymentId, contract);
+    return await getIsOfflineDeploymentOnContract(indexer, deploymentId, contracts);
   }, []);
 }

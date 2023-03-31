@@ -7,8 +7,8 @@ import { BigNumber, constants, ContractReceipt, ContractTransaction } from 'ethe
 import i18next from '../../i18n';
 import { Button, Typography } from 'antd';
 import styles from './ModalApproveToken.module.css';
-import { useContracts } from '../../containers';
 import { parseError, TOKEN } from '../../utils';
+import { useWeb3Store } from 'src/stores';
 
 export const getTokenApprovalModalText = (token = TOKEN) => ({
   title: i18next.t('tokenApproval.approve', { token }),
@@ -49,11 +49,10 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const onApproveToken = async () => {
     try {
       setIsLoading(true);
-      const contracts = await pendingContracts;
       assert(contracts, 'Contracts not available');
 
       let approvalTxResult: ContractReceipt;

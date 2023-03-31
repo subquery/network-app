@@ -6,14 +6,13 @@ import { Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@subql/components';
-import { useContracts } from '../../../containers';
 import TransactionModal from '../../../components/TransactionModal';
 import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';
 import styles from './MyOffers.module.css';
 import { useLocation } from 'react-router';
-import { useContractClient } from '../../../hooks';
 import { SummaryList } from '../../../components';
 import { ROUTES } from '../../../utils';
+import { useWeb3Store } from 'src/stores';
 
 type Props = {
   offerId: string;
@@ -27,8 +26,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const [receive, setReceive] = React.useState<string>();
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const pendingContracts = useContracts();
-  const contractClient = useContractClient();
+  const { contracts, contractClient } = useWeb3Store();
 
   React.useEffect(() => {
     async function getCancelPenalty() {
@@ -93,7 +91,6 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
   const actionBtnLabel = isExpiredPath ? t('myOffers.withdraw.title') : t('general.cancel');
 
   const handleClick = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     return contracts.purchaseOfferMarket.cancelPurchaseOffer(offerId);

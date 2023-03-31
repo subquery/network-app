@@ -1,27 +1,27 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useContracts, useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
+import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { ProjectDetails } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 import { useCallback, useEffect, useState } from 'react';
+import { useWeb3Store } from 'src/stores';
 
 export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
   const { getQuery } = useQueryRegistry();
   const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   // Used to rerun async memo
   const [cacheBreak, setCacheBreak] = useState<number>(0);
 
   const sub = useCallback(async () => {
-    if (!pendingContracts) {
+    if (!contracts) {
       return () => undefined;
     }
 
-    const contracts = await pendingContracts;
     const listener = (owner: string, queryId: unknown) => {
       setCacheBreak((val) => val + 1);
     };
@@ -35,7 +35,7 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
       contracts.queryRegistry.off(deploymentFilter, listener);
       contracts.queryRegistry.off(metadataFilter, listener);
     };
-  }, [pendingContracts, id]);
+  }, [contracts, id]);
 
   useEffect(() => {
     const pendingUnsub = sub();

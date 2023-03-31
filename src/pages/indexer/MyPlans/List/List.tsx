@@ -8,7 +8,6 @@ import { Button, Typography } from '@subql/components';
 import { GetPlans_plans_nodes as Plan } from '@__generated__/registry/GetPlans';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import TransactionModal from '@components/TransactionModal';
-import { useContracts } from '@containers';
 import assert from 'assert';
 import { convertBigNumberToNumber, formatEther, TOKEN } from '@utils';
 import { SummaryList, TableText } from '@components';
@@ -17,6 +16,7 @@ import clsx from 'clsx';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { last } from 'ramda';
 import { TableTitle } from '@subql/components';
+import { useWeb3Store } from 'src/stores';
 
 type Props = {
   data: Plan[];
@@ -26,10 +26,9 @@ type Props = {
 
 const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const handleRemovePlan = async (id: string) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const planId = last(id.split(':'));

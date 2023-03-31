@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber } from '@ethersproject/bignumber';
+import { useWeb3Store } from 'src/stores';
 import { useAsyncMemo, useEraValue } from '.';
-import { useContracts, useDelegation, useIndexer } from '../containers';
+import { useDelegation, useIndexer } from '../containers';
 import { AsyncMemoReturn } from './useAsyncMemo';
 import { CurrentEraValue } from './useEraValue';
 
 export function useIndexerCapacity(address: string): AsyncMemoReturn<CurrentEraValue<BigNumber> | undefined> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const delegation = useDelegation(address, address);
   const indexerStake = useEraValue(delegation.data?.delegation?.amount);
   const indexer = useIndexer({ address: address });
   const indexerTotalStake = useEraValue(indexer?.data?.indexer?.totalStake);
 
   return useAsyncMemo(async () => {
-    const contracts = await pendingContracts;
     if (!contracts) return;
 
     const leverageLimit = await contracts.staking.indexerLeverageLimit();
@@ -27,5 +27,5 @@ export function useIndexerCapacity(address: string): AsyncMemoReturn<CurrentEraV
     const after = stakeAfter?.mul(leverageLimit).sub(totalStakeAfter || 0) || BigNumber.from(0);
 
     return { current, after };
-  }, [indexerStake, pendingContracts]);
+  }, [indexerStake, contracts]);
 }

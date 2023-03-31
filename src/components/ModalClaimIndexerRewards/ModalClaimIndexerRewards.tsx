@@ -6,8 +6,8 @@ import assert from 'assert';
 import i18next from '../../i18n';
 import { Button, Typography } from 'antd';
 import styles from './ModalClaimIndexerRewards.module.css';
-import { useContracts } from '../../containers';
 import { parseError } from '../../utils';
+import { useWeb3Store } from 'src/stores';
 
 export const claimIndexerRewardsModalText = {
   title: i18next.t('claimIndexerRewards.title'),
@@ -33,12 +33,11 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const onClaimIndexerRewards = async () => {
     try {
       setIsLoading(true);
-      const contracts = await pendingContracts;
       assert(contracts, 'Contracts not available');
 
       const approvalTx = await contracts.rewardsHelper.indexerCatchup(indexer);

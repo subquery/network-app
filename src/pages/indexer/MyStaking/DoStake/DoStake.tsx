@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import assert from 'assert';
-import { useContracts, useSQToken, useWeb3 } from '@containers';
+import { useSQToken, useWeb3 } from '@containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
@@ -19,6 +19,7 @@ import moment from 'moment';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
+import { useWeb3Store } from 'src/stores';
 
 enum StakeAction {
   Stake = 'stake',
@@ -64,7 +65,7 @@ const getContentText = (
 
 export const DoStake: React.FC = () => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -77,7 +78,6 @@ export const DoStake: React.FC = () => {
   const requireTokenApproval = stakingAllowance?.data?.isZero();
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     assert(account, 'Account not available');

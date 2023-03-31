@@ -23,8 +23,8 @@ import { useAsyncMemo } from '../../../hooks';
 import { Status } from '@subql/network-query';
 import styles from './AcceptOffer.module.css';
 import { deploymentStatus } from '../../../components/Status/Status';
-import { useContractClient } from '../../../hooks';
 import { useWeb3 } from '../../../containers';
+import { useWeb3Store } from 'src/stores';
 
 const RequirementCheckListTitle = () => {
   const titles = ['CRITERIA', 'REQUIRED', 'ACTUAL', 'PASS'];
@@ -119,7 +119,7 @@ export const CheckList: React.VFC<ICheckList> = ({
   const { t } = useTranslation();
   const [checkListErr, setCheckListErr] = React.useState<string | undefined>(parseError(error));
   const { account: indexer } = useWeb3();
-  const contractClient = useContractClient();
+  const { contractClient } = useWeb3Store();
 
   const REQUIRED_STATUS = Status.READY;
   const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;

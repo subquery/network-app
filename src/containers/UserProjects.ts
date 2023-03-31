@@ -3,7 +3,7 @@
 
 import { BigNumber } from 'ethers';
 import * as React from 'react';
-import { useContracts } from '.';
+import { useWeb3Store } from 'src/stores';
 import { useAsyncMemo } from '../hooks';
 import { createContainer, Logger } from './Container';
 import { useQueryRegistry } from './QueryRegistry';
@@ -11,15 +11,13 @@ import { useWeb3 } from './Web3';
 
 function useUserProjectsImpl(logger: Logger) {
   const { account } = useWeb3();
-  const pendingContracts = useContracts();
-  const { getUserQueries } = useQueryRegistry();
+  const { contracts } = useWeb3Store();
+  // const { getUserQueries } = useQueryRegistry();
 
   const [cacheBreak, setCacheBreak] = React.useState<number>(0);
 
   const sub = React.useCallback(async () => {
-    if (!account || !pendingContracts) return () => undefined;
-
-    const contracts = await pendingContracts;
+    if (!account || !contracts) return () => undefined;
 
     const filter = contracts?.queryRegistry.filters.CreateQuery(null, account);
 
@@ -27,7 +25,7 @@ function useUserProjectsImpl(logger: Logger) {
 
     contracts?.queryRegistry.on(filter, listener);
     return () => contracts.queryRegistry.off(filter, listener);
-  }, [account, pendingContracts]);
+  }, [account, contracts]);
 
   React.useEffect(() => {
     const pendingUnsub = sub();
@@ -38,10 +36,11 @@ function useUserProjectsImpl(logger: Logger) {
   }, [sub]);
 
   return useAsyncMemo<BigNumber[]>(async () => {
-    if (!account) return [];
+    // if (!account) return [];
 
-    return getUserQueries(account);
-  }, [account, getUserQueries, cacheBreak]);
+    // return getUserQueries(account);
+    return [];
+  }, [account, cacheBreak]);
 }
 
 export const { useContainer: useUserProjects, Provider: UserProjectsProvider } = createContainer(useUserProjectsImpl, {

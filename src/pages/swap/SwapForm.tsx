@@ -8,19 +8,20 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { BigNumber, ContractTransaction } from 'ethers';
 import assert from 'assert';
+import { parseUnits } from 'ethers/lib/utils';
+import { useWeb3Store } from 'src/stores';
+import { Card } from '@subql/components';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   ApproveContract,
   getTokenApprovalModalText,
   ModalApproveToken,
   NumberInput,
-  Stat,
   SummaryList,
 } from '../../components';
 import styles from './SwapForm.module.css';
 import { STABLE_TOKEN, TOKEN, tokenDecimals, truncFormatEtherStr, STABLE_TOKEN_DECIMAL } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
-import { useContracts } from '../../containers';
-import { parseUnits } from 'ethers/lib/utils';
 
 interface Stats {
   title: string;
@@ -71,7 +72,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onUpdateSwapData,
 }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const calWithRate = (value: string | number, reverseCal = false): string => {
     if (fromRate === 0) return '0';
@@ -131,7 +132,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
       };
 
   const onTradeOrder = async (amount: string) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
     assert(orderId, 'There is no orderId available.');
 
@@ -149,9 +149,14 @@ export const SwapForm: React.FC<ISwapForm> = ({
 
       <div className={styles.statsContainer}>
         {stats.map((statsItem) => (
-          <div className={styles.stats} key={statsItem.title}>
-            <Stat title={statsItem.title} value={statsItem.value} tooltip={statsItem.tooltip} />
-          </div>
+          <Card
+            key={statsItem.title}
+            description={statsItem.value}
+            title={statsItem.title}
+            titleTooltipIcon={<InfoCircleOutlined />}
+            titleTooltip={statsItem.tooltip}
+            className={styles.stat}
+          />
         ))}
       </div>
 

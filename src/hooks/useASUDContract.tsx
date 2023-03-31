@@ -3,7 +3,8 @@
 
 import { BigNumber, Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import { useContracts, useWeb3 } from '../containers';
+import { useWeb3Store } from 'src/stores';
+import { useWeb3 } from '../containers';
 import { AsyncData, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
 import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
 
@@ -34,15 +35,14 @@ export function useAUSDBalance(): AsyncMemoReturn<string | undefined> {
  */
 export function useAUSDAllowance(): AsyncMemoReturn<BigNumber> {
   const { account } = useWeb3();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   return useAsyncMemo(async () => {
-    const contracts = await pendingContracts;
     const aUSDContract = await initialAUSDContract();
     if (!aUSDContract || !account || !contracts) return BigNumber.from('0');
 
     return await aUSDContract.allowance(account, contracts.permissionedExchange.address);
-  }, [account, pendingContracts]);
+  }, [account, contracts]);
 }
 
 /**
