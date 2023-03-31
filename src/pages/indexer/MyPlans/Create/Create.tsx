@@ -13,7 +13,7 @@ import { Select, TableProps, Radio, Table } from 'antd';
 import * as yup from 'yup';
 import { constants } from 'ethers';
 import TransactionModal from '@components/TransactionModal';
-import { useContracts, useWeb3 } from '@containers';
+import { useWeb3 } from '@containers';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -32,6 +32,7 @@ import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
 import { TableTitle } from '@subql/components';
 import { SUB_PLAN_TEMPLATES } from '@containers/IndexerRegistryProjectSub';
+import { useWeb3Store } from 'src/stores';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
@@ -301,7 +302,7 @@ const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep
 export const Create: React.FC = () => {
   const { t } = useTranslation();
   const [curStep, setCurStep] = React.useState<number>(0);
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const templates = useGetPlanTemplatesQuery();
 
   templates.subscribeToMore({
@@ -315,7 +316,6 @@ export const Create: React.FC = () => {
   });
 
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     if (!templates || templates.error) {

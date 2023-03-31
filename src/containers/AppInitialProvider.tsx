@@ -7,6 +7,7 @@ import { useWeb3 } from './Web3';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import { ContractSDK } from '@subql/contract-sdk';
 import { networkDeploymentDetails } from '@utils';
+import { ContractClient } from '@subql/network-clients';
 
 /**
  *
@@ -14,7 +15,7 @@ import { networkDeploymentDetails } from '@utils';
  * The App will initial ContractSDK, and store at global state
  */
 export const AppInitProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const { contract, setContract } = useWeb3Store();
+  const { contracts, setContracts, setContractClient } = useWeb3Store();
   const web3 = useWeb3();
   const [signerOrProvider, setSignerOrProvider] = React.useState<Web3Provider | JsonRpcSigner | undefined>();
 
@@ -27,12 +28,16 @@ export const AppInitProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   React.useEffect(() => {
     async function initContract() {
-      if (signerOrProvider && !contract) {
+      if (signerOrProvider && !contracts) {
         try {
           const contractInstance = await ContractSDK.create(signerOrProvider, {
             deploymentDetails: networkDeploymentDetails,
           });
-          setContract(contractInstance);
+          setContracts(contractInstance);
+
+          const sortedContractClient = ContractClient.create(contractInstance);
+          setContractClient(sortedContractClient);
+
           console.log('Contract Instance Initial', contractInstance);
         } catch (error) {
           console.error('Failed to init contracts', error);
@@ -40,7 +45,7 @@ export const AppInitProvider: React.FC<PropsWithChildren> = ({ children }) => {
       }
     }
     initContract();
-  }, [contract, setContract, signerOrProvider]);
+  }, [contracts, setContractClient, setContracts, signerOrProvider]);
 
   return <div>{children}</div>;
 };

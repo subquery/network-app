@@ -109,18 +109,18 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
               );
               return (
                 <>
-                  <div className="flex-between">
-                    <Typography variant="h6" className={styles.header}>
-                      {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
-                    </Typography>
-                    {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
-                      <ClaimRewards
-                        indexers={unclaimedRewards?.indexers as string[]}
-                        account={account ?? ''}
-                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
-                      />
-                    )}
-                  </div>
+                  <Typography variant="h6" className={styles.header}>
+                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                  </Typography>
+
+                  {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
+                    <ClaimRewards
+                      indexers={unclaimedRewards?.indexers as string[]}
+                      account={account ?? ''}
+                      totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                    />
+                  )}
+
                   <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
                 </>
               );

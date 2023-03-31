@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import assert from 'assert';
-import { useContracts } from '../containers';
+import { useWeb3Store } from 'src/stores';
 import { AsyncData, convertBigNumberToNumber } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
@@ -14,12 +14,11 @@ import { useAsyncMemo } from './useAsyncMemo';
 export const defaultLockPeriod = 7200;
 
 export function useLockPeriod(): AsyncData<number> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const lockPeriod = await contracts.staking.lockPeriod();
     return convertBigNumberToNumber(lockPeriod);
-  }, [pendingContracts]);
+  }, [contracts]);
 }

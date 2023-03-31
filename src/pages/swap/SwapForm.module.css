@@ -4,12 +4,11 @@
 
 .statsContainer {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
+  column-gap: 1rem;
 }
 
-.stats {
-  width: 48%;
+.stat {
+  width: 100%;
 }
 
 .swapAction {

@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { SummaryList } from '../../../../../components';
 import { NotificationType, openNotificationWithIcon } from '@components/Notification';
-import { useContracts } from '../../../../../containers';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -25,21 +24,21 @@ import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
 import styles from './Summary.module.css';
 import { ROUTES } from '../../../../../utils';
+import { useWeb3Store } from 'src/stores';
 
 const { CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
-export const Summary: React.VFC = () => {
+export const Summary: React.FC = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
   const navigate = useNavigate();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const createOfferContext = React.useContext(CreateOfferContext);
 
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
 
   const handleSubmit = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const {

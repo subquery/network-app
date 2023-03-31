@@ -21,7 +21,7 @@ import { IndexerDetails } from '../../models';
 import Status from '../Status';
 import { Spinner } from '@subql/components';
 import { deploymentStatus } from '../Status/Status';
-import { useContracts, useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
+import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
 import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/registry/GetDeploymentPlans';
 import { LazyQueryResult } from '@apollo/client';
 import { PlansTable, PlansTableProps } from './PlansTable';
@@ -35,6 +35,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
+import { useWeb3Store } from 'src/stores';
 
 type Props = {
   indexer: DeploymentIndexer;
@@ -158,7 +159,7 @@ const ConnectedRow: React.FC<
 > = ({ indexer, deploymentId, startBlock, ...rest }) => {
   const { updateIndexerStatus } = useProjectProgress();
   const { balance, planAllowance } = useSQToken();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const asyncMetadata = useIndexerMetadata(indexer.indexerId);
 
   const [loadDeploymentPlans, deploymentPlans] = useDeploymentPlansLazy({
@@ -188,8 +189,6 @@ const ConnectedRow: React.FC<
   }, deploymentPlans) as LazyQueryResult<Plan[], any>;
 
   const purchasePlan = async (indexer: string, planId?: string) => {
-    const contracts = await pendingContracts;
-
     assert(contracts, 'Contracts not available');
     assert(deploymentId, 'DeploymentId not provided');
     assert(planId, 'planId not provided');

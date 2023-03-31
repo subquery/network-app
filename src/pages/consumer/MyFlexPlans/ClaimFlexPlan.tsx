@@ -9,20 +9,20 @@ import { BigNumber } from 'ethers';
 
 import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import TransactionModal from '../../../components/TransactionModal';
-import { useContracts } from '../../../containers';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { TOKEN } from '../../../utils';
 import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
+import { useWeb3Store } from 'src/stores';
 
 interface ClaimFlexPlanProps {
   flexPlan: ConsumerFlexPlan;
   onSuccess: () => void;
 }
 
-export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan, onSuccess }) => {
+export const ClaimFlexPlan: React.FC<ClaimFlexPlanProps> = ({ flexPlan, onSuccess }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const { status, expiredAt, id, total, spent } = flexPlan;
   const planUnFinalised = status !== ChannelStatus.FINALIZED && new Date(expiredAt).getTime() < Date.now();
@@ -40,7 +40,6 @@ export const ClaimFlexPlan: React.VFC<ClaimFlexPlanProps> = ({ flexPlan, onSucce
   };
 
   const handleClick = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     return contracts.stateChannel.claim(id);

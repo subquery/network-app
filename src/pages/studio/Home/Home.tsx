@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router';
 import Modal from 'react-modal';
 import { CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
-import { useUserProjects, useWeb3 } from '../../../containers';
+import { useWeb3 } from '../../../containers';
 import { useProject } from '../../../hooks';
 import { modalStyles, renderAsync } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
@@ -54,7 +54,7 @@ const Home: React.VFC = () => {
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
 
-  const asyncProjects = useUserProjects();
+  // const asyncProjects = useUserProjects();
 
   const handleCreateProject = (name: string) => {
     navigate(`${STUDIO_CREATE_NAV}?name=${encodeURI(name)}`);
@@ -74,7 +74,7 @@ const Home: React.VFC = () => {
       >
         <NewProject onSubmit={handleCreateProject} onClose={() => setShowCreateModal(false)} />
       </Modal>
-
+      {/* 
       {renderAsync(asyncProjects, {
         loading: () => <Spinner />,
         error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
@@ -96,7 +96,7 @@ const Home: React.VFC = () => {
             </div>
           );
         },
-      })}
+      })} */}
     </div>
   );
 };

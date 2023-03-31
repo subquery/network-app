@@ -7,16 +7,14 @@ import './i18n';
 
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import { Explorer, Studio, Account, Indexer, Delegator, Consumer, Swap } from './pages';
+import { Explorer, Account, Indexer, Delegator, Consumer, Swap } from './pages';
 import { ChainStatus, Header, WalletRoute } from './components';
 import {
   Web3Provider,
   IPFSProvider,
   ProjectMetadataProvider,
   QueryRegistryProvider,
-  ContractsProvider,
   QueryApolloProvider,
-  UserProjectsProvider,
   IndexerRegistryProvider,
   SQTokenProvider,
   EraProvider,
@@ -25,27 +23,24 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
 import { t } from 'i18next';
 import { AppInitProvider } from '@containers/AppInitialProvider';
+import { Studio } from '@pages/studio';
 
-// TODO: Remove ContractProvider, ERAProvider, SQTProvider
+// TODO: Remove ERAProvider, SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
         <Web3Provider>
           <AppInitProvider>
-            <ContractsProvider>
-              <ProjectMetadataProvider>
-                <QueryRegistryProvider>
-                  <IndexerRegistryProvider>
-                    <EraProvider>
-                      <SQTokenProvider>
-                        <UserProjectsProvider>{children}</UserProjectsProvider>
-                      </SQTokenProvider>
-                    </EraProvider>
-                  </IndexerRegistryProvider>
-                </QueryRegistryProvider>
-              </ProjectMetadataProvider>
-            </ContractsProvider>
+            <ProjectMetadataProvider>
+              <QueryRegistryProvider>
+                <IndexerRegistryProvider>
+                  <EraProvider>
+                    <SQTokenProvider>{children}</SQTokenProvider>
+                  </EraProvider>
+                </IndexerRegistryProvider>
+              </QueryRegistryProvider>
+            </ProjectMetadataProvider>
           </AppInitProvider>
         </Web3Provider>
       </QueryApolloProvider>

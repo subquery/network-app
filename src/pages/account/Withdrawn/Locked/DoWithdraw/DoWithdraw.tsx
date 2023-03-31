@@ -6,20 +6,20 @@ import * as React from 'react';
 import assert from 'assert';
 import styles from './DoWithdraw.module.css';
 import { useTranslation } from 'react-i18next';
-import { useContracts } from '@containers';
 import TransactionModal from '@components/TransactionModal';
 import clsx from 'clsx';
 import { Button } from '@components/Button';
 import { truncFormatEtherStr } from '@utils';
+import { useWeb3Store } from 'src/stores';
 
 interface DoWithdrawProps {
   unlockedAmount: string;
   disabled: boolean;
 }
 
-export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disabled }) => {
+export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const modalText = {
     title: t('withdrawals.withdraw'),
@@ -29,7 +29,6 @@ export const DoWithdraw: React.VFC<DoWithdrawProps> = ({ unlockedAmount, disable
   };
 
   const handleClick = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     return contracts.stakingManager.widthdraw();

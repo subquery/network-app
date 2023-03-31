@@ -6,10 +6,11 @@ import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
 import * as React from 'react';
-import { useContracts, useOrders } from '../containers';
+import { useOrders } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { useWeb3Store } from 'src/stores';
 
 export function formatToken(value: BigNumberish, unit = 18): number {
   return convertStringToNumber(formatUnits(value, unit));
@@ -18,16 +19,15 @@ export function formatToken(value: BigNumberish, unit = 18): number {
 export function useSwapToken(
   orderId: string | undefined,
 ): AsyncMemoReturn<{ tokenGet: string; tokenGive: string } | undefined> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     if (!orderId) return undefined;
 
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const { tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
-  }, [pendingContracts, orderId]);
+  }, [contracts, orderId]);
 }
 
 /**
@@ -35,16 +35,15 @@ export function useSwapToken(
  * @returns amountGet/amountGive rate: number
  */
 export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     if (!orderId) return 0;
 
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const { amountGive, amountGet, tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
     return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
-  }, [pendingContracts, orderId]);
+  }, [contracts, orderId]);
 }
 
 /**
@@ -52,17 +51,16 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
  * @returns swap pool
  */
 export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNumber> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     if (!orderId) return BigNumber.from(0);
 
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const { tokenGiveBalance } = await contracts.permissionedExchange.orders(orderId);
 
     return tokenGiveBalance;
-  }, [pendingContracts, orderId]);
+  }, [contracts, orderId]);
 }
 
 /**
@@ -70,13 +68,12 @@ export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNum
  * @returns tradable amount
  */
 export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     return await contracts.permissionedExchange.tradeQuota(contracts.sqToken.address, account);
-  }, [pendingContracts]);
+  }, [contracts]);
 }
 
 /**

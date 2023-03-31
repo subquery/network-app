@@ -5,7 +5,7 @@ import * as React from 'react';
 import assert from 'assert';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useTranslation } from 'react-i18next';
-import { useContracts, useEra, useSQToken, useWeb3 } from '@containers';
+import { useEra, useSQToken, useWeb3 } from '@containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
@@ -20,6 +20,7 @@ import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { DelegateForm } from './DelegateFrom';
 import { BigNumber } from 'ethers';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
+import { useWeb3Store } from 'src/stores';
 
 const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: any) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -45,7 +46,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
@@ -53,7 +54,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
   const indexer = useGetIndexerQuery({ variables: { address: indexerAddress ?? '' } });
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(input.toString());

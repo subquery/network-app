@@ -7,7 +7,7 @@ import styles from './MyFlexPlans.module.css';
 import { Dropdown, Menu } from 'antd';
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 
-export const BillingAction: React.VFC = () => {
+export const BillingAction: React.FC = () => {
   const menuList = (
     <Menu>
       <Menu.Item key={'Transfer'}>

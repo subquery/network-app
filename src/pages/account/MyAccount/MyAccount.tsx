@@ -105,7 +105,10 @@ export const MyAccount: React.FC = () => {
 
   return renderAsync(mergeAsync(indexerDelegators, delegating, sortedIndexer, rewards, withdrawals), {
     loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load account details: ${e}`}</Typography>,
+    error: (e) => {
+      console.error('e', e);
+      return <Typography>{`Failed to load account details: ${e}`}</Typography>;
+    },
     data: (data) => {
       const [idexerDelagation, d, i, r, w] = data;
       const totalCount = idexerDelagation?.indexer?.delegations?.totalCount || 0;

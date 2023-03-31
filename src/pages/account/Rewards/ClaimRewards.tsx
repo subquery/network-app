@@ -6,10 +6,10 @@ import { Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionModal from '../../../components/TransactionModal';
-import { useContracts } from '../../../containers';
 import styles from './ClaimRewards.module.css';
 import { Typography } from '@subql/components';
 import { TOKEN } from '../../../utils';
+import { useWeb3Store } from 'src/stores';
 
 type Props = {
   account: string;
@@ -20,7 +20,7 @@ type Props = {
 
 const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
 
   const text = {
     title: t('rewards.claim.title'),
@@ -35,7 +35,6 @@ const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onCl
   };
 
   const handleClick = async () => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);

@@ -7,7 +7,6 @@ import { parseEther } from 'ethers/lib/utils';
 import { useWeb3 } from '@containers';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { useContracts } from '@containers';
 import TransactionModal from '@components/TransactionModal';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { useGetDelegationQuery } from '@subql/react-hooks';
@@ -17,6 +16,7 @@ import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import { Spinner, Typography } from '@subql/components';
 import { useLockPeriod } from '@hooks';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components';
+import { useWeb3Store } from 'src/stores';
 
 const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | undefined, t: any) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -46,7 +46,7 @@ interface DoUndelegateProps {
 export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, variant = 'textBtn' }) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
-  const pendingContracts = useContracts();
+  const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
@@ -64,7 +64,6 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
   });
 
   const handleClick = async (amount: string) => {
-    const contracts = await pendingContracts;
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(amount.toString());
