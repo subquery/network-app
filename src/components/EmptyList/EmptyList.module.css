@@ -13,7 +13,6 @@
 
 .description {
   margin: 1.5rem auto;
-  display: flex;
   flex-direction: column;
   row-gap: 1rem;
   width: 70%;
