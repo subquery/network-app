@@ -23,3 +23,4 @@ export * from './useSortedIndexerDeployments';
 export * from './useNetworkClient';
 export * from './useSwapData';
 export * from './useIndexerFlexPlans';
+export * from './useInitContracts';

@@ -43,7 +43,7 @@ export const MyStaking: React.FC = () => {
             if (indexer === undefined && !s) return <Spinner />;
             if (!indexer && !s) return <NotRegisteredIndexer />;
 
-            const sortedTotalStaking = truncFormatEtherStr(`${s?.totalStake.current ?? 0}`);
+            const sortedTotalStaking = truncFormatEtherStr(`${s?.ownStake.current ?? 0}`);
 
             return (
               <>
