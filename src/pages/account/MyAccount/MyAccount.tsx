@@ -80,7 +80,8 @@ const cards: CardProps[] = [
 function reduceTotal(rewards: any) {
   return formatEther(
     rewards?.reduce(
-      (accumulator: any, currentValue: { amount: unknown }) => accumulator.add(BigNumber.from(currentValue?.amount)),
+      (accumulator: any, currentValue: { amount: unknown }) =>
+        accumulator.add(BigNumber.from(currentValue?.amount ?? 0)),
       BigNumber.from(0),
     ),
     4,
