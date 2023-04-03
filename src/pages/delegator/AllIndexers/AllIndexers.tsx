@@ -4,12 +4,12 @@
 import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
 import { useGetIndexersQuery } from '@subql/react-hooks';
-import { useEra } from '../../../containers';
+import { useEra } from '@hooks';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
 
-export const AllIndexers: React.VFC = () => {
+export const AllIndexers: React.FC = () => {
   const indexers = useGetIndexersQuery();
   const { currentEra } = useEra();
 

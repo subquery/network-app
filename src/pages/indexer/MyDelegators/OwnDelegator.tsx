@@ -8,7 +8,7 @@ import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEra } from '@containers';
+import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { TOKEN, mapAsync, convertStringToNumber, mergeAsync } from '@utils';
 import styles from './OwnDelegator.module.css';
@@ -17,7 +17,7 @@ interface Props {
   indexer: string;
 }
 
-export const OwnDelegator: React.VFC<Props> = ({ indexer }) => {
+export const OwnDelegator: React.FC<Props> = ({ indexer }) => {
   const { t } = useTranslation();
   const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
   const { currentEra } = useEra();

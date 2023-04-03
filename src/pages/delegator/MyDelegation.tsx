@@ -10,7 +10,7 @@ import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { AppPageHeader, Button, Card, EmptyList, TableText } from '@components';
 import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '@utils';
 import { useDelegating } from '@hooks/useDelegating';
-import { useEra, useWeb3 } from '@containers';
+import { useWeb3 } from '@containers';
 import styles from './MyDelegation.module.css';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { parseEther } from 'ethers/lib/utils';
@@ -19,6 +19,7 @@ import { TokenAmount } from '@components/TokenAmount';
 import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { DoUndelegate } from './DoUndelegate';
 import { NavLink } from 'react-router-dom';
+import { useEra } from '@hooks';
 
 const getColumns = (
   t: any,
@@ -87,7 +88,7 @@ const getColumns = (
 ];
 
 export const MyDelegation: React.FC = () => {
-  const { currentEra } = useEra(); // TODO: Replace when container upgrade
+  const { currentEra } = useEra();
   const { t } = useTranslation();
   const { account } = useWeb3();
   const delegating = useDelegating(account ?? '');

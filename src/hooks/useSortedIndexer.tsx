@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
-import { useEra } from '../containers';
 import { SUB_DELEGATIONS, SUB_INDEXERS } from '../containers/IndexerRegistryProjectSub';
 import {
   AsyncData,
@@ -14,6 +13,7 @@ import {
 } from '../utils';
 import { COMMISSION_DIV_UNIT } from './useCommissionRate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
+import { useEra } from '@hooks';
 
 export const getCommission = (value: unknown, curEra: number | undefined): CurrentEraValue<string> => {
   const commission = parseRawEraValue(value, curEra);

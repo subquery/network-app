@@ -11,7 +11,7 @@ const translation = {
     to: 'To',
     from: 'From',
     redelegate: 'You can delegate from wallet or choose an indexer to redelegate from',
-    delegationAmountTitle: 'You are delegating',
+    delegationAmountTitle: 'You are delegating(Next)',
     amount: 'Delegation amount',
     delegator: 'Delegator',
     currentEra: 'Current Era',

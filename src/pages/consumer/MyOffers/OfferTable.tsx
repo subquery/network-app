@@ -96,8 +96,6 @@ const getColumns = (
   path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
   connectedAccount?: string | null,
 ) => {
-  console.log('path', path);
-
   const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',

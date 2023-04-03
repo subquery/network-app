@@ -17,7 +17,6 @@ import {
   QueryApolloProvider,
   IndexerRegistryProvider,
   SQTokenProvider,
-  EraProvider,
 } from './containers';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
@@ -25,7 +24,7 @@ import { t } from 'i18next';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { Studio } from '@pages/studio';
 
-// TODO: Remove ERAProvider, SQTProvider
+// TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
@@ -35,9 +34,7 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
                 <IndexerRegistryProvider>
-                  <EraProvider>
-                    <SQTokenProvider>{children}</SQTokenProvider>
-                  </EraProvider>
+                  <SQTokenProvider>{children}</SQTokenProvider>
                 </IndexerRegistryProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
