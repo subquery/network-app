@@ -151,9 +151,12 @@ const ProjectInner: React.VFC = () => {
     { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
     { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
     { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
-    { link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') },
     // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
   ];
+
+  const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
+
+  const sortedTabList = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
 
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
@@ -175,7 +178,7 @@ const ProjectInner: React.VFC = () => {
                 onChangeVersion={handleChangeVersion}
               />
             </div>
-            <TabButtons tabs={tabList} />
+            <TabButtons tabs={sortedTabList} />
           </div>
           <div className={clsx('content-width')}>
             <Routes>

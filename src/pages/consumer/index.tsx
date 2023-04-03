@@ -15,14 +15,19 @@ import { SAPlayground } from './Playground';
 
 const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE } = ROUTES;
 
-export const Consumer: React.VFC = () => {
+const isFlexPlanActive = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true';
+
+export const Consumer: React.FC = () => {
   const { t } = useTranslation();
 
-  const sidebarList = [
+  const FlexPlanTab = [
     {
       label: t('plans.category.myFlexPlans'),
       link: FLEX_PLANS,
     },
+  ];
+
+  const sidebarList = [
     {
       label: t('plans.category.myOffers'),
       link: MY_OFFERS,
@@ -37,15 +42,17 @@ export const Consumer: React.VFC = () => {
     },
   ];
 
+  const updatedSidebarList = isFlexPlanActive ? [...FlexPlanTab, ...sidebarList] : [...sidebarList];
+
   return (
-    <AppSidebar list={sidebarList}>
+    <AppSidebar list={updatedSidebarList}>
       <Routes>
         <Route path={`${SERVICE_AGREEMENTS}/${PLAYGROUND}/:id`} element={<SAPlayground />} />
         <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'consumer'} />} />
         <Route path={`${FLEX_PLANS}/${PLAYGROUND}/:id`} element={<FlexPlayground />} />
         <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
         <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
-        <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
+        {isFlexPlanActive && <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />}
         <Route path={'/'} element={<Navigate replace to={FLEX_PLANS} />} />
       </Routes>
     </AppSidebar>

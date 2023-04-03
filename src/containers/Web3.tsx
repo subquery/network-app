@@ -11,15 +11,14 @@ import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 import { networks } from '@subql/contract-sdk';
 import { useWeb3Store } from 'src/stores';
 
-export const defaultChainId = parseInt(networks.testnet.chainId, 16);
-export const ECOSYSTEM_NETWORK = networks.testnet.chainName;
+export const SUPPORTED_NETWORK = (import.meta.env.VITE_NETWORK ?? 'testnet') as keyof typeof networks;
+export const defaultChainId = parseInt(networks[SUPPORTED_NETWORK].chainId, 16);
+export const ECOSYSTEM_NETWORK = networks[SUPPORTED_NETWORK].chainName;
 
 export const RPC_URLS: Record<number, string> = {
   80001: 'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
   137: 'https://polygon-rpc.com/',
 };
-
-export const SUPPORTED_NETWORK = 'testnet';
 
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [defaultChainId],
