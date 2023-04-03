@@ -5,7 +5,7 @@ import * as React from 'react';
 import assert from 'assert';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useTranslation } from 'react-i18next';
-import { useEra, useSQToken, useWeb3 } from '@containers';
+import { useSQToken, useWeb3 } from '@containers';
 import {
   tokenApprovalModalText,
   ModalApproveToken,
@@ -21,6 +21,7 @@ import { DelegateForm } from './DelegateFrom';
 import { BigNumber } from 'ethers';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
 import { useWeb3Store } from 'src/stores';
+import { useEra } from '@hooks';
 
 const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: any) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;

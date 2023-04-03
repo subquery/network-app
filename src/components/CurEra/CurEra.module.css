@@ -4,7 +4,6 @@
 
 .countdownText {
   color: var(--gray700);
-  text-align: right;
 }
 
 .eraContainer {
@@ -16,4 +15,5 @@
 .eraProgress {
   padding-top: 3px;
   padding-right: 8px;
+  text-align: right;
 }

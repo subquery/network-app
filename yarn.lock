@@ -3864,10 +3864,10 @@
     reflect-metadata "^0.1.13"
     semver "^7.3.5"
 
-"@subql/components@^1.0.1-75":
-  version "1.0.1-75"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-75.tgz#cb65944eefc050f9c668990a211cea9419f514eb"
-  integrity sha512-ZuFST+6claLT5IVjHDH3klqTmsYj2QBVddCuJ8mgQKld4UVLfUYJAllLh575N1VYQeZSZo4zVkMT1YLQaBQSFw==
+"@subql/components@^1.0.1-76":
+  version "1.0.1-76"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.1-76.tgz#1af1eb14915b8c29b34daa42ad1f91b93baac218"
+  integrity sha512-2/uUFWf73dTFw2GXbpEGAb6nE7OkAhFfrRdT3tl4tq1j/Ps0fCb4zWCzXhzGB5PiitWge9m8lJBSIjD3HXXwPg==
   dependencies:
     antd "5.0.2"
     clsx "^1.2.1"

@@ -8,7 +8,6 @@ export { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 export * from './QueryRegistryProject';
 export * from './QueryApolloProvider';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
-export { useEra, EraProvider } from './Era';
 export * from './IndexerRegistryProject';
 export * from './QuerySwapExchangeProject';
 export * from './SQToken';

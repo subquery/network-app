@@ -7,7 +7,7 @@ import i18next from 'i18next';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEra } from '../../containers';
+import { useEra } from '@hooks';
 import { getTimeLeft, getProgress, renderAsync } from '../../utils';
 import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
