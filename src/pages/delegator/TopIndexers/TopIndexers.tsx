@@ -22,7 +22,10 @@ export const TopIndexers: React.VFC = () => {
     <div>
       {renderAsync(topIndexers, {
         error: (error) => (
-          <Typography.Text type="danger">{`Error: Failed to get top Indexers: ${error.message}`}</Typography.Text>
+          <>
+            <Typography.Text type="danger">Error: </Typography.Text>{' '}
+            <Typography.Text type="secondary">{`Failed to get top Indexers: ${error.message}`}</Typography.Text>
+          </>
         ),
         data: (data) => {
           const topIndexers = data?.indexerPrograms as TopIndexersPrograms[];

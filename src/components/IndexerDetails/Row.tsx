@@ -74,7 +74,12 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <Typography className="errorText">{`Error: ${parseError(error)}`}</Typography>,
+            error: (error) => (
+              <>
+                <Typography.Text type="danger">Error: </Typography.Text>{' '}
+                <Typography.Text type="secondary">{parseError(error)}</Typography.Text>
+              </>
+            ),
             data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>
