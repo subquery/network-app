@@ -42,7 +42,13 @@ export const OwnDeployments: React.VFC<Props> = ({ indexer, emptyList, desc }) =
       dataIndex: 'indexingProgress',
       render: (indexingProgress: number, deployment) => {
         const { indexingProgressErr } = deployment;
-        if (indexingProgressErr) return <Typography.Text type="danger">{indexingProgressErr}</Typography.Text>;
+        if (indexingProgressErr)
+          return (
+            <>
+              <Typography.Text type="danger">Error: </Typography.Text>{' '}
+              <Typography.Text type="secondary">{indexingProgressErr}</Typography.Text>
+            </>
+          );
         return <ProgressBar progress={truncateToDecimalPlace(indexingProgress, 2)} className={styles.progress} />;
       },
     },

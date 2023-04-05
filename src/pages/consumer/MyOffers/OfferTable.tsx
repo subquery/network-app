@@ -341,7 +341,12 @@ export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams,
         mapAsync((d) => d.offers?.nodes.filter(notEmpty), data),
         {
           loading: () => <Spinner />,
-          error: (e) => <Typography.Text type="danger">{`Failed to load offers: ${e}`}</Typography.Text>,
+          error: (e) => (
+            <>
+              <Typography.Text type="danger">Error: </Typography.Text>{' '}
+              <Typography.Text type="secondary">{`Failed to load offers: ${e}`}</Typography.Text>
+            </>
+          ),
           empty: () => (
             <EmptyList
               title={t('myOffers.noOffersTitle')}
