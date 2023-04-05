@@ -30,7 +30,6 @@ import {
 import { Typography } from '@subql/components';
 import { ROUTES, URLS } from '@utils';
 import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
-import clsx from 'clsx';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 
@@ -135,24 +134,15 @@ const NoOffers: React.FC = () => {
   );
 };
 
-export const MyOffersContainer: React.FC = () => {
-  const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
-  const { t } = useTranslation();
-  const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
-  return (
-    <>
-      <AppPageHeader title={title} />
-      <Outlet />
-    </>
-  );
-};
-
 export const MyOffers: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { offerAllowance } = useSQToken();
+  const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const requiresTokenApproval = offerAllowance.data?.isZero();
   const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
+
+  const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
 
   offers.subscribeToMore({
     document: SUB_OFFERS,
@@ -170,8 +160,9 @@ export const MyOffers: React.FC = () => {
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
       return (
-        <Routes>
-          <Route path={'/'} element={<MyOffersContainer />}>
+        <>
+          <AppPageHeader title={title} />
+          <Routes>
             <Route
               path={OPEN_OFFERS}
               element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
@@ -201,8 +192,8 @@ export const MyOffers: React.FC = () => {
               element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
             />
             <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
-          </Route>
-        </Routes>
+          </Routes>
+        </>
       );
     },
   });

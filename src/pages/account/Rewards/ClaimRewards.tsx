@@ -18,7 +18,7 @@ type Props = {
   onClaimed?: () => void;
 };
 
-const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
+export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
 
@@ -72,5 +72,3 @@ const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onCl
     />
   );
 };
-
-export default ClaimRewards;
