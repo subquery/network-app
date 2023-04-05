@@ -13,8 +13,7 @@ import { DoDelegate } from '../../DoDelegate';
 import { CurrentEraValue } from '@hooks/useEraValue';
 import { useWeb3 } from '@containers';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
-
-import { GetIndexers_indexers_nodes as Indexer } from '@__generated__/registry/GetIndexers';
+import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
 import { TokenAmount } from '@components/TokenAmount';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { AntDTable, SearchInput, TableText } from '@components';
