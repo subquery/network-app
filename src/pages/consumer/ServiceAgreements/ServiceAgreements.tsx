@@ -137,15 +137,17 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
   const { account } = useWeb3();
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
   const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;
-  const { t } = useTranslation();
   const serviceAgreements = useTotalCount({ variables: { address: account ?? '' } });
+
+  function parseErrors(e: Error) {
+    throw new Error('Function not implemented.');
+  }
 
   return renderAsync(serviceAgreements, {
     loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load agreements: ${e}`}</Typography>,
+    error: (e) => <Typography>{`Failed to load agreements: ${parseErrors(e)}`}</Typography>,
     data: (data) => {
       const totalCount = data?.serviceAgreements?.totalCount ?? 0;
-      const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
 
       return (
         <Routes>

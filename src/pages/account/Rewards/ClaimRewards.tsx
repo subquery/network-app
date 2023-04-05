@@ -52,7 +52,7 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
       onClick={handleClick}
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
-          <>
+          <div>
             <Typography className={'errorText'}>{error}</Typography>
             <div className={styles.btnContainer}>
               <Button
@@ -66,7 +66,7 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
                 {text.submitText}
               </Button>
             </div>
-          </>
+          </div>
         );
       }}
     />

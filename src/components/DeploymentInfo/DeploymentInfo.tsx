@@ -83,20 +83,19 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
   });
 };
 
-// TODO: Migrate from SA page, see how can improve
-export const VersionDeployment: React.VFC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
+export const VersionDeployment: React.FC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
-  const meta = useAsyncMemo(
-    () => getDeploymentMetadata(catSingle, deployment?.version),
-    [deployment?.version, catSingle],
-  );
-
+  const deploymentVersion = deployment?.version;
+  const meta = useAsyncMemo(async () => {
+    if (!deploymentVersion) return null;
+    return await getDeploymentMetadata(catSingle, deploymentVersion);
+  }, [deploymentVersion, catSingle]);
+  console.log('meta', meta);
   return (
     <TableText
       content={
         <Copy value={deployment?.id} position={'flex-start'}>
-          {' '}
-          {`${meta.data?.version} - ${getTrimmedStr(deployment?.id)}`}
+          {`${meta.data?.version ? meta.data?.version + ' - ' : ''}${getTrimmedStr(deployment?.id)}`}
         </Copy>
       }
     />
