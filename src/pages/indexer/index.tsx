@@ -8,15 +8,15 @@ import { MyStaking } from './MyStaking';
 
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
-import { Marketplace } from './OfferMarketplace';
 import { ServiceAgreements } from '../consumer/ServiceAgreements';
 import { MyDelegators } from './MyDelegators';
 import { MyProjects } from './MyProjects';
 import { Plans } from './MyPlans';
+import { Marketplace } from '@pages/consumer/OfferMarketplace';
 
 const { MY_PROJECTS, MY_PLANS, MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 
-export const Indexer: React.VFC = () => {
+export const Indexer: React.FC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
@@ -55,7 +55,6 @@ export const Indexer: React.VFC = () => {
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
         <Route path={`${MY_PLANS}/*`} element={<Plans />} />
         <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'indexer'} />} />
-        <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
         <Route path={'/'} element={<Navigate replace to={MY_STAKING} />} />
       </Routes>
     </AppSidebar>

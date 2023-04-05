@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
 import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
-import ClaimRewards from './ClaimRewards';
+import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
 import { AppPageHeader, TableText } from '@components';
 import { BigNumber } from 'ethers';
@@ -109,17 +109,19 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
               );
               return (
                 <>
-                  <Typography variant="h6" className={styles.header}>
-                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
-                  </Typography>
+                  <div className={styles.claim}>
+                    <Typography variant="h6" className={styles.header}>
+                      {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                    </Typography>
 
-                  {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
-                    <ClaimRewards
-                      indexers={unclaimedRewards?.indexers as string[]}
-                      account={account ?? ''}
-                      totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
-                    />
-                  )}
+                    {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
+                      <ClaimRewards
+                        indexers={unclaimedRewards?.indexers as string[]}
+                        account={account ?? ''}
+                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                      />
+                    )}
+                  </div>
 
                   <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
                 </>

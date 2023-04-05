@@ -27,3 +27,9 @@
 .rewardsList {
   margin-top: 2rem;
 }
+
+.claim {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

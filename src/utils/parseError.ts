@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
+
 export const walletConnectionErrors = [
   {
     error: 'No Ethereum provider was found on window.ethereum.',
@@ -11,36 +13,54 @@ export const walletConnectionErrors = [
 export const errors = [
   {
     error: 'apply pending changes first',
-    message: 'Error: There is pending stake or commission rate changes not finalized by indexer yet.',
+    message: 'There is pending stake or commission rate changes not finalized by indexer yet.',
   },
 
   {
     error: 'Not registered',
-    message: 'Error: Your address has not registered yet.',
+    message: 'Your address has not registered yet.',
   },
   {
     error: 'exceed daily',
-    message: `Error: You can not query as you have exceed daily limit.`,
+    message: `You can not query as you have exceed daily limit.`,
   },
   {
     error: 'invalid project id',
-    message: `Error: Please check deployment id or indexer health.`,
+    message: `Please check deployment id or indexer health.`,
   },
   {
     error: 'exceed rate limit',
-    message: `Error: You can not query as you have exceed rate limit.`,
+    message: `You can not query as you have exceed rate limit.`,
   },
   {
     error: 'invalid request',
-    message: `Error: request invalid.`,
+    message: `The Request is invalid.`,
+  },
+  {
+    error: 'user rejected transaction',
+    message: `The transaction has been rejected.`,
+  },
+  {
+    error: 'network does not support ENS',
+    message: `The address is not support ENS or invalid.`,
   },
 ];
 
-const generalErrorMsg = 'Error: unfortunately, something went wrong.';
+const generalErrorMsg = 'Unfortunately, something went wrong.';
 
-export function parseError(error: any, errorsMapping = errors): string {
+export function parseError(error: any, errorsMapping = errors): string | undefined {
+  if (!error) return;
+  console.log('error', error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
-  const sortedError = errorsMapping.find((e) => rawErrorMsg.match(e.error));
 
-  return sortedError?.message ?? rawErrorMsg ?? generalErrorMsg;
+  const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
+
+  const mapContractError = () => {
+    const revertCode = Object.keys(contractErrorCodes).find((key) =>
+      rawErrorMsg.toString().match(`reverted: ${key}`),
+    ) as keyof typeof contractErrorCodes;
+    return revertCode ? contractErrorCodes[revertCode] : undefined;
+  };
+
+  return mappingError() ?? mapContractError() ?? generalErrorMsg;
 }

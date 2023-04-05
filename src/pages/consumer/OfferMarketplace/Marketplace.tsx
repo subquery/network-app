@@ -5,10 +5,32 @@ import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, Spinner } from '@components';
+import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
 import { useWeb3 } from '../../../containers';
 import { Typography } from '@subql/components';
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
+import styles from './Marketplace.module.css';
+import { ROUTES } from '@utils';
+import { useLocation } from 'react-router-dom';
+
+const { INDEXER_OFFER_MARKETPLACE_NAV } = ROUTES;
+
+const NoOffers: React.FC = () => {
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  if (pathname === INDEXER_OFFER_MARKETPLACE_NAV) {
+    return (
+      <EmptyList
+        title={t('indexerOfferMarket.noOffersTitle')}
+        infoI18nKey={'indexerOfferMarket.noOffers'}
+        infoLinkDesc={t('myOffers.noOffersInfoLink')}
+      />
+    );
+  }
+
+  return <EmptyList title={t('consumerOfferMarket.noOffersTitle')} description={t('consumerOfferMarket.noOffers')} />;
+};
 
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
@@ -26,19 +48,19 @@ export const Marketplace: React.FC = () => {
     data: (offers) => {
       const { totalCount } = offers.offers || { totalCount: 0 };
 
-      if (totalCount <= 0) {
-        return (
-          <div>
-            <AppPageHeader title={t('offerMarket.header')} />
-            <EmptyList title={t('consumerOfferMarket.noOffersTitle')} description={t('consumerOfferMarket.noOffers')} />
-          </div>
-        );
-      }
-
       return (
         <div>
-          <AppPageHeader title={t('offerMarket.header')} desc={t('consumerOfferMarket.listDescription')} />
-          <OfferTable queryFn={useGetAllOpenOffersQuery} />
+          <AppPageHeader title={t('offerMarket.header')} />
+          {totalCount > 0 ? (
+            <>
+              <Description desc={t('consumerOfferMarket.listDescription')} />
+              <div className={styles.offers}>
+                <OfferTable queryFn={useGetAllOpenOffersQuery} />
+              </div>
+            </>
+          ) : (
+            <NoOffers />
+          )}
         </div>
       );
     },

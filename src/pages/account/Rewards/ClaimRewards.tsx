@@ -18,7 +18,7 @@ type Props = {
   onClaimed?: () => void;
 };
 
-const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
+export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
 
@@ -52,7 +52,7 @@ const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onCl
       onClick={handleClick}
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
-          <>
+          <div>
             <Typography className={'errorText'}>{error}</Typography>
             <div className={styles.btnContainer}>
               <Button
@@ -66,11 +66,9 @@ const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onCl
                 {text.submitText}
               </Button>
             </div>
-          </>
+          </div>
         );
       }}
     />
   );
 };
-
-export default ClaimRewards;

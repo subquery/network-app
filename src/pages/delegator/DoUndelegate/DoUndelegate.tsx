@@ -29,7 +29,7 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
     }),
     inputTitle: t('delegate.undelegateAmount'),
     submitText: t('delegate.confirmUndelegate'),
-    failureText: 'Sorry, could not undelegate',
+    failureText: 'Sorry, fail to undelegate.',
   };
 };
 

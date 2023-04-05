@@ -4,8 +4,9 @@
 
 ### Web app
 
-- [Production](https://frontier.subquery.network/explorer)
+- [Production](https://kepler.subquery.network)
 - [Development](https://testnet.thechaindata.com/explorer)
+- [Frontier](https://frontier.subquery.network/explorer)
 
 ### Data feed
 
