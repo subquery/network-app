@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProjectMetadata, useProjectsQuery } from '../../../containers';
-import { GetProject_project as Project } from '../../../__generated__/registry/GetProject';
+import { ProjectFieldsFragment as Project } from '@subql/network-query';
 import { useAsyncMemo, useOnScreen } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import styles from './Home.module.css';

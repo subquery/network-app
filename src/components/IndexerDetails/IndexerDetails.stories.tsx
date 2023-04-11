@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Status } from '../../__generated__/registry/globalTypes';
+import { Status } from '@subql/network-query';
 import { Row } from './Row';
 import { useTranslation } from 'react-i18next';
 import { IPFSProvider } from '../../containers';

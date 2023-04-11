@@ -5,7 +5,7 @@ import { useProjectMetadata, useProjectQuery } from '../containers';
 import { ProjectDeployment, ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
-import { GetProject_project as Project } from '../__generated__/registry/GetProject';
+import { ProjectFieldsFragment as Project } from '@subql/network-query';
 
 type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;

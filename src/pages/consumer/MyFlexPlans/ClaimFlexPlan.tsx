@@ -12,7 +12,7 @@ import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { TOKEN } from '../../../utils';
-import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
+import { ChannelStatus } from '@subql/network-query';
 import { useWeb3Store } from 'src/stores';
 
 interface ClaimFlexPlanProps {

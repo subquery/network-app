@@ -11,7 +11,7 @@ import { getTrimmedStr, renderAsync } from '../../utils';
 import IPFSImage from '../IPFSImage';
 import { TableText } from '../TableText';
 import styles from './DeploymentInfo.module.css';
-import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../__generated__/registry/GetOngoingServiceAgreements';
+import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import Copy from '../Copy';
 import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 import { Tooltip } from 'antd';
