@@ -17,7 +17,7 @@ const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 const registryLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
 
 const registrySubLink = new WebSocketLink({
-  uri: import.meta.env.VITE_QUERY_REGISTRY_PROJECT ?? '',
+  uri: import.meta.env.VITE_SUBSCRIPTION_REGISTRY_PROJECT ?? '',
   options: {
     reconnect: true,
   },
