@@ -22,7 +22,6 @@ import Status from '../Status';
 import { Spinner } from '@subql/components';
 import { deploymentStatus } from '../Status/Status';
 import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
-//import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/registry/GetDeploymentPlans';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { LazyQueryResult } from '@apollo/client';
 import { PlansTable, PlansTableProps } from './PlansTable';

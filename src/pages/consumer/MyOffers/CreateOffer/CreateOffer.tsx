@@ -6,7 +6,7 @@ import { Steps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { LeftOutlined } from '@ant-design/icons';
-import { GetDeploymentPlans_plans_nodes_planTemplate as PlanTemplate } from '../../../../__generated__/registry/GetDeploymentPlans';
+import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import styles from './CreateOffer.module.css';
 import { Button } from '../../../../components/Button';
 import { SelectDeployment } from './SelectDeployment';
