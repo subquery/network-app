@@ -3,8 +3,6 @@
 
 import React from 'react';
 import { useWeb3Store } from 'src/stores';
-
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import { ContractSDK } from '@subql/contract-sdk';
 import { networkDeploymentDetails } from '@utils';
 import { ContractClient } from '@subql/network-clients';
@@ -14,18 +12,12 @@ export function useInitContracts(): { loading: boolean } {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { contracts, setContracts, setContractClient } = useWeb3Store();
   const web3 = useWeb3();
-  const [signerOrProvider, setSignerOrProvider] = React.useState<Web3Provider | JsonRpcSigner | undefined>();
-
-  React.useEffect(() => {
-    if (web3) {
-      const signerOrProvider = web3.account ? web3.library?.getSigner(web3.account) : web3.library;
-      setSignerOrProvider(signerOrProvider);
-    }
-  }, [web3]);
 
   React.useEffect(() => {
     async function initContract() {
-      setIsLoading(true);
+      const signerOrProvider = web3?.account ? web3?.library?.getSigner(web3.account) : web3?.library;
+      // NOTE: This is a check whether signer has issue with production only
+      console.log('signerOrProvider', signerOrProvider);
       if (signerOrProvider && !contracts) {
         try {
           const contractInstance = await ContractSDK.create(signerOrProvider, {
@@ -42,9 +34,10 @@ export function useInitContracts(): { loading: boolean } {
         }
       }
     }
+    setIsLoading(true);
     initContract();
     setIsLoading(false);
-  }, [contracts, setContractClient, setContracts, signerOrProvider]);
+  }, [contracts, setContractClient, setContracts, web3]);
 
   return { loading: isLoading };
 }
