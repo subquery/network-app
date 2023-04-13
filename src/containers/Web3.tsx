@@ -8,12 +8,21 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
-import { networks } from '@subql/contract-sdk';
+import { SQNetworks } from '@subql/network-config';
 import { useWeb3Store } from 'src/stores';
+import { networks } from '@subql/contract-sdk';
+import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
+import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
 
-export const SUPPORTED_NETWORK = (import.meta.env.VITE_NETWORK ?? 'testnet') as keyof typeof networks;
+export const isMainnet = import.meta.env.VITE_NETWORK === 'kepler';
+export const SUPPORTED_NETWORK = (isMainnet ? 'kepler' : 'testnet') as SQNetworks;
 export const defaultChainId = parseInt(networks[SUPPORTED_NETWORK].chainId, 16);
+
 export const ECOSYSTEM_NETWORK = networks[SUPPORTED_NETWORK].chainName;
+
+export const NETWORK_DEPLOYMENT_DETAILS = isMainnet ? keplerJSON : testnetJSON;
+
+export const SQT_TOKEN_ADDRESS = NETWORK_DEPLOYMENT_DETAILS.SQToken.address;
 
 export const RPC_URLS: Record<number, string> = {
   80001: 'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',

@@ -10,20 +10,12 @@ import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, Spinner, TabButtons } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '@hooks/useSwapData';
-import {
-  formatEther,
-  mergeAsync,
-  renderAsyncArray,
-  SQT_TOKEN_ADDRESS,
-  STABLE_TOKEN,
-  STABLE_TOKEN_ADDRESS,
-  TOKEN,
-  ROUTES,
-} from '@utils';
+import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, ROUTES } from '@utils';
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
 import { Footer } from '@subql/components';
+import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 
 const { SWAP, SELL, BUY } = ROUTES;
 
