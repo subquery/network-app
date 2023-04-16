@@ -125,7 +125,7 @@ export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
     if (e?.code === 4902) {
       await ethWindowObj.request({
         method: ethMethods.addChain,
-        params: [networks.testnet],
+        params: [networks[SUPPORTED_NETWORK]],
       });
     } else {
       console.log('Switch Ethereum network failed', e);
