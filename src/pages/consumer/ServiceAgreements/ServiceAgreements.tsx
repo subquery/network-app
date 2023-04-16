@@ -103,7 +103,7 @@ const Agreements: React.FC<{
 
   return (
     <>
-      <AppPageHeader title={t('plans.category.serviceAgreement')} />
+      <AppPageHeader title={t('plans.category.serviceAgreement')} desc={t('serviceAgreements.agreementsDescription')} />
 
       {totalCount <= 0 && (
         <EmptyList
