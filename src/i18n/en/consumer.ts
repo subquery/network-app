@@ -166,7 +166,7 @@ const translation = {
     learnLink: 'Learn more ',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
-
+    agreementsDescription: `Agreements represent an agreement between only one Indexer and one Consumer. It’s a direct relationship where all payment flows between the two parties for the work that is done.`,
     nonConsumerAgreementsDescription_0:
       'If you (as a Consumer) create an offer that is accepted by an Indexer OR you (as a Consumer) purchase a plan advertised by an Indexer in the Explorer, a service agreement will be generated which can be tracked here.',
     nonConsumerAgreementsDescription_1:
