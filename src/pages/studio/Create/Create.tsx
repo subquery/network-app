@@ -17,7 +17,7 @@ import { isEthError } from '../../../utils';
 import { ROUTES } from '../../../utils';
 const { STUDIO_PROJECT_NAV } = ROUTES;
 
-const Create: React.VFC = () => {
+const Create: React.FC = () => {
   const { t } = useTranslation('translation');
 
   const query = useRouteQuery();

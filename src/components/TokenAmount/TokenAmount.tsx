@@ -4,7 +4,7 @@
 import { truncFormatEtherStr, TOKEN } from '../../utils';
 import { TableText } from '../TableText';
 
-export const TokenAmount: React.VFC<{ value: string | number | undefined; className?: string }> = ({
+export const TokenAmount: React.FC<{ value: string | number | undefined; className?: string }> = ({
   value,
   className,
 }) => {

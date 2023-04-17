@@ -15,7 +15,7 @@ import { TOKEN, truncFormatEtherStr, URLS } from '@utils';
 import { UseSortedIndexerReturn } from '@hooks/useSortedIndexer';
 import { TableTitle } from '@subql/components';
 
-export const NotRegisteredIndexer: React.VFC = () => {
+export const NotRegisteredIndexer: React.FC = () => {
   const { t } = useTranslation();
 
   return (
@@ -50,7 +50,7 @@ interface Props {
   showDelegated?: boolean;
 }
 
-export const Indexing: React.VFC<Props> = ({ tableData, showDelegated = false }) => {
+export const Indexing: React.FC<Props> = ({ tableData, showDelegated = false }) => {
   const { t } = useTranslation();
 
   const delegatedColumn = {

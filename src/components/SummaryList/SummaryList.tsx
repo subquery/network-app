@@ -15,7 +15,7 @@ interface SummaryListProps {
   list: List[];
 }
 
-export const SummaryList: React.VFC<SummaryListProps> = ({ title, list }) => {
+export const SummaryList: React.FC<SummaryListProps> = ({ title, list }) => {
   return (
     <div className={styles.container}>
       {title && <Typography>{title}</Typography>}

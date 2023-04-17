@@ -193,7 +193,7 @@ interface props {
   onLoadMore?: (offset: number) => void;
 }
 
-export const TopIndexerList: React.VFC<props> = ({ indexers, onLoadMore }) => {
+export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);

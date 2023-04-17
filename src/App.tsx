@@ -63,10 +63,10 @@ const entryLinks = [
     link: ROUTES.EXPLORER,
     label: t('header.explorer'),
   },
-  // {
-  //   link: ROUTES.STUDIO,
-  //   label: t('header.studio'),
-  // },
+  {
+    link: ROUTES.STUDIO,
+    label: t('header.studio'),
+  },
   {
     link: ROUTES.INDEXER,
     label: t('indexer.title'),
@@ -119,16 +119,7 @@ export const App: React.FC = () => {
               <ChainStatus>
                 <Routes>
                   <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
-                  <Route
-                    element={
-                      <WalletRoute
-                        element={<Studio />}
-                        title={t('studio.wallet.connect')}
-                        subtitle={t('studio.wallet.subTitle')}
-                      />
-                    }
-                    path={`${ROUTES.STUDIO}/*`}
-                  />
+                  <Route element={<WalletRoute element={<Studio />} />} path={`${ROUTES.STUDIO}/*`} />
                   <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
                   <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
                   <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />

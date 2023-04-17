@@ -51,7 +51,7 @@ interface IOngoingFlexPlanActions {
   onSuccess: () => void;
 }
 
-export const OngoingFlexPlanActions: React.VFC<IOngoingFlexPlanActions> = ({ flexPlan }) => {
+export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();

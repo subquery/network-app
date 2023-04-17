@@ -14,7 +14,7 @@ import { ROUTES } from '../../../utils';
 
 const { PROJECT_NAV } = ROUTES;
 
-const ProjectItem: React.VFC<{ project: Project; onClick?: () => void }> = ({ project, onClick }) => {
+const ProjectItem: React.FC<{ project: Project; onClick?: () => void }> = ({ project, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
 
   const { data: metadata } = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project]);

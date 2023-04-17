@@ -47,7 +47,7 @@ interface TerminateFlexPlanProps {
   onSuccess: () => void;
 }
 
-export const TerminateFlexPlan: React.VFC<TerminateFlexPlanProps> = ({ flexPlan }) => {
+export const TerminateFlexPlan: React.FC<TerminateFlexPlanProps> = ({ flexPlan }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();

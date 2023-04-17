@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite --mode staging",
-    "start": "yarn codegen && vite",
+    "start": "yarn codegen && yarn dev",
     "build:dev": "yarn codegen && vite build --mode staging",
     "build": "yarn codegen && vite build",
     "codegen": "mkdir -p src/__generated__ && sh ./scripts/codegen.sh",

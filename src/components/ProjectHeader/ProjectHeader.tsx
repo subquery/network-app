@@ -17,7 +17,7 @@ type Props = {
   onChangeVersion?: (key: string) => void;
 };
 
-const ProjectHeader: React.VFC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
+const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
   const { t } = useTranslation();
 
   const VersionDropdown = () => {

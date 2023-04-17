@@ -177,7 +177,7 @@ type FormProps = {
   error?: string;
 };
 
-const PlanForm: React.VFC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
+const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
   const template = templates[selectedTemplateIdx];

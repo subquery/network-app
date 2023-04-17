@@ -37,7 +37,7 @@ const OfferDetailsSchema = Yup.object().shape({
   [EXPIRE_DATE]: Yup.date().required().min(moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT)),
 });
 
-export const OfferDetails: React.VFC = () => {
+export const OfferDetails: React.FC = () => {
   const { t } = useTranslation();
   const { balance } = useSQToken();
   const createOfferContext = React.useContext(CreateOfferContext);

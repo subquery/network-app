@@ -9,7 +9,7 @@ import { Typography } from 'antd';
 import { TopIndexerList } from './TopIndexersList';
 import { GetTopIndexers_indexerPrograms as TopIndexersPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
 
-export const TopIndexers: React.VFC = () => {
+export const TopIndexers: React.FC = () => {
   const { t } = useTranslation();
   const topIndexers = useTopIndexers();
 

@@ -41,7 +41,7 @@ const NoIndexers: React.FC = () => {
   );
 };
 
-const ProjectInner: React.VFC = () => {
+const ProjectInner: React.FC = () => {
   const { id } = useParams();
   const query = useRouteQuery();
   const navigate = useNavigate();
@@ -216,7 +216,7 @@ const ProjectInner: React.VFC = () => {
   });
 };
 
-export const Project: React.VFC = () => {
+export const Project: React.FC = () => {
   return (
     <ProjectProgressProvider>
       <ProjectInner />

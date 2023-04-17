@@ -24,7 +24,7 @@ interface Props {
   desc?: string | React.ReactNode;
 }
 
-export const OwnDeployments: React.VFC<Props> = ({ indexer, emptyList, desc }) => {
+export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const indexerDeployments = useSortedIndexerDeployments(indexer);

@@ -14,7 +14,7 @@ import { Button } from '@subql/components';
 import { ROUTES } from '../../../utils';
 const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
 
-const Project: React.VFC<{ projectId: string; account: string; onClick?: () => void }> = ({
+const Project: React.FC<{ projectId: string; account: string; onClick?: () => void }> = ({
   projectId,
   account,
   onClick,
@@ -49,7 +49,7 @@ const Project: React.VFC<{ projectId: string; account: string; onClick?: () => v
   );
 };
 
-const Home: React.VFC = () => {
+const Home: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);

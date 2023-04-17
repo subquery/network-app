@@ -16,7 +16,7 @@ type Props = {
   updatedAt: Date;
 };
 
-const ExternalLink: React.VFC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
+const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
   return (
     <div className={styles.linkContainer}>
       <i className={`bi-${icon}`} role="img" aria-label={icon} />

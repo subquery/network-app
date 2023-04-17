@@ -46,7 +46,7 @@ interface props {
 
 // TODO: `useGetIndexerQuery` has been used by DoDelegate
 // TODO: update indexer detail Page once ready
-export const IndexerList: React.VFC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
+export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
   const { account } = useWeb3();

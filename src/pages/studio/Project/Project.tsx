@@ -18,7 +18,7 @@ import { ROUTES } from '../../../utils';
 
 const { DETAILS, DEPLOYMENTS } = ROUTES;
 
-const Project: React.VFC = () => {
+const Project: React.FC = () => {
   const { id } = useParams();
   const { account } = useWeb3();
   const asyncProject = useProject(id ?? '');

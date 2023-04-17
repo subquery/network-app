@@ -11,7 +11,7 @@ interface CardProps {
   value?: string;
 }
 
-export const Stat: React.VFC<CardProps> = ({ title, tooltip, value }) => {
+export const Stat: React.FC<CardProps> = ({ title, tooltip, value }) => {
   return (
     <div className={styles.stat}>
       {title && (

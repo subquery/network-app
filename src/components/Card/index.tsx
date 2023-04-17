@@ -14,7 +14,7 @@ interface CardProps {
   action?: React.ReactNode;
 }
 
-export const Card: React.VFC<CardProps> = ({ category, title, value, className, action }) => {
+export const Card: React.FC<CardProps> = ({ category, title, value, className, action }) => {
   return (
     <div className={styles.cardContainer}>
       <SQCard

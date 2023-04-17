@@ -12,7 +12,7 @@ type Props = {
   onClick?: () => void;
 };
 
-const ProjectCard: React.VFC<Props> = ({ project, onClick }) => {
+const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
   return (
     <div className={styles.card} onClick={onClick}>
       <IPFSImage src={project.metadata?.image || '/static/default.project.png'} className={styles.image} />

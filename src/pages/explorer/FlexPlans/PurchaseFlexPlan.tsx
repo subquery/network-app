@@ -70,7 +70,7 @@ const purchaseFlexPlanSchema = yup.object({
     ),
 });
 
-const PurchaseForm: React.VFC<IPurchaseForm> = ({ onClose, balance, deploymentIndexer, onSuccess }) => {
+const PurchaseForm: React.FC<IPurchaseForm> = ({ onClose, balance, deploymentIndexer, onSuccess }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
   const { t } = useTranslation();
@@ -212,7 +212,7 @@ interface PurchaseFlexPlaneProps {
 
 // TODO: Improve renderAsync render cache when reloading
 // TODO: Current need to wait dynamic time for purchase result on chain.
-export const PurchaseFlexPlan: React.VFC<PurchaseFlexPlaneProps> = ({
+export const PurchaseFlexPlan: React.FC<PurchaseFlexPlaneProps> = ({
   flexPlan,
   balance,
   isPurchased,
