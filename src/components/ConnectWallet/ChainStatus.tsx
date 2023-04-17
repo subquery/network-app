@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@subql/components';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { useWeb3Store } from 'src/stores';
 import { getConnectorConfig } from '@utils/getNetworkConnector';
 import { ECOSYSTEM_NETWORK, handleSwitchNetwork, useWeb3 } from '../../containers/Web3';
 import styles from './ChainStatus.module.css';
 import { AppTypography } from '@components/Typography';
+import { Button } from 'antd';
 
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { ethWindowObj } = useWeb3Store();
@@ -32,12 +32,9 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
               {t('unsupportedNetwork.subtitle', { supportNetwork: ECOSYSTEM_NETWORK })}
             </AppTypography>
             {isExtensionInstalled && (
-              <Button
-                label={t('unsupportedNetwork.button')}
-                className={styles.button}
-                type="primary"
-                onClick={() => handleSwitchNetwork(ethWindowObj)}
-              />
+              <Button onClick={() => handleSwitchNetwork(ethWindowObj)} type="primary" size="large" shape="round">
+                {t('unsupportedNetwork.button')}
+              </Button>
             )}
           </div>
         </div>
