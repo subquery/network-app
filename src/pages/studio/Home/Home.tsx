@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import Modal from 'react-modal';
+import { useGetProjectsQuery } from '@subql/react-hooks';
+
 import { CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useProject } from '../../../hooks';
@@ -53,8 +55,7 @@ const Home: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
-
-  // const asyncProjects = useUserProjects();
+  const asyncProjects = useGetProjectsQuery();
 
   const handleCreateProject = (name: string) => {
     navigate(`${STUDIO_CREATE_NAV}?name=${encodeURI(name)}`);
@@ -74,29 +75,33 @@ const Home: React.FC = () => {
       >
         <NewProject onSubmit={handleCreateProject} onClose={() => setShowCreateModal(false)} />
       </Modal>
-      {/* 
+
       {renderAsync(asyncProjects, {
         loading: () => <Spinner />,
         error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
-        data: (projects) => {
-          if (!projects?.length) {
+        data: (_projects) => {
+          if (!_projects.projects?.nodes.length) {
             return <CreateInstructions onClick={enableCreateModal} />;
           }
 
+          const projects = _projects.projects?.nodes
+            .map((p) => ({ id: p?.id ?? '', owner: p?.owner ?? '' }))
+            .filter(({ id, owner }) => account && id && owner === account);
+
           return (
             <div className={styles.list}>
-              {projects.map((id) => (
+              {projects.map(({ id }) => (
                 <Project
-                  projectId={id.toHexString()}
-                  key={id.toHexString()}
-                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${id.toHexString()}`)}
-                  account={account!}
+                  projectId={id}
+                  key={id}
+                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${id}`)}
+                  account={account ?? ''}
                 />
               ))}
             </div>
           );
         },
-      })} */}
+      })}
     </div>
   );
 };
