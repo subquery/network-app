@@ -81,27 +81,33 @@ const Project: React.FC = () => {
           </div>
           <div className={clsx('content-width', styles.content)}>
             <Routes>
-              <Route path={DETAILS}>
-                {editing ? (
-                  <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
-                ) : (
-                  <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
-                )}
-              </Route>
-              <Route path={DEPLOYMENTS}>
-                <div className={styles.deployments}>
-                  <DeploymentsTab
-                    projectId={id ?? ''}
-                    currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
-                  />
-                  <Button
-                    type="primary"
-                    label={t('deployment.create.title')}
-                    className={styles.deployButton}
-                    onClick={handleNewDeployment}
-                  />
-                </div>
-              </Route>
+              <Route
+                path={DETAILS}
+                element={
+                  editing ? (
+                    <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
+                  ) : (
+                    <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
+                  )
+                }
+              />
+              <Route
+                path={DEPLOYMENTS}
+                element={
+                  <div className={styles.deployments}>
+                    <DeploymentsTab
+                      projectId={id ?? ''}
+                      currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
+                    />
+                    <Button
+                      type="primary"
+                      label={t('deployment.create.title')}
+                      className={styles.deployButton}
+                      onClick={handleNewDeployment}
+                    />
+                  </div>
+                }
+              />
               <Route path={'/:id'} element={<Navigate replace to={DETAILS} />} />
             </Routes>
           </div>
