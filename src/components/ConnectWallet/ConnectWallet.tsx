@@ -29,7 +29,7 @@ const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => voi
           <div>
             <img src={icon} alt="wallet logo" className={styles.walletIcon} />
 
-            <Typography variant="body" className={styles.walletSubtitle}>
+            <Typography variant="text" className={styles.walletSubtitle}>
               {description ?? t('connectWallet.metamaskDesc')}
             </Typography>
           </div>
@@ -49,7 +49,7 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle }) => {
       <Typography variant="h4" className={styles.title}>
         {title || t('connectWallet.title')}
       </Typography>
-      <Typography variant="body" className={styles.subtitle}>
+      <Typography variant="text" className={styles.subtitle}>
         {subTitle || t('connectWallet.subtitle')}
       </Typography>
       {ALL_SUPPORTED_CONNECTORS.map((supportConnector) => {
