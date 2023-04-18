@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useProjectMetadata } from '../containers';
-import { useIndexerDeploymentsQuery } from '../containers/QueryRegistryProject';
+//import { useIndexerDeploymentsQuery } from '../containers/QueryRegistryProject';
 import { ProjectMetadata } from '../models';
 import { AsyncData, cidToBytes32, getDeploymentProgress } from '../utils';
 import { Status } from '@subql/network-query';
@@ -11,7 +11,7 @@ import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 import { useWeb3Store } from 'src/stores';
-import { useGetDeploymentIndexerQuery } from '@subql/react-hooks';
+import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
 
 const fetchDeploymentProgress = async (
   indexer: string,
@@ -49,7 +49,7 @@ export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentInd
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
   const { contracts } = useWeb3Store();
-  const indexerDeployments = useIndexerDeploymentsQuery({ indexerAddress: indexer });
+  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({ variables: { indexerAddress: indexer } });
   const indexerMetadata = useIndexerMetadata(indexer);
   const proxyEndpoint = indexerMetadata?.data?.url;
 
