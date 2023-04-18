@@ -19,7 +19,7 @@
 
 .swapButton {
   width: 20%;
-  background: var(--gray200);
+  background: var(--sq-primary-blue);
   display: flex;
   flex-direction: column;
   justify-content: center;

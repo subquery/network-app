@@ -322,12 +322,6 @@ const translation = {
         'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on MetaMask.',
     },
   },
-  consumerOfferMarket: {
-    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
-    noOffersTitle: 'There are no offers here yet',
-    noOffers:
-      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
-  },
   swap: {
     buyKSQT: `${STABLE_TOKEN} → ${TOKEN}`,
     sellKSQT: `${TOKEN} → ${STABLE_TOKEN}`,
