@@ -87,7 +87,8 @@ const translation = {
   indexerOfferMarket: {
     noOffersTitle: 'There are no current offers for you to accept',
     noOffers:
-      'As an Indexer, you can explore and accept offers here once they have been created by Consumers. Once accepted, the offer will appear under Service Agreements. <br><br> Learn more <1>here<1/>',
+      'As an Indexer, you can explore and accept offers here once they have been created by Consumers. Once accepted, the offer will appear under Service Agreements. ',
+    learnMore: 'Learn Marketplace <1>here<1>',
     listDescription:
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
   },

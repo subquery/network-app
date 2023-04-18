@@ -129,4 +129,5 @@ export const URLS = {
   LEARN_SERVICE_AGREEMENTS_DOC:
     'https://academy.subquery.network/subquery_network/kepler/consumers.html#how-to-make-a-use-of-your-purchased-plan-and-indexed-data',
   DELEGATOR: 'https://academy.subquery.network/subquery_network/delegators.html',
+  OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
 };

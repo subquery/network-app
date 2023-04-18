@@ -10,7 +10,7 @@ import { useWeb3 } from '../../../containers';
 import { Typography } from '@subql/components';
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
 import styles from './Marketplace.module.css';
-import { ROUTES } from '@utils';
+import { ROUTES, URLS } from '@utils';
 import { useLocation } from 'react-router-dom';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV } = ROUTES;
@@ -23,8 +23,10 @@ const NoOffers: React.FC = () => {
     return (
       <EmptyList
         title={t('indexerOfferMarket.noOffersTitle')}
-        infoI18nKey={'indexerOfferMarket.noOffers'}
-        infoLinkDesc={t('myOffers.noOffersInfoLink')}
+        description={t('indexerOfferMarket.noOffers')}
+        infoI18nKey={t('indexerOfferMarket.learnMore')}
+        infoLinkDesc={t('indexerOfferMarket.learnMore')}
+        infoLink={URLS.OFFER_MARKETPLACE}
       />
     );
   }
