@@ -91,6 +91,12 @@ const translation = {
     listDescription:
       'As an Indexer, you can explore and accept offers being advertised by Consumers which will generate service agreements',
   },
+  consumerOfferMarket: {
+    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
+    noOffersTitle: 'There are no offers here yet',
+    noOffers:
+      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
+  },
   myDelegators: {
     noDelegatorsTitle: 'You don’t have any Delegators yet',
     noDelegatorsDescription:
@@ -137,6 +143,10 @@ const translation = {
       socialCredibility:
         'If Indexers have provided a ENS name pointing towards their account address. Enabled is better.',
     },
+  },
+  allIndexers: {
+    nonData: 'There is no Indexer available.',
+    desc: 'View all Indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
   },
 };
 

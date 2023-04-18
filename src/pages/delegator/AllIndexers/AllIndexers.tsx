@@ -8,11 +8,13 @@ import { useEra } from '@hooks';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
+import { EmptyList } from '@components';
+import { useTranslation } from 'react-i18next';
 
 export const AllIndexers: React.FC = () => {
   const indexers = useGetIndexersQuery();
   const { currentEra } = useEra();
-
+  const { t } = useTranslation();
   const fetchMore = (offset: number) => {
     getUseQueryFetchMore(indexers, { offset, first: 10 });
   };
@@ -43,7 +45,7 @@ export const AllIndexers: React.FC = () => {
           error: (error) => <Typography>{`Error: Failed to get Indexers: ${error.message}`}</Typography>,
           data: (data) => {
             if (!data || data?.totalCount === 0) {
-              return <Typography>{`No Indexer available.`}</Typography>;
+              <EmptyList title={t('allIndexers.nonData')} description={t('allIndexers.desc')}></EmptyList>;
             }
 
             return (
