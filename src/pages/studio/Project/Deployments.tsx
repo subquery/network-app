@@ -4,7 +4,7 @@
 import { ProjectDeployments, Spinner } from '../../../components';
 import { useDeploymentsQuery, useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
-import { mergeAsync, notEmpty, renderAsync } from '../../../utils';
+import { notEmpty, renderAsync } from '../../../utils';
 import { uniqBy } from 'ramda';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 
@@ -43,26 +43,30 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
 
     return Promise.all(
       projectDeployments.map(async (deployment) => {
-        const result = await getDeploymentMetadata(catSingle, deployment.version);
+        let result = { version: '', description: '' };
+        try {
+          result = (await getDeploymentMetadata(catSingle, deployment.version)) ?? result;
+        } catch {
+          console.error(`Failed to get deployment version for ${deployment.version}`);
+        }
 
         return {
           deploymentId: deployment.id,
           createdAt: deployment.createdTimestamp,
-          version: result?.version ?? '',
-          description: result?.description ?? '',
+          version: result.version,
+          description: result.description,
         };
       }),
     );
   }, [query, currentDeployment]);
 
-  return renderAsync(mergeAsync(query, asyncDeployments), {
+  return renderAsync(asyncDeployments, {
     loading: () => <Spinner />,
     error: (e) => <div>{`Error: ${e.message}`}</div>,
-    data: (data) => {
-      if (!data) return null;
-      const [, deployments] = data;
+    data: (deployments) => {
+      if (!deployments) return null;
       if (!deployments?.length) {
-        return <div>Unable to find deployments for this project</div>;
+        return <div>There has no deployments for this project</div>;
       }
 
       return <ProjectDeployments deployments={deployments} />;
