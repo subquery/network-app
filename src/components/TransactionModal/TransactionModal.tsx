@@ -183,6 +183,7 @@ const TransactionModal = <P, T extends string>({
                 }}
                 className={sortedStyle}
                 size="medium"
+                colorScheme="standard"
                 disabled={disabled || isLoading}
                 rightItem={
                   isLoading ? (

@@ -4,6 +4,10 @@
   min-width: 30%;
 }
 
+.submitBtn:hover {
+  background: var(--primary-hover) !important;
+}
+
 .btnContainer {
   width: 100%;
   display: flex;
