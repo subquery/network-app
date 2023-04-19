@@ -2,12 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useProjectMetadata } from '../containers';
-//import { useIndexerDeploymentsQuery } from '../containers/QueryRegistryProject';
 import { ProjectMetadata } from '../models';
 import { AsyncData, cidToBytes32, getDeploymentProgress } from '../utils';
 import { Status } from '@subql/network-query';
 import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql/network-query';
-//import { GetDeploymentIndexersByIndexer_deploymentIndexers_nodes as DeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexersByIndexer';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 import { useWeb3Store } from 'src/stores';

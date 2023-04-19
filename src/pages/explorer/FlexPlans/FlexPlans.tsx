@@ -27,21 +27,23 @@ import styles from './FlexPlans.module.css';
 import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
 import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
-import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+// import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import moment from 'moment';
 
 type Data<T> = T | undefined;
 
-function checkIfPurchased(openPlans: Data<GetOngoingFlexPlan>, plan: IIndexerFlexPlan): boolean | undefined {
+function checkIfPurchased(openPlans: Data<any>, plan: IIndexerFlexPlan): boolean | undefined {
   if (openPlans?.stateChannels?.nodes) {
-    return openPlans.stateChannels?.nodes.some((openPlan) => openPlan?.indexer.toLowerCase() === plan.indexer);
+    return openPlans.stateChannels?.nodes?.some(
+      (openPlan: { indexer: string }) => openPlan?.indexer.toLowerCase() === plan.indexer,
+    );
   }
 }
 
 // TODO: confirm score threadThread with consumer host service
 const getColumns = (
   account: string | null | undefined,
-  openPlans: Data<GetOngoingFlexPlan>,
+  openPlans: Data<any>,
   balance: BigNumber | undefined,
   onFetchBalance: () => void,
 ): TableProps<IIndexerFlexPlan>['columns'] => [
