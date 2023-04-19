@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes, useParams } from 'react-router';
+import { Navigate, Route, useParams } from 'react-router';
 import Modal from 'react-modal';
-import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit, TabButtons } from '../../../components';
+import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit } from '../../../components';
 import { Button } from '@subql/components';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
@@ -15,6 +15,7 @@ import DeploymentsTab from './Deployments';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { ROUTES } from '../../../utils';
+import { Typography } from 'antd';
 
 const { DETAILS, DEPLOYMENTS } = ROUTES;
 
@@ -24,6 +25,7 @@ const Project: React.FC = () => {
   const asyncProject = useProject(id ?? '');
   const { t } = useTranslation();
 
+  const [tab, setTab] = React.useState<typeof DETAILS | typeof DEPLOYMENTS>(DETAILS);
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [editing, setEditing] = React.useState<boolean>(false);
   const createDeployment = useCreateDeployment(id ?? '');
@@ -43,10 +45,7 @@ const Project: React.FC = () => {
     setEditing(false);
   };
 
-  const tabLinks = [
-    { label: t('studio.project.tab1'), link: DETAILS },
-    { label: t('studio.project.tab2'), link: DEPLOYMENTS },
-  ];
+  const tabStyle = (curTab: typeof DETAILS | typeof DEPLOYMENTS) => (curTab === tab ? undefined : 'secondary');
 
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
@@ -75,41 +74,43 @@ const Project: React.FC = () => {
             <div className="content-width">
               <ProjectHeader project={project} />
               <div className={styles.tabContainer}>
-                <TabButtons tabs={tabLinks} />
+                <Typography.Text onClick={() => setTab(DETAILS)} className={`${styles.tab} `} type={tabStyle(DETAILS)}>
+                  {'Details'}
+                </Typography.Text>
+                <Typography.Text
+                  onClick={() => setTab(DEPLOYMENTS)}
+                  className={styles.tab}
+                  type={tabStyle(DEPLOYMENTS)}
+                >
+                  {'Deployments'}
+                </Typography.Text>
               </div>
             </div>
           </div>
           <div className={clsx('content-width', styles.content)}>
-            <Routes>
-              <Route
-                path={DETAILS}
-                element={
-                  editing ? (
-                    <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
-                  ) : (
-                    <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
-                  )
-                }
-              />
-              <Route
-                path={DEPLOYMENTS}
-                element={
-                  <div className={styles.deployments}>
-                    <DeploymentsTab
-                      projectId={id ?? ''}
-                      currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
-                    />
-                    <Button
-                      type="primary"
-                      label={t('deployment.create.title')}
-                      className={styles.deployButton}
-                      onClick={handleNewDeployment}
-                    />
-                  </div>
-                }
-              />
-              <Route path={'/:id'} element={<Navigate replace to={DETAILS} />} />
-            </Routes>
+            {tab === DETAILS && (
+              <>
+                {editing ? (
+                  <ProjectEdit project={project} onSubmit={handleSubmitEdit} onCancel={() => setEditing(false)} />
+                ) : (
+                  <ProjectDetail metadata={project.metadata} onEdit={handleEditMetadata} />
+                )}
+              </>
+            )}
+            {tab === DEPLOYMENTS && (
+              <div className={styles.deployments}>
+                <DeploymentsTab
+                  projectId={id ?? ''}
+                  currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
+                />
+                <Button
+                  type="primary"
+                  label={t('deployment.create.title')}
+                  className={styles.deployButton}
+                  onClick={handleNewDeployment}
+                />
+              </div>
+            )}
           </div>
         </div>
       );

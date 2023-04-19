@@ -12,7 +12,7 @@ export const Studio: React.FC = () => {
     <div className="fullWidth">
       <Routes>
         <Route path="create" element={<Create />} />
-        <Route path="project/:id" element={<Project />} />
+        <Route path="project/:id/*" element={<Project />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>
