@@ -23,10 +23,15 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 
   return (
     <div className={styles.progress}>
-      <ProgressBar progress={truncateToDecimalPlace(maxProgress, 2)} className={styles.progressBar} />
-      <Typography variant="medium" className={styles.behind}>
-        {blocksBehind > 0 ? t('indexerProgress.blocks', { count: blocksBehind }) : t('indexerProgress.projectSynced')}
-      </Typography>
+      <ProgressBar progress={truncateToDecimalPlace(maxProgress, 4)} className={styles.progressBar} />
+      {blocksBehind > 0 && (
+        <div>
+          <Typography variant="medium" className={styles.indexingBlock}>
+            {t('indexerProgress.blocks')}
+          </Typography>
+          <Typography variant="medium" className={styles.indexingBlockCount}>{`#${currentBlock}`}</Typography>
+        </div>
+      )}
     </div>
   );
 };

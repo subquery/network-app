@@ -209,9 +209,7 @@ const translation = {
     button: 'Switch Network',
   },
   indexerProgress: {
-    projectSynced: 'Up to date',
-    blocks: '{{count}} block behind',
-    blocks_other: '{{count}} blocks behind',
+    blocks: 'Indexing blocks',
   },
   deployments: {
     header1: 'Version',

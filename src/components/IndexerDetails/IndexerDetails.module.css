@@ -43,17 +43,21 @@
 
 .progress {
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
 .progressBar {
   width: 100%;
-  margin-bottom: 2px;
-  max-width: 315px;
+  padding-right: 20px;
 }
 
-.behind {
-  padding-left: 12px;
+.indexingBlock {
+  color: var(--gray700);
+  margin-right: 2px;
+}
+
+.indexingBlockCount {
+  color: var(--primary);
 }
 
 .tableHeader {
