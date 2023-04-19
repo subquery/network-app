@@ -6,7 +6,7 @@
  * NOTE: Please avoid hardcode any color value in the Page files.
  */
 export const COLORS = {
-  primary: '#4388dd',
+  primary: '#1677ff',
   success: '#65cd45',
   error: '#f1585b',
 
