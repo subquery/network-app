@@ -3904,22 +3904,29 @@
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.3-2.tgz#ed4d464d546b65ef7339aeaa01d070e6761847d1"
   integrity sha512-3SQEJWoGM+sH+bubcMfjVxD2te6UEwPFtuGpcmqZB3nq6TV/S5IshXwX6cvMFzqyaUl2aOP95KuJ3CWTHfAOPw==
 
-"@subql/network-query@0.3.3-2", "@subql/network-query@^0.3.3-2":
+"@subql/network-query@0.3.3-2":
   version "0.3.3-2"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-2.tgz#ea873ad6ebbea7a4d0ce9d7a9bf1ff33c669b5bf"
   integrity sha512-MNkfC+tu00GX/g8t8S2/flOF2NV3qdluQbEv8CfQTG/EFQjOYvpNDAyzBIS/dU6yYgkPNUOmCi1gn+l9BZRWPw==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@^0.3.3-3":
-  version "0.3.3-3"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.3-3.tgz#1b8ae8f85824f87cd7c40dbea45fc29867cf4bca"
-  integrity sha512-K++DVYgdcNUsU3lLrO+pzz8S2m71fOURF4+Kkwc70jMMY7m0xVVmlJNHWn7OBLvYhYkAeFTTg1SvA+fccfJmrQ==
+"@subql/network-query@0.3.3-4", "@subql/network-query@^0.3.3-4":
+  version "0.3.3-4"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-4.tgz#4ad80650a17dca3a2a96c616132e90151bf6a7e5"
+  integrity sha512-HHQMfY5ybs/f2qMV697VBVL0Aq4tsrK7uFWyGheo9QYeA16vlt/dmac+VvlsvtW3YoHuUsGp/qv1M4+PPsTS/A==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/react-hooks@^0.3.3-6":
+  version "0.3.3-6"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.3-6.tgz#7fb436fdb6d0f05d7e996945ae89e58bef3ec14e"
+  integrity sha512-TWWGvOghzkDFyFYZ/hkyaG8Ftq5igxe7rfESj1fPeRoETW3w0262sT/OuAC5Q4QHdQ5Pk9CyowPAKJJrdXiB3w==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.3-2"
+    "@subql/network-query" "0.3.3-4"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 

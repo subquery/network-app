@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { TableText } from '../../../components';
-import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import {
   formatDate,
   formatEther,

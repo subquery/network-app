@@ -6,13 +6,12 @@ import { Typography, Button } from 'antd';
 import assert from 'assert';
 import { useTranslation } from 'react-i18next';
 import { BigNumber } from 'ethers';
-
-import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import TransactionModal from '../../../components/TransactionModal';
 import styles from './MyFlexPlans.module.css';
 import { formatEther } from '../../../utils/numberFormatters';
 import { TOKEN } from '../../../utils';
-import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
+import { ChannelStatus } from '@subql/network-query';
 import { useWeb3Store } from 'src/stores';
 
 interface ClaimFlexPlanProps {

@@ -12,8 +12,8 @@ import { AntDTable, DeploymentMeta, EmptyList, Spinner, TableText } from '../../
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { TableTitle } from '@subql/components';
 import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
-import { GetOngoingFlexPlan_stateChannels_nodes as ConsumerFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
-import { ChannelStatus } from '../../../__generated__/registry/globalTypes';
+import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
+import { ChannelStatus } from '@subql/network-query';
 import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { useWeb3 } from '../../../containers';
 import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';

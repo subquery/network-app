@@ -3,7 +3,7 @@
 
 import { Table, TableProps, Tooltip } from 'antd';
 import * as React from 'react';
-import { GetDeploymentIndexers_deploymentIndexers_nodes as DeploymentIndexer } from '../../__generated__/registry/GetDeploymentIndexers';
+import { DeploymentIndexerFieldsFragment as DeploymentIndexer } from '@subql/network-query';
 import Progress from './Progress';
 import { IndexerName } from './IndexerName';
 import {
@@ -22,7 +22,7 @@ import Status from '../Status';
 import { Spinner } from '@subql/components';
 import { deploymentStatus } from '../Status/Status';
 import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
-import { GetDeploymentPlans_plans_nodes as Plan } from '../../__generated__/registry/GetDeploymentPlans';
+import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { LazyQueryResult } from '@apollo/client';
 import { PlansTable, PlansTableProps } from './PlansTable';
 import assert from 'assert';

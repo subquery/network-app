@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import {
-  GetDeploymentPlans_plans_nodes as Plan,
-  GetDeploymentPlans_plans_nodes_planTemplate as PlanTemplate,
-} from '../../__generated__/registry/GetDeploymentPlans';
+import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
+import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { Table, TableProps } from 'antd';
 import { LazyQueryResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +23,7 @@ import { TableText } from '../TableText';
 
 export type PlansTableProps = {
   loadPlans: () => void;
-  asyncPlans: LazyQueryResult<Plan[], unknown>;
+  asyncPlans: LazyQueryResult<Plan[], any>;
 } & Omit<DoPurchaseProps, 'plan'>;
 
 type DoPurchaseProps = {

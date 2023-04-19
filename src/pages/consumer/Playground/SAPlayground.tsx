@@ -6,7 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
 import { TableText } from '../../../components';
-import { GetOngoingServiceAgreements_serviceAgreements_nodes as ServiceAgreement } from '../../../__generated__/registry/GetOngoingServiceAgreements';
+import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import {
   formatEther,
   getEncryptStorage,
