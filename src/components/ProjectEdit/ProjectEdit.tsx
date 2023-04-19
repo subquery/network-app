@@ -17,7 +17,7 @@ type Props = {
   onCancel?: () => void;
 };
 
-const ProjectEdit: React.VFC<Props> = (props) => {
+const ProjectEdit: React.FC<Props> = (props) => {
   const { t } = useTranslation('translation');
   const [submitError, setSubmitError] = React.useState<string>();
 

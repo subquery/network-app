@@ -11,7 +11,7 @@ interface IButtonProps extends ButtonProps {
 }
 
 // custom antD button
-export const Button: React.VFC<IButtonProps> = ({ children, onClick, ...buttonProps }) => {
+export const Button: React.FC<IButtonProps> = ({ children, onClick, ...buttonProps }) => {
   return (
     <AntdButton
       type="primary"

@@ -58,15 +58,16 @@ const externalAppLinks = [
   },
 ];
 
+const studioLink = {
+  link: ROUTES.STUDIO,
+  label: t('header.studio'),
+};
+
 const entryLinks = [
   {
     link: ROUTES.EXPLORER,
     label: t('header.explorer'),
   },
-  // {
-  //   link: ROUTES.STUDIO,
-  //   label: t('header.studio'),
-  // },
   {
     link: ROUTES.INDEXER,
     label: t('indexer.title'),
@@ -102,9 +103,10 @@ const entryLinks = [
   },
 ];
 
-export const App: React.FC = () => {
-  const { t } = useTranslation();
+const studioEnabled = import.meta.env.VITE_STUDIO_ENABLED === 'true';
+const calEntryLinks = studioEnabled ? [...entryLinks, studioLink] : [...entryLinks];
 
+export const App: React.FC = () => {
   return (
     <Providers>
       <div className="App">
@@ -112,23 +114,16 @@ export const App: React.FC = () => {
           <div className="Main">
             <div className="Header">
               {/* TODO: replace with component from ui library */}
-              <Header appNavigation={entryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
+              <Header appNavigation={calEntryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
             </div>
 
             <div className="Content">
               <ChainStatus>
                 <Routes>
                   <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
-                  <Route
-                    element={
-                      <WalletRoute
-                        element={<Studio />}
-                        title={t('studio.wallet.connect')}
-                        subtitle={t('studio.wallet.subTitle')}
-                      />
-                    }
-                    path={`${ROUTES.STUDIO}/*`}
-                  />
+                  {studioEnabled && (
+                    <Route element={<WalletRoute element={<Studio />} />} path={`${ROUTES.STUDIO}/*`} />
+                  )}
                   <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
                   <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
                   <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />

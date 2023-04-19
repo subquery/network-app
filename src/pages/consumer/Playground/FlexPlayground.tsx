@@ -66,7 +66,7 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   },
 ];
 
-export const FlexPlayground: React.VFC = () => {
+export const FlexPlayground: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { state } = useLocation();

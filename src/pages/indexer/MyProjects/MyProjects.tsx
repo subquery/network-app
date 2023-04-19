@@ -21,7 +21,7 @@ export const NoDeployment: React.FC = () => {
   );
 };
 
-export const MyProjects: React.VFC = () => {
+export const MyProjects: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
 

@@ -12,7 +12,7 @@ type Props = {
   icon?: React.ReactNode;
 };
 
-export const Description: React.VFC<Props> = ({ desc, icon }) => {
+export const Description: React.FC<Props> = ({ desc, icon }) => {
   return (
     <Space>
       {icon ?? <AiOutlineInfoCircle className="flex" color={COLORS.primary} />}

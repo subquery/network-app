@@ -92,7 +92,7 @@ const OfferSummary: React.FC<OfferSummaryProps> = ({ offer, onNext, curStep }) =
   );
 };
 
-export const DeploymentProject: React.VFC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
+export const DeploymentProject: React.FC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
   title,
   projectId,
   deploymentVersion,

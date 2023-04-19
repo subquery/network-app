@@ -15,7 +15,7 @@ type Props = {
   editText?: string;
 };
 
-const ImageInput: React.VFC<Props> = ({ label, value, placeholder, editText, imageClassName, onChange }) => {
+const ImageInput: React.FC<Props> = ({ label, value, placeholder, editText, imageClassName, onChange }) => {
   const alt = React.useMemo(() => (value ? (typeof value === 'string' ? value : value.name) : undefined), [value]);
 
   return (

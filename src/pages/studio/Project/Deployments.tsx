@@ -16,7 +16,7 @@ type Props = {
   };
 };
 
-const DeploymentsTab: React.VFC<Props> = ({ projectId, currentDeployment }) => {
+const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
   const query = useDeploymentsQuery({ projectId });
   const { catSingle } = useIPFS();
 

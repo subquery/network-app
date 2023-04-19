@@ -18,7 +18,7 @@ const buttonLinks = [
   { label: 'Specific', link: SPECIFIC_PLANS },
 ];
 
-export const Plans: React.VFC = () => {
+export const Plans: React.FC = () => {
   const { t } = useTranslation();
   return (
     <div>

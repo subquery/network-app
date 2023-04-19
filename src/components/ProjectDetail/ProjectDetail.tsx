@@ -13,7 +13,7 @@ type Props = {
   onEdit?: () => void;
 };
 
-const ProjectDetail: React.VFC<Props> = ({ metadata, onEdit }) => {
+const ProjectDetail: React.FC<Props> = ({ metadata, onEdit }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.container}>

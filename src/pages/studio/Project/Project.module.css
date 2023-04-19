@@ -19,5 +19,13 @@
 }
 
 .tabContainer {
-  padding-top: 47px;
+  display: flex;
+  column-gap: 1rem;
+  margin: 1rem 0;
+}
+
+.tab {
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
 }

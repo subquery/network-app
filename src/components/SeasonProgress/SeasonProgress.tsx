@@ -14,7 +14,7 @@ function getStatus(mTo: moment.Moment, mNow: moment.Moment): string {
   }
 }
 
-export const SeasonProgress: React.VFC<{
+export const SeasonProgress: React.FC<{
   timePeriod: {
     from: Date;
     to: Date;

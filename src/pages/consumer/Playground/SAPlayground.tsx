@@ -59,7 +59,7 @@ const columns: TableProps<ServiceAgreement>['columns'] = [
   },
 ];
 
-export const SAPlayground: React.VFC = () => {
+export const SAPlayground: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const location = useLocation();

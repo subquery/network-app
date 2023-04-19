@@ -65,7 +65,7 @@ interface IStepButtons {
   submitType?: boolean;
 }
 
-export const StepButtons: React.VFC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {
+export const StepButtons: React.FC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {
   const { t } = useTranslation();
   const isFirstStep = curStep === 0;
   return (
@@ -96,7 +96,7 @@ const steps = [
   i18next.t('myOffers.steps.step_3'),
 ];
 
-export const CreateOffer: React.VFC = () => {
+export const CreateOffer: React.FC = () => {
   const [offer, setOffer] = React.useState<IOffer>(initialOffer);
   const [curStep, setCurStep] = React.useState<number>(0);
 

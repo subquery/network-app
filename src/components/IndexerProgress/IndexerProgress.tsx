@@ -17,7 +17,7 @@ type Props = {
   containerClassName?: string;
 };
 
-const IndexerProgress: React.VFC<Props> = ({ indexerStatus, chainBlockHeight, startBlock, containerClassName }) => {
+const IndexerProgress: React.FC<Props> = ({ indexerStatus, chainBlockHeight, startBlock, containerClassName }) => {
   const maxProgress = React.useMemo(() => {
     const greatestBlock = Math.max(0, ...indexerStatus.map((status) => status.latestBlock));
 

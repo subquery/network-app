@@ -20,7 +20,7 @@ interface IStepButtons {
   submitType?: boolean;
 }
 
-export const StepButtons: React.VFC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {
+export const StepButtons: React.FC<IStepButtons> = ({ loading, curStep, disabled = false, onStepChange }) => {
   const { t } = useTranslation();
   const isFirstStep = curStep === 0;
   return (

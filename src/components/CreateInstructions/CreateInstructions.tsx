@@ -6,7 +6,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/components';
 import styles from './CreateInstructions.module.css';
 
-const Instruction: React.VFC<{ step: 1 | 2 | 3 | 4 }> = ({ step }) => {
+const Instruction: React.FC<{ step: 1 | 2 | 3 | 4 }> = ({ step }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.instruction}>
@@ -28,7 +28,7 @@ type Props = {
   onClick?: () => void;
 };
 
-const CreateInstructions: React.VFC<Props> = ({ onClick }) => {
+const CreateInstructions: React.FC<Props> = ({ onClick }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.container}>

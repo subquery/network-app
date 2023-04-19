@@ -11,7 +11,7 @@ import { useGetDeploymentQuery } from '@subql/react-hooks';
 import { useProject } from '../../../../../hooks';
 import { renderAsync, ROUTES } from '../../../../../utils';
 
-export const DeploymentProject: React.VFC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
+export const DeploymentProject: React.FC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
   title,
   projectId,
   deploymentVersion,
@@ -60,7 +60,7 @@ const Description = () => {
   );
 };
 
-export const SelectDeployment: React.VFC = () => {
+export const SelectDeployment: React.FC = () => {
   const { t } = useTranslation();
   const createOfferContext = React.useContext(CreateOfferContext);
 

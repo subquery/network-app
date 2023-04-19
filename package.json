@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite --mode staging",
+    "dev": "yarn codegen && vite --mode staging",
     "start": "yarn codegen && vite",
     "build:dev": "yarn codegen && vite build --mode staging",
     "build": "yarn codegen && vite build",

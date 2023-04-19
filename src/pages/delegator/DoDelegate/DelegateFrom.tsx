@@ -18,7 +18,7 @@ import { NumberInput } from '../../../components/NumberInput';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
 import { BigNumber, BigNumberish } from 'ethers';
 
-export const AddressName: React.VFC<{
+export const AddressName: React.FC<{
   address?: string;
 }> = ({ address }) => {
   const asyncMetadata = useIndexerMetadata(address ?? '');
@@ -51,7 +51,7 @@ type FormProps = {
   curEra?: number;
 };
 
-export const DelegateForm: React.VFC<FormProps> = ({
+export const DelegateForm: React.FC<FormProps> = ({
   curEra,
   onSubmit,
   indexerAddress,

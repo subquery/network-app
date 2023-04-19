@@ -12,7 +12,7 @@ import { Spinner } from '@subql/components';
 import { ColumnsType } from 'antd/lib/table';
 import { BreadcrumbNav } from '@components';
 
-export const PlaygroundHeader: React.VFC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
+export const PlaygroundHeader: React.FC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>

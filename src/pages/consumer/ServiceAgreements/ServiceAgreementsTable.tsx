@@ -59,7 +59,7 @@ interface ServiceAgreementsTableProps {
   emptyI18nKey?: string;
 }
 
-export const ServiceAgreementsTable: React.VFC<ServiceAgreementsTableProps> = ({
+export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
   queryFn,
   queryParams,
   emptyI18nKey,

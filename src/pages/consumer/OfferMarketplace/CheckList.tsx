@@ -104,7 +104,7 @@ interface ICheckList {
   isLoading?: boolean;
 }
 
-export const CheckList: React.VFC<ICheckList> = ({
+export const CheckList: React.FC<ICheckList> = ({
   status,
   requiredBlockHeight,
   deploymentId,

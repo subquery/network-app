@@ -15,7 +15,7 @@ type Props = {
   desc?: string | Array<string>;
 };
 
-export const AppPageHeader: React.VFC<Props> = ({ title, desc }) => {
+export const AppPageHeader: React.FC<Props> = ({ title, desc }) => {
   const sortedDescriptions = Array.isArray(desc) ? desc : [desc];
   return (
     <>

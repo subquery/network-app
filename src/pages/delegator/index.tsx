@@ -12,7 +12,7 @@ import { IndexerDetails } from './IndexerDetails/IndexerDetails';
 
 const { INDEXERS, INDEXER, DELEGATING } = ROUTES;
 
-export const Delegator: React.VFC = () => {
+export const Delegator: React.FC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [

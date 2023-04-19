@@ -65,7 +65,7 @@ const columns: TableProps<SortedWithdrawals>['columns'] = [
   },
 ];
 
-export const Locked: React.VFC = () => {
+export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };

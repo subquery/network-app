@@ -263,7 +263,7 @@ interface MyOfferTableProps {
 }
 
 // TODO: update totalCount text via design
-export const OfferTable: React.VFC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
+export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, description }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();

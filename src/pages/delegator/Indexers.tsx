@@ -17,7 +17,7 @@ const buttonLinks = [
   { label: 'All', link: ALL_INDEXERS },
 ];
 
-export const Indexers: React.VFC = () => {
+export const Indexers: React.FC = () => {
   const { t } = useTranslation();
 
   return (

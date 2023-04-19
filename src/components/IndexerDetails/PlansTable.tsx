@@ -37,7 +37,7 @@ type DoPurchaseProps = {
   deploymentId?: string;
 };
 
-const DoPurchase: React.VFC<DoPurchaseProps> = ({
+const DoPurchase: React.FC<DoPurchaseProps> = ({
   plan,
   purchasePlan,
   balance,
@@ -143,7 +143,7 @@ const DoPurchase: React.VFC<DoPurchaseProps> = ({
   );
 };
 
-export const PlansTable: React.VFC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
+export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
 
   React.useEffect(() => {

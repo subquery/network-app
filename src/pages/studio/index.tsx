@@ -7,12 +7,12 @@ import Create from './Create';
 import Home from './Home';
 import Project from './Project';
 
-export const Studio: React.VFC = () => {
+export const Studio: React.FC = () => {
   return (
     <div className="fullWidth">
       <Routes>
         <Route path="create" element={<Create />} />
-        <Route path="project/:id" element={<Project />} />
+        <Route path="project/:id/*" element={<Project />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>

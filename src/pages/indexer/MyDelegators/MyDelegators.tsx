@@ -28,7 +28,7 @@ const NoDelegator: React.FC = () => {
 // TODO: move NoDelegator to OwnDelegator for indexer details consideration
 // TODO: OwnDelegator -> OwnDelegatorTable
 // TODO: pass delegators data to OwnDelegator
-export const MyDelegators: React.VFC = () => {
+export const MyDelegators: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
   const filterParams = { id: account ?? '', offset: 0 };

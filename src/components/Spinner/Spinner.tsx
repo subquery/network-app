@@ -10,7 +10,7 @@ type Props = {
   size?: number;
 };
 
-const Spinner: React.VFC<Props> = ({ size }) => {
+const Spinner: React.FC<Props> = ({ size }) => {
   const antIcon = <LoadingOutlined style={{ fontSize: size }} spin />;
 
   return (

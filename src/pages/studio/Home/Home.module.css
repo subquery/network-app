@@ -6,10 +6,11 @@
 }
 
 .list {
-  display: grid;
-  grid-template-columns: repeat(3, 270px [col-start]);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .card {
-  padding-bottom: 24px;
+  margin: 10px 15px;
 }
