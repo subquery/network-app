@@ -1,12 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import './App.css';
 import './i18n';
 
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
+import { AppInitProvider } from '@containers/AppInitialProvider';
+import { Studio } from '@pages/studio';
+import { useStudioEnabled } from '@hooks';
+import { entryLinks, studioLink, externalAppLinks } from '@utils/links';
+
 import { Explorer, Account, Indexer, Delegator, Consumer, Swap } from './pages';
 import { ChainStatus, Header, WalletRoute } from './components';
 import {
@@ -18,11 +23,7 @@ import {
   IndexerRegistryProvider,
   SQTokenProvider,
 } from './containers';
-import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
-import { t } from 'i18next';
-import { AppInitProvider } from '@containers/AppInitialProvider';
-import { Studio } from '@pages/studio';
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -45,68 +46,10 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-const externalAppLinks = [
-  {
-    label: t('header.externalExplorer.title'),
-    description: t('header.externalExplorer.description'),
-    link: 'https://explorer.subquery.network/',
-  },
-  {
-    label: t('header.managedService.title'),
-    description: t('header.managedService.description'),
-    link: 'https://managedservice.subquery.network/',
-  },
-];
-
-const studioLink = {
-  link: ROUTES.STUDIO,
-  label: t('header.studio'),
-};
-
-const entryLinks = [
-  {
-    link: ROUTES.EXPLORER,
-    label: t('header.explorer'),
-  },
-  {
-    link: ROUTES.INDEXER,
-    label: t('indexer.title'),
-  },
-  {
-    link: ROUTES.CONSUMER,
-    label: t('consumer'),
-  },
-  {
-    link: ROUTES.DELEGATOR,
-    label: t('delegator'),
-  },
-  {
-    link: ROUTES.SWAP,
-    label: t('header.swap'),
-  },
-  {
-    link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
-    label: t('header.documentation'),
-  },
-  {
-    label: t('header.ecosystem'),
-    dropdown: [
-      {
-        link: 'https://forum.subquery.network/c/season-3/6',
-        label: t('header.forum'),
-      },
-      {
-        link: 'https://snapshot.org/#/subquerynetwork.eth',
-        label: t('header.governance'),
-      },
-    ],
-  },
-];
-
-const studioEnabled = import.meta.env.VITE_STUDIO_ENABLED === 'true';
-const calEntryLinks = studioEnabled ? [...entryLinks, studioLink] : [...entryLinks];
-
 export const App: React.FC = () => {
+  const studioEnabled = useStudioEnabled();
+  const calEntryLinks = useMemo(() => (studioEnabled ? [...entryLinks, studioLink] : [...entryLinks]), [studioEnabled]);
+
   return (
     <Providers>
       <div className="App">
