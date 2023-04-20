@@ -17,7 +17,7 @@ import {
   useProjectMetadata,
   useProjectProgress,
 } from '../../../containers';
-import { useAsyncMemo, useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
+import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
 import styles from './Project.module.css';
 
@@ -48,6 +48,7 @@ const ProjectInner: React.FC = () => {
   const location = useLocation();
 
   const [offset, setOffset] = React.useState(0);
+  const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
   const { catSingle } = useIPFS();
@@ -103,15 +104,36 @@ const ProjectInner: React.FC = () => {
     }
   }, [catSingle, indexers, updateIndexerStatus, deploymentId]);
 
-  const { data: deploymentVersions } = useAsyncMemo(async () => {
-    const deploymentsWithSemver = await Promise.all(
-      (deployments?.project?.deployments.nodes ?? [])
-        .filter(notEmpty)
-        .map((d) => getVersionMetadata(d.version).then((versionMeta) => ({ id: d.id, version: versionMeta.version }))),
-    );
+  React.useEffect(() => {
+    const getVersions = async () => {
+      try {
+        const versions = deployments?.project?.deployments.nodes ?? [];
 
-    return deploymentsWithSemver.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.version }), {});
-  }, [deployments]);
+        const result = await Promise.allSettled(
+          versions.map(async (d) => {
+            const versionResult = await getVersionMetadata(d?.version ?? '');
+            return { ...d, versionHash: d?.version, version: versionResult };
+          }),
+        );
+
+        const filteredVersions = (
+          result.filter((r) => r.status === 'fulfilled') as Array<PromiseFulfilledResult<any>>
+        ).map((r) => r.value);
+
+        const calculatedVersions = filteredVersions.reduce(
+          (acc, cur) => ({ ...acc, [cur.id]: cur?.version?.version }),
+          {},
+        );
+        calculatedVersions && setDeploymentVersions(calculatedVersions);
+      } catch (error) {
+        console.log('getVersions error', error);
+      }
+    };
+
+    if (deployments && !deploymentVersions) {
+      getVersions();
+    }
+  }, [deploymentVersions, deployments, getVersionMetadata]);
 
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
 
