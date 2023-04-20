@@ -138,6 +138,7 @@ const ProjectInner: React.FC = () => {
     },
   });
 
+  // TODO: support free playground in the future, the indexer-proxy is ready for it
   // const renderPlayground = () => {
   //   if (!hasIndexers) {
   //     return <Redirect from="/:id" to={`overview`} />;
