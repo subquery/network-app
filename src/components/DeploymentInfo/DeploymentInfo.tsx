@@ -90,7 +90,7 @@ export const VersionDeployment: React.FC<{ deployment: ServiceAgreement['deploym
     if (!deploymentVersion) return null;
     return await getDeploymentMetadata(catSingle, deploymentVersion);
   }, [deploymentVersion, catSingle]);
-  console.log('meta', meta);
+
   return (
     <TableText
       content={
