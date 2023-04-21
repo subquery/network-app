@@ -26,7 +26,8 @@ type Props = {
 const Copy: React.FC<Props> = ({ value, className, iconClassName, children, iconSize, position = 'flex-center' }) => {
   const [icon, setIcon] = React.useState<boolean>(false);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation();
     setIcon(true);
     if (value) {
       navigator.clipboard.writeText(value);
@@ -36,7 +37,7 @@ const Copy: React.FC<Props> = ({ value, className, iconClassName, children, icon
   };
 
   return (
-    <div className={position} onClick={handleClick}>
+    <div className={position} onClick={(e) => handleClick(e)}>
       {children}
       <div className={clsx(styles.container, className)}>
         <div className={clsx(styles.copy, iconClassName)}>
