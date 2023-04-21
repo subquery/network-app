@@ -23,11 +23,11 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 
   return (
     <div className={styles.progress}>
-      <ProgressBar progress={truncateToDecimalPlace(maxProgress, 4)} className={styles.progressBar} showInfo={false} />
+      <ProgressBar progress={maxProgress} className={styles.progressBar} showInfo={false} />
       {blocksBehind > 0 && (
         <div>
           <Typography variant="medium" className={styles.precentage}>
-            {`${truncateToDecimalPlace(maxProgress, 4)}% `}
+            {`${(maxProgress * 100).toFixed(4)} % `}
           </Typography>
           <Typography variant="medium" className={styles.indexingBlock}>
             {t('indexerProgress.blocks')}
