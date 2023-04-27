@@ -212,7 +212,12 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
         {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to load user service agreements: ${e}`}</Typography>,
-          empty: () => <EmptyList description={t('serviceAgreements.non')} />,
+          empty: () => (
+            <EmptyList
+              title={t('serviceAgreements.noOngoingAgreementsTitle')}
+              description={t('serviceAgreements.nonOngoingAgreements')}
+            />
+          ),
           data: (data) => {
             return <Table columns={sortedCols} dataSource={data} scroll={{ x: 1500 }} rowKey={'id'} />;
           },

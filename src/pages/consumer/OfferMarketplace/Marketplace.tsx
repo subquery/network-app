@@ -6,12 +6,12 @@ import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
-import { useWeb3 } from '../../../containers';
 import { Typography } from '@subql/components';
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
 import styles from './Marketplace.module.css';
 import { ROUTES, URLS } from '@utils';
 import { useLocation } from 'react-router-dom';
+import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV } = ROUTES;
 
@@ -37,12 +37,17 @@ const NoOffers: React.FC = () => {
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
-  const { account } = useWeb3();
   const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
 
-  React.useEffect(() => {
-    offers.refetch();
-  }, [offers, account]);
+  offers.subscribeToMore({
+    document: SUB_OFFERS,
+    updateQuery: (prev, { subscriptionData }) => {
+      if (subscriptionData.data) {
+        offers.refetch();
+      }
+      return prev;
+    },
+  });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,

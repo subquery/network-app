@@ -163,6 +163,9 @@ const translation = {
     },
     noAgreementsTitle: 'You don’t have any service agreements yet',
     non: 'There are no service agreements for this project yet.',
+    noOngoingAgreementsTitle: 'There are no ongoing service agreements.',
+    nonOngoingAgreements:
+      'Ongoing service agreements will be displayed here along with the details of the plan or offer purchased by the Indexer. When an agreement has expired, it will automatically move to the Expired list. If there are currently no ongoing service agreements, this page will reflect that. ',
     learnLink: 'Learn more ',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
