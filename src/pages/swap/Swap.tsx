@@ -66,8 +66,6 @@ const getStats = ({
   ];
 };
 
-// TODO: replace with aUSD sdk pkg when switch back to acala network
-// TODO: when order is undefined at useSwapData, upon design confirm
 const SellAUSD = () => {
   const { t } = useTranslation();
 
@@ -83,7 +81,10 @@ const SellAUSD = () => {
   const aUSDTotalSupply = useAUSDTotalSupply();
 
   return renderAsyncArray(mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply), {
-    error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
+    error: (error) => {
+      console.error('Swap Error: ', error);
+      return <Typography.Text type="danger">{`Failed to load info: ${error.message}`}</Typography.Text>;
+    },
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply] = data;
