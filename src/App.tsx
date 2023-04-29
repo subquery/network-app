@@ -18,11 +18,17 @@ import {
   IndexerRegistryProvider,
   SQTokenProvider,
 } from './containers';
-import { useTranslation } from 'react-i18next';
 import { ROUTES } from './utils';
 import { t } from 'i18next';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { Studio } from '@pages/studio';
+import {
+  SUBQL_EXPLORER,
+  SUBQL_HOST_SERVICE,
+  SUBQL_NETWORK_DOC,
+  SUBQL_NETWORK_FORUM,
+  SUBQL_NETWORK_GOVERNANCE,
+} from '@utils/links';
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -49,12 +55,12 @@ const externalAppLinks = [
   {
     label: t('header.externalExplorer.title'),
     description: t('header.externalExplorer.description'),
-    link: 'https://explorer.subquery.network/',
+    link: SUBQL_EXPLORER,
   },
   {
     label: t('header.managedService.title'),
     description: t('header.managedService.description'),
-    link: 'https://managedservice.subquery.network/',
+    link: SUBQL_HOST_SERVICE,
   },
 ];
 
@@ -85,18 +91,18 @@ const entryLinks = [
     label: t('header.swap'),
   },
   {
-    link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
+    link: SUBQL_NETWORK_DOC,
     label: t('header.documentation'),
   },
   {
     label: t('header.ecosystem'),
     dropdown: [
       {
-        link: 'https://forum.subquery.network/c/season-3/6',
+        link: SUBQL_NETWORK_FORUM,
         label: t('header.forum'),
       },
       {
-        link: 'https://snapshot.org/#/subquerynetwork.eth',
+        link: SUBQL_NETWORK_GOVERNANCE,
         label: t('header.governance'),
       },
     ],
