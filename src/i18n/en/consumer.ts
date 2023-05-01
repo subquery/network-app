@@ -329,6 +329,8 @@ const translation = {
     buyKSQT: `${STABLE_TOKEN} → ${TOKEN}`,
     sellKSQT: `${TOKEN} → ${STABLE_TOKEN}`,
     poolSize: `${TOKEN} pool size`,
+    nonOrder: `There is no available order in pool currently. `,
+    nonOrderDesc: `Currently, there are no active swap orders available. However, don't worry - when orders become available, you can convert between USDC and kSQT using our basic swap mechanism. Get ready to swap with Kepler!`,
     poolSizeTooltip: `This is the amount of ${TOKEN} currently available to be purchased in the liquidity pool`,
     curRate: 'current rate',
     curRateTooltip: 'The token rate will remain fixed in Kepler network before mainnet is launched',

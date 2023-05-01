@@ -3,14 +3,14 @@
 
 import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
-import { Empty, Table, TableProps, Tag } from 'antd';
+import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '@containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
 import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
-import { AppPageHeader, TableText } from '@components';
+import { AppPageHeader, EmptyList, TableText } from '@components';
 import { BigNumber } from 'ethers';
 import { TokenAmount } from '@components/TokenAmount';
 import { useGetRewardsQuery } from '@subql/react-hooks';
@@ -27,13 +27,9 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const filterParams = { address: delegator };
   const rewards = useGetRewardsQuery({ variables: filterParams });
   const { t } = useTranslation();
-  const emptyListText = {
-    emptyText: <Empty description={t('withdrawals.noRewards')} image={Empty.PRESENTED_IMAGE_SIMPLE} />,
-  };
 
   rewards.subscribeToMore({
     document: SUB_REWARDS,
-    variables: filterParams,
     updateQuery: (prev, { subscriptionData }) => {
       if (subscriptionData.data) {
         rewards.refetch();
@@ -93,7 +89,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
           {
             error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
             loading: () => <Spinner />,
-            empty: () => <Table columns={columns} locale={emptyListText} />,
+            empty: () => <EmptyList title={t('withdrawals.noRewards')} />,
             data: (data) => {
               const totalUnclaimedRewards = rewards?.data?.unclaimedRewards?.totalCount || 0;
               const unclaimedRewards = rewards?.data?.unclaimedRewards?.nodes?.reduce(
