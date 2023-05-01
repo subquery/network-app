@@ -19,7 +19,7 @@ import { t } from 'i18next';
 import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
 import { DoWithdraw } from '../DoWithdraw';
 import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
-import { Empty } from 'antd';
+import { EmptyList } from '@components';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
@@ -71,16 +71,12 @@ export const Locked: React.FC = () => {
   const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };
   const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
   const lockPeriod = useLockPeriod();
-  const emptyListText = {
-    emptyText: <Empty description={t('withdrawals.noWithdrawals')} image={Empty.PRESENTED_IMAGE_SIMPLE} />,
-  };
 
   withdrawals.subscribeToMore({
     document: SUB_WITHDRAWALS,
-    variables: filterParams,
     updateQuery: (prev, { subscriptionData }) => {
       if (subscriptionData.data) {
-        withdrawals.refetch(filterParams);
+        withdrawals.refetch();
       }
       return prev;
     },
@@ -102,7 +98,7 @@ export const Locked: React.FC = () => {
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
           loading: () => <Spinner />,
-          empty: () => <Table columns={columns} locale={emptyListText} />,
+          empty: () => <EmptyList title={t('withdrawals.noWithdrawals')} />,
           data: (data) => {
             const sortedData = data.sort((a, b) => moment(b.endAt).unix() - moment(a.endAt).unix());
             const unlockedRewards = data.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
