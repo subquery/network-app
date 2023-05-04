@@ -37,6 +37,13 @@ import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useWeb3Store } from 'src/stores';
 
+const ErrorMsg = ({ error }: { error: Error }) => (
+  <>
+    <Typography.Text type="danger">Error: </Typography.Text>
+    <Typography.Text type="secondary">{parseError(error)}</Typography.Text>
+  </>
+);
+
 type Props = {
   indexer: DeploymentIndexer;
   metadata: AsyncData<IndexerDetails | undefined>;
@@ -74,12 +81,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => (
-              <>
-                <Typography.Text type="danger">Error: </Typography.Text>{' '}
-                <Typography.Text type="secondary">{parseError(error)}</Typography.Text>
-              </>
-            ),
+            error: (error) => <ErrorMsg error={error} />,
             data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>
@@ -90,7 +92,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
       width: '15%',
       render: () => {
         return renderAsync(isOfflineDeploymentOnContract, {
-          error: (error) => <Typography>{error?.toString()}</Typography>,
+          error: (error) => <Status text="Error" color={deploymentStatus.NOTINDEXING} />,
           loading: () => <Spinner />,
           data: (data) => {
             const sortedStatus = getDeploymentStatus(indexer.status, data);
