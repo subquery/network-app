@@ -132,7 +132,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       //'t('indexer.title')'
       title: <TableTitle title={t('indexer.title')} />,
       dataIndex: 'address',
-      width: 80,
+      width: 100,
       render: (val: string) =>
         val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
     },
