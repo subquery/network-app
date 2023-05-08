@@ -5,6 +5,7 @@ import { Typography } from '@subql/components';
 import { TableProps, Tag } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { FixedType } from 'rc-table/lib/interface';
 import i18next from 'i18next';
 import { AntDTable, SearchInput, TableText } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
@@ -25,7 +26,7 @@ const getColumns = (
   {
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
-    width: 20,
+    width: 50,
     render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
     onCell: (record: GetTopIndexers_indexerPrograms) => ({
       onClick: () => viewIndexerDetail(record.id),
@@ -34,6 +35,7 @@ const getColumns = (
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,
     dataIndex: 'id',
+    width: 250,
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
@@ -181,6 +183,7 @@ const getColumns = (
     title: <TableTitle title={i18next.t('indexer.action')} />,
     dataIndex: 'id',
     align: 'center',
+    fixed: 'right' as FixedType,
     render: (id: string) => {
       if (id === account) return <Typography> - </Typography>;
       return <DoDelegate indexerAddress={id} variant="textBtn" />;
@@ -223,7 +226,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
 
       <AntDTable
         customPagination
-        tableProps={{ columns, rowKey: 'id', dataSource: [...orderedIndexerList] }}
+        tableProps={{ columns, rowKey: 'id', scroll: { x: 1600 }, dataSource: [...orderedIndexerList] }}
         // paginationProps={{
         //   total: searchedIndexer ? searchedIndexer.length : totalCount,
         //   onChange: (page, pageSize) => {
