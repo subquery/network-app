@@ -17,6 +17,7 @@
 
 .projectName {
   color: var(--gray700);
+  padding-right: 5px;
 }
 
 .projectDeploymentId {
