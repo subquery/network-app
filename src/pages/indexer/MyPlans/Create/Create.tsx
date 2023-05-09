@@ -197,7 +197,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
     },
     {
       label: t('plans.headers.rateLimit'),
-      value: ` ${template.rateLimit} queries/min`,
+      value: ` ${template.rateLimit} queries/sec`,
     },
   ];
 

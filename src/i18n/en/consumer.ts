@@ -19,7 +19,7 @@ const translation = {
       createPlans: `Create plans for projects you're indexing. <br> Learn how to create a plan <1>here</1>.`,
       query: '{{count}} query',
       query_other: '{{count}} queries',
-      requestPerMin: 'requests/min',
+      requestPerMin: 'requests/sec',
     },
     specific: {
       title: 'You can create maximum 5 specific plans',
