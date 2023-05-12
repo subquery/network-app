@@ -5,6 +5,10 @@ import { STABLE_TOKEN, TOKEN } from '@utils/constants';
 
 const translation = {
   header: {
+    self: {
+      title: 'SubQuery Kepler',
+      description: "Decentralise your project with SubQuery's Kepler Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
+    },
     externalExplorer: {
       title: 'SubQuery Explorer',
       description:

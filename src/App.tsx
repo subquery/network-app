@@ -62,6 +62,11 @@ const externalAppLinks = [
     description: t('header.managedService.description'),
     link: SUBQL_HOST_SERVICE,
   },
+  {
+    label: t('header.self.title'),
+    description: t('header.self.description'),
+    link: '/',
+  },
 ];
 
 const studioLink = {
@@ -120,7 +125,7 @@ export const App: React.FC = () => {
           <div className="Main">
             <div className="Header">
               {/* TODO: replace with component from ui library */}
-              <Header appNavigation={calEntryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
+              <Header appNavigation={calEntryLinks} dropdownLinks={{ label: t('header.self.title'), links: externalAppLinks }} />
             </div>
 
             <div className="Content">
