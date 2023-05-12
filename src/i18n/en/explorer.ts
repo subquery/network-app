@@ -12,12 +12,12 @@ const translation = {
     externalExplorer: {
       title: 'SubQuery Explorer',
       description:
-        'Explore SubQuery projects built by other teams in the community and hosted on SubQuery’s Managed Service. Get inspired and see what others are building!',
+        "Explore SubQuery projects built by other teams in the community and hosted on SubQuery's Managed Service. Get inspired and see what others are building!",
     },
     managedService: {
       title: 'SubQuery Managed Service',
       description:
-        'Use SubQuery’s Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.',
+        "Use SubQuery's Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.",
     },
     explorer: 'Explorer',
     studio: 'Studio',
