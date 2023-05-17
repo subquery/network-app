@@ -27,7 +27,7 @@ export const AddressName: React.FC<{
   return (
     <div className={clsx('flex-start', styles.option)}>
       <div className="flex-col">
-        <Typography>{address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'} </Typography>
+        <Typography>{address === account ? 'Your wallet' : asyncMetadata?.name ?? 'Indexer'} </Typography>
         <Typography>{address} </Typography>
       </div>
     </div>
