@@ -174,15 +174,13 @@ const ConnectedRow: React.FC<
     address: indexer.indexerId,
   });
 
-  const asyncMetadataComplete = {
-    data: {
-      name: asyncMetadata?.name,
-      image: asyncMetadata?.image,
-      url: wrapProxyEndpoint(`${asyncMetadata?.url}/query/${deploymentId}`, indexer.indexerId),
-    },
-    loading: false,
-    error: undefined,
-  };
+  const asyncMetadataComplete = mapAsync(
+    (metadata): IndexerDetails => ({
+      ...metadata,
+      url: wrapProxyEndpoint(`${metadata.url}/query/${deploymentId}`, indexer.indexerId),
+    }),
+    asyncMetadata,
+  );
 
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync((d) => {
@@ -206,12 +204,12 @@ const ConnectedRow: React.FC<
   };
 
   const progressInfo = useAsyncMemo(async () => {
-    if (!deploymentId || !asyncMetadata?.url) {
+    if (!deploymentId || !asyncMetadata.data?.url) {
       return null;
     }
 
     const meta = await getDeploymentMetadata({
-      proxyEndpoint: asyncMetadata?.url,
+      proxyEndpoint: asyncMetadata.data?.url,
       deploymentId,
       indexer: indexer.indexerId,
     });
@@ -226,7 +224,7 @@ const ConnectedRow: React.FC<
       targetBlock: meta?.targetHeight ?? 0,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
-  }, [asyncMetadata, startBlock]);
+  }, [asyncMetadata?.data, startBlock]);
 
   return (
     <Row

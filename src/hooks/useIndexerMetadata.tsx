@@ -6,7 +6,6 @@ import { useIndexerRegistry, useIPFS } from '../containers';
 import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { AsyncData, bytes32ToCid } from '../utils';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
-import { useGetIndexerQuery } from '@subql/react-hooks';
 
 export async function getIndexerMetadata(
   catSingle: (cid: string) => Promise<Uint8Array>,
@@ -19,12 +18,17 @@ export async function getIndexerMetadata(
   return indexerMetadataSchema.validate(obj);
 }
 
-export function useIndexerMetadata(address: string): IndexerDetails | undefined {
-  const indexerMetadata = useGetIndexerQuery({ variables: { address } }).data?.indexer?.metadata;
+export function useIndexerMetadata(address: string): AsyncData<IndexerDetails | undefined> {
+  const { getIndexer } = useIndexerRegistry();
+  const { catSingle } = useIPFS();
 
-  return {
-    name: indexerMetadata?.name as string | undefined,
-    image: undefined,
-    url: indexerMetadata?.url as string | undefined,
-  };
+  return useAsyncMemo(async () => {
+    if (!address) return undefined;
+
+    const metadataHash = await getIndexer(address);
+
+    if (!metadataHash) return undefined;
+
+    return getIndexerMetadata(catSingle, bytes32ToCid(metadataHash));
+  }, [address, catSingle]);
 }
