@@ -49,7 +49,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
   const { contracts } = useWeb3Store();
   const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({ variables: { indexerAddress: indexer } });
   const indexerMetadata = useIndexerMetadata(indexer);
-  const proxyEndpoint = indexerMetadata?.data?.url;
+  const proxyEndpoint = indexerMetadata?.url;
 
   const sortedIndexerDeployments = useAsyncMemo(async () => {
     if (!indexerDeployments?.data?.deploymentIndexers?.nodes) return [];
