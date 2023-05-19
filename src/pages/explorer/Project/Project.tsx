@@ -24,7 +24,7 @@ import styles from './Project.module.css';
 import { FlexPlans } from '../FlexPlans';
 import { ROUTES } from '../../../utils';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
-import { useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
+import { useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
@@ -221,7 +221,7 @@ const ProjectInner: React.FC = () => {
                 path={SERVICE_AGREEMENTS}
                 element={
                   <ServiceAgreementsTable
-                    queryFn={useGetSpecificServiceAgreementsQuery}
+                    queryFn={useGetProjectOngoingServiceAgreementsQuery}
                     queryParams={{ deploymentId }}
                   />
                 }
