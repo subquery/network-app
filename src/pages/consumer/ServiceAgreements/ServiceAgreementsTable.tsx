@@ -14,7 +14,7 @@ import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName
 import { useLocation, useNavigate } from 'react-router';
 import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
-import { useAsyncMemo, useGetIndexerQuery, useGetSpecificServiceAgreementsQuery } from '@subql/react-hooks';
+import { useAsyncMemo, useGetIndexerQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { RenderResult } from '@subql/react-hooks/dist/utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
@@ -54,7 +54,7 @@ export const Project: React.FC<{ project: SAProject }> = ({ project }) => {
 };
 
 interface ServiceAgreementsTableProps {
-  queryFn: SA_QUERY_FN | typeof useGetSpecificServiceAgreementsQuery;
+  queryFn: SA_QUERY_FN | typeof useGetProjectOngoingServiceAgreementsQuery;
   queryParams?: { deploymentId?: string; address?: string };
   emptyI18nKey?: string;
 }
