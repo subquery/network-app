@@ -37,10 +37,11 @@ import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useWeb3Store } from 'src/stores';
 
-const ErrorMsg = ({ error }: { error: Error }) => (
+const ErrorMsg = ({ msg }: { msg: any }) => (
   <>
     <Typography.Text type="danger">Error: </Typography.Text>
-    <Typography.Text type="secondary">{parseError(error)}</Typography.Text>
+    <Typography.Text type="secondary">{`We can't connect to this Indexer’s metadata endpoint, it appears that they are offline.\n`}</Typography.Text>
+    <Typography.Text type="secondary">{`You can verify this by making a HTTP GET request to your ${msg.indexer.indexer?.metadata?.url}/metadata/${msg.deploymentId}`}</Typography.Text>
   </>
 );
 
@@ -81,7 +82,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg error={error} />,
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error }} />,
             data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>

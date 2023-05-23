@@ -51,6 +51,7 @@ const generalErrorMsg = 'Unfortunately, something went wrong.';
 export function parseError(error: any, errorsMapping = errors): string | undefined {
   if (!error) return;
   console.log('error', error);
+  console.log(errorsMapping);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
 
   const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
