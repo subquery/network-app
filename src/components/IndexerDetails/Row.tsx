@@ -39,9 +39,15 @@ import { useWeb3Store } from 'src/stores';
 
 const ErrorMsg = ({ msg }: { msg: any }) => (
   <>
-    <Typography.Text type="danger">Error: </Typography.Text>
+    <Tooltip
+      title={`We can't connect to this Indexer’s metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to ${msg.indexer.indexer?.metadata?.url}/metadata/${msg.deploymentId}`}
+    >
+      <Typography.Text type="danger">Error: </Typography.Text>
+      <Typography.Text type="secondary">{`Indexer Connection Error`}</Typography.Text>
+    </Tooltip>
+    {/* <Typography.Text type="danger">Error: </Typography.Text>
     <Typography.Text type="secondary">{`We can't connect to this Indexer’s metadata endpoint, it appears that they are offline.\n`}</Typography.Text>
-    <Typography.Text type="secondary">{`You can verify this by making a HTTP GET request to your ${msg.indexer.indexer?.metadata?.url}/metadata/${msg.deploymentId}`}</Typography.Text>
+    <Typography.Text type="secondary">{`You can verify this by making a HTTP GET request to your ${msg.indexer.indexer?.metadata?.url}/metadata/${msg.deploymentId}`}</Typography.Text> */}
   </>
 );
 
