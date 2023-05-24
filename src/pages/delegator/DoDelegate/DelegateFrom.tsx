@@ -21,13 +21,13 @@ import { BigNumber, BigNumberish } from 'ethers';
 export const AddressName: React.FC<{
   address?: string;
 }> = ({ address }) => {
-  const asyncMetadata = useIndexerMetadata(address ?? '');
+  const metadata = useIndexerMetadata(address ?? '');
   const { account } = useWeb3();
 
   return (
     <div className={clsx('flex-start', styles.option)}>
       <div className="flex-col">
-        <Typography>{address === account ? 'Your wallet' : asyncMetadata.data?.name ?? 'Indexer'} </Typography>
+        <Typography>{address === account ? 'Your wallet' : metadata?.name ?? 'Indexer'} </Typography>
         <Typography>{address} </Typography>
       </div>
     </div>
