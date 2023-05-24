@@ -37,3 +37,8 @@
   height: 350px;
   overflow: scroll;
 }
+
+.project {
+  display: flex;
+  flex-direction: column;
+}

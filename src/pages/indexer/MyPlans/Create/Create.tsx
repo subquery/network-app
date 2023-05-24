@@ -144,9 +144,8 @@ const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (
             <>
               {data?.map((indexerDeployments) => (
                 <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
-                  <div>
+                  <div className={styles.project}>
                     <Typography className={styles.projectName}>{`${indexerDeployments.projectName}`}</Typography>
-                    <br></br>
                     <Typography
                       className={styles.projectDeploymentId}
                     >{`Deployment ID: ${indexerDeployments.deployment?.id}`}</Typography>
