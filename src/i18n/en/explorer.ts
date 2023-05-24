@@ -5,15 +5,19 @@ import { STABLE_TOKEN, TOKEN } from '@utils/constants';
 
 const translation = {
   header: {
+    self: {
+      title: 'SubQuery Kepler',
+      description: "Decentralise your project with SubQuery's Kepler Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
+    },
     externalExplorer: {
       title: 'SubQuery Explorer',
       description:
-        'Explore SubQuery projects built by other teams in the community and hosted on SubQuery’s Managed Service. Get inspired and see what others are building!',
+        "Explore SubQuery projects built by other teams in the community and hosted on SubQuery's Managed Service. Get inspired and see what others are building!",
     },
     managedService: {
       title: 'SubQuery Managed Service',
       description:
-        'Use SubQuery’s Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.',
+        "Use SubQuery's Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.",
     },
     explorer: 'Explorer',
     studio: 'Studio',
