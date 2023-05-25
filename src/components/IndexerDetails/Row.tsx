@@ -40,10 +40,12 @@ import { useWeb3Store } from 'src/stores';
 const ErrorMsg = ({ msg }: { msg: any }) => (
   <>
     <Tooltip
-      title={`We can't connect to this Indexer’s metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to ${msg.indexer.indexer?.metadata?.url}/metadata/${msg.deploymentId}`}
+      title={`${msg.t('indexers.tooltips.connection')}${msg.indexer.indexer?.metadata?.url}/metadata/${
+        msg.deploymentId
+      }`}
     >
       <Typography.Text type="danger">Error: </Typography.Text>
-      <Typography.Text type="secondary">{`Indexer Connection Error`}</Typography.Text>
+      <Typography.Text type="secondary">{msg.t('indexers.tooltips.errors')}</Typography.Text>
     </Tooltip>
   </>
 );
@@ -85,7 +87,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error }} />,
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t }} />,
             data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>
