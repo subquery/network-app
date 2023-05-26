@@ -36,8 +36,16 @@ import { useTranslation } from 'react-i18next';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useWeb3Store } from 'src/stores';
+import { TFunction } from 'i18next';
 
-const ErrorMsg = ({ msg }: { msg: any }) => (
+type ErrorMsgProps = {
+  indexer: DeploymentIndexer;
+  deploymentId: string | undefined;
+  error: Error;
+  t: TFunction;
+};
+
+const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   <>
     <Tooltip
       title={`${msg.t('indexers.tooltips.connection')}${msg.indexer.indexer?.metadata?.url}/metadata/${
