@@ -36,11 +36,25 @@ import { useTranslation } from 'react-i18next';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useWeb3Store } from 'src/stores';
+import { TFunction } from 'i18next';
 
-const ErrorMsg = ({ error }: { error: Error }) => (
+type ErrorMsgProps = {
+  indexer: DeploymentIndexer;
+  deploymentId: string | undefined;
+  error: Error;
+  t: TFunction;
+};
+
+const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   <>
-    <Typography.Text type="danger">Error: </Typography.Text>
-    <Typography.Text type="secondary">{parseError(error)}</Typography.Text>
+    <Tooltip
+      title={`${msg.t('indexers.tooltips.connection')}${msg.indexer.indexer?.metadata?.url}/metadata/${
+        msg.deploymentId
+      }`}
+    >
+      <Typography.Text type="danger">Error: </Typography.Text>
+      <Typography.Text type="secondary">{msg.t('indexers.tooltips.errors')}</Typography.Text>
+    </Tooltip>
   </>
 );
 
@@ -81,7 +95,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg error={error} />,
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t }} />,
             data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
           })}
         </>

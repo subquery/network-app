@@ -134,6 +134,9 @@ const translation = {
     },
     tooltip: {
       status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',
+      connection:
+        "We can't connect to this Indexer's metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to",
+      error: 'Indexer Connection Error',
     },
   },
   create: {
