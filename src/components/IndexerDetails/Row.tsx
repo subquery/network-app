@@ -46,7 +46,7 @@ const ErrorMsg = ({ error }: { error: Error }) => (
 
 type Props = {
   indexer: DeploymentIndexer;
-  metadata: any;
+  metadata: IndexerDetails;
   progressInfo: AsyncData<{
     currentBlock: number;
     targetBlock: number;
@@ -73,7 +73,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
   const columns: TableProps<any>['columns'] = [
     {
       width: '20%',
-      render: () => <IndexerName name={metadata.data?.name} image={metadata.data?.image} address={indexer.indexerId} />,
+      render: () => <IndexerName name={metadata?.name} image={metadata?.image} address={indexer.indexerId} />,
     },
     {
       width: '30%',
@@ -147,7 +147,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         pagination={false}
         rowKey="id"
       />
-      {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata.data} />}
+      {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata} />}
     </>
   );
 };

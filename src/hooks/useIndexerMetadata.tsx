@@ -1,10 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useAsyncMemo } from './useAsyncMemo';
-import { useIndexerRegistry, useIPFS } from '../containers';
 import { IndexerDetails, indexerMetadataSchema } from '../models';
-import { AsyncData, bytes32ToCid } from '../utils';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 
@@ -19,7 +16,7 @@ export async function getIndexerMetadata(
   return indexerMetadataSchema.validate(obj);
 }
 
-export function useIndexerMetadata(address: string): IndexerDetails | undefined {
+export function useIndexerMetadata(address: string): IndexerDetails {
   const indexerMetadata = useGetIndexerQuery({ variables: { address } }).data?.indexer?.metadata;
 
   return {
