@@ -65,7 +65,7 @@ export const getDeploymentProgress = async ({
 
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
-  if (!metadata) return 0;
+  if (!metadata?.lastProcessedHeight || !metadata?.targetHeight) return 0;
 
   return metadata.lastProcessedHeight / metadata.targetHeight;
 };
