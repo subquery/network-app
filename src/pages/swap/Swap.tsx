@@ -20,8 +20,8 @@ import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 const { SWAP, SELL, BUY } = ROUTES;
 
 const buttonLinks = [
-  { label: i18next.t('swap.buyKSQT'), link: `${SWAP}/${BUY}` },
-  { label: i18next.t('swap.sellKSQT'), link: `${SWAP}/${SELL}` },
+  { label: i18next.t('swap.buykSQT'), link: `${SWAP}/${BUY}` },
+  { label: i18next.t('swap.sellkSQT'), link: `${SWAP}/${SELL}` },
 ];
 
 const getStats = ({
