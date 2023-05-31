@@ -149,6 +149,6 @@ const translation = {
     nonData: 'There is no Indexer available.',
     desc: 'View all Indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
   },
-};
+} as const;
 
 export default translation;

@@ -349,6 +349,6 @@ const translation = {
     swapSuccess: 'The swap transaction has succeeded.',
     swapFailure: 'The transaction has failed.',
   },
-};
+} as const;
 
 export default translation;

@@ -45,6 +45,6 @@ const translation = {
     txSubmitted: 'Transaction has been submitted. Please wait for the transaction confirmed.',
     changeValidIn15s: 'Change will be reflected on dashboard in 15s.',
   },
-};
+} as const;
 
 export default translation;
