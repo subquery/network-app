@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from 'react';
 export function useStudioEnabled() {
   const { contracts } = useWeb3Store();
   const { account } = useWeb3();
-
   const [studioEnabled, setStudioEnabled] = useState(false);
 
   const checkStudioEnabled = useCallback(async () => {

@@ -46,38 +46,42 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const App: React.FC = () => {
+const RenderRouter: React.FC = () => {
   const studioEnabled = useStudioEnabled();
   const calEntryLinks = useMemo(() => (studioEnabled ? [...entryLinks, studioLink] : [...entryLinks]), [studioEnabled]);
 
   return (
+    <BrowserRouter>
+      <div className="Main">
+        <div className="Header">
+          {/* TODO: replace with component from ui library */}
+          <Header appNavigation={calEntryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
+        </div>
+
+        <div className="Content">
+          <ChainStatus>
+            <Routes>
+              <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
+              {studioEnabled && <Route element={<WalletRoute element={<Studio />} />} path={`${ROUTES.STUDIO}/*`} />}
+              <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
+              <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
+              <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />
+              <Route element={<WalletRoute element={<Consumer />} />} path={`${ROUTES.CONSUMER}/*`} />
+              <Route element={<WalletRoute element={<Swap />} />} path={`${ROUTES.SWAP}/*`} />
+              <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
+            </Routes>
+          </ChainStatus>
+        </div>
+      </div>
+    </BrowserRouter>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
     <Providers>
       <div className="App">
-        <BrowserRouter>
-          <div className="Main">
-            <div className="Header">
-              {/* TODO: replace with component from ui library */}
-              <Header appNavigation={calEntryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
-            </div>
-
-            <div className="Content">
-              <ChainStatus>
-                <Routes>
-                  <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
-                  {studioEnabled && (
-                    <Route element={<WalletRoute element={<Studio />} />} path={`${ROUTES.STUDIO}/*`} />
-                  )}
-                  <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
-                  <Route element={<WalletRoute element={<Indexer />} />} path={`${ROUTES.INDEXER}/*`} />
-                  <Route element={<WalletRoute element={<Delegator />} />} path={`${ROUTES.DELEGATOR}/*`} />
-                  <Route element={<WalletRoute element={<Consumer />} />} path={`${ROUTES.CONSUMER}/*`} />
-                  <Route element={<WalletRoute element={<Swap />} />} path={`${ROUTES.SWAP}/*`} />
-                  <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
-                </Routes>
-              </ChainStatus>
-            </div>
-          </div>
-        </BrowserRouter>
+        <RenderRouter />
       </div>
     </Providers>
   );
