@@ -84,6 +84,7 @@ export function useSwapOrderId(swapFrom: string): { orderId: string | undefined;
   const mountedRef = React.useRef(true);
   const [orderId, setOrderId] = React.useState<string>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
+  // TODO: swapFrom now is reversed should be equal to contracts.
   const { data, loading } = useOrders({ swapFrom: swapFrom, now });
 
   React.useEffect(() => {
