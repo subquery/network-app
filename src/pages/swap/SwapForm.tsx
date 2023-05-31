@@ -212,7 +212,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   onChange={(value) => updateFieldVal(TO_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[TO_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(TO_INPUT_ID, value.toString(), setValues, setErrors)}
-                  placeholder={calWithRate('1', true) ?? '0'}
+                  placeholder={calWithRate('1') ?? '0'}
                 />
 
                 <div className={styles.swapAction}>
