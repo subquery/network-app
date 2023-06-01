@@ -8,6 +8,14 @@ import { TranslationKeys, GetDictValue } from '@i18n';
 declare module 'i18next' {
   interface CustomTypeOptions {
     returnNull: false;
+    // WARNING
+    // i18next can config this for tips, but it has bug now.
+    // https://github.com/i18next/i18next/issues/1956   Don't close for now.
+    // And the declare in typescript is a deep merge. https://www.typescriptlang.org/docs/handbook/declaration-merging.html
+    // So the TFunction we override will be merge with the default definition.
+    // The default is `string`, so add a wrong type definition to override the `string`.
+    // TODO: If the above issue solved will use this instead of override.
+    resources: { 'z-dont-use-it': '' };
   }
 
   interface TFunction {

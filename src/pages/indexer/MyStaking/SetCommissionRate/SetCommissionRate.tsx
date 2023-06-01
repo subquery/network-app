@@ -12,8 +12,9 @@ import { Spinner, Typography } from '@subql/components';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
 import { useWeb3Store } from 'src/stores';
+import { TFunction } from 'i18next';
 
-const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: any) => {
+const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
 
   return {
