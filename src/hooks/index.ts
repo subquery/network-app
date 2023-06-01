@@ -25,3 +25,4 @@ export * from './useSwapData';
 export * from './useIndexerFlexPlans';
 export * from './useInitContracts';
 export * from './useEra';
+export * from './useStudio';
