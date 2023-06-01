@@ -3,8 +3,8 @@
 
 import React, { PropsWithChildren } from 'react';
 import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
-import { offsetLimitPagination, getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition, offsetLimitPagination } from '@apollo/client/utilities';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 

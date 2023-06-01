@@ -1,10 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useAsyncMemo } from '.';
+import yaml from 'js-yaml';
+
 import { useIPFS } from '../containers';
 import { AsyncData } from '../utils';
-import yaml from 'js-yaml';
+import { useAsyncMemo } from '.';
 
 export async function fetchIpfsMetadata<T = unknown>(
   catSingle: (cid: string) => Promise<Uint8Array>,

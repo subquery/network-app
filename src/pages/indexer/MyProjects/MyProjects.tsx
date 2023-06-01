@@ -5,8 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList } from '@components';
 import { useWeb3 } from '@containers';
-import { OwnDeployments } from './OwnDeployments';
 import { URLS } from '@utils';
+
+import { OwnDeployments } from './OwnDeployments';
 
 export const NoDeployment: React.FC = () => {
   const { t } = useTranslation();

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { AbstractConnector } from '@web3-react/abstract-connector';
+
 import { SUPPORTED_CONNECTORS } from '../containers/Web3';
 
 export const getConnectorConfig = (connector: AbstractConnector | undefined) => {

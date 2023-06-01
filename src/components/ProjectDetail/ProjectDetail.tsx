@@ -3,8 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProjectMetadata } from '../../models';
 import { Button } from '@subql/components';
+
+import { ProjectMetadata } from '../../models';
 import Detail from '../Detail';
 import styles from './ProjectDetail.module.css';
 

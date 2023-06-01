@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import styles from './AppSidebar.module.css';
-import { Sidebar } from '../Sidebar';
 import { Footer } from '@subql/components';
+
+import { Sidebar } from '../Sidebar';
+import styles from './AppSidebar.module.css';
 
 type Props = {
   list: {

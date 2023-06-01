@@ -1,8 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/components';
 import * as React from 'react';
+import { Typography } from '@subql/components';
+
 import styles from './SummaryList.module.css';
 
 interface List {

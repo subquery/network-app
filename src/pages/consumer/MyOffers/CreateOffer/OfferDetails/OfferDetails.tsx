@@ -1,20 +1,21 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DatePicker, Typography } from 'antd';
 import * as React from 'react';
-import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { Formik, Form } from 'formik';
-import moment from 'moment';
-import styles from './OfferDetails.module.css';
 import { AiOutlineWarning } from 'react-icons/ai';
-import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
-import { NumberInput, AppTypography } from '../../../../../components';
+import { DatePicker, Typography } from 'antd';
 import { BigNumber, ethers } from 'ethers';
-import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
-import { useSQToken } from '../../../../../containers';
 import { parseEther } from 'ethers/lib/utils';
+import { Form, Formik } from 'formik';
+import moment from 'moment';
+import * as Yup from 'yup';
+
+import { AppTypography, NumberInput } from '../../../../../components';
+import { useSQToken } from '../../../../../containers';
+import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
+import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
+import styles from './OfferDetails.module.css';
 
 // Can not select days before today + 24 hours, value & validation
 export const EXPIRE_DATE_GAP = 24;

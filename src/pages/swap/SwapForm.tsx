@@ -1,17 +1,19 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Alert, Button } from 'antd';
-import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
-import { BigNumber, ContractTransaction } from 'ethers';
-import assert from 'assert';
-import { parseUnits } from 'ethers/lib/utils';
-import { useWeb3Store } from 'src/stores';
-import { Card } from '@subql/components';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Card } from '@subql/components';
+import { Alert, Button } from 'antd';
+import assert from 'assert';
+import { BigNumber, ContractTransaction } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import { Form, Formik } from 'formik';
+import * as Yup from 'yup';
+
+import { useWeb3Store } from 'src/stores';
+
 import {
   ApproveContract,
   getTokenApprovalModalText,
@@ -19,9 +21,9 @@ import {
   NumberInput,
   SummaryList,
 } from '../../components';
-import styles from './SwapForm.module.css';
-import { STABLE_TOKEN, TOKEN, tokenDecimals, truncFormatEtherStr, STABLE_TOKEN_DECIMAL } from '../../utils';
 import TransactionModal from '../../components/TransactionModal';
+import { STABLE_TOKEN, STABLE_TOKEN_DECIMAL, TOKEN, tokenDecimals, truncFormatEtherStr } from '../../utils';
+import styles from './SwapForm.module.css';
 
 interface Stats {
   title: string;

@@ -3,9 +3,10 @@
 
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import styles from './Sidebar.module.css';
-import clsx from 'clsx';
 import { Typography } from '@subql/components';
+import clsx from 'clsx';
+
+import styles from './Sidebar.module.css';
 
 type Props = {
   list: {

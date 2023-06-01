@@ -3,16 +3,17 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
 import { Navigate, Route, Routes } from 'react-router';
+import { useGetConsumerClosedFlexPlansQuery, useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
+import i18next from 'i18next';
+
 import { AppPageHeader, Card, TabButtons } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
-import { MyFlexPlanTable } from './MyFlexPlanTable';
-import styles from './MyFlexPlans.module.css';
-import { BillingAction } from './BillingAction';
-import i18next from 'i18next';
 import { ROUTES } from '../../../utils';
+import { BillingAction } from './BillingAction';
+import styles from './MyFlexPlans.module.css';
+import { MyFlexPlanTable } from './MyFlexPlanTable';
 
 const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
 

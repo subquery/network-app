@@ -3,12 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Typography } from '@subql/components';
+
 import { ProjectWithMetadata } from '../../models';
 import Detail from '../Detail';
-import { Address, Typography } from '@subql/components';
+import { Dropdown } from '../Dropdown';
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectHeader.module.css';
-import { Dropdown } from '../Dropdown';
 
 type Props = {
   project: Required<ProjectWithMetadata>;

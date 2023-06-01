@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber, utils, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 
 export function convertStringToNumber(value: string): number {
   return parseFloat(value);
@@ -11,7 +11,7 @@ export function truncateToDecimalPlace(value: number, decimalPlaces: number): nu
   return Math.trunc(value * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
 }
 
-export function convertBigNumberToNumber(value: BigNumberish | BigInt): number {
+export function convertBigNumberToNumber(value: BigNumberish | bigint): number {
   return BigNumber.from(value).toNumber();
 }
 
@@ -24,7 +24,7 @@ export function truncFormatEtherStr(value: string, decimalPlaces = 4): string {
   return wholeNumberStr.concat('.', sortedDecimalPlaceStr);
 }
 
-export function formatEther(value: BigNumberish | BigInt | undefined, toFixed?: number): string {
+export function formatEther(value: BigNumberish | bigint | undefined, toFixed?: number): string {
   const formattedEther = utils.formatEther(BigNumber.from(value ?? 0).toString());
   return toFixed ? truncFormatEtherStr(formattedEther, toFixed) : formattedEther;
 }

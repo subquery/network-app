@@ -1,12 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { uniqBy } from 'ramda';
+
 import { ProjectDeployments, Spinner } from '../../../components';
 import { useDeploymentsQuery, useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
-import { notEmpty, renderAsync } from '../../../utils';
-import { uniqBy } from 'ramda';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
+import { notEmpty, renderAsync } from '../../../utils';
 
 type Props = {
   projectId: string;

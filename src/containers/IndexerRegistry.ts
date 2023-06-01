@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useWeb3Store } from 'src/stores';
+
 import { createContainer, Logger } from './Container';
 
 function useIndexerRegistryImpl(logger: Logger): { getIndexer: (address: string) => Promise<string> } {

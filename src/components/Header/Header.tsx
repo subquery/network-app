@@ -2,14 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import clsx from 'clsx';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Space, Divider } from 'antd';
-import styles from './Header.module.css';
-import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components/dist/common';
 import { AccountActions } from '@components/AccountActions';
 import { ConnectWalletButton } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
+import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components/dist/common';
+import { Divider, Space } from 'antd';
+import clsx from 'clsx';
+
+import styles from './Header.module.css';
 
 export interface AppLink {
   label: string;

@@ -2,17 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { PropsWithChildren } from 'react';
+import { networks } from '@subql/contract-sdk';
+import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
+import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
+import { SQNetworks } from '@subql/network-config';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { providers } from 'ethers';
 import { NetworkConnector } from '@web3-react/network-connector';
-import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
-import { SQNetworks } from '@subql/network-config';
+import { providers } from 'ethers';
+
 import { useWeb3Store } from 'src/stores';
-import { networks } from '@subql/contract-sdk';
-import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
-import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
+
+import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
 export const isMainnet = import.meta.env.VITE_NETWORK === 'kepler';
 export const SUPPORTED_NETWORK = (isMainnet ? 'kepler' : 'testnet') as SQNetworks;

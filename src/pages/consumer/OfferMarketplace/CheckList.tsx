@@ -1,30 +1,32 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Button, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
-import clsx from 'clsx';
-import { Status as AppStatus, Spinner } from '../../../components';
-import moment from 'moment';
-import {
-  getDeploymentMetadata,
-  parseError,
-  COLORS,
-  formatEther,
-  convertStringToNumber,
-  mergeAsync,
-  renderAsyncArray,
-  isUndefined,
-  TOKEN,
-} from '../../../utils';
-import { useAsyncMemo } from '../../../hooks';
 import { Status } from '@subql/network-query';
-import styles from './AcceptOffer.module.css';
+import { Button, Typography } from 'antd';
+import clsx from 'clsx';
+import moment from 'moment';
+
+import { useWeb3Store } from 'src/stores';
+
+import { Spinner, Status as AppStatus } from '../../../components';
 import { deploymentStatus } from '../../../components/Status/Status';
 import { useWeb3 } from '../../../containers';
-import { useWeb3Store } from 'src/stores';
+import { useAsyncMemo } from '../../../hooks';
+import {
+  COLORS,
+  convertStringToNumber,
+  formatEther,
+  getDeploymentMetadata,
+  isUndefined,
+  mergeAsync,
+  parseError,
+  renderAsyncArray,
+  TOKEN,
+} from '../../../utils';
+import styles from './AcceptOffer.module.css';
 
 const RequirementCheckListTitle = () => {
   const titles = ['CRITERIA', 'REQUIRED', 'ACTUAL', 'PASS'];

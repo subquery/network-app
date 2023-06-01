@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { t } from 'i18next';
+
 import { ROUTES } from './routes';
 
 export const externalAppLinks = [

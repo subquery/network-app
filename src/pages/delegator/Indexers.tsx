@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Route, Routes } from 'react-router';
+
 import { AppPageHeader, TabButtons } from '../../components';
-import { TopIndexers } from './TopIndexers';
+import { ROUTES } from '../../utils';
 import { AllIndexers } from './AllIndexers';
 import styles from './Indexers.module.css';
-import { ROUTES } from '../../utils';
+import { TopIndexers } from './TopIndexers';
 
 const { TOP_INDEXERS, ALL_INDEXERS } = ROUTES;
 

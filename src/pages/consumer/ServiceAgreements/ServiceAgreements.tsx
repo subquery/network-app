@@ -3,24 +3,25 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Route, Routes } from 'react-router';
 import { AppPageHeader, EmptyList, TabButtons } from '@components';
 import { useWeb3 } from '@containers';
-import styles from './ServiceAgreements.module.css';
-import { Navigate, Route, Routes } from 'react-router';
-import { ServiceAgreementsTable } from './ServiceAgreementsTable';
-import { ROUTES, URLS } from '@utils';
+import { Spinner, Typography } from '@subql/components';
 import {
   renderAsync,
-  useGetConsumerServiceAgreementsCountQuery,
-  useGetIndexerServiceAgreementsCountQuery,
-  useGetIndexerOngoingServiceAgreementsQuery,
-  useGetIndexerExpiredServiceAgreementsQuery,
-  useGetConsumerOngoingServiceAgreementsQuery,
   useGetConsumerExpiredServiceAgreementsQuery,
+  useGetConsumerOngoingServiceAgreementsQuery,
+  useGetConsumerServiceAgreementsCountQuery,
+  useGetIndexerExpiredServiceAgreementsQuery,
+  useGetIndexerOngoingServiceAgreementsQuery,
+  useGetIndexerServiceAgreementsCountQuery,
 } from '@subql/react-hooks';
-import { Spinner, Typography } from '@subql/components';
-import { SAPlayground } from '../Playground';
+import { ROUTES, URLS } from '@utils';
 import { t } from 'i18next';
+
+import { SAPlayground } from '../Playground';
+import styles from './ServiceAgreements.module.css';
+import { ServiceAgreementsTable } from './ServiceAgreementsTable';
 
 const { CONSUMER, INDEXER, ONGOING_PLANS, PLAYGROUND, SERVICE_AGREEMENTS, EXPIRED_PLANS } = ROUTES;
 

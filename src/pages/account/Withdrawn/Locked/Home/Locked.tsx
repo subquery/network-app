@@ -1,25 +1,26 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
-import { Table, TableProps, Tag } from 'antd';
-import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3 } from '@containers';
-import { useGetWithdrawlsQuery } from '@subql/react-hooks';
-import { defaultLockPeriod, useLockPeriod } from '@hooks';
-import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
-import { BigNumber } from 'ethers';
-import styles from './Locked.module.css';
-import { WithdrawalStatus } from '@subql/react-hooks/dist/graphql';
-import { TokenAmount } from '@components/TokenAmount';
-import { TableText, TableTitle } from '@subql/components';
-import { t } from 'i18next';
-import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
-import { DoWithdraw } from '../DoWithdraw';
-import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
 import { EmptyList } from '@components';
+import { TokenAmount } from '@components/TokenAmount';
+import { useWeb3 } from '@containers';
+import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
+import { defaultLockPeriod, useLockPeriod } from '@hooks';
+import { Spinner, Typography } from '@subql/components';
+import { TableText, TableTitle } from '@subql/components';
+import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
+import { useGetWithdrawlsQuery } from '@subql/react-hooks';
+import { WithdrawalStatus } from '@subql/react-hooks/dist/graphql';
+import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
+import { Table, TableProps, Tag } from 'antd';
+import { BigNumber } from 'ethers';
+import { t } from 'i18next';
+import moment from 'moment';
+
+import { DoWithdraw } from '../DoWithdraw';
+import styles from './Locked.module.css';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;

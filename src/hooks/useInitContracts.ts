@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { useWeb3Store } from 'src/stores';
-import { ContractSDK } from '@subql/contract-sdk';
 import { useWeb3 } from '@containers';
 import { NETWORK_DEPLOYMENT_DETAILS } from '@containers/Web3';
+import { ContractSDK } from '@subql/contract-sdk';
 import { ContractClient } from '@subql/network-clients';
+
+import { useWeb3Store } from 'src/stores';
 
 export function useInitContracts(): { loading: boolean } {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);

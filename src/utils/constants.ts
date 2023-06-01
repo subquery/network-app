@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+
 import { STABLE_TOKEN_ADDRESS } from './USDC';
 
 export const DATE_FORMAT = 'DD/MM/YYYY';

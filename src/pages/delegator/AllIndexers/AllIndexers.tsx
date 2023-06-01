@@ -1,15 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
-import { useGetIndexersQuery } from '@subql/react-hooks';
+import { useTranslation } from 'react-i18next';
+import { EmptyList } from '@components';
 import { useEra } from '@hooks';
+import { Spinner, Typography } from '@subql/components';
+import { useGetIndexersQuery } from '@subql/react-hooks';
+
+import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
-import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
-import { EmptyList } from '@components';
-import { useTranslation } from 'react-i18next';
 
 export const AllIndexers: React.FC = () => {
   const indexers = useGetIndexersQuery();

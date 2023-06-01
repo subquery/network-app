@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { getCapitalizedStr } from '@utils';
-import { LeftOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { LeftOutlined } from '@ant-design/icons';
 import { Button } from '@components/Button';
+import { getCapitalizedStr } from '@utils';
+
 import styles from './StepButton.module.css';
 
 export enum StepType {

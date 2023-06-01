@@ -1,15 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Status } from '@subql/network-query';
+import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql/network-query';
+import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
+
+import { useWeb3Store } from 'src/stores';
+
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
 import { AsyncData, cidToBytes32, getDeploymentProgress } from '../utils';
-import { Status } from '@subql/network-query';
-import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql/network-query';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
-import { useWeb3Store } from 'src/stores';
-import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
 
 const fetchDeploymentProgress = async (
   indexer: string,

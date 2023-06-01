@@ -3,13 +3,15 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { UnsupportedChainIdError } from '@web3-react/core';
-import { useWeb3Store } from 'src/stores';
+import { AppTypography } from '@components/Typography';
 import { getConnectorConfig } from '@utils/getNetworkConnector';
+import { UnsupportedChainIdError } from '@web3-react/core';
+import { Button } from 'antd';
+
+import { useWeb3Store } from 'src/stores';
+
 import { ECOSYSTEM_NETWORK, handleSwitchNetwork, useWeb3 } from '../../containers/Web3';
 import styles from './ChainStatus.module.css';
-import { AppTypography } from '@components/Typography';
-import { Button } from 'antd';
 
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { ethWindowObj } = useWeb3Store();

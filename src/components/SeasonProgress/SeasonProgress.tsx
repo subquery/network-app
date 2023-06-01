@@ -3,6 +3,7 @@
 
 import { Progress } from 'antd';
 import moment from 'moment';
+
 import { getProgress, getTimeLeft } from '../../utils';
 import styles from './SeasonProgress.module.css';
 

@@ -7,9 +7,9 @@
  * As the data always be filled start from the first page of antTable
  */
 
-import { Pagination, Table, TableProps, PaginationProps } from 'antd';
-import clsx from 'clsx';
 import * as React from 'react';
+import { Pagination, PaginationProps, Table, TableProps } from 'antd';
+import clsx from 'clsx';
 
 interface AntDTableProps {
   customPagination?: boolean;

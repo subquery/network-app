@@ -1,15 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import assert from 'assert';
-import { Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import TransactionModal from '../../../components/TransactionModal';
-import styles from './ClaimRewards.module.css';
 import { Typography } from '@subql/components';
-import { TOKEN } from '../../../utils';
+import { Button } from 'antd';
+import assert from 'assert';
+
 import { useWeb3Store } from 'src/stores';
+
+import TransactionModal from '../../../components/TransactionModal';
+import { TOKEN } from '../../../utils';
+import styles from './ClaimRewards.module.css';
 
 type Props = {
   account: string;

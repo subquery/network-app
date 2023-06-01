@@ -3,13 +3,14 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Button, Typography } from 'antd';
-import { CreateOfferContext, StepButtons } from '../CreateOffer';
-import styles from './SelectDeployment.module.css';
-import { DeploymentInfo, SearchInput, Spinner } from '../../../../../components';
 import { useGetDeploymentQuery } from '@subql/react-hooks';
+import { Button, Typography } from 'antd';
+
+import { DeploymentInfo, SearchInput, Spinner } from '../../../../../components';
 import { useProject } from '../../../../../hooks';
 import { renderAsync, ROUTES } from '../../../../../utils';
+import { CreateOfferContext, StepButtons } from '../CreateOffer';
+import styles from './SelectDeployment.module.css';
 
 export const DeploymentProject: React.FC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
   title,

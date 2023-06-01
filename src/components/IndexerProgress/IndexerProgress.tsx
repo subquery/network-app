@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { ProgressBar } from '@subql/components';
+
 import styles from './IndexerProgress.module.css';
 
 type Status = {

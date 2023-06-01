@@ -1,22 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import ImageInput from './ImageInput';
+import Banner from './Banner';
+import Copy from './Copy';
+import CreateInstructions from './CreateInstructions';
 import FTextInput from './FTextInput';
+import ImageInput from './ImageInput';
+import IndexerProgress from './IndexerProgress';
 import IPFSImage from './IPFSImage';
-import ProjectHeader from './ProjectHeader';
+import NewDeployment from './NewDeployment';
+import NewProject from './NewProject';
+import ProjectCard from './ProjectCard';
+import ProjectDeployments from './ProjectDeployments';
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
-import ProjectDeployments from './ProjectDeployments';
-import NewDeployment from './NewDeployment';
+import ProjectHeader from './ProjectHeader';
 import ProjectOverview from './ProjectOverview';
-import IndexerProgress from './IndexerProgress';
 import Spinner from './Spinner';
-import ProjectCard from './ProjectCard';
-import Banner from './Banner';
-import CreateInstructions from './CreateInstructions';
-import NewProject from './NewProject';
-import Copy from './Copy';
 import Status from './Status';
 export * from './Header';
 export * from './ConnectWallet';

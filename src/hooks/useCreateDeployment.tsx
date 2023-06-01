@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ContractReceipt } from '@ethersproject/contracts';
+
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { NewDeployment } from '../models';
 import { getDeployment } from './useDeployment';

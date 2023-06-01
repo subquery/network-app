@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { formatEther } from '@ethersproject/units';
+import { useEra } from '@hooks';
+
 import { useDelegator } from '../containers';
 import { AsyncData, mapAsync, mergeAsync } from '../utils';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
-import { useEra } from '@hooks';
 
 export function useUserDelegations(account?: string | null): AsyncData<CurrentEraValue<string>> {
   const totalDelegations = useDelegator({ address: account ?? '' });

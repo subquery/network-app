@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
 import {
   AppPageHeader,
@@ -12,14 +13,11 @@ import {
   TabButtons,
   tokenApprovalModalText,
 } from '@components';
-import { useTranslation } from 'react-i18next';
-import styles from './MyOffers.module.css';
-import i18next from 'i18next';
-import { CreateOffer } from './CreateOffer';
 import { Button } from '@components/Button';
-import { useSQToken, useWeb3 } from '@containers';
-import { OfferTable } from './OfferTable';
 import TransactionModal from '@components/TransactionModal';
+import { useSQToken, useWeb3 } from '@containers';
+import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
+import { Typography } from '@subql/components';
 import {
   renderAsync,
   useGetOfferCountQuery,
@@ -27,9 +25,12 @@ import {
   useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersQuery,
 } from '@subql/react-hooks';
-import { Typography } from '@subql/components';
 import { ROUTES, URLS } from '@utils';
-import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
+import i18next from 'i18next';
+
+import { CreateOffer } from './CreateOffer';
+import styles from './MyOffers.module.css';
+import { OfferTable } from './OfferTable';
 
 const { CONSUMER_OFFERS_NAV, CREATE_OFFER, OPEN_OFFERS, CLOSE_OFFERS, EXPIRED_OFFERS } = ROUTES;
 

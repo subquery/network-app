@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState, useRef, RefObject } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 
 export function useOnScreen(ref: RefObject<HTMLElement>): boolean {
   const observerRef = useRef<IntersectionObserver | null>(null);

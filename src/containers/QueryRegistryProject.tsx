@@ -1,31 +1,32 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
 import {
   ApolloClient,
-  InMemoryCache,
   ApolloProvider,
-  useQuery,
-  gql,
-  QueryResult,
-  useLazyQuery,
-  QueryTuple,
   FieldPolicy,
+  gql,
+  InMemoryCache,
+  QueryResult,
+  QueryTuple,
+  useLazyQuery,
+  useQuery,
 } from '@apollo/client';
-import * as React from 'react';
-import { PLAN_FIELDS, PLAN_TEMPLATE_FIELDS } from './IndexerRegistryProject';
+
+import { GetAcceptedOffers, GetAcceptedOffersVariables } from '../__generated__/registry/GetAcceptedOffers';
 import { GetDeployment, GetDeploymentVariables } from '../__generated__/registry/GetDeployment';
+import { GetDeploymentIndexer, GetDeploymentIndexerVariables } from '../__generated__/registry/GetDeploymentIndexer';
 import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/registry/GetDeploymentIndexers';
 import {
-  GetDeploymentIndexersByIndexerVariables,
   GetDeploymentIndexersByIndexer,
+  GetDeploymentIndexersByIndexerVariables,
 } from '../__generated__/registry/GetDeploymentIndexersByIndexer';
-import { GetDeploymentPlansVariables, GetDeploymentPlans } from '../__generated__/registry/GetDeploymentPlans';
-import { GetProjectVariables, GetProject } from '../__generated__/registry/GetProject';
-import { GetProjectDeploymentsVariables, GetProjectDeployments } from '../__generated__/registry/GetProjectDeployments';
-import { GetProjectsVariables, GetProjects } from '../__generated__/registry/GetProjects';
-import { GetDeploymentIndexerVariables, GetDeploymentIndexer } from '../__generated__/registry/GetDeploymentIndexer';
-import { GetAcceptedOffers, GetAcceptedOffersVariables } from '../__generated__/registry/GetAcceptedOffers';
+import { GetDeploymentPlans, GetDeploymentPlansVariables } from '../__generated__/registry/GetDeploymentPlans';
+import { GetProject, GetProjectVariables } from '../__generated__/registry/GetProject';
+import { GetProjectDeployments, GetProjectDeploymentsVariables } from '../__generated__/registry/GetProjectDeployments';
+import { GetProjects, GetProjectsVariables } from '../__generated__/registry/GetProjects';
+import { PLAN_FIELDS, PLAN_TEMPLATE_FIELDS } from './IndexerRegistryProject';
 
 const PROJECT_FIELDS = gql`
   fragment ProjectFields on Project {

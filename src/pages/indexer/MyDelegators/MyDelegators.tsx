@@ -1,16 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList, Spinner } from '@components';
 import { useWeb3 } from '@containers';
-import styles from './MyDelegators.module.css';
-import { Typography } from '@subql/components';
-import { OwnDelegator } from './OwnDelegator';
 import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
+import { Typography } from '@subql/components';
+import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';
+
+import styles from './MyDelegators.module.css';
+import { OwnDelegator } from './OwnDelegator';
 
 const NoDelegator: React.FC = () => {
   const { t } = useTranslation();

@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Route, Routes } from 'react-router';
+
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
-import { MyDelegation } from './MyDelegation';
-import { Indexers } from './Indexers';
 import { IndexerDetails } from './IndexerDetails/IndexerDetails';
+import { Indexers } from './Indexers';
+import { MyDelegation } from './MyDelegation';
 
 const { INDEXERS, INDEXER, DELEGATING } = ROUTES;
 

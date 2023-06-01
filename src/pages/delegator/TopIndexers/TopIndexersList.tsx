@@ -1,22 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/components';
-import { TableProps, Tag } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FixedType } from 'rc-table/lib/interface';
-import i18next from 'i18next';
+import { useNavigate } from 'react-router-dom';
+import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
 import { AntDTable, SearchInput, TableText } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { useWeb3 } from '@containers';
+import { Typography } from '@subql/components';
+import { TableTitle } from '@subql/components';
+import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
+import { TableProps, Tag } from 'antd';
+import i18next from 'i18next';
+import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../DoDelegate';
-import { TableTitle } from '@subql/components';
-import { useWeb3 } from '@containers';
 import styles from './TopIndexersList.module.css';
-import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
-import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
-import { useNavigate } from 'react-router-dom';
 const { DELEGATOR, INDEXER } = ROUTES;
 
 const getColumns = (

@@ -1,11 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import assert from 'assert';
-import { useEra } from '@hooks';
 import { useMemo } from 'react';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { isBigNumberish } from '@ethersproject/bignumber/lib/bignumber';
+import { useEra } from '@hooks';
+import assert from 'assert';
 
 type JSONBigInt = {
   type: 'bigint';

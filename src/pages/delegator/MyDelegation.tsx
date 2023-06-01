@@ -2,25 +2,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Table, TableProps, Tag, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router-dom';
+import { AppPageHeader, Button, Card, EmptyList, TableText } from '@components';
+import { TokenAmount } from '@components/TokenAmount';
+import { useWeb3 } from '@containers';
+import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
+import { useEra } from '@hooks';
+import { useDelegating } from '@hooks/useDelegating';
+import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
+import { TableTitle } from '@subql/components';
+import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
+import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
+import { Table, TableProps, Tag, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
-import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
-import { AppPageHeader, Button, Card, EmptyList, TableText } from '@components';
-import { formatEther, TOKEN, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES } from '@utils';
-import { useDelegating } from '@hooks/useDelegating';
-import { useWeb3 } from '@containers';
-import styles from './MyDelegation.module.css';
-import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { parseEther } from 'ethers/lib/utils';
-import { TableTitle } from '@subql/components';
-import { TokenAmount } from '@components/TokenAmount';
-import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
-import { DoUndelegate } from './DoUndelegate';
-import { NavLink } from 'react-router-dom';
-import { useEra } from '@hooks';
 import { TFunction } from 'i18next';
+
+import { DoUndelegate } from './DoUndelegate';
+import styles from './MyDelegation.module.css';
 
 const getColumns = (
   t: TFunction,

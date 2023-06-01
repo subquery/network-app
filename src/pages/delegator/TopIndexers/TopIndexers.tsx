@@ -3,11 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Typography } from 'antd';
+
+import { GetTopIndexers_indexerPrograms as TopIndexersPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
 import { useTopIndexers } from '../../../containers/QueryTop100Indexers';
 import { getUseQueryFetchMore, renderAsync } from '../../../utils';
-import { Typography } from 'antd';
 import { TopIndexerList } from './TopIndexersList';
-import { GetTopIndexers_indexerPrograms as TopIndexersPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
 
 export const TopIndexers: React.FC = () => {
   const { t } = useTranslation();

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber } from 'ethers';
-import { useAsyncMemo, useNetworkClient } from '.';
+
 import { AsyncMemoReturn } from './useAsyncMemo';
+import { useAsyncMemo, useNetworkClient } from '.';
 
 export function useMaxUnstakeAmount(indexer: string): AsyncMemoReturn<BigNumber | undefined> {
   const networkClient = useNetworkClient();

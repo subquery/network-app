@@ -1,15 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FTextInput } from '..';
-import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
 import { Button, Typography } from '@subql/components';
-import ImageInput from '../ImageInput';
-import styles from './ProjectEdit.module.css';
+import { Form, Formik } from 'formik';
+
+import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
 import { isEthError } from '../../utils';
+import ImageInput from '../ImageInput';
+import { FTextInput } from '..';
+import styles from './ProjectEdit.module.css';
 
 type Props = {
   project: Required<ProjectWithMetadata>;

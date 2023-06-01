@@ -1,15 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useWeb3 } from '@containers';
 import * as React from 'react';
 import { Route, Routes } from 'react-router';
+import { useWeb3 } from '@containers';
+import { Footer } from '@subql/components';
 import { ROUTES } from '@utils';
-import { MyAccount } from './MyAccount';
+
 import { Rewards } from './Rewards/Rewards';
 import { Withdrawn } from './Withdrawn/Withdrawn';
-import { Footer } from '@subql/components';
 import styles from './Account.module.css';
+import { MyAccount } from './MyAccount';
 
 const { REWARDS, WITHDRAWN } = ROUTES;
 

@@ -1,22 +1,23 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
-import { Table, TableProps, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { AppPageHeader, EmptyList, TableText } from '@components';
+import { BreadcrumbNav } from '@components';
+import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
+import { SUB_REWARDS } from '@containers/IndexerRegistryProjectSub';
+import { Spinner, Typography } from '@subql/components';
+import { TableTitle } from '@subql/components';
 import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
+import { useGetRewardsQuery } from '@subql/react-hooks';
+import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
+import { Table, TableProps, Tag } from 'antd';
+import { BigNumber } from 'ethers';
+
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
-import { AppPageHeader, EmptyList, TableText } from '@components';
-import { BigNumber } from 'ethers';
-import { TokenAmount } from '@components/TokenAmount';
-import { useGetRewardsQuery } from '@subql/react-hooks';
-import { TableTitle } from '@subql/components';
-import { BreadcrumbNav } from '@components';
-import { SUB_REWARDS } from '@containers/IndexerRegistryProjectSub';
 
 function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
   return !!(reward as Reward).claimedTime;

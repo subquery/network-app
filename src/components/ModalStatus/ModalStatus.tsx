@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Modal as AntDModal } from 'antd';
-import { Typography } from '@subql/components';
-import { FaCheckSquare, FaWindowClose } from 'react-icons/fa';
-import styles from './ModalStatus.module.css';
 import { useTranslation } from 'react-i18next';
+import { FaCheckSquare, FaWindowClose } from 'react-icons/fa';
+import { Typography } from '@subql/components';
+import { Modal as AntDModal } from 'antd';
+
+import styles from './ModalStatus.module.css';
 
 /**
  * NOTE:

@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import assert from 'assert';
-import i18next from '../../i18n';
 import { Button, Typography } from 'antd';
-import styles from './ModalClaimIndexerRewards.module.css';
-import { parseError } from '../../utils';
+import assert from 'assert';
+
 import { useWeb3Store } from 'src/stores';
+
+import i18next from '../../i18n';
+import { parseError } from '../../utils';
+import styles from './ModalClaimIndexerRewards.module.css';
 
 export const claimIndexerRewardsModalText = {
   title: i18next.t('claimIndexerRewards.title'),

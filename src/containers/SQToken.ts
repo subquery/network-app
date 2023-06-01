@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import assert from 'assert';
+
 import { useWeb3Store } from 'src/stores';
-import { useWeb3 } from '.';
+
 import { useAsyncMemo } from '../hooks';
 import { createContainer } from './Container';
+import { useWeb3 } from '.';
 
 function useSQTokenImpl() {
   const { account } = useWeb3();

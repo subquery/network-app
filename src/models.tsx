@@ -3,6 +3,7 @@
 
 import type { SubstrateProjectManifestVersioned } from '@subql/common-substrate/dist/project';
 import * as yup from 'yup';
+
 import { CIDv0 } from './utils';
 
 export const projectMetadataSchema = yup.object({

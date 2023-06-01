@@ -1,14 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { Progress } from 'antd';
 import i18next from 'i18next';
 import moment from 'moment';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useEra } from '@hooks';
-import { getTimeLeft, getProgress, renderAsync } from '../../utils';
+
+import { getProgress, getTimeLeft, renderAsync } from '../../utils';
 import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
 

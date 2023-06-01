@@ -2,23 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { parseEther } from '@ethersproject/units';
-import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { parseEther } from '@ethersproject/units';
 import { Spinner } from '@subql/components';
-import moment from 'moment';
-import { BigNumber, ethers } from 'ethers';
 import { Button, Space, Typography } from 'antd';
-import { Form, Formik } from 'formik';
 import clsx from 'clsx';
+import { BigNumber, ethers } from 'ethers';
+import { Form, Formik } from 'formik';
+import moment from 'moment';
+import * as yup from 'yup';
+
 import { NumberInput } from '../../../components';
+import { BillingExchangeModal } from '../../../components/BillingTransferModal';
+import TransactionModal from '../../../components/TransactionModal';
 import { useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { IIndexerFlexPlan } from '../../../hooks';
 import { formatEther, getAuthReqHeader, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../../utils';
-import TransactionModal from '../../../components/TransactionModal';
-
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
-import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {

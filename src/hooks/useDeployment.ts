@@ -5,10 +5,11 @@ import {
   SubstrateProjectManifestVersioned,
   VersionedProjectManifest,
 } from '@subql/common-substrate/dist/project/versioned';
+
 import { useIPFS } from '../containers';
-import { useAsyncMemo } from './useAsyncMemo';
 import { ProjectDeployment } from '../models';
 import { AsyncData } from '../utils';
+import { useAsyncMemo } from './useAsyncMemo';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
 
 export async function getDeployment(

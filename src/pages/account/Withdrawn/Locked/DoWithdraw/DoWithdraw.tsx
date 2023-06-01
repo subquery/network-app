@@ -1,16 +1,18 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/components';
 import * as React from 'react';
-import assert from 'assert';
-import styles from './DoWithdraw.module.css';
 import { useTranslation } from 'react-i18next';
-import TransactionModal from '@components/TransactionModal';
-import clsx from 'clsx';
 import { Button } from '@components/Button';
+import TransactionModal from '@components/TransactionModal';
+import { Typography } from '@subql/components';
 import { truncFormatEtherStr } from '@utils';
+import assert from 'assert';
+import clsx from 'clsx';
+
 import { useWeb3Store } from 'src/stores';
+
+import styles from './DoWithdraw.module.css';
 
 interface DoWithdrawProps {
   unlockedAmount: string;

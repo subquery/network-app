@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { AbstractConnectorArguments, ConnectorUpdate } from '@web3-react/types';
 import { AbstractConnector } from '@web3-react/abstract-connector';
+import { AbstractConnectorArguments, ConnectorUpdate } from '@web3-react/types';
 
 export type SendReturnResult = { result: any };
 export type SendReturn = any;

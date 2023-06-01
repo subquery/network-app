@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import styles from './Card.module.css';
-import clsx from 'clsx';
 import { Card as SQCard } from '@subql/components';
+import clsx from 'clsx';
+
+import styles from './Card.module.css';
 
 interface CardProps {
   category?: string;

@@ -1,14 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber } from '@ethersproject/bignumber';
-import clsx from 'clsx';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
+import { BigNumber } from '@ethersproject/bignumber';
+import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
+import { useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { URLS } from '@utils';
+import clsx from 'clsx';
+
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { URLS } from '@utils';
 import {
   ProjectProgressProvider,
   useDeploymentsQuery,
@@ -19,12 +22,9 @@ import {
 } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
-import styles from './Project.module.css';
-
-import { FlexPlans } from '../FlexPlans';
 import { ROUTES } from '../../../utils';
-import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
-import { useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { FlexPlans } from '../FlexPlans';
+import styles from './Project.module.css';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 

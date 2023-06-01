@@ -2,17 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import assert from 'assert';
 import { useTranslation } from 'react-i18next';
-import { useWeb3 } from '../../../../containers';
+import { Spinner, Typography } from '@subql/components';
+import assert from 'assert';
+import { TFunction } from 'i18next';
+
+import { useWeb3Store } from 'src/stores';
+
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
 import TransactionModal from '../../../../components/TransactionModal';
+import { useWeb3 } from '../../../../containers';
+import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
-import { Spinner, Typography } from '@subql/components';
-import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
-import { useWeb3Store } from 'src/stores';
-import { TFunction } from 'i18next';
 
 const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;

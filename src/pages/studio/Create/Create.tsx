@@ -2,19 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Formik, Form } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
-import { FTextInput, ImageInput } from '../../../components';
-import { Button, Typography } from '@subql/components';
 import { useNavigate } from 'react-router';
-import styles from './Create.module.css';
-import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { BigNumber } from '@ethersproject/bignumber';
-import Instructions from './Instructions';
+import { Button, Typography } from '@subql/components';
 import clsx from 'clsx';
+import { Form, Formik } from 'formik';
+
+import { FTextInput, ImageInput } from '../../../components';
+import { useCreateProject, useRouteQuery } from '../../../hooks';
+import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { isEthError } from '../../../utils';
 import { ROUTES } from '../../../utils';
+import styles from './Create.module.css';
+import Instructions from './Instructions';
 const { STUDIO_PROJECT_NAV } = ROUTES;
 
 const Create: React.FC = () => {

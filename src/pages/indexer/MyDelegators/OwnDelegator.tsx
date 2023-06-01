@@ -1,16 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableText, TableTitle } from '@subql/components';
-import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
-import { Spinner, Typography } from '@subql/components';
-import { Table } from 'antd';
-import { formatEther } from 'ethers/lib/utils';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
-import { TOKEN, mapAsync, convertStringToNumber, mergeAsync } from '@utils';
+import { TableText, TableTitle } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
+import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { convertStringToNumber, mapAsync, mergeAsync, TOKEN } from '@utils';
+import { Table } from 'antd';
+import { formatEther } from 'ethers/lib/utils';
+
 import styles from './OwnDelegator.module.css';
 
 interface Props {

@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { BsCheckLg, BsClipboard } from 'react-icons/bs';
 import { message } from 'antd';
-import { BsClipboard, BsCheckLg } from 'react-icons/bs';
 import clsx from 'clsx';
+
 import styles from './Copy.module.css';
 
 const sendSuccessMsg = (msg: string, className?: string) => {

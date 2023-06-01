@@ -1,14 +1,29 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner } from '@subql/components';
 import * as React from 'react';
-import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { BigNumber } from 'ethers';
+import { useLocation } from 'react-router';
+import { Spinner } from '@subql/components';
+import { TableTitle } from '@subql/components';
+import { OfferFieldsFragment } from '@subql/network-query';
+import {
+  useGetAcceptedOffersQuery,
+  useGetAllOpenOffersQuery,
+  useGetDeploymentIndexerQuery,
+  useGetOwnExpiredOffersQuery,
+  useGetOwnFinishedOffersQuery,
+  useGetOwnOpenOffersQuery,
+  useGetSpecificOpenOffersQuery,
+} from '@subql/react-hooks';
 import { TableProps, Typography } from 'antd';
+import clsx from 'clsx';
+import { BigNumber } from 'ethers';
+import i18next from 'i18next';
+import moment from 'moment';
+
 import { AntDTable, DeploymentMeta, EmptyList, SearchInput, TableText } from '../../../components';
+import { TokenAmount } from '../../../components/TokenAmount';
 import { useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
@@ -23,24 +38,10 @@ import {
   renderAsyncArray,
   URLS,
 } from '../../../utils';
-import { useLocation } from 'react-router';
-import styles from './OfferTable.module.css';
-import { CancelOffer } from './CancelOffer';
-import clsx from 'clsx';
-import { TableTitle } from '@subql/components';
-import { TokenAmount } from '../../../components/TokenAmount';
 import { ROUTES } from '../../../utils';
-import {
-  useGetAcceptedOffersQuery,
-  useGetAllOpenOffersQuery,
-  useGetOwnExpiredOffersQuery,
-  useGetOwnFinishedOffersQuery,
-  useGetOwnOpenOffersQuery,
-  useGetSpecificOpenOffersQuery,
-  useGetDeploymentIndexerQuery,
-} from '@subql/react-hooks';
-import { OfferFieldsFragment } from '@subql/network-query';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
+import { CancelOffer } from './CancelOffer';
+import styles from './OfferTable.module.css';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 

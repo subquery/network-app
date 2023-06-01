@@ -3,10 +3,12 @@
 
 import { BigNumber, Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
+
 import { useWeb3Store } from 'src/stores';
+
 import { useWeb3 } from '../containers';
 import { AsyncData, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
-import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
+import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
 /**
  * @returns useAUSDContract

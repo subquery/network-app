@@ -1,27 +1,27 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from '@subql/components';
-import { TableProps } from 'antd';
-import { FixedType } from 'rc-table/lib/interface';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import i18next from 'i18next';
-import styles from './IndexerList.module.css';
-import { DoDelegate } from '../../DoDelegate';
-import { CurrentEraValue } from '@hooks/useEraValue';
-import { useWeb3 } from '@containers';
-import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
-import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
-import { TokenAmount } from '@components/TokenAmount';
-import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { AntDTable, SearchInput, TableText } from '@components';
-import { TableTitle } from '@subql/components';
-import { useGetIndexerQuery } from '@subql/react-hooks';
-
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { TokenAmount } from '@components/TokenAmount';
+import { useWeb3 } from '@containers';
 import { useNetworkClient } from '@hooks';
+import { CurrentEraValue } from '@hooks/useEraValue';
+import { Typography } from '@subql/components';
+import { TableTitle } from '@subql/components';
+import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
+import { useGetIndexerQuery } from '@subql/react-hooks';
+import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
+import { TableProps } from 'antd';
+import i18next from 'i18next';
+import { FixedType } from 'rc-table/lib/interface';
+
+import { DoDelegate } from '../../DoDelegate';
+import styles from './IndexerList.module.css';
 const { DELEGATOR, INDEXER } = ROUTES;
 
 interface SortedIndexerListProps {

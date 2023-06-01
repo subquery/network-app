@@ -1,18 +1,20 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import assert from 'assert';
-import { Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 import { Typography } from '@subql/components';
+import { Button } from 'antd';
+import assert from 'assert';
+
+import { useWeb3Store } from 'src/stores';
+
+import { SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';
-import styles from './MyOffers.module.css';
-import { useLocation } from 'react-router';
-import { SummaryList } from '../../../components';
 import { ROUTES } from '../../../utils';
-import { useWeb3Store } from 'src/stores';
+import styles from './MyOffers.module.css';
 
 type Props = {
   offerId: string;

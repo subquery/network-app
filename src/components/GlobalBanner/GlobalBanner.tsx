@@ -3,8 +3,9 @@
 
 import * as React from 'react';
 import { Typography } from 'antd';
-import styles from './GlobalBanner.module.css';
+
 import { Button } from '../Button';
+import styles from './GlobalBanner.module.css';
 
 interface GlobalBannerProps {
   title: string | React.ReactNode;

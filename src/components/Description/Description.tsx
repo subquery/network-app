@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Space } from 'antd';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { Space } from 'antd';
+
 import { COLORS } from '../../utils';
 import { AppTypography } from '../Typography';
 

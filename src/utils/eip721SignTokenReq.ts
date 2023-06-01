@@ -3,12 +3,13 @@
 
 import { Web3Provider } from '@ethersproject/providers';
 import { FetcherReturnType } from 'graphiql';
+
 import {
-  getEip721Signature,
-  ConsumerHostMessageType,
-  withChainIdRequestBody,
   authSARequestBody,
+  ConsumerHostMessageType,
   ConsumerSAMessageType,
+  getEip721Signature,
+  withChainIdRequestBody,
 } from './eip712';
 import { POST } from './fetch';
 import { parseError } from './parseError';

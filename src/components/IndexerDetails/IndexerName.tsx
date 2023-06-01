@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import styles from './IndexerDetails.module.css';
-import { truncateAddress } from '../../utils';
-import IPFSImage from '../IPFSImage';
-import Copy from '../Copy';
 import { Typography } from '@subql/components';
+
 import { useIndexerMetadata } from '../../hooks';
 import { useENS } from '../../hooks/useEns';
+import { truncateAddress } from '../../utils';
+import Copy from '../Copy';
+import IPFSImage from '../IPFSImage';
+import styles from './IndexerDetails.module.css';
 
 type Props = {
   name?: string;

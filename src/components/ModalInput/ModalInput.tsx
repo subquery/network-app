@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Button, InputNumberProps } from 'antd';
 import { Typography } from '@subql/components';
+import { Button, InputNumberProps } from 'antd';
 import { useFormik } from 'formik';
-import styles from './ModalInput.module.css';
+
+import { TOKEN } from '../../utils';
 import { parseError } from '../../utils/parseError';
 import { NumberInput } from '../NumberInput';
-import { TOKEN } from '../../utils';
+import styles from './ModalInput.module.css';
 
 /**
  * NOTE:
