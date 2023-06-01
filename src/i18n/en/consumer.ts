@@ -19,7 +19,7 @@ const translation = {
       createPlans: `Create plans for projects you're indexing. <br> Learn how to create a plan <1>here</1>.`,
       query: '{{count}} query',
       query_other: '{{count}} queries',
-      requestPerMin: 'requests/min',
+      requestPerMin: 'requests/sec',
     },
     specific: {
       title: 'You can create maximum 5 specific plans',
@@ -163,6 +163,9 @@ const translation = {
     },
     noAgreementsTitle: 'You don’t have any service agreements yet',
     non: 'There are no service agreements for this project yet.',
+    noOngoingAgreementsTitle: 'There are no ongoing service agreements.',
+    nonOngoingAgreements:
+      'Ongoing service agreements will be displayed here along with the details of the plan or offer purchased by the Indexer. When an agreement has expired, it will automatically move to the Expired list. If there are currently no ongoing service agreements, this page will reflect that. ',
     learnLink: 'Learn more ',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
@@ -323,9 +326,11 @@ const translation = {
     },
   },
   swap: {
-    buyKSQT: `${STABLE_TOKEN} → ${TOKEN}`,
-    sellKSQT: `${TOKEN} → ${STABLE_TOKEN}`,
+    buykSQT: `${STABLE_TOKEN} → ${TOKEN}`,
+    sellkSQT: `${TOKEN} → ${STABLE_TOKEN}`,
     poolSize: `${TOKEN} pool size`,
+    nonOrder: `There is no available order in pool currently. `,
+    nonOrderDesc: `Currently, there are no active swap orders available. However, don't worry - when orders become available, you can convert between USDC and kSQT using our basic swap mechanism. Get ready to swap with Kepler!`,
     poolSizeTooltip: `This is the amount of ${TOKEN} currently available to be purchased in the liquidity pool`,
     curRate: 'current rate',
     curRateTooltip: 'The token rate will remain fixed in Kepler network before mainnet is launched',
@@ -344,6 +349,6 @@ const translation = {
     swapSuccess: 'The swap transaction has succeeded.',
     swapFailure: 'The transaction has failed.',
   },
-};
+} as const;
 
 export default translation;

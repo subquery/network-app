@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { wrapProxyEndpoint } from '.';
+import axios from 'axios';
 
 interface GetDeploymentProgress {
   proxyEndpoint?: string;
@@ -43,13 +44,14 @@ export async function getDeploymentMetadata({
 
   if (!endpoint) throw new Error('Endpoint not available.');
 
-  const rawResponse = await fetch(endpoint);
-  if (!rawResponse.ok) {
+  try {
+    const response = await axios.get(endpoint, {
+      timeout: 5000, // 5 seconds
+    });
+    return response?.data?.data?._metadata;
+  } catch (err) {
     throw new Error(`Failed to fetch metadata from deployment's Query Service.`);
   }
-
-  const response = await rawResponse.json();
-  return response?.data?._metadata;
 }
 
 export const getDeploymentProgress = async ({
@@ -63,7 +65,7 @@ export const getDeploymentProgress = async ({
 
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
-  if (!metadata) return 0;
+  if (!metadata?.lastProcessedHeight || !metadata?.targetHeight) return 0;
 
   return metadata.lastProcessedHeight / metadata.targetHeight;
 };

@@ -144,7 +144,7 @@ const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (
             <>
               {data?.map((indexerDeployments) => (
                 <Select.Option value={indexerDeployments.deployment?.id} key={indexerDeployments?.id}>
-                  <div>
+                  <div className={styles.project}>
                     <Typography className={styles.projectName}>{`${indexerDeployments.projectName}`}</Typography>
                     <Typography
                       className={styles.projectDeploymentId}
@@ -197,7 +197,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
     },
     {
       label: t('plans.headers.rateLimit'),
-      value: ` ${template.rateLimit} queries/min`,
+      value: ` ${template.rateLimit} queries/sec`,
     },
   ];
 

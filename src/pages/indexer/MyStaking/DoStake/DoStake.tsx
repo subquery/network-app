@@ -20,6 +20,7 @@ import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { useWeb3Store } from 'src/stores';
+import { TFunction } from 'i18next';
 
 enum StakeAction {
   Stake = 'stake',
@@ -30,7 +31,7 @@ const getContentText = (
   requireClaimIndexerRewards = false,
   requireTokenApproval = false,
   actionType: StakeAction,
-  t: any,
+  t: TFunction,
   lockPeriod: number | undefined,
   maxAmount: string | undefined,
 ) => {

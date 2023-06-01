@@ -13,7 +13,7 @@ type TableProps = {
   className?: string;
 };
 
-export const Table: React.FC<TableProps> = ({ children, className }) => {
+export const Table: React.FC<React.PropsWithChildren<TableProps>> = ({ children, className }) => {
   return (
     <div className={styles.tableContainer}>
       <table className={[styles.table, className].join(' ')}>{children}</table>
@@ -25,7 +25,7 @@ type TableHeadProps = {
   className?: string;
 };
 
-export const TableHead: React.FC<TableHeadProps> = ({ className, children }) => {
+export const TableHead: React.FC<React.PropsWithChildren<TableHeadProps>> = ({ className, children }) => {
   return <thead className={[styles.head, className].join(' ')}>{children}</thead>;
 };
 
@@ -33,7 +33,7 @@ type TableBodyProps = {
   className?: string;
 };
 
-export const TableBody: React.FC<TableBodyProps> = ({ children, className }) => {
+export const TableBody: React.FC<React.PropsWithChildren<TableBodyProps>> = ({ children, className }) => {
   return <tbody className={[styles.body, className].join(' ')}>{children}</tbody>;
 };
 
@@ -41,7 +41,7 @@ type TableRowProps = {
   className?: string;
 };
 
-export const TableRow: React.FC<TableRowProps> = ({ children, className }) => {
+export const TableRow: React.FC<React.PropsWithChildren<TableRowProps>> = ({ children, className }) => {
   return <tr className={[styles.row, className].join(' ')}>{children}</tr>;
 };
 
@@ -49,7 +49,7 @@ type TableCellProps = {
   className?: string;
 };
 
-export const TableCell: React.FC<TableCellProps> = ({ children, className }) => {
+export const TableCell: React.FC<React.PropsWithChildren<TableCellProps>> = ({ children, className }) => {
   return <th className={[styles.cell, className].join(' ')}>{children}</th>;
 };
 

@@ -7,7 +7,7 @@ import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { ApproveContract, Spinner, TabButtons } from '@components';
+import { ApproveContract, EmptyList, Spinner, TabButtons } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '@hooks/useSwapData';
 import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, ROUTES } from '@utils';
@@ -20,8 +20,8 @@ import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 const { SWAP, SELL, BUY } = ROUTES;
 
 const buttonLinks = [
-  { label: i18next.t('swap.buyKSQT'), link: `${SWAP}/${BUY}` },
-  { label: i18next.t('swap.sellKSQT'), link: `${SWAP}/${SELL}` },
+  { label: i18next.t('swap.buykSQT'), link: `${SWAP}/${BUY}` },
+  { label: i18next.t('swap.sellkSQT'), link: `${SWAP}/${SELL}` },
 ];
 
 const getStats = ({
@@ -66,8 +66,6 @@ const getStats = ({
   ];
 };
 
-// TODO: replace with aUSD sdk pkg when switch back to acala network
-// TODO: when order is undefined at useSwapData, upon design confirm
 const SellAUSD = () => {
   const { t } = useTranslation();
 
@@ -82,8 +80,15 @@ const SellAUSD = () => {
   const aUSDBalance = useAUSDBalance();
   const aUSDTotalSupply = useAUSDTotalSupply();
 
+  if (fetchingOrderId) return <Spinner />;
+
+  if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
+
   return renderAsyncArray(mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply), {
-    error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
+    error: (error) => {
+      console.error('Swap Error: ', error);
+      return <Typography.Text type="danger">{`Failed to load info: ${error.message}`}</Typography.Text>;
+    },
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply] = data;
@@ -144,6 +149,10 @@ const GetAUSD = () => {
   const tradableQuota = useSellSQTQuota(account ?? '');
   const { balance } = useSQToken();
   const aUSDBalance = useAUSDBalance();
+
+  if (fetchingOrderId) return <Spinner />;
+
+  if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
 
   return renderAsyncArray(mergeAsync(swapRate, tradableQuota, swapTokens, balance, aUSDBalance), {
     error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,

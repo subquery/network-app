@@ -5,15 +5,20 @@ import { STABLE_TOKEN, TOKEN } from '@utils/constants';
 
 const translation = {
   header: {
+    self: {
+      title: 'SubQuery Kepler',
+      description:
+        "Decentralise your project with SubQuery's Kepler Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
+    },
     externalExplorer: {
       title: 'SubQuery Explorer',
       description:
-        'Explore SubQuery projects built by other teams in the community and hosted on SubQuery’s Managed Service. Get inspired and see what others are building!',
+        "Explore SubQuery projects built by other teams in the community and hosted on SubQuery's Managed Service. Get inspired and see what others are building!",
     },
     managedService: {
       title: 'SubQuery Managed Service',
       description:
-        'Use SubQuery’s Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.',
+        "Use SubQuery's Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.",
     },
     explorer: 'Explorer',
     studio: 'Studio',
@@ -130,6 +135,9 @@ const translation = {
     },
     tooltip: {
       status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',
+      connection:
+        "We can't connect to this Indexer's metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to",
+      error: 'Indexer Connection Error',
     },
   },
   create: {
@@ -217,6 +225,6 @@ const translation = {
     header3: 'Description',
     header4: 'Created',
   },
-};
+} as const;
 
 export default translation;

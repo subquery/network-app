@@ -22,8 +22,9 @@ import { BigNumber } from 'ethers';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
 import { useWeb3Store } from 'src/stores';
 import { useEra } from '@hooks';
+import { TFunction } from 'i18next';
 
-const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: any) => {
+const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
 
   if (requireTokenApproval) return tokenApprovalModalText;

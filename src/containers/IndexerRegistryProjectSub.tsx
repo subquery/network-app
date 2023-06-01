@@ -40,8 +40,8 @@ export const SUB_PLAN_TEMPLATES = gql`
 `;
 
 export const SUB_WITHDRAWALS = gql`
-  subscription GetPlanTemplates {
-    planTemplates {
+  subscription GetWithdrawals {
+    withdrawls {
       id
       _entity
     }

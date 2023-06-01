@@ -15,7 +15,7 @@ export const en = {
     ...globalTransaltions,
     ...explorerTranslations,
   },
-};
+} as const;
 
 export type Translations = typeof en;
 

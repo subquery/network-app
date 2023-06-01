@@ -12,7 +12,6 @@ export function useCreateDeployment(projectId: string): (deploymentDetails: NewD
   const { catSingle } = useIPFS();
 
   const createDeployment = async (deploymentDetails: NewDeployment) => {
-    console.log('Uploading version details');
     const versionCid = await uploadVersionMetadata({
       version: deploymentDetails.version,
       description: deploymentDetails.description,

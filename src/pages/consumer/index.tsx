@@ -49,11 +49,15 @@ export const Consumer: React.FC = () => {
       <Routes>
         <Route path={`${SERVICE_AGREEMENTS}/${PLAYGROUND}/:id`} element={<SAPlayground />} />
         <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'consumer'} />} />
-        <Route path={`${FLEX_PLANS}/${PLAYGROUND}/:id`} element={<FlexPlayground />} />
-        <Route path={`${FLEX_PLANS}/*`} element={<MyFlexPlans />} />
+        <Route
+          path={`${FLEX_PLANS}/${PLAYGROUND}/:id`}
+          element={isFlexPlanActive ? <FlexPlayground /> : <Navigate replace to={'/'} />}
+        />
+        <Route path={`${FLEX_PLANS}/*`} element={isFlexPlanActive ? <MyFlexPlans /> : <Navigate replace to={'/'} />} />
         <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
-        {isFlexPlanActive && <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />}
-        <Route path={'/'} element={<Navigate replace to={FLEX_PLANS} />} />
+        <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />
+
+        <Route path={'/'} element={<Navigate replace to={isFlexPlanActive ? FLEX_PLANS : MY_OFFERS} />} />
       </Routes>
     </AppSidebar>
   );

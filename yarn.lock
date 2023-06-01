@@ -3899,10 +3899,15 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@0.3.3-2", "@subql/network-config@^0.3.3-2":
+"@subql/network-config@0.3.3-2":
   version "0.3.3-2"
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.3-2.tgz#ed4d464d546b65ef7339aeaa01d070e6761847d1"
   integrity sha512-3SQEJWoGM+sH+bubcMfjVxD2te6UEwPFtuGpcmqZB3nq6TV/S5IshXwX6cvMFzqyaUl2aOP95KuJ3CWTHfAOPw==
+
+"@subql/network-config@^0.3.3-3":
+  version "0.3.3-3"
+  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.3-3.tgz#ca3922438975233e9a6b5695df6a5ff3448b5920"
+  integrity sha512-r9R0W4mdRfOnkpyZKoyWUFvedfpylWrgHYVq7OPYyIss8y4lKoS0QL9evBOaGtI5BO2xBdRR5VH0v72CKQOQJw==
 
 "@subql/network-query@0.3.3-2":
   version "0.3.3-2"
@@ -3911,22 +3916,22 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@0.3.3-4", "@subql/network-query@^0.3.3-4":
-  version "0.3.3-4"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-4.tgz#4ad80650a17dca3a2a96c616132e90151bf6a7e5"
-  integrity sha512-HHQMfY5ybs/f2qMV697VBVL0Aq4tsrK7uFWyGheo9QYeA16vlt/dmac+VvlsvtW3YoHuUsGp/qv1M4+PPsTS/A==
+"@subql/network-query@0.3.3-7", "@subql/network-query@^0.3.3-7":
+  version "0.3.3-7"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-7.tgz#9268cb34a231e7bc0e5ed5bd65856db1214c57ed"
+  integrity sha512-FaM3sl3NrDteR1KYYqwD8Hp8FXf7JNJWnGVvrPlVn23tbSivuF13gPiayBNSCP5bi+RQMab9dKybTSTJQiIjSQ==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@^0.3.3-6":
-  version "0.3.3-6"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.3-6.tgz#7fb436fdb6d0f05d7e996945ae89e58bef3ec14e"
-  integrity sha512-TWWGvOghzkDFyFYZ/hkyaG8Ftq5igxe7rfESj1fPeRoETW3w0262sT/OuAC5Q4QHdQ5Pk9CyowPAKJJrdXiB3w==
+"@subql/react-hooks@^0.3.3-9":
+  version "0.3.3-9"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.3-9.tgz#c1441ebfa542af6821120be51f01654ab92e9864"
+  integrity sha512-cbyCvCiPSqgPZs/qOSn9oqcJRCfohn3uHg8IsuwXOzTbtqLt5LPIx7EMZJ1wAo6+SMQlHmY0FfKHJK8uQ+bJ7g==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.3-4"
+    "@subql/network-query" "0.3.3-7"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 
@@ -5600,6 +5605,15 @@ axios@^0.27.2:
   dependencies:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
+
+axios@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.4.0.tgz#38a7bf1224cd308de271146038b551d725f0be1f"
+  integrity sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==
+  dependencies:
+    follow-redirects "^1.15.0"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
 
 axobject-query@^3.1.1:
   version "3.1.1"
@@ -8530,7 +8544,7 @@ focus-lock@^0.11.6:
   dependencies:
     tslib "^2.0.3"
 
-follow-redirects@^1.14.9:
+follow-redirects@^1.14.9, follow-redirects@^1.15.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
@@ -12721,6 +12735,11 @@ proxy-addr@~2.0.7:
   dependencies:
     forwarded "0.2.0"
     ipaddr.js "1.9.1"
+
+proxy-from-env@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz#e102f16ca355424865755d2c9e8ea4f24d58c3e2"
+  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
 
 prr@~1.0.1:
   version "1.0.1"

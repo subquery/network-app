@@ -17,6 +17,7 @@
 
 .projectName {
   color: var(--gray700);
+  padding-right: 5px;
 }
 
 .projectDeploymentId {
@@ -35,4 +36,9 @@
 .templateList {
   height: 350px;
   overflow: scroll;
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
 }
