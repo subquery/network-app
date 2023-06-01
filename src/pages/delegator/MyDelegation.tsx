@@ -20,9 +20,10 @@ import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { DoUndelegate } from './DoUndelegate';
 import { NavLink } from 'react-router-dom';
 import { useEra } from '@hooks';
+import { TFunction } from 'i18next';
 
 const getColumns = (
-  t: any,
+  t: TFunction,
 ): TableProps<{
   value: CurrentEraValue<string>;
   indexer: string;

@@ -104,6 +104,6 @@ const translation = {
     participant: 'There is {{count}} {{role}}',
     participant_other: 'There are {{count}} {{role}}s',
   },
-};
+} as const;
 
 export default translation;

@@ -7,7 +7,8 @@ const translation = {
   header: {
     self: {
       title: 'SubQuery Kepler',
-      description: "Decentralise your project with SubQuery's Kepler Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
+      description:
+        "Decentralise your project with SubQuery's Kepler Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
     },
     externalExplorer: {
       title: 'SubQuery Explorer',
@@ -224,6 +225,6 @@ const translation = {
     header3: 'Description',
     header4: 'Created',
   },
-};
+} as const;
 
 export default translation;
