@@ -182,7 +182,7 @@ const GET_ACCEPTED_OFFERS = gql`
   }
 `;
 
-export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject> {
+export function useProjectQuery(params: GetProjectVariables): QueryResult<GetProject, GetProjectVariables> {
   return useQuery<GetProject, GetProjectVariables>(GET_PROJECT, { variables: params });
 }
 
@@ -192,31 +192,39 @@ export function useProjectsQuery(params: GetProjectsVariables): QueryResult<GetP
   return useQuery<GetProjects, GetProjectsVariables>(GET_PROJECTS, { variables: params });
 }
 
-export function useDeploymentQuery(params: GetDeploymentVariables): QueryResult<GetDeployment> {
+export function useDeploymentQuery(params: GetDeploymentVariables): QueryResult<GetDeployment, GetDeploymentVariables> {
   return useQuery<GetDeployment, GetDeploymentVariables>(GET_DEPLOYMENT, {
     variables: params,
   });
 }
 
-export function useDeploymentsQuery(params: GetProjectDeploymentsVariables): QueryResult<GetProjectDeployments> {
+export function useDeploymentsQuery(
+  params: GetProjectDeploymentsVariables,
+): QueryResult<GetProjectDeployments, GetProjectDeploymentsVariables> {
   return useQuery<GetProjectDeployments, GetProjectDeploymentsVariables>(GET_PROJECT_DEPLOYMENTS, {
     variables: params,
   });
 }
 
-export function useAcceptedOffersQuery(params?: GetAcceptedOffersVariables): QueryResult<GetAcceptedOffers> {
+export function useAcceptedOffersQuery(
+  params?: GetAcceptedOffersVariables,
+): QueryResult<GetAcceptedOffers, GetAcceptedOffersVariables> {
   return useQuery<GetAcceptedOffers, GetAcceptedOffersVariables>(GET_ACCEPTED_OFFERS, {
     variables: params,
   });
 }
 
-export function useIndexersQuery(params?: GetDeploymentIndexersVariables): QueryResult<GetDeploymentIndexers> {
+export function useIndexersQuery(
+  params?: GetDeploymentIndexersVariables,
+): QueryResult<GetDeploymentIndexers, GetDeploymentIndexersVariables> {
   return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
     variables: params,
   });
 }
 
-export function useDeploymentIndexerQuery(params?: GetDeploymentIndexerVariables): QueryResult<GetDeploymentIndexer> {
+export function useDeploymentIndexerQuery(
+  params?: GetDeploymentIndexerVariables,
+): QueryResult<GetDeploymentIndexer, GetDeploymentIndexerVariables> {
   return useQuery<GetDeploymentIndexer, GetDeploymentIndexerVariables>(GET_DEPLOYMENT_INDEXER, {
     variables: params,
   });
@@ -224,7 +232,7 @@ export function useDeploymentIndexerQuery(params?: GetDeploymentIndexerVariables
 
 export function useIndexerDeploymentsQuery(
   params?: GetDeploymentIndexersByIndexerVariables,
-): QueryResult<GetDeploymentIndexersByIndexer> {
+): QueryResult<GetDeploymentIndexersByIndexer, GetDeploymentIndexersByIndexerVariables> {
   return useQuery<GetDeploymentIndexersByIndexer, GetDeploymentIndexersByIndexerVariables>(
     GET_DEPLOYMENT_INDEXERS_WITH_INDEXER,
     {
@@ -259,7 +267,7 @@ function subqlOffsetPagination<T>(keyArgs?: string[] | false): FieldPolicy<T[], 
   };
 }
 
-export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string }> = (props) => {
+export const QueryRegistryProjectProvider: React.FC<{ endpoint?: string; children: React.ReactNode }> = (props) => {
   const client = React.useMemo(() => {
     if (!props?.endpoint) {
       throw new Error('Query Registry Project endpoint not provided');

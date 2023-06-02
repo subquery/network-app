@@ -37,9 +37,10 @@ import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useWeb3Store } from 'src/stores';
 import { TFunction } from 'i18next';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 
 type ErrorMsgProps = {
-  indexer: DeploymentIndexer;
+  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
   deploymentId: string | undefined;
   error: Error;
   t: TFunction;
@@ -59,7 +60,7 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
 );
 
 type Props = {
-  indexer: DeploymentIndexer;
+  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
   metadata: IndexerDetails;
   progressInfo: AsyncData<{
     currentBlock: number;
@@ -212,6 +213,7 @@ const ConnectedRow: React.FC<
   };
 
   const progressInfo = useAsyncMemo(async () => {
+    // TODO: Need thinking, this seems not robust.
     if (!deploymentId || !metadata?.url) {
       return null;
     }
@@ -232,7 +234,7 @@ const ConnectedRow: React.FC<
       targetBlock: meta?.targetHeight ?? 0,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
-  }, [startBlock]);
+  }, [startBlock, metadata.url, indexer]);
 
   return (
     <Row

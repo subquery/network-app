@@ -6,15 +6,16 @@ import { Pagination, Table, TableProps } from 'antd';
 import Row from './Row';
 import { useTranslation } from 'react-i18next';
 import styles from './IndexerDetails.module.css';
-import { Status, DeploymentIndexerFieldsFragment as DeploymentIndexer } from '@subql/network-query';
+import { Status } from '@subql/network-query';
 import { notEmpty } from '../../utils';
 import { useDeploymentIndexerQuery } from '../../containers';
 import { SearchInput } from '../SearchInput';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 
 type Props = {
-  indexers: readonly DeploymentIndexer[];
+  indexers: GetDeploymentIndexers_deploymentIndexers_nodes[];
   deploymentId?: string;
   startBlock?: number;
   totalCount?: number;

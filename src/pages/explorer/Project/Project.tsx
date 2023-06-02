@@ -68,7 +68,6 @@ const ProjectInner: React.FC = () => {
     () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty),
     [asyncIndexers.data],
   );
-  const hasIndexers = React.useMemo(() => !!indexers?.length, [indexers]);
 
   // Populate data from gql for total progress, less accurate than when indexers tab visible
   React.useEffect(() => {
