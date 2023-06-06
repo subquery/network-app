@@ -2,21 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Table, TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { SummaryList, TableText } from '@components';
+import TransactionModal from '@components/TransactionModal';
 import { Button, Typography } from '@subql/components';
+import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
-import TransactionModal from '@components/TransactionModal';
-import assert from 'assert';
 import { convertBigNumberToNumber, formatEther, TOKEN } from '@utils';
-import { SummaryList, TableText } from '@components';
-import styles from './List.module.css';
-import clsx from 'clsx';
 import { formatSecondsDuration } from '@utils/dateFormatters';
+import { Table, TableProps } from 'antd';
+import assert from 'assert';
+import clsx from 'clsx';
 import { last } from 'ramda';
-import { TableTitle } from '@subql/components';
+
 import { useWeb3Store } from 'src/stores';
+
+import styles from './List.module.css';
 
 type Props = {
   data: Plan[];

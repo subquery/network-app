@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import clsx from 'clsx';
-import { Typography } from '@subql/components';
-import { Space } from 'antd';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import styles from './AppPageHeader.module.css';
-import { CurEra } from '../CurEra';
+import { Typography } from '@subql/components';
 import { COLORS } from '@utils';
+import { Space } from 'antd';
+import clsx from 'clsx';
+
+import { CurEra } from '../CurEra';
+import styles from './AppPageHeader.module.css';
 
 type Props = {
   title: string | React.ReactNode;

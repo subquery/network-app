@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { InputNumber, InputNumberProps, Button } from 'antd';
-import styles from './NumberInput.module.css';
-import { AppTypography } from '../Typography';
+import { Button, InputNumber, InputNumberProps } from 'antd';
 import { BigNumberish } from 'ethers';
+
+import { AppTypography } from '../Typography';
+import styles from './NumberInput.module.css';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;

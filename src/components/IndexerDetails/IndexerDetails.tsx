@@ -2,17 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Pagination, Table, TableProps } from 'antd';
-import Row from './Row';
 import { useTranslation } from 'react-i18next';
-import styles from './IndexerDetails.module.css';
-import { Status } from '@subql/network-query';
-import { notEmpty } from '../../utils';
-import { useDeploymentIndexerQuery } from '../../containers';
-import { SearchInput } from '../SearchInput';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
+import { Status } from '@subql/network-query';
+import { Pagination, Table, TableProps } from 'antd';
+
+import { useDeploymentIndexerQuery } from '../../containers';
+import { notEmpty } from '../../utils';
+import { SearchInput } from '../SearchInput';
+import styles from './IndexerDetails.module.css';
+import Row from './Row';
 
 type Props = {
   indexers: GetDeploymentIndexers_deploymentIndexers_nodes[];

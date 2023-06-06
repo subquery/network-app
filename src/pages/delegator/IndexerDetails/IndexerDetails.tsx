@@ -1,23 +1,24 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useSortedIndexer } from '@hooks';
-import { Indexing } from '@pages/indexer/MyStaking/Indexing';
-import { Spinner, Typography } from '@subql/components';
-import { renderAsync, ROUTES, truncateAddress } from '@utils';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import ReactJazzicon from 'react-jazzicon';
 import { useParams } from 'react-router-dom';
 import { Copy, CurEra, EmptyList } from '@components';
-import { useTranslation } from 'react-i18next';
-import styles from './IndexerDetails.module.css';
-import ReactJazzicon from 'react-jazzicon';
-import { DoDelegate } from '../DoDelegate';
-import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { BreadcrumbNav } from '@components';
+import { useWeb3 } from '@containers';
+import { useSortedIndexer } from '@hooks';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { OwnDeployments } from '@pages/indexer/MyProjects/OwnDeployments';
+import { Indexing } from '@pages/indexer/MyStaking/Indexing';
+import { Spinner, Typography } from '@subql/components';
+import { useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { renderAsync, ROUTES, truncateAddress } from '@utils';
+import { t } from 'i18next';
+
+import { DoDelegate } from '../DoDelegate';
 import { DoUndelegate } from '../DoUndelegate';
-import { useWeb3 } from '@containers';
-import { BreadcrumbNav } from '@components';
+import styles from './IndexerDetails.module.css';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 

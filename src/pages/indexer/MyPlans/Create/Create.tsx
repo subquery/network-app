@@ -1,19 +1,19 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { parseEther } from '@ethersproject/units';
-import { Button, Spinner, Typography } from '@subql/components';
-import assert from 'assert';
-import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import clsx from 'clsx';
-import { Select, TableProps, Radio, Table } from 'antd';
-import * as yup from 'yup';
-import { constants } from 'ethers';
+import { SummaryList, TableText } from '@components';
+import { NumberInput } from '@components/NumberInput';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
+import { SUB_PLAN_TEMPLATES } from '@containers/IndexerRegistryProjectSub';
+import { parseEther } from '@ethersproject/units';
+import { useSortedIndexerDeployments } from '@hooks';
+import { Button, Spinner, Typography } from '@subql/components';
+import { TableTitle } from '@subql/components';
+import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
+import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -23,16 +23,18 @@ import {
   notEmpty,
   renderAsync,
 } from '@utils';
-import { SummaryList, TableText } from '@components';
-import { useSortedIndexerDeployments } from '@hooks';
-import styles from './Create.module.css';
 import { formatSecondsDuration } from '@utils/dateFormatters';
-import { NumberInput } from '@components/NumberInput';
-import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
-import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
-import { TableTitle } from '@subql/components';
-import { SUB_PLAN_TEMPLATES } from '@containers/IndexerRegistryProjectSub';
+import { Radio, Select, Table, TableProps } from 'antd';
+import assert from 'assert';
+import clsx from 'clsx';
+import { constants } from 'ethers';
+import { Form, Formik } from 'formik';
+import i18next from 'i18next';
+import * as yup from 'yup';
+
 import { useWeb3Store } from 'src/stores';
+
+import styles from './Create.module.css';
 
 export const getPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,

@@ -1,10 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Field } from 'formik';
 import * as React from 'react';
-import styles from './ImageInput.module.css';
+import { Field } from 'formik';
+
 import IPFSImage from '../IPFSImage';
+import styles from './ImageInput.module.css';
 
 type Props = {
   label: string;

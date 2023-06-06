@@ -3,11 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ROUTES } from '../../../utils';
-import styles from './Withdrawn.module.css';
-import { AppPageHeader } from '../../../components';
-import { Locked } from './Locked';
 import { BreadcrumbNav } from '@components';
+
+import { AppPageHeader } from '../../../components';
+import { ROUTES } from '../../../utils';
+import { Locked } from './Locked';
+import styles from './Withdrawn.module.css';
 
 export const Withdrawn: React.FC<{ delegator: string }> = () => {
   const { t } = useTranslation();

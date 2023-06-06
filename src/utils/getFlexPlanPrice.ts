@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumberish } from 'ethers';
+
 import { convertStringToNumber, formatEther } from './numberFormatters';
 
 export function getFlexPlanPrice(price: BigNumberish): string {

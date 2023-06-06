@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { Button, Typography } from 'antd';
 import assert from 'assert';
 import { BigNumber, constants, ContractReceipt, ContractTransaction } from 'ethers';
-import i18next from '../../i18n';
-import { Button, Typography } from 'antd';
-import styles from './ModalApproveToken.module.css';
-import { parseError, TOKEN } from '../../utils';
+
 import { useWeb3Store } from 'src/stores';
+
+import i18next from '../../i18n';
+import { parseError, TOKEN } from '../../utils';
+import styles from './ModalApproveToken.module.css';
 
 export const getTokenApprovalModalText = (token = TOKEN) => ({
   title: i18next.t('tokenApproval.approve', { token }),

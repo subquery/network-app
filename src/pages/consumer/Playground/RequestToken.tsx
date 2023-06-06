@@ -1,12 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography, Button } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button, Typography } from 'antd';
+
 import { useWeb3 } from '../../../containers';
-import styles from './Playground.module.css';
 import { requestConsumerHostToken, requestServiceAgreementToken } from '../../../utils/eip721SignTokenReq';
+import styles from './Playground.module.css';
 
 export interface RequestTokenProps {
   indexer: string;

@@ -2,14 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppPageHeader, TabButtons } from '@components';
-import { Default } from './Default';
-import { Create } from './Create';
-import Specific from './Specific';
-import { useTranslation } from 'react-i18next';
-import styles from './Plans.module.css';
 import { ROUTES } from '@utils';
+
+import { Create } from './Create';
+import { Default } from './Default';
+import styles from './Plans.module.css';
+import Specific from './Specific';
 
 const { DEFAULT_PLANS, SPECIFIC_PLANS } = ROUTES;
 

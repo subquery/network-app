@@ -1,20 +1,21 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Spinner, Typography } from '@subql/components';
+import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
+import { Tooltip } from 'antd';
+
 import { useIPFS, useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
+import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 import { ProjectMetadata } from '../../models';
 import { getTrimmedStr, renderAsync } from '../../utils';
+import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
 import { TableText } from '../TableText';
 import styles from './DeploymentInfo.module.css';
-import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
-import Copy from '../Copy';
-import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
-import { Tooltip } from 'antd';
 
 type Props = {
   project?: ProjectMetadata;

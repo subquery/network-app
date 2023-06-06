@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { truncFormatEtherStr, TOKEN } from '../../utils';
+import { TOKEN, truncFormatEtherStr } from '../../utils';
 import { TableText } from '../TableText';
 
 export const TokenAmount: React.FC<{ value: string | number | undefined; className?: string }> = ({

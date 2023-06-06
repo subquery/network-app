@@ -1,22 +1,23 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
-import { Formik, Form } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../containers';
-import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../utils';
-import * as yup from 'yup';
-import { SummaryList } from '../../../components';
-import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
-import { Select, Divider, Button } from 'antd';
-import styles from './DoDelegate.module.css';
+import { Spinner, Typography } from '@subql/components';
+import { Button, Divider, Select } from 'antd';
 import clsx from 'clsx';
+import { BigNumber, BigNumberish } from 'ethers';
+import { Form, Formik } from 'formik';
+import * as yup from 'yup';
+
+import { SummaryList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
+import { useDelegation, useDelegations, useSQToken, useWeb3 } from '../../../containers';
+import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { BigNumber, BigNumberish } from 'ethers';
+import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../utils';
+import styles from './DoDelegate.module.css';
 
 export const AddressName: React.FC<{
   address?: string;

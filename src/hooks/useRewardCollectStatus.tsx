@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useWeb3Store } from 'src/stores';
-import { useAsyncMemo } from '.';
+
 import { AsyncMemoReturn } from './useAsyncMemo';
+import { useAsyncMemo } from '.';
 
 export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasClaimedRewards: boolean } | undefined> {
   const { contracts } = useWeb3Store();

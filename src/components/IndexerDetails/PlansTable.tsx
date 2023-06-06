@@ -2,24 +2,25 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { LazyQueryResult } from '@apollo/client';
+import { BigNumber } from '@ethersproject/bignumber';
+import { ContractTransaction } from '@ethersproject/contracts';
+import { Button, Spinner, Typography } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { Table, TableProps } from 'antd';
-import { LazyQueryResult } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
-import { BigNumber } from '@ethersproject/bignumber';
-import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
-import { Button, Spinner, Typography } from '@subql/components';
-import TransactionModal from '../TransactionModal';
-import { ContractTransaction } from '@ethersproject/contracts';
-import { IndexerDetails } from '../../models';
-import { IndexerName } from './IndexerName';
-import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
-import { formatSecondsDuration } from '../../utils/dateFormatters';
-import { SummaryList } from '../SummaryList';
-import styles from './IndexerDetails.module.css';
 import { last } from 'ramda';
+
+import { IndexerDetails } from '../../models';
+import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
+import { formatSecondsDuration } from '../../utils/dateFormatters';
+import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
+import { SummaryList } from '../SummaryList';
 import { TableText } from '../TableText';
+import TransactionModal from '../TransactionModal';
+import styles from './IndexerDetails.module.css';
+import { IndexerName } from './IndexerName';
 
 export type PlansTableProps = {
   loadPlans: () => void;

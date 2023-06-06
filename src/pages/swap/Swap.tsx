@@ -1,21 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Typography } from 'antd';
-import { BigNumber, BigNumberish } from 'ethers';
-import i18next, { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, EmptyList, Spinner, TabButtons } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
+import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
 import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '@hooks/useSwapData';
-import { formatEther, mergeAsync, renderAsyncArray, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, ROUTES } from '@utils';
+import { Footer } from '@subql/components';
+import { formatEther, mergeAsync, renderAsyncArray, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '@utils';
+import { Typography } from 'antd';
+import { BigNumber, BigNumberish } from 'ethers';
+import i18next, { TFunction } from 'i18next';
+
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
-import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
-import { Footer } from '@subql/components';
-import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 
 const { SWAP, SELL, BUY } = ROUTES;
 

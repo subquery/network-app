@@ -1,43 +1,44 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useQuery, gql, QueryResult } from '@apollo/client';
+import { gql, QueryResult, useQuery } from '@apollo/client';
+
+import { GetAllDelegations, GetAllDelegationsVariables } from '../__generated__/registry/GetAllDelegations';
+import { GetAllOpenOffers, GetAllOpenOffersVariables } from '../__generated__/registry/GetAllOpenOffers';
+import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
+import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
+import { GetDelegations, GetDelegationsVariables } from '../__generated__/registry/GetDelegations';
+import { GetDelegator, GetDelegatorVariables } from '../__generated__/registry/GetDelegator';
 import {
-  GetExpiredServiceAgreementsVariables,
   GetExpiredServiceAgreements,
+  GetExpiredServiceAgreementsVariables,
 } from '../__generated__/registry/GetExpiredServiceAgreements';
 import {
-  GetOngoingServiceAgreementsVariables,
-  GetOngoingServiceAgreements,
-} from '../__generated__/registry/GetOngoingServiceAgreements';
-import {
-  GetSpecificServiceAgreementsVariables,
-  GetSpecificServiceAgreements,
-} from '../__generated__/registry/GetSpecificServiceAgreements';
-import { GetOwnOpenOffersVariables, GetOwnOpenOffers } from '../__generated__/registry/GetOwnOpenOffers';
-import { GetOwnFinishedOffersVariables, GetOwnFinishedOffers } from '../__generated__/registry/GetOwnFinishedOffers';
-import { GetOwnExpiredOffersVariables, GetOwnExpiredOffers } from '../__generated__/registry/GetOwnExpiredOffers';
-import { GetAllOpenOffersVariables, GetAllOpenOffers } from '../__generated__/registry/GetAllOpenOffers';
-import { GetSpecificOpenOffersVariables, GetSpecificOpenOffers } from '../__generated__/registry/GetSpecificOpenOffers';
-import { GetAllDelegationsVariables, GetAllDelegations } from '../__generated__/registry/GetAllDelegations';
-import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
-import { GetDelegationsVariables, GetDelegations } from '../__generated__/registry/GetDelegations';
-import {
-  GetFilteredDelegationsVariables,
   GetFilteredDelegations,
+  GetFilteredDelegationsVariables,
 } from '../__generated__/registry/GetFilteredDelegations';
-import { GetDelegatorVariables, GetDelegator } from '../__generated__/registry/GetDelegator';
-import { GetIndexerVariables, GetIndexer } from '../__generated__/registry/GetIndexer';
+import { GetIndexer, GetIndexerVariables } from '../__generated__/registry/GetIndexer';
 import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/registry/GetIndexerDelegators';
-import { GetIndexerRewardsVariables, GetIndexerRewards } from '../__generated__/registry/GetIndexerRewards';
-import { GetIndexersVariables, GetIndexers } from '../__generated__/registry/GetIndexers';
-import { GetPlansVariables, GetPlans } from '../__generated__/registry/GetPlans';
-import { GetPlanTemplatesVariables, GetPlanTemplates } from '../__generated__/registry/GetPlanTemplates';
-import { GetRewardsVariables, GetRewards } from '../__generated__/registry/GetRewards';
-import { GetSpecificPlansVariables, GetSpecificPlans } from '../__generated__/registry/GetSpecificPlans';
-import { GetWithdrawlsVariables, GetWithdrawls } from '../__generated__/registry/GetWithdrawls';
+import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/registry/GetIndexerRewards';
+import { GetIndexers, GetIndexersVariables } from '../__generated__/registry/GetIndexers';
 import { GetOngoingFlexPlan, GetOngoingFlexPlanVariables } from '../__generated__/registry/GetOngoingFlexPlan';
-import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
+import {
+  GetOngoingServiceAgreements,
+  GetOngoingServiceAgreementsVariables,
+} from '../__generated__/registry/GetOngoingServiceAgreements';
+import { GetOwnExpiredOffers, GetOwnExpiredOffersVariables } from '../__generated__/registry/GetOwnExpiredOffers';
+import { GetOwnFinishedOffers, GetOwnFinishedOffersVariables } from '../__generated__/registry/GetOwnFinishedOffers';
+import { GetOwnOpenOffers, GetOwnOpenOffersVariables } from '../__generated__/registry/GetOwnOpenOffers';
+import { GetPlans, GetPlansVariables } from '../__generated__/registry/GetPlans';
+import { GetPlanTemplates, GetPlanTemplatesVariables } from '../__generated__/registry/GetPlanTemplates';
+import { GetRewards, GetRewardsVariables } from '../__generated__/registry/GetRewards';
+import { GetSpecificOpenOffers, GetSpecificOpenOffersVariables } from '../__generated__/registry/GetSpecificOpenOffers';
+import { GetSpecificPlans, GetSpecificPlansVariables } from '../__generated__/registry/GetSpecificPlans';
+import {
+  GetSpecificServiceAgreements,
+  GetSpecificServiceAgreementsVariables,
+} from '../__generated__/registry/GetSpecificServiceAgreements';
+import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/registry/GetWithdrawls';
 
 const INDEXER_FIELDS = gql`
   fragment IndexerFields on Indexer {

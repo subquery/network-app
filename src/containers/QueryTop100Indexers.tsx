@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useQuery, gql, QueryResult } from '@apollo/client';
-import { TOP_100_INDEXERS } from './QueryApolloProvider';
+import { gql, QueryResult, useQuery } from '@apollo/client';
+
 import { GetTopIndexers } from '../__generated__/excellentIndexers/GetTopIndexers';
+import { TOP_100_INDEXERS } from './QueryApolloProvider';
 
 const GET_TOP_INDEXERS = gql`
   query GetTopIndexers {

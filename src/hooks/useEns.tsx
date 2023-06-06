@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useAsyncMemo } from './useAsyncMemo';
-import { AsyncData } from '../utils';
 import { useWeb3Store } from 'src/stores';
+
+import { AsyncData } from '../utils';
+import { useAsyncMemo } from './useAsyncMemo';
 
 export function useENS(address: string): AsyncData<string | undefined | null> {
   const { ethProvider } = useWeb3Store();

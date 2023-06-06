@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import assert from 'assert';
+
 import { useWeb3Store } from 'src/stores';
+
 import { AsyncData, convertBigNumberToNumber } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 

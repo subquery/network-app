@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import ProjectEdit from './ProjectEdit';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+
 import { IPFSProvider } from '../../containers';
+import ProjectEdit from './ProjectEdit';
 
 export default {
   title: 'ProjectEdit',

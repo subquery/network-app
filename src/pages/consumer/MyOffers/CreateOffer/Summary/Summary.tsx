@@ -1,16 +1,19 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { assert } from '@polkadot/util';
 import { Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import moment from 'moment';
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+
+import { useWeb3Store } from 'src/stores';
+
 import { SummaryList } from '../../../../../components';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -20,11 +23,10 @@ import {
   parseError,
   TOKEN,
 } from '../../../../../utils';
+import { ROUTES } from '../../../../../utils';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
 import styles from './Summary.module.css';
-import { ROUTES } from '../../../../../utils';
-import { useWeb3Store } from 'src/stores';
 
 const { CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 

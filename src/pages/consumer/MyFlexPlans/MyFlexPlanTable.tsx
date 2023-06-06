@@ -1,24 +1,25 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import { TableTitle } from '@subql/components';
+import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
+import { ChannelStatus } from '@subql/network-query';
+import { useGetConsumerClosedFlexPlansQuery, useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
 import { TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 import moment from 'moment';
-import * as React from 'react';
-import { useLocation } from 'react-router';
-import { useGetConsumerOngoingFlexPlansQuery, useGetConsumerClosedFlexPlansQuery } from '@subql/react-hooks';
+
 import { AntDTable, DeploymentMeta, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { TableTitle } from '@subql/components';
-import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
-import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
-import { ChannelStatus } from '@subql/network-query';
-import { ClaimFlexPlan } from './ClaimFlexPlan';
 import { useWeb3 } from '../../../containers';
-import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
+import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
-import { useTranslation } from 'react-i18next';
+import { ClaimFlexPlan } from './ClaimFlexPlan';
+import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
 
 const { ONGOING_PLANS_NAV, CLOSED_PLANS_NAV } = ROUTES;
 

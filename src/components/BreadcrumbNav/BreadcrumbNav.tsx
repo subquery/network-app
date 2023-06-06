@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Breadcrumb } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { Breadcrumb } from 'antd';
 
 interface BreadcrumbProps {
   backLink: string;

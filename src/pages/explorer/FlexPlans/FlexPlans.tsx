@@ -2,15 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { BigNumber } from 'ethers';
+import { useTranslation } from 'react-i18next';
+import { BsStarFill } from 'react-icons/bs';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { Space, Table, TableProps } from 'antd';
-import i18next from 'i18next';
-import { BsStarFill } from 'react-icons/bs';
-import { useIndexerFlexPlans, IIndexerFlexPlan } from '../../../hooks';
-import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { TableTitle } from '@subql/components';
+import { Space, Table, TableProps } from 'antd';
+import { BigNumber } from 'ethers';
+import i18next from 'i18next';
+// import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
+import moment from 'moment';
+
+import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
+import { IIndexerFlexPlan, useIndexerFlexPlans } from '../../../hooks';
 import {
   formatEther,
   formatSecondsDuration,
@@ -22,13 +28,8 @@ import {
   ROUTES,
   TOKEN,
 } from '../../../utils';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import styles from './FlexPlans.module.css';
-import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
-import { useTranslation } from 'react-i18next';
 import { PurchaseFlexPlan } from './PurchaseFlexPlan';
-// import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
-import moment from 'moment';
 
 type Data<T> = T | undefined;
 

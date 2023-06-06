@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { DependencyList, useEffect, useState, useCallback } from 'react';
+import { DependencyList, useCallback, useEffect, useState } from 'react';
+
 import { AsyncData } from '../utils';
 
 export interface AsyncMemoReturn<T> extends AsyncData<T> {

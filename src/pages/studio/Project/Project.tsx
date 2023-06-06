@@ -2,20 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
-import { ProjectDetail, ProjectHeader, NewDeployment, Spinner, ProjectEdit } from '../../../components';
+import { Navigate, Route, useParams } from 'react-router';
 import { Button } from '@subql/components';
+import { Typography } from 'antd';
+import clsx from 'clsx';
+
+import { NewDeployment, ProjectDetail, ProjectEdit, ProjectHeader, Spinner } from '../../../components';
+import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
-import { useWeb3 } from '../../../containers';
-import styles from './Project.module.css';
 import { modalStyles, renderAsync } from '../../../utils';
-import DeploymentsTab from './Deployments';
-import { useTranslation } from 'react-i18next';
-import clsx from 'clsx';
 import { ROUTES } from '../../../utils';
-import { Typography } from 'antd';
+import DeploymentsTab from './Deployments';
+import styles from './Project.module.css';
 
 const { DETAILS, DEPLOYMENTS } = ROUTES;
 

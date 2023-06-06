@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+
 import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
 import { FormProjectMetadata, ProjectMetadata } from '../models';
 

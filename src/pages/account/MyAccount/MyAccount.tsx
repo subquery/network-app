@@ -1,28 +1,29 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useWeb3 } from '@containers';
-import styles from './MyAccount.module.css';
 import { useTranslation } from 'react-i18next';
-import { Card, Spinner, Typography } from '@subql/components';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { EmptyList } from '@components';
+import { useWeb3 } from '@containers';
+import { useSortedIndexer } from '@hooks';
+import { useDelegating } from '@hooks/useDelegating';
+import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
+import { Card, Spinner, Typography } from '@subql/components';
+import { WithdrawalStatus } from '@subql/network-query';
 import {
   renderAsync,
   useGetIndexerDelegatorsQuery,
   useGetRewardsQuery,
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
-import { EmptyList } from '@components';
 import { formatEther, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
-import { useSortedIndexer } from '@hooks';
-import { BigNumber } from 'ethers';
-import { WithdrawalStatus } from '@subql/network-query';
-import { AccountHeader } from './Header';
-import { t } from 'i18next';
-import { useDelegating } from '@hooks/useDelegating';
 import { ROUTES } from '@utils';
-import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
+import { BigNumber } from 'ethers';
+import { t } from 'i18next';
+
+import { AccountHeader } from './Header';
+import styles from './MyAccount.module.css';
 
 const { INDEXER, INDEXERS, DELEGATOR, MY_STAKING, MY_ACCOUNT, REWARDS, WITHDRAWN } = ROUTES;
 

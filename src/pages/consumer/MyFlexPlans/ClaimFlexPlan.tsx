@@ -2,17 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Typography, Button } from 'antd';
-import assert from 'assert';
 import { useTranslation } from 'react-i18next';
-import { BigNumber } from 'ethers';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
-import TransactionModal from '../../../components/TransactionModal';
-import styles from './MyFlexPlans.module.css';
-import { formatEther } from '../../../utils/numberFormatters';
-import { TOKEN } from '../../../utils';
 import { ChannelStatus } from '@subql/network-query';
+import { Button, Typography } from 'antd';
+import assert from 'assert';
+import { BigNumber } from 'ethers';
+
 import { useWeb3Store } from 'src/stores';
+
+import TransactionModal from '../../../components/TransactionModal';
+import { TOKEN } from '../../../utils';
+import { formatEther } from '../../../utils/numberFormatters';
+import styles from './MyFlexPlans.module.css';
 
 interface ClaimFlexPlanProps {
   flexPlan: ConsumerFlexPlan;

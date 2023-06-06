@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@subql/components';
+
 import styles from './NewProject.module.css';
 
 type Props = {

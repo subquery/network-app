@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { MyStaking } from './MyStaking';
+import { Navigate, Route, Routes } from 'react-router';
+import { Marketplace } from '@pages/consumer/OfferMarketplace';
 
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import { ServiceAgreements } from '../consumer/ServiceAgreements';
 import { MyDelegators } from './MyDelegators';
-import { MyProjects } from './MyProjects';
 import { Plans } from './MyPlans';
-import { Marketplace } from '@pages/consumer/OfferMarketplace';
+import { MyProjects } from './MyProjects';
+import { MyStaking } from './MyStaking';
 
 const { MY_PROJECTS, MY_PLANS, MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 

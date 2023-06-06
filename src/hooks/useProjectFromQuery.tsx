@@ -1,11 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { ProjectFieldsFragment as Project } from '@subql/network-query';
+
 import { useProjectMetadata, useProjectQuery } from '../containers';
 import { ProjectDeployment, ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
-import { ProjectFieldsFragment as Project } from '@subql/network-query';
 
 type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;

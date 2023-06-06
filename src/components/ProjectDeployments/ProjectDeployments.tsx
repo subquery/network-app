@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import styles from './ProjectDeployments.module.css';
-import { NewDeployment } from '../../models';
-import moment from 'moment';
-import { Copy } from '..';
 import { useTranslation } from 'react-i18next';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '../Table';
+import moment from 'moment';
+
+import { NewDeployment } from '../../models';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
+import { Copy } from '..';
+import styles from './ProjectDeployments.module.css';
 
 type Deployment = NewDeployment & { createdAt?: Date };
 

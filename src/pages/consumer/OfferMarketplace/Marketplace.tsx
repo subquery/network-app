@@ -1,17 +1,18 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
-import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
+import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
+import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
+import { ROUTES, URLS } from '@utils';
+import moment from 'moment';
+
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
 import styles from './Marketplace.module.css';
-import { ROUTES, URLS } from '@utils';
-import { useLocation } from 'react-router-dom';
-import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 
 const { INDEXER_OFFER_MARKETPLACE_NAV } = ROUTES;
 

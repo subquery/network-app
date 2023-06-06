@@ -1,11 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import delegatorTranslations from './delegator';
 import consumerTranslations from './consumer';
-import indexerTranslations from './indexer';
-import globalTransaltions from './global';
+import delegatorTranslations from './delegator';
 import explorerTranslations from './explorer';
+import globalTransaltions from './global';
+import indexerTranslations from './indexer';
 
 export const en = {
   translation: {

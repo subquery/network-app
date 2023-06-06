@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { BigNumber } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
-import TransactionModal from '../../../components/TransactionModal';
-import styles from './MyFlexPlans.module.css';
-import { formatEther } from '../../../utils/numberFormatters';
-import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { Button } from 'antd';
+import { BigNumber } from 'ethers';
+
 import { AppTypography, SummaryList } from '../../../components';
-import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
+import TransactionModal from '../../../components/TransactionModal';
 import { useWeb3 } from '../../../containers';
+import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
+import { formatEther } from '../../../utils/numberFormatters';
+import styles from './MyFlexPlans.module.css';
 
 async function terminatePlan(flexPlanId: string, account: string, library: Web3Provider | undefined) {
   try {

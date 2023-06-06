@@ -1,15 +1,16 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3 } from '@containers';
-import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
-import List from '../List';
-import { useGetPlansQuery } from '@subql/react-hooks';
 import { EmptyList } from '@components';
+import { useWeb3 } from '@containers';
 import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
+import { Spinner, Typography } from '@subql/components';
+import { useGetPlansQuery } from '@subql/react-hooks';
+import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
+
+import List from '../List';
 
 export const Default: React.FC = () => {
   const { account } = useWeb3();

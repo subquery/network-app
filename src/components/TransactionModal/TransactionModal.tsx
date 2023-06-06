@@ -1,18 +1,19 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { MdErrorOutline } from 'react-icons/md';
+import { LoadingOutlined } from '@ant-design/icons';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/components';
-import * as React from 'react';
+import { Tooltip } from 'antd';
+
 import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import styles from './TransactionModal.module.css';
-import { MdErrorOutline } from 'react-icons/md';
-import { Tooltip } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { LoadingOutlined } from '@ant-design/icons';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 

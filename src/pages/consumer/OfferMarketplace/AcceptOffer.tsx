@@ -1,14 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import assert from 'assert';
-import { Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { StepButtons } from '@components/StepButton';
+import { useProject } from '@hooks';
 import { Spinner } from '@subql/components';
+import { DeploymentIndexerFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
+import { useGetIndexerQuery } from '@subql/react-hooks';
+import { Typography } from 'antd';
+import assert from 'assert';
 import moment from 'moment';
-import { useWeb3 } from '../../../containers';
+
+import { useWeb3Store } from 'src/stores';
+
+import { DeploymentInfo, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
+import { useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
   convertStringToNumber,
@@ -17,14 +25,8 @@ import {
   getCapitalizedStr,
   renderAsync,
 } from '../../../utils';
-import { CheckList } from './CheckList';
 import styles from './AcceptOffer.module.css';
-import { OfferFieldsFragment, DeploymentIndexerFieldsFragment } from '@subql/network-query';
-import { useGetIndexerQuery } from '@subql/react-hooks';
-import { DeploymentInfo, SummaryList } from '../../../components';
-import { StepButtons } from '@components/StepButton';
-import { useProject } from '@hooks';
-import { useWeb3Store } from 'src/stores';
+import { CheckList } from './CheckList';
 
 interface OfferSummaryProps {
   offer: OfferFieldsFragment;

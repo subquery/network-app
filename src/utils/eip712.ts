@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Web3Provider } from '@ethersproject/providers';
+
 import { defaultChainId } from '../containers/Web3';
 
 export interface SAMessage {

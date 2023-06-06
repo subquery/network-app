@@ -1,13 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useTranslation } from 'react-i18next';
 import { assert } from '@polkadot/util';
 import { parseEther } from 'ethers/lib/utils';
-import { useTranslation } from 'react-i18next';
+
 import { useWeb3Store } from 'src/stores';
+
 import { useSQToken } from '../../containers';
 import { formatEther, TOKEN } from '../../utils';
-import { ModalApproveToken, ApproveContract } from '../ModalApproveToken';
+import { ApproveContract, ModalApproveToken } from '../ModalApproveToken';
 import TransactionModal from '../TransactionModal';
 
 type TransferAction = 'Transfer' | 'Withdraw';

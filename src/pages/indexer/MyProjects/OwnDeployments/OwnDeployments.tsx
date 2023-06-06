@@ -1,20 +1,21 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ProgressBar, Spinner } from '@subql/components';
-import { Table, TableProps, Typography } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ProgressBar, Spinner } from '@subql/components';
+import { TableTitle } from '@subql/components';
+import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import { Table, TableProps, Typography } from 'antd';
+
 import { DeploymentInfo, Status } from '../../../../components';
+import { Description } from '../../../../components/Description/Description';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import { useSortedIndexerDeployments, UseSortedIndexerDeploymentsReturn } from '../../../../hooks';
 import { renderAsync, truncateToDecimalPlace } from '../../../../utils';
-import styles from './OwnDeployments.module.css';
 import { ROUTES } from '../../../../utils';
-import { TableTitle } from '@subql/components';
-import { Description } from '../../../../components/Description/Description';
-import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import styles from './OwnDeployments.module.css';
 
 const { PROJECT_NAV } = ROUTES;
 

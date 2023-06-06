@@ -1,13 +1,14 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FTextInput } from '..';
-import { NewDeployment as NewDeploymentParams, newDeploymentSchema } from '../../models';
 import { Button } from '@subql/components';
+import { Form, Formik } from 'formik';
+
+import { NewDeployment as NewDeploymentParams, newDeploymentSchema } from '../../models';
 import { ModalContainer } from '../NewProject/NewProject';
+import { FTextInput } from '..';
 import styles from './NewDeployment.module.css';
 
 type Props = {

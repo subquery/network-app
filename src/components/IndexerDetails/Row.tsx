@@ -1,43 +1,43 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table, TableProps, Tooltip } from 'antd';
 import * as React from 'react';
-import { DeploymentIndexerFieldsFragment as DeploymentIndexer } from '@subql/network-query';
-import Progress from './Progress';
-import { IndexerName } from './IndexerName';
+import { useTranslation } from 'react-i18next';
+import { BsDashSquare, BsInfoSquare, BsPlusSquare } from 'react-icons/bs';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
+import { LazyQueryResult } from '@apollo/client';
+import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
+import { Spinner } from '@subql/components';
+import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
+import { Status as DeploymentStatus } from '@subql/network-query';
+import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import { Table, TableProps, Tooltip } from 'antd';
+import { Typography } from 'antd';
+import assert from 'assert';
+import clsx from 'clsx';
+import { TFunction } from 'i18next';
+
+import { useWeb3Store } from 'src/stores';
+
+import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
+import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
+import { IndexerDetails } from '../../models';
 import {
   AsyncData,
   cidToBytes32,
   getDeploymentMetadata,
   mapAsync,
   notEmpty,
-  parseError,
   renderAsync,
   wrapProxyEndpoint,
 } from '../../utils';
-import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
-import { IndexerDetails } from '../../models';
-import Status from '../Status';
-import { Spinner } from '@subql/components';
-import { deploymentStatus } from '../Status/Status';
-import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
-import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
-import { LazyQueryResult } from '@apollo/client';
-import { PlansTable, PlansTableProps } from './PlansTable';
-import assert from 'assert';
-import { BsPlusSquare, BsDashSquare, BsInfoSquare } from 'react-icons/bs';
-import { Typography } from 'antd';
 import Copy from '../Copy';
+import Status from '../Status';
+import { deploymentStatus } from '../Status/Status';
 import styles from './IndexerDetails.module.css';
-import { Status as DeploymentStatus } from '@subql/network-query';
-import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
-import { getDeploymentStatus } from '@utils/getIndexerStatus';
-import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
-import { useWeb3Store } from 'src/stores';
-import { TFunction } from 'i18next';
-import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
+import { IndexerName } from './IndexerName';
+import { PlansTable, PlansTableProps } from './PlansTable';
+import Progress from './Progress';
 
 type ErrorMsgProps = {
   indexer: GetDeploymentIndexers_deploymentIndexers_nodes;

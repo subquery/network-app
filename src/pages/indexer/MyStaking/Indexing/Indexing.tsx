@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import { Table, Typography } from 'antd';
+import { Trans, useTranslation } from 'react-i18next';
 import { BsArrowReturnRight } from 'react-icons/bs';
-import { BigNumber } from 'ethers';
-import clsx from 'clsx';
-import styles from './Indexing.module.css';
 import { EmptyList } from '@components';
-import { CurrentEraValue } from '@subql/network-clients';
-import { isUndefined } from '@polkadot/util';
-import { TOKEN, truncFormatEtherStr, URLS } from '@utils';
 import { UseSortedIndexerReturn } from '@hooks/useSortedIndexer';
+import { isUndefined } from '@polkadot/util';
 import { TableTitle } from '@subql/components';
+import { CurrentEraValue } from '@subql/network-clients';
+import { TOKEN, truncFormatEtherStr, URLS } from '@utils';
+import { Table, Typography } from 'antd';
+import clsx from 'clsx';
+import { BigNumber } from 'ethers';
+
+import styles from './Indexing.module.css';
 
 export const NotRegisteredIndexer: React.FC = () => {
   const { t } = useTranslation();

@@ -1,12 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Status } from '@subql/network-query';
-import { Row } from './Row';
 import { useTranslation } from 'react-i18next';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Status } from '@subql/network-query';
+
 import { IPFSProvider } from '../../containers';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '../Table';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
+import { Row } from './Row';
 
 export default {
   title: 'IndexerDetailsRow',

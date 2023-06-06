@@ -2,15 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Required because we import @subql/common/dist/project rather than @subql/common
-import 'reflect-metadata';
 import ReactDOM from 'react-dom';
+import TagManager from 'react-gtm-module';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
-import TagManager from 'react-gtm-module';
+import { Buffer } from 'buffer';
+
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
+
+import 'reflect-metadata';
 import './index.less';
-import { Buffer } from 'buffer';
 
 window.Buffer = Buffer;
 

@@ -1,11 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
-import { createContainer, Logger } from './Container';
 import * as React from 'react';
-import { bytes32ToCid, cidToBytes32 } from '../utils';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
+
 import { useWeb3Store } from 'src/stores';
+
+import { bytes32ToCid, cidToBytes32 } from '../utils';
+import { createContainer, Logger } from './Container';
 
 type QueryDetails = {
   queryId: BigNumber;

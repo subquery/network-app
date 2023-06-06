@@ -2,28 +2,28 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { PropsWithChildren, useMemo } from 'react';
-import './App.css';
-import './i18n';
-
 import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
-import { Studio } from '@pages/studio';
 import { useStudioEnabled } from '@hooks';
-import { entryLinks, studioLink, externalAppLinks } from '@utils/links';
+import { Studio } from '@pages/studio';
+import { entryLinks, externalAppLinks, studioLink } from '@utils/links';
 
-import { Explorer, Account, Indexer, Delegator, Consumer, Swap } from './pages';
 import { ChainStatus, Header, WalletRoute } from './components';
 import {
-  Web3Provider,
+  IndexerRegistryProvider,
   IPFSProvider,
   ProjectMetadataProvider,
-  QueryRegistryProvider,
   QueryApolloProvider,
-  IndexerRegistryProvider,
+  QueryRegistryProvider,
   SQTokenProvider,
+  Web3Provider,
 } from './containers';
+import { Account, Consumer, Delegator, Explorer, Indexer, Swap } from './pages';
 import { ROUTES } from './utils';
+
+import './App.css';
+import './i18n';
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {

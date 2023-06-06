@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Modal as AntDModal, Typography, Steps as AntDSteps } from 'antd';
-import styles from './Modal.module.css';
+import { Modal as AntDModal, Steps as AntDSteps, Typography } from 'antd';
+
 import Spinner from '../Spinner';
+import styles from './Modal.module.css';
 
 /**
  * NOTE:

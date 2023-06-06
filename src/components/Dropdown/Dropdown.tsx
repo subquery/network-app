@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Menu, Dropdown as AntdDropdown } from 'antd';
-import { Typography } from '@subql/components';
-import clsx from 'clsx';
 import { AiOutlineDown } from 'react-icons/ai';
+import { Typography } from '@subql/components';
+import { Dropdown as AntdDropdown, Menu } from 'antd';
+import clsx from 'clsx';
+
 import styles from './Dropdown.module.css';
 
 interface keyPair {

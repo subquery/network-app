@@ -1,16 +1,18 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import * as React from 'react';
+import { BigNumberish } from '@ethersproject/bignumber';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import moment from 'moment';
-import * as React from 'react';
+
+import { useWeb3Store } from 'src/stores';
+
 import { useOrders } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
-import { useAsyncMemo, AsyncMemoReturn } from './useAsyncMemo';
-import { BigNumberish } from '@ethersproject/bignumber';
-import { useWeb3Store } from 'src/stores';
+import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
 export function formatToken(value: BigNumberish, unit = 18): number {
   return convertStringToNumber(formatUnits(value, unit));

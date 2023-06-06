@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useQuery, gql, QueryResult } from '@apollo/client';
+import { gql, QueryResult, useQuery } from '@apollo/client';
+
 import { GetOrders, GetOrdersVariables } from '../__generated__/swapExchange/GetOrders';
 import { SWAP_EXCHANGE_CLIENT } from './QueryApolloProvider';
 

@@ -2,27 +2,29 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import assert from 'assert';
-import { formatEther, parseEther } from '@ethersproject/units';
 import { useTranslation } from 'react-i18next';
-import { useSQToken, useWeb3 } from '@containers';
 import {
-  tokenApprovalModalText,
-  ModalApproveToken,
   claimIndexerRewardsModalText,
+  ModalApproveToken,
   ModalClaimIndexerRewards,
+  tokenApprovalModalText,
 } from '@components';
 import TransactionModal from '@components/TransactionModal';
-import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import { useSQToken, useWeb3 } from '@containers';
+import { formatEther, parseEther } from '@ethersproject/units';
+import { useEra } from '@hooks';
+import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
-import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
-import { DelegateForm } from './DelegateFrom';
-import { BigNumber } from 'ethers';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
-import { useWeb3Store } from 'src/stores';
-import { useEra } from '@hooks';
+import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import assert from 'assert';
+import { BigNumber } from 'ethers';
 import { TFunction } from 'i18next';
+
+import { useWeb3Store } from 'src/stores';
+
+import { DelegateForm } from './DelegateFrom';
 
 const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval = false, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;

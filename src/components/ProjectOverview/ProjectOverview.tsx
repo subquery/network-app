@@ -1,12 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import moment from 'moment';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
+
 import { ProjectMetadata } from '../../models';
 import Detail from '../Detail';
-
 import styles from './ProjectOverview.module.css';
 
 type Props = {

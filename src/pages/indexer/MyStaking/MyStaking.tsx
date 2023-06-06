@@ -2,17 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Spinner, Typography } from '@subql/components';
-import { useNavigate } from 'react-router';
-import { useWeb3 } from '@containers';
-import { Card, AppPageHeader, Description } from '@components';
-import styles from './MyStaking.module.css';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { AppPageHeader, Card, Description } from '@components';
+import { useWeb3 } from '@containers';
 import { useIsIndexer, useSortedIndexer } from '@hooks';
+import { Spinner, Typography } from '@subql/components';
 import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '@utils';
-import { Indexing, NotRegisteredIndexer } from './Indexing';
-import { SetCommissionRate } from './SetCommissionRate';
+
 import { DoStake } from './DoStake';
+import { Indexing, NotRegisteredIndexer } from './Indexing';
+import styles from './MyStaking.module.css';
+import { SetCommissionRate } from './SetCommissionRate';
 
 export const MyStaking: React.FC = () => {
   const { t } = useTranslation();

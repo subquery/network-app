@@ -1,13 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
+import { Route } from 'react-router';
 import { ConnectWallet } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
 import { Spinner, Toast } from '@subql/components';
 import { parseError, walletConnectionErrors } from '@utils';
-import React from 'react';
-import { Route } from 'react-router';
+
 import { useWeb3Store } from 'src/stores';
+
 import styles from './WalletRoute.module.css';
 
 type WalletRouteProps = React.ComponentProps<typeof Route> & {

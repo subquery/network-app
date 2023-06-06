@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ethers, Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
+
 import abi from './USDC.json';
 
 // NOTE: Why not use hook: plan to move to network-client

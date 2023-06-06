@@ -2,22 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import assert from 'assert';
-import { parseEther } from 'ethers/lib/utils';
-import { useWeb3 } from '@containers';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components';
 import TransactionModal from '@components/TransactionModal';
+import { useWeb3 } from '@containers';
+import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
+import { useLockPeriod } from '@hooks';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
+import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther } from '@utils';
-import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
-import { Spinner, Typography } from '@subql/components';
-import { useLockPeriod } from '@hooks';
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components';
-import { useWeb3Store } from 'src/stores';
+import assert from 'assert';
+import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
+import moment from 'moment';
+
+import { useWeb3Store } from 'src/stores';
 
 const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | undefined, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;

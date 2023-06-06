@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BigNumber } from '@ethersproject/bignumber';
+
 import { useWeb3Store } from 'src/stores';
-import { useAsyncMemo, useEraValue } from '.';
+
 import { useDelegation, useIndexer } from '../containers';
 import { AsyncMemoReturn } from './useAsyncMemo';
 import { CurrentEraValue } from './useEraValue';
+import { useAsyncMemo, useEraValue } from '.';
 
 export function useIndexerCapacity(address: string): AsyncMemoReturn<CurrentEraValue<BigNumber> | undefined> {
   const { contracts } = useWeb3Store();

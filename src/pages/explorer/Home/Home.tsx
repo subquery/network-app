@@ -3,14 +3,15 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProjectMetadata, useProjectsQuery } from '../../../containers';
+import { useNavigate } from 'react-router';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
+
+import { ProjectCard, Spinner } from '../../../components';
+import { useProjectMetadata, useProjectsQuery } from '../../../containers';
 import { useAsyncMemo, useOnScreen } from '../../../hooks';
 import { notEmpty } from '../../../utils';
-import styles from './Home.module.css';
-import { Spinner, ProjectCard } from '../../../components';
-import { useNavigate } from 'react-router';
 import { ROUTES } from '../../../utils';
+import styles from './Home.module.css';
 
 const { PROJECT_NAV } = ROUTES;
 

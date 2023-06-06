@@ -3,16 +3,17 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSQToken, useWeb3 } from '../../containers';
-import { Address } from '@subql/components';
-import styles from './AccountActions.module.css';
 import { AiOutlineDown } from 'react-icons/ai';
-import { Dropdown } from '../Dropdown';
-import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
-import { getConnectorConfig } from '../../utils/getNetworkConnector';
 import { BsBoxArrowLeft } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { Address } from '@subql/components';
+
+import { useSQToken, useWeb3 } from '../../containers';
+import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
+import { getConnectorConfig } from '../../utils/getNetworkConnector';
+import { Dropdown } from '../Dropdown';
+import styles from './AccountActions.module.css';
 
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { t } = useTranslation();

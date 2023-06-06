@@ -3,7 +3,9 @@
 
 import { getIsOfflineDeploymentOnContract } from '@utils/getIndexerStatus';
 import assert from 'assert';
+
 import { useWeb3Store } from 'src/stores';
+
 import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
 export function useDeploymentStatusOnContract(

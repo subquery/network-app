@@ -1,14 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Tooltip, Typography } from 'antd';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import jwt_decode from 'jwt-decode';
-import { GraphiQL } from '@subql/components';
-import styles from './Playground.module.css';
 import Countdown from 'react-countdown';
+import { useTranslation } from 'react-i18next';
 import type { Fetcher } from '@graphiql/toolkit';
+import { GraphiQL } from '@subql/components';
+import { Tooltip, Typography } from 'antd';
+import jwt_decode from 'jwt-decode';
+
+import styles from './Playground.module.css';
 export interface GraphQLQueryProps {
   queryUrl: string;
   fetcher: Fetcher;

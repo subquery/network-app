@@ -4,8 +4,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { TableText } from '../../../components';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
+import { TableProps } from 'antd';
+import { BigNumber } from 'ethers';
+import { FetcherParams } from 'graphiql';
+import i18next from 'i18next';
+
+import { TableText } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { useWeb3 } from '../../../containers';
 import {
   formatDate,
   formatEther,
@@ -17,17 +26,9 @@ import {
   TOKEN,
   wrapProxyEndpoint,
 } from '../../../utils';
-import { POST } from '../../../utils/fetch';
-import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
-import { TableProps } from 'antd';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { TableTitle } from '@subql/components';
-import i18next from 'i18next';
-import { BigNumber } from 'ethers';
-import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
 import { ROUTES } from '../../../utils';
-import { FetcherParams } from 'graphiql';
+import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
+import { POST } from '../../../utils/fetch';
 import { AuthPlayground } from './AuthPlayground';
 
 const { FLEX_PLANS, ONGOING_PLANS_NAV } = ROUTES;

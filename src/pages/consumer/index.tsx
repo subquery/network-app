@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Route, Routes } from 'react-router';
+
 import { AppSidebar } from '../../components';
-import { MyFlexPlans } from './MyFlexPlans';
-import { FlexPlayground } from './Playground/FlexPlayground';
 import { ROUTES } from '../../utils';
+import { FlexPlayground } from './Playground/FlexPlayground';
+import { MyFlexPlans } from './MyFlexPlans';
 import { MyOffers } from './MyOffers';
 import { Marketplace } from './OfferMarketplace';
-import { ServiceAgreements } from './ServiceAgreements';
 import { SAPlayground } from './Playground';
+import { ServiceAgreements } from './ServiceAgreements';
 
 const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE } = ROUTES;
 

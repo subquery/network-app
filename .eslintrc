@@ -1,7 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "header"],
+  "plugins": ["@typescript-eslint", "header", "simple-import-sort"],
   "extends": ["react-app", "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended", "prettier"],
   "rules": {
     "header/header": [
@@ -16,6 +16,27 @@
       ],
       2
     ],
-    "@typescript-eslint/ban-types": "warn"
+    "@typescript-eslint/ban-types": "warn",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // Packages. `react` related packages come first.
+          ["^react", "^@?\\w"],
+          // Internal packages.
+          [
+            "^(src|containers|components|hooks|container|pages|stores|utils|i18n)(/.*|$)"
+          ],
+          // Other local imports. Put same-folder imports and `.` last.
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$"
+          ]
+        ]
+      }
+    ]
   }
 }

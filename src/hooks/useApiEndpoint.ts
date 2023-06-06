@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 

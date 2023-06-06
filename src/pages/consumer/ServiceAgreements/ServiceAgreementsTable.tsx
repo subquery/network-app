@@ -1,24 +1,25 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Spinner, Typography } from '@subql/components';
 import * as React from 'react';
-import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { Table, TableProps, Typography as AntDTypography, Tooltip, Button } from 'antd';
+import { useLocation, useNavigate } from 'react-router';
+import { Spinner, Typography } from '@subql/components';
+import { TableText, TableTitle } from '@subql/components';
+import { ServiceAgreementFieldsFragment } from '@subql/network-query';
+import { useAsyncMemo, useGetIndexerQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { RenderResult } from '@subql/react-hooks/dist/utils';
+import { Button, Table, TableProps, Tooltip, Typography as AntDTypography } from 'antd';
+import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
+
 import { Copy, EmptyList, VersionDeployment } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { useLocation, useNavigate } from 'react-router';
-import styles from './ServiceAgreements.module.css';
 import { ROUTES } from '../../../utils';
-import { useAsyncMemo, useGetIndexerQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
-import { ServiceAgreementFieldsFragment } from '@subql/network-query';
-import { RenderResult } from '@subql/react-hooks/dist/utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
-import { TableTitle, TableText } from '@subql/components';
+import styles from './ServiceAgreements.module.css';
 
 type SAProject = NonNullable<NonNullable<ServiceAgreementFieldsFragment['deployment']>['project']>;
 

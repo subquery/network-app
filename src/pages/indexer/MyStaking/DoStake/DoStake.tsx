@@ -3,24 +3,25 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import assert from 'assert';
-import { useSQToken, useWeb3 } from '@containers';
 import {
-  tokenApprovalModalText,
-  ModalApproveToken,
   claimIndexerRewardsModalText,
+  ModalApproveToken,
   ModalClaimIndexerRewards,
+  tokenApprovalModalText,
 } from '@components';
-import { useLockPeriod } from '@hooks';
-import { parseEther } from '@ethersproject/units';
 import TransactionModal from '@components/TransactionModal';
-import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
-import moment from 'moment';
+import { useSQToken, useWeb3 } from '@containers';
+import { parseEther } from '@ethersproject/units';
+import { useLockPeriod } from '@hooks';
+import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
-import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
-import { useWeb3Store } from 'src/stores';
+import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
+import assert from 'assert';
 import { TFunction } from 'i18next';
+import moment from 'moment';
+
+import { useWeb3Store } from 'src/stores';
 
 enum StakeAction {
   Stake = 'stake',

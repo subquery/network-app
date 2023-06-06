@@ -1,16 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Table } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BreadcrumbNav } from '@components';
+import { Spinner } from '@subql/components';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
+
 import { CurEra, DeploymentMeta } from '../../../components';
+import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
 import styles from './Playground.module.css';
 import { RequestToken, RequestTokenProps } from './RequestToken';
-import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
-import { Spinner } from '@subql/components';
-import { ColumnsType } from 'antd/lib/table';
-import { BreadcrumbNav } from '@components';
 
 export const PlaygroundHeader: React.FC<{ link: string; linkText: string }> = ({ link: LINK, linkText }) => {
   const { t } = useTranslation();

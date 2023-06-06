@@ -1,10 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ethers } from 'ethers';
-import { create } from 'zustand';
 import { ContractSDK } from '@subql/contract-sdk';
 import { ContractClient } from '@subql/network-clients';
+import { ethers } from 'ethers';
+import { create } from 'zustand';
 
 /**
  *

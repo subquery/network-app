@@ -1,12 +1,20 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { TableProps } from 'antd';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router';
-import { TableText } from '../../../components';
+import { useLocation, useNavigate } from 'react-router';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
+import { useGetIndexerQuery } from '@subql/react-hooks';
+import { TableProps } from 'antd';
+import { FetcherParams } from 'graphiql';
+import i18next from 'i18next';
+import moment from 'moment';
+
+import { TableText } from '../../../components';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { useWeb3 } from '../../../containers';
 import {
   formatEther,
   getEncryptStorage,
@@ -16,17 +24,10 @@ import {
   TOKEN,
   wrapProxyEndpoint,
 } from '../../../utils';
-import { POST } from '../../../utils/fetch';
-import { useWeb3 } from '../../../containers';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
-import i18next from 'i18next';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import moment from 'moment';
-import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
 import { ROUTES } from '../../../utils';
+import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
+import { POST } from '../../../utils/fetch';
 import { AuthPlayground } from './AuthPlayground';
-import { FetcherParams } from 'graphiql';
-import { useGetIndexerQuery } from '@subql/react-hooks';
 
 const { CONSUMER_SA_NAV, SA_NAV } = ROUTES;
 

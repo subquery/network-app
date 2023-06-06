@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useWeb3Store } from 'src/stores';
-import { useWeb3 } from '@containers';
 import { useCallback, useEffect, useState } from 'react';
+import { useWeb3 } from '@containers';
+
+import { useWeb3Store } from 'src/stores';
 
 export function useStudioEnabled() {
   const { contracts } = useWeb3Store();

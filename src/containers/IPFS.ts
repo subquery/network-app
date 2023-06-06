@@ -1,11 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { createContainer, Logger } from './Container';
 import React from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import LRUCache from 'lru-cache';
+
 import { concatU8A } from '../utils';
+import { createContainer, Logger } from './Container';
 
 type InitialState = {
   gateway?: string;

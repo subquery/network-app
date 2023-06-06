@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useNavigate } from 'react-router';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router';
+import { Button } from '@subql/components';
 import { useGetProjectsQuery } from '@subql/react-hooks';
 
-import { CreateInstructions, Spinner, ProjectCard, NewProject } from '../../../components';
+import { CreateInstructions, NewProject, ProjectCard, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useProject } from '../../../hooks';
 import { modalStyles, renderAsync } from '../../../utils';
+import { ROUTES } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
-import { Button } from '@subql/components';
-import { ROUTES } from '../../../utils';
 const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
 
 const Project: React.FC<{ projectId: string; account: string; onClick?: () => void }> = ({
