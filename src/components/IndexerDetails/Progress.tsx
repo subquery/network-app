@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar, Typography } from '@subql/components';
-import { truncateToDecimalPlace } from '@utils';
 
 import styles from './IndexerDetails.module.css';
 

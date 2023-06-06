@@ -4,10 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsDashSquare, BsInfoSquare, BsPlusSquare } from 'react-icons/bs';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 import { LazyQueryResult } from '@apollo/client';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { Spinner } from '@subql/components';
-import { DeploymentIndexerFieldsFragment as DeploymentIndexer } from '@subql/network-query';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
@@ -28,7 +28,6 @@ import {
   getDeploymentMetadata,
   mapAsync,
   notEmpty,
-  parseError,
   renderAsync,
   wrapProxyEndpoint,
 } from '../../utils';
@@ -41,7 +40,7 @@ import { PlansTable, PlansTableProps } from './PlansTable';
 import Progress from './Progress';
 
 type ErrorMsgProps = {
-  indexer: DeploymentIndexer;
+  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
   deploymentId: string | undefined;
   error: Error;
   t: TFunction;
@@ -61,7 +60,7 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
 );
 
 type Props = {
-  indexer: DeploymentIndexer;
+  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
   metadata: IndexerDetails;
   progressInfo: AsyncData<{
     currentBlock: number;
@@ -214,6 +213,7 @@ const ConnectedRow: React.FC<
   };
 
   const progressInfo = useAsyncMemo(async () => {
+    // TODO: Need thinking, this seems not robust.
     if (!deploymentId || !metadata?.url) {
       return null;
     }
@@ -234,7 +234,7 @@ const ConnectedRow: React.FC<
       targetBlock: meta?.targetHeight ?? 0,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
-  }, [startBlock]);
+  }, [startBlock, metadata.url, indexer]);
 
   return (
     <Row

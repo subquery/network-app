@@ -3,9 +3,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { DeploymentIndexerFieldsFragment as DeploymentIndexer, Status } from '@subql/network-query';
+import { Status } from '@subql/network-query';
 import { Pagination, Table, TableProps } from 'antd';
 
 import { useDeploymentIndexerQuery } from '../../containers';
@@ -15,7 +16,7 @@ import styles from './IndexerDetails.module.css';
 import Row from './Row';
 
 type Props = {
-  indexers: readonly DeploymentIndexer[];
+  indexers: GetDeploymentIndexers_deploymentIndexers_nodes[];
   deploymentId?: string;
   startBlock?: number;
   totalCount?: number;
