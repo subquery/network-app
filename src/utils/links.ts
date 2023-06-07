@@ -45,14 +45,14 @@ export const entryLinks = [
     label: t('header.swap'),
   },
   {
-    link: 'https://academy.subquery.network/subquery_network/testnet/welcome.html',
+    link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',
     label: t('header.documentation'),
   },
   {
     label: t('header.ecosystem'),
     dropdown: [
       {
-        link: 'https://forum.subquery.network/c/season-3/6',
+        link: 'https://forum.subquery.network/c/kepler-network/16',
         label: t('header.forum'),
       },
       {
