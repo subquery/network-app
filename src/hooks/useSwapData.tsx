@@ -48,6 +48,20 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
   }, [contracts, orderId]);
 }
 
+export function useSwapTradeLimitation() {
+  const { contracts } = useWeb3Store();
+
+  return useAsyncMemo(async () => {
+    assert(contracts, 'Contracts not available');
+    if (contracts.permissionedExchange) {
+      const limitation = await contracts.permissionedExchange.tradeLimitation();
+      return limitation;
+    }
+
+    return BigNumber.from(0);
+  }, [contracts]);
+}
+
 /**
  * @args: orderId
  * @returns swap pool

@@ -8,7 +8,14 @@ import { ApproveContract, EmptyList, Spinner, TabButtons } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
-import { useSellSQTQuota, useSwapOrderId, useSwapPool, useSwapRate, useSwapToken } from '@hooks/useSwapData';
+import {
+  useSellSQTQuota,
+  useSwapOrderId,
+  useSwapPool,
+  useSwapRate,
+  useSwapToken,
+  useSwapTradeLimitation,
+} from '@hooks/useSwapData';
 import { Footer } from '@subql/components';
 import { formatEther, mergeAsync, renderAsyncArray, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '@utils';
 import { Typography } from 'antd';
@@ -80,60 +87,63 @@ const SellAUSD = () => {
   const swapTokens = useSwapToken(orderId);
   const aUSDBalance = useAUSDBalance();
   const aUSDTotalSupply = useAUSDTotalSupply();
-
+  const usdcToSqtLimitation = useSwapTradeLimitation();
   if (fetchingOrderId) return <Spinner />;
 
   if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
 
-  return renderAsyncArray(mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply), {
-    error: (error) => {
-      console.error('Swap Error: ', error);
-      return <Typography.Text type="danger">{`Failed to load info: ${error.message}`}</Typography.Text>;
+  return renderAsyncArray(
+    mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply, usdcToSqtLimitation),
+    {
+      error: (error) => {
+        console.error('Swap Error: ', error);
+        return <Typography.Text type="danger">{`Failed to load info: ${error.message}`}</Typography.Text>;
+      },
+      empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
+      data: (data) => {
+        const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply, usdcToSqtLimitation] = data;
+        if (sqtAUSDRate === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
+
+        const sortedAUSDBalance = aUSDAmount ?? '0';
+        const sortedRate = sqtAUSDRate ?? 0;
+        const sortedPoolSize = sqtPoolSize ?? '0';
+        const pair = {
+          from: STABLE_TOKEN,
+          fromMax: sortedAUSDBalance,
+          to: TOKEN,
+          toMax: formatEther(sortedPoolSize),
+        };
+
+        const stats = getStats({
+          sqtPoolSize: formatEther(sortedPoolSize, 4),
+          sqtAUSDRate: sortedRate,
+          tokenGet: tokens?.tokenGet ?? '',
+          tokenGive: tokens?.tokenGive ?? '',
+          t,
+        });
+
+        return (
+          <SwapForm
+            stats={stats}
+            pair={pair}
+            fromRate={sortedRate}
+            usdcLimitation={usdcToSqtLimitation as BigNumber}
+            orderId={orderId}
+            requireTokenApproval={!!requireTokenApproval}
+            contract={ApproveContract.PermissionedExchange}
+            onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
+            onApproveAllowance={() => aUSDAllowance?.refetch()}
+            increaseAllowanceAmount={aUSDSupply}
+            onUpdateSwapData={() => {
+              swapTokens.refetch(true);
+              swapPool.refetch(true);
+              aUSDBalance.refetch(true);
+            }}
+          />
+        );
+      },
     },
-    empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
-    data: (data) => {
-      const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply] = data;
-      if (sqtAUSDRate === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
-
-      const sortedAUSDBalance = aUSDAmount ?? '0';
-      const sortedRate = sqtAUSDRate ?? 0;
-      const sortedPoolSize = sqtPoolSize ?? '0';
-
-      const pair = {
-        from: STABLE_TOKEN,
-        fromMax: sortedAUSDBalance,
-        to: TOKEN,
-        toMax: formatEther(sortedPoolSize),
-      };
-
-      const stats = getStats({
-        sqtPoolSize: formatEther(sortedPoolSize, 4),
-        sqtAUSDRate: sortedRate,
-        tokenGet: tokens?.tokenGet ?? '',
-        tokenGive: tokens?.tokenGive ?? '',
-        t,
-      });
-
-      return (
-        <SwapForm
-          stats={stats}
-          pair={pair}
-          fromRate={sortedRate}
-          orderId={orderId}
-          requireTokenApproval={!!requireTokenApproval}
-          contract={ApproveContract.PermissionedExchange}
-          onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
-          onApproveAllowance={() => aUSDAllowance?.refetch()}
-          increaseAllowanceAmount={aUSDSupply}
-          onUpdateSwapData={() => {
-            swapTokens.refetch(true);
-            swapPool.refetch(true);
-            aUSDBalance.refetch(true);
-          }}
-        />
-      );
-    },
-  });
+  );
 };
 
 // TODO: Improve useSwapToken function: as current use TOKEN in util / useSwapToken two places

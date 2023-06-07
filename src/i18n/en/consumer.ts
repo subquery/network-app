@@ -348,6 +348,8 @@ const translation = {
     swapReviewTitle: 'You are going to swap:',
     swapSuccess: 'The swap transaction has succeeded.',
     swapFailure: 'The transaction has failed.',
+    usdcLimitation:
+      'The maximum amount of USDC that you can swap to kSQT in a single transaction is {{limitation}}. Please decrease your order size',
   },
 } as const;
 

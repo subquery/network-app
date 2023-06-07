@@ -15,7 +15,7 @@ import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import styles from './TransactionModal.module.css';
 
-type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
+type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction | false>;
 
 type Props<P, T extends string> = {
   text: {
@@ -104,7 +104,7 @@ const TransactionModal = <P, T extends string>({
       if (!showModal || !action) return;
 
       const tx = await action(params, showModal);
-
+      if (!tx) return;
       setIsLoading(true);
       resetModal();
       openNotificationWithIcon({ title: 'Your transaction has been submitted! Please wait for around 30s.' });

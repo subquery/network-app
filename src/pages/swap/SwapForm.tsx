@@ -4,11 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { Card } from '@subql/components';
 import { Alert, Button } from 'antd';
 import assert from 'assert';
 import { BigNumber, ContractTransaction } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -47,6 +48,7 @@ interface ISwapForm {
   contract?: ApproveContract;
   onApproveAllowance?: () => void;
   increaseAllowanceAmount?: BigNumber;
+  usdcLimitation?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
   onUpdateSwapData?: () => void;
 }
@@ -72,10 +74,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
   increaseAllowanceAmount,
   onIncreaseAllowance,
   onUpdateSwapData,
+  usdcLimitation,
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
-
   const calWithRate = (value: string | number, reverseCal = false): string => {
     if (fromRate === 0) return '0';
     const strValue = value.toString();
@@ -138,7 +140,17 @@ export const SwapForm: React.FC<ISwapForm> = ({
     assert(orderId, 'There is no orderId available.');
 
     const { tokenGet } = await contracts.permissionedExchange.orders(orderId);
-    return contracts.permissionedExchange.trade(orderId, parseUnits(amount, tokenDecimals[tokenGet]));
+    const amountWithUnits = parseUnits(amount, tokenDecimals[tokenGet]);
+    if (usdcLimitation) {
+      if (amountWithUnits.gt(usdcLimitation)) {
+        openNotificationWithIcon({
+          type: NotificationType.ERROR,
+          description: t('swap.usdcLimitation', { limitation: formatUnits(usdcLimitation, tokenDecimals[tokenGet]) }),
+        });
+        return false;
+      }
+    }
+    return contracts.permissionedExchange.trade(orderId, amountWithUnits);
   };
 
   return (

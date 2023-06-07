@@ -52,9 +52,7 @@ export function parseError(error: any, errorsMapping = errors): string | undefin
   if (!error) return;
   console.log('error', error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
-
   const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
-
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),
