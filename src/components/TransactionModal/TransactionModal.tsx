@@ -106,10 +106,9 @@ const TransactionModal = <P, T extends string>({
       if (!showModal || !action) return;
 
       const tx = await action(params, showModal);
-
       setIsLoading(true);
       resetModal();
-      openNotificationWithIcon({ title: 'Your transaction has been submitted! Please wait for around 30s.' });
+      openNotificationWithIcon({ title: t('transaction.submmited') });
       const result = await tx.wait();
 
       if (result.status) {

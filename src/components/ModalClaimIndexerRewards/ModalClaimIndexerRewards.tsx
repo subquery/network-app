@@ -41,7 +41,6 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
     try {
       setIsLoading(true);
       assert(contracts, 'Contracts not available');
-
       const approvalTx = await contracts.rewardsHelper.indexerCatchup(indexer);
       const approvalTxResult = await approvalTx.wait();
 
