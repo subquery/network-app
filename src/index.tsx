@@ -24,7 +24,7 @@ const isProd = import.meta.env.NODE_ENV === 'production';
 isProd && TagManager.initialize(tagManagerArgs);
 
 Sentry.init({
-  dsn: import.meta.env.SENTRY_DSN,
+  dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [new BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%

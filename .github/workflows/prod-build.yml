@@ -10,7 +10,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
-      SENTRY_DSN: ${{ secrets.DEV_SENTRY_DSN }}
+      VITE_SENTRY_DSN: ${{ secrets.DEV_SENTRY_DSN }}
       NODE_OPTIONS: --max-old-space-size=32768      
     steps:
       - uses: actions/checkout@v2
