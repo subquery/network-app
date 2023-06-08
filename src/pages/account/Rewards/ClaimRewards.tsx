@@ -39,11 +39,18 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
   const handleClick = async () => {
     assert(contracts, 'Contracts not available');
 
-    const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
-
-    pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
-
-    return pendingTx;
+    try {
+      const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
+      pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
+      return pendingTx;
+    } catch (e: any) {
+      throw new Error(
+        `${e} other information: ${JSON.stringify({
+          account,
+          indexers,
+        })}`,
+      );
+    }
   };
 
   return (
@@ -52,6 +59,7 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
       text={text}
       actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
       onClick={handleClick}
+      rethrowWhenSubmit
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
           <div>

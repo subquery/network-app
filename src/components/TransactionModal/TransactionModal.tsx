@@ -50,6 +50,7 @@ type Props<P, T extends string> = {
   initialCheck?: AsyncData<unknown>;
   onSuccess?: () => void;
   loading?: boolean; // status for whole modal (Update at: Sep 22)
+  rethrowWhenSubmit?: boolean;
 };
 
 // TODO: review successModalText/failureModalText when move to subql-component
@@ -65,6 +66,7 @@ const TransactionModal = <P, T extends string>({
   variant = 'button',
   initialCheck,
   loading,
+  rethrowWhenSubmit = false,
 }: Props<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -153,7 +155,7 @@ const TransactionModal = <P, T extends string>({
           currentStep={currentStep}
           steps={text.steps}
           content={
-            renderContent?.(wrapTxAction(onClick), resetModal, isLoading, failureModalText) || (
+            renderContent?.(wrapTxAction(onClick, rethrowWhenSubmit), resetModal, isLoading, failureModalText) || (
               <ModalInput
                 {...inputParams}
                 inputTitle={text.inputTitle}
