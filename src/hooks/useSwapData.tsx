@@ -53,12 +53,8 @@ export function useSwapTradeLimitation() {
 
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    if (contracts.permissionedExchange) {
-      const limitation = await contracts.permissionedExchange.tradeLimitation();
-      return limitation;
-    }
-
-    return BigNumber.from(0);
+    const limitation = await contracts.permissionedExchange.tradeLimitation();
+    return limitation;
   }, [contracts]);
 }
 

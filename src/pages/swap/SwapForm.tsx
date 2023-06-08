@@ -78,6 +78,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
+  const [tokenGet, setTokenGet] = React.useState('');
   const calWithRate = (value: string | number, reverseCal = false): string => {
     if (fromRate === 0) return '0';
     const strValue = value.toString();
@@ -111,6 +112,20 @@ export const SwapForm: React.FC<ISwapForm> = ({
       .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
         from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
       )
+      .test(
+        'isOutOfLimatation',
+        t('swap.usdcLimitation', {
+          limitation: formatUnits(usdcLimitation || BigNumber.from(0), tokenDecimals[tokenGet]),
+        }),
+        (from) => {
+          if (from && usdcLimitation) {
+            if (parseUnits(from, tokenDecimals[tokenGet]).gt(usdcLimitation)) {
+              return false;
+            }
+          }
+          return true;
+        },
+      )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
@@ -135,23 +150,24 @@ export const SwapForm: React.FC<ISwapForm> = ({
         successText: t('swap.swapSuccess'),
       };
 
+  const getTokenGet = async () => {
+    if (!contracts || !orderId) return;
+
+    const { tokenGet } = await contracts.permissionedExchange.orders(orderId);
+
+    setTokenGet(tokenGet);
+  };
+
   const onTradeOrder = async (amount: string) => {
     assert(contracts, 'Contracts not available');
     assert(orderId, 'There is no orderId available.');
 
-    const { tokenGet } = await contracts.permissionedExchange.orders(orderId);
-    const amountWithUnits = parseUnits(amount, tokenDecimals[tokenGet]);
-    if (usdcLimitation) {
-      if (amountWithUnits.gt(usdcLimitation)) {
-        openNotificationWithIcon({
-          type: NotificationType.ERROR,
-          description: t('swap.usdcLimitation', { limitation: formatUnits(usdcLimitation, tokenDecimals[tokenGet]) }),
-        });
-        return false;
-      }
-    }
-    return contracts.permissionedExchange.trade(orderId, amountWithUnits);
+    return contracts.permissionedExchange.trade(orderId, parseUnits(amount, tokenDecimals[tokenGet]));
   };
+
+  React.useEffect(() => {
+    getTokenGet();
+  }, [contracts, orderId]);
 
   return (
     <div className={styles.container}>

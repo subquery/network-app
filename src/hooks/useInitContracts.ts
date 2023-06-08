@@ -15,13 +15,13 @@ export function useInitContracts(): { loading: boolean } {
   const { account, library } = useWeb3();
 
   React.useEffect(() => {
-    async function initContract() {
+    function initContract() {
       const signerOrProvider = account ? library?.getSigner(account) : library;
       // NOTE: This is a check whether signer has issue with production only
       console.log('signerOrProvider', signerOrProvider);
       if (signerOrProvider) {
         try {
-          const contractInstance = await ContractSDK.create(signerOrProvider, {
+          const contractInstance = ContractSDK.create(signerOrProvider, {
             deploymentDetails: NETWORK_DEPLOYMENT_DETAILS,
           });
           setContracts(contractInstance);
