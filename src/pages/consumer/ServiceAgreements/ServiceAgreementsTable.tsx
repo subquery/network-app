@@ -14,7 +14,7 @@ import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { Copy, EmptyList, VersionDeployment } from '../../../components';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { ConnectedIndexer, IndexerName } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -75,50 +75,45 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
   const columns: TableProps<ServiceAgreementFieldsFragment>['columns'] = [
     {
       dataIndex: 'id',
-      title: <TableTitle title={'#'} />,
+      key: 'id',
+      title: <TableTitle title={'ID'} />,
       width: 40,
       render: (text: string, _: ServiceAgreementFieldsFragment, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'deployment',
-      key: 'project',
-      title: <TableTitle title={t('serviceAgreements.headers.project')} />,
+      dataIndex: 'consumerAddress',
+      key: 'Consumer',
+      title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
       width: 150,
-      render: (deployment: ServiceAgreementFieldsFragment['deployment']) =>
-        deployment?.project && <Project project={deployment.project} />,
+      render: (consumer: string) => <IndexerName address={consumer}></IndexerName>,
     },
     {
-      dataIndex: 'deployment',
-      title: <TableTitle title={t('serviceAgreements.headers.deployment')} />,
-      key: 'deployment',
+      dataIndex: 'Indexer',
+      title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
+      key: 'Indexer',
       width: 200,
-      render: (deployment: ServiceAgreementFieldsFragment['deployment']) => (
-        <VersionDeployment deployment={deployment} />
-      ),
+      // render: (deployment: ServiceAgreementFieldsFragment['deployment']) => (
+      //   <VersionDeployment deployment={deployment} />
+      // ),
     },
     {
-      dataIndex: 'period',
+      dataIndex: 'StartDate',
+      title: <TableTitle title={t('serviceAgreements.headers.startDate')} />,
+      key: 'StartDate',
+      width: 200,
+    },
+    {
+      dataIndex: 'ExpiryDate',
+      key: 'ExpiryDate',
       title: (
         <TableTitle
           title={isOngoingPath ? t('serviceAgreements.headers.expiry') : t('serviceAgreements.headers.expired')}
         />
       ),
-
-      key: 'expiry',
       width: 160,
       render: (_, sa: ServiceAgreementFieldsFragment) => {
         return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
       },
-    },
-    {
-      dataIndex: 'indexerAddress',
-      title: <TableTitle title={t('indexers.head.url')} />,
-      key: 'indexer',
-      width: 200,
-      ellipsis: true,
-      render: (indexer: ServiceAgreementFieldsFragment['indexerAddress'], sa: ServiceAgreementFieldsFragment) => (
-        <QueryUrl indexer={indexer} deploymentId={sa.deploymentId} />
-      ),
     },
     {
       dataIndex: 'lockedAmount',
