@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { useWeb3 } from '@containers';
-import { NETWORK_DEPLOYMENT_DETAILS } from '@containers/Web3';
+import { NETWORK_NAME } from '@containers/Web3';
 import { ContractSDK } from '@subql/contract-sdk';
 import { ContractClient } from '@subql/network-clients';
 
@@ -21,9 +21,7 @@ export function useInitContracts(): { loading: boolean } {
       console.log('signerOrProvider', signerOrProvider);
       if (signerOrProvider) {
         try {
-          const contractInstance = ContractSDK.create(signerOrProvider, {
-            deploymentDetails: NETWORK_DEPLOYMENT_DETAILS,
-          });
+          const contractInstance = ContractSDK.create(signerOrProvider, { network: NETWORK_NAME });
           setContracts(contractInstance);
 
           const sortedContractClient = ContractClient.create(contractInstance);

@@ -16,6 +16,7 @@ import { useWeb3Store } from 'src/stores';
 
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
+export const NETWORK_NAME = import.meta.env.VITE_NETWORK;
 export const isMainnet = import.meta.env.VITE_NETWORK === 'kepler';
 export const SUPPORTED_NETWORK = (isMainnet ? 'kepler' : 'testnet') as SQNetworks;
 export const defaultChainId = parseInt(networks[SUPPORTED_NETWORK].chainId, 16);

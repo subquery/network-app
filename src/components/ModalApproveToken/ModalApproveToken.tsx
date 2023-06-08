@@ -67,7 +67,7 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
         );
         approvalTxResult = await approvalTx.wait();
       } else {
-        const approvalTx = await contracts.sqToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
+        const approvalTx = await contracts.sQToken.increaseAllowance(contracts[contract].address, constants.MaxUint256);
         approvalTxResult = await approvalTx.wait();
       }
 
