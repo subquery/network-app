@@ -17,7 +17,7 @@ function useSQTokenImpl() {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.balanceOf(account);
+    return contracts.sQToken.balanceOf(account);
   }, [account, contracts]);
 
   const consumerHostBalance = useAsyncMemo(async () => {
@@ -31,35 +31,35 @@ function useSQTokenImpl() {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.allowance(account, contracts.consumerHost.address);
+    return contracts.sQToken.allowance(account, contracts.consumerHost.address);
   }, [account, contracts]);
 
   const stakingAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.allowance(account, contracts.staking.address);
+    return contracts.sQToken.allowance(account, contracts.staking.address);
   }, [account, contracts]);
 
   const planAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.allowance(account, contracts.planManager.address);
+    return contracts.sQToken.allowance(account, contracts.planManager.address);
   }, [account, contracts]);
 
   const offerAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.allowance(account, contracts.purchaseOfferMarket.address);
+    return contracts.sQToken.allowance(account, contracts.purchaseOfferMarket.address);
   }, [account, contracts]);
 
   const permissionExchangeAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.allowance(account, contracts.permissionedExchange.address);
+    return contracts.sQToken.allowance(account, contracts.permissionedExchange.address);
   }, [account, contracts]);
 
   return {
