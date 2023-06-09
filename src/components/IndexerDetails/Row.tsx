@@ -191,6 +191,8 @@ const ConnectedRow: React.FC<
     url: wrapProxyEndpoint(`${metadata?.url}/query/${deploymentId}`, indexer.indexerId),
   };
 
+  // console.warn(wrapProxyEndpoint(`${metadata?.url}/query/${deploymentId}`, indexer.indexerId))
+
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync((d) => {
     const plans = d.plans?.nodes.filter(notEmpty) ?? [];

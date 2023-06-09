@@ -278,7 +278,9 @@ export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: str
     return endpoint;
   }
 
-  return `https://gql-proxy.subquery.network/${indexerAddr}?to=${encodeURIComponent(endpoint)}`;
+  return `https://gql-proxy.subquery.network/${indexerAddr}?to=${encodeURIComponent(
+    endpoint.replace(/([^:]\/)\/+/g, '$1'),
+  )}`;
 }
 
 export function getUseQueryFetchMore<TData = any, TVariables = OperationVariables>(
