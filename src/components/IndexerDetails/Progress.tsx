@@ -14,10 +14,10 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 }) => {
   const { t } = useTranslation();
 
-  const maxProgress = React.useMemo(
-    () => Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1),
-    [startBlock, currentBlock, targetBlock],
-  );
+  const maxProgress = React.useMemo(() => {
+    const result = Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1);
+    return isNaN(result) ? 0 : result;
+  }, [startBlock, currentBlock, targetBlock]);
 
   const blocksBehind = Math.max(targetBlock - currentBlock, 0);
 
