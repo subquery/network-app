@@ -15,12 +15,12 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
   const { t } = useTranslation();
 
   const maxProgress = React.useMemo(() => {
+    if (!(targetBlock - startBlock)) return 0;
     const result = Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1);
     return isNaN(result) ? 0 : result;
   }, [startBlock, currentBlock, targetBlock]);
 
   const blocksBehind = Math.max(targetBlock - currentBlock, 0);
-
   return (
     <div className={styles.progress}>
       <ProgressBar progress={maxProgress} className={styles.progressBar} showInfo={false} />
