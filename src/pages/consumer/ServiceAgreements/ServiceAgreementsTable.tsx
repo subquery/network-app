@@ -88,21 +88,23 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
       render: (consumer: string) => <IndexerName address={consumer}></IndexerName>,
     },
     {
-      dataIndex: 'Indexer',
+      dataIndex: 'indexerAddress',
       title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
       key: 'Indexer',
       width: 200,
-      // render: (deployment: ServiceAgreementFieldsFragment['deployment']) => (
-      //   <VersionDeployment deployment={deployment} />
-      // ),
+      render: (indexer: string) => <IndexerName address={indexer}></IndexerName>,
     },
     {
-      dataIndex: 'StartDate',
+      dataIndex: 'startTime',
       title: <TableTitle title={t('serviceAgreements.headers.startDate')} />,
       key: 'StartDate',
       width: 200,
+      render: (startTime: number) => <div>{moment(startTime).utc(true).format('YYYY-MM-DD hh:mm')}</div>,
     },
     {
+      sorter: (a, b) => {
+        return +new Date(a.endTime) > +new Date(b.endTime);
+      },
       dataIndex: 'ExpiryDate',
       key: 'ExpiryDate',
       title: (
@@ -169,6 +171,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
 
   const [now, setNow] = React.useState<Date>(moment().toDate());
   const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
+  // TODO pagination ? not very sure.
   const serviceAgreements = queryFn({ variables: sortedParams });
   const [data, setData] = React.useState(serviceAgreements);
 
