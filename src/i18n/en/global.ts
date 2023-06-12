@@ -4,6 +4,7 @@
 const translation = {
   errors: {
     transactionRejected: 'User rejected the request',
+    failedToGetIndexerInfo: 'Failed to get indexer info: {{message}}',
   },
   general: {
     action: 'action',
