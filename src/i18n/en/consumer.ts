@@ -146,8 +146,9 @@ const translation = {
       consumer: 'Consumer',
       indexer: 'Indexer',
       expiry: 'Expires In',
-      expired: 'Expired',
+      expired: 'Expiry Date',
       price: 'Price',
+      startDate: 'Start Date',
     },
     playground: {
       title: 'Playground',
