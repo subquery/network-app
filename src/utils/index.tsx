@@ -278,7 +278,9 @@ export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: str
     return endpoint;
   }
 
-  return `https://gql-proxy.thechaindata.com/${indexerAddr}?to=${encodeURIComponent(endpoint)}`;
+  return `${import.meta.env.VITE_GQL_PROXY}/${indexerAddr}?to=${encodeURIComponent(
+    endpoint.replace(/([^:]\/)\/+/g, '$1'),
+  )}`;
 }
 
 export function getUseQueryFetchMore<TData = any, TVariables = OperationVariables>(
