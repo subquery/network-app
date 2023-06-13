@@ -1,5 +1,6 @@
 .cardContainer {
   display: flex;
+  width: 260px;
   min-width: 260px;
   min-height: 120px;
   background: white;
@@ -41,5 +42,5 @@
 }
 .sCard {
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
 }
