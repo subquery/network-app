@@ -17,7 +17,16 @@ import {
   useSwapTradeLimitation,
 } from '@hooks/useSwapData';
 import { Footer } from '@subql/components';
-import { formatEther, mergeAsync, renderAsyncArray, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN } from '@utils';
+import {
+  formatEther,
+  mergeAsync,
+  parseError,
+  renderAsyncArray,
+  ROUTES,
+  STABLE_TOKEN,
+  STABLE_TOKEN_ADDRESS,
+  TOKEN,
+} from '@utils';
 import { Typography } from 'antd';
 import { BigNumber, BigNumberish } from 'ethers';
 import i18next, { TFunction } from 'i18next';
@@ -166,7 +175,9 @@ const GetAUSD = () => {
   if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
 
   return renderAsyncArray(mergeAsync(swapRate, tradableQuota, swapTokens, balance, aUSDBalance), {
-    error: (error) => <Typography.Text type="danger">{`Failed to get indexer info: ${error.message}`}</Typography.Text>,
+    error: (error) => (
+      <Typography.Text type="danger">{t('errors.failedToGetIndexerInfo', parseError(error) || '')}</Typography.Text>
+    ),
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {
       const [swapRate, tradeQuota, tokens, sqtBalance, aUSDAmount] = data;

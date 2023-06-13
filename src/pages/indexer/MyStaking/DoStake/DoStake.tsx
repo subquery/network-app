@@ -93,7 +93,7 @@ export const DoStake: React.FC = () => {
   };
 
   return renderAsyncArray(mergeAsync(rewardClaimStatus, maxUnstake), {
-    error: (error) => <Typography>{`Failed to get indexer info: ${error.message}`}</Typography>,
+    error: (error) => <Typography>{t('errors.failedToGetIndexerInfo', error.message)}</Typography>,
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {

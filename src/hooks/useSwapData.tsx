@@ -26,7 +26,6 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-
     const { tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
   }, [contracts, orderId]);
