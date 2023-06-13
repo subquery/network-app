@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { AppPageHeader, Button, Card, EmptyList, TableText } from '@components';
+import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
@@ -171,8 +171,15 @@ export const MyDelegation: React.FC = () => {
   return (
     <>
       <AppPageHeader title={t('delegate.delegating')} desc={t('delegate.delegationDesc')} />
-      <DelegatingCard />
-      <DelegationList />
+      <WalletRoute
+        componentMode
+        element={
+          <>
+            <DelegatingCard />
+            <DelegationList />
+          </>
+        }
+      ></WalletRoute>
     </>
   );
 };

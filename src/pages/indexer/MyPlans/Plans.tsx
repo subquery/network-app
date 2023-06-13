@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppPageHeader, TabButtons } from '@components';
+import { AppPageHeader, TabButtons, WalletRoute } from '@components';
 import { ROUTES } from '@utils';
 
 import { Create } from './Create';
@@ -25,18 +25,25 @@ export const Plans: React.FC = () => {
     <div>
       <AppPageHeader title={t('indexer.myPlans')} desc={t('indexer.myPlansDescription')} />
 
-      <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
-        <div className={styles.create}>
-          <Create />
-        </div>
-      </div>
+      <WalletRoute
+        componentMode
+        element={
+          <>
+            <div className={styles.tabs}>
+              <TabButtons tabs={buttonLinks} whiteTab />
+              <div className={styles.create}>
+                <Create />
+              </div>
+            </div>
 
-      <Routes>
-        <Route path={DEFAULT_PLANS} element={<Default />} />
-        <Route path={SPECIFIC_PLANS} element={<Specific />} />
-        <Route path={'/'} element={<Navigate replace to={DEFAULT_PLANS} />} />
-      </Routes>
+            <Routes>
+              <Route path={DEFAULT_PLANS} element={<Default />} />
+              <Route path={SPECIFIC_PLANS} element={<Specific />} />
+              <Route path={'/'} element={<Navigate replace to={DEFAULT_PLANS} />} />
+            </Routes>
+          </>
+        }
+      ></WalletRoute>
     </div>
   );
 };

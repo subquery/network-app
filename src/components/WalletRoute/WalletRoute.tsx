@@ -5,8 +5,10 @@ import React from 'react';
 import { Route } from 'react-router';
 import { ConnectWallet } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
+import { useIsLogin } from '@hooks/useIsLogin';
 import { Spinner, Toast } from '@subql/components';
 import { parseError, walletConnectionErrors } from '@utils';
+import clsx from 'clsx';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -16,13 +18,20 @@ type WalletRouteProps = React.ComponentProps<typeof Route> & {
   title?: string;
   subtitle?: string;
   element: React.ReactNode;
+  componentMode?: boolean;
 };
 
-export const WalletRoute: React.FC<WalletRouteProps> = ({ title, subtitle, element: Element }) => {
+export const WalletRoute: React.FC<WalletRouteProps> = ({
+  title,
+  subtitle,
+  element: Element,
+  componentMode = false,
+}) => {
   const [errorAlert, setErrorAlert] = React.useState<string>();
 
   const { account, error } = useWeb3();
   const { isInitialAccount } = useWeb3Store();
+  const isLogin = useIsLogin();
 
   React.useEffect(() => {
     if (error) {
@@ -38,11 +47,11 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({ title, subtitle, eleme
     );
   }
 
-  if (!account) {
+  if (!isLogin) {
     return (
-      <div className={styles.container}>
+      <div className={clsx(styles.container, componentMode && styles.componentMode)}>
         {errorAlert && <Toast state="error" text={errorAlert} className={styles.error} />}
-        <ConnectWallet title={title} subTitle={subtitle} />
+        <ConnectWallet title={title} subTitle={subtitle} className={componentMode ? styles.componentModeWallet : ''} />
       </div>
     );
   }
