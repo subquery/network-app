@@ -106,7 +106,7 @@ const SellAUSD = () => {
     {
       error: (error) => {
         console.error('Swap Error: ', error);
-        return <Typography.Text type="danger">{`Failed to load info: ${error.message}`}</Typography.Text>;
+        return <Typography.Text type="danger">{`Failed to load info: ${parseError(error) || ''}`}</Typography.Text>;
       },
       empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
       data: (data) => {
