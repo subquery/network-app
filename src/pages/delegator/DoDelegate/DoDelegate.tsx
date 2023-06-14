@@ -8,12 +8,15 @@ import {
   ModalApproveToken,
   ModalClaimIndexerRewards,
   tokenApprovalModalText,
+  WalletRoute,
 } from '@components';
 import TransactionModal from '@components/TransactionModal';
+import { idleText } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
@@ -56,12 +59,12 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const delegation = useGetDelegationQuery({ variables: { id: `${account ?? ''}:${indexerAddress}` } });
   const indexer = useGetIndexerQuery({ variables: { address: indexerAddress ?? '' } });
+  const isLogin = useIsLogin();
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(input.toString());
-
     if (delegator && delegator !== account) {
       return contracts.stakingManager.redelegate(delegator, indexerAddress, delegateAmount);
     }
@@ -75,7 +78,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
     data: (data) => {
       const [r, d, era, i] = data;
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
-      const isActionDisabled = !stakingAllowance.data || rewardClaimStatus.loading;
+      // if doesn't login will enter wallerRoute logical code process
+      const isActionDisabled = isLogin ? !stakingAllowance.data || rewardClaimStatus.loading : false;
 
       let afterDelegatedAmount = 0;
       let indexerCapacity = BigNumber.from(0);
@@ -90,7 +94,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
         indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
       }
 
-      const modalText = getModalText(requireClaimIndexerRewards, requireTokenApproval, t);
+      const modalText = isLogin ? getModalText(requireClaimIndexerRewards, requireTokenApproval, t) : idleText;
 
       return (
         <TransactionModal
@@ -104,6 +108,9 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
           ]}
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, isLoading, error) => {
+            if (!isLogin) {
+              return <WalletRoute componentMode element={<></>}></WalletRoute>;
+            }
             if (requireClaimIndexerRewards) {
               return (
                 <ModalClaimIndexerRewards

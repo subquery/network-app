@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, Spinner } from '@components';
+import { AppPageHeader, EmptyList, Spinner, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
 import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
@@ -57,8 +57,15 @@ export const MyDelegators: React.FC = () => {
             title={t('indexer.myDelegators')}
             desc={totalCount > 0 ? t('indexer.myDelegatorsDescription') : undefined}
           />
-          {totalCount <= 0 && <NoDelegator />}
-          {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
+          <WalletRoute
+            componentMode
+            element={
+              <>
+                {totalCount <= 0 && <NoDelegator />}
+                {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
+              </>
+            }
+          ></WalletRoute>
         </div>
       );
     },

@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Typography } from '@subql/components';
+import clsx from 'clsx';
 
 import { ALL_SUPPORTED_CONNECTORS, useConnectNetwork } from '../../containers/Web3';
 import styles from './ConnectWallet.module.css';
@@ -11,6 +12,7 @@ import styles from './ConnectWallet.module.css';
 type Props = {
   title?: string;
   subTitle?: string;
+  className?: string;
 };
 
 const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => void }> = ({
@@ -41,12 +43,12 @@ const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => voi
   );
 };
 
-export const ConnectWallet: React.FC<Props> = ({ title, subTitle }) => {
+export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
   const { t } = useTranslation();
   const { onNetworkConnect } = useConnectNetwork();
 
   return (
-    <div className={styles.container}>
+    <div className={clsx(styles.container, className)}>
       <Typography variant="h4" className={styles.title}>
         {title || t('connectWallet.title')}
       </Typography>

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, EmptyList, TabButtons } from '@components';
+import { AppPageHeader, EmptyList, TabButtons, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import {
@@ -45,8 +45,8 @@ const roleMapping = {
       noAgreementsDescription: [
         'serviceAgreements.nonIndexerAgreementsDescription_0',
         'serviceAgreements.nonIndexerAgreementsDescription_1',
-      ],
-      noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink',
+      ] as const,
+      noAgreementsInfoLink: 'serviceAgreements.nonIndexerAgreementsInfoLink' as const,
       noAgreementsLink: URLS.PLANS_OFFERS,
     },
   },
@@ -59,10 +59,10 @@ const roleMapping = {
     },
     intl: {
       noAgreementsDescription: [
-        t('serviceAgreements.nonConsumerAgreementsDescription_0'),
-        t('serviceAgreements.nonConsumerAgreementsDescription_1'),
-      ],
-      noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink',
+        'serviceAgreements.nonConsumerAgreementsDescription_0',
+        'serviceAgreements.nonConsumerAgreementsDescription_1',
+      ] as const,
+      noAgreementsInfoLink: 'serviceAgreements.nonConsumerAgreementsInfoLink' as const,
       noAgreementsLink: URLS.PLANS_OFFERS,
     },
   },
@@ -106,30 +106,37 @@ const Agreements: React.FC<{
     <>
       <AppPageHeader title={t('plans.category.serviceAgreement')} desc={t('serviceAgreements.agreementsDescription')} />
 
-      {totalCount <= 0 && (
-        <EmptyList
-          title={t('serviceAgreements.noAgreementsTitle')}
-          description={noAgreementsDescription.map((tKey) => t(tKey))}
-          infoI18nKey={noAgreementsInfoLink}
-          infoLinkDesc={t(noAgreementsInfoLink)}
-          infoLink={noAgreementsLink}
-        />
-      )}
+      <WalletRoute
+        componentMode
+        element={
+          <>
+            {totalCount <= 0 && (
+              <EmptyList
+                title={t('serviceAgreements.noAgreementsTitle')}
+                description={noAgreementsDescription.map((tKey) => t(tKey))}
+                infoI18nKey={noAgreementsInfoLink}
+                infoLinkDesc={t(noAgreementsInfoLink)}
+                infoLink={noAgreementsLink}
+              />
+            )}
 
-      {totalCount > 0 && (
-        <>
-          <div className={styles.tabs}>
-            <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
-          </div>
-          <div className="contentContainer">
-            <ServiceAgreementsTable
-              queryFn={queryFn}
-              queryParams={{ address: account || '' }}
-              emptyI18nKey={emptyI18nKey}
-            />
-          </div>
-        </>
-      )}
+            {totalCount > 0 && (
+              <>
+                <div className={styles.tabs}>
+                  <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
+                </div>
+                <div className="contentContainer">
+                  <ServiceAgreementsTable
+                    queryFn={queryFn}
+                    queryParams={{ address: account || '' }}
+                    emptyI18nKey={emptyI18nKey}
+                  />
+                </div>
+              </>
+            )}
+          </>
+        }
+      ></WalletRoute>
     </>
   );
 };

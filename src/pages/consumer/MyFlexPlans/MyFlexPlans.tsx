@@ -4,10 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
+import { useIsLogin } from '@hooks/useIsLogin';
 import { useGetConsumerClosedFlexPlansQuery, useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
 import i18next from 'i18next';
 
-import { AppPageHeader, Card, TabButtons } from '../../../components';
+import { AppPageHeader, Card, TabButtons, WalletRoute } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -59,14 +60,18 @@ const BalanceCards = () => {
 
 const Header = () => {
   const { t } = useTranslation();
-
+  const isLogin = useIsLogin();
   return (
     <>
       <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
-      <BalanceCards />
-      <div className={styles.tabs}>
-        <TabButtons tabs={buttonLinks} whiteTab />
-      </div>
+      {isLogin && (
+        <>
+          <BalanceCards />
+          <div className={styles.tabs}>
+            <TabButtons tabs={buttonLinks} whiteTab />
+          </div>
+        </>
+      )}
     </>
   );
 };
@@ -75,11 +80,16 @@ export const MyFlexPlans: React.FC = () => {
   return (
     <div>
       <Header />
-      <Routes>
-        <Route path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
-        <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
-        <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
-      </Routes>
+      <WalletRoute
+        componentMode
+        element={
+          <Routes>
+            <Route path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
+            <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
+            <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
+          </Routes>
+        }
+      ></WalletRoute>
     </div>
   );
 };
