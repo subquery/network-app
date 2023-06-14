@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
 import { Card } from '@subql/components';
 import { Alert, Button } from 'antd';
 import assert from 'assert';

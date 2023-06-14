@@ -17,6 +17,11 @@ import styles from './TransactionModal.module.css';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
+export const idleText = {
+  title: ' ',
+  steps: [],
+};
+
 type Props<P, T extends string> = {
   text: {
     title: string;

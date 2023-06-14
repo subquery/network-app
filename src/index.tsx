@@ -4,13 +4,12 @@
 // Required because we import @subql/common/dist/project rather than @subql/common
 import ReactDOM from 'react-dom';
 import TagManager from 'react-gtm-module';
-import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 import { Buffer } from 'buffer';
 
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 
+import './config/sentryConf';
 import 'reflect-metadata';
 import './index.less';
 
@@ -22,14 +21,6 @@ const tagManagerArgs = {
 
 const isProd = import.meta.env.NODE_ENV === 'production';
 isProd && TagManager.initialize(tagManagerArgs);
-
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  integrations: [new BrowserTracing()],
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  tracesSampleRate: 1.0,
-});
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

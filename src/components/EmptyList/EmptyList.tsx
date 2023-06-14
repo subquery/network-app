@@ -9,7 +9,7 @@ import styles from './EmptyList.module.css';
 
 interface IEmptyList {
   title?: string;
-  description?: string | Array<string>;
+  description?: string | Array<string> | readonly string[];
   infoI18nKey?: string;
   infoLinkDesc?: string;
   infoLink?: string;
@@ -36,6 +36,9 @@ export const EmptyList: React.FC<IEmptyList> = ({
         </div>
         {infoI18nKey && (
           <Typography className={styles.infoLink}>
+            {/* TODO: will fix this ts error when i18n issue fix. */}
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
             <Trans i18nKey={infoI18nKey}>
               {infoLinkDesc}
               <a href={infoLink ?? '/'} target={'_blank'} rel="noreferrer">

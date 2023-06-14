@@ -8,6 +8,14 @@
   align-items: center;
 }
 
+.componentMode {
+  background: transparent;
+}
+
+.componentModeWallet {
+  border: 1px solid rgba(223, 227, 232, 0.6);
+}
+
 .error {
   margin: 1rem;
 }

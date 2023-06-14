@@ -26,7 +26,6 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-
     const { tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
   }, [contracts, orderId]);
@@ -83,7 +82,7 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    return await contracts.permissionedExchange.tradeQuota(contracts.sQToken.address, account);
+    return await contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account);
   }, [contracts]);
 }
 

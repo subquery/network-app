@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList } from '@components';
+import { AppPageHeader, EmptyList, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
 import { URLS } from '@utils';
 
@@ -29,7 +29,12 @@ export const MyProjects: React.FC = () => {
   return (
     <>
       <AppPageHeader title={t('myProjects.title')} />
-      <OwnDeployments indexer={account ?? ''} emptyList={<NoDeployment />} desc={t('myProjects.description')} />
+      <WalletRoute
+        componentMode
+        element={
+          <OwnDeployments indexer={account ?? ''} emptyList={<NoDeployment />} desc={t('myProjects.description')} />
+        }
+      ></WalletRoute>
     </>
   );
 };

@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { captureException } from '@sentry/react';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
 
 export const walletConnectionErrors = [
@@ -52,6 +53,7 @@ export function parseError(error: any, errorsMapping = errors): string | undefin
   if (!error) return;
   console.log('error', error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
+
   const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
@@ -60,5 +62,16 @@ export function parseError(error: any, errorsMapping = errors): string | undefin
     return revertCode ? contractErrorCodes[revertCode] : undefined;
   };
 
-  return mappingError() ?? mapContractError() ?? generalErrorMsg;
+  // https://github.com/ethers-io/ethers.js/discussions/1856
+  // it seems caused by network error or didn't deploy contract on network.
+  // refresh will be ok. and just make sure called method have been deploy.
+  const callRevert = () => {
+    if (rawErrorMsg.toString().match(`CALL_EXCEPTION`)) {
+      captureException(error);
+      return 'Call revert exception. Please refresh the page and try again later.';
+    }
+
+    return;
+  };
+  return mappingError() ?? mapContractError() ?? callRevert() ?? generalErrorMsg;
 }

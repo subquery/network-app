@@ -12,6 +12,7 @@ import {
   Spinner,
   TabButtons,
   tokenApprovalModalText,
+  WalletRoute,
 } from '@components';
 import { Button } from '@components/Button';
 import TransactionModal from '@components/TransactionModal';
@@ -163,37 +164,42 @@ export const MyOffers: React.FC = () => {
       return (
         <>
           <AppPageHeader title={title} />
-          <Routes>
-            <Route
-              path={OPEN_OFFERS}
-              element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
-            />
-            <Route
-              path={CLOSE_OFFERS}
-              element={
-                <MyOffer
-                  queryFn={useGetOwnFinishedOffersQuery}
-                  description={t('myOffers.closedDescription')}
-                  totalCount={totalCount}
+          <WalletRoute
+            componentMode
+            element={
+              <Routes>
+                <Route
+                  path={OPEN_OFFERS}
+                  element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
                 />
-              }
-            />
-            <Route
-              path={EXPIRED_OFFERS}
-              element={
-                <MyOffer
-                  queryFn={useGetOwnExpiredOffersQuery}
-                  description={t('myOffers.expiredDescription')}
-                  totalCount={totalCount}
+                <Route
+                  path={CLOSE_OFFERS}
+                  element={
+                    <MyOffer
+                      queryFn={useGetOwnFinishedOffersQuery}
+                      description={t('myOffers.closedDescription')}
+                      totalCount={totalCount}
+                    />
+                  }
                 />
-              }
-            />
-            <Route
-              path={CREATE_OFFER}
-              element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
-            />
-            <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
-          </Routes>
+                <Route
+                  path={EXPIRED_OFFERS}
+                  element={
+                    <MyOffer
+                      queryFn={useGetOwnExpiredOffersQuery}
+                      description={t('myOffers.expiredDescription')}
+                      totalCount={totalCount}
+                    />
+                  }
+                />
+                <Route
+                  path={CREATE_OFFER}
+                  element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+                />
+                <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
+              </Routes>
+            }
+          ></WalletRoute>
         </>
       );
     },
