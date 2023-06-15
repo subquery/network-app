@@ -18,6 +18,8 @@ const GET_TOP_INDEXERS = gql`
       updatedAt
       uptime
       totalPoints
+      currICR
+      nextICR
     }
   }
 `;

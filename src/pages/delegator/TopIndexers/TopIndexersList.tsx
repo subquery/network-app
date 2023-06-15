@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
 import { AntDTable, SearchInput, TableText } from '@components';
@@ -37,6 +36,28 @@ const getColumns = (
     dataIndex: 'id',
     width: 250,
     render: (val) => <ConnectedIndexer id={val} account={account} />,
+  },
+  {
+    title: (
+      <TableTitle
+        title={i18next.t('topIndexers.commission')}
+        tooltip={i18next.t('topIndexers.commissionTooltip')}
+      ></TableTitle>
+    ),
+    dataIndex: 'currICR',
+    sorter: (a, b) => a.nextICR - b.nextICR,
+    render: (currICR, raw) => (
+      <div>
+        {raw.nextICR === currICR ? (
+          <span>{currICR}%</span>
+        ) : (
+          <span>
+            <del>{currICR}%</del>
+            {raw.nextICR}%
+          </span>
+        )}
+      </div>
+    ),
   },
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.score')} />,
@@ -201,7 +222,10 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
 
-  const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account);
+  // better sort in graphql but now cannot.
+  const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account).sort(
+    (a, b) => b.totalPoints - a.totalPoints,
+  );
 
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>
@@ -209,9 +233,6 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
         onSearch={(value: string) => {
           console.log(`search value ${value}`);
         }}
-        // defaultValue={searchIndexer}
-        // loading={sortedIndexer.loading}
-        // emptyResult={!searchedIndexer}
       />
     </div>
   );
@@ -227,12 +248,6 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
       <AntDTable
         customPagination
         tableProps={{ columns, rowKey: 'id', scroll: { x: 1600 }, dataSource: [...orderedIndexerList] }}
-        // paginationProps={{
-        //   total: searchedIndexer ? searchedIndexer.length : totalCount,
-        //   onChange: (page, pageSize) => {
-        //     onLoadMore?.((page - 1) * pageSize);
-        //   },
-        // }}
       />
     </div>
   );
