@@ -223,8 +223,10 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
 
   // better sort in graphql but now cannot.
-  const orderedIndexerList = getOrderedAccounts(indexers.slice(), 'id', account).sort(
-    (a, b) => b.totalPoints - a.totalPoints,
+  const orderedIndexerList = getOrderedAccounts(
+    indexers.slice().sort((a, b) => b.totalPoints - a.totalPoints),
+    'id',
+    account,
   );
 
   const SearchAddress = () => (
