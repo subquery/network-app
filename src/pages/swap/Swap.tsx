@@ -177,7 +177,9 @@ const GetAUSD = () => {
 
   return renderAsyncArray(mergeAsync(swapRate, tradableQuota, swapTokens, balance, aUSDBalance), {
     error: (error) => (
-      <Typography.Text type="danger">{t('errors.failedToGetIndexerInfo', parseError(error) || '')}</Typography.Text>
+      <Typography.Text type="danger">
+        {t('errors.failedToGetIndexerInfo', { message: parseError(error) || '' })}
+      </Typography.Text>
     ),
     empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
     data: (data) => {

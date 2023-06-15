@@ -44,7 +44,13 @@ export const SetCommissionRate: React.FC = () => {
   };
 
   return renderAsyncArray(mergeAsync(rewardClaimStatus, commissionRate), {
-    error: (error) => <Typography>{t('errors.failedToGetIndexerInfo', error.message)}</Typography>,
+    error: (error) => (
+      <Typography>
+        {t('errors.failedToGetIndexerInfo', {
+          message: error.message,
+        })}
+      </Typography>
+    ),
     loading: () => <Spinner />,
     empty: () => <></>,
     data: (data) => {

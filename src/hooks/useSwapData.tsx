@@ -41,7 +41,6 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
     if (!orderId) return 0;
 
     assert(contracts, 'Contracts not available');
-
     const { amountGive, amountGet, tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
     return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
   }, [contracts, orderId]);
