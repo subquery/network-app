@@ -3908,10 +3908,10 @@
     react-router-dom "^6.4.2"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@0.13.3-5":
-  version "0.13.3-5"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.13.3-5.tgz#e04e69514a4b35db2c28e639a739f6b32949ceef"
-  integrity sha512-kK2An45ihH0K/TziwzBnWIXOfCsYkPFTIDYSm9DUoPqmVxsvl2Gz1/UB3bBvK4iQvdoN24uWxmW+xr7liP6MxA==
+"@subql/contract-sdk@^0.13.5":
+  version "0.13.5"
+  resolved "https://registry.npmmirror.com/@subql/contract-sdk/-/contract-sdk-0.13.5.tgz#04eb129a5fa90bad09f02159011939cf92bf4f00"
+  integrity sha512-OLtUXdvT7FuGLmwGmYm3LQpYofmN4+qVjWkulq+hh0sYpgF5b7Rig/ONxdKPrmQ2V+2LyWI8f4xKHMz0j3T/FA==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
