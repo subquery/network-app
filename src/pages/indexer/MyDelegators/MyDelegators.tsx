@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList, Spinner, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
-import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';

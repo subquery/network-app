@@ -3,8 +3,7 @@
 
 import React, { PropsWithChildren } from 'react';
 import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition, offsetLimitPagination } from '@apollo/client/utilities';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
@@ -15,13 +14,6 @@ export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
 const registryLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
-
-const registrySubLink = new WebSocketLink({
-  uri: import.meta.env.VITE_SUBSCRIPTION_REGISTRY_PROJECT ?? '',
-  options: {
-    reconnect: true,
-  },
-});
 
 export const QueryApolloProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const client = new ApolloClient({
