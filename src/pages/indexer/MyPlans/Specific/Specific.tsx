@@ -20,16 +20,6 @@ const Specific: React.FC = () => {
   // TODO find a way to query indexed projects that only have plans
   const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
 
-  // specificPlans.subscribeToMore({
-  //   document: SUB_PLANS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       specificPlans.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return (
     <div className={'contentContainer'}>
       {renderAsyncArray(

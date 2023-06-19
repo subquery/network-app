@@ -34,17 +34,6 @@ export const MyDelegators: React.FC = () => {
   const filterParams = { id: account ?? '', offset: 0 };
   const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams, pollInterval: 10000 });
 
-  // delegators.subscribeToMore({
-  //   document: SUB_DELEGATORS,
-  //   variables: filterParams,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       delegators.refetch(filterParams);
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return renderAsync(delegators, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,

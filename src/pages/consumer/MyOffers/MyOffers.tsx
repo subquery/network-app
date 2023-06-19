@@ -145,16 +145,6 @@ export const MyOffers: React.FC = () => {
 
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
 
-  // offers.subscribeToMore({
-  //   document: SUB_OFFERS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       offers.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return renderAsync(offers, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,

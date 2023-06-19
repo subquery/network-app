@@ -16,16 +16,6 @@ export const Default: React.FC = () => {
   const { t } = useTranslation();
   const plans = useGetPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
 
-  // plans.subscribeToMore({
-  //   document: SUB_PLANS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       plans.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return (
     <div className={'contentContainer'}>
       {renderAsyncArray(

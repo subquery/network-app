@@ -28,16 +28,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const rewards = useGetRewardsQuery({ variables: filterParams, pollInterval: 10000 });
   const { t } = useTranslation();
 
-  // rewards.subscribeToMore({
-  //   document: SUB_REWARDS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       rewards.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {
       title: <TableTitle title={'#'} />,

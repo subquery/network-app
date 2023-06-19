@@ -39,16 +39,6 @@ export const Marketplace: React.FC = () => {
   const [now] = React.useState<Date>(moment().toDate());
   const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 }, pollInterval: 10000 });
 
-  // offers.subscribeToMore({
-  //   document: SUB_OFFERS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       offers.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return renderAsync(offers, {
     loading: () => <Spinner />,
     error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,

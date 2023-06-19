@@ -20,16 +20,6 @@ export const AllIndexers: React.FC = () => {
     getUseQueryFetchMore(indexers, { offset, first: 10 });
   };
 
-  // indexers.subscribeToMore({
-  //   document: SUB_INDEXERS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       indexers.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return (
     <div>
       {renderAsync(

@@ -53,17 +53,6 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
 
-  // delegation.subscribeToMore({
-  //   document: SUB_DELEGATIONS,
-  //   variables: filterParams,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       delegation.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   const handleClick = async (amount: string) => {
     assert(contracts, 'Contracts not available');
 

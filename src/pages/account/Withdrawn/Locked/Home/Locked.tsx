@@ -72,16 +72,6 @@ export const Locked: React.FC = () => {
   const withdrawals = useGetWithdrawlsQuery({ variables: filterParams, pollInterval: 10000 });
   const lockPeriod = useLockPeriod();
 
-  // withdrawals.subscribeToMore({
-  //   document: SUB_WITHDRAWALS,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       withdrawals.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   return (
     <div className={styles.withdrawnContainer}>
       {renderAsyncArray(

@@ -306,16 +306,6 @@ export const Create: React.FC = () => {
   const { contracts } = useWeb3Store();
   const templates = useGetPlanTemplatesQuery({ pollInterval: 10000 });
 
-  // templates.subscribeToMore({
-  //   document: SUB_PLAN_TEMPLATES,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       templates.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     assert(contracts, 'Contracts not available');
 

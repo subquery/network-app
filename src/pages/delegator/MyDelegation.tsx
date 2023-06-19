@@ -101,17 +101,6 @@ export const MyDelegation: React.FC = () => {
     pollInterval: 10000,
   });
 
-  // delegations.subscribeToMore({
-  //   document: SUB_DELEGATIONS,
-  //   variables: filterParams,
-  //   updateQuery: (prev, { subscriptionData }) => {
-  //     if (subscriptionData.data) {
-  //       delegations.refetch();
-  //     }
-  //     return prev;
-  //   },
-  // });
-
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
