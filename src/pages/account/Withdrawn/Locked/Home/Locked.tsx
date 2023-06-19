@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { EmptyList } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { SUB_WITHDRAWALS } from '@containers/IndexerRegistryProjectSub';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
@@ -70,18 +69,18 @@ export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };
-  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
+  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams, pollInterval: 10000 });
   const lockPeriod = useLockPeriod();
 
-  withdrawals.subscribeToMore({
-    document: SUB_WITHDRAWALS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        withdrawals.refetch();
-      }
-      return prev;
-    },
-  });
+  // withdrawals.subscribeToMore({
+  //   document: SUB_WITHDRAWALS,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       withdrawals.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   return (
     <div className={styles.withdrawnContainer}>

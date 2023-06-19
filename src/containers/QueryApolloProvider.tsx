@@ -31,14 +31,7 @@ export const QueryApolloProvider: React.FC<PropsWithChildren> = ({ children }) =
       ApolloLink.split(
         (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
         top100IndexersLink,
-        ApolloLink.split(
-          ({ query }) => {
-            const definition = getMainDefinition(query);
-            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-          },
-          registrySubLink,
-          registryLink,
-        ),
+        registryLink,
       ),
     ),
     cache: new InMemoryCache({

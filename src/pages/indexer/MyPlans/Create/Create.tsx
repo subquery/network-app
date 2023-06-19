@@ -7,7 +7,6 @@ import { SummaryList, TableText } from '@components';
 import { NumberInput } from '@components/NumberInput';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
-import { SUB_PLAN_TEMPLATES } from '@containers/IndexerRegistryProjectSub';
 import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
 import { Button, Spinner, Typography } from '@subql/components';
@@ -305,17 +304,17 @@ export const Create: React.FC = () => {
   const { t } = useTranslation();
   const [curStep, setCurStep] = React.useState<number>(0);
   const { contracts } = useWeb3Store();
-  const templates = useGetPlanTemplatesQuery();
+  const templates = useGetPlanTemplatesQuery({ pollInterval: 10000 });
 
-  templates.subscribeToMore({
-    document: SUB_PLAN_TEMPLATES,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        templates.refetch();
-      }
-      return prev;
-    },
-  });
+  // templates.subscribeToMore({
+  //   document: SUB_PLAN_TEMPLATES,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       templates.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   const handleCreate = async (amount: string, templateId: string, deploymentId?: string) => {
     assert(contracts, 'Contracts not available');

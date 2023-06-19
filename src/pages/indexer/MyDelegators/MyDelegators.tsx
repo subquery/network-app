@@ -33,18 +33,18 @@ export const MyDelegators: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
   const filterParams = { id: account ?? '', offset: 0 };
-  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams });
+  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams, pollInterval: 10000 });
 
-  delegators.subscribeToMore({
-    document: SUB_DELEGATORS,
-    variables: filterParams,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        delegators.refetch(filterParams);
-      }
-      return prev;
-    },
-  });
+  // delegators.subscribeToMore({
+  //   document: SUB_DELEGATORS,
+  //   variables: filterParams,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       delegators.refetch(filterParams);
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   return renderAsync(delegators, {
     loading: () => <Spinner />,

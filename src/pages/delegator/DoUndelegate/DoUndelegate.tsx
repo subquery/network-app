@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
-import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { useLockPeriod } from '@hooks';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
@@ -52,18 +51,18 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
-  const delegation = useGetDelegationQuery({ variables: filterParams });
+  const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
 
-  delegation.subscribeToMore({
-    document: SUB_DELEGATIONS,
-    variables: filterParams,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        delegation.refetch();
-      }
-      return prev;
-    },
-  });
+  // delegation.subscribeToMore({
+  //   document: SUB_DELEGATIONS,
+  //   variables: filterParams,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       delegation.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   const handleClick = async (amount: string) => {
     assert(contracts, 'Contracts not available');

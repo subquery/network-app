@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
-import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
 import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
@@ -38,17 +37,17 @@ const NoOffers: React.FC = () => {
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
-  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
+  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 }, pollInterval: 10000 });
 
-  offers.subscribeToMore({
-    document: SUB_OFFERS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        offers.refetch();
-      }
-      return prev;
-    },
-  });
+  // offers.subscribeToMore({
+  //   document: SUB_OFFERS,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       offers.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,

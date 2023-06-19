@@ -7,7 +7,6 @@ import { NavLink } from 'react-router-dom';
 import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { SUB_DELEGATIONS } from '@containers/IndexerRegistryProjectSub';
 import { useEra } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
@@ -99,18 +98,19 @@ export const MyDelegation: React.FC = () => {
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
+    pollInterval: 10000,
   });
 
-  delegations.subscribeToMore({
-    document: SUB_DELEGATIONS,
-    variables: filterParams,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        delegations.refetch();
-      }
-      return prev;
-    },
-  });
+  // delegations.subscribeToMore({
+  //   document: SUB_DELEGATIONS,
+  //   variables: filterParams,
+  //   updateQuery: (prev, { subscriptionData }) => {
+  //     if (subscriptionData.data) {
+  //       delegations.refetch();
+  //     }
+  //     return prev;
+  //   },
+  // });
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
