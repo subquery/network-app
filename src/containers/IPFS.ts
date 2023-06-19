@@ -1,8 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
+import localforage from 'localforage';
 import LRUCache from 'lru-cache';
 
 import { concatU8A } from '../utils';
@@ -22,7 +23,7 @@ function useIPFSImpl(
     throw new Error('No IPFS gateway provided');
   }
   const ipfs = React.useRef<IPFSHTTPClient>(create({ url: gateway }));
-  const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(50));
+  const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(150));
 
   React.useEffect(() => {
     // logger.l(`Creating ipfs client at: ${gateway}`);
@@ -36,6 +37,14 @@ function useIPFSImpl(
     if (result) {
       // logger.l(`Getting: ${cid}...CACHED`);
       return result;
+    }
+
+    const cachedRes = await localforage.getItem<Uint8Array>(cid);
+
+    // maybe need a flush way.
+    if (cachedRes) {
+      cache.current.set(cid, cachedRes);
+      return cachedRes;
     }
 
     const results = ipfs.current.cat(cid);
@@ -53,6 +62,7 @@ function useIPFSImpl(
 
     if (res) {
       cache.current.set(cid, res);
+      localforage.setItem(cid, res);
       return res;
     }
 
