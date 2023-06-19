@@ -13,7 +13,7 @@ import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } fro
 import { IndexerList } from './IndexerList/IndexerList';
 
 export const AllIndexers: React.FC = () => {
-  const indexers = useGetIndexersQuery();
+  const indexers = useGetIndexersQuery({ variables: { offset: 0, first: 10 } });
   const { currentEra } = useEra();
   const { t } = useTranslation();
   const fetchMore = (offset: number) => {
