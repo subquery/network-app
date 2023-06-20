@@ -25,10 +25,9 @@ const registrySubLink = new WebSocketLink({
 
 const getSwapLink = () => {
   const httpOptions = { fetch, fetchOptions: { timeout: 5000 } };
-  const deploymentId = 'QmV6sbiPyTDUjcQNJs2eGcAQp2SMXL2BU6qdv5aKrRr7Hg';
 
   return deploymentHttpLink({
-    deploymentId,
+    deploymentId: import.meta.env.VITE_SUBQUERY_DEPLOYMENT_ID,
     httpOptions,
     authUrl: import.meta.env.VITE_AUTH_URL,
     fallbackServiceUrl: import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT,
