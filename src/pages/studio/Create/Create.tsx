@@ -12,7 +12,7 @@ import { Form, Formik } from 'formik';
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
-import { isEthError } from '../../../utils';
+import { isEthError, parseError } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import styles from './Create.module.css';
 import Instructions from './Instructions';
@@ -43,7 +43,7 @@ const Create: React.FC = () => {
           setSubmitError(t('errors.transactionRejected'));
           return;
         }
-        setSubmitError((e as Error).message);
+        setSubmitError(parseError(e));
       }
     },
     [navigate, createProject, t],

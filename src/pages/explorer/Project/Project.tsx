@@ -94,7 +94,7 @@ const ProjectInner: React.FC = () => {
             indexer: indexer.indexerId,
           });
         } catch (error) {
-          console.error(parseError(error));
+          parseError(error);
         }
 
         if (!indexerMeta) return;

@@ -39,18 +39,9 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
   const handleClick = async () => {
     assert(contracts, 'Contracts not available');
 
-    try {
-      const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
-      pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
-      return pendingTx;
-    } catch (e: any) {
-      throw new Error(
-        `${e} other information: ${JSON.stringify({
-          account,
-          indexers,
-        })}`,
-      );
-    }
+    const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
+    pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
+    return pendingTx;
   };
 
   return (

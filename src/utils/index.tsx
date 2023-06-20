@@ -4,6 +4,8 @@
 import { OperationVariables, QueryResult } from '@apollo/client';
 import { Spinner } from '@subql/components';
 import { BigNumber, BigNumberish, utils } from 'ethers';
+
+import { parseError } from './parseError';
 export * from './numberFormatters';
 export * from './stringFormatters';
 export * from './dateFormatters';
@@ -132,10 +134,12 @@ export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): Rende
     try {
       return handlers.data(data.data, data);
     } catch (e) {
+      parseError(e);
       // TODO not sure this is desired behaviour
       return handlers.error(e as Error);
     }
   } else if (data.error) {
+    parseError(data.error);
     return handlers.error(data.error);
   } else if (data.loading) {
     return handlers.loading ? handlers.loading() : defaultLoading();
@@ -159,11 +163,13 @@ export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: 
       }
       return handlers.data(data.data, data);
     } catch (e) {
+      parseError(e);
       // TODO not sure this is desired behaviour
       return handlers.error(e as Error);
     }
   }
   if (data.error) {
+    parseError(data.error);
     return handlers.error(data.error);
   } else if (data.loading) {
     return handlers.loading ? handlers.loading() : defaultLoading();

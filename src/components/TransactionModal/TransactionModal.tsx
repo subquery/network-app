@@ -128,7 +128,6 @@ const TransactionModal = <P, T extends string>({
         throw new Error(text.failureText);
       }
     } catch (error) {
-      console.error('TxAction error', error);
       openNotificationWithIcon({
         type: NotificationType.ERROR,
         title: 'Failure',

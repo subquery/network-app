@@ -65,7 +65,7 @@ export async function requestConsumerHostToken(
 
     return { data: sortedResponse?.token };
   } catch (error) {
-    console.error('Failed to request token of consumer host.');
+    parseError(error);
     return { error: 'Failed to request token of consumer host.' };
   }
 }
@@ -112,7 +112,7 @@ export async function requestServiceAgreementToken(
       throw new Error(parseError(sortedError));
     }
   } catch (error) {
-    console.error('Request Service Agreement Token.', error);
+    parseError(error);
     return { error: 'Failed to request token for service agreement.' };
   }
 }
