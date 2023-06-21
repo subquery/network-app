@@ -26,7 +26,7 @@
     "@subql/contract-sdk": "^0.13.5",
     "@subql/network-clients": "^0.3.3-1",
     "@subql/network-config": "^0.3.3-3",
-    "@subql/network-query": "^0.3.3-7",
+    "@subql/network-query": "0.3.7",
     "@subql/react-hooks": "^0.3.3-9",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

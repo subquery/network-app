@@ -4046,10 +4046,17 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@0.3.3-7", "@subql/network-query@^0.3.3-7":
+"@subql/network-query@0.3.3-7":
   version "0.3.3-7"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-7.tgz#9268cb34a231e7bc0e5ed5bd65856db1214c57ed"
   integrity sha512-FaM3sl3NrDteR1KYYqwD8Hp8FXf7JNJWnGVvrPlVn23tbSivuF13gPiayBNSCP5bi+RQMab9dKybTSTJQiIjSQ==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/network-query@0.3.7":
+  version "0.3.7"
+  resolved "https://registry.npmmirror.com/@subql/network-query/-/network-query-0.3.7.tgz#ca918560fb12cad202b2a70e9507520e192b4e47"
+  integrity sha512-Va5JMoocf8KT+ocwvfxxlkEYO+cNzKsGRBvTAkY0UYC3StJjYwAPJqa0eF1HcRUWq+CJOtbv0gQR4ReyK/SdpA==
   dependencies:
     graphql "^16.5.0"
 
