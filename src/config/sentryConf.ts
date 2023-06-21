@@ -26,9 +26,10 @@ Sentry.init({
 
     return event;
   },
+  // this env set on Github workflow.
   dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [new BrowserTracing()],
-
+  environment: import.meta.env.MODE,
   // Set tracesSampleRate to 1.0 to capture 100%
   tracesSampleRate: 1.0,
 });

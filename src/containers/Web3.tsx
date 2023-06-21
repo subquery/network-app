@@ -6,6 +6,7 @@ import { networks } from '@subql/contract-sdk';
 import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { SQNetworks } from '@subql/network-config';
+import { parseError } from '@utils/parseError';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
@@ -124,14 +125,12 @@ export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
       params: [{ chainId: `0x${Number(defaultChainId).toString(16)}` }],
     });
   } catch (e: any) {
-    console.log('e:', e);
+    parseError(e);
     if (e?.code === 4902) {
       await ethWindowObj.request({
         method: ethMethods.addChain,
         params: [networks[SUPPORTED_NETWORK]],
       });
-    } else {
-      console.log('Switch Ethereum network failed', e);
     }
   }
 };
@@ -151,7 +150,7 @@ export const useConnectNetwork = () => {
         setEthWindowObj(connector.windowObj);
         await activate(connector.connector);
       } catch (e) {
-        console.log('Failed to activate wallet', e);
+        parseError(e);
       }
     },
     [account, deactivate, setEthWindowObj, activate],

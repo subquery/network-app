@@ -25,7 +25,7 @@ export type TalismanWindow = Window &
 // prevents error with SSR
 const talismanWindow = typeof window !== 'undefined' ? (window as TalismanWindow) : ({} as TalismanWindow);
 
-const __DEV__ = import.meta.env.NODE_ENV !== 'production';
+const __DEV__ = import.meta.env.DEV;
 
 function parseSendReturn(sendReturn: SendReturnResult | SendReturn): any {
   return sendReturn.hasOwnProperty('result') ? sendReturn.result : sendReturn;

@@ -11,7 +11,7 @@ import { useIPFS, useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
 import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 import { ProjectMetadata } from '../../models';
-import { getTrimmedStr, renderAsync } from '../../utils';
+import { getTrimmedStr, parseError, renderAsync } from '../../utils';
 import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
 import { TableText } from '../TableText';
@@ -73,7 +73,7 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
 
   return renderAsync(metadata, {
     loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load project info: ${e}`}</Typography>,
+    error: (e) => <Typography>{`Failed to load project info: ${parseError(e)}`}</Typography>,
     data: (projectMeta) => {
       if (!projectMeta) {
         return <Typography>Project metadata not found</Typography>;

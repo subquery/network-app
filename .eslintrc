@@ -4,6 +4,7 @@
   "plugins": ["@typescript-eslint", "header", "simple-import-sort"],
   "extends": ["react-app", "plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended", "prettier"],
   "rules": {
+    "react-hooks/exhaustive-deps": "off",
     "header/header": [
       2,
       "line",

@@ -18,7 +18,7 @@ import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 import TransactionModal from '../../../components/TransactionModal';
 import { useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
 import { IIndexerFlexPlan } from '../../../hooks';
-import { formatEther, getAuthReqHeader, getCapitalizedStr, POST, renderAsync, TOKEN } from '../../../utils';
+import { formatEther, getAuthReqHeader, getCapitalizedStr, parseError, POST, renderAsync, TOKEN } from '../../../utils';
 import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 
 async function purchasePlan(amount: string, period: number, deploymentIndexer: number, authToken: string) {
@@ -44,7 +44,7 @@ async function purchasePlan(amount: string, period: number, deploymentIndexer: n
 
     return { data: sortedResponse };
   } catch (error) {
-    console.error(`Failed to purchase flex plan. ${error}`);
+    parseError(error);
     return { error: `${error ?? 'Failed to purchase flex plan.'}` };
   }
 }

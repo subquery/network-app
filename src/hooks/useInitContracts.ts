@@ -6,6 +6,7 @@ import { useWeb3 } from '@containers';
 import { NETWORK_NAME } from '@containers/Web3';
 import { ContractSDK } from '@subql/contract-sdk';
 import { ContractClient } from '@subql/network-clients';
+import { parseError } from '@utils';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -29,7 +30,7 @@ export function useInitContracts(): { loading: boolean } {
 
           console.log('Contract Instance Initial', contractInstance);
         } catch (error) {
-          console.error('Failed to init contracts', error);
+          parseError(error);
         }
       }
     }

@@ -50,7 +50,6 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
         onFail && onFail();
       }
     } catch (error) {
-      console.error('onClaimIndexerRewards', error);
       setError(parseError(error));
     } finally {
       setIsLoading(false);

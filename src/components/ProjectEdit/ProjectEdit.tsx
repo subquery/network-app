@@ -7,7 +7,7 @@ import { Button, Typography } from '@subql/components';
 import { Form, Formik } from 'formik';
 
 import { FormProjectMetadata, projectMetadataSchema, ProjectWithMetadata } from '../../models';
-import { isEthError } from '../../utils';
+import { isEthError, parseError } from '../../utils';
 import ImageInput from '../ImageInput';
 import { FTextInput } from '..';
 import styles from './ProjectEdit.module.css';
@@ -30,7 +30,7 @@ const ProjectEdit: React.FC<Props> = (props) => {
         setSubmitError(t('errors.transactionRejected'));
         return;
       }
-      setSubmitError((e as Error).message);
+      setSubmitError(parseError(e));
     }
   };
 

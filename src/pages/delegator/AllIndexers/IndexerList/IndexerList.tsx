@@ -17,7 +17,6 @@ import { useGetIndexerQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
 import { TableProps } from 'antd';
-import i18next from 'i18next';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
@@ -87,22 +86,24 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
 
   const rawIndexerList = React.useMemo(() => searchedIndexer ?? indexers ?? [], [indexers, searchedIndexer]);
 
+  const getSortedIndexers = async () => {
+    if (rawIndexerList.length > 0) {
+      setLoadingList(true);
+      setIndexerList([]);
+      const sortedIndexers = await Promise.all(
+        rawIndexerList.map((indexer) => {
+          return networkClient?.getIndexer(indexer.id);
+        }),
+      );
+
+      setIndexerList(sortedIndexers);
+      setLoadingList(false);
+      return sortedIndexers;
+    }
+  };
+
   React.useEffect(() => {
     getSortedIndexers();
-    async function getSortedIndexers() {
-      if (rawIndexerList.length > 0) {
-        setLoadingList(true);
-        const sortedIndexers = await Promise.all(
-          rawIndexerList.map((indexer) => {
-            return networkClient?.getIndexer(indexer.id);
-          }),
-        );
-
-        setIndexerList(sortedIndexers);
-        setLoadingList(false);
-        return sortedIndexers;
-      }
-    }
   }, [networkClient, rawIndexerList]);
 
   const orderedIndexerList = React.useMemo(
@@ -282,7 +283,6 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
   const isLoading =
     !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0));
-
   return (
     <div className={styles.container}>
       <div className={styles.indexerListHeader}>
@@ -299,7 +299,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
           rowKey: 'address',
           dataSource: [...orderedIndexerList],
           scroll: { x: 1600 },
-          loading: isLoading,
+          loading: !!isLoading,
         }}
         paginationProps={{
           total: searchedIndexer ? searchedIndexer.length : totalCount,
