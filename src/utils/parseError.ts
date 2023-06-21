@@ -48,7 +48,7 @@ export const errors = [
 ];
 
 export const logError = (msg: string) => {
-  return console.error(`%c [Error] ${msg}`, 'color:lightgreen;font-size:22px');
+  return console.error(`%c [Error] ${msg}`, 'color:lightgreen;');
 };
 
 export function parseError(error: any, errorsMapping = errors): string | undefined {
