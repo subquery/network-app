@@ -3,12 +3,12 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GetTopIndexers_indexerPrograms } from '@__generated__/excellentIndexers/GetTopIndexers'; // TODO: add excellentIndexers to network-query codegen
 import { AntDTable, SearchInput, TableText } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
+import { GetTopIndexersQuery } from '@subql/network-query';
 import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
 import { TableProps, Tag } from 'antd';
 import i18next from 'i18next';
@@ -21,13 +21,13 @@ const { DELEGATOR, INDEXER } = ROUTES;
 const getColumns = (
   account: string,
   viewIndexerDetail: (url: string) => void,
-): TableProps<GetTopIndexers_indexerPrograms>['columns'] => [
+): TableProps<GetTopIndexersQuery['indexerPrograms'][number]>['columns'] => [
   {
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
     width: 50,
     render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
   },
@@ -73,7 +73,7 @@ const getColumns = (
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     sorter: (a, b) => a.uptime - b.uptime,
@@ -83,7 +83,7 @@ const getColumns = (
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ownStake')} title={i18next.t('topIndexers.ownStake')} />,
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     sorter: (a, b) => a.ownStaked - b.ownStaked,
@@ -95,7 +95,7 @@ const getColumns = (
     ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     sorter: (a, b) => a.delegated - b.delegated,
@@ -112,7 +112,7 @@ const getColumns = (
     render: (eraRewardsCollection) => (
       <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     filters: [
@@ -150,7 +150,7 @@ const getColumns = (
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     filters: [
@@ -182,7 +182,7 @@ const getColumns = (
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
-    onCell: (record: GetTopIndexers_indexerPrograms) => ({
+    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),
     filters: [
@@ -213,7 +213,7 @@ const getColumns = (
 ];
 
 interface props {
-  indexers: GetTopIndexers_indexerPrograms[];
+  indexers: GetTopIndexersQuery['indexerPrograms'];
   onLoadMore?: (offset: number) => void;
 }
 

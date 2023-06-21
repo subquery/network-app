@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography } from 'antd';
 
-import { GetTopIndexers_indexerPrograms as TopIndexersPrograms } from '../../../__generated__/excellentIndexers/GetTopIndexers';
 import { useTopIndexers } from '../../../containers/QueryTop100Indexers';
 import { renderAsync } from '../../../utils';
 import { TopIndexerList } from './TopIndexersList';
@@ -13,7 +12,6 @@ import { TopIndexerList } from './TopIndexersList';
 export const TopIndexers: React.FC = () => {
   const { t } = useTranslation();
   const topIndexers = useTopIndexers();
-
   return (
     <div>
       {renderAsync(topIndexers, {
@@ -24,7 +22,7 @@ export const TopIndexers: React.FC = () => {
           </>
         ),
         data: (data) => {
-          const topIndexers = data?.indexerPrograms as TopIndexersPrograms[];
+          const topIndexers = data?.indexerPrograms;
 
           if (!topIndexers) {
             return <Typography>{t('topIndexers.nonData')}</Typography>;

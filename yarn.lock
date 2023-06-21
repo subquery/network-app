@@ -3923,10 +3923,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.npmmirror.com/@subql/network-query/-/network-query-0.3.4.tgz#17f79c0d2b151d4624b4a213aa1ed291f3af8564"
-  integrity sha512-fc7oykqZcanC/MafPebADhSIUVbUxbig+rdMl0rw1QLOrrSR40PD5FjoZ/G2qBDHcXC1UsV//1Gksz3n4q2ZkQ==
+"@subql/network-query@0.3.7":
+  version "0.3.7"
+  resolved "https://registry.npmmirror.com/@subql/network-query/-/network-query-0.3.7.tgz#ca918560fb12cad202b2a70e9507520e192b4e47"
+  integrity sha512-Va5JMoocf8KT+ocwvfxxlkEYO+cNzKsGRBvTAkY0UYC3StJjYwAPJqa0eF1HcRUWq+CJOtbv0gQR4ReyK/SdpA==
   dependencies:
     graphql "^16.5.0"
 
