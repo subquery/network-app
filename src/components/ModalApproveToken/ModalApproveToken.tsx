@@ -79,7 +79,6 @@ export const ModalApproveToken: React.FC<ModalApproveTokenProps> = ({
         onSubmit && onSubmit();
       }
     } catch (error) {
-      console.error('ModalApproveToken', error);
       setError(parseError(error));
     } finally {
       setIsLoading(false);

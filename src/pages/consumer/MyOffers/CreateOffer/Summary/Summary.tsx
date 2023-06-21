@@ -81,7 +81,6 @@ export const Summary: React.FC = () => {
         });
       });
     } catch (error) {
-      console.error('handleOfferCreate error', error);
       openNotificationWithIcon({
         type: NotificationType.ERROR,
         title: 'Offer created Failed',

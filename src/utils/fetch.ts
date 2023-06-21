@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { parseError } from './parseError';
+
 interface PostProps {
   endpoint: string;
   headers?: any;
@@ -21,7 +23,7 @@ export const POST = async ({ endpoint, headers, requestBody }: PostProps): Promi
       body: JSON.stringify(requestBody),
     });
   } catch (e) {
-    console.log('Fetch error', e);
+    parseError(e);
     error = e;
   }
 

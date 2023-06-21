@@ -11,7 +11,7 @@ import { BigNumber } from 'ethers';
 import { AppTypography, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { useWeb3 } from '../../../containers';
-import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { getAuthReqHeader, parseError, TOKEN } from '../../../utils';
 import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 import { formatEther } from '../../../utils/numberFormatters';
 import styles from './MyFlexPlans.module.css';
@@ -38,7 +38,7 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
 
     return { data: sortedResponse };
   } catch (error) {
-    console.error(`Failed to terminate flex plan. ${error}`);
+    parseError(error);
     return { error };
   }
 }

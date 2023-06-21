@@ -47,11 +47,13 @@ export const errors = [
   },
 ];
 
-const generalErrorMsg = 'Unfortunately, something went wrong.';
+export const logError = (msg: string) => {
+  return console.error(`%c [Error] ${msg}`, 'color:lightgreen;font-size:22px');
+};
 
 export function parseError(error: any, errorsMapping = errors): string | undefined {
   if (!error) return;
-  console.log('error', error);
+  logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
 
   const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
@@ -73,5 +75,14 @@ export function parseError(error: any, errorsMapping = errors): string | undefin
 
     return;
   };
-  return mappingError() ?? mapContractError() ?? callRevert() ?? generalErrorMsg;
+
+  const generalErrorMsg = () => {
+    try {
+      captureException(error);
+    } finally {
+      return 'Unfortunately, something went wrong.';
+    }
+  };
+
+  return mappingError() ?? mapContractError() ?? callRevert() ?? generalErrorMsg();
 }
