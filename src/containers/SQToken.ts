@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { limitContract } from '@utils/limitation';
 import assert from 'assert';
 
 import { useWeb3Store } from 'src/stores';
@@ -12,12 +13,11 @@ import { useWeb3 } from '.';
 function useSQTokenImpl() {
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
-
   const balance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return contracts.sqToken.balanceOf(account);
+    return limitContract(async () => await contracts.sqToken.balanceOf(account));
   }, [account, contracts]);
 
   const consumerHostBalance = useAsyncMemo(async () => {
@@ -58,8 +58,9 @@ function useSQTokenImpl() {
   const permissionExchangeAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
-
-    return contracts.sqToken.allowance(account, contracts.permissionedExchange.address);
+    return limitContract(
+      async () => await contracts.sqToken.allowance(account, contracts.permissionedExchange.address),
+    );
   }, [account, contracts]);
 
   return {

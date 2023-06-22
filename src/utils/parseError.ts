@@ -69,7 +69,6 @@ export function parseError(error: any, errorsMapping = errors): string | undefin
   // refresh will be ok. and just make sure called method have been deploy.
   const callRevert = () => {
     if (rawErrorMsg.toString().match(`CALL_EXCEPTION`)) {
-      captureException(error);
       return 'Call revert exception. Please refresh the page and try again later.';
     }
 

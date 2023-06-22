@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { limitContract } from '@utils/limitation';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
@@ -26,7 +27,10 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-    const { tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
+    const { tokenGet, tokenGive } = await limitContract(
+      async () => await contracts.permissionedExchange.orders(orderId),
+      orderId,
+    );
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
   }, [contracts, orderId]);
 }
@@ -40,7 +44,10 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
   return useAsyncMemo(async () => {
     if (!orderId) return 0;
     assert(contracts, 'Contracts not available');
-    const { amountGive, amountGet, tokenGet, tokenGive } = await contracts.permissionedExchange.orders(orderId);
+    const { amountGive, amountGet, tokenGet, tokenGive } = await limitContract(
+      async () => await contracts.permissionedExchange.orders(orderId),
+      orderId,
+    );
     return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
   }, [contracts, orderId]);
 }
@@ -50,7 +57,7 @@ export function useSwapTradeLimitation() {
 
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    const limitation = await contracts.permissionedExchange.tradeLimitation();
+    const limitation = await limitContract(async () => await contracts.permissionedExchange.tradeLimitation());
     return limitation;
   }, [contracts]);
 }
@@ -65,8 +72,10 @@ export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNum
     if (!orderId) return BigNumber.from(0);
 
     assert(contracts, 'Contracts not available');
-
-    const { tokenGiveBalance } = await contracts.permissionedExchange.orders(orderId);
+    const { tokenGiveBalance } = await limitContract(
+      async () => await contracts.permissionedExchange.orders(orderId),
+      orderId,
+    );
 
     return tokenGiveBalance;
   }, [contracts, orderId]);
@@ -80,7 +89,9 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    return await contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account);
+    return await limitContract(
+      async () => await contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account),
+    );
   }, [contracts]);
 }
 
