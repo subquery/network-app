@@ -153,7 +153,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const getTokenGet = async () => {
     if (!contracts || !orderId) return;
 
-    const { tokenGet } = await limitContract(async () => await contracts.permissionedExchange.orders(orderId), orderId);
+    const { tokenGet } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
 
     setTokenGet(tokenGet);
   };

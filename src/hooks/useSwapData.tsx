@@ -27,10 +27,7 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-    const { tokenGet, tokenGive } = await limitContract(
-      async () => await contracts.permissionedExchange.orders(orderId),
-      orderId,
-    );
+    const { tokenGet, tokenGive } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
   }, [contracts, orderId]);
 }
@@ -45,7 +42,7 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
     if (!orderId) return 0;
     assert(contracts, 'Contracts not available');
     const { amountGive, amountGet, tokenGet, tokenGive } = await limitContract(
-      async () => await contracts.permissionedExchange.orders(orderId),
+      () => contracts.permissionedExchange.orders(orderId),
       orderId,
     );
     return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
@@ -57,7 +54,7 @@ export function useSwapTradeLimitation() {
 
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    const limitation = await limitContract(async () => await contracts.permissionedExchange.tradeLimitation());
+    const limitation = await limitContract(() => contracts.permissionedExchange.tradeLimitation());
     return limitation;
   }, [contracts]);
 }
@@ -72,10 +69,7 @@ export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNum
     if (!orderId) return BigNumber.from(0);
 
     assert(contracts, 'Contracts not available');
-    const { tokenGiveBalance } = await limitContract(
-      async () => await contracts.permissionedExchange.orders(orderId),
-      orderId,
-    );
+    const { tokenGiveBalance } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
 
     return tokenGiveBalance;
   }, [contracts, orderId]);
@@ -89,9 +83,7 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    return await limitContract(
-      async () => await contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account),
-    );
+    return await limitContract(() => contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account));
   }, [contracts]);
 }
 

@@ -15,12 +15,9 @@ export const waitForSomething = async (
   { func, timeout, splitTime = 50 }: waitForSomethingArg,
   sleepTime = 0,
 ): Promise<boolean> => {
-  if (timeout) {
-    if (sleepTime >= timeout) {
-      return false;
-    }
+  if (timeout && sleepTime >= timeout) {
+    return false;
   }
-
   try {
     const r = await func();
 

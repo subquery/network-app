@@ -5,8 +5,12 @@ import plimit from 'p-limit';
 
 import { sleep, waitForSomething } from './waitForSomething';
 
-const limit = plimit(1);
+const limit = plimit(3);
 const cachedResult: Record<string, any> = {};
+
+export enum limitContractCacheEnum {
+  CACHED_PENDING = 'cached-pending',
+}
 
 // limit 1 concurrency and will retry 4 times, interval 10s.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,18 +22,19 @@ export const limitContract = async <T extends Promise<any>>(
   let error: any = null;
   if (cacheName) {
     if (cacheName in cachedResult) {
-      if (cachedResult[cacheName] === 'cached-pending') {
+      const curCachedResult = cachedResult[cacheName];
+      if (curCachedResult === limitContractCacheEnum.CACHED_PENDING) {
         const getCache = await waitForSomething({
-          func: () => cachedResult[cacheName] !== 'cached-pending',
+          func: () => cachedResult[cacheName] !== limitContractCacheEnum.CACHED_PENDING,
           timeout: 5 * 10000,
         });
         if (getCache) return cachedResult[cacheName];
       } else {
-        return cachedResult[cacheName];
+        return curCachedResult;
       }
     }
 
-    cachedResult[cacheName] = 'cached-pending';
+    cachedResult[cacheName] = limitContractCacheEnum.CACHED_PENDING;
   }
 
   for (const _ of [0, 0, 0, 0]) {

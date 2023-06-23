@@ -17,7 +17,7 @@ function useSQTokenImpl() {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
-    return limitContract(async () => await contracts.sqToken.balanceOf(account));
+    return limitContract(() => contracts.sqToken.balanceOf(account));
   }, [account, contracts]);
 
   const consumerHostBalance = useAsyncMemo(async () => {
