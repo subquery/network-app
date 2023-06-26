@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 import { useIPFS } from '@containers';
 import { decodeIpfsRaw } from '@containers/IPFS';
-import { useGetIndexerQuery } from '@subql/react-hooks';
 import { bytes32ToCid, parseError } from '@utils';
 import assert from 'assert';
 import localforage from 'localforage';
@@ -14,7 +13,7 @@ import { useWeb3Store } from 'src/stores/web3Account';
 import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
 
-export async function getIndexerMetadatagetIndexerMetadata(
+export async function getIndexerMetadata(
   catSingle: (cid: string) => Promise<Uint8Array>,
   cid?: string | null,
 ): Promise<IndexerDetails | undefined> {
