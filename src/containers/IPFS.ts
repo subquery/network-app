@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import localforage from 'localforage';
 import LRUCache from 'lru-cache';
@@ -31,11 +31,8 @@ function useIPFSImpl(
   }, [gateway, logger]);
 
   const catSingle = async (cid: string): Promise<Uint8Array> => {
-    // logger.l(`Getting: ${cid}`);
-
     const result = cache.current.get(cid);
     if (result) {
-      // logger.l(`Getting: ${cid}...CACHED`);
       return result;
     }
 
@@ -76,3 +73,7 @@ function useIPFSImpl(
 }
 
 export const { useContainer: useIPFS, Provider: IPFSProvider } = createContainer(useIPFSImpl, { displayName: 'IPFS' });
+
+export const decodeIpfsRaw = <T>(raw: Uint8Array): T => {
+  return JSON.parse(Buffer.from(raw).toString('utf8'));
+};
