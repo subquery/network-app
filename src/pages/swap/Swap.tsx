@@ -97,7 +97,6 @@ const SellAUSD = () => {
   const aUSDBalance = useAUSDBalance();
   const aUSDTotalSupply = useAUSDTotalSupply();
   const usdcToSqtLimitation = useSwapTradeLimitation();
-
   if (fetchingOrderId) return <Spinner />;
 
   if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;

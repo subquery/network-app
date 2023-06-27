@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Card } from '@subql/components';
+import { limitContract } from '@utils/limitation';
 import { Alert, Button } from 'antd';
 import assert from 'assert';
 import { BigNumber, ContractTransaction } from 'ethers';
@@ -152,7 +153,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const getTokenGet = async () => {
     if (!contracts || !orderId) return;
 
-    const { tokenGet } = await contracts.permissionedExchange.orders(orderId);
+    const { tokenGet } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
 
     setTokenGet(tokenGet);
   };

@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { limitContract } from '@utils/limitation';
 import { BigNumber, Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
@@ -27,7 +28,7 @@ export function useAUSDBalance(): AsyncMemoReturn<string | undefined> {
   return useAsyncMemo(async () => {
     const aUSDContract = await initialAUSDContract();
     if (!aUSDContract || !account) return undefined;
-    const aUSD = await aUSDContract?.balanceOf(account);
+    const aUSD = (await limitContract(() => aUSDContract.balanceOf(account))) as BigNumber;
     return formatUnits(aUSD, STABLE_TOKEN_DECIMAL);
   }, [account]);
 }
@@ -43,7 +44,9 @@ export function useAUSDAllowance(): AsyncMemoReturn<BigNumber> {
     const aUSDContract = await initialAUSDContract();
     if (!aUSDContract || !account || !contracts) return BigNumber.from('0');
 
-    return await aUSDContract.allowance(account, contracts.permissionedExchange.address);
+    return (await limitContract(() =>
+      aUSDContract.allowance(account, contracts.permissionedExchange.address),
+    )) as Promise<BigNumber>;
   }, [account, contracts]);
 }
 
@@ -55,6 +58,6 @@ export function useAUSDTotalSupply(): AsyncData<BigNumber> {
     const aUSDContract = await initialAUSDContract();
     if (!aUSDContract) return BigNumber.from('0');
 
-    return await aUSDContract.totalSupply();
+    return (await limitContract(() => aUSDContract.totalSupply())) as Promise<BigNumber>;
   }, []);
 }

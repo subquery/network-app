@@ -144,6 +144,9 @@ const translation = {
       socialCredibility:
         'If Indexers have provided a ENS name pointing towards their account address. Enabled is better.',
     },
+    commission: 'Commission',
+    commissionTooltip:
+      "Indexers set an Indexer's Commission Rate (ICR) which is the percentage Indexers earn. The remaining is then shared amongst the Indexer and all Delegators propotionally by staked/delegated amount. \n A lower ICR will be more attractive for Delegators as a larger percentage of rewards is shared between Delegators.",
   },
   allIndexers: {
     nonData: 'There is no Indexer available.',
