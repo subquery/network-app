@@ -21,7 +21,7 @@ export function useCreateDeployment(projectId: string): (deploymentDetails: NewD
     try {
       await getDeployment(catSingle, deploymentDetails.deploymentId);
     } catch (e) {
-      throw new Error('Deployment is not valid');
+      throw new Error(`Deployment is not valid$: ${e}`);
     }
 
     console.log('Uploaded version details', versionCid);
