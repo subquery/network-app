@@ -139,8 +139,8 @@ export const SAPlayground: React.FC = () => {
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
+        navigate(-1);
       }
-      navigate(-1);
       setIsCheckingAuth(false);
     };
     initialQuery();
