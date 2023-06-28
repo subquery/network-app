@@ -111,8 +111,8 @@ export const SAPlayground: React.FC = () => {
     const initialQuery = async () => {
       setIsCheckingAuth(true);
       if (!queryUrl) return;
-
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
+
       const { response, error } = await POST({
         endpoint: queryUrl,
         requestBody: { query: defaultQuery },
@@ -139,9 +139,8 @@ export const SAPlayground: React.FC = () => {
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
-        navigate(SA_NAV);
       }
-
+      navigate(-1);
       setIsCheckingAuth(false);
     };
     initialQuery();

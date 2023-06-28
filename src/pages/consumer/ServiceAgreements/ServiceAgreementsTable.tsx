@@ -13,7 +13,7 @@ import { Button, Table, TableProps, Tooltip, Typography as AntDTypography } from
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
 
-import { Copy, EmptyList, VersionDeployment } from '../../../components';
+import { Copy, EmptyList } from '../../../components';
 import { ConnectedIndexer, IndexerName } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
@@ -102,6 +102,10 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
       render: (startTime: number) => <div>{moment(startTime).utc(true).format('YYYY-MM-DD hh:mm')}</div>,
     },
     {
+      // TODO: check the type definition.
+      // sorter can be a function, maybe update in new version, feature works good.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       sorter: (a, b) => {
         return +new Date(a.endTime) > +new Date(b.endTime);
       },
@@ -145,7 +149,9 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
         <Button
           size="middle"
           type={'link'}
-          onClick={() => navigate(`${CONSUMER_SA_PLAYGROUND_NAV}/${saId}`, { state: { serviceAgreement: sa } })}
+          onClick={() => {
+            navigate(`${CONSUMER_SA_PLAYGROUND_NAV}/${saId}`, { state: { serviceAgreement: sa } });
+          }}
         >
           {t('serviceAgreements.playground.title')}
         </Button>
@@ -175,16 +181,21 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
   const serviceAgreements = queryFn({ variables: sortedParams });
   const [data, setData] = React.useState(serviceAgreements);
 
-  let roleCol;
+  const columnsWithRole = React.useMemo(() => {
+    if (!columns) return [];
+    let roleCol: typeof indexerCol | undefined;
 
-  if (pathname.startsWith(INDEXER_SA_NAV)) {
-    roleCol = consumerCol;
-  } else if (pathname.startsWith(CONSUMER_SA_NAV)) {
-    roleCol = indexerCol;
-  }
+    if (pathname.startsWith(INDEXER_SA_NAV)) {
+      roleCol = consumerCol;
+    } else if (pathname.startsWith(CONSUMER_SA_NAV)) {
+      roleCol = indexerCol;
+    }
+    return roleCol ? [...columns.slice(0, 3), roleCol, ...columns.slice(3)] : columns;
+  }, [columns, pathname, consumerCol, indexerCol]);
 
-  const columnsWithRole = roleCol ? [...columns.slice(0, 3), roleCol, ...columns.slice(3)] : columns;
-  const sortedCols = isOngoingPath ? [...columnsWithRole, playgroundCol] : columnsWithRole;
+  const sortedCols = React.useMemo(() => {
+    return isOngoingPath ? [...columnsWithRole, playgroundCol] : columnsWithRole;
+  }, [isOngoingPath, columnsWithRole, playgroundCol]);
 
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
