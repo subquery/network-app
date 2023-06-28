@@ -25,12 +25,12 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
 };
 
 const swapLink = getDecentraliseLink(
-  import.meta.env.VITE_SUBQUERY_DEPLOYMENT_ID,
+  import.meta.env.VITE_EXCHANGE_DEPLOYMENT_ID,
   import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT,
 );
 
 const registryLink = getDecentraliseLink(
-  import.meta.env.VITE_QUERY_REGISTRY_DEPLOYMENT_ID,
+  import.meta.env.VITE_NETWORK_DEPLOYMENT_ID,
   import.meta.env.VITE_QUERY_REGISTRY_PROJECT,
 );
 

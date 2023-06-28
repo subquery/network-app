@@ -71,12 +71,4 @@ export function useIndexerMetadata(address: string): IndexerDetails {
     image: undefined,
     ...metadata,
   };
-
-  // const indexerMetadata = useGetIndexerQuery({ variables: { address } }).data?.indexer?.metadata;
-
-  // return {
-  //   name: indexerMetadata?.name as string | undefined,
-  //   image: undefined,
-  //   url: indexerMetadata?.url as string | undefined,
-  // };
 }
