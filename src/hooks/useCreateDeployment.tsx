@@ -3,26 +3,18 @@
 
 import { ContractReceipt } from '@ethersproject/contracts';
 
-import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
+import { useProjectMetadata, useQueryRegistry } from '../containers';
 import { NewDeployment } from '../models';
-import { getDeployment } from './useDeployment';
 
 export function useCreateDeployment(projectId: string): (deploymentDetails: NewDeployment) => Promise<ContractReceipt> {
   const queryRegistry = useQueryRegistry();
   const { uploadVersionMetadata } = useProjectMetadata();
-  const { catSingle } = useIPFS();
 
   const createDeployment = async (deploymentDetails: NewDeployment) => {
     const versionCid = await uploadVersionMetadata({
       version: deploymentDetails.version,
       description: deploymentDetails.description,
     });
-
-    try {
-      await getDeployment(catSingle, deploymentDetails.deploymentId);
-    } catch (e) {
-      throw new Error('Deployment is not valid');
-    }
 
     console.log('Uploaded version details', versionCid);
 

@@ -58,7 +58,6 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     }
 
     const metadata = await getMetadataFromCid(query.metadata);
-    // const deployment = await getDeployment(catSingle, query.deployment);
 
     return {
       id,
