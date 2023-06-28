@@ -190,7 +190,8 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
     } else if (pathname.startsWith(CONSUMER_SA_NAV)) {
       roleCol = indexerCol;
     }
-    return roleCol ? [...columns.slice(0, 3), roleCol, ...columns.slice(3)] : columns;
+    // TODO think a better way to do.
+    return roleCol ? [columns[0], roleCol, ...columns.slice(3)] : columns;
   }, [columns, pathname, consumerCol, indexerCol]);
 
   const sortedCols = React.useMemo(() => {
