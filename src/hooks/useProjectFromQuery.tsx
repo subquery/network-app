@@ -4,13 +4,12 @@
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
 
 import { useProjectMetadata, useProjectQuery } from '../containers';
-import { ProjectDeployment, ProjectMetadata } from '../models';
+import { ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 
 type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;
-  deployment?: ProjectDeployment;
 };
 
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
@@ -33,7 +32,6 @@ export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> 
     return {
       ...query,
       metadata,
-      deployment: undefined,
     };
   }, [data, getMetadataFromCid]);
 
