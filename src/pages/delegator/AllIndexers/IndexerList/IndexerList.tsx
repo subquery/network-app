@@ -90,6 +90,8 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     if (rawIndexerList.length > 0) {
       setLoadingList(true);
       setIndexerList([]);
+
+      // TODO: optimise concurrent.
       const sortedIndexers = await Promise.all(
         rawIndexerList.map((indexer) => {
           return networkClient?.getIndexer(indexer.id);

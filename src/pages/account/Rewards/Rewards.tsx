@@ -7,7 +7,6 @@ import { AppPageHeader, EmptyList, TableText } from '@components';
 import { BreadcrumbNav } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { SUB_REWARDS } from '@containers/IndexerRegistryProjectSub';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
@@ -26,18 +25,8 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
   const filterParams = { address: delegator };
-  const rewards = useGetRewardsQuery({ variables: filterParams });
+  const rewards = useGetRewardsQuery({ variables: filterParams, pollInterval: 10000 });
   const { t } = useTranslation();
-
-  rewards.subscribeToMore({
-    document: SUB_REWARDS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        rewards.refetch();
-      }
-      return prev;
-    },
-  });
 
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
     {

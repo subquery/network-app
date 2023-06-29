@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Outlet, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
 import {
   AppPageHeader,
   ApproveContract,
@@ -17,7 +17,6 @@ import {
 import { Button } from '@components/Button';
 import TransactionModal from '@components/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
-import { SUB_OFFERS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
 import {
   renderAsync,
@@ -142,19 +141,9 @@ export const MyOffers: React.FC = () => {
   const { offerAllowance } = useSQToken();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const requiresTokenApproval = offerAllowance.data?.isZero();
-  const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' } });
+  const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' }, pollInterval: 10000 });
 
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
-
-  offers.subscribeToMore({
-    document: SUB_OFFERS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        offers.refetch();
-      }
-      return prev;
-    },
-  });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,

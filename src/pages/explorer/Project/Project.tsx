@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
-import { useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { useGetDeploymentIndexersQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';
 import clsx from 'clsx';
 
@@ -15,7 +15,6 @@ import IndexerDetails from '../../../components/IndexerDetails';
 import {
   ProjectProgressProvider,
   useDeploymentsQuery,
-  useIndexersQuery,
   useIPFS,
   useProjectMetadata,
   useProjectProgress,
@@ -59,7 +58,10 @@ const ProjectInner: React.FC = () => {
 
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 
-  const asyncIndexers = useIndexersQuery({ deploymentId: deploymentId ?? '', offset });
+  const asyncIndexers = useGetDeploymentIndexersQuery({
+    variables: { deploymentId: deploymentId ?? '', offset },
+  });
+
   const fetchMore = (offset: number) => {
     setOffset(offset);
   };

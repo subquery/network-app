@@ -4,7 +4,6 @@
 import { useEra } from '@hooks';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
 
-import { SUB_DELEGATIONS, SUB_INDEXERS } from '../containers/IndexerRegistryProjectSub';
 import {
   AsyncData,
   convertBigNumberToNumber,
@@ -64,31 +63,9 @@ export interface UseSortedIndexerReturn {
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
   const { currentEra } = useEra();
   const indexerQueryParams = { address: account ?? '' };
-  const indexerData = useGetIndexerQuery({ variables: indexerQueryParams });
+  const indexerData = useGetIndexerQuery({ variables: indexerQueryParams, pollInterval: 10000 });
   const delegationQueryParams = { id: `${account ?? ''}:${account}` };
   const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams });
-
-  indexerData.subscribeToMore({
-    document: SUB_INDEXERS,
-    variables: { id: account ?? '' },
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        indexerData.refetch(indexerQueryParams);
-      }
-      return prev;
-    },
-  });
-
-  indexerDelegation.subscribeToMore({
-    document: SUB_DELEGATIONS,
-    variables: delegationQueryParams,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        indexerDelegation.refetch(delegationQueryParams);
-      }
-      return prev;
-    },
-  });
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 

@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DeploymentMeta, EmptyList } from '@components';
 import { useWeb3 } from '@containers';
-import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
 import { Spinner, Typography } from '@subql/components';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
@@ -19,17 +18,7 @@ const Specific: React.FC = () => {
   const { account } = useWeb3();
 
   // TODO find a way to query indexed projects that only have plans
-  const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' } });
-
-  specificPlans.subscribeToMore({
-    document: SUB_PLANS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        specificPlans.refetch();
-      }
-      return prev;
-    },
-  });
+  const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
 
   return (
     <div className={'contentContainer'}>

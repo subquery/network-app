@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader, EmptyList, Spinner, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
-import { SUB_DELEGATORS } from '@containers/IndexerRegistryProjectSub';
 import { Typography } from '@subql/components';
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';
@@ -33,18 +32,7 @@ export const MyDelegators: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
   const filterParams = { id: account ?? '', offset: 0 };
-  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams });
-
-  delegators.subscribeToMore({
-    document: SUB_DELEGATORS,
-    variables: filterParams,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        delegators.refetch(filterParams);
-      }
-      return prev;
-    },
-  });
+  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams, pollInterval: 10000 });
 
   return renderAsync(delegators, {
     loading: () => <Spinner />,

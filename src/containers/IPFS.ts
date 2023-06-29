@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
+import localforage from 'localforage';
 import LRUCache from 'lru-cache';
 
 import { concatU8A } from '../utils';
@@ -22,7 +23,7 @@ function useIPFSImpl(
     throw new Error('No IPFS gateway provided');
   }
   const ipfs = React.useRef<IPFSHTTPClient>(create({ url: gateway }));
-  const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(50));
+  const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(150));
 
   React.useEffect(() => {
     // logger.l(`Creating ipfs client at: ${gateway}`);
@@ -30,12 +31,17 @@ function useIPFSImpl(
   }, [gateway, logger]);
 
   const catSingle = async (cid: string): Promise<Uint8Array> => {
-    // logger.l(`Getting: ${cid}`);
-
     const result = cache.current.get(cid);
     if (result) {
-      // logger.l(`Getting: ${cid}...CACHED`);
       return result;
+    }
+
+    const cachedRes = await localforage.getItem<Uint8Array>(cid);
+
+    // maybe need a flush way.
+    if (cachedRes) {
+      cache.current.set(cid, cachedRes);
+      return cachedRes;
     }
 
     const results = ipfs.current.cat(cid);
@@ -53,6 +59,7 @@ function useIPFSImpl(
 
     if (res) {
       cache.current.set(cid, res);
+      localforage.setItem(cid, res);
       return res;
     }
 
@@ -66,3 +73,7 @@ function useIPFSImpl(
 }
 
 export const { useContainer: useIPFS, Provider: IPFSProvider } = createContainer(useIPFSImpl, { displayName: 'IPFS' });
+
+export const decodeIpfsRaw = <T>(raw: Uint8Array): T => {
+  return JSON.parse(Buffer.from(raw).toString('utf8'));
+};

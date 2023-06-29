@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyList } from '@components';
 import { useWeb3 } from '@containers';
-import { SUB_PLANS } from '@containers/IndexerRegistryProjectSub';
 import { Spinner, Typography } from '@subql/components';
 import { useGetPlansQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
@@ -15,17 +14,7 @@ import List from '../List';
 export const Default: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
-  const plans = useGetPlansQuery({ variables: { address: account ?? '' } });
-
-  plans.subscribeToMore({
-    document: SUB_PLANS,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (subscriptionData.data) {
-        plans.refetch();
-      }
-      return prev;
-    },
-  });
+  const plans = useGetPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
 
   return (
     <div className={'contentContainer'}>
