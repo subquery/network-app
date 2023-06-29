@@ -3968,30 +3968,6 @@
     ethers "^5.6.8"
     jwt-decode "^3.1.2"
 
-"@subql/common-substrate@^0.3.2-0":
-  version "0.3.2-0"
-  resolved "https://registry.yarnpkg.com/@subql/common-substrate/-/common-substrate-0.3.2-0.tgz#aebfaff0f655e7966c5a05a24dd85842f11f99eb"
-  integrity sha512-1MacJUeIUjV5l8ioIIwJHJmOsEJ09PK7BSAetVk4nwDNYL2B0RaptcGgSg3aeCxR29MP9yaS9Fq7nuTvJDGK9Q==
-  dependencies:
-    "@subql/common" "0.21.3-0"
-    "@subql/types" "0.14.1-0"
-    class-transformer "0.4.0"
-    class-validator "^0.13.2"
-    js-yaml "^4.1.0"
-    reflect-metadata "^0.1.13"
-
-"@subql/common@0.21.3-0", "@subql/common@^0.21.3-0":
-  version "0.21.3-0"
-  resolved "https://registry.yarnpkg.com/@subql/common/-/common-0.21.3-0.tgz#c6ac4bb6dd5957d575e312fb78cd8a2e53465858"
-  integrity sha512-ShJ13ZbsNFmjVYGspO2DSFWg4YmgfPNsMYrTJfDcxMYa0W6mQzi3cVm4/HXqJNZ1G4RfailGyK+983FBCGVVvg==
-  dependencies:
-    axios "^0.27.2"
-    class-transformer "0.5.1"
-    class-validator "^0.13.2"
-    js-yaml "^4.1.0"
-    reflect-metadata "^0.1.13"
-    semver "^7.3.5"
-
 "@subql/components@1.0.3-2":
   version "1.0.3-2"
   resolved "https://registry.npmmirror.com/@subql/components/-/components-1.0.3-2.tgz#a28c094d1fc96b8ecd50e3216f2184b35fddd921"
@@ -4071,11 +4047,6 @@
     "@subql/network-query" "0.3.3-7"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
-
-"@subql/types@0.14.1-0":
-  version "0.14.1-0"
-  resolved "https://registry.yarnpkg.com/@subql/types/-/types-0.14.1-0.tgz#c7cd1ee2d05c26a56e02a9d04fed0532f950564a"
-  integrity sha512-AiB2lYpqMGaRLV2+SUc+M0ykZikZVqmDX1v5jVgrcHhuI9eUj42vRNyDKzjyx2g6dtYe2urPUKfVvV8DytQCkg==
 
 "@testing-library/dom@^7.28.1":
   version "7.31.2"
@@ -6535,12 +6506,7 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-class-transformer@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.4.0.tgz#b52144117b423c516afb44cc1c76dbad31c2165b"
-  integrity sha512-ETWD/H2TbWbKEi7m9N4Km5+cw1hNcqJSxlSYhsLsNjQzWWiZIYA1zafxpK9PwVfaZ6AqR5rrjPVUBGESm5tQUA==
-
-class-transformer@0.5.1, class-transformer@^0.5.1:
+class-transformer@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.5.1.tgz#24147d5dffd2a6cea930a3250a677addf96ab336"
   integrity sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==
@@ -6554,14 +6520,6 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
-
-class-validator@^0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.13.2.tgz#64b031e9f3f81a1e1dcd04a5d604734608b24143"
-  integrity sha512-yBUcQy07FPlGzUjoLuUfIOXzgynnQPPruyK1Ge2B74k9ROwnle1E+NxLWnUv5OLU8hA/qL5leAE9XnXq3byaBw==
-  dependencies:
-    libphonenumber-js "^1.9.43"
-    validator "^13.7.0"
 
 class-validator@^0.14.0:
   version "0.14.0"
@@ -10935,7 +10893,7 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libphonenumber-js@^1.10.14, libphonenumber-js@^1.9.43:
+libphonenumber-js@^1.10.14:
   version "1.10.21"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.21.tgz#860312cbec1389e36e28389161025c7817a3ae32"
   integrity sha512-/udZhx49av2r2gZR/+xXSrwcR8smX/sDNrVpOFrvW+CA26TfYTVZfwb3MIDvmwAYMLs7pXuJjZX0VxxGpqPhsA==

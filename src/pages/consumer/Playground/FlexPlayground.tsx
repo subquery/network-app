@@ -103,7 +103,6 @@ export const FlexPlayground: React.FC = () => {
       if (!queryUrl) return;
 
       const headers = sessionToken ? { Authorization: `Bearer ${sessionToken}` } : undefined;
-
       const { response, error } = await POST({
         endpoint: queryUrl,
         headers: headers,
@@ -127,14 +126,14 @@ export const FlexPlayground: React.FC = () => {
       } else if (status) {
         setQueryable(undefined);
         removeStorage(TOKEN_STORAGE_KEY);
-        const sortedError = error ? parseError(error) : error?.message ?? t('myFlexPlans.playground.error');
+        const sortedError = error ? parseError(error) : error?.message ?? t('myFlexPlans.error');
 
         openNotificationWithIcon({
           type: NotificationType.ERROR,
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
         });
-        navigate(FLEX_PLANS);
+        navigate(-1);
       }
 
       setIsCheckingAuth(false);

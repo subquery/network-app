@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// Required because we import @subql/common/dist/project rather than @subql/common
 import ReactDOM from 'react-dom';
 import TagManager from 'react-gtm-module';
 import { Buffer } from 'buffer';

@@ -107,6 +107,7 @@ const translation = {
     ongoing: 'Ongoing',
     closed: 'Closed',
     playground: 'Playground',
+    error: 'Fetch playground wrong',
     billing: {
       transfer: `Transfer ${TOKEN ?? 'kSQT'} to billing account`,
       addToken: `Add ${TOKEN ?? 'kSQT'}`,
