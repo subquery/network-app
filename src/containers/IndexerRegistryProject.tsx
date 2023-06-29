@@ -13,14 +13,7 @@ import {
   GetExpiredServiceAgreements,
   GetExpiredServiceAgreementsVariables,
 } from '../__generated__/registry/GetExpiredServiceAgreements';
-import {
-  GetFilteredDelegations,
-  GetFilteredDelegationsVariables,
-} from '../__generated__/registry/GetFilteredDelegations';
-import { GetIndexer, GetIndexerVariables } from '../__generated__/registry/GetIndexer';
-import { GetIndexerDelegators, GetIndexerDelegatorsVariables } from '../__generated__/registry/GetIndexerDelegators';
 import { GetIndexerRewards, GetIndexerRewardsVariables } from '../__generated__/registry/GetIndexerRewards';
-import { GetIndexers, GetIndexersVariables } from '../__generated__/registry/GetIndexers';
 import { GetOngoingFlexPlan, GetOngoingFlexPlanVariables } from '../__generated__/registry/GetOngoingFlexPlan';
 import {
   GetOngoingServiceAgreements,
@@ -93,40 +86,6 @@ const SERVICE_AGREEMENT_FIELDS = gql`
       project {
         id
         metadata
-      }
-    }
-  }
-`;
-
-const GET_INDEXER = gql`
-  ${INDEXER_FIELDS}
-  query GetIndexer($address: String!) {
-    indexer(id: $address) {
-      ...IndexerFields
-    }
-  }
-`;
-
-const GET_INDEXERS = gql`
-  ${INDEXER_FIELDS}
-  query GetIndexers($offset: Int, $order: IndexersOrderBy = ID_ASC) {
-    indexers(first: 10, offset: $offset, orderBy: [$order], filter: { active: { equalTo: true } }) {
-      totalCount
-      nodes {
-        ...IndexerFields
-      }
-    }
-  }
-`;
-
-const GET_INDEXER_DELEGATORS = gql`
-  query GetIndexerDelegators($id: String!, $offset: Int) {
-    indexer(id: $id) {
-      delegations(offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
-        nodes {
-          delegatorId
-          amount
-        }
       }
     }
   }
@@ -537,22 +496,7 @@ const GET_CONSUMER_CLOSED_FLEX_PLANS = gql`
   }
 `;
 
-export function useIndexer(params: GetIndexerVariables): QueryResult<GetIndexer> {
-  return useQuery<GetIndexer, GetIndexerVariables>(GET_INDEXER, { variables: params });
-}
-
-export function useIndexers(params: GetIndexersVariables): QueryResult<GetIndexers> {
-  return useQuery<GetIndexers, GetIndexersVariables>(GET_INDEXERS, {
-    variables: params,
-    // pollInterval: 20000,
-  });
-}
-
-export function useIndexerDelegators(params: GetIndexerDelegatorsVariables): QueryResult<GetIndexerDelegators> {
-  return useQuery<GetIndexerDelegators, GetIndexerDelegatorsVariables>(GET_INDEXER_DELEGATORS, { variables: params });
-}
-
-export function useDelegation(indexer: string, delegator: string): QueryResult<GetDelegation> {
+export function useDelegation(indexer: string, delegator: string): QueryResult<GetDelegation, GetDelegationVariables> {
   return useQuery<GetDelegation, GetDelegationVariables>(GET_DELEGATION, {
     variables: { id: `${indexer}:${delegator}` },
     // pollInterval: 15000,
@@ -562,18 +506,12 @@ export function useAllDelegations(params: GetAllDelegationsVariables): QueryResu
   return useQuery<GetAllDelegations, GetAllDelegationsVariables>(GET_ALL_DELEGATIONS, { variables: params });
 }
 
-export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations> {
+export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations, GetDelegationsVariables> {
   // return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 10000 });
   return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params });
 }
 
-export function useFilteredDelegations(params: GetFilteredDelegationsVariables): QueryResult<GetFilteredDelegations> {
-  return useQuery<GetFilteredDelegations, GetFilteredDelegationsVariables>(GET_FILTERED_DELEGATIONS, {
-    variables: params,
-  });
-}
-
-export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls> {
+export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls, GetWithdrawlsVariables> {
   return useQuery<GetWithdrawls, GetWithdrawlsVariables>(GET_WITHDRAWLS, { variables: params, pollInterval: 10000 });
 }
 
@@ -581,7 +519,7 @@ export function usePlanTemplates(params: GetPlanTemplatesVariables): QueryResult
   return useQuery<GetPlanTemplates, GetPlanTemplatesVariables>(GET_PLAN_TEMPLATES, { variables: params });
 }
 
-export function usePlans(params: GetPlansVariables): QueryResult<GetPlans> {
+export function usePlans(params: GetPlansVariables): QueryResult<GetPlans, GetPlansVariables> {
   return useQuery<GetPlans, GetPlansVariables>(GET_PLANS, {
     variables: params,
     pollInterval: 20000,
@@ -597,7 +535,7 @@ export function useSpecificPlansPlans(params: GetSpecificPlansVariables): QueryR
 
 export function useServiceAgreements(
   params: GetOngoingServiceAgreementsVariables,
-): QueryResult<GetOngoingServiceAgreements> {
+): QueryResult<GetOngoingServiceAgreements, GetOngoingServiceAgreementsVariables> {
   return useQuery<GetOngoingServiceAgreements, GetOngoingServiceAgreementsVariables>(GET_SERVICE_AGREEMENTS, {
     variables: params,
     pollInterval: 20000,
@@ -606,7 +544,7 @@ export function useServiceAgreements(
 
 export function useExpiredServiceAgreements(
   params: GetExpiredServiceAgreementsVariables,
-): QueryResult<GetExpiredServiceAgreements> {
+): QueryResult<GetExpiredServiceAgreements, GetExpiredServiceAgreementsVariables> {
   return useQuery<GetExpiredServiceAgreements, GetExpiredServiceAgreementsVariables>(GET_EXPIRED_SERVICE_AGREEMENTS, {
     variables: params,
   });
@@ -614,7 +552,7 @@ export function useExpiredServiceAgreements(
 
 export function useSpecificServiceAgreements(
   params: GetSpecificServiceAgreementsVariables,
-): QueryResult<GetSpecificServiceAgreements> {
+): QueryResult<GetSpecificServiceAgreements, GetSpecificServiceAgreementsVariables> {
   return useQuery<GetSpecificServiceAgreements, GetSpecificServiceAgreementsVariables>(
     GET_SPECIFIC_SERVICE_AGREEMENTS,
     {
@@ -623,55 +561,71 @@ export function useSpecificServiceAgreements(
   );
 }
 
-export function useOwnOpenOffers(params: GetOwnOpenOffersVariables): QueryResult<GetOwnOpenOffers> {
+export function useOwnOpenOffers(
+  params: GetOwnOpenOffersVariables,
+): QueryResult<GetOwnOpenOffers, GetOwnOpenOffersVariables> {
   return useQuery<GetOwnOpenOffers, GetOwnOpenOffersVariables>(GET_OWN_OPEN_OFFERS, {
     variables: params,
   });
 }
 
-export function useOwnFinishedOffers(params: GetOwnFinishedOffersVariables): QueryResult<GetOwnFinishedOffers> {
+export function useOwnFinishedOffers(
+  params: GetOwnFinishedOffersVariables,
+): QueryResult<GetOwnFinishedOffers, GetOwnFinishedOffersVariables> {
   return useQuery<GetOwnFinishedOffers, GetOwnFinishedOffersVariables>(GET_OWN_FINISHED_OFFERS, {
     variables: params,
   });
 }
 
-export function useOwnExpiredOffers(params: GetOwnExpiredOffersVariables): QueryResult<GetOwnExpiredOffers> {
+export function useOwnExpiredOffers(
+  params: GetOwnExpiredOffersVariables,
+): QueryResult<GetOwnExpiredOffers, GetOwnExpiredOffersVariables> {
   return useQuery<GetOwnExpiredOffers, GetOwnExpiredOffersVariables>(GET_OWN_EXPIRED_OFFERS, {
     variables: params,
   });
 }
 
-export function useAllOpenOffers(params: GetAllOpenOffersVariables): QueryResult<GetAllOpenOffers> {
+export function useAllOpenOffers(
+  params: GetAllOpenOffersVariables,
+): QueryResult<GetAllOpenOffers, GetAllOpenOffersVariables> {
   return useQuery<GetAllOpenOffers, GetAllOpenOffersVariables>(GET_ALL_OPEN_OFFERS, {
     variables: params,
   });
 }
 
-export function useSpecificOpenOffers(params: GetSpecificOpenOffersVariables): QueryResult<GetSpecificOpenOffers> {
+export function useSpecificOpenOffers(
+  params: GetSpecificOpenOffersVariables,
+): QueryResult<GetSpecificOpenOffers, GetSpecificOpenOffersVariables> {
   return useQuery<GetSpecificOpenOffers, GetSpecificOpenOffersVariables>(GET_SPECIFIC_OPEN_OFFERS, {
     variables: params,
   });
 }
 
-export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards> {
+export function useRewards(params: GetRewardsVariables): QueryResult<GetRewards, GetRewardsVariables> {
   return useQuery<GetRewards, GetRewardsVariables>(GET_REWARDS, { variables: params, pollInterval: 15000 });
 }
 
-export function useIndexerRewards(params: GetIndexerRewardsVariables): QueryResult<GetIndexerRewards> {
+export function useIndexerRewards(
+  params: GetIndexerRewardsVariables,
+): QueryResult<GetIndexerRewards, GetIndexerRewardsVariables> {
   return useQuery<GetIndexerRewards, GetIndexerRewardsVariables>(GET_INDEXER_REWARDS, { variables: params });
 }
 
-export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator> {
+export function useDelegator(params: GetDelegatorVariables): QueryResult<GetDelegator, GetDelegatorVariables> {
   return useQuery<GetDelegator, GetDelegatorVariables>(GET_DELEGATOR, { variables: params });
 }
 
-export function useConsumerOpenFlexPlans(params: GetOngoingFlexPlanVariables): QueryResult<GetOngoingFlexPlan> {
+export function useConsumerOpenFlexPlans(
+  params: GetOngoingFlexPlanVariables,
+): QueryResult<GetOngoingFlexPlan, GetOngoingFlexPlanVariables> {
   return useQuery<GetOngoingFlexPlan, GetOngoingFlexPlanVariables>(GET_CONSUMER_ONGOING_FLEX_PLANS, {
     variables: params,
   });
 }
 
-export function useConsumerClosedFlexPlans(params: GetClosedFlexPlansVariables): QueryResult<GetClosedFlexPlans> {
+export function useConsumerClosedFlexPlans(
+  params: GetClosedFlexPlansVariables,
+): QueryResult<GetClosedFlexPlans, GetClosedFlexPlansVariables> {
   return useQuery<GetClosedFlexPlans, GetClosedFlexPlansVariables>(GET_CONSUMER_CLOSED_FLEX_PLANS, {
     variables: params,
   });

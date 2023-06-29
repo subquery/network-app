@@ -96,11 +96,7 @@ const DEPLOYMENT_INDEXER_FIELDS = gql`
     timestamp
     status
     indexer {
-      metadata {
-        metadataCID
-        name
-        url
-      }
+      metadata
     }
   }
 `;
@@ -211,14 +207,6 @@ export function useAcceptedOffersQuery(
   params?: GetAcceptedOffersVariables,
 ): QueryResult<GetAcceptedOffers, GetAcceptedOffersVariables> {
   return useQuery<GetAcceptedOffers, GetAcceptedOffersVariables>(GET_ACCEPTED_OFFERS, {
-    variables: params,
-  });
-}
-
-export function useIndexersQuery(
-  params?: GetDeploymentIndexersVariables,
-): QueryResult<GetDeploymentIndexers, GetDeploymentIndexersVariables> {
-  return useQuery<GetDeploymentIndexers, GetDeploymentIndexersVariables>(GET_DEPLOYMENT_INDEXERS, {
     variables: params,
   });
 }
