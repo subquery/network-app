@@ -3990,49 +3990,30 @@
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@^0.3.3-1":
-  version "0.3.3-1"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.3-1.tgz#a444a99173fca54d6d48063cd49b76bbae0dcc66"
-  integrity sha512-JwgA/JjZfjNgDzby00eJJ6/3MGzkJMie3zPdbJSMfDZjW7xg42nRBm8Ys3C3hqqHTefucctz2yDEOoMBFvrcHA==
+"@subql/network-clients@^0.3.10-0":
+  version "0.3.10-0"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.10-0.tgz#ae65864f4ad352aa963dbb0dfd48f85c382108c7"
+  integrity sha512-LCMkc4Cp0Gc/8Uo4zzskcIIcgMjHLQba8mjJUAQP7/AjK4OBuSRn3rS5qmh+z/+OAtdwqdDTCK75cuxQb2UbXg==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
-    "@subql/network-config" "0.3.3-2"
-    "@subql/network-query" "0.3.3-2"
+    "@subql/network-config" "0.3.10-0"
+    "@subql/network-query" "0.3.10-0"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@0.3.3-2":
-  version "0.3.3-2"
-  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.3-2.tgz#ed4d464d546b65ef7339aeaa01d070e6761847d1"
-  integrity sha512-3SQEJWoGM+sH+bubcMfjVxD2te6UEwPFtuGpcmqZB3nq6TV/S5IshXwX6cvMFzqyaUl2aOP95KuJ3CWTHfAOPw==
+"@subql/network-config@0.3.10-0", "@subql/network-config@^0.3.10-0":
+  version "0.3.10-0"
+  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.10-0.tgz#79e8e81927c6fead8e35a4989bf50ac764383d71"
+  integrity sha512-Nz6qve9FHowLQYuKtEW8qTqaeL0qH02QHsq6B0N0UQ/NBQO5L6ELff0RCuHWN/P6BZFiVvbNXniDA1ok9rIOvg==
 
-"@subql/network-config@^0.3.3-3":
-  version "0.3.3-3"
-  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.3-3.tgz#ca3922438975233e9a6b5695df6a5ff3448b5920"
-  integrity sha512-r9R0W4mdRfOnkpyZKoyWUFvedfpylWrgHYVq7OPYyIss8y4lKoS0QL9evBOaGtI5BO2xBdRR5VH0v72CKQOQJw==
-
-"@subql/network-query@0.3.10-0":
+"@subql/network-query@0.3.10-0", "@subql/network-query@^0.3.10-0":
   version "0.3.10-0"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.10-0.tgz#9921afd7bf5cb43e4c0cc769be622370325a0f8d"
   integrity sha512-mOVLjoNCVJpmKIJBiIZAhWGgTIMg/qSO/KqpO1oOL2BZWZvRIMrHB3lFZtSDaJECVCk7kwk5kv7yd8Yp/256Mw==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/network-query@0.3.3-2":
-  version "0.3.3-2"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.3-2.tgz#ea873ad6ebbea7a4d0ce9d7a9bf1ff33c669b5bf"
-  integrity sha512-MNkfC+tu00GX/g8t8S2/flOF2NV3qdluQbEv8CfQTG/EFQjOYvpNDAyzBIS/dU6yYgkPNUOmCi1gn+l9BZRWPw==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/network-query@0.3.7":
-  version "0.3.7"
-  resolved "https://registry.npmmirror.com/@subql/network-query/-/network-query-0.3.7.tgz#ca918560fb12cad202b2a70e9507520e192b4e47"
-  integrity sha512-Va5JMoocf8KT+ocwvfxxlkEYO+cNzKsGRBvTAkY0UYC3StJjYwAPJqa0eF1HcRUWq+CJOtbv0gQR4ReyK/SdpA==
   dependencies:
     graphql "^16.5.0"
 
