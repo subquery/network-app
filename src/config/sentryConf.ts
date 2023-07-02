@@ -32,4 +32,5 @@ Sentry.init({
   environment: import.meta.env.MODE,
   // Set tracesSampleRate to 1.0 to capture 100%
   tracesSampleRate: 1.0,
+  attachStacktrace: true,
 });
