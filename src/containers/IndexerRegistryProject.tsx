@@ -3,7 +3,6 @@
 
 import { gql, QueryResult, useQuery } from '@apollo/client';
 
-import { GetAllDelegations, GetAllDelegationsVariables } from '../__generated__/registry/GetAllDelegations';
 import { GetAllOpenOffers, GetAllOpenOffersVariables } from '../__generated__/registry/GetAllOpenOffers';
 import { GetClosedFlexPlans, GetClosedFlexPlansVariables } from '../__generated__/registry/GetClosedFlexPlans';
 import { GetDelegation, GetDelegationVariables } from '../__generated__/registry/GetDelegation';
@@ -32,22 +31,6 @@ import {
   GetSpecificServiceAgreementsVariables,
 } from '../__generated__/registry/GetSpecificServiceAgreements';
 import { GetWithdrawls, GetWithdrawlsVariables } from '../__generated__/registry/GetWithdrawls';
-
-const INDEXER_FIELDS = gql`
-  fragment IndexerFields on Indexer {
-    id
-    controller
-    commission
-    totalStake
-    maxUnstakeAmount
-    capacity
-    metadata {
-      metadataCID
-      name
-      url
-    }
-  }
-`;
 
 export const PLAN_TEMPLATE_FIELDS = gql`
   fragment PlanTemplateFields on PlanTemplate {
@@ -99,78 +82,11 @@ const GET_DELEGATION = gql`
   }
 `;
 
-const GET_ALL_DELEGATIONS = gql`
-  query GetAllDelegations($offset: Int) {
-    delegations(offset: $offset) {
-      nodes {
-        id
-        delegatorId
-        indexerId
-        amount
-        indexer {
-          metadata {
-            metadataCID
-            name
-            url
-          }
-        }
-      }
-    }
-  }
-`;
-
 const GET_DELEGATOR = gql`
   query GetDelegator($address: String!) {
     delegator(id: $address) {
       id
       totalDelegations
-    }
-  }
-`;
-
-const GET_DELEGATIONS = gql`
-  query GetDelegations($delegator: String!, $offset: Int) {
-    delegations(filter: { delegatorId: { equalTo: $delegator } }, offset: $offset) {
-      totalCount
-      nodes {
-        id
-        delegatorId
-        indexerId
-        amount
-        indexer {
-          metadata {
-            metadataCID
-            name
-            url
-          }
-          active
-        }
-      }
-    }
-  }
-`;
-
-const GET_FILTERED_DELEGATIONS = gql`
-  query GetFilteredDelegations($delegator: String!, $filterIndexer: String!, $offset: Int) {
-    delegations(
-      filter: { delegatorId: { equalTo: $delegator }, indexerId: { notEqualTo: $filterIndexer } }
-      offset: $offset
-    ) {
-      totalCount
-      nodes {
-        id
-        delegatorId
-        indexerId
-        amount
-        indexer {
-          metadata {
-            metadataCID
-            name
-            url
-          }
-          active
-        }
-      }
     }
   }
 `;
@@ -501,14 +417,6 @@ export function useDelegation(indexer: string, delegator: string): QueryResult<G
     variables: { id: `${indexer}:${delegator}` },
     // pollInterval: 15000,
   });
-}
-export function useAllDelegations(params: GetAllDelegationsVariables): QueryResult<GetAllDelegations> {
-  return useQuery<GetAllDelegations, GetAllDelegationsVariables>(GET_ALL_DELEGATIONS, { variables: params });
-}
-
-export function useDelegations(params: GetDelegationsVariables): QueryResult<GetDelegations, GetDelegationsVariables> {
-  // return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params, pollInterval: 10000 });
-  return useQuery<GetDelegations, GetDelegationsVariables>(GET_DELEGATIONS, { variables: params });
 }
 
 export function useWithdrawls(params: GetWithdrawlsVariables): QueryResult<GetWithdrawls, GetWithdrawlsVariables> {

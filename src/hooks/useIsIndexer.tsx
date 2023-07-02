@@ -12,7 +12,6 @@ export function useIsIndexer(account: string | null | undefined): AsyncData<bool
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-
     return await contracts.indexerRegistry.isIndexer(account || '');
   }, [account, contracts]);
 }
