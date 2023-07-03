@@ -11,7 +11,7 @@ import clsx from 'clsx';
 
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { useDeploymentsQuery, useIPFS, useProjectMetadata } from '../../../containers';
+import { useDeploymentsQuery, useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { notEmpty, renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -43,7 +43,6 @@ const ProjectInner: React.FC = () => {
   const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
-  const { catSingle } = useIPFS();
 
   const asyncProject = useProjectFromQuery(id ?? '');
   const { data: deployments } = useDeploymentsQuery({ projectId: id ?? '' });
@@ -74,7 +73,6 @@ const ProjectInner: React.FC = () => {
             return { ...d, versionHash: d?.version, version: versionResult };
           }),
         );
-
         const filteredVersions = (
           result.filter((r) => r.status === 'fulfilled') as Array<PromiseFulfilledResult<any>>
         ).map((r) => r.value);

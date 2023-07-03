@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar, Typography } from '@subql/components';
+import { strip } from '@utils';
 
 import styles from './IndexerDetails.module.css';
 
@@ -14,6 +15,9 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 }) => {
   const { t } = useTranslation();
 
+  // no necessary to calculate a very exact result.
+  // just show who didn't sync 100% is ok.
+  // 99.9978 and 99.9999 are same thing in this situation.
   const maxProgress = React.useMemo(() => {
     if (!(targetBlock - startBlock)) return 0;
     const result = Math.min(Math.max((currentBlock - startBlock) / (targetBlock - startBlock), 0), 1);
@@ -21,13 +25,14 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
   }, [startBlock, currentBlock, targetBlock]);
 
   const blocksBehind = Math.max(targetBlock - currentBlock, 0);
+
   return (
     <div className={styles.progress}>
       <ProgressBar progress={maxProgress} className={styles.progressBar} showInfo={false} />
       {blocksBehind > 0 && (
         <div>
           <Typography variant="medium" className={styles.precentage}>
-            {`${(maxProgress * 100).toFixed(4)} % `}
+            {`${strip(maxProgress * 100)} % `}
           </Typography>
           <Typography variant="medium" className={styles.indexingBlock}>
             {t('indexerProgress.blocks')}

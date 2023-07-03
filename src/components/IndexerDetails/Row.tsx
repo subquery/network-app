@@ -94,7 +94,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
             error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata }} />,
-            data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
+            data: (info) => (info ? <Progress key={indexer.indexerId} {...info} /> : <Typography>-</Typography>),
           })}
         </>
       ),
@@ -151,14 +151,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
 
   return (
     <>
-      <Table
-        columns={columns}
-        // expandable={{ rowExpandable: () => true, expandedRowRender }}
-        dataSource={rowData}
-        showHeader={false}
-        pagination={false}
-        rowKey="id"
-      />
+      <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
       {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata} />}
     </>
   );

@@ -93,20 +93,22 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
           <SearchAddress />
         </div>
       </div>
-
+      {/* TODO: refactor */}
+      {/* Looks like weired= =. */}
       <Table
         columns={columns}
-        dataSource={[{}]}
+        dataSource={[{ id: 1 }]}
         pagination={false}
-        rowKey="indexer"
+        rowKey="id"
         rowClassName={() => styles.tableHeader}
       />
       <>
         {indexerList
+          .slice(1)
           .filter(notEmpty)
           .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
           .map((indexer, index) => (
-            <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
+            <Row indexer={indexer} key={indexer.indexerId} startBlock={startBlock} deploymentId={deploymentId} />
           ))}
       </>
       <div className={styles.indexersPagination}>
