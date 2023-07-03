@@ -17,7 +17,8 @@ import { SetCommissionRate } from './SetCommissionRate';
 
 export const MyStaking: React.FC = () => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
+  // const { account } = useWeb3();
+  const account = '0xeeeD5Dd49C1dFf8275693199F7F047F68512fD55';
   const isIndexer = useIsIndexer(account);
   const sortedIndexer = useSortedIndexer(account || '');
 
@@ -51,7 +52,9 @@ export const MyStaking: React.FC = () => {
                       {s && (
                         <div className={styles.stakingActions}>
                           <DoStake />
-                          <SetCommissionRate />
+                          <div style={{ marginLeft: '1rem' }}>
+                            <SetCommissionRate />
+                          </div>
                         </div>
                       )}
                     </div>
