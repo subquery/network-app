@@ -71,6 +71,8 @@ const translation = {
     here: 'here',
     amount: ' There are {{count}} indexer.',
     amount_other: ' There are {{count}} indexers.',
+    unStakeTooltip:
+      'You are at the minimum staking amount so you are unable to unstake more. You can unregister your indexer in the Indexer Admin app',
   },
   myProjects: {
     title: 'My Projects',

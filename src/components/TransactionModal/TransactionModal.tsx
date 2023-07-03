@@ -22,7 +22,14 @@ export const idleText = {
   steps: [],
 };
 
-type Props<P, T extends string> = {
+export type TransactionModalAction<T extends string> = {
+  label: string;
+  key: T;
+  onClick?: () => void;
+  tooltip?: string;
+} & React.ComponentProps<typeof Button>;
+
+export type TransactionModalProps<P, T extends string> = {
   text: {
     title: string;
     steps: string[];
@@ -36,14 +43,7 @@ type Props<P, T extends string> = {
   currentStep?: number;
   onClick?: Action<P, T>;
   onClose?: () => void;
-  actions: Array<
-    {
-      label: string;
-      key: T;
-      onClick?: () => void;
-      tooltip?: string;
-    } & React.ComponentProps<typeof Button>
-  >;
+  actions: TransactionModalAction<T>[];
   inputParams?: Omit<React.ComponentProps<typeof ModalInput>, 'inputTitle' | 'submitText' | 'onSubmit' | 'isLoading'>;
   renderContent?: (
     onSubmit: (params: P) => void,
@@ -72,7 +72,7 @@ const TransactionModal = <P, T extends string>({
   initialCheck,
   loading,
   rethrowWhenSubmit = false,
-}: Props<P, T>): React.ReactElement | null => {
+}: TransactionModalProps<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);

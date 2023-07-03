@@ -3,12 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
 import { AppPageHeader, Card, Description, WalletRoute } from '@components';
 import { useWeb3 } from '@containers';
 import { useIsIndexer, useSortedIndexer } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
-import { mergeAsync, renderAsync, ROUTES, TOKEN, truncFormatEtherStr } from '@utils';
+import { mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '@utils';
 
 import { DoStake } from './DoStake';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
@@ -34,12 +33,12 @@ export const MyStaking: React.FC = () => {
               error: (e) => <Typography>{`Failed to load indexer information: ${e}`}</Typography>,
               data: (data) => {
                 if (!data) return null;
-                const [s, indexer] = data;
+                const [sortedIndexerData, indexer] = data;
 
-                if (indexer === undefined && !s) return <Spinner />;
-                if (!indexer && !s) return <NotRegisteredIndexer />;
+                if (indexer === undefined && !sortedIndexerData) return <Spinner />;
+                if (!indexer && !sortedIndexerData) return <NotRegisteredIndexer />;
 
-                const sortedTotalStaking = truncFormatEtherStr(`${s?.ownStake.current ?? 0}`);
+                const sortedTotalStaking = truncFormatEtherStr(`${sortedIndexerData?.ownStake.current ?? 0}`);
 
                 return (
                   <>
@@ -48,15 +47,17 @@ export const MyStaking: React.FC = () => {
                       <div className={styles.stakingAmount}>
                         <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
                       </div>
-                      {s && (
+                      {sortedIndexerData && (
                         <div className={styles.stakingActions}>
                           <DoStake />
-                          <SetCommissionRate />
+                          <div style={{ marginLeft: '1rem' }}>
+                            <SetCommissionRate />
+                          </div>
                         </div>
                       )}
                     </div>
 
-                    <Indexing tableData={s} />
+                    <Indexing tableData={sortedIndexerData} />
                   </>
                 );
               },

@@ -10,6 +10,7 @@ import {
   tokenApprovalModalText,
 } from '@components';
 import TransactionModal from '@components/TransactionModal';
+import { TransactionModalAction } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { parseEther } from '@ethersproject/units';
 import { useLockPeriod } from '@hooks';
@@ -119,19 +120,21 @@ export const DoStake: React.FC = () => {
         curAmountTruncated,
       );
 
-      const stakeButton = {
+      const stakeButton: TransactionModalAction<StakeAction.Stake> = {
         label: t('indexer.stake'),
         key: StakeAction.Stake,
         onClick: () => setStakeAction(StakeAction.Stake),
       };
 
-      const unstakeButton = {
+      const unstakeButton: TransactionModalAction<StakeAction.UnStake> = {
         label: t('indexer.unstake'),
         key: StakeAction.UnStake,
         onClick: () => setStakeAction(StakeAction.UnStake),
+        disabled: isMaxUnstakeZero,
+        tooltip: isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined,
       };
 
-      const actions = isMaxUnstakeZero ? [stakeButton] : [stakeButton, unstakeButton];
+      const actions = [stakeButton, unstakeButton];
 
       return (
         <TransactionModal
