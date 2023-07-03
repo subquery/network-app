@@ -17,7 +17,6 @@ import {
 import { GetAcceptedOffers, GetAcceptedOffersVariables } from '../__generated__/registry/GetAcceptedOffers';
 import { GetDeployment, GetDeploymentVariables } from '../__generated__/registry/GetDeployment';
 import { GetDeploymentIndexer, GetDeploymentIndexerVariables } from '../__generated__/registry/GetDeploymentIndexer';
-import { GetDeploymentIndexers, GetDeploymentIndexersVariables } from '../__generated__/registry/GetDeploymentIndexers';
 import {
   GetDeploymentIndexersByIndexer,
   GetDeploymentIndexersByIndexerVariables,
@@ -97,22 +96,6 @@ const DEPLOYMENT_INDEXER_FIELDS = gql`
     status
     indexer {
       metadata
-    }
-  }
-`;
-
-const GET_DEPLOYMENT_INDEXERS = gql`
-  ${DEPLOYMENT_INDEXER_FIELDS}
-  query GetDeploymentIndexers($offset: Int, $deploymentId: String!) {
-    deploymentIndexers(
-      first: 20
-      offset: $offset
-      filter: { deploymentId: { equalTo: $deploymentId }, status: { notEqualTo: TERMINATED } }
-    ) {
-      totalCount
-      nodes {
-        ...DeploymentIndexerFields
-      }
     }
   }
 `;

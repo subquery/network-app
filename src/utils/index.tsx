@@ -309,3 +309,5 @@ export function isUndefined(val: unknown): boolean {
 export function isNull(val: unknown): boolean {
   return val === null;
 }
+
+export type ExcludeNull<T> = T extends null ? never : T;
