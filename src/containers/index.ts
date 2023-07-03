@@ -11,4 +11,3 @@ export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
 export * from './IndexerRegistryProject';
 export * from './QuerySwapExchangeProject';
 export * from './SQToken';
-export * from './ProjectProgress';

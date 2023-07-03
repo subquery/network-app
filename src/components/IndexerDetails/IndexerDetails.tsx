@@ -3,20 +3,19 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { Status } from '@subql/network-query';
+import { GetDeploymentIndexersQuery, Status } from '@subql/network-query';
+import { useGetDeploymentIndexerQuery } from '@subql/react-hooks';
 import { Pagination, Table, TableProps } from 'antd';
 
-import { useDeploymentIndexerQuery } from '../../containers';
-import { notEmpty } from '../../utils';
+import { ExcludeNull, notEmpty } from '../../utils';
 import { SearchInput } from '../SearchInput';
 import styles from './IndexerDetails.module.css';
 import Row from './Row';
 
 type Props = {
-  indexers: GetDeploymentIndexers_deploymentIndexers_nodes[];
+  indexers: ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'];
   deploymentId?: string;
   startBlock?: number;
   totalCount?: number;
@@ -32,9 +31,11 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
 
-  const sortedIndexer = useDeploymentIndexerQuery({
-    indexerAddress: searchIndexer ?? '',
-    deploymentId: deploymentId ?? '',
+  const sortedIndexer = useGetDeploymentIndexerQuery({
+    variables: {
+      indexerAddress: searchIndexer ?? '',
+      deploymentId: deploymentId ?? '',
+    },
   });
 
   const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);
@@ -92,20 +93,22 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
           <SearchAddress />
         </div>
       </div>
-
+      {/* TODO: refactor */}
+      {/* Looks like weired= =. */}
       <Table
         columns={columns}
-        dataSource={[{}]}
+        dataSource={[{ id: 1 }]}
         pagination={false}
-        rowKey="indexer"
+        rowKey="id"
         rowClassName={() => styles.tableHeader}
       />
       <>
         {indexerList
+          .slice(1)
           .filter(notEmpty)
           .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
           .map((indexer, index) => (
-            <Row indexer={indexer} key={index} startBlock={startBlock} deploymentId={deploymentId} />
+            <Row indexer={indexer} key={indexer.indexerId} startBlock={startBlock} deploymentId={deploymentId} />
           ))}
       </>
       <div className={styles.indexersPagination}>

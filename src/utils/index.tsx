@@ -3,6 +3,7 @@
 
 import { OperationVariables, QueryResult } from '@apollo/client';
 import { Spinner } from '@subql/components';
+import { renderAsync } from '@subql/react-hooks';
 import { BigNumber, BigNumberish, utils } from 'ethers';
 
 import { parseError } from './parseError';
@@ -22,6 +23,17 @@ export * from './getOrderedAccounts';
 export * from './getFlexPlanPrice';
 export * from './routes';
 export * from './eip721SignTokenReq';
+
+export { renderAsync };
+
+export function strip(num: number, fixed = 4): string {
+  const stringNum = `${num}`;
+  const compile = new RegExp(`\\d+\\.\\d{${fixed}}`);
+  const withDot = stringNum.match(compile);
+  if (withDot) return withDot[0];
+  const base = 10 ** fixed;
+  return (Math.round(num * base) / base).toFixed(fixed);
+}
 
 export function truncateAddress(address: string): string {
   if (!address) {
@@ -128,25 +140,6 @@ type HandlersArray<T extends any[]> = {
 };
 
 const defaultLoading = () => <Spinner />;
-
-export function renderAsync<T>(data: AsyncData<T>, handlers: Handlers<T>): RenderResult {
-  if (data.data !== undefined) {
-    try {
-      return handlers.data(data.data, data);
-    } catch (e) {
-      parseError(e);
-      // TODO not sure this is desired behaviour
-      return handlers.error(e as Error);
-    }
-  } else if (data.error) {
-    parseError(data.error);
-    return handlers.error(data.error);
-  } else if (data.loading) {
-    return handlers.loading ? handlers.loading() : defaultLoading();
-  }
-
-  return null;
-}
 
 /**
  * NOTE: re-consider scenario -> when one exist while another is undefined
@@ -309,3 +302,5 @@ export function isUndefined(val: unknown): boolean {
 export function isNull(val: unknown): boolean {
   return val === null;
 }
+
+export type ExcludeNull<T> = T extends null ? never : T;

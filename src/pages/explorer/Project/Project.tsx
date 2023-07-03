@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
-import { BigNumber } from '@ethersproject/bignumber';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { useGetDeploymentIndexersQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';
@@ -12,15 +11,9 @@ import clsx from 'clsx';
 
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import {
-  ProjectProgressProvider,
-  useDeploymentsQuery,
-  useIPFS,
-  useProjectMetadata,
-  useProjectProgress,
-} from '../../../containers';
+import { useDeploymentsQuery, useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { getDeploymentMetadata, notEmpty, parseError, renderAsync } from '../../../utils';
+import { notEmpty, renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { FlexPlans } from '../FlexPlans';
 import styles from './Project.module.css';
@@ -50,8 +43,6 @@ const ProjectInner: React.FC = () => {
   const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
-  const { catSingle } = useIPFS();
-  const { updateIndexerStatus } = useProjectProgress();
 
   const asyncProject = useProjectFromQuery(id ?? '');
   const { data: deployments } = useDeploymentsQuery({ projectId: id ?? '' });
@@ -71,40 +62,6 @@ const ProjectInner: React.FC = () => {
     [asyncIndexers.data],
   );
 
-  // Populate data from gql for total progress, less accurate than when indexers tab visible
-  React.useEffect(() => {
-    if (!indexers) {
-      return;
-    }
-
-    indexers.forEach((indexer) => {
-      updateIndexerStatus(indexer.indexerId, BigNumber.from(indexer.blockHeight).toNumber());
-    });
-
-    if (indexers.length) {
-      const indexer = indexers[0];
-
-      (async function fetchMeta() {
-        let indexerMeta;
-        try {
-          const { url: indexerEndpoint } = indexer.indexer?.metadata ?? {};
-
-          if (!indexerEndpoint) return;
-          indexerMeta = await getDeploymentMetadata({
-            proxyEndpoint: indexerEndpoint,
-            deploymentId,
-            indexer: indexer.indexerId,
-          });
-        } catch (error) {
-          parseError(error);
-        }
-
-        if (!indexerMeta) return;
-        updateIndexerStatus(indexer.indexerId, indexerMeta.lastProcessedHeight, indexerMeta.targetHeight);
-      })();
-    }
-  }, [catSingle, indexers, updateIndexerStatus, deploymentId]);
-
   React.useEffect(() => {
     const getVersions = async () => {
       try {
@@ -116,7 +73,6 @@ const ProjectInner: React.FC = () => {
             return { ...d, versionHash: d?.version, version: versionResult };
           }),
         );
-
         const filteredVersions = (
           result.filter((r) => r.status === 'fulfilled') as Array<PromiseFulfilledResult<any>>
         ).map((r) => r.value);
@@ -160,16 +116,6 @@ const ProjectInner: React.FC = () => {
       );
     },
   });
-
-  // TODO: support free playground in the future, the indexer-proxy is ready for it
-  // const renderPlayground = () => {
-  //   if (!hasIndexers) {
-  //     return <Redirect from="/:id" to={`overview`} />;
-  //   }
-
-  //   return <div>Coming soon</div>;
-  //   // return <Playground/>
-  // };
 
   const tabList = [
     { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
@@ -241,9 +187,5 @@ const ProjectInner: React.FC = () => {
 };
 
 export const Project: React.FC = () => {
-  return (
-    <ProjectProgressProvider>
-      <ProjectInner />
-    </ProjectProgressProvider>
-  );
+  return <ProjectInner />;
 };

@@ -4,11 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsDashSquare, BsInfoSquare, BsPlusSquare } from 'react-icons/bs';
-import { GetDeploymentIndexers_deploymentIndexers_nodes } from '@__generated__/registry/GetDeploymentIndexers';
 import { LazyQueryResult } from '@apollo/client';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { Spinner } from '@subql/components';
-import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
+import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { Table, TableProps, Tooltip } from 'antd';
@@ -19,12 +18,13 @@ import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useDeploymentPlansLazy, useProjectProgress, useSQToken, useWeb3 } from '../../containers';
+import { useDeploymentPlansLazy, useSQToken, useWeb3 } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import {
   AsyncData,
   cidToBytes32,
+  ExcludeNull,
   getDeploymentMetadata,
   mapAsync,
   notEmpty,
@@ -40,19 +40,16 @@ import { PlansTable, PlansTableProps } from './PlansTable';
 import Progress from './Progress';
 
 type ErrorMsgProps = {
-  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
+  indexer: ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number];
   deploymentId: string | undefined;
+  metadata: IndexerDetails;
   error: Error;
   t: TFunction;
 };
 
 const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   <>
-    <Tooltip
-      title={`${msg.t('indexers.tooltip.connection')}${msg.indexer.indexer?.metadata?.url}/metadata/${
-        msg.deploymentId
-      }`}
-    >
+    <Tooltip title={`${msg.t('indexers.tooltip.connection')}${msg.metadata?.url}/metadata/${msg.deploymentId}`}>
       <Typography.Text type="danger">Error: </Typography.Text>
       <Typography.Text type="secondary">{msg.t('indexers.tooltip.error')}</Typography.Text>
     </Tooltip>
@@ -60,7 +57,7 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
 );
 
 type Props = {
-  indexer: GetDeploymentIndexers_deploymentIndexers_nodes;
+  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
   metadata: IndexerDetails;
   progressInfo: AsyncData<{
     currentBlock: number;
@@ -96,8 +93,8 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t }} />,
-            data: (info) => (info ? <Progress {...info} /> : <Typography>-</Typography>),
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata }} />,
+            data: (info) => (info ? <Progress key={indexer.indexerId} {...info} /> : <Typography>-</Typography>),
           })}
         </>
       ),
@@ -154,14 +151,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
 
   return (
     <>
-      <Table
-        columns={columns}
-        // expandable={{ rowExpandable: () => true, expandedRowRender }}
-        dataSource={rowData}
-        showHeader={false}
-        pagination={false}
-        rowKey="id"
-      />
+      <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
       {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata} />}
     </>
   );
@@ -176,7 +166,6 @@ const ConnectedRow: React.FC<
     startBlock?: number;
   }
 > = ({ indexer, deploymentId, startBlock, ...rest }) => {
-  const { updateIndexerStatus } = useProjectProgress();
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const metadata = useIndexerMetadata(indexer.indexerId);
@@ -223,11 +212,6 @@ const ConnectedRow: React.FC<
       deploymentId,
       indexer: indexer.indexerId,
     });
-
-    // Update container to show total progress
-    if (meta) {
-      updateIndexerStatus(indexer.id, meta.lastProcessedHeight, meta.targetHeight);
-    }
 
     return {
       startBlock,
