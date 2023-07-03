@@ -134,7 +134,6 @@ export const DoStake: React.FC = () => {
         tooltip: isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined,
       };
 
-      // const actions = isMaxUnstakeZero ? [stakeButton] : [stakeButton, unstakeButton];
       const actions = [stakeButton, unstakeButton];
 
       return (
