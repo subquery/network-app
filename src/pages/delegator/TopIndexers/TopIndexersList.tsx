@@ -130,17 +130,6 @@ const getColumns = (
       return record.rewardCollection < 1;
     },
   },
-  // {
-  //   title: (
-  //     <TableTitle
-  //       noTooltipIcon={true}
-  //       tooltip={i18next.t('topIndexers.tooltip.timeToUpgrade')}
-  //       title={i18next.t('topIndexers.timeToUpgrade')}
-  //     />
-  //   ),
-  //   dataIndex: 'timeToUpgrade',
-  //   render: (timeToUpgrade) => <TableText>{timeToUpgrade}</TableText>,
-  // },
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ssl')} title={i18next.t('topIndexers.ssl')} />,
     dataIndex: 'sslEnabled',

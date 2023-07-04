@@ -39,16 +39,17 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       ),
     },
     {
+      width: '100%',
       title: <TableTitle title={t('general.progress')} />,
       dataIndex: 'indexingProgress',
       render: (indexingProgress: number, deployment) => {
         const { indexingProgressErr } = deployment;
         if (indexingProgressErr)
           return (
-            <>
+            <div>
               <Typography.Text type="danger">Error: </Typography.Text>{' '}
               <Typography.Text type="secondary">{indexingProgressErr}</Typography.Text>
-            </>
+            </div>
           );
         return <ProgressBar progress={truncateToDecimalPlace(indexingProgress, 2)} className={styles.progress} />;
       },

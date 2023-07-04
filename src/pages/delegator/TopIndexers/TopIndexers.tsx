@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography } from 'antd';
 
+import Spinner from '../../../components/Spinner/Spinner';
 import { useTopIndexers } from '../../../containers/QueryTop100Indexers';
 import { renderAsync } from '../../../utils';
 import { TopIndexerList } from './TopIndexersList';
@@ -12,9 +13,11 @@ import { TopIndexerList } from './TopIndexersList';
 export const TopIndexers: React.FC = () => {
   const { t } = useTranslation();
   const topIndexers = useTopIndexers();
+
   return (
     <div>
       {renderAsync(topIndexers, {
+        loading: () => <Spinner></Spinner>,
         error: (error) => (
           <>
             <Typography.Text type="danger">Error: </Typography.Text>{' '}

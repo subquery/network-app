@@ -73,7 +73,6 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
-
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
