@@ -10,7 +10,7 @@ import { useWeb3 } from '@containers';
 import { useEra } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
-import { TableTitle } from '@subql/components';
+import { Spinner, TableTitle } from '@subql/components';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
 import { Table, TableProps, Tag, Typography } from 'antd';
@@ -122,6 +122,7 @@ export const MyDelegation: React.FC = () => {
   const DelegationList = () => (
     <>
       {renderAsync(delegationList, {
+        loading: () => <Spinner></Spinner>,
         error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
         data: (data) => {
           if (!data || data.length === 0) {

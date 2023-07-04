@@ -24,9 +24,14 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
   const sortedName = asyncEns.data ?? name;
   return (
     <div className={styles.indexer}>
-      <IPFSImage src={image} renderPlaceholder={() => <Jazzicon diameter={45} seed={jsNumberForAddress(address)} />} />
+      <IPFSImage
+        src={image}
+        renderPlaceholder={() => (
+          <Jazzicon paperStyles={{ flexShrink: 0 }} diameter={45} seed={jsNumberForAddress(address)} />
+        )}
+      />
       <div className={styles.indexerText}>
-        {sortedName && <Typography>{sortedName}</Typography>}
+        {sortedName && <Typography className={styles.name}>{sortedName}</Typography>}
         <div>
           <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
             <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>

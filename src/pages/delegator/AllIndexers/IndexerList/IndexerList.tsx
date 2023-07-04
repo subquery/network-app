@@ -17,6 +17,7 @@ import { useGetIndexerQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
 import { TableProps } from 'antd';
+import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
@@ -41,6 +42,8 @@ interface props {
   onLoadMore?: (offset: number) => void;
   era?: number;
 }
+
+const limit = pLimit(5);
 
 // TODO: `useGetIndexerQuery` has been used by DoDelegate
 // TODO: update indexer detail Page once ready
@@ -91,10 +94,11 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       setLoadingList(true);
       setIndexerList([]);
 
-      // TODO: optimise concurrent.
+      // TODO: use batch fetch replace.
+      // note networkClient.getIndexer have more sideEffects.
       const sortedIndexers = await Promise.all(
         rawIndexerList.map((indexer) => {
-          return networkClient?.getIndexer(indexer.id);
+          return limit(() => networkClient?.getIndexer(indexer.id));
         }),
       );
 

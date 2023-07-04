@@ -104,7 +104,6 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
       />
       <>
         {indexerList
-          .slice(1)
           .filter(notEmpty)
           .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
           .map((indexer, index) => (

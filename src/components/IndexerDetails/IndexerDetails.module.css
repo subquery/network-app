@@ -3,6 +3,10 @@
   flex-direction: row;
 }
 
+.name {
+  word-break: break-all;
+}
+
 .indexerText {
   padding-left: 10px;
   display: flex;
