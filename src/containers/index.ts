@@ -9,5 +9,4 @@ export * from './QueryRegistryProject';
 export * from './QueryApolloProvider';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
 export * from './IndexerRegistryProject';
-export * from './QuerySwapExchangeProject';
 export * from './SQToken';
