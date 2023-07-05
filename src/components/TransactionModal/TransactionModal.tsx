@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdErrorOutline } from 'react-icons/md';
 import { LoadingOutlined } from '@ant-design/icons';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { NotificationType, openNotification } from '@components/Notification';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/components';
 import { Tooltip } from 'antd';
@@ -113,13 +113,13 @@ const TransactionModal = <P, T extends string>({
       const tx = await action(params, showModal);
       setIsLoading(true);
       resetModal();
-      openNotificationWithIcon({ title: t('transaction.submmited') });
+      openNotification({ title: t('transaction.submmited') });
       const result = await tx.wait();
 
       if (result.status) {
         onSuccess && onSuccess();
         setSuccessModalText(text.successText || 'Success');
-        openNotificationWithIcon({
+        openNotification({
           type: NotificationType.SUCCESS,
           title: 'Success',
           description: text.successText ?? t('status.changeValidIn15s'),
@@ -128,7 +128,7 @@ const TransactionModal = <P, T extends string>({
         throw new Error(text.failureText);
       }
     } catch (error) {
-      openNotificationWithIcon({
+      openNotification({
         type: NotificationType.ERROR,
         title: 'Failure',
         description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,

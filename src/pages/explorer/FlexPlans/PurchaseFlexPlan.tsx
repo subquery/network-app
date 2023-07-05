@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { NotificationType, openNotification } from '@components/Notification';
 import { parseEther } from '@ethersproject/units';
 import { Spinner } from '@subql/components';
 import { Button, Space, Typography } from 'antd';
@@ -97,7 +97,7 @@ const PurchaseForm: React.FC<IPurchaseForm> = ({ onClose, balance, deploymentInd
       const { data, error } = purchaseRequest;
       if (error) throw Error(error);
       if (data?.id) {
-        openNotificationWithIcon({
+        openNotification({
           type: NotificationType.SUCCESS,
           title: t('flexPlans.successPurchaseTitle'),
           description: t('flexPlans.successPurchaseDesc'),

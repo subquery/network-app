@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Web3Provider } from '@ethersproject/providers';
+import { openNotification } from '@subql/components';
 import { FetcherReturnType } from 'graphiql';
+import { t } from 'i18next';
 
 import {
   authSARequestBody,
@@ -113,6 +115,10 @@ export async function requestServiceAgreementToken(
     }
   } catch (error) {
     parseError(error);
-    return { error: 'Failed to request token for service agreement.' };
+    openNotification({
+      type: 'error',
+      description: t('serviceAgreements.faliedToFetchServiceAgreement'),
+    });
+    return { error: t('serviceAgreements.faliedToFetchServiceAgreement') };
   }
 }
