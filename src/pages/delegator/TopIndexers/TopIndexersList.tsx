@@ -72,7 +72,7 @@ const getColumns = (
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
-    render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
+    render: (upTime) => <TableText>{upTime}%</TableText>,
     onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),

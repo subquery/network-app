@@ -15,7 +15,6 @@ const GET_TOP_INDEXERS = gql`
       rewardCollection
       socialCredibility
       sslEnabled
-      updatedAt
       uptime
       totalPoints
       currICR
