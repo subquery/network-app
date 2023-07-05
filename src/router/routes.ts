@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
+
 /**
  * The routes should be grouped based on tabs
  * Each routes group should come with ROOT ROUTE & SUB ROUTES
@@ -131,3 +133,13 @@ export const URLS = {
   DELEGATOR: 'https://academy.subquery.network/subquery_network/kepler/delegators.html',
   OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
 };
+
+export const routers = [
+  { path: '/explorer/*', component: React.lazy(() => import('../pages/explorer/index')) },
+  { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
+  { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
+  { path: '/indexer/*', component: React.lazy(() => import('../pages/indexer/index')) },
+  { path: '/delegator/*', component: React.lazy(() => import('../pages/delegator/index')) },
+  { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
+  { path: '/swap/*', component: React.lazy(() => import('../pages/swap/Swap')) },
+];

@@ -228,7 +228,7 @@ const GetAUSD = () => {
   });
 };
 
-export const Swap: React.FC = () => {
+const Swap: React.FC = () => {
   return (
     <div className={styles.swap}>
       <div className={styles.container}>
@@ -247,3 +247,5 @@ export const Swap: React.FC = () => {
     </div>
   );
 };
+
+export default Swap;

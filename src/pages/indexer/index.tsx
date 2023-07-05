@@ -16,7 +16,7 @@ import { MyStaking } from './MyStaking';
 
 const { MY_PROJECTS, MY_PLANS, MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 
-export const Indexer: React.FC = () => {
+const Indexer: React.FC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
@@ -60,3 +60,5 @@ export const Indexer: React.FC = () => {
     </AppSidebar>
   );
 };
+
+export default Indexer;

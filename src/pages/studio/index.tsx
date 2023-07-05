@@ -8,7 +8,7 @@ import Create from './Create';
 import Home from './Home';
 import Project from './Project';
 
-export const Studio: React.FC = () => {
+const Studio: React.FC = () => {
   return (
     <div className="fullWidth">
       <Routes>
@@ -19,3 +19,5 @@ export const Studio: React.FC = () => {
     </div>
   );
 };
+
+export default Studio;
