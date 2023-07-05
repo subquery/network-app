@@ -1,8 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// i18n must render before App
 // eslint-disable-next-line simple-import-sort/imports
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import TagManager from 'react-gtm-module';
 import { Buffer } from 'buffer';
 
@@ -23,4 +24,5 @@ const tagManagerArgs = {
 const isProd = import.meta.env.PROD;
 isProd && TagManager.initialize(tagManagerArgs);
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivElement);
+root.render(<App></App>);

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { FC, LazyExoticComponent } from 'react';
 
 /**
  * The routes should be grouped based on tabs
@@ -134,7 +134,12 @@ export const URLS = {
   OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
 };
 
-export const routers = [
+export const routers: {
+  path: string;
+  component?: LazyExoticComponent<FC>;
+  redirect?: string;
+}[] = [
+  { path: '/', redirect: '/explorer' },
   { path: '/explorer/*', component: React.lazy(() => import('../pages/explorer/index')) },
   { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
   { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
