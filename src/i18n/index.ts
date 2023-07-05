@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { initReactI18next } from 'react-i18next';
-import i18n, { t } from 'i18next';
+import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import en from './en';
@@ -45,5 +45,3 @@ export type GetDictValue<
 export type TranslationKeys = ObjectKeyPaths<(typeof resources)['en']['translation']>;
 
 export default i18n;
-
-console.warn(t('account.linkText.delegating'));
