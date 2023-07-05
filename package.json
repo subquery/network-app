@@ -20,7 +20,7 @@
     "@sentry/react": "^6.19.4",
     "@sentry/tracing": "^6.19.4",
     "@subql/apollo-links": "^0.5.2",
-    "@subql/components": "1.0.3-2",
+    "@subql/components": "1.0.3-4",
     "@subql/contract-sdk": "^0.13.7",
     "@subql/network-clients": "^0.3.13",
     "@subql/network-config": "^0.3.13",
