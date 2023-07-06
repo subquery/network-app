@@ -5,8 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
+import { captureMessage } from '@sentry/react';
 import { useGetDeploymentIndexersQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
-import { URLS } from '@utils';
+import { parseError, URLS } from '@utils';
 import clsx from 'clsx';
 
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
@@ -73,17 +74,24 @@ const ProjectInner: React.FC = () => {
             return { ...d, versionHash: d?.version, version: versionResult };
           }),
         );
-        const filteredVersions = (
-          result.filter((r) => r.status === 'fulfilled') as Array<PromiseFulfilledResult<any>>
-        ).map((r) => r.value);
 
-        const calculatedVersions = filteredVersions.reduce(
-          (acc, cur) => ({ ...acc, [cur.id]: cur?.version?.version }),
+        const filteredVersions = result
+          .map((i) => i.status === 'fulfilled' && i.value)
+          .filter((i): i is Exclude<typeof i, false> => !!i);
+
+        const calculatedVersions: { [key: string]: string } = filteredVersions.reduce(
+          (acc, cur) => ({ ...acc, [cur.id as string]: cur.version.version }),
           {},
         );
+
+        // cur.id be defined as optional.
+        // but if it is undefined, will show `undefined` to user.
+        if (calculatedVersions['undefined']) {
+          captureMessage(JSON.stringify(result));
+        }
         calculatedVersions && setDeploymentVersions(calculatedVersions);
       } catch (error) {
-        console.log('getVersions error', error);
+        parseError(error);
       }
     };
 
