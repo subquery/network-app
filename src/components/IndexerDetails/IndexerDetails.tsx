@@ -55,7 +55,7 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
 
   const indexerList = searchedIndexer && searchedIndexer?.length > 0 ? searchedIndexer : indexers ?? [];
 
-  const columns: TableProps<any>['columns'] = [
+  const columns: TableProps<{ id: number }>['columns'] = [
     {
       width: '20%',
       title: <TableTitle title={t('indexers.head.indexers')} />,

@@ -104,7 +104,7 @@ const ConnectedRow: React.FC<{
     },
   ];
 
-  const columns: TableProps<any>['columns'] = [
+  const columns: TableProps<(typeof rowData)[number]>['columns'] = [
     {
       width: '20%',
       render: () => (
