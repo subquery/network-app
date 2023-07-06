@@ -3,8 +3,7 @@
 
 import { t } from 'i18next';
 
-import { ROUTES } from './routes';
-
+import { ROUTES } from '../router/routes';
 export const externalAppLinks = [
   {
     label: t('header.externalExplorer.title'),

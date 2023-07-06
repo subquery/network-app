@@ -2,20 +2,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Route, Routes } from 'react-router';
+import { Route, Routes, useNavigate } from 'react-router';
+import { WalletRoute } from '@components';
+import { useStudioEnabled } from '@hooks';
 
 import Create from './Create';
 import Home from './Home';
 import Project from './Project';
 
-export const Studio: React.FC = () => {
+const Studio: React.FC = () => {
+  const studioEnabled = useStudioEnabled();
+  const navigate = useNavigate();
+  if (!studioEnabled) {
+    navigate('/');
+  }
   return (
-    <div className="fullWidth">
-      <Routes>
-        <Route path="create" element={<Create />} />
-        <Route path="project/:id/*" element={<Project />} />
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </div>
+    <WalletRoute
+      element={
+        <div className="fullWidth">
+          <Routes>
+            <Route path="create" element={<Create />} />
+            <Route path="project/:id/*" element={<Project />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </div>
+      }
+    ></WalletRoute>
   );
 };
+
+export default Studio;

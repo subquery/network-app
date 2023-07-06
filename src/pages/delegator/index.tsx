@@ -13,7 +13,7 @@ import { MyDelegation } from './MyDelegation';
 
 const { INDEXERS, INDEXER, DELEGATING } = ROUTES;
 
-export const Delegator: React.FC = () => {
+const Delegator: React.FC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
@@ -38,3 +38,5 @@ export const Delegator: React.FC = () => {
     </AppSidebar>
   );
 };
+
+export default Delegator;
