@@ -22,7 +22,6 @@ import { useDeploymentPlansLazy, useSQToken, useWeb3 } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import {
-  AsyncData,
   cidToBytes32,
   ExcludeNull,
   getDeploymentMetadata,
@@ -36,7 +35,7 @@ import Status from '../Status';
 import { deploymentStatus } from '../Status/Status';
 import styles from './IndexerDetails.module.css';
 import { IndexerName } from './IndexerName';
-import { PlansTable, PlansTableProps } from './PlansTable';
+import { PlansTable } from './PlansTable';
 import Progress from './Progress';
 
 type ErrorMsgProps = {
@@ -56,24 +55,47 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   </>
 );
 
-type Props = {
+const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
-  metadata: IndexerDetails;
-  progressInfo: AsyncData<{
-    currentBlock: number;
-    targetBlock: number;
-    startBlock?: number;
-  } | null>;
-} & PlansTableProps;
-
-export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deploymentId, ...plansTableProps }) => {
+  deploymentId?: string;
+  startBlock?: number;
+}> = ({ indexer, deploymentId, startBlock }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const { balance, planAllowance } = useSQToken();
+  const { contracts } = useWeb3Store();
+  const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
+  const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
+  const [loadDeploymentPlans, deploymentPlans] = useDeploymentPlansLazy({
+    deploymentId: deploymentId ?? '',
+    address: indexer.indexerId,
+  });
+
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
 
-  const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
+  const queryUrl = React.useMemo(() => {
+    return wrapProxyEndpoint(`${indexerMetadata.url}/query/${deploymentId}`, indexer.indexerId);
+  }, [indexerMetadata, deploymentId, indexer.indexer]);
 
-  const toggleShowPlans = () => setShowPlans((show) => !show);
+  const progressInfo = useAsyncMemo(async () => {
+    // TODO: Need thinking, this seems not robust.
+    if (!deploymentId || !indexerMetadata?.url) {
+      return null;
+    }
+
+    const meta = await getDeploymentMetadata({
+      proxyEndpoint: indexerMetadata?.url,
+      deploymentId,
+      indexer: indexer.indexerId,
+    });
+
+    return {
+      startBlock,
+      targetBlock: meta?.targetHeight ?? 0,
+      currentBlock: meta?.lastProcessedHeight ?? 0,
+    };
+  }, [startBlock, indexerMetadata.url, indexer]);
+
   const rowData = [
     {
       id: indexer.indexerId,
@@ -85,7 +107,9 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
   const columns: TableProps<any>['columns'] = [
     {
       width: '20%',
-      render: () => <IndexerName name={metadata?.name} image={metadata?.image} address={indexer.indexerId} />,
+      render: () => (
+        <IndexerName name={indexerMetadata?.name} image={indexerMetadata?.image} address={indexer.indexerId} />
+      ),
     },
     {
       width: '30%',
@@ -93,7 +117,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata }} />,
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata: indexerMetadata }} />,
             data: (info) => (info ? <Progress key={indexer.indexerId} {...info} /> : <Typography>-</Typography>),
           })}
         </>
@@ -118,9 +142,9 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
       ellipsis: true,
       render: () => (
         <>
-          <Copy value={metadata?.url} className={styles.copy} iconClassName={styles.copyIcon}>
-            <Tooltip title={metadata?.url}>
-              <Typography.Text ellipsis={true}>{metadata?.url ?? '-'}</Typography.Text>
+          <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon}>
+            <Tooltip title={queryUrl}>
+              <Typography.Text ellipsis={true}>{queryUrl ?? '-'}</Typography.Text>
             </Tooltip>
           </Copy>
         </>
@@ -149,36 +173,7 @@ export const Row: React.FC<Props> = ({ indexer, metadata, progressInfo, deployme
     },
   ];
 
-  return (
-    <>
-      <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
-      {showPlans && <PlansTable {...plansTableProps} deploymentId={''} indexerDetails={metadata} />}
-    </>
-  );
-};
-
-const ConnectedRow: React.FC<
-  Omit<
-    Props,
-    'metadata' | 'loadPlans' | 'asyncPlans' | 'purchasePlan' | 'balance' | 'planManagerAllowance' | 'progressInfo'
-  > & {
-    deploymentId?: string;
-    startBlock?: number;
-  }
-> = ({ indexer, deploymentId, startBlock, ...rest }) => {
-  const { balance, planAllowance } = useSQToken();
-  const { contracts } = useWeb3Store();
-  const metadata = useIndexerMetadata(indexer.indexerId);
-
-  const [loadDeploymentPlans, deploymentPlans] = useDeploymentPlansLazy({
-    deploymentId: deploymentId ?? '',
-    address: indexer.indexerId,
-  });
-
-  const metadataComplete = {
-    ...metadata,
-    url: wrapProxyEndpoint(`${metadata?.url}/query/${deploymentId}`, indexer.indexerId),
-  };
+  const toggleShowPlans = () => setShowPlans((show) => !show);
 
   // Get unique plans based on plan id preferring one with a deploymentId set
   const plans = mapAsync((d) => {
@@ -201,38 +196,21 @@ const ConnectedRow: React.FC<
     return contracts.planManager.acceptPlan(planId, cidToBytes32(deploymentId));
   };
 
-  const progressInfo = useAsyncMemo(async () => {
-    // TODO: Need thinking, this seems not robust.
-    if (!deploymentId || !metadata?.url) {
-      return null;
-    }
-
-    const meta = await getDeploymentMetadata({
-      proxyEndpoint: metadata?.url,
-      deploymentId,
-      indexer: indexer.indexerId,
-    });
-
-    return {
-      startBlock,
-      targetBlock: meta?.targetHeight ?? 0,
-      currentBlock: meta?.lastProcessedHeight ?? 0,
-    };
-  }, [startBlock, metadata.url, indexer]);
-
   return (
-    <Row
-      {...rest}
-      metadata={metadataComplete}
-      indexer={indexer}
-      loadPlans={loadDeploymentPlans}
-      asyncPlans={plans}
-      purchasePlan={purchasePlan}
-      balance={balance}
-      planManagerAllowance={planAllowance}
-      progressInfo={progressInfo}
-      deploymentId={deploymentId}
-    />
+    <>
+      <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
+      {showPlans && (
+        <PlansTable
+          balance={balance}
+          planManagerAllowance={planAllowance}
+          purchasePlan={purchasePlan}
+          loadPlans={loadDeploymentPlans}
+          asyncPlans={plans}
+          deploymentId={''}
+          indexerDetails={indexerMetadata}
+        />
+      )}
+    </>
   );
 };
 

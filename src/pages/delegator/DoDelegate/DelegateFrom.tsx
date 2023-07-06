@@ -23,7 +23,7 @@ import styles from './DoDelegate.module.css';
 export const AddressName: React.FC<{
   address?: string;
 }> = ({ address }) => {
-  const metadata = useIndexerMetadata(address ?? '');
+  const { indexerMetadata: metadata } = useIndexerMetadata(address ?? '');
   const { account } = useWeb3();
 
   return (
