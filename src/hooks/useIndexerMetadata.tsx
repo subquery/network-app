@@ -24,30 +24,34 @@ export async function getIndexerMetadata(
   return indexerMetadataSchema.validate(obj);
 }
 
-export function useIndexerMetadata(address: string): IndexerDetails {
+export function useIndexerMetadata(address: string): {
+  indexerMetadata: IndexerDetails;
+  refresh: () => void;
+} {
   const { contracts } = useWeb3Store();
   const { catSingle } = useIPFS();
-  const [indexerCid, setIndexerCid] = useState('');
-  const [metadata, setMetadata] = useState<{ name: string; url: string }>();
+  const [metadata, setMetadata] = useState<IndexerDetails>();
 
   const fetchCid = async () => {
-    const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
-    if (cacheCid) {
-      setIndexerCid(cacheCid);
-      return;
-    }
+    // TODO: restore this cache(maybe)
+    // Question in here: refresh is not convenient and not very necessary.
+    // const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
+    // if (cacheCid) {
+    //   return cacheCid;
+    // }
     assert(contracts, 'Contracts not available');
 
     const res = await contracts.indexerRegistry.metadata(address);
     const decodeCid = bytes32ToCid(res);
     localforage.setItem(`${address}-metadata`, decodeCid);
-    setIndexerCid(decodeCid);
+    return decodeCid;
   };
 
   const fetchMetadata = async () => {
     try {
+      const indexerCid = await fetchCid();
       const res = await catSingle(indexerCid);
-      const decodeMetadata = decodeIpfsRaw<{ name: string; url: string }>(res);
+      const decodeMetadata = decodeIpfsRaw<IndexerDetails>(res);
       setMetadata(decodeMetadata);
     } catch (e) {
       parseError(e);
@@ -55,20 +59,22 @@ export function useIndexerMetadata(address: string): IndexerDetails {
     }
   };
 
+  const refresh = async () => {
+    await localforage.removeItem(`${address}-metadata`);
+    fetchMetadata();
+  };
+
   useEffect(() => {
-    fetchCid();
+    fetchMetadata();
   }, []);
 
-  useEffect(() => {
-    if (indexerCid) {
-      fetchMetadata();
-    }
-  }, [indexerCid]);
-
   return {
-    name: undefined,
-    url: undefined,
-    image: undefined,
-    ...metadata,
+    indexerMetadata: {
+      name: undefined,
+      url: undefined,
+      image: undefined,
+      ...metadata,
+    },
+    refresh,
   };
 }
