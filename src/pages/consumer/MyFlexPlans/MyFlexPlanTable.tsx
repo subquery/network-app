@@ -116,7 +116,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   const { account } = useWeb3();
   const { pathname } = useLocation();
   const { t } = useTranslation();
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [now] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: account ?? '', now, offset: 0 };
   const flexPlans = queryFn({ variables: sortedParams });
 
@@ -144,8 +144,8 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   return (
     <div className="contentContainer">
       {renderAsyncArray(
-        mapAsync((d) => {
-          return d?.stateChannels?.nodes?.filter(notEmpty);
+        mapAsync((flexPlansChannels) => {
+          return flexPlansChannels?.stateChannels?.nodes?.filter(notEmpty);
         }, flexPlans),
         {
           loading: () => <Spinner />,
@@ -155,18 +155,11 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
             return (
               <div>
                 <AntDTable
-                  customPagination
                   tableProps={{
                     columns: getColumns(pathname, fetchMoreFlexPlans),
                     dataSource: flexPlanList,
                     scroll: { x: 2000 },
                     rowKey: 'expiredAt',
-                  }}
-                  paginationProps={{
-                    total: flexPlans.data?.stateChannels?.totalCount,
-                    onChange: (page, pageSize) => {
-                      fetchMoreFlexPlans?.((page - 1) * pageSize);
-                    },
                   }}
                 />
               </div>
