@@ -26,13 +26,15 @@ export async function getIndexerMetadata(
 
 export function useIndexerMetadata(address: string): {
   indexerMetadata: IndexerDetails;
-  flash: () => void;
+  refresh: () => void;
 } {
   const { contracts } = useWeb3Store();
   const { catSingle } = useIPFS();
   const [metadata, setMetadata] = useState<IndexerDetails>();
 
   const fetchCid = async () => {
+    // TODO: restore this cache(maybe)
+    // Question in here: refresh is not convenient and not very necessary.
     // const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
     // if (cacheCid) {
     //   return cacheCid;
@@ -57,7 +59,7 @@ export function useIndexerMetadata(address: string): {
     }
   };
 
-  const flash = async () => {
+  const refresh = async () => {
     await localforage.removeItem(`${address}-metadata`);
     fetchMetadata();
   };
@@ -73,6 +75,6 @@ export function useIndexerMetadata(address: string): {
       image: undefined,
       ...metadata,
     },
-    flash,
+    refresh,
   };
 }
