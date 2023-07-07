@@ -14,7 +14,7 @@ import { MyAccount } from './MyAccount';
 
 const { REWARDS, WITHDRAWN } = ROUTES;
 
-export const Account: React.FC = () => {
+const Account: React.FC = () => {
   const { account } = useWeb3();
   return (
     <div className={styles.account}>
@@ -29,3 +29,5 @@ export const Account: React.FC = () => {
     </div>
   );
 };
+
+export default Account;

@@ -9,7 +9,7 @@ import { useWeb3 } from '@containers';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetTopIndexersQuery } from '@subql/network-query';
-import { getOrderedAccounts, mulToPercentage, ROUTES } from '@utils';
+import { getOrderedAccounts, mulToPercentage, ROUTES, truncateToDecimalPlace } from '@utils';
 import { TableProps, Tag } from 'antd';
 import i18next from 'i18next';
 import { FixedType } from 'rc-table/lib/interface';
@@ -72,7 +72,7 @@ const getColumns = (
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
-    render: (upTime) => <TableText>{mulToPercentage(upTime)}</TableText>,
+    render: (upTime) => <TableText>{truncateToDecimalPlace(upTime, 2)}%</TableText>,
     onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
       onClick: () => viewIndexerDetail(record.id),
     }),

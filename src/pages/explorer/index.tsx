@@ -9,7 +9,7 @@ import styles from './Explorer.module.css';
 import Home from './Home';
 import { Project } from './Project';
 
-export const Explorer: React.FC = () => {
+const Explorer: React.FC = () => {
   return (
     <div className={styles.account}>
       <div className={styles.page}>
@@ -22,3 +22,5 @@ export const Explorer: React.FC = () => {
     </div>
   );
 };
+
+export default Explorer;

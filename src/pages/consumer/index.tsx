@@ -18,7 +18,7 @@ const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE
 
 const isFlexPlanActive = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true';
 
-export const Consumer: React.FC = () => {
+const Consumer: React.FC = () => {
   const { t } = useTranslation();
 
   const FlexPlanTab = [
@@ -63,3 +63,5 @@ export const Consumer: React.FC = () => {
     </AppSidebar>
   );
 };
+
+export default Consumer;

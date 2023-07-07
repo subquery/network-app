@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { PropsWithChildren, useMemo } from 'react';
-import { Navigate, Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useStudioEnabled } from '@hooks';
-import { Studio } from '@pages/studio';
 import { entryLinks, externalAppLinks, studioLink } from '@utils/links';
 
-import { ChainStatus, Header, WalletRoute } from './components';
+import { ChainStatus, Header } from './components';
 import {
   IndexerRegistryProvider,
   IPFSProvider,
@@ -19,11 +17,9 @@ import {
   SQTokenProvider,
   Web3Provider,
 } from './containers';
-import { Account, Consumer, Delegator, Explorer, Indexer, Swap } from './pages';
-import { ROUTES } from './utils';
+import RouterComponent from './router';
 
 import './App.css';
-import './i18n';
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -49,7 +45,6 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 const RenderRouter: React.FC = () => {
   const studioEnabled = useStudioEnabled();
   const calEntryLinks = useMemo(() => (studioEnabled ? [...entryLinks, studioLink] : [...entryLinks]), [studioEnabled]);
-
   return (
     <BrowserRouter>
       <div className="Main">
@@ -60,16 +55,7 @@ const RenderRouter: React.FC = () => {
 
         <div className="Content">
           <ChainStatus>
-            <Routes>
-              <Route element={<Explorer />} path={`${ROUTES.EXPLORER}/*`} />
-              {studioEnabled && <Route element={<WalletRoute element={<Studio />} />} path={`${ROUTES.STUDIO}/*`} />}
-              <Route element={<WalletRoute element={<Account />} />} path={`${ROUTES.MY_ACCOUNT}/*`} />
-              <Route element={<Indexer />} path={`${ROUTES.INDEXER}/*`} />
-              <Route element={<Delegator />} path={`${ROUTES.DELEGATOR}/*`} />
-              <Route element={<Consumer />} path={`${ROUTES.CONSUMER}/*`} />
-              <Route element={<WalletRoute element={<Swap />} />} path={`${ROUTES.SWAP}/*`} />
-              <Route path="/" element={<Navigate replace to={ROUTES.EXPLORER} />} />
-            </Routes>
+            <RouterComponent></RouterComponent>
           </ChainStatus>
         </div>
       </div>

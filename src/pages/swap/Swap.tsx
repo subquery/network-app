@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { ApproveContract, EmptyList, Spinner, TabButtons } from '@components';
+import { ApproveContract, EmptyList, Spinner, TabButtons, WalletRoute } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
@@ -228,22 +228,28 @@ const GetAUSD = () => {
   });
 };
 
-export const Swap: React.FC = () => {
+const Swap: React.FC = () => {
   return (
-    <div className={styles.swap}>
-      <div className={styles.container}>
-        <div className={styles.content}>
-          <div className={styles.tabs}>
-            <TabButtons tabs={buttonLinks} whiteTab />
+    <WalletRoute
+      element={
+        <div className={styles.swap}>
+          <div className={styles.container}>
+            <div className={styles.content}>
+              <div className={styles.tabs}>
+                <TabButtons tabs={buttonLinks} whiteTab />
+              </div>
+              <Routes>
+                <Route index path={BUY} element={<SellAUSD />} />
+                <Route path={SELL} element={<GetAUSD />} />
+                <Route path={'/'} element={<Navigate replace to={BUY} />} />
+              </Routes>
+            </div>
           </div>
-          <Routes>
-            <Route index path={BUY} element={<SellAUSD />} />
-            <Route path={SELL} element={<GetAUSD />} />
-            <Route path={'/'} element={<Navigate replace to={BUY} />} />
-          </Routes>
+          <Footer simple />
         </div>
-      </div>
-      <Footer simple />
-    </div>
+      }
+    ></WalletRoute>
   );
 };
+
+export default Swap;
