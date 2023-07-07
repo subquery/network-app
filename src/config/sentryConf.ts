@@ -1,15 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { CaptureConsole } from '@sentry/integrations';
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 import { isString } from 'lodash';
 
 const eventLimiter: { [index: string]: boolean } = {};
 
 Sentry.init({
   beforeSend: (event, hint) => {
-    const rawError = hint?.originalException;
+    const rawError = hint?.originalException as Error;
     if (!rawError) return event;
     const msg = isString(rawError) ? rawError : rawError.message;
 
@@ -28,7 +28,12 @@ Sentry.init({
   },
   // this env set on Github workflow.
   dsn: import.meta.env.VITE_SENTRY_DSN,
-  integrations: [new BrowserTracing()],
+  integrations: [
+    new CaptureConsole({
+      levels: ['error'],
+    }),
+    new Sentry.BrowserTracing(),
+  ],
   environment: import.meta.env.MODE,
   // Set tracesSampleRate to 1.0 to capture 100%
   tracesSampleRate: 1.0,
