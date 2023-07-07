@@ -1,10 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useGetProjectDeploymentsQuery } from '@subql/react-hooks';
 import { uniqBy } from 'ramda';
 
 import { ProjectDeployments, Spinner } from '../../../components';
-import { useDeploymentsQuery, useIPFS } from '../../../containers';
+import { useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
 import { notEmpty, renderAsync } from '../../../utils';
@@ -18,7 +19,11 @@ type Props = {
 };
 
 const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
-  const query = useDeploymentsQuery({ projectId });
+  const query = useGetProjectDeploymentsQuery({
+    variables: {
+      projectId,
+    },
+  });
   const { catSingle } = useIPFS();
 
   const asyncDeployments = useAsyncMemo(async () => {

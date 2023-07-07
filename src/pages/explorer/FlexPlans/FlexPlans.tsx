@@ -10,7 +10,6 @@ import { TableTitle } from '@subql/components';
 import { Space, Table, TableProps } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
-// import { GetOngoingFlexPlan } from '../../../__generated__/registry/GetOngoingFlexPlan';
 import moment from 'moment';
 
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
