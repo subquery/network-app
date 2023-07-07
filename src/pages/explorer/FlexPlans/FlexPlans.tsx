@@ -7,6 +7,7 @@ import { BsStarFill } from 'react-icons/bs';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { TableTitle } from '@subql/components';
+import { useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
 import { Space, Table, TableProps } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
@@ -14,7 +15,7 @@ import moment from 'moment';
 
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { useConsumerOpenFlexPlans, useSQToken, useWeb3 } from '../../../containers';
+import { useSQToken, useWeb3 } from '../../../containers';
 import { IIndexerFlexPlan, useIndexerFlexPlans } from '../../../hooks';
 import {
   formatEther,
@@ -102,7 +103,12 @@ export const FlexPlans: React.FC = () => {
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
 
   const [now] = React.useState<Date>(moment().toDate());
-  const openPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
+  const openPlans = useGetConsumerOngoingFlexPlansQuery({
+    variables: {
+      consumer: account ?? '',
+      now,
+    },
+  });
 
   const [balance] = consumerHostBalance.data ?? [];
   const onFetchConsumerHostBalance = () => consumerHostBalance.refetch();
