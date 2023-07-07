@@ -7,7 +7,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { useIndexerMetadata } from '@hooks';
 import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
-import { useGetIndexerQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { FetcherParams } from 'graphiql';
 import i18next from 'i18next';
@@ -73,8 +72,7 @@ export const SAPlayground: React.FC = () => {
   const serviceAgreement = locationState?.serviceAgreement;
   const TOKEN_STORAGE_KEY = `${serviceAgreement?.id}/${account}`;
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
-  // const indexerMetadata = useGetIndexerQuery({ variables: { address: serviceAgreement?.indexerAddress } });
-  const indexerMetadata = useIndexerMetadata(serviceAgreement?.indexerAddress);
+  const { indexerMetadata } = useIndexerMetadata(serviceAgreement?.indexerAddress);
   React.useEffect(() => {
     if (!locationState?.serviceAgreement || serviceAgreement?.consumerAddress !== account) {
       navigate(SA_NAV);
