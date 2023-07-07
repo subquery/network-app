@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { NotificationType, openNotification } from '@components/Notification';
 import { assert } from '@polkadot/util';
 import { Typography } from 'antd';
 import { BigNumber } from 'ethers';
@@ -66,7 +66,7 @@ export const Summary: React.FC = () => {
         expireDate,
       );
 
-      openNotificationWithIcon({
+      openNotification({
         title: 'Offer transaction submitted.',
         description: t('status.txSubmitted'),
       });
@@ -74,14 +74,14 @@ export const Summary: React.FC = () => {
       navigate(CONSUMER_OPEN_OFFERS_NAV);
 
       tx.wait().then(() => {
-        openNotificationWithIcon({
+        openNotification({
           type: NotificationType.SUCCESS,
           title: 'Offer created!',
           description: t('status.changeValidIn15s'),
         });
       });
     } catch (error) {
-      openNotificationWithIcon({
+      openNotification({
         type: NotificationType.ERROR,
         title: 'Offer created Failed',
         description: parseError(error),
@@ -125,7 +125,7 @@ export const Summary: React.FC = () => {
     },
     {
       label: t('myOffers.step_2.indexerCap'),
-      value: t('myOffers.step_2.indexerCapWithCount', { count: offer?.indexerCap }),
+      value: t('myOffers.step_2.indexerCapWithCount', { count: offer?.indexerCap, defaultValue: '' }),
     },
     {
       label: t('myOffers.step_2.minimumIndexedHeight'),

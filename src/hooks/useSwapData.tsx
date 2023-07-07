@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { useGetOrdersQuery } from '@subql/react-hooks';
 import { limitContract } from '@utils/limitation';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -11,7 +12,7 @@ import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useOrders } from '../containers';
+import { SWAP_EXCHANGE_CLIENT } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
@@ -94,9 +95,15 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
 export function useSwapOrderId(swapFrom: string): { orderId: string | undefined; loading: boolean } {
   const mountedRef = React.useRef(true);
   const [orderId, setOrderId] = React.useState<string>();
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [now] = React.useState<Date>(moment().toDate());
   // TODO: swapFrom now is reversed should be equal to contracts.
-  const { data, loading } = useOrders({ swapFrom: swapFrom, now });
+  const { data, loading } = useGetOrdersQuery({
+    variables: {
+      swapFrom,
+      now,
+    },
+    context: { clientName: SWAP_EXCHANGE_CLIENT },
+  });
 
   React.useEffect(() => {
     const order = data?.orders?.nodes[0];

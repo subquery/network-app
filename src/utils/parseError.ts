@@ -3,6 +3,7 @@
 
 import { captureException } from '@sentry/react';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
+import { isObject } from 'lodash';
 
 export const walletConnectionErrors = [
   {
@@ -46,12 +47,20 @@ export const errors = [
     message: `The address is not support ENS or invalid.`,
   },
 ];
-
-export const logError = (msg: string) => {
+function logError(msg: Error): void;
+function logError(msg: Record<string, unknown>): void;
+function logError(msg: string): void;
+function logError(msg: Error | string | Record<string, unknown>): void {
+  if (msg instanceof Error) {
+    return console.error(msg);
+  }
+  if (isObject(msg)) {
+    return console.error(`%c [Error] ${JSON.stringify(msg)}`, 'color:lightgreen;');
+  }
   return console.error(`%c [Error] ${msg}`, 'color:lightgreen;');
-};
+}
 
-export function parseError(error: any, errorsMapping = errors): string | undefined {
+export function parseError(error: any, errorsMapping = errors, options = { alert: false }): string | undefined {
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { NotificationType, openNotification } from '@components/Notification';
 import { TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { TableProps } from 'antd';
@@ -128,7 +128,7 @@ export const FlexPlayground: React.FC = () => {
         removeStorage(TOKEN_STORAGE_KEY);
         const sortedError = error ? parseError(error) : error?.message ?? t('myFlexPlans.error');
 
-        openNotificationWithIcon({
+        openNotification({
           type: NotificationType.ERROR,
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
@@ -145,7 +145,7 @@ export const FlexPlayground: React.FC = () => {
     setQueryable(false);
     removeStorage(TOKEN_STORAGE_KEY);
 
-    openNotificationWithIcon({
+    openNotification({
       type: NotificationType.ERROR,
       title: t('serviceAgreements.playground.queryTitle'),
       description: t('serviceAgreements.playground.expiredToken'),

@@ -182,6 +182,7 @@ const translation = {
     nonIndexerAgreementsDescription_1:
       'You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace',
     nonIndexerAgreementsInfoLink: 'Learn more <1>here</1>',
+    faliedToFetchServiceAgreement: 'Failed to request token for service agreement.',
   },
   myOffers: {
     title: 'My Offers',

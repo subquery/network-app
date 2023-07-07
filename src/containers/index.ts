@@ -7,5 +7,4 @@ export { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetadata';
 export { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 export * from './QueryApolloProvider';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
-export * from './QuerySwapExchangeProject';
 export * from './SQToken';

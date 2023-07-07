@@ -4,9 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { NotificationType, openNotificationWithIcon } from '@components/Notification';
+import { NotificationType, openNotification } from '@components/Notification';
+import { useIndexerMetadata } from '@hooks';
 import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
-import { useGetIndexerQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { FetcherParams } from 'graphiql';
 import i18next from 'i18next';
@@ -72,21 +72,20 @@ export const SAPlayground: React.FC = () => {
   const serviceAgreement = locationState?.serviceAgreement;
   const TOKEN_STORAGE_KEY = `${serviceAgreement?.id}/${account}`;
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
-  const indexerMetadata = useGetIndexerQuery({ variables: { address: serviceAgreement?.indexerAddress } });
-
+  const { indexerMetadata } = useIndexerMetadata(serviceAgreement?.indexerAddress);
   React.useEffect(() => {
-    if (!locationState?.serviceAgreement || indexerMetadata?.error || serviceAgreement?.consumerAddress !== account) {
+    if (!locationState?.serviceAgreement || serviceAgreement?.consumerAddress !== account) {
       navigate(SA_NAV);
     }
   }, [indexerMetadata, navigate, serviceAgreement?.consumerAddress, account, locationState?.serviceAgreement]);
 
   const url = React.useMemo(() => {
-    const rawUrl = indexerMetadata.data?.indexer?.metadata?.url;
+    const rawUrl = indexerMetadata.url;
     if (rawUrl) {
       const url = new URL(rawUrl);
       return url.toString();
     }
-  }, [indexerMetadata.data?.indexer?.metadata?.url]);
+  }, [indexerMetadata]);
 
   const { queryUrl, requestTokenUrl } = React.useMemo(() => {
     if (url) {
@@ -134,7 +133,7 @@ export const SAPlayground: React.FC = () => {
         const { error: resError } = (await response?.json()) ?? {};
         const sortedError = resError ? parseError(resError) : error?.message ?? t('serviceAgreements.playground.error');
 
-        openNotificationWithIcon({
+        openNotification({
           type: NotificationType.ERROR,
           title: t('serviceAgreements.playground.queryTitle'),
           description: sortedError,
@@ -150,7 +149,7 @@ export const SAPlayground: React.FC = () => {
     setQueryable(false);
     removeStorage(TOKEN_STORAGE_KEY);
 
-    openNotificationWithIcon({
+    openNotification({
       type: NotificationType.ERROR,
       title: t('serviceAgreements.playground.queryTitle'),
       description: t('serviceAgreements.playground.expiredToken'),

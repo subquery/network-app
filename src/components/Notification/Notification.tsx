@@ -1,39 +1,14 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { notification } from 'antd';
+import type { NotificationProps } from '@subql/components';
+import { openNotification } from '@subql/components';
 
-import { COLORS } from '../../utils';
+export { openNotification };
+export type { NotificationProps };
 
 export enum NotificationType {
   INFO = 'info',
   SUCCESS = 'success',
   ERROR = 'error',
 }
-
-const borderColorMapping = {
-  [NotificationType.INFO]: COLORS.primary,
-  [NotificationType.SUCCESS]: COLORS.success,
-  [NotificationType.ERROR]: COLORS.error,
-};
-interface NotificationProps {
-  type?: NotificationType;
-  title?: string;
-  description?: string;
-}
-
-export const openNotificationWithIcon = ({
-  type = NotificationType.INFO,
-  title,
-  description,
-}: NotificationProps): void => {
-  notification[type]({
-    message: title ?? 'Notification',
-    description: description,
-    style: {
-      borderBottom: `4px solid ${borderColorMapping[type] ?? borderColorMapping[NotificationType.INFO]}`,
-      overflow: 'scroll',
-    },
-    duration: type === NotificationType.INFO ? 45 : 30,
-  });
-};
