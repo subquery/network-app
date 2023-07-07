@@ -15,7 +15,6 @@ export { useEraValue } from './useEraValue';
 export { useIPFSMetadata } from './useIPFSMetadata';
 export { useSortedIndexer } from './useSortedIndexer';
 export * from './useLockPeriod';
-export * from './useUserDelegations';
 export * from './useIsIndexer';
 export * from './useSortedIndexerDeployments';
 export * from './useNetworkClient';

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Spinner, Typography } from '@subql/components';
-import { useGetDelegationsQuery } from '@subql/react-hooks';
+import { useGetDelegationQuery, useGetDelegationsQuery } from '@subql/react-hooks';
 import { Button, Divider, Select } from 'antd';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -14,7 +14,7 @@ import * as yup from 'yup';
 import { SummaryList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
-import { useDelegation, useSQToken, useWeb3 } from '../../../containers';
+import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../utils';
@@ -72,7 +72,11 @@ export const DelegateForm: React.FC<FormProps> = ({
 
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
-  const indexerDelegation = useDelegation(account ?? '', delegateFrom ?? '');
+  const indexerDelegation = useGetDelegationQuery({
+    variables: {
+      id: `${account ?? ''}:${delegateFrom ?? ''}`,
+    },
+  });
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 

@@ -9,6 +9,7 @@ import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContr
 import { Spinner } from '@subql/components';
 import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
+import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { Table, TableProps, Tooltip } from 'antd';
 import { Typography } from 'antd';
@@ -18,7 +19,7 @@ import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useDeploymentPlansLazy, useSQToken, useWeb3 } from '../../containers';
+import { useSQToken, useWeb3 } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import { IndexerDetails } from '../../models';
 import {
@@ -66,9 +67,11 @@ const ConnectedRow: React.FC<{
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
   const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
-  const [loadDeploymentPlans, deploymentPlans] = useDeploymentPlansLazy({
-    deploymentId: deploymentId ?? '',
-    address: indexer.indexerId,
+  const [loadDeploymentPlans, deploymentPlans] = useGetDeploymentPlansLazyQuery({
+    variables: {
+      deploymentId: deploymentId ?? '',
+      address: indexer.indexerId,
+    },
   });
 
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
