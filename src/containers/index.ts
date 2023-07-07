@@ -5,8 +5,6 @@ export { useWeb3, Web3Provider } from './Web3';
 export { useIPFS, IPFSProvider } from './IPFS';
 export { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetadata';
 export { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
-export * from './QueryRegistryProject';
 export * from './QueryApolloProvider';
 export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
-export * from './IndexerRegistryProject';
 export * from './SQToken';

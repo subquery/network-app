@@ -6,13 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
-import { useGetDeploymentIndexersQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import {
+  useGetDeploymentIndexersQuery,
+  useGetProjectDeploymentsQuery,
+  useGetProjectOngoingServiceAgreementsQuery,
+} from '@subql/react-hooks';
 import { parseError, URLS } from '@utils';
 import clsx from 'clsx';
 
 import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
-import { useDeploymentsQuery, useProjectMetadata } from '../../../containers';
+import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { notEmpty, renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -46,7 +50,11 @@ const ProjectInner: React.FC = () => {
   const { getVersionMetadata } = useProjectMetadata();
 
   const asyncProject = useProjectFromQuery(id ?? '');
-  const { data: deployments } = useDeploymentsQuery({ projectId: id ?? '' });
+  const { data: deployments } = useGetProjectDeploymentsQuery({
+    variables: {
+      projectId: id ?? '',
+    },
+  });
 
   const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
 

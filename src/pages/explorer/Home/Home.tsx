@@ -5,9 +5,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
+import { useGetProjectsQuery } from '@subql/react-hooks';
 
 import { ProjectCard, Spinner } from '../../../components';
-import { useProjectMetadata, useProjectsQuery } from '../../../containers';
+import { useProjectMetadata } from '../../../containers';
 import { useAsyncMemo, useOnScreen } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -48,7 +49,9 @@ export const Header: React.FC<{ renderRightItem?: () => React.ReactNode }> = ({ 
 };
 
 const Home: React.FC = () => {
-  const { data, loading, error, fetchMore } = useProjectsQuery({ offset: 0 });
+  const { data, loading, error, fetchMore } = useGetProjectsQuery({
+    variables: { offset: 0 },
+  });
   const navigate = useNavigate();
 
   const bottom = React.useRef<HTMLDivElement>(null);

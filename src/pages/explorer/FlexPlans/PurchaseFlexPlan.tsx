@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NotificationType, openNotification } from '@components/Notification';
 import { parseEther } from '@ethersproject/units';
 import { Spinner } from '@subql/components';
+import { useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
 import { Button, Space, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber, ethers } from 'ethers';
@@ -16,7 +17,7 @@ import * as yup from 'yup';
 import { NumberInput } from '../../../components';
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
 import TransactionModal from '../../../components/TransactionModal';
-import { useConsumerOpenFlexPlans, useWeb3 } from '../../../containers';
+import { useWeb3 } from '../../../containers';
 import { IIndexerFlexPlan } from '../../../hooks';
 import { formatEther, getAuthReqHeader, getCapitalizedStr, parseError, POST, renderAsync, TOKEN } from '../../../utils';
 import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
@@ -233,7 +234,12 @@ export const PurchaseFlexPlan: React.FC<PurchaseFlexPlaneProps> = ({
     ? t('general.connectAccount')
     : '';
 
-  const flexPlans = useConsumerOpenFlexPlans({ consumer: account ?? '', now });
+  const flexPlans = useGetConsumerOngoingFlexPlansQuery({
+    variables: {
+      consumer: account ?? '',
+      now,
+    },
+  });
   const refetchOnSuccess = () => {
     flexPlans.refetch({ consumer: account ?? '', now });
     onFetchBalance();

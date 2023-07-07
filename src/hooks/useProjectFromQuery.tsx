@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
+import { useGetProjectQuery } from '@subql/react-hooks';
 
-import { useProjectMetadata, useProjectQuery } from '../containers';
+import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
@@ -15,7 +16,11 @@ type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
   const { getMetadataFromCid } = useProjectMetadata();
 
-  const { data, loading, error } = useProjectQuery({ id });
+  const { data, loading, error } = useGetProjectQuery({
+    variables: {
+      id,
+    },
+  });
 
   const {
     data: project,
