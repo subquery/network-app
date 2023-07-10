@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CaptureConsole } from '@sentry/integrations';
 import * as Sentry from '@sentry/react';
 import { isString } from 'lodash';
 
@@ -28,12 +27,7 @@ Sentry.init({
   },
   // this env set on Github workflow.
   dsn: import.meta.env.VITE_SENTRY_DSN,
-  integrations: [
-    new CaptureConsole({
-      levels: ['error'],
-    }),
-    new Sentry.BrowserTracing(),
-  ],
+  integrations: [new Sentry.BrowserTracing()],
   environment: import.meta.env.MODE,
   // Set tracesSampleRate to 1.0 to capture 100%
   tracesSampleRate: 1.0,
