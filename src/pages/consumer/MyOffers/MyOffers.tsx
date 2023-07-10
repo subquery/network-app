@@ -141,7 +141,9 @@ export const MyOffers: React.FC = () => {
   const { offerAllowance } = useSQToken();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const requiresTokenApproval = offerAllowance.data?.isZero();
-  const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' }, pollInterval: 10000 });
+  const offers = useGetOfferCountQuery({
+    variables: { consumer: account ?? '' },
+  });
 
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
 
