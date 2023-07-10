@@ -100,6 +100,11 @@ const translation = {
     successPurchaseTitle: 'Success',
     successPurchaseDesc: 'You have successfully purchased the plan!',
     own: 'Created by you',
+    flexPlan: 'Flex Plan',
+    flexPlanDesc:
+      'For provide a better experience, Subquery will pick the optimal indexer for your Flex Plan based on a combination of price and historical performance.',
+    deposit: 'Deposit',
+    createFlexPlan: 'Create Flex Plan',
   },
   myFlexPlans: {
     description:

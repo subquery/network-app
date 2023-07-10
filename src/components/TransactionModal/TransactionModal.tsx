@@ -58,7 +58,14 @@ export type TransactionModalProps<P, T extends string> = {
   rethrowWhenSubmit?: boolean;
 };
 
-// TODO: review successModalText/failureModalText when move to subql-component
+// TODO: arrange this compoent
+//   No questions aspect: Feature good.
+//   Need some arrange: 1. onClick, actions, renderContent are coupling, those attributes are all having part logic to do same thing.
+//                      1.1 The problem is onClick actually means modal clicked callback and also actually wants to handle the different actions in onClick, but didn't have param to flag what action trigger that.
+//                      1.2 renderContent actually means render modal content and onClick join in this render. and the confuse part is actions also have a onClick field if you don't notice this.
+//                      2. actions and variant have the same problems.
+//                      3. text is not a searchable name.
+//   I am not sure the optimize target. just put those problems now.
 const TransactionModal = <P, T extends string>({
   renderContent,
   text,
