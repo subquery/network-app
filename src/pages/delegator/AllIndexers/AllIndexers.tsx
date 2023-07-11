@@ -8,12 +8,11 @@ import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { useGetIndexersQuery } from '@subql/react-hooks';
 
-// import { SUB_INDEXERS } from '../../../containers/IndexerRegistryProjectSub';
 import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 
 export const AllIndexers: React.FC = () => {
-  const indexers = useGetIndexersQuery({ variables: { offset: 0, first: 10 }, pollInterval: 10000 });
+  const indexers = useGetIndexersQuery({ variables: { offset: 0, first: 10 } });
   const { currentEra } = useEra();
   const { t } = useTranslation();
   const fetchMore = (offset: number) => {

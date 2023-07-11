@@ -37,7 +37,7 @@ const NoOffers: React.FC = () => {
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
-  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 }, pollInterval: 10000 });
+  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,

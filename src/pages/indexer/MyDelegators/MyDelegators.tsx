@@ -32,7 +32,7 @@ export const MyDelegators: React.FC = () => {
   const { account } = useWeb3();
   const { t } = useTranslation();
   const filterParams = { id: account ?? '', offset: 0 };
-  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams, pollInterval: 10000 });
+  const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams });
 
   return renderAsync(delegators, {
     loading: () => <Spinner />,

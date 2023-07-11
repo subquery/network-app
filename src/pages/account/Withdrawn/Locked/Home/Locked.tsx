@@ -68,8 +68,13 @@ const columns: TableProps<SortedWithdrawals>['columns'] = [
 export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const filterParams = { delegator: account || '', status: WithdrawalStatus.ONGOING, offset: 0 };
-  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams, pollInterval: 10000 });
+  const filterParams = {
+    delegator: account || '',
+    status: WithdrawalStatus.ONGOING,
+    offset: 0,
+  };
+  // TODO: refresh when do the withdrawl action.
+  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
   const lockPeriod = useLockPeriod();
 
   return (
