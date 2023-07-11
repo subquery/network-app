@@ -51,7 +51,7 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
   }, []);
 
   return (
-    <div className={styles.indexer}>
+    <div className={styles.indexer} onMouseEnter={fetchEns}>
       <IPFSImage
         src={image}
         renderPlaceholder={() => (
