@@ -5,16 +5,14 @@ import { useEffect, useState } from 'react';
 import { useIPFS } from '@containers';
 import { decodeIpfsRaw } from '@containers/IPFS';
 import { bytes32ToCid, parseError } from '@utils';
+import { limitQueue } from '@utils/limitation';
 import assert from 'assert';
 import localforage from 'localforage';
-import PQueue from 'p-queue';
 
 import { useWeb3Store } from 'src/stores/web3Account';
 
 import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
-
-const limitQueue = new PQueue({ concurrency: 10, interval: 1000 });
 
 export async function getIndexerMetadata(
   catSingle: (cid: string) => Promise<Uint8Array>,

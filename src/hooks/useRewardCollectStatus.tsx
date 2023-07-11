@@ -1,18 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { limitContract } from '@utils/limitation';
-import PQueue from 'p-queue';
+import { limitContract, limitQueue } from '@utils/limitation';
 
 import { useWeb3Store } from 'src/stores';
 
 import { AsyncMemoReturn } from './useAsyncMemo';
 import { useAsyncMemo } from '.';
-
-const limit = new PQueue({
-  concurrency: 3,
-  interval: 1000,
-});
 
 export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasClaimedRewards: boolean } | undefined> {
   const { contracts } = useWeb3Store();
@@ -20,8 +14,8 @@ export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasCl
   return useAsyncMemo(async () => {
     if (!contracts) return;
 
-    const lastClaimedEra = await limit.add(() => contracts.rewardsDistributor.getRewardInfo(indexer));
-    const lastSettledEra = await limit.add(() => contracts.rewardsStaking.getLastSettledEra(indexer));
+    const lastClaimedEra = await limitQueue.add(() => contracts.rewardsDistributor.getRewardInfo(indexer));
+    const lastSettledEra = await limitQueue.add(() => contracts.rewardsStaking.getLastSettledEra(indexer));
 
     const currentEra = await limitContract(() => contracts.eraManager.eraNumber(), 'eraNumber');
 

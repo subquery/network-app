@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { Typography } from '@subql/components';
-import PQuene from 'p-queue';
+import { limitQueue } from '@utils/limitation';
 
 import { useIndexerMetadata } from '../../hooks';
 import { useENS } from '../../hooks/useEns';
@@ -21,8 +21,6 @@ type Props = {
   onAddressClick?: (address: string) => void;
 };
 
-const limit = new PQuene({ concurrency: 10, interval: 1000 });
-
 export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress, onAddressClick }) => {
   const { fetchEnsNameOnce, fetchEnsFromCache } = useENS(address);
   const [ensName, setEnsName] = useState<string>();
@@ -32,7 +30,7 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
   }, [name, ensName]);
 
   const fetchEns = async () => {
-    const fetchedEns = await limit.add(() => fetchEnsNameOnce());
+    const fetchedEns = await limitQueue.add(() => fetchEnsNameOnce());
     if (fetchedEns) {
       setEnsName(fetchedEns);
     }
