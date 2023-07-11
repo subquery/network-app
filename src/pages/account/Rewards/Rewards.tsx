@@ -25,7 +25,7 @@ function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
   const filterParams = { address: delegator };
-  const rewards = useGetRewardsQuery({ variables: filterParams, pollInterval: 10000 });
+  const rewards = useGetRewardsQuery({ variables: filterParams });
   const { t } = useTranslation();
 
   const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
