@@ -93,7 +93,6 @@ export const DelegateForm: React.FC<FormProps> = ({
     const indexerDelegation = getIndexerDelegation();
     maxAmount = indexerDelegation?.after;
   }
-
   const sortedMaxAmount = formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
 
   const maxAmountText = `Max available delegation: ${sortedMaxAmount} ${TOKEN} (next era).`;
