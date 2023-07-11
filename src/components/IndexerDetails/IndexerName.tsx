@@ -1,8 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useEffect, useMemo, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { Typography } from '@subql/components';
+import PQuene from 'p-queue';
 
 import { useIndexerMetadata } from '../../hooks';
 import { useENS } from '../../hooks/useEns';
@@ -19,9 +21,37 @@ type Props = {
   onAddressClick?: (address: string) => void;
 };
 
+const limit = new PQuene({ concurrency: 10, interval: 1000 });
+
 export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress, onAddressClick }) => {
-  const asyncEns = useENS(address);
-  const sortedName = asyncEns.data ?? name;
+  const { fetchEnsNameOnce, fetchEnsFromCache } = useENS(address);
+  const [ensName, setEnsName] = useState<string>();
+
+  const sortedName = useMemo(() => {
+    return ensName || name;
+  }, [name, ensName]);
+
+  const fetchEns = async () => {
+    const fetchedEns = await limit.add(() => fetchEnsNameOnce());
+    if (fetchedEns) {
+      setEnsName(fetchedEns);
+    }
+  };
+
+  const initEns = async () => {
+    const cachedName = await fetchEnsFromCache();
+    if (cachedName) {
+      setEnsName(cachedName);
+      return;
+    }
+
+    fetchEns();
+  };
+
+  useEffect(() => {
+    initEns();
+  }, []);
+
   return (
     <div className={styles.indexer}>
       <IPFSImage

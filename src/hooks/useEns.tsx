@@ -1,17 +1,34 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import localforage from 'localforage';
+import { once } from 'lodash';
+
 import { useWeb3Store } from 'src/stores';
 
-import { AsyncData } from '../utils';
-import { useAsyncMemo } from './useAsyncMemo';
-
-export function useENS(address: string): AsyncData<string | undefined | null> {
+type EnsReturnFuncType = () => Promise<string | null | undefined>;
+export function useENS(address: string): {
+  fetchEnsName: EnsReturnFuncType;
+  fetchEnsNameOnce: EnsReturnFuncType;
+  fetchEnsFromCache: EnsReturnFuncType;
+} {
   const { ethProvider } = useWeb3Store();
-  return useAsyncMemo(async () => {
-    if (!address || !ethProvider) return undefined;
 
+  const fetchEnsName = async () => {
+    if (!address || !ethProvider) return undefined;
     const ens = await ethProvider.lookupAddress(address);
+    localforage.setItem(`ens-${address}`, ens);
     return ens;
-  }, [address]);
+  };
+
+  const fetchEnsFromCache = async () => {
+    if (!address) return;
+    return await localforage.getItem<string | null | undefined>(`ens-${address}`);
+  };
+
+  return {
+    fetchEnsName,
+    fetchEnsNameOnce: once(fetchEnsName),
+    fetchEnsFromCache,
+  };
 }

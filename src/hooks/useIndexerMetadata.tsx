@@ -7,11 +7,14 @@ import { decodeIpfsRaw } from '@containers/IPFS';
 import { bytes32ToCid, parseError } from '@utils';
 import assert from 'assert';
 import localforage from 'localforage';
+import PQueue from 'p-queue';
 
 import { useWeb3Store } from 'src/stores/web3Account';
 
 import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
+
+const limitQueue = new PQueue({ concurrency: 10, interval: 1000 });
 
 export async function getIndexerMetadata(
   catSingle: (cid: string) => Promise<Uint8Array>,
@@ -33,23 +36,31 @@ export function useIndexerMetadata(address: string): {
   const [metadata, setMetadata] = useState<IndexerDetails>();
 
   const fetchCid = async () => {
-    // TODO: restore this cache(maybe)
-    // Question in here: refresh is not convenient and not very necessary.
-    // const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
-    // if (cacheCid) {
-    //   return cacheCid;
-    // }
     assert(contracts, 'Contracts not available');
-
     const res = await contracts.indexerRegistry.metadata(address);
     const decodeCid = bytes32ToCid(res);
     localforage.setItem(`${address}-metadata`, decodeCid);
     return decodeCid;
   };
 
+  const fetchCidFromCache = async () => {
+    const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
+    if (cacheCid) {
+      return cacheCid;
+    }
+  };
+
   const fetchMetadata = async () => {
     try {
-      const indexerCid = await fetchCid();
+      // fetch cid from cache first and use it for render.
+      // then will fetch newest data from contract.
+      let indexerCid = await fetchCidFromCache();
+      if (!indexerCid) {
+        indexerCid = (await limitQueue.add(() => fetchCid())) as string;
+      } else {
+        // refresh at next tick.
+        setTimeout(() => refresh());
+      }
       const res = await catSingle(indexerCid);
       const decodeMetadata = decodeIpfsRaw<IndexerDetails>(res);
       setMetadata(decodeMetadata);
