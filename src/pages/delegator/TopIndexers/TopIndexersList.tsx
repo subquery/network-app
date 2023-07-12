@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { AntDTable, SearchInput, TableText } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
-import { Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { GetTopIndexersQuery } from '@subql/network-query';
+import { DelegationFieldsFragment, GetTopIndexersQuery, IndexerFieldsFragment } from '@subql/network-query';
+import { useGetAllDelegationsQuery, useGetIndexersQuery } from '@subql/react-hooks';
 import { getOrderedAccounts, mulToPercentage, ROUTES, truncateToDecimalPlace } from '@utils';
 import { TableProps, Tag } from 'antd';
 import i18next from 'i18next';
@@ -21,6 +22,8 @@ const { DELEGATOR, INDEXER } = ROUTES;
 const getColumns = (
   account: string,
   viewIndexerDetail: (url: string) => void,
+  delegations: readonly (DelegationFieldsFragment | null)[],
+  indexers: readonly (IndexerFieldsFragment | null)[],
 ): TableProps<GetTopIndexersQuery['indexerPrograms'][number]>['columns'] => [
   {
     title: <TableTitle title={'#'} />,
@@ -196,7 +199,9 @@ const getColumns = (
     fixed: 'right' as FixedType,
     render: (id: string) => {
       if (id === account) return <Typography> - </Typography>;
-      return <DoDelegate indexerAddress={id} variant="textBtn" />;
+      const delegation = delegations.find((i) => i?.id === `${account}:${id}`);
+      const indexer = indexers.find((i) => i?.id === id);
+      return <DoDelegate indexerAddress={id} variant="textBtn" delegation={delegation} indexer={indexer} />;
     },
   },
 ];
@@ -210,6 +215,14 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
+
+  // TODO: add filter into network-query
+  const delegations = useGetAllDelegationsQuery();
+  const allIndexers = useGetIndexersQuery({
+    variables: {
+      filter: { id: { in: indexers.map((i) => i.id) } },
+    },
+  });
 
   // better sort in graphql but now cannot.
   const orderedIndexerList = getOrderedAccounts(
@@ -228,7 +241,18 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
     </div>
   );
 
-  const columns = getColumns(account ?? '', viewIndexerDetail);
+  const columns = React.useMemo(() => {
+    if (delegations.data?.delegations?.nodes && allIndexers.data?.indexers?.nodes) {
+      return getColumns(
+        account ?? '',
+        viewIndexerDetail,
+        delegations.data.delegations.nodes,
+        allIndexers.data.indexers.nodes,
+      );
+    }
+
+    return [];
+  }, [account, viewIndexerDetail, delegations, allIndexers]);
 
   return (
     <div className={styles.container}>
@@ -236,10 +260,14 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
         <SearchAddress />
       </div>
 
-      <AntDTable
-        customPagination
-        tableProps={{ columns, rowKey: 'id', scroll: { x: 1600 }, dataSource: [...orderedIndexerList] }}
-      />
+      {columns?.length ? (
+        <AntDTable
+          customPagination
+          tableProps={{ columns, rowKey: 'id', scroll: { x: 1600 }, dataSource: [...orderedIndexerList] }}
+        />
+      ) : (
+        <Spinner></Spinner>
+      )}
     </div>
   );
 };

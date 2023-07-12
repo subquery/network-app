@@ -37,7 +37,6 @@ function useSQTokenImpl() {
   const stakingAllowance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
-
     return contracts.sqToken.allowance(account, contracts.staking.address);
   }, [account, contracts]);
 

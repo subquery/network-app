@@ -1,6 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { limitContract, limitQueue } from '@utils/limitation';
+
 import { useWeb3Store } from 'src/stores';
 
 import { AsyncMemoReturn } from './useAsyncMemo';
@@ -12,13 +14,16 @@ export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasCl
   return useAsyncMemo(async () => {
     if (!contracts) return;
 
-    const [currentEra, lastClaimedEra, lastSettledEra] = await Promise.all([
-      contracts.eraManager.eraNumber(),
-      (await contracts.rewardsDistributor.getRewardInfo(indexer)).lastClaimEra,
-      contracts.rewardsStaking.getLastSettledEra(indexer),
-    ]);
-    const rewardClaimStatus = currentEra.eq(lastClaimedEra.add(1)) && lastSettledEra.lte(lastClaimedEra);
+    const lastClaimedEra = await limitQueue.add(() => contracts.rewardsDistributor.getRewardInfo(indexer));
+    const lastSettledEra = await limitQueue.add(() => contracts.rewardsStaking.getLastSettledEra(indexer));
 
-    return { hasClaimedRewards: rewardClaimStatus };
+    const currentEra = await limitContract(() => contracts.eraManager.eraNumber(), 'eraNumber');
+
+    if (lastClaimedEra && lastSettledEra && currentEra) {
+      const rewardClaimStatus =
+        currentEra.eq(lastClaimedEra.lastClaimEra.add(1)) && lastSettledEra.lte(lastClaimedEra.lastClaimEra);
+
+      return { hasClaimedRewards: rewardClaimStatus };
+    }
   }, [contracts]);
 }

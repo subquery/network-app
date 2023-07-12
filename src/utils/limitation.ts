@@ -2,10 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import plimit from 'p-limit';
+import PQueue from 'p-queue';
 
 import { sleep, waitForSomething } from './waitForSomething';
 
 const limit = plimit(3);
+export const limitQueue = new PQueue({
+  concurrency: 12,
+  interval: 1500,
+});
 const cachedResult: Record<string, any> = {};
 
 export enum limitContractCacheEnum {
