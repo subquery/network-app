@@ -18,10 +18,6 @@ const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) => {
   const httpOptions = { fetch, fetchOptions: { timeout: 5000 } };
 
-  if (!import.meta.env.PROD) {
-    return getHttpLink(fallbackServiceUrl);
-  }
-
   return deploymentHttpLink({
     deploymentId,
     httpOptions,
@@ -50,7 +46,7 @@ const links = ApolloLink.from([
         response: { url },
       } = operation.getContext();
 
-      if (url && url.match(/.+\/query\/[0-9a-zA-Z]{46}/)) return;
+      if (url && url.match(/.+\/(query)|(payg)\/[0-9a-zA-Z]{46}/)) return;
     } finally {
       // don't care there have errors.
     }
