@@ -18,10 +18,6 @@ const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) => {
   const httpOptions = { fetch, fetchOptions: { timeout: 5000 } };
 
-  if (!import.meta.env.PROD) {
-    return getHttpLink(fallbackServiceUrl);
-  }
-
   return deploymentHttpLink({
     deploymentId,
     httpOptions,
