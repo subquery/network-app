@@ -50,7 +50,7 @@ const links = ApolloLink.from([
         response: { url },
       } = operation.getContext();
 
-      if (url && url.match(/.+\/query\/[0-9a-zA-Z]{46}/)) return;
+      if (url && url.match(/.+\/(query)|(payg)\/[0-9a-zA-Z]{46}/)) return;
     } finally {
       // don't care there have errors.
     }
