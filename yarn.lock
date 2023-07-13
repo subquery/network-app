@@ -3964,10 +3964,10 @@
     resolve-from "^5.0.0"
     store2 "^2.12.0"
 
-"@subql/apollo-links@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.npmmirror.com/@subql/apollo-links/-/apollo-links-0.5.2.tgz#3d754cffbcb08c4d9128e2c5f97fadd9330e7de3"
-  integrity sha512-+TLWCJtGu0yiP21la6ow+stgcPRWKVEG3BHBKXmxOMjjX1m/TZr4J4QvlI/VgYGNL8k7ImHvZtlhvkJ4awe0KQ==
+"@subql/apollo-links@0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-0.5.3.tgz#65b0d21fe4a1e5f5dc282f201e6c569681c88e50"
+  integrity sha512-yDu5dCEKkIRQsq3+HHsdRKu5z6Hp9TP4dGqHoaA5TpDvqRKmff2tKCqE5YvOkFD8AdXA1GiCyF6LnhHt5N6xwA==
   dependencies:
     "@metamask/eth-sig-util" "5.1.0"
     apollo-link-error "^1.1.13"
