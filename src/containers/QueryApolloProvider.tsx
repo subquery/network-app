@@ -40,7 +40,7 @@ const links = ApolloLink.from([
   onError(({ graphQLErrors, operation }) => {
     // Filter consumer by community.
     // If community link goes error, apollo-links will try until all failed.
-    // So Just catch the error cause by fallback service.
+    // So Just catch the error caused by fallback service.
     try {
       const {
         response: { url },

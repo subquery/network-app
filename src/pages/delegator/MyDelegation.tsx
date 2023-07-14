@@ -96,6 +96,7 @@ export const MyDelegation: React.FC = () => {
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
 
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
+
   // TODO: refresh when do some actions.
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
@@ -173,3 +174,5 @@ export const MyDelegation: React.FC = () => {
     </>
   );
 };
+
+export default MyDelegation;

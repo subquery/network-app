@@ -37,3 +37,5 @@ export const Indexers: React.FC = () => {
     </>
   );
 };
+
+export default Indexers;

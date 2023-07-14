@@ -5,7 +5,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
-console.log(process.env.analyze);
+
 export default defineConfig({
   plugins: [eslint(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
   server: {

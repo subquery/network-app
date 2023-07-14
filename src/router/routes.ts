@@ -134,17 +134,31 @@ export const URLS = {
   OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
 };
 
-export const routers: {
+export type BasicRouteType = {
   path: string;
   component?: LazyExoticComponent<FC>;
   redirect?: string;
-}[] = [
+  children?: BasicRouteType[];
+};
+
+export const routers: BasicRouteType[] = [
   { path: '/', redirect: '/explorer' },
   { path: '/explorer/*', component: React.lazy(() => import('../pages/explorer/index')) },
   { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
   { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
   { path: '/indexer/*', component: React.lazy(() => import('../pages/indexer/index')) },
-  { path: '/delegator/*', component: React.lazy(() => import('../pages/delegator/index')) },
+
+  {
+    path: '/delegator',
+    component: React.lazy(() => import('../pages/delegator/index')),
+    redirect: '/delegator/delegating',
+    children: [
+      { path: 'delegating/*', component: React.lazy(() => import('../pages/delegator/MyDelegation')) },
+      { path: 'indexers/*', component: React.lazy(() => import('../pages/delegator/Indexers')) },
+      { path: 'indexer/:id', component: React.lazy(() => import('../pages/delegator/IndexerDetails/IndexerDetails')) },
+    ],
+  },
+
   { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
   { path: '/swap/*', component: React.lazy(() => import('../pages/swap/Swap')) },
 ];
