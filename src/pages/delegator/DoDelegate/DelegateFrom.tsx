@@ -3,33 +3,38 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner, Typography } from '@subql/components';
-import { useGetDelegationQuery, useGetDelegationsQuery } from '@subql/react-hooks';
+import { useFetchMetadata } from '@hooks/useFetchMetadata';
+import { Typography } from '@subql/components';
+import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
+import { limitQueue } from '@utils/limitation';
 import { Button, Divider, Select } from 'antd';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 
+import { IndexerDetails } from 'src/models';
+
 import { SummaryList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
-import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
+import { useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../utils';
+import { convertStringToNumber, formatEther, TOKEN } from '../../../utils';
 import styles from './DoDelegate.module.css';
 
 export const AddressName: React.FC<{
   address?: string;
-}> = ({ address }) => {
-  const { indexerMetadata: metadata } = useIndexerMetadata(address ?? '');
-  const { account } = useWeb3();
-
+  curAccount: string;
+  metadata?: IndexerDetails;
+}> = ({ curAccount, address, metadata }) => {
   return (
     <div className={clsx('flex-start', styles.option)}>
       <div className="flex-col">
-        <Typography>{address === account ? 'Your wallet' : metadata?.name ?? 'Indexer'} </Typography>
+        <Typography style={{ marginRight: 5 }}>
+          {address === curAccount ? 'Your wallet ' : metadata?.name ?? 'Indexer'}
+        </Typography>
         <Typography>{address} </Typography>
       </div>
     </div>
@@ -64,12 +69,15 @@ export const DelegateForm: React.FC<FormProps> = ({
 }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const fetchMetadata = useFetchMetadata();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
-  const delegations = useGetDelegationsQuery({
+  const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
+
   const { balance } = useSQToken();
 
+  const [delegationOptions, setDelegationOptions] = React.useState<{ label: React.ReactNode; value: string }[]>();
   const [delegateFrom, setDelegateFrom] = React.useState(account);
 
   const indexerDelegation = useGetDelegationQuery({
@@ -107,6 +115,56 @@ export const DelegateForm: React.FC<FormProps> = ({
       value: ` ${delegatedAmount} ${TOKEN}`,
     },
   ];
+
+  const initDelegations = async () => {
+    if (!account) return;
+    const { data, error } = await loadDelegations();
+    if (!error && data?.delegations?.nodes) {
+      const sortedDelegations = data.delegations.nodes
+        .map((delegation) => ({
+          ...delegation,
+          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, curEra), (v) =>
+            convertStringToNumber(formatEther(v ?? 0)),
+          ),
+        }))
+        .filter(
+          (delegation) =>
+            (delegation.value.current || delegation.value.after) &&
+            delegation.indexerId !== account &&
+            delegation?.indexerId !== indexerAddress,
+        );
+
+      const indexerMetadata = sortedDelegations.map((i) => {
+        const cid = i?.indexer?.metadata;
+        return limitQueue.add(() => fetchMetadata(cid));
+      });
+
+      const allMetadata = await Promise.all(indexerMetadata);
+
+      setDelegationOptions([
+        {
+          label: <AddressName curAccount={account} address={account} metadata={{ name: '', url: '', image: '' }} />,
+          value: account,
+        },
+        ...sortedDelegations.map((delegation, index) => {
+          return {
+            label: (
+              <AddressName
+                curAccount={account}
+                address={delegation.indexerId}
+                metadata={allMetadata[index] || undefined}
+              ></AddressName>
+            ),
+            value: delegation.indexerId || '',
+          };
+        }),
+      ]);
+    }
+  };
+
+  React.useEffect(() => {
+    initDelegations();
+  }, [account]);
   return (
     <Formik
       initialValues={{
@@ -124,12 +182,12 @@ export const DelegateForm: React.FC<FormProps> = ({
 
             <div className={styles.select}>
               <Typography className={styles.inputTitle}>{t('delegate.from')} </Typography>
-              <Typography className={'grayText'} variant="medium">
+              <Typography className={'grayText'} variant="medium" style={{ marginLeft: '10px' }}>
                 {t('delegate.redelegate')}
               </Typography>
               <Select
                 id="delegator"
-                defaultValue={account}
+                value={delegateFrom}
                 optionFilterProp="children"
                 onChange={(delegator) => {
                   resetForm();
@@ -141,44 +199,11 @@ export const DelegateForm: React.FC<FormProps> = ({
                 size="large"
                 allowClear
                 disabled={isSubmitting}
+                options={delegationOptions}
                 // TODO
                 // onSearch={onSearch}
                 // filterOption={() => {}}
-              >
-                {renderAsync(delegations, {
-                  error: (error) => <Typography>{`Failed to get delegation info: ${error.message}`}</Typography>,
-                  loading: () => <Spinner />,
-                  data: (data) => {
-                    const sortedDelegations =
-                      data.delegations?.nodes
-                        .map((delegation) => ({
-                          ...delegation,
-                          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, curEra), (v) =>
-                            convertStringToNumber(formatEther(v ?? 0)),
-                          ),
-                        }))
-                        .filter(
-                          (delegation) =>
-                            (delegation.value.current || delegation.value.after) &&
-                            delegation.indexerId !== account &&
-                            delegation?.indexerId !== indexerAddress,
-                        )
-                        .map((delegation) => delegation?.indexerId) ?? [];
-
-                    const delegationList = [account, ...sortedDelegations];
-
-                    return (
-                      <>
-                        {delegationList?.map((delegating) => (
-                          <Select.Option value={delegating} key={delegating}>
-                            <AddressName address={delegating ?? ''} />
-                          </Select.Option>
-                        ))}
-                      </>
-                    );
-                  },
-                })}
-              </Select>
+              ></Select>
             </div>
 
             <div className={'fullWidth'}>

@@ -153,8 +153,16 @@ export const routers: BasicRouteType[] = [
     component: React.lazy(() => import('../pages/delegator/index')),
     redirect: '/delegator/delegating',
     children: [
-      { path: 'delegating/*', component: React.lazy(() => import('../pages/delegator/MyDelegation')) },
-      { path: 'indexers/*', component: React.lazy(() => import('../pages/delegator/Indexers')) },
+      { path: 'delegating', component: React.lazy(() => import('../pages/delegator/MyDelegation')) },
+      {
+        path: 'indexers',
+        component: React.lazy(() => import('../pages/delegator/Indexers')),
+        redirect: '/delegator/indexers/top',
+        children: [
+          { path: 'top', component: React.lazy(() => import('../pages/delegator/TopIndexers/TopIndexers')) },
+          { path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) },
+        ],
+      },
       { path: 'indexer/:id', component: React.lazy(() => import('../pages/delegator/IndexerDetails/IndexerDetails')) },
     ],
   },

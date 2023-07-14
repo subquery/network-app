@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { useIPFS } from '@containers';
-import { decodeIpfsRaw } from '@containers/IPFS';
-import { bytes32ToCid, parseError } from '@utils';
+import { bytes32ToCid } from '@utils';
 import { limitQueue } from '@utils/limitation';
 import assert from 'assert';
 import localforage from 'localforage';
@@ -12,6 +10,7 @@ import localforage from 'localforage';
 import { useWeb3Store } from 'src/stores/web3Account';
 
 import { IndexerDetails, indexerMetadataSchema } from '../models';
+import { useFetchMetadata } from './useFetchMetadata';
 import { fetchIpfsMetadata } from './useIPFSMetadata';
 
 export async function getIndexerMetadata(
@@ -25,12 +24,18 @@ export async function getIndexerMetadata(
   return indexerMetadataSchema.validate(obj);
 }
 
-export function useIndexerMetadata(address: string): {
+export function useIndexerMetadata(
+  address: string,
+  options: {
+    cid?: string;
+    immediate: boolean;
+  } = { immediate: true },
+): {
   indexerMetadata: IndexerDetails;
   refresh: () => void;
 } {
   const { contracts } = useWeb3Store();
-  const { catSingle } = useIPFS();
+  const fetchMetadata = useFetchMetadata();
   const [metadata, setMetadata] = useState<IndexerDetails>();
 
   const fetchCid = async () => {
@@ -48,34 +53,33 @@ export function useIndexerMetadata(address: string): {
     }
   };
 
-  const fetchMetadata = async () => {
-    try {
+  const refresh = async () => {
+    await localforage.removeItem(`${address}-metadata`);
+    init();
+  };
+
+  const init = async () => {
+    if (options.immediate) {
       // fetch cid from cache first and use it for render.
       // then will fetch newest data from contract.
-      let indexerCid = await fetchCidFromCache();
+      let indexerCid = options.cid || (await fetchCidFromCache());
+
       if (!indexerCid) {
         indexerCid = (await limitQueue.add(() => fetchCid())) as string;
       } else {
         // refresh at next tick.
         setTimeout(() => refresh());
       }
-      const res = await catSingle(indexerCid);
-      const decodeMetadata = decodeIpfsRaw<IndexerDetails>(res);
-      setMetadata(decodeMetadata);
-    } catch (e) {
-      parseError(e);
-      localforage.removeItem(`${address}-metadata`);
+      const res = await fetchMetadata(indexerCid);
+      if (res) {
+        setMetadata(res);
+      }
     }
   };
 
-  const refresh = async () => {
-    await localforage.removeItem(`${address}-metadata`);
-    fetchMetadata();
-  };
-
   useEffect(() => {
-    fetchMetadata();
-  }, []);
+    init();
+  }, [options.immediate]);
 
   return {
     indexerMetadata: {

@@ -15,18 +15,17 @@ const LazyComponent = (Component: LazyExoticComponent<FC>) => {
   );
 };
 
-const renderRoutes: FC<BasicRouteType[]> = (routers) => {
+const renderRoutes: FC<{ routers: BasicRouteType[]; parentPath?: string }> = ({ routers, parentPath = '' }) => {
   return (
     <>
       {routers.map((router) => {
-        console.log(router.redirect);
-
         if (router.component || router.redirect) {
           return (
             <Route
               path={router.path}
               key={router.path}
               element={
+                // Support that just have redirect field
                 <>
                   {router.component ? (
                     LazyComponent(router.component)
@@ -36,10 +35,11 @@ const renderRoutes: FC<BasicRouteType[]> = (routers) => {
                 </>
               }
             >
-              {router.children && renderRoutes(router.children)}
+              {router.children && renderRoutes({ routers: router.children, parentPath: router.path })}
+              {/* Support that have some common part share to all children components and then redirect to a exact children to work */}
               {router.redirect && (
                 <Route
-                  path={router.path}
+                  path={`${parentPath}${router.path.startsWith('/') ? router.path : `/${router.path}`}`}
                   key={router.path}
                   element={<Navigate to={router.redirect}></Navigate>}
                 ></Route>
@@ -56,7 +56,7 @@ const renderRoutes: FC<BasicRouteType[]> = (routers) => {
 };
 
 const RouterComponent: FC = () => {
-  return <Routes>{renderRoutes(routers)}</Routes>;
+  return <Routes>{renderRoutes({ routers })}</Routes>;
 };
 
 export default RouterComponent;
