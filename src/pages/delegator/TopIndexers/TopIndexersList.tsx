@@ -21,7 +21,6 @@ const { DELEGATOR, INDEXER } = ROUTES;
 
 const getColumns = (
   account: string,
-  viewIndexerDetail: (url: string) => void,
   delegations: readonly (DelegationFieldsFragment | null)[],
   indexers: readonly (IndexerFieldsFragment | null)[],
 ): TableProps<GetTopIndexersQuery['indexerPrograms'][number]>['columns'] => [
@@ -30,9 +29,6 @@ const getColumns = (
     dataIndex: 'idx',
     width: 50,
     render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
   },
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,
@@ -66,9 +62,7 @@ const getColumns = (
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.score')} />,
     dataIndex: 'totalPoints',
     render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
-    onCell: () => ({
-      onClick: () => viewIndexerDetail(account),
-    }),
+
     sorter: (a, b) => a.totalPoints - b.totalPoints,
     showSorterTooltip: false,
   },
@@ -76,9 +70,7 @@ const getColumns = (
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{truncateToDecimalPlace(upTime, 2)}%</TableText>,
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     sorter: (a, b) => a.uptime - b.uptime,
     showSorterTooltip: false,
   },
@@ -86,9 +78,7 @@ const getColumns = (
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ownStake')} title={i18next.t('topIndexers.ownStake')} />,
     dataIndex: 'ownStaked',
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     sorter: (a, b) => a.ownStaked - b.ownStaked,
     showSorterTooltip: false,
   },
@@ -98,9 +88,7 @@ const getColumns = (
     ),
     dataIndex: 'delegated',
     render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     sorter: (a, b) => a.delegated - b.delegated,
     showSorterTooltip: false,
   },
@@ -115,9 +103,7 @@ const getColumns = (
     render: (eraRewardsCollection) => (
       <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     filters: [
       {
         text: i18next.t('general.frequent'),
@@ -142,9 +128,7 @@ const getColumns = (
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     filters: [
       {
         text: i18next.t('general.enabled'),
@@ -174,9 +158,7 @@ const getColumns = (
       }
       return <Tag>{i18next.t('general.disabled')}</Tag>;
     },
-    onCell: (record: GetTopIndexersQuery['indexerPrograms'][number]) => ({
-      onClick: () => viewIndexerDetail(record.id),
-    }),
+
     filters: [
       {
         text: i18next.t('general.enabled'),
@@ -201,7 +183,15 @@ const getColumns = (
       if (id === account) return <Typography> - </Typography>;
       const delegation = delegations.find((i) => i?.id === `${account}:${id}`);
       const indexer = indexers.find((i) => i?.id === id);
-      return <DoDelegate indexerAddress={id} variant="textBtn" delegation={delegation} indexer={indexer} />;
+      return (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <DoDelegate indexerAddress={id} variant="textBtn" delegation={delegation} indexer={indexer} />
+        </div>
+      );
     },
   },
 ];
@@ -243,12 +233,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
 
   const columns = React.useMemo(() => {
     if (delegations.data?.delegations?.nodes && allIndexers.data?.indexers?.nodes) {
-      return getColumns(
-        account ?? '',
-        viewIndexerDetail,
-        delegations.data.delegations.nodes,
-        allIndexers.data.indexers.nodes,
-      );
+      return getColumns(account ?? '', delegations.data.delegations.nodes, allIndexers.data.indexers.nodes);
     }
 
     return [];
@@ -263,7 +248,17 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
       {columns?.length ? (
         <AntDTable
           customPagination
-          tableProps={{ columns, rowKey: 'id', scroll: { x: 1600 }, dataSource: [...orderedIndexerList] }}
+          tableProps={{
+            columns,
+            rowKey: 'id',
+            scroll: { x: 1600 },
+            dataSource: [...orderedIndexerList],
+            onRow: (record) => ({
+              onClick: () => {
+                viewIndexerDetail(record.id);
+              },
+            }),
+          }}
         />
       ) : (
         <Spinner></Spinner>
