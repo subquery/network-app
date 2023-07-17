@@ -50,10 +50,8 @@ export const limitContract = async <T extends Promise<any>>(
     try {
       const result = await limit(asyncFunc);
       if (cacheName) {
-        // cachedResult[cacheName] = result;
         cachedResult.set(cacheName, result);
         setTimeout(() => {
-          // delete cachedResult[cacheName];
           cachedResult.delete(cacheName);
         }, 15000);
       }
