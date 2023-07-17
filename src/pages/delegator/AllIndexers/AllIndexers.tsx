@@ -47,3 +47,5 @@ export const AllIndexers: React.FC = () => {
     </div>
   );
 };
+
+export default AllIndexers;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as Sentry from '@sentry/react';
-import { isString } from 'lodash';
+import { isString } from 'lodash-es';
 
 const eventLimiter: { [index: string]: boolean } = {};
 
