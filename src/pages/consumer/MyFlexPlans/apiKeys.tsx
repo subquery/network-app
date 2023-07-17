@@ -136,6 +136,7 @@ const ApiKeysFC: FC = () => {
           if (!isConsumerHostError(res.data)) {
             await init();
             setOpenCreateNew(false);
+            setNewApiKeyName('');
           }
         }}
         onCancel={() => {
