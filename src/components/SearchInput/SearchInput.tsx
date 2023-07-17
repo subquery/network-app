@@ -5,8 +5,6 @@ import * as React from 'react';
 import { Typography } from '@subql/components';
 import { Input, InputProps } from 'antd';
 
-import styles from './SearchInput.module.css';
-
 type Props = {
   onSearch?: (input: string) => void;
   searchResult?: string;
