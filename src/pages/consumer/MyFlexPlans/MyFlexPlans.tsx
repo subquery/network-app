@@ -12,15 +12,17 @@ import { AppPageHeader, Card, TabButtons, WalletRoute } from '../../../component
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
+import ApiKeys from './apiKeys';
 import { BillingAction } from './BillingAction';
 import styles from './MyFlexPlans.module.css';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 
-const { ONGOING_PLANS, EXPIRED_PLANS } = ROUTES;
+const { ONGOING_PLANS, EXPIRED_PLANS, API_KEY } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
   { label: i18next.t('myFlexPlans.closed'), link: EXPIRED_PLANS },
+  { label: i18next.t('myFlexPlans.apiKey'), link: API_KEY },
 ];
 
 // TODO: useSQTToken update once Container improve - renovation
@@ -86,6 +88,7 @@ export const MyFlexPlans: React.FC = () => {
           <Routes>
             <Route path={ONGOING_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansQuery} />} />
             <Route path={EXPIRED_PLANS} element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansQuery} />} />
+            <Route path={API_KEY} element={<ApiKeys />} />
             <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
           </Routes>
         }
