@@ -80,7 +80,7 @@ const Header = () => {
 
 export const MyFlexPlans: React.FC = () => {
   return (
-    <div>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Header />
       <WalletRoute
         componentMode
