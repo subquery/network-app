@@ -138,6 +138,9 @@ const ApiKeysFC: FC = () => {
             setOpenCreateNew(false);
           }
         }}
+        onCancel={() => {
+          setOpenCreateNew(false);
+        }}
       >
         <div>
           <span>Name</span>
