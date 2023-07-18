@@ -46,7 +46,7 @@ function useIPFSImpl(
       return cachedRes;
     }
 
-    const results = ipfs.current.cat(cacheKey);
+    const results = ipfs.current.cat(cid);
 
     let res: Uint8Array | undefined = undefined;
 
