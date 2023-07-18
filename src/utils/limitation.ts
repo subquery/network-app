@@ -15,6 +15,21 @@ export const limitQueue = new PQueue({
 // TODO: migrate to cache module
 // supply more robust cache API.
 // driver, expiration system...
+export const makeCacheKey = (
+  key: string,
+  options: {
+    prefix?: string;
+    suffix?: string;
+    type?: string; // maybe need to make a const varible. gerneral/sqt/flexplan such as.
+  } = {},
+) => {
+  // const prefix = options.prefix ?? import.meta.env.MODE
+  // const type = options.type ?? 'gerneral'
+  // const suffix = options
+  const { prefix = import.meta.env.MODE, type = 'gerneral', suffix = '' } = options;
+  return `${prefix}-${type}-${key}-${suffix}`;
+};
+
 export const cachedResult: Map<string, any> = new Map();
 
 export enum limitContractCacheEnum {

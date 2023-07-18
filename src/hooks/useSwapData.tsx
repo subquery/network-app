@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
 import { useGetOrdersQuery } from '@subql/react-hooks';
-import { limitContract } from '@utils/limitation';
+import { limitContract, makeCacheKey } from '@utils/limitation';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
@@ -28,7 +28,10 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-    const { tokenGet, tokenGive } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
+    const { tokenGet, tokenGive } = await limitContract(
+      () => contracts.permissionedExchange.orders(orderId),
+      makeCacheKey(orderId, { type: 'swapOrders' }),
+    );
     return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
   }, [contracts, orderId]);
 }
@@ -44,7 +47,7 @@ export function useSwapRate(orderId: string | undefined): AsyncMemoReturn<number
     assert(contracts, 'Contracts not available');
     const { amountGive, amountGet, tokenGet, tokenGive } = await limitContract(
       () => contracts.permissionedExchange.orders(orderId),
-      orderId,
+      makeCacheKey(orderId, { type: 'swapOrders' }),
     );
     return formatToken(amountGive, tokenDecimals[tokenGive]) / formatToken(amountGet, tokenDecimals[tokenGet]);
   }, [contracts, orderId]);
@@ -70,7 +73,10 @@ export function useSwapPool(orderId: string | undefined): AsyncMemoReturn<BigNum
     if (!orderId) return BigNumber.from(0);
 
     assert(contracts, 'Contracts not available');
-    const { tokenGiveBalance } = await limitContract(() => contracts.permissionedExchange.orders(orderId), orderId);
+    const { tokenGiveBalance } = await limitContract(
+      () => contracts.permissionedExchange.orders(orderId),
+      makeCacheKey(orderId, { type: 'swapOrders' }),
+    );
 
     return tokenGiveBalance;
   }, [contracts, orderId]);
@@ -84,7 +90,12 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    return await limitContract(() => contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account));
+    return await limitContract(() =>
+      contracts.permissionedExchange.tradeQuota(
+        contracts?.sqToken.address,
+        makeCacheKey(`${account}`, { type: 'sqtToken' }),
+      ),
+    );
   }, [contracts]);
 }
 

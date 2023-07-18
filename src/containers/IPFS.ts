@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { makeCacheKey } from '@utils/limitation';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import localforage from 'localforage';
 import LRUCache from 'lru-cache';
@@ -31,20 +32,21 @@ function useIPFSImpl(
   }, [gateway, logger]);
 
   const catSingle = async (cid: string): Promise<Uint8Array> => {
-    const result = cache.current.get(cid);
+    const cacheKey = makeCacheKey(cid, { type: 'IPFS' });
+    const result = cache.current.get(cacheKey);
     if (result) {
       return result;
     }
 
-    const cachedRes = await localforage.getItem<Uint8Array>(cid);
+    const cachedRes = await localforage.getItem<Uint8Array>(cacheKey);
 
     // maybe need a flush way.
     if (cachedRes) {
-      cache.current.set(cid, cachedRes);
+      cache.current.set(cacheKey, cachedRes);
       return cachedRes;
     }
 
-    const results = ipfs.current.cat(cid);
+    const results = ipfs.current.cat(cacheKey);
 
     let res: Uint8Array | undefined = undefined;
 
@@ -58,8 +60,8 @@ function useIPFSImpl(
     }
 
     if (res) {
-      cache.current.set(cid, res);
-      localforage.setItem(cid, res);
+      cache.current.set(cacheKey, res);
+      localforage.setItem(cacheKey, res);
       return res;
     }
 
