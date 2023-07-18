@@ -106,6 +106,7 @@ const translation = {
       'Flex Plans are advertised by Indexers on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
     ongoing: 'Ongoing',
     closed: 'Closed',
+    apiKey: 'API Key',
     playground: 'Playground',
     error: 'Fetch playground wrong',
     billing: {
