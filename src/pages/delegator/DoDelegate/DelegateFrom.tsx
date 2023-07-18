@@ -74,7 +74,6 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
-
   const { balance } = useSQToken();
 
   const [delegationOptions, setDelegationOptions] = React.useState<{ label: React.ReactNode; value: string }[]>();
@@ -92,18 +91,33 @@ export const DelegateForm: React.FC<FormProps> = ({
     return rawDelegate;
   };
 
-  const isYourself = delegateFrom === account;
-  let maxAmount: BigNumberish | undefined;
+  const isYourself = React.useMemo(() => delegateFrom === account, [account, delegateFrom]);
 
-  if (isYourself) {
-    maxAmount = balance.data;
-  } else {
-    const indexerDelegation = getIndexerDelegation();
-    maxAmount = indexerDelegation?.after;
-  }
-  const sortedMaxAmount = formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
+  const sortedMaxAmount = React.useMemo(() => {
+    let maxAmount: BigNumberish | undefined;
 
-  const maxAmountText = `Max available delegation: ${sortedMaxAmount} ${TOKEN} (next era).`;
+    if (isYourself) {
+      maxAmount = balance.data;
+    } else {
+      const indexerDelegation = getIndexerDelegation();
+      maxAmount = indexerDelegation?.after;
+    }
+
+    return formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
+  }, [isYourself, balance, getIndexerDelegation]);
+
+  const maxAmountText = React.useMemo(() => {
+    if (isYourself) {
+      return t('delegate.walletBalance', {
+        balance: formatEther(balance.data, 4),
+        token: TOKEN,
+      });
+    }
+    return t('delegate.amountAvailable', {
+      balance: sortedMaxAmount,
+      token: TOKEN,
+    });
+  }, [isYourself, sortedMaxAmount, TOKEN, balance]);
 
   const summaryList = [
     {
