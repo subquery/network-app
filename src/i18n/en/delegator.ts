@@ -41,6 +41,8 @@ const translation = {
     nonToUndelegate: `There is 0 ${TOKEN} delegating for next era.`,
     delegationDesc:
       'View all Indexers you have delegated your kSQT tokens to. In return for delegating, you will earn rewards in kSQT from the rewards pool.',
+    walletBalance: 'Wallet Balance: {{balance}} {{token}}',
+    amountAvailable: 'Amount available for delegation: {{balance}} {{token}}',
   },
 
   withdrawals: {
