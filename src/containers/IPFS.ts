@@ -27,7 +27,6 @@ function useIPFSImpl(
   const cache = React.useRef<LRUCache<string, Uint8Array>>(new LRUCache(150));
 
   React.useEffect(() => {
-    // logger.l(`Creating ipfs client at: ${gateway}`);
     ipfs.current = create({ url: gateway });
   }, [gateway, logger]);
 
@@ -40,7 +39,6 @@ function useIPFSImpl(
 
     const cachedRes = await localforage.getItem<Uint8Array>(cacheKey);
 
-    // maybe need a flush way.
     if (cachedRes) {
       cache.current.set(cacheKey, cachedRes);
       return cachedRes;
