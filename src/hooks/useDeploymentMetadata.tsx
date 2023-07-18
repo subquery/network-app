@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useGetDeploymentQuery } from '@subql/react-hooks';
+import { useEffect } from 'react';
+import { useGetDeploymentLazyQuery } from '@subql/react-hooks';
 
 import { useIPFS } from '../containers';
 import { AsyncData, mergeAsyncLast } from '../utils';
@@ -32,15 +33,21 @@ export async function getDeploymentMetadata(
 
 export function useDeploymentMetadata(deploymentId: string | undefined): AsyncData<DeploymentMetadata | undefined> {
   const { catSingle } = useIPFS();
-  const asyncDeployment = useGetDeploymentQuery({
-    variables: {
-      deploymentId: deploymentId ?? '',
-    },
-  });
+  const [loadDeployment, asyncDeployment] = useGetDeploymentLazyQuery();
   const asyncMetadata = useAsyncMemo(
     () => getDeploymentMetadata(catSingle, asyncDeployment.data?.deployment?.version),
     [catSingle, asyncDeployment.data?.deployment?.version],
   );
+
+  useEffect(() => {
+    if (deploymentId) {
+      loadDeployment({
+        variables: {
+          deploymentId,
+        },
+      });
+    }
+  }, [deploymentId]);
 
   return mergeAsyncLast(asyncDeployment, asyncMetadata);
 }
