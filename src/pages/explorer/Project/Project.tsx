@@ -144,7 +144,7 @@ const ProjectInner: React.FC = () => {
   React.useEffect(() => {
     if (deploymentId) {
       loadIndexersLazy({
-        variables: { deploymentId: deploymentId, offset },
+        variables: { deploymentId, offset },
       });
     }
   }, [deploymentId]);

@@ -43,7 +43,7 @@ export function useDeploymentMetadata(deploymentId: string | undefined): AsyncDa
     if (deploymentId) {
       loadDeployment({
         variables: {
-          deploymentId: deploymentId ?? '',
+          deploymentId,
         },
       });
     }
