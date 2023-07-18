@@ -20,6 +20,7 @@ const EmptyApiKeys: FC<{ children: React.ReactNode }> = ({ children }) => {
       <Typography type="secondary">Create an API key to use in your application.</Typography>
       <Typography type="secondary">This key can be used for request queries. Learn more here.</Typography>
       <Typography type="secondary" style={{ marginTop: '24px' }}>
+        {/* TODO: finish it when missing document done. */}
         Learn more <a>here</a>
       </Typography>
       {children}
