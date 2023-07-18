@@ -19,7 +19,7 @@ import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../M
 import { SummaryList } from '../SummaryList';
 import { TableText } from '../TableText';
 import TransactionModal from '../TransactionModal';
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 import { IndexerName } from './IndexerName';
 
 export type PlansTableProps = {

@@ -11,7 +11,7 @@ import { Pagination, Table, TableProps } from 'antd';
 
 import { ExcludeNull, notEmpty } from '../../utils';
 import { SearchInput } from '../SearchInput';
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 import Row from './Row';
 
 type Props = {

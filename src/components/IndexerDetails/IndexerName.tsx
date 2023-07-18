@@ -11,7 +11,7 @@ import { useENS } from '../../hooks/useEns';
 import { truncateAddress } from '../../utils';
 import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 
 type Props = {
   name?: string;

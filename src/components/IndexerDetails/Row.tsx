@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BsDashSquare, BsInfoSquare, BsPlusSquare } from 'react-icons/bs';
+import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { LazyQueryResult } from '@apollo/client';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { Spinner } from '@subql/components';
@@ -34,7 +34,7 @@ import {
 import Copy from '../Copy';
 import Status from '../Status';
 import { deploymentStatus } from '../Status/Status';
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 import { IndexerName } from './IndexerName';
 import { PlansTable } from './PlansTable';
 import Progress from './Progress';
@@ -165,12 +165,14 @@ const ConnectedRow: React.FC<{
           );
         }
         return (
-          account !== indexer.indexerId &&
-          (showPlans ? (
-            <BsDashSquare onClick={toggleShowPlans} size="20" className="pointer" />
-          ) : (
-            <BsPlusSquare onClick={toggleShowPlans} size="20" className="pointer" />
-          ))
+          <div className={styles.planButton}>
+            {account !== indexer.indexerId &&
+              (showPlans ? (
+                <BsChevronDown onClick={toggleShowPlans} size="20" className="pointer" />
+              ) : (
+                <BsChevronUp onClick={toggleShowPlans} size="20" className="pointer" />
+              ))}
+          </div>
         );
       },
     },

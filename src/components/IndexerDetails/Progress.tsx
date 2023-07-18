@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ProgressBar, Typography } from '@subql/components';
 import { strip } from '@utils';
 
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 
 const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBlock: number }> = ({
   startBlock = 0,
