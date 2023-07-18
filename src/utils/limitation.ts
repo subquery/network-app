@@ -11,7 +11,26 @@ export const limitQueue = new PQueue({
   concurrency: 12,
   interval: 1500,
 });
-const cachedResult: Record<string, any> = {};
+
+// TODO: migrate to cache module
+// supply more robust cache API.
+// driver, expiration system...
+export const makeCacheKey = (
+  key: string,
+  options: {
+    prefix?: string;
+    suffix?: string;
+    type?: string; // maybe need to make a const varible. gerneral/sqt/flexplan such as.
+  } = {},
+) => {
+  // const prefix = options.prefix ?? import.meta.env.MODE
+  // const type = options.type ?? 'gerneral'
+  // const suffix = options
+  const { prefix = import.meta.env.MODE, type = 'gerneral', suffix = '' } = options;
+  return `${prefix}-${type}-${key}-${suffix}`;
+};
+
+export const cachedResult: Map<string, any> = new Map();
 
 export enum limitContractCacheEnum {
   CACHED_PENDING = 'cached-pending',
@@ -26,29 +45,29 @@ export const limitContract = async <T extends Promise<any>>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any = null;
   if (cacheName) {
-    if (cacheName in cachedResult) {
-      const curCachedResult = cachedResult[cacheName];
+    if (cachedResult.has(cacheName)) {
+      const curCachedResult = cachedResult.get(cacheName);
       if (curCachedResult === limitContractCacheEnum.CACHED_PENDING) {
         const getCache = await waitForSomething({
-          func: () => cachedResult[cacheName] !== limitContractCacheEnum.CACHED_PENDING,
+          func: () => cachedResult.get(cacheName) !== limitContractCacheEnum.CACHED_PENDING,
           timeout: 5 * 10000,
         });
-        if (getCache) return cachedResult[cacheName];
+        if (getCache) return cachedResult.get(cacheName);
       } else {
         return curCachedResult;
       }
     }
 
-    cachedResult[cacheName] = limitContractCacheEnum.CACHED_PENDING;
+    cachedResult.set(cacheName, limitContractCacheEnum.CACHED_PENDING);
   }
 
   for (const _ of [0, 0, 0, 0]) {
     try {
       const result = await limit(asyncFunc);
       if (cacheName) {
-        cachedResult[cacheName] = result;
+        cachedResult.set(cacheName, result);
         setTimeout(() => {
-          delete cachedResult[cacheName];
+          cachedResult.delete(cacheName);
         }, 15000);
       }
       return result;
@@ -60,7 +79,7 @@ export const limitContract = async <T extends Promise<any>>(
   }
 
   if (cacheName) {
-    delete cachedResult[cacheName];
+    cachedResult.delete(cacheName);
   }
   throw new Error(error);
 };
