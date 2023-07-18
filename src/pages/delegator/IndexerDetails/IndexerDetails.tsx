@@ -104,3 +104,5 @@ export const IndexerDetails = () => {
     </>
   );
 };
+
+export default IndexerDetails;

@@ -13,7 +13,7 @@ import { CurrentEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
-import { useGetIndexerQuery } from '@subql/react-hooks';
+import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
 import { TableProps } from 'antd';
@@ -57,6 +57,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
 
+  const delegations = useGetAllDelegationsQuery();
   /**
    * SearchInput logic
    */
@@ -278,9 +279,11 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
+        const curIndexer = indexers?.find((i) => i.id === id);
+        const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
         return (
           <div className={'flex-start'}>
-            <DoDelegate indexerAddress={id} variant="textBtn" />
+            <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer} delegation={delegation} />
           </div>
         );
       },

@@ -36,3 +36,5 @@ export const TopIndexers: React.FC = () => {
     </div>
   );
 };
+
+export default TopIndexers;

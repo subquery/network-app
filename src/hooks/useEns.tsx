@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import localforage from 'localforage';
-import { once } from 'lodash';
+import { once } from 'lodash-es';
 
 import { useWeb3Store } from 'src/stores';
 

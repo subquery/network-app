@@ -29,3 +29,5 @@ __generated__
 src/globalTypes.ts
 .env
 dist
+
+stats.html
