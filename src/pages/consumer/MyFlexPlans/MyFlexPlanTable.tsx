@@ -7,7 +7,7 @@ import { useLocation } from 'react-router';
 import { TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { ChannelStatus } from '@subql/network-query';
-import { useGetConsumerClosedFlexPlansQuery, useGetConsumerOngoingFlexPlansQuery } from '@subql/react-hooks';
+import { useGetConsumerClosedFlexPlansLazyQuery, useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
 import { TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
@@ -109,7 +109,7 @@ const getColumns = (path: typeof ONGOING_PLANS_NAV | typeof CLOSED_PLANS_NAV, on
 };
 
 interface MyFlexPlanTableProps {
-  queryFn: typeof useGetConsumerOngoingFlexPlansQuery | typeof useGetConsumerClosedFlexPlansQuery;
+  queryFn: typeof useGetConsumerOngoingFlexPlansLazyQuery | typeof useGetConsumerClosedFlexPlansLazyQuery;
 }
 
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
@@ -118,28 +118,17 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: account ?? '', now, offset: 0 };
-  const flexPlans = queryFn({ variables: sortedParams });
+  const [loadFlexPlan, flexPlans] = queryFn({ variables: sortedParams, fetchPolicy: 'no-cache' });
 
-  const fetchMoreFlexPlans = (offset?: number) => {
-    flexPlans.fetchMore({
-      variables: {
-        offset,
-        consumer: account ?? '',
-        now: moment().toDate(),
-      },
-      updateQuery: (previous, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previous;
-        return { ...fetchMoreResult };
-      },
-    });
+  const fetchMoreFlexPlans = () => {
+    loadFlexPlan();
   };
 
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      fetchMoreFlexPlans(); // Cache to avoid re-render
-    }, 20000);
-    return () => clearInterval(interval);
-  }, []);
+    if (account) {
+      loadFlexPlan();
+    }
+  }, [account]);
 
   return (
     <div className="contentContainer">

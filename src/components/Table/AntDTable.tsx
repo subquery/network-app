@@ -34,7 +34,7 @@ export const AntDTable: React.FC<AntDTableProps> = ({ customPagination = false, 
         className={clsx('flex-end', 'verticalMargin')}
         defaultCurrent={1}
         showSizeChanger={false}
-        pageSize={10} // must be the same as useQuery first field
+        pageSize={1} // must be the same as useQuery first field
         {...paginationProps}
       />
     </>
