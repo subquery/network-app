@@ -52,7 +52,7 @@ interface IOngoingFlexPlanActions {
   onSuccess: () => void;
 }
 
-export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flexPlan }) => {
+export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flexPlan, onSuccess }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string>();
@@ -69,14 +69,19 @@ export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flex
 
   const handleOnSubmit = async (onCancel: () => void) => {
     setIsLoading(true);
-    const terminateResult = await terminatePlan(flexPlan.id, account ?? '', library);
-    const { error, data } = terminateResult;
+    try {
+      const terminateResult = await terminatePlan(flexPlan.id, account ?? '', library);
+      const { error, data } = terminateResult;
 
-    if (error) {
-      setError(`Failed to terminated. ${error}`);
+      if (error) {
+        setError(`Failed to terminated. ${error}`);
+        return;
+      }
+      onSuccess && onSuccess();
+      onCancel();
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
