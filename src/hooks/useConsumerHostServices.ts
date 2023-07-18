@@ -12,14 +12,10 @@ const instance = axios.create({
 });
 
 export const isConsumerHostError = (res: object): res is ConsumerHostError => {
-  if (Object.hasOwn(res, 'error')) {
-    return true;
-  }
-
-  return false;
+  return Object.hasOwn(res, 'error');
 };
 
-// Will add more controller along side below TODO
+// Will add more controller along with below TODO
 export type ConsumerHostServicesProps = {
   alert: boolean;
 };
