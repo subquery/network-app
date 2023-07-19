@@ -77,7 +77,7 @@ export async function requestServiceAgreementToken(
   library: Web3Provider | undefined,
   requestTokenUrl: string | undefined,
   indexer: string,
-  agreement: string,
+  agreement: string | undefined,
   deploymentId: string,
 ): Promise<{ data?: string; error?: string } | undefined> {
   try {
@@ -92,7 +92,7 @@ export async function requestServiceAgreementToken(
       deploymentId,
     };
     const eip721Signature = await getEip721Signature(signMsg, ConsumerSAMessageType, account, library);
-
+    console.warn(eip721Signature);
     const tokenRequestBody = authSARequestBody(
       {
         consumer: account,

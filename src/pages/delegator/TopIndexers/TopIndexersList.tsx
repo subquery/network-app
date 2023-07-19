@@ -205,6 +205,9 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
+  const [filterParams, setFilterParams] = React.useState<{ address: string }>({
+    address: '',
+  });
 
   // TODO: add filter into network-query
   const delegations = useGetAllDelegationsQuery();
@@ -215,17 +218,23 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   });
 
   // better sort in graphql but now cannot.
-  const orderedIndexerList = getOrderedAccounts(
-    indexers.slice().sort((a, b) => b.totalPoints - a.totalPoints),
-    'id',
-    account,
-  );
+  const orderedIndexerList = React.useMemo(() => {
+    return getOrderedAccounts(
+      indexers.slice().sort((a, b) => b.totalPoints - a.totalPoints),
+      'id',
+      account,
+    ).filter((i) => i.id.includes(filterParams.address));
+  }, [indexers, account, filterParams]);
 
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>
       <SearchInput
+        defaultValue={filterParams.address}
         onSearch={(value: string) => {
-          console.log(`search value ${value}`);
+          setFilterParams({
+            ...filterParams,
+            address: value,
+          });
         }}
       />
     </div>
@@ -252,7 +261,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
             columns,
             rowKey: 'id',
             scroll: { x: 1600 },
-            dataSource: [...orderedIndexerList],
+            dataSource: orderedIndexerList,
             onRow: (record) => ({
               onClick: () => {
                 viewIndexerDetail(record.id);

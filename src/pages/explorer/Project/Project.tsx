@@ -7,7 +7,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 're
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import {
-  useGetDeploymentIndexersQuery,
+  useGetDeploymentIndexersLazyQuery,
   useGetProjectDeploymentsQuery,
   useGetProjectOngoingServiceAgreementsQuery,
 } from '@subql/react-hooks';
@@ -43,33 +43,66 @@ const ProjectInner: React.FC = () => {
   const query = useRouteQuery();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [offset, setOffset] = React.useState(0);
-  const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
-
   const asyncProject = useProjectFromQuery(id ?? '');
   const { data: deployments } = useGetProjectDeploymentsQuery({
     variables: {
       projectId: id ?? '',
     },
   });
+  const [loadIndexersLazy, asyncIndexers] = useGetDeploymentIndexersLazyQuery();
 
-  const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
+  const [offset, setOffset] = React.useState(0);
+  const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
 
-  const asyncIndexers = useGetDeploymentIndexersQuery({
-    variables: { deploymentId: deploymentId ?? '', offset },
-  });
+  const sortedTabList = React.useMemo(() => {
+    const tabList = [
+      { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
+      { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+      { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
+    ];
+    const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
+    return import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
+  }, [location.search]);
 
-  const fetchMore = (offset: number) => {
-    setOffset(offset);
-  };
+  const deploymentId = React.useMemo(() => {
+    return query.get('deploymentId') || asyncProject.data?.currentDeployment;
+  }, [asyncProject]);
 
   const indexers = React.useMemo(
     () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty),
     [asyncIndexers.data],
   );
+
+  const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
+
+  const handleChangeVersion = (value: string) => {
+    navigate(`${location.pathname}?deploymentId=${value}`);
+  };
+
+  const fetchMore = (offset: number) => {
+    setOffset(offset);
+  };
+
+  const indexerDetails = renderAsync(asyncIndexers, {
+    loading: () => <Spinner />,
+    error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
+    data: (data) => {
+      if (!indexers?.length) {
+        return <NoIndexers />;
+      }
+      return (
+        <IndexerDetails
+          indexers={indexers}
+          deploymentId={deploymentId}
+          totalCount={data?.deploymentIndexers?.totalCount}
+          onLoadMore={fetchMore}
+          offset={offset}
+        />
+      );
+    },
+  });
 
   React.useEffect(() => {
     const getVersions = async () => {
@@ -108,43 +141,15 @@ const ProjectInner: React.FC = () => {
     }
   }, [deploymentVersions, deployments, getVersionMetadata]);
 
-  const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
+  React.useEffect(() => {
+    if (deploymentId) {
+      loadIndexersLazy({
+        variables: { deploymentId, offset },
+      });
+    }
+  }, [deploymentId]);
 
-  const handleChangeVersion = (value: string) => {
-    navigate(`${location.pathname}?deploymentId=${value}`);
-  };
-
-  const indexerDetails = renderAsync(asyncIndexers, {
-    loading: () => <Spinner />,
-    error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
-    data: (data) => {
-      if (!indexers?.length) {
-        return <NoIndexers />;
-      }
-      return (
-        <IndexerDetails
-          indexers={indexers}
-          deploymentId={deploymentId}
-          totalCount={data?.deploymentIndexers?.totalCount}
-          onLoadMore={fetchMore}
-          offset={offset}
-        />
-      );
-    },
-  });
-
-  const tabList = [
-    { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
-    { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
-    { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
-    // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
-  ];
-
-  const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
-
-  const sortedTabList = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
-
-  return renderAsync(asyncProject, {
+  const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
     data: (project) => {
@@ -200,6 +205,8 @@ const ProjectInner: React.FC = () => {
       );
     },
   });
+
+  return page ? page : <span>Failed to load project: can't find project detail information</span>;
 };
 
 export const Project: React.FC = () => {

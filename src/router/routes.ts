@@ -28,6 +28,7 @@ const CONSUMER = {
   PLAYGROUND: 'playground',
   ONGOING_PLANS: 'ongoing',
   EXPIRED_PLANS: 'closed',
+  API_KEY: 'api-key',
   MY_OFFERS: 'my-offers',
   OPEN_OFFERS: 'open',
   CLOSE_OFFERS: 'close',

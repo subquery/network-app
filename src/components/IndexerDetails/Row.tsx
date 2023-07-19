@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { LazyQueryResult } from '@apollo/client';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
-import { Spinner } from '@subql/components';
+import { Modal, Spinner } from '@subql/components';
 import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
@@ -29,6 +29,7 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
+  requestServiceAgreementToken,
   wrapProxyEndpoint,
 } from '../../utils';
 import Copy from '../Copy';
@@ -62,7 +63,7 @@ const ConnectedRow: React.FC<{
   startBlock?: number;
 }> = ({ indexer, deploymentId, startBlock }) => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
+  const { account, library } = useWeb3();
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
@@ -75,6 +76,7 @@ const ConnectedRow: React.FC<{
   });
 
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
+  const [showReqTokenConfirmModal, setShowReqTokenConfirmModal] = React.useState(false);
 
   const queryUrl = React.useMemo(() => {
     return wrapProxyEndpoint(`${indexerMetadata.url}/query/${deploymentId}`, indexer.indexerId);
@@ -157,7 +159,16 @@ const ConnectedRow: React.FC<{
       width: '12%',
       render: () => {
         return (
-          <Typography className={styles.playgroundButton}>
+          <Typography
+            style={{
+              width: '115px',
+              margin: '0 auto',
+            }}
+            className={styles.playgroundButton}
+            onClick={() => {
+              setShowReqTokenConfirmModal(true);
+            }}
+          >
             <img src="/static/playground.svg" style={{ marginRight: '6px' }} alt="" />
             Playground
           </Typography>
@@ -226,6 +237,36 @@ const ConnectedRow: React.FC<{
           indexerDetails={indexerMetadata}
         />
       )}
+
+      <Modal
+        open={showReqTokenConfirmModal}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        onOk={async () => {
+          if (account && deploymentId) {
+            const url = import.meta.env.VITE_CONSUMER_HOST_ENDPOINT;
+            const res = await requestServiceAgreementToken(
+              account,
+              library,
+              wrapProxyEndpoint(`${url}/token`, indexer.indexerId),
+              indexer.indexerId,
+              '',
+              deploymentId,
+            );
+            console.warn(res);
+          }
+        }}
+        onCancel={() => {
+          setShowReqTokenConfirmModal(false);
+        }}
+        title="Request Token"
+        submitText="Request Token"
+      >
+        <Typography>To start testing your queries in the GraphQL playground, simply request a trial token.</Typography>
+      </Modal>
     </>
   );
 };
