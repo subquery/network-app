@@ -20,7 +20,7 @@
     "@subql/apollo-links": "0.5.3",
     "@subql/components": "1.0.3-4",
     "@subql/contract-sdk": "^0.13.7",
-    "@subql/network-clients": "^0.3.13",
+    "@subql/network-clients": "0.3.14-1",
     "@subql/network-config": "^0.3.13",
     "@subql/network-query": "0.3.14-1",
     "@subql/react-hooks": "0.3.14-1",

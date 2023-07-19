@@ -90,12 +90,7 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
-    return await limitContract(() =>
-      contracts.permissionedExchange.tradeQuota(
-        contracts?.sqToken.address,
-        makeCacheKey(`${account}`, { type: 'sqtToken' }),
-      ),
-    );
+    return await limitContract(() => contracts.permissionedExchange.tradeQuota(contracts?.sqToken.address, account));
   }, [contracts]);
 }
 
