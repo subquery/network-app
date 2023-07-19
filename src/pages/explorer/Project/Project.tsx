@@ -153,6 +153,7 @@ const ProjectInner: React.FC = () => {
     loading: () => <Spinner />,
     error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
     data: (project) => {
+      console.warn(project);
       if (!project) {
         // Should never happen
         return <span>Project doesn't exist</span>;
