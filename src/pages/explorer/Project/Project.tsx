@@ -149,11 +149,10 @@ const ProjectInner: React.FC = () => {
     }
   }, [deploymentId]);
 
-  return renderAsync(asyncProject, {
+  const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
     data: (project) => {
-      console.warn(project);
       if (!project) {
         // Should never happen
         return <span>Project doesn't exist</span>;
@@ -206,6 +205,8 @@ const ProjectInner: React.FC = () => {
       );
     },
   });
+
+  return page ? page : <span>Failed to load project: can't find project detail information</span>;
 };
 
 export const Project: React.FC = () => {
