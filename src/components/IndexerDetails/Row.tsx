@@ -128,7 +128,7 @@ const ConnectedRow: React.FC<{
     },
 
     {
-      width: '15%',
+      width: '13%',
       render: () => {
         return renderAsync(isOfflineDeploymentOnContract, {
           error: (error) => <Status text="Error" color={deploymentStatus.NOTINDEXING} />,
@@ -154,9 +154,14 @@ const ConnectedRow: React.FC<{
       ),
     },
     {
-      width: '10%',
+      width: '12%',
       render: () => {
-        return <Typography className={styles.playgroundButton}>Playground</Typography>;
+        return (
+          <Typography className={styles.playgroundButton}>
+            <img src="/static/playground.svg" style={{ marginRight: '6px' }} alt="" />
+            Playground
+          </Typography>
+        );
       },
     },
     {
