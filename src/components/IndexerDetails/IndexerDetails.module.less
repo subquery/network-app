@@ -100,7 +100,28 @@
 }
 
 .planButton {
-  color: var(--primary);
+  color: var(--sq-blue600);
   width: 32px;
   height: 32px;
+  font-size: 14px;
+  background: rgba(var(--sq-primary-blue-rgb), 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(var(--sq-primary-blue-rgb), 0.15);
+  }
+}
+
+.playgroundButton {
+  color: var(--sq-blue600);
+  border-radius: 26px;
+  padding: 6px;
+  text-align: center;
+  
+  &:hover {
+    background: rgba(var(--sq-primary-blue-rgb), 0.08);
+  }
 }

@@ -141,7 +141,7 @@ const ConnectedRow: React.FC<{
       },
     },
     {
-      width: '30%',
+      width: '20%',
       ellipsis: true,
       render: () => (
         <>
@@ -152,6 +152,12 @@ const ConnectedRow: React.FC<{
           </Copy>
         </>
       ),
+    },
+    {
+      width: '10%',
+      render: () => {
+        return <Typography className={styles.playgroundButton}>Playground</Typography>;
+      },
     },
     {
       width: '5%',
@@ -168,9 +174,9 @@ const ConnectedRow: React.FC<{
           <div className={styles.planButton}>
             {account !== indexer.indexerId &&
               (showPlans ? (
-                <BsChevronDown onClick={toggleShowPlans} size="20" className="pointer" />
+                <BsChevronDown onClick={toggleShowPlans} size="14" className="pointer" />
               ) : (
-                <BsChevronUp onClick={toggleShowPlans} size="20" className="pointer" />
+                <BsChevronUp onClick={toggleShowPlans} size="14" className="pointer" />
               ))}
           </div>
         );

@@ -72,9 +72,13 @@ const IndexerDetails: React.FC<Props> = ({ indexers, startBlock, deploymentId, t
       dataIndex: 'status',
     },
     {
-      width: '30%',
+      width: '20%',
       title: <TableTitle title={t('indexers.head.url')} />,
       dataIndex: 'status',
+    },
+    {
+      width: '10%',
+      title: <TableTitle title={t('indexers.head.playground')} />,
     },
     {
       width: '5%',

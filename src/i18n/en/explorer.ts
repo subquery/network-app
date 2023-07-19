@@ -132,6 +132,7 @@ const translation = {
       status: 'Status',
       url: 'Query URL',
       plans: 'Plans',
+      playground: 'Playground',
     },
     tooltip: {
       status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',
