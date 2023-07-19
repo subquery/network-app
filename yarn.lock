@@ -4034,15 +4034,15 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.14-0":
-  version "0.3.14-0"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.14-0.tgz#3f06164ff8201a0bf4fae038e09213f8468dd66b"
-  integrity sha512-cvnqBSfeukJVWKUheNqw171j1JX+3L/zQp6iDVDb0/uneY1Bc3SA7V5K+UhIvtyBUpFgOFWuiit/IG/ERd13ag==
+"@subql/react-hooks@0.3.14-1":
+  version "0.3.14-1"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.14-1.tgz#b20a3bb54aca927ed732b6416a1df69c85b3ae40"
+  integrity sha512-KGnss6VEB9IOAdyFo1hYTmQhh9kc4KjY+oOt8z5bFo8x5NFLYwR1f1vCk5yFXH3jKrpGkhpVE/xvl7FwdI+qFQ==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.14-0"
+    "@subql/network-query" "0.3.14-1"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 

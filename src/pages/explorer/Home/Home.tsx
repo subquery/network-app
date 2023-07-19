@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
-import { useGetProjectsQuery } from '@subql/react-hooks';
+import { useGetProjectsLazyQuery } from '@subql/react-hooks';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
@@ -49,30 +49,38 @@ export const Header: React.FC<{ renderRightItem?: () => React.ReactNode }> = ({ 
 };
 
 const Home: React.FC = () => {
-  const { data, loading, error, fetchMore } = useGetProjectsQuery({
+  const [getProjects, { error, loading }] = useGetProjectsLazyQuery({
     variables: { offset: 0 },
   });
   const navigate = useNavigate();
 
   const bottom = React.useRef<HTMLDivElement>(null);
   const [endReached, setEndReached] = React.useState<boolean>(false);
-  const projects = React.useMemo(() => data?.projects?.nodes.filter(notEmpty), [data]);
+  // const projects = React.useMemo(() => data?.projects?.nodes.filter(notEmpty), [data]);
+  const [projects, setProjects] = React.useState<Project[]>([]);
   const isBottomVisible = useOnScreen(bottom);
 
-  // XXX untested
-  React.useEffect(() => {
-    if (isBottomVisible && !loading && !error && !endReached) {
-      fetchMore({
-        variables: {
-          offset: data?.projects?.nodes.length,
-        },
-      }).then((res) => {
-        if (!res.data.projects?.nodes.length) {
-          setEndReached(true);
-        }
-      });
+  const loadMore = async () => {
+    const res = await getProjects({
+      variables: {
+        offset: projects.length,
+      },
+    });
+
+    if (res.data?.projects?.nodes) {
+      setProjects([...projects, ...res.data.projects?.nodes.filter(notEmpty)]);
     }
-  }, [isBottomVisible, loading, error, fetchMore, data, endReached]);
+
+    if (!res.error && !res.data?.projects?.nodes.length) {
+      setEndReached(true);
+    }
+  };
+
+  React.useEffect(() => {
+    if (!endReached && isBottomVisible) {
+      loadMore();
+    }
+  }, [isBottomVisible, endReached]);
 
   return (
     <div className="content-width">
