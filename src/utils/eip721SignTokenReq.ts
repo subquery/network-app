@@ -11,6 +11,7 @@ import {
   ConsumerHostMessageType,
   ConsumerSAMessageType,
   getEip721Signature,
+  trailSAMessageType,
   withChainIdRequestBody,
 } from './eip712';
 import { POST } from './fetch';
@@ -79,28 +80,33 @@ export async function requestServiceAgreementToken(
   indexer: string,
   agreement: string | undefined,
   deploymentId: string,
+  trail?: boolean,
 ): Promise<{ data?: string; error?: string } | undefined> {
   try {
     const timestamp = new Date().getTime();
     if (!library || !account || !requestTokenUrl) return;
 
     const signMsg = {
-      consumer: account,
       indexer,
-      agreement,
       timestamp,
       deploymentId,
+      ...(trail
+        ? {}
+        : {
+            consumer: account,
+            agreement,
+          }),
     };
-    const eip721Signature = await getEip721Signature(signMsg, ConsumerSAMessageType, account, library);
-    console.warn(eip721Signature);
+
+    const eip721Signature = await getEip721Signature(
+      signMsg,
+      trail ? trailSAMessageType : ConsumerSAMessageType,
+      account,
+      library,
+    );
+
     const tokenRequestBody = authSARequestBody(
-      {
-        consumer: account,
-        timestamp: timestamp,
-        indexer,
-        agreement,
-        deploymentId,
-      },
+      { ...signMsg, ...(trail ? { consumer: account } : {}) },
       eip721Signature ?? '',
     );
 

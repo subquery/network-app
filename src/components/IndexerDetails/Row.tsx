@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { LazyQueryResult } from '@apollo/client';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
-import { Modal, Spinner } from '@subql/components';
+import { GraphiQL, Modal, Spinner } from '@subql/components';
 import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
@@ -77,6 +77,7 @@ const ConnectedRow: React.FC<{
 
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
   const [showReqTokenConfirmModal, setShowReqTokenConfirmModal] = React.useState(false);
+  const [trailToken, setTrailToken] = React.useState('');
 
   const queryUrl = React.useMemo(() => {
     return wrapProxyEndpoint(`${indexerMetadata.url}/query/${deploymentId}`, indexer.indexerId);
@@ -247,16 +248,19 @@ const ConnectedRow: React.FC<{
         }}
         onOk={async () => {
           if (account && deploymentId) {
-            const url = import.meta.env.VITE_CONSUMER_HOST_ENDPOINT;
             const res = await requestServiceAgreementToken(
               account,
               library,
-              wrapProxyEndpoint(`${url}/token`, indexer.indexerId),
+              wrapProxyEndpoint(`${indexerMetadata.url}/token`, indexer.indexerId),
               indexer.indexerId,
               '',
               deploymentId,
+              true,
             );
-            console.warn(res);
+
+            if (res?.data) {
+              setTrailToken(res.data);
+            }
           }
         }}
         onCancel={() => {
@@ -267,6 +271,8 @@ const ConnectedRow: React.FC<{
       >
         <Typography>To start testing your queries in the GraphQL playground, simply request a trial token.</Typography>
       </Modal>
+
+      {/* {queryUrl && trailToken && <GraphiQL url={queryUrl} bearToken={trailToken}></GraphiQL>} */}
     </>
   );
 };
