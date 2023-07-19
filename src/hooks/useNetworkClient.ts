@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { networkLink } from '@containers/QueryApolloProvider';
 import { SUPPORTED_NETWORK } from '@containers/Web3';
 import { NetworkClient } from '@subql/network-clients';
 
@@ -10,7 +11,11 @@ export function useNetworkClient(): NetworkClient | undefined {
 
   React.useEffect(() => {
     async function getNetworkClient() {
-      const client = await NetworkClient.create(SUPPORTED_NETWORK);
+      const client = await NetworkClient.create(SUPPORTED_NETWORK, undefined, undefined, {
+        queryClientOptions: {
+          link: networkLink,
+        },
+      });
       setNetworkClient(client);
     }
 

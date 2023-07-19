@@ -25,12 +25,12 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
   });
 };
 
-const swapLink = getDecentraliseLink(
+export const swapLink = getDecentraliseLink(
   import.meta.env.VITE_EXCHANGE_DEPLOYMENT_ID,
   import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT,
 );
 
-const registryLink = getDecentraliseLink(
+export const networkLink = getDecentraliseLink(
   import.meta.env.VITE_NETWORK_DEPLOYMENT_ID,
   import.meta.env.VITE_QUERY_REGISTRY_PROJECT,
 );
@@ -66,7 +66,7 @@ const links = ApolloLink.from([
       (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
       top100IndexersLink,
 
-      registryLink,
+      networkLink,
     ),
   ),
 ]);

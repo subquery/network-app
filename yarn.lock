@@ -4000,15 +4000,15 @@
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@^0.3.13":
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.13.tgz#f782b235a3ce12139586b0aca4b279497a3314f3"
-  integrity sha512-IQlepoWCFGgyA6KHD0SIWKTkdIfzJ+p0T11x84xjGO28pQE+Uoyd8K+jVMRPv8uVGv8VM/YyqoyKVoe/UDS7ig==
+"@subql/network-clients@0.3.14-1":
+  version "0.3.14-1"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.14-1.tgz#077baf8b88b7c37da95564197ac40a83bd6b4fc1"
+  integrity sha512-LZgvDXbLmoXLYEtRffK+eOXzcCMpNTMIjxbVcD3hpnopXnssJbxhizCGkJ1pasjL+q83029wZJWpp4bPBuLhbg==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
     "@subql/network-config" "0.3.13"
-    "@subql/network-query" "0.3.13"
+    "@subql/network-query" "0.3.14-2"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
@@ -4020,17 +4020,17 @@
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.13.tgz#324c58b1f9d1b9ba9ae0f2f332c4f9a316aee103"
   integrity sha512-jX38TOnhrTmCoKB9gjiW5R/cQgYK6efco1ME2vJfaY3uFm6/p69uvWRN2gUU8kVh9aHdrSqSoSE6Oj/VK7dCOQ==
 
-"@subql/network-query@0.3.13":
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.13.tgz#c9ea14931b4afbfed36ba5f3845855fdd7e3859f"
-  integrity sha512-/I7A4u5smySA9hlhG8ARO4uW2GU+G72LlqeCx1BMz56xQdIbcPvL93qWHX3zlvK6V+uMxlqlP95Q1qZrIvcyQg==
-  dependencies:
-    graphql "^16.5.0"
-
 "@subql/network-query@0.3.14-0":
   version "0.3.14-0"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.14-0.tgz#2ede4f5627d3db4fd932c1d0fbea86b2608f6cb7"
   integrity sha512-lND5vtxkFr0+weDMWbnIljcVVy1ONcADWYykIZudmDyStQwybDfK/W4b85Iq2C6SQuDt/taSG5Mi/HBFGcYZ5Q==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/network-query@0.3.14-2":
+  version "0.3.14-2"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.14-2.tgz#911552f05ad4cfaa63637d654607e8141020e3fc"
+  integrity sha512-49UwJYvkCPFRGPR9INu/QzRHx2tN9nYP0rDq1tconW5Fd9nIwZuRlX80ns1+1T5g4om36taNIuS29xAXvvRkQg==
   dependencies:
     graphql "^16.5.0"
 
