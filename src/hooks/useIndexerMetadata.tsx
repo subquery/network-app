@@ -28,7 +28,7 @@ export function useIndexerMetadata(
   address: string,
   options: {
     cid?: string;
-    immediate: boolean;
+    immediate?: boolean;
   } = { immediate: true },
 ): {
   indexerMetadata: IndexerDetails;

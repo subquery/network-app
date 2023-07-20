@@ -1,12 +1,15 @@
 .input {
   margin: 1rem 0;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .inputTitle {
   font-weight: 400;
   font-size: 16px;
   line-height: 24px;
-  margin-bottom: 0.25rem;
+  margin-bottom: 8px;
 }
 
 /* TODO: antD theme custom */
@@ -34,6 +37,8 @@
 
 .inputBottomText {
   display: block;
+  margin-top: 1px;
+  color: var(--sq-gray700);
 }
 
 /* TODO: antD theme custom */

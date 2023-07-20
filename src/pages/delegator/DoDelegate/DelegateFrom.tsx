@@ -3,11 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
-import { Button, Divider, Select } from 'antd';
+import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Form, Formik } from 'formik';
@@ -19,10 +20,10 @@ import { SummaryList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
-import { useSortedIndexerDeployments } from '../../../hooks';
+import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, TOKEN } from '../../../utils';
-import styles from './DoDelegate.module.css';
+import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
+import styles from './DoDelegate.module.less';
 
 export const AddressName: React.FC<{
   address?: string;
@@ -31,11 +32,13 @@ export const AddressName: React.FC<{
 }> = ({ curAccount, address, metadata }) => {
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <div className="flex-col">
-        <Typography style={{ marginRight: 5 }}>
-          {address === curAccount ? 'Your wallet ' : metadata?.name ?? 'Indexer'}
+      <div className="col-flex">
+        <Typography style={{ marginBottom: 4 }}>
+          {address === curAccount ? 'Your Wallet ' : metadata?.name ?? 'Indexer'}
         </Typography>
-        <Typography>{address} </Typography>
+        <Typography variant="small" type="secondary">
+          {address}
+        </Typography>
       </div>
     </div>
   );
@@ -56,6 +59,7 @@ type FormProps = {
   onCancel?: () => void;
   error?: string;
   curEra?: number;
+  indexerMetadataCid?: string;
 };
 
 export const DelegateForm: React.FC<FormProps> = ({
@@ -66,24 +70,33 @@ export const DelegateForm: React.FC<FormProps> = ({
   delegatedAmount,
   onCancel,
   error,
+  indexerMetadataCid,
 }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const fetchMetadata = useFetchMetadata();
+  const { indexerMetadata } = useIndexerMetadata(indexerAddress, {
+    cid: indexerMetadataCid,
+    immediate: true,
+  });
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
   const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
   const { balance } = useSQToken();
 
-  const [delegationOptions, setDelegationOptions] = React.useState<{ label: React.ReactNode; value: string }[]>();
+  const [delegationOptions, setDelegationOptions] = React.useState<
+    { label: React.ReactNode; value: string; name?: string }[]
+  >([]);
   const [delegateFrom, setDelegateFrom] = React.useState(account);
+  const [selectedOption, setSelectedOption] = React.useState<(typeof delegationOptions)[number]>();
 
   const indexerDelegation = useGetDelegationQuery({
     variables: {
       id: `${account ?? ''}:${delegateFrom ?? ''}`,
     },
   });
+
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -121,12 +134,19 @@ export const DelegateForm: React.FC<FormProps> = ({
 
   const summaryList = [
     {
-      label: t('indexer.title'),
+      label: t('delegate.to'),
       value: <ConnectedIndexer id={indexerAddress} />,
+      strong: true,
     },
     {
-      label: 'Your delegation',
+      label: t('delegate.remainingCapacity'),
+      value: ` ${formatEther(indexerCapacity, 4)} ${TOKEN}`,
+      tooltip: t('delegate.remainingTooltip'),
+    },
+    {
+      label: t('delegate.existingDelegation'),
       value: ` ${delegatedAmount} ${TOKEN}`,
+      tooltip: t('delegate.existingDelegationTooltip'),
     },
   ];
 
@@ -154,11 +174,11 @@ export const DelegateForm: React.FC<FormProps> = ({
       });
 
       const allMetadata = await Promise.all(indexerMetadata);
-
       setDelegationOptions([
         {
           label: <AddressName curAccount={account} address={account} metadata={{ name: '', url: '', image: '' }} />,
           value: account,
+          name: '',
         },
         ...sortedDelegations.map((delegation, index) => {
           return {
@@ -170,6 +190,7 @@ export const DelegateForm: React.FC<FormProps> = ({
               ></AddressName>
             ),
             value: delegation.indexerId || '',
+            name: allMetadata[index]?.name,
           };
         }),
       ]);
@@ -191,24 +212,29 @@ export const DelegateForm: React.FC<FormProps> = ({
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => (
         <Form>
           <div>
-            <SummaryList title={t('delegate.to')} list={summaryList} />
+            <SummaryList list={summaryList} />
             <Divider className={styles.divider} />
 
             <div className={styles.select}>
-              <Typography className={styles.inputTitle}>{t('delegate.from')} </Typography>
-              <Typography className={'grayText'} variant="medium" style={{ marginLeft: '10px' }}>
-                {t('delegate.redelegate')}
-              </Typography>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                <Typography>{t('delegate.from')} </Typography>
+                <Tooltip title={t('delegate.selectTooltip')}>
+                  <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+                </Tooltip>
+              </div>
               <Select
                 id="delegator"
                 value={delegateFrom}
                 optionFilterProp="children"
-                onChange={(delegator) => {
+                onChange={(delegator, raw) => {
                   resetForm();
                   setDelegateFrom(delegator);
                   setFieldValue('delegator', delegator);
+                  if (!Array.isArray(raw)) {
+                    setSelectedOption(raw);
+                  }
                 }}
-                className={'fullWidth'}
+                className={clsx('fullWidth', styles.delegatorSelect)}
                 loading={indexerDeployments.loading}
                 size="large"
                 allowClear
@@ -246,11 +272,29 @@ export const DelegateForm: React.FC<FormProps> = ({
             </div>
 
             <Typography className={'errorText'}>{error}</Typography>
-            <Typography className={styles.description} variant="medium">
+            {/* <Typography className={styles.description} variant="medium">
               {t('delegate.delegateValidNextEra')}
-            </Typography>
+            </Typography> */}
+            <Alert
+              className={styles.alertInfo}
+              type="info"
+              message={
+                isYourself
+                  ? t('delegate.delegateFromYourselfInfo', {
+                      indexerName: indexerMetadata.name,
+                    })
+                  : t('delegate.redelegateInfo', {
+                      reIndexerName: selectedOption?.name,
+                      indexerName: indexerMetadata.name,
+                    })
+              }
+              showIcon
+              style={{
+                marginBottom: 32,
+              }}
+            ></Alert>
 
-            <div className={clsx('flex', 'flex-end', styles.btns)}>
+            <div className={clsx('flex', 'flex-end')}>
               <Button
                 onClick={submitForm}
                 loading={isSubmitting}

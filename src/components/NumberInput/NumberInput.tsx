@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { Typography } from '@subql/components';
 import { Button, InputNumber, InputNumberProps } from 'antd';
 import { BigNumberish } from 'ethers';
 
@@ -59,7 +60,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     maxAmount > 0 ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}` : undefined;
   const inputBottomText = description ?? maxAmountText ?? maxText;
   const DescriptionText = ({ text }: { text: string }) => (
-    <AppTypography className={styles.inputBottomText}>{text}</AppTypography>
+    <Typography className={styles.inputBottomText} variant="medium">
+      {text}
+    </Typography>
   );
 
   const ErrorText = () => (

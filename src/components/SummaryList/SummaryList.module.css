@@ -10,11 +10,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 5px 0;
+  margin: 16px 0;
+  line-height: 1.57143;
 }
 
 .label {
-  color: var(--gray500);
+  color: var(--sq-gray600);
+}
+
+.strongLabel {
+  color: var(--sq-gray900);
 }
 
 .value {
