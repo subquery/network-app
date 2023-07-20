@@ -300,7 +300,7 @@ const ConnectedRow: React.FC<{
         title="Request Token"
         submitText="Request Token"
       >
-        <Typography>To start testing your queries in the GraphQL playground, simply request a trial token.</Typography>
+        <Typography>{t('explorer.flexPlans.requestToken')}</Typography>
       </Modal>
 
       <AntdModal
@@ -312,14 +312,20 @@ const ConnectedRow: React.FC<{
         <div className={styles.playgroundModalHeader}>
           <Typography className={styles.playgroundModalTitle}>
             <PlaygroundIcon style={{ marginRight: '8px' }} />
-            Playground
+            {t('myFlexPlans.playground')}
           </Typography>
           <Typography className={styles.playgroundModalLimitInfo}>
             <span style={{ marginRight: 8 }}>
-              Remain requests limit: {trailLimitInfo && trailLimitInfo.daily_limit - trailLimitInfo.daily_used}
+              {t('explorer.flexPlans.remainLimit', {
+                limit: `${trailLimitInfo && trailLimitInfo.daily_limit - trailLimitInfo.daily_used}`,
+              })}
             </span>
             {/* TODO: now can't get exactly expires time. Will update at next version. */}
-            <span>Token expires in 24h</span>
+            <span>
+              {t('explorer.flexPlans.expireTime', {
+                time: '24h',
+              })}
+            </span>
           </Typography>
         </div>
         {queryUrl && trailToken && <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>}

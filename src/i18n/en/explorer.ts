@@ -108,6 +108,9 @@ const translation = {
       indexer: 'indexer',
       validityPeriod: 'Validity Period',
       non: 'There are no flex plans for this project yet.',
+      requestToken: 'To start testing your queries in the GraphQL playground, simply request a trial token.',
+      remainLimit: 'Remain requests limit: {{limit}}',
+      expireTime: 'Token expires in {{time}}',
     },
   },
   deployment: {
