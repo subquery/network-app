@@ -3976,10 +3976,10 @@
     ethers "^5.6.8"
     jwt-decode "^3.1.2"
 
-"@subql/components@1.0.3-4":
-  version "1.0.3-4"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.3-4.tgz#79ee62f4fb6fc9a3f5643804c49c11c59774bc6a"
-  integrity sha512-BU3D7LqqvMevlYScfkbgqJiIwIwDV3Hu77sPxKZZB+PM7N3v8dB9RIivZrio8zxKIaH3SXmy/i/WxvhxaRpeTA==
+"@subql/components@1.0.3-5":
+  version "1.0.3-5"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.3-5.tgz#27829c427047fd0b03a427c7aa10c4cfd9740746"
+  integrity sha512-ICnMV8sP56VWuvPpEqtwro/4vGwwIf8M7aisk6BLgZc3IGS1xN2o1V+Z0x+1BtQKsU/iVRFeFdegs7MA1pIGvA==
   dependencies:
     "@graphiql/plugin-explorer" "^0.1.20"
     antd "5.0.2"
@@ -9318,7 +9318,7 @@ graphql-ws@^5.8.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.12.0.tgz#d06fe38916334b4a4c827f73268cbf4359a32ed7"
   integrity sha512-PA3ImUp8utrpEjoxBMhvxsjkStvFEdU0E1gEBREt8HZIWkxOUymwJBhFnBL7t/iHhUq1GVPeZevPinkZFENxTw==
 
-"graphql@14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0", graphql@^15.6.1:
+"graphql@14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0":
   version "15.8.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.8.0.tgz#33410e96b012fa3bdb1091cc99a94769db212b38"
   integrity sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==

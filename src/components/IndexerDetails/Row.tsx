@@ -12,8 +12,9 @@ import { Status as DeploymentStatus } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { Table, TableProps, Tooltip } from 'antd';
-import { Typography } from 'antd';
+import { Modal as AntdModal, Typography } from 'antd';
 import assert from 'assert';
+import axios from 'axios';
 import clsx from 'clsx';
 import { TFunction } from 'i18next';
 
@@ -21,10 +22,12 @@ import { useWeb3Store } from 'src/stores';
 
 import { useSQToken, useWeb3 } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
+import PlaygroundIcon from '../../images/playground';
 import { IndexerDetails } from '../../models';
 import {
   cidToBytes32,
   ExcludeNull,
+  getAuthReqHeader,
   getDeploymentMetadata,
   mapAsync,
   notEmpty,
@@ -57,6 +60,13 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   </>
 );
 
+export interface QueryLimit {
+  daily_limit: number;
+  daily_used: number;
+  rate_limit: number;
+  rate_used: number;
+}
+
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
   deploymentId?: string;
@@ -77,7 +87,9 @@ const ConnectedRow: React.FC<{
 
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
   const [showReqTokenConfirmModal, setShowReqTokenConfirmModal] = React.useState(false);
+  const [showPlayground, setShowPlayground] = React.useState(false);
   const [trailToken, setTrailToken] = React.useState('');
+  const [trailLimitInfo, setTrailLimitInfo] = React.useState<QueryLimit>();
 
   const queryUrl = React.useMemo(() => {
     return wrapProxyEndpoint(`${indexerMetadata.url}/query/${deploymentId}`, indexer.indexerId);
@@ -170,7 +182,7 @@ const ConnectedRow: React.FC<{
               setShowReqTokenConfirmModal(true);
             }}
           >
-            <img src="/static/playground.svg" style={{ marginRight: '6px' }} alt="" />
+            <PlaygroundIcon color="var(--sq-blue600)" width={14} height={14} style={{ marginRight: '5px' }} />
             Playground
           </Typography>
         );
@@ -187,16 +199,18 @@ const ConnectedRow: React.FC<{
             </Tooltip>
           );
         }
-        return (
-          <div className={styles.planButton}>
-            {account !== indexer.indexerId &&
-              (showPlans ? (
+        if (account !== indexer.indexerId) {
+          return (
+            <div className={styles.planButton}>
+              {showPlans ? (
                 <BsChevronDown onClick={toggleShowPlans} size="14" className="pointer" />
               ) : (
                 <BsChevronUp onClick={toggleShowPlans} size="14" className="pointer" />
-              ))}
-          </div>
-        );
+              )}
+            </div>
+          );
+        }
+        return <></>;
       },
     },
   ];
@@ -224,6 +238,39 @@ const ConnectedRow: React.FC<{
     return contracts.planManager.acceptPlan(planId, cidToBytes32(deploymentId));
   };
 
+  // TODO: migrate all indexer-proxy services.
+  const getQueryLimit = async (domain?: string, token?: string) => {
+    if (!domain || !token) return;
+    const res = await axios.get<QueryLimit>(`${domain}/query-limit`, {
+      headers: getAuthReqHeader(token),
+    });
+    if (res.data.rate_limit) {
+      setTrailLimitInfo(res.data);
+      return;
+    }
+  };
+
+  const requestPlayground = async () => {
+    if (account && deploymentId) {
+      const res = await requestServiceAgreementToken(
+        account,
+        library,
+        wrapProxyEndpoint(`${indexerMetadata.url}/token`, indexer.indexerId),
+        indexer.indexerId,
+        '',
+        deploymentId,
+        true,
+      );
+
+      if (res?.data) {
+        await getQueryLimit(indexerMetadata.url, res.data);
+        setShowReqTokenConfirmModal(false);
+        setTrailToken(res.data);
+        setShowPlayground(true);
+      }
+    }
+  };
+
   return (
     <>
       <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
@@ -246,23 +293,7 @@ const ConnectedRow: React.FC<{
             display: 'none',
           },
         }}
-        onOk={async () => {
-          if (account && deploymentId) {
-            const res = await requestServiceAgreementToken(
-              account,
-              library,
-              wrapProxyEndpoint(`${indexerMetadata.url}/token`, indexer.indexerId),
-              indexer.indexerId,
-              '',
-              deploymentId,
-              true,
-            );
-
-            if (res?.data) {
-              setTrailToken(res.data);
-            }
-          }
-        }}
+        onOk={() => requestPlayground()}
         onCancel={() => {
           setShowReqTokenConfirmModal(false);
         }}
@@ -272,7 +303,27 @@ const ConnectedRow: React.FC<{
         <Typography>To start testing your queries in the GraphQL playground, simply request a trial token.</Typography>
       </Modal>
 
-      {/* {queryUrl && trailToken && <GraphiQL url={queryUrl} bearToken={trailToken}></GraphiQL>} */}
+      <AntdModal
+        open={showPlayground}
+        onCancel={() => setShowPlayground(false)}
+        className={styles.playgroundModal}
+        width={1200}
+      >
+        <div className={styles.playgroundModalHeader}>
+          <Typography className={styles.playgroundModalTitle}>
+            <PlaygroundIcon style={{ marginRight: '8px' }} />
+            Playground
+          </Typography>
+          <Typography className={styles.playgroundModalLimitInfo}>
+            <span style={{ marginRight: 8 }}>
+              Remain requests limit: {trailLimitInfo && trailLimitInfo.daily_limit - trailLimitInfo.daily_used}
+            </span>
+            {/* TODO: now can't get exactly expires time. Will update at next version. */}
+            <span>Token expires in 24h</span>
+          </Typography>
+        </div>
+        {queryUrl && trailToken && <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>}
+      </AntdModal>
     </>
   );
 };
