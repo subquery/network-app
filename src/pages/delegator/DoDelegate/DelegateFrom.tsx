@@ -272,9 +272,6 @@ export const DelegateForm: React.FC<FormProps> = ({
             </div>
 
             <Typography className={'errorText'}>{error}</Typography>
-            {/* <Typography className={styles.description} variant="medium">
-              {t('delegate.delegateValidNextEra')}
-            </Typography> */}
             <Alert
               className={styles.alertInfo}
               type="info"
