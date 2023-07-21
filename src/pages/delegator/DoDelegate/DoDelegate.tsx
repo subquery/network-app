@@ -132,6 +132,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
                 indexerAddress={indexerAddress}
                 delegatedAmount={afterDelegatedAmount}
                 indexerCapacity={indexerCapacity}
+                indexerMetadataCid={indexer?.metadata}
                 error={error}
                 curEra={era?.index}
               />
@@ -139,6 +140,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
           }}
           variant={isActionDisabled ? 'disabledTextBtn' : variant}
           initialCheck={rewardClaimStatus}
+          width="540px"
         />
       );
     },

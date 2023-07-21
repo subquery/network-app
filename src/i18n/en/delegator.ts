@@ -8,7 +8,7 @@ const translation = {
   delegate: {
     title: 'Delegate',
     delegating: 'Delegating',
-    to: 'To',
+    to: 'Delegate to',
     from: 'From',
     redelegate: 'You can delegate from wallet or choose an indexer to redelegate from',
     delegationAmountTitle: 'You are delegating(Next)',
@@ -19,7 +19,7 @@ const translation = {
     undelegate: 'Undelegate',
     enterAmount: 'Enter Amount',
     delegateValidNextEra: 'Once confirm, your tokens will be delegated from next era.',
-    delegateAmount: 'Delegation amount',
+    delegateAmount: 'Amount',
     confirmDelegate: 'Confirm Delegation',
     undelegateValidNextEra:
       'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. ',
@@ -42,7 +42,17 @@ const translation = {
     delegationDesc:
       'View all Indexers you have delegated your kSQT tokens to. In return for delegating, you will earn rewards in kSQT from the rewards pool.',
     walletBalance: 'Wallet Balance: {{balance}} {{token}}',
-    amountAvailable: 'Amount available for delegation: {{balance}} {{token}}',
+    amountAvailable: 'Amount available for re-delegation: {{balance}} {{token}}',
+    remainingCapacity: 'Remaining Delegation Capacity',
+    remainingTooltip:
+      'The maximum amount of tokens the Indexer can still accept before needing to deposit more of their own stake.',
+    existingDelegationTooltip: 'The amount of tokens that you have already delegated to this indexer',
+    existingDelegation: 'Your Existing Delegation',
+    selectTooltip:
+      'Select the source of the funds that you would like to delegate. This can be directly from your wallet, or by re-delegating tokens from an exisiting delegation.',
+    delegateFromYourselfInfo: 'Once confirmed, your funds will be delegated to {{indexerName}} from the next era.',
+    redelegateInfo:
+      'Once confirmed, your funds will be re-delegated from indexer {{reIndexerName}} to {{indexerName}} from the next era.',
   },
 
   withdrawals: {

@@ -24,6 +24,7 @@ interface ModalProps {
   onCancel: () => void;
   onOk?: () => void;
   loading?: boolean;
+  width?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -36,6 +37,7 @@ export const Modal: React.FC<ModalProps> = ({
   description,
   content,
   loading,
+  width = '45%',
 }) => {
   const Title = () => (
     <Typography.Title level={3} className={styles.title}>
@@ -56,7 +58,8 @@ export const Modal: React.FC<ModalProps> = ({
       onCancel={onCancel}
       footer={null}
       destroyOnClose={true}
-      width={'45%'}
+      width={width}
+      className={styles.modal}
     >
       {steps && (
         <div className={styles.steps}>

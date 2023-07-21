@@ -1,0 +1,50 @@
+.btn {
+  margin-right: 1rem;
+  background: var(--gradient-to);
+}
+
+.select {
+  margin-bottom: 24px;
+}
+
+.option {
+  padding: 0.2rem 0;
+}
+
+.description {
+  color: var(--gray700);
+  margin: 1rem 0;
+}
+
+.divider {
+  margin-top: 28px;
+  margin-bottom: 24px;
+}
+
+.delegatorSelect {
+
+  :global {
+    // up css priority
+    .ant-select-selector.ant-select-selector.ant-select-selector.ant-select-selector {
+      height: 72px;
+      max-height: 72px;
+      padding: 12px;
+    }
+  }
+}
+
+// TODO: migrate when re-new @subql/components
+.alertInfo {
+  border: 1px solid rgba(58, 160, 255, 0.50);
+  background: rgba(58, 160, 255, 0.08);
+  display: flex;
+  align-items: flex-start;
+  padding: 9px 16px;
+
+  :global {
+    .anticon-info-circle {
+      color: var(--sq-info);
+      margin-top: 4px;
+    }
+  }
+}
