@@ -143,8 +143,18 @@ export type BasicRouteType = {
 };
 
 export const routers: BasicRouteType[] = [
-  { path: '/', redirect: '/explorer' },
-  { path: '/explorer/*', component: React.lazy(() => import('../pages/explorer/index')) },
+  { path: '/', redirect: '/explorer/home' },
+
+  {
+    path: '/explorer',
+    component: React.lazy(() => import('../pages/explorer/index')),
+    redirect: '/explorer/home',
+    children: [
+      { path: 'home', component: React.lazy(() => import('../pages/explorer/Home/Home')) },
+      { path: 'project/:id/*', component: React.lazy(() => import('../pages/explorer/Project/Project')) },
+    ],
+  },
+
   { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
   { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
   { path: '/indexer/*', component: React.lazy(() => import('../pages/indexer/index')) },
