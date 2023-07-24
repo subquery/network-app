@@ -15,14 +15,14 @@ const translation = {
       myFlexPlans: 'My Flex Plans',
     },
     default: {
-      title: 'You can create maximum 5 default plans',
+      title: 'You can create a maximum of 5 default plans for each project deployment',
       createPlans: `Create plans for projects you're indexing. <br> Learn how to create a plan <1>here</1>.`,
       query: '{{count}} query',
       query_other: '{{count}} queries',
       requestPerMin: 'requests/sec',
     },
     specific: {
-      title: 'You can create maximum 5 specific plans',
+      title: 'You can create a maximum of 5 specific plans for each project deployment',
       nonPlans:
         'You are not indexing any deployments to have specific plan.<br> Learn how to create a specific plan <1>here</1>.',
       nonDeployment: 'You have no plans specific to this deployment',
