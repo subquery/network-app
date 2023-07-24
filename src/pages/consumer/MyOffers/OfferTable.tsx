@@ -308,7 +308,9 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
    */
 
   const [data, setData] = React.useState(sortedOffers);
-  const totalCount = data?.data?.offers?.totalCount ?? 0;
+  const totalCount = React.useMemo(() => {
+    return data?.data?.offers?.totalCount ?? 0;
+  }, [data]);
 
   const fetchMoreOffers = async (offset: number) => {
     const res = await loadSortedOffers({

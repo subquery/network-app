@@ -108,6 +108,7 @@ interface MyOfferProps {
 
 const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
   const { account } = useWeb3();
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -167,12 +168,13 @@ export const MyOffers: React.FC = () => {
               <Routes>
                 <Route
                   path={OPEN_OFFERS}
-                  element={<MyOffer queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />}
+                  element={<MyOffer key="openOffers" queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />}
                 />
                 <Route
                   path={CLOSE_OFFERS}
                   element={
                     <MyOffer
+                      key="closedOffers"
                       queryFn={useGetOwnFinishedOffersLazyQuery}
                       description={t('myOffers.closedDescription')}
                       totalCount={totalCount}
@@ -183,6 +185,7 @@ export const MyOffers: React.FC = () => {
                   path={EXPIRED_OFFERS}
                   element={
                     <MyOffer
+                      key="expiredOffers"
                       queryFn={useGetOwnExpiredOffersLazyQuery}
                       description={t('myOffers.expiredDescription')}
                       totalCount={totalCount}
