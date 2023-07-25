@@ -98,3 +98,71 @@
 .searchInput {
   width: 360px;
 }
+
+.planButton {
+  color: var(--sq-blue600);
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  background: rgba(var(--sq-primary-blue-rgb), 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(var(--sq-primary-blue-rgb), 0.15);
+  }
+}
+
+.playgroundButton {
+  color: var(--sq-blue600);
+  border-radius: 26px;
+  padding: 2px 6px;
+  text-align: center;
+  word-break: normal;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: rgba(var(--sq-primary-blue-rgb), 0.08);
+  }
+}
+
+.playgroundModal {
+  min-height: 740px;
+
+  :global {
+    .ant-modal-content {
+      padding: 0;
+      border-radius: 8px 8px 0px 0px;
+      background: #1F2A3B;
+      .ant-modal-footer {
+        display: none;
+      }
+  
+      .ant-modal-close-x {
+        color:#fff;
+      }
+    }
+
+    .graphiql-container {
+      height: 740px;
+    }
+  }
+
+  &Header {
+    padding: 16px 24px;
+    font-family: var(--sq-font-family);
+  }
+
+  &Title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  &LimitInfo {
+    color: #fff;
+    font-size: 14px;
+  }
+}

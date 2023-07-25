@@ -12,7 +12,7 @@ import { Pagination, Table, TableProps } from 'antd';
 
 import { notEmpty, URLS } from '../../utils';
 import { SearchInput } from '../SearchInput';
-import styles from './IndexerDetails.module.css';
+import styles from './IndexerDetails.module.less';
 import Row from './Row';
 
 type Props = {
@@ -101,9 +101,13 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
       dataIndex: 'status',
     },
     {
-      width: '30%',
+      width: '20%',
       title: <TableTitle title={t('indexers.head.url')} />,
       dataIndex: 'status',
+    },
+    {
+      width: '10%',
+      title: <TableTitle title={t('indexers.head.playground')} />,
     },
     {
       width: '5%',

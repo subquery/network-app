@@ -108,6 +108,9 @@ const translation = {
       indexer: 'indexer',
       validityPeriod: 'Validity Period',
       non: 'There are no flex plans for this project yet.',
+      requestToken: 'To start testing your queries in the GraphQL playground, simply request a trial token.',
+      remainLimit: 'Remain requests limit: {{limit}}',
+      expireTime: 'Token expires in {{time}}',
     },
   },
   deployment: {
@@ -132,6 +135,7 @@ const translation = {
       status: 'Status',
       url: 'Query URL',
       plans: 'Plans',
+      playground: 'Playground',
     },
     tooltip: {
       status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',

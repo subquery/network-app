@@ -31,6 +31,12 @@ export const ConsumerSAMessageType = [
   { name: 'deploymentId', type: 'string' },
 ];
 
+export const trailSAMessageType = [
+  { name: 'indexer', type: 'address' },
+  { name: 'timestamp', type: 'uint256' },
+  { name: 'deploymentId', type: 'string' },
+];
+
 const IndexerMessageType = [
   { name: 'indexer', type: 'address' },
   { name: 'timestamp', type: 'uint256' },
