@@ -5,12 +5,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
+import { FetcherParams } from '@graphiql/toolkit';
 import { Spinner, TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { renderAsync, useGetConsumerFlexPlanQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { BigNumber } from 'ethers';
-import { FetcherParams } from 'graphiql';
 import i18next from 'i18next';
 
 import { TableText } from '../../../components';
