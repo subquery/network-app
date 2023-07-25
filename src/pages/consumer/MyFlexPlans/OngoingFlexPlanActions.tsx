@@ -12,7 +12,7 @@ import { BigNumber } from 'ethers';
 import { AppTypography, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { useWeb3 } from '../../../containers';
-import { getAuthReqHeader, TOKEN } from '../../../utils';
+import { getAuthReqHeader, parseError, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { requestConsumerHostToken } from '../../../utils/eip721SignTokenReq';
 import { formatEther } from '../../../utils/numberFormatters';
@@ -28,10 +28,11 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
       throw new Error('Failed to request user authentication.');
     }
 
-    const terminateUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/users/channels/${flexPlanId}/terminate`;
+    const terminateUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/users/channels/${flexPlanId}/finalize`;
 
     const response = await fetch(terminateUrl, {
       headers: { ...getAuthReqHeader(consumerToken) },
+      method: 'POST',
     });
 
     const sortedResponse = response && (await response.json());
@@ -42,7 +43,7 @@ async function terminatePlan(flexPlanId: string, account: string, library: Web3P
 
     return { data: sortedResponse };
   } catch (error) {
-    console.error(`Failed to terminate flex plan. ${error}`);
+    parseError(error);
     return { error };
   }
 }
@@ -71,7 +72,7 @@ export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flex
     setIsLoading(true);
     try {
       const terminateResult = await terminatePlan(flexPlan.id, account ?? '', library);
-      const { error, data } = terminateResult;
+      const { error } = terminateResult;
 
       if (error) {
         setError(`Failed to terminated. ${error}`);
