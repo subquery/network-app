@@ -78,14 +78,18 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
         <TransactionModal
           variant={disabled ? 'disabledTextBtn' : variant}
           text={modalText}
-          actions={[
-            {
-              label: t('delegate.undelegate'),
-              key: 'undelegate',
-              disabled,
-              tooltip,
-            },
-          ]}
+          actions={
+            disabled
+              ? []
+              : [
+                  {
+                    label: t('delegate.undelegate'),
+                    key: 'undelegate',
+                    disabled,
+                    tooltip,
+                  },
+                ]
+          }
           inputParams={{
             showMaxButton: true,
             stringMode: true,
