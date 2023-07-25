@@ -59,8 +59,7 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
   deploymentId?: string;
-  startBlock?: number;
-}> = ({ indexer, deploymentId, startBlock }) => {
+}> = ({ indexer, deploymentId }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { balance, planAllowance } = useSQToken();
@@ -93,11 +92,11 @@ const ConnectedRow: React.FC<{
     });
 
     return {
-      startBlock,
+      startBlock: 0,
       targetBlock: meta?.targetHeight ?? 0,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
-  }, [startBlock, indexerMetadata.url, indexer]);
+  }, [indexerMetadata.url, indexer]);
 
   const rowData = [
     {

@@ -59,3 +59,5 @@ export const MyDelegators: React.FC = () => {
     },
   });
 };
+
+export default MyDelegators;

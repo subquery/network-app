@@ -68,3 +68,5 @@ export const MyStaking: React.FC = () => {
     </>
   );
 };
+
+export default MyStaking;
