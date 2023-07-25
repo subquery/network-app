@@ -5,10 +5,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
+import { FetcherParams } from '@graphiql/toolkit';
 import { useIndexerMetadata } from '@hooks';
 import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { TableProps } from 'antd';
-import { FetcherParams } from 'graphiql';
 import i18next from 'i18next';
 import moment from 'moment';
 

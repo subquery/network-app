@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Web3Provider } from '@ethersproject/providers';
+import { FetcherReturnType } from '@graphiql/toolkit';
 import { openNotification } from '@subql/components';
-import { FetcherReturnType } from 'graphiql';
 import { t } from 'i18next';
 
 import {
