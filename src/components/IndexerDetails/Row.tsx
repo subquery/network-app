@@ -18,6 +18,7 @@ import clsx from 'clsx';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
+import { useProjectStore } from 'src/stores/project';
 
 import { useSQToken, useWeb3 } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
@@ -56,12 +57,17 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   </>
 );
 
+// TODO: nested ternary operator is lack of readable.
+const getMaxTargetBlock = (cur: number, max?: number) => (max ? (max > cur ? max : cur) : cur);
+
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
   deploymentId?: string;
 }> = ({ indexer, deploymentId }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const { projectMaxTargetHeightInfoRef, setProjectMaxTargetHeightInfo, projectMaxTargetHeightInfo } =
+    useProjectStore();
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
@@ -91,9 +97,17 @@ const ConnectedRow: React.FC<{
       indexer: indexer.indexerId,
     });
 
+    let maxTargetHeight = projectMaxTargetHeightInfoRef.get(deploymentId) || 0;
+
+    if (!maxTargetHeight || (maxTargetHeight && meta?.targetHeight && meta.targetHeight > maxTargetHeight)) {
+      maxTargetHeight = meta?.targetHeight || 0;
+      projectMaxTargetHeightInfoRef.set(deploymentId, maxTargetHeight);
+      setProjectMaxTargetHeightInfo(deploymentId, maxTargetHeight);
+    }
+
     return {
       startBlock: 0,
-      targetBlock: meta?.targetHeight ?? 0,
+      targetBlock: maxTargetHeight,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
   }, [indexerMetadata.url, indexer]);
@@ -120,7 +134,16 @@ const ConnectedRow: React.FC<{
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
             error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata: indexerMetadata }} />,
-            data: (info) => (info ? <Progress key={indexer.indexerId} {...info} /> : <Typography>-</Typography>),
+            data: (info) =>
+              info ? (
+                <Progress
+                  key={indexer.indexerId}
+                  {...info}
+                  targetBlock={getMaxTargetBlock(info.targetBlock, projectMaxTargetHeightInfo[deploymentId || ''])}
+                />
+              ) : (
+                <Typography>-</Typography>
+              ),
           })}
         </>
       ),
