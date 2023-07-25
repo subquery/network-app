@@ -56,7 +56,7 @@ export const GraphQLQuery: React.FC<GraphQLQueryProps> = ({
         </div>
       )}
       <div className={styles.playgroundContainer}>
-        <GraphiQL url={queryUrl} fetcher={fetcher} />
+        <GraphiQL url={queryUrl} fetcher={fetcher} theme="dark" />
       </div>
     </>
   );

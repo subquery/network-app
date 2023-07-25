@@ -10,7 +10,7 @@ import { useInfiniteScroll } from 'ahooks';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
-import { useAsyncMemo, useOnScreen } from '../../../hooks';
+import { useAsyncMemo } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import styles from './Home.module.css';
