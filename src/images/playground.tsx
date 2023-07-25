@@ -25,7 +25,7 @@ const PlaygroundIcon: FC<Icon> = ({ color = '#fff', width = 18, height = 18, sty
         ...style,
       }}
     >
-      <g clip-path="url(#clip0_3341_23102)">
+      <g clipPath="url(#clip0_3341_23102)">
         <path
           d="M2.44784 13.7185L1.78784 13.3369L9.14864 0.588135L9.80864 0.969735L2.44784 13.7185Z"
           fill="currentColor"

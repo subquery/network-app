@@ -3971,10 +3971,10 @@
     resolve-from "^5.0.0"
     store2 "^2.12.0"
 
-"@subql/apollo-links@0.5.4-0":
-  version "0.5.4-0"
-  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-0.5.4-0.tgz#f15f886adc4056a52ed78987f8852448b8046146"
-  integrity sha512-XjV5u2TFe724qs+5iqnb+Z4vrQaoGCd5TC2rBvsJ6QRRu0mEJ/WScFG/fX2MjgXeYFMF7z3rHyVkC/jJRknXsQ==
+"@subql/apollo-links@0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-0.5.5.tgz#02b4c80c7b4269e07f089710d552e92dea79d339"
+  integrity sha512-2gN/+iY6lOXgvEeH7CHkaa5bQRKkViIEpKAItXy5N9hXWpf5Y9MAHx2mois3JU08EYpKA03ICm2o+5XzihZAoQ==
   dependencies:
     "@metamask/eth-sig-util" "5.1.0"
     apollo-link-error "^1.1.13"
@@ -9356,12 +9356,7 @@ graphql-ws@^5.8.2:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.12.0.tgz#d06fe38916334b4a4c827f73268cbf4359a32ed7"
   integrity sha512-PA3ImUp8utrpEjoxBMhvxsjkStvFEdU0E1gEBREt8HZIWkxOUymwJBhFnBL7t/iHhUq1GVPeZevPinkZFENxTw==
 
-"graphql@14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0", graphql@16.7.0, graphql@^16.5.0:
-  version "16.7.0"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.7.0.tgz#717051b8c183fcf8c3ad0a3668aeb5ffd1e9bc33"
-  integrity sha512-kdNG+ZGNf0E4dezSA2N9cRq8UdOMCcz9Wzh1dDSrCzGCz0nj6p8qlE+utY6iqr9y1sh3MZxUb7K794neZ2oT1w==
-
-graphql@^16.7.0:
+"graphql@14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0", graphql@16.7.1, graphql@^16.5.0, graphql@^16.7.0:
   version "16.7.1"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.7.1.tgz#11475b74a7bff2aefd4691df52a0eca0abd9b642"
   integrity sha512-DRYR9tf+UGU0KOsMcKAlXeFfX89UiiIZ0dRU3mR0yJfu6OjZqUcp68NnFLnqQU5RexygFoDy1EW+ccOYcPfmHg==

@@ -17,7 +17,7 @@
     "@apollo/react-testing": "^4.0.0",
     "@polkadot/util": "^7.8.2",
     "@sentry/react": "^7.57.0",
-    "@subql/apollo-links": "0.5.4-0",
+    "@subql/apollo-links": "0.5.5",
     "@subql/components": "1.0.3-5",
     "@subql/contract-sdk": "^0.13.7",
     "@subql/network-clients": "0.3.14-1",
@@ -46,7 +46,6 @@
     "ethers": "^5.4.7",
     "formik": "^2.2.9",
     "graphiql": "^1.8.10",
-    "graphql": "^16.7.0",
     "graphql-ws": "^5.8.2",
     "i18next": "^22.4.6",
     "i18next-browser-languagedetector": "^7.0.1",
@@ -153,6 +152,6 @@
   "resolutions": {
     "ipfs-http-client": "53.0.1",
     "@polkadot/x-global": "7.9.2",
-    "graphql": "16.7.0"
+    "graphql": "16.7.1"
   }
 }

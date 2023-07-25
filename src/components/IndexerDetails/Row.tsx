@@ -238,7 +238,7 @@ const ConnectedRow: React.FC<{
   };
 
   // TODO: migrate all indexer-proxy services.
-  const getQueryLimit = async (domain?: string, token?: string) => {
+  const updateQueryLimit = async (domain?: string, token?: string) => {
     if (!domain || !token) return;
     const res = await axios.get<QueryLimit>(`${domain}/query-limit`, {
       headers: getAuthReqHeader(token),
@@ -262,7 +262,7 @@ const ConnectedRow: React.FC<{
       );
 
       if (res?.data) {
-        await getQueryLimit(indexerMetadata.url, res.data);
+        await updateQueryLimit(indexerMetadata.url, res.data);
         setShowReqTokenConfirmModal(false);
         setTrailToken(res.data);
         setShowPlayground(true);
