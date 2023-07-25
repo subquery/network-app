@@ -143,11 +143,52 @@ export type BasicRouteType = {
 };
 
 export const routers: BasicRouteType[] = [
-  { path: '/', redirect: '/explorer' },
-  { path: '/explorer/*', component: React.lazy(() => import('../pages/explorer/index')) },
+  { path: '/', redirect: '/explorer/home' },
+
+  {
+    path: '/explorer',
+    component: React.lazy(() => import('../pages/explorer/index')),
+    redirect: '/explorer/home',
+    children: [
+      { path: 'home', component: React.lazy(() => import('../pages/explorer/Home/Home')) },
+      { path: 'project/:id/*', component: React.lazy(() => import('../pages/explorer/Project/Project')) },
+    ],
+  },
+
   { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
   { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
-  { path: '/indexer/*', component: React.lazy(() => import('../pages/indexer/index')) },
+
+  {
+    path: '/indexer',
+    component: React.lazy(() => import('../pages/indexer/index')),
+    redirect: '/indexer/my-staking',
+    children: [
+      {
+        path: 'my-staking/*',
+        component: React.lazy(() => import('../pages/indexer/MyStaking/MyStaking')),
+      },
+      {
+        path: 'my-delegators/*',
+        component: React.lazy(() => import('../pages/indexer/MyDelegators/MyDelegators')),
+      },
+      {
+        path: 'my-projects/*',
+        component: React.lazy(() => import('../pages/indexer/MyProjects/MyProjects')),
+      },
+      {
+        path: 'offers/*',
+        component: React.lazy(() => import('@pages/consumer/OfferMarketplace/Marketplace')),
+      },
+      {
+        path: 'my-plans/*',
+        component: React.lazy(() => import('../pages/indexer/MyPlans/Plans')),
+      },
+      {
+        path: 'service-agreements/*',
+        component: React.lazy(() => import('../pages/consumer/ServiceAgreements/index')),
+      },
+    ],
+  },
 
   {
     path: '/delegator',

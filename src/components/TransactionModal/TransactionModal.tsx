@@ -56,6 +56,7 @@ export type TransactionModalProps<P, T extends string> = {
   onSuccess?: () => void;
   loading?: boolean; // status for whole modal (Update at: Sep 22)
   rethrowWhenSubmit?: boolean;
+  width?: string;
 };
 
 // TODO: review successModalText/failureModalText when move to subql-component
@@ -72,6 +73,7 @@ const TransactionModal = <P, T extends string>({
   initialCheck,
   loading,
   rethrowWhenSubmit = false,
+  width = '45%',
 }: TransactionModalProps<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -170,6 +172,7 @@ const TransactionModal = <P, T extends string>({
               /> //NOTE: slowly deprecate it and use NumberInput only
             )
           }
+          width={width}
         />
       )}
 

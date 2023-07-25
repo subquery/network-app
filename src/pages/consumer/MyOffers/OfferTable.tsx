@@ -9,11 +9,16 @@ import { TableTitle } from '@subql/components';
 import { OfferFieldsFragment } from '@subql/network-query';
 import {
   useGetAcceptedOffersQuery,
+  useGetAllOpenOffersLazyQuery,
   useGetAllOpenOffersQuery,
   useGetDeploymentIndexerQuery,
+  useGetOwnExpiredOffersLazyQuery,
   useGetOwnExpiredOffersQuery,
+  useGetOwnFinishedOffersLazyQuery,
   useGetOwnFinishedOffersQuery,
+  useGetOwnOpenOffersLazyQuery,
   useGetOwnOpenOffersQuery,
+  useGetSpecificOpenOffersLazyQuery,
   useGetSpecificOpenOffersQuery,
 } from '@subql/react-hooks';
 import { TableProps, Typography } from 'antd';
@@ -255,10 +260,10 @@ const getColumns = (
 
 interface MyOfferTableProps {
   queryFn:
-    | typeof useGetOwnOpenOffersQuery
-    | typeof useGetOwnFinishedOffersQuery
-    | typeof useGetOwnExpiredOffersQuery
-    | typeof useGetAllOpenOffersQuery;
+    | typeof useGetOwnOpenOffersLazyQuery
+    | typeof useGetOwnFinishedOffersLazyQuery
+    | typeof useGetOwnExpiredOffersLazyQuery
+    | typeof useGetAllOpenOffersLazyQuery;
   queryParams?: { consumer?: string };
   description?: string;
 }
@@ -281,8 +286,8 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     deploymentId: searchDeploymentId ?? '',
     offset,
   });
-  const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersQuery : queryFn;
-  const sortedOffers = sortedFn({ variables: sortedParams(0) });
+  const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersLazyQuery : queryFn;
+  const [loadSortedOffers, sortedOffers] = sortedFn({ variables: sortedParams(0) });
 
   const SearchDeployment = () => (
     <div className={styles.indexerSearch}>
@@ -303,38 +308,29 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
    */
 
   const [data, setData] = React.useState(sortedOffers);
-  const totalCount = data?.data?.offers?.totalCount ?? 0;
+  const totalCount = React.useMemo(() => {
+    return data?.data?.offers?.totalCount ?? 0;
+  }, [data]);
 
-  const fetchMoreOffers = (offset: number) => {
-    sortedOffers.fetchMore({
-      variables: {
-        offset,
-        ...sortedParams,
-      },
-      updateQuery: (previousOffers, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousOffers;
-        return { ...fetchMoreResult }; // make it as new object then will trigger render
-      },
+  const fetchMoreOffers = async (offset: number) => {
+    const res = await loadSortedOffers({
+      variables: sortedParams(offset),
     });
+
+    if (res.data?.offers) {
+      setData(res);
+    }
   };
 
   // NOTE: Every 1min to query wit a new timestamp
   React.useEffect(() => {
+    fetchMoreOffers(0);
+
     const interval = setInterval(() => {
       setNow(moment().toDate());
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  // NOTE: Every 5min to query wit a new timestamp, manual set cache data which is similar to cache-network fetch policy
-  React.useEffect(() => {
-    if (sortedOffers.loading === true && sortedOffers.previousData) {
-      setData({ ...sortedOffers, data: sortedOffers.previousData });
-      sortedOffers.data = sortedOffers.previousData;
-    } else {
-      setData({ ...sortedOffers });
-    }
-  }, [sortedOffers, sortedOffers.loading]);
 
   return (
     <>

@@ -21,8 +21,11 @@ import { Typography } from '@subql/components';
 import {
   renderAsync,
   useGetOfferCountQuery,
+  useGetOwnExpiredOffersLazyQuery,
   useGetOwnExpiredOffersQuery,
+  useGetOwnFinishedOffersLazyQuery,
   useGetOwnFinishedOffersQuery,
+  useGetOwnOpenOffersLazyQuery,
   useGetOwnOpenOffersQuery,
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
@@ -95,13 +98,17 @@ export const OfferHeader: React.FC = () => {
 };
 
 interface MyOfferProps {
-  queryFn: typeof useGetOwnOpenOffersQuery | typeof useGetOwnFinishedOffersQuery | typeof useGetOwnExpiredOffersQuery;
+  queryFn:
+    | typeof useGetOwnOpenOffersLazyQuery
+    | typeof useGetOwnFinishedOffersLazyQuery
+    | typeof useGetOwnExpiredOffersLazyQuery;
   totalCount: number;
   description?: string;
 }
 
 const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
   const { account } = useWeb3();
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -161,13 +168,14 @@ export const MyOffers: React.FC = () => {
               <Routes>
                 <Route
                   path={OPEN_OFFERS}
-                  element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
+                  element={<MyOffer key="openOffers" queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />}
                 />
                 <Route
                   path={CLOSE_OFFERS}
                   element={
                     <MyOffer
-                      queryFn={useGetOwnFinishedOffersQuery}
+                      key="closedOffers"
+                      queryFn={useGetOwnFinishedOffersLazyQuery}
                       description={t('myOffers.closedDescription')}
                       totalCount={totalCount}
                     />
@@ -177,7 +185,8 @@ export const MyOffers: React.FC = () => {
                   path={EXPIRED_OFFERS}
                   element={
                     <MyOffer
-                      queryFn={useGetOwnExpiredOffersQuery}
+                      key="expiredOffers"
+                      queryFn={useGetOwnExpiredOffersLazyQuery}
                       description={t('myOffers.expiredDescription')}
                       totalCount={totalCount}
                     />
