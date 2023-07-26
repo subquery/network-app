@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { Modal as AntDModal, Steps as AntDSteps, Typography } from 'antd';
+import clsx from 'clsx';
 
 import Spinner from '../Spinner';
 import styles from './Modal.module.css';
@@ -25,6 +26,7 @@ interface ModalProps {
   onOk?: () => void;
   loading?: boolean;
   width?: string;
+  className?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -38,6 +40,7 @@ export const Modal: React.FC<ModalProps> = ({
   content,
   loading,
   width = '45%',
+  className = '',
 }) => {
   const Title = () => (
     <Typography.Title level={3} className={styles.title}>
@@ -59,10 +62,10 @@ export const Modal: React.FC<ModalProps> = ({
       footer={null}
       destroyOnClose={true}
       width={width}
-      className={styles.modal}
+      className={clsx(styles.modal, className)}
     >
       {steps && (
-        <div className={styles.steps}>
+        <div className={clsx(styles.steps, 'modalSteps')}>
           <AntDSteps size="small" current={currentStep} items={steps?.map((step) => ({ title: step }))} />
         </div>
       )}

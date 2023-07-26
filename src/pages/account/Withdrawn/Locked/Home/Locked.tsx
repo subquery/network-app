@@ -3,23 +3,30 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { EmptyList } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
+import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
-import { WithdrawalFieldsFragment as Withdrawls } from '@subql/network-query';
-import { useGetWithdrawlsQuery } from '@subql/react-hooks';
+import { WithdrawalFieldsFragment as Withdrawls, WithdrawalType } from '@subql/network-query';
+import { useGetWithdrawlsLazyQuery } from '@subql/react-hooks';
 import { WithdrawalStatus } from '@subql/react-hooks/dist/graphql';
 import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
-import { Table, TableProps, Tag } from 'antd';
+import { Button, Table, TableProps, Tag } from 'antd';
+import assert from 'assert';
+import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
+import { capitalize } from 'lodash-es';
 import moment from 'moment';
 
+import { useWeb3Store } from 'src/stores';
+
 import { DoWithdraw } from '../DoWithdraw';
-import styles from './Locked.module.css';
+import styles from './Locked.module.less';
 
 interface SortedWithdrawals extends Withdrawls {
   idx: number;
@@ -29,41 +36,68 @@ interface SortedWithdrawals extends Withdrawls {
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
 
-const columns: TableProps<SortedWithdrawals>['columns'] = [
-  {
-    title: <TableTitle title={'#'} />,
-    width: '10%',
-    render: (t, r, index) => <TableText content={index + 1} />,
-  },
-  {
-    title: <TableTitle title={t('withdrawals.amount')} />,
-    dataIndex: 'amount',
-    width: '25%',
-    render: (value: string) => <TokenAmount value={formatEther(value)} />,
-  },
-  {
-    title: <TableTitle title={t('withdrawals.type')} />,
-    dataIndex: 'type',
-    width: '25%',
-    render: (value: string) => <TableText>{value}</TableText>,
-  },
-  {
-    title: <TableTitle title={t('withdrawals.lockedUntil')} />,
-    dataIndex: 'endAt',
-    width: '25%',
-    render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
-  },
-  {
-    title: <TableTitle title={t('withdrawals.status')} />,
-    dataIndex: 'lockStatus',
-    width: '15%',
-    render: (value: LOCK_STATUS) => {
-      const tagColor = value === LOCK_STATUS.UNLOCK ? 'success' : 'processing';
-      const tagContent = value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked');
-      return <Tag color={tagColor}>{tagContent}</Tag>;
-    },
-  },
-];
+const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: () => void }> = ({
+  id,
+  type,
+  onSuccess,
+}) => {
+  const { contracts } = useWeb3Store();
+  const cancelUnbonding = () => {
+    assert(contracts, 'Contracts not available');
+
+    return contracts.stakingManager.cancelUnbonding(id);
+  };
+
+  return (
+    <div>
+      <TransactionModal
+        text={{
+          title: '',
+          steps: [],
+        }}
+        actions={[{ label: capitalize(t('general.cancel')), key: 'claim' }]}
+        variant={'textBtn'}
+        onClick={cancelUnbonding}
+        width="416px"
+        className={styles.cancelModal}
+        onSuccess={onSuccess}
+        renderContent={(onSubmit, onCancel, isLoading, error) => {
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <BsExclamationCircle color="var(--sq-info)" fontSize={22}></BsExclamationCircle>
+                <Typography style={{ marginLeft: 16 }} variant="text">
+                  {type === WithdrawalType.UNDELEGATION
+                    ? t('general.cancelUndelegation')
+                    : t('general.cancelUnstaking')}
+                </Typography>
+              </div>
+              <Typography variant="medium" style={{ marginLeft: 38, marginBottom: 32, color: 'var(--sq--gray700)' }}>
+                {type === WithdrawalType.UNDELEGATION
+                  ? t('general.cancelUndelegationTips')
+                  : t('general.cancelUnstakingTips')}
+              </Typography>
+              <div className="flex-end">
+                <Button onClick={onCancel} loading={isLoading} shape="round">
+                  {capitalize(t('general.cancel'))}
+                </Button>
+                <Button
+                  onClick={onSubmit}
+                  loading={isLoading}
+                  shape="round"
+                  style={{ marginLeft: '10px' }}
+                  type="primary"
+                >
+                  {capitalize(t('general.confirm'))}
+                </Button>
+              </div>
+            </div>
+          );
+        }}
+      ></TransactionModal>
+    </div>
+  );
+};
 
 export const Locked: React.FC = () => {
   const { t } = useTranslation();
@@ -74,8 +108,61 @@ export const Locked: React.FC = () => {
     offset: 0,
   };
   // TODO: refresh when do the withdrawl action.
-  const withdrawals = useGetWithdrawlsQuery({ variables: filterParams });
+  const [getWithdrawals, withdrawals] = useGetWithdrawlsLazyQuery({
+    variables: filterParams,
+    fetchPolicy: 'network-only',
+  });
   const lockPeriod = useLockPeriod();
+
+  const columns: TableProps<SortedWithdrawals>['columns'] = [
+    {
+      title: <TableTitle title={'#'} />,
+      width: '10%',
+      render: (t, r, index) => <TableText content={index + 1} />,
+    },
+    {
+      title: <TableTitle title={t('withdrawals.amount')} />,
+      dataIndex: 'amount',
+      width: '25%',
+      render: (value: string) => <TokenAmount value={formatEther(value)} />,
+    },
+    {
+      title: <TableTitle title={t('withdrawals.lockedUntil')} />,
+      dataIndex: 'endAt',
+      width: '25%',
+      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
+    },
+    {
+      title: <TableTitle title={t('withdrawals.type')} />,
+      dataIndex: 'type',
+      width: '15%',
+      render: (value: string) => (
+        <TableText>
+          {value === WithdrawalType.UNSTAKE ? t('withdrawals.unstaking') : t('withdrawals.unDelegation')}
+        </TableText>
+      ),
+    },
+    {
+      title: <TableTitle title={t('withdrawals.status')} />,
+      dataIndex: 'lockStatus',
+      width: '15%',
+      render: (value: LOCK_STATUS) => {
+        const tagColor = value === LOCK_STATUS.UNLOCK ? 'success' : 'processing';
+        const tagContent = value === LOCK_STATUS.UNLOCK ? t('withdrawals.unlocked') : t('withdrawals.locked');
+        return <Tag color={tagColor}>{tagContent}</Tag>;
+      },
+    },
+    {
+      title: <TableTitle title={t('general.action')}></TableTitle>,
+      dataIndex: 'index',
+      width: '25%',
+      render: (id, record) => <CancelUnbonding id={id} type={record.type} onSuccess={getWithdrawals}></CancelUnbonding>,
+    },
+  ];
+
+  React.useEffect(() => {
+    getWithdrawals();
+  }, []);
 
   return (
     <div className={styles.withdrawnContainer}>
