@@ -127,16 +127,20 @@ export const Locked: React.FC = () => {
       render: (value: string) => <TokenAmount value={formatEther(value)} />,
     },
     {
-      title: <TableTitle title={t('withdrawals.type')} />,
-      dataIndex: 'type',
-      width: '15%',
-      render: (value: string) => <TableText>{value}</TableText>,
-    },
-    {
       title: <TableTitle title={t('withdrawals.lockedUntil')} />,
       dataIndex: 'endAt',
       width: '25%',
       render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
+    },
+    {
+      title: <TableTitle title={t('withdrawals.type')} />,
+      dataIndex: 'type',
+      width: '15%',
+      render: (value: string) => (
+        <TableText>
+          {value === WithdrawalType.UNSTAKE ? t('withdrawals.unstaking') : t('withdrawals.unDelegation')}
+        </TableText>
+      ),
     },
     {
       title: <TableTitle title={t('withdrawals.status')} />,

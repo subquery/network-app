@@ -65,7 +65,7 @@ const translation = {
     unlockedAsset_other: 'You can withdraw {{count}} unlocked Assets.',
     amount: 'amount',
     startAt: 'start at',
-    type: 'type',
+    type: 'category',
     lockedUntil: 'locked until',
     status: 'status',
     locked: 'Locked',
@@ -79,6 +79,8 @@ const translation = {
     enterWithdrawAmount: `Enter the amount of ${TOKEN} you want to withdraw`,
     confirmWithdraw: 'Confirm Withdrawal',
     aboutToWithdraw: `You are about to withdraw {{amount}} ${TOKEN}.`,
+    unstaking: 'Staking Withdrawl',
+    unDelegation: 'Delegation Withdrawl',
   },
 
   projects: {
