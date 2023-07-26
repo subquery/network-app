@@ -1,0 +1,49 @@
+.withdrawnContainer {
+  margin: 1rem 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 1rem 0;
+}
+
+.tableCell {
+  color: var(--gray600);
+}
+
+
+// TODO: replace it when components finishi
+.cancelModal {
+  :global .ant-modal-content {
+    padding: 32px;
+    .ant-modal-close {
+      display: none;
+    }
+    .ant-modal-header {
+      display: none;
+    }
+
+    .modalSteps {
+      display: none;
+    }
+
+    .ant-btn {
+      padding: 10px 16px;
+      height: auto;
+      font-family: var(--sq-font-family);
+      font-size: 14px;
+      line-height: 1;
+      height: 38px;
+    }
+  }
+}

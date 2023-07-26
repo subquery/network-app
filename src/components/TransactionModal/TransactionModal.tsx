@@ -57,6 +57,7 @@ export type TransactionModalProps<P, T extends string> = {
   loading?: boolean; // status for whole modal (Update at: Sep 22)
   rethrowWhenSubmit?: boolean;
   width?: string;
+  className?: string;
 };
 
 // TODO: review successModalText/failureModalText when move to subql-component
@@ -74,6 +75,7 @@ const TransactionModal = <P, T extends string>({
   loading,
   rethrowWhenSubmit = false,
   width = '45%',
+  className = '',
 }: TransactionModalProps<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -173,6 +175,7 @@ const TransactionModal = <P, T extends string>({
             )
           }
           width={width}
+          className={className}
         />
       )}
 

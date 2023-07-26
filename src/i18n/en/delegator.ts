@@ -74,6 +74,7 @@ const translation = {
     noRewards: 'There are no rewards available.',
     withdrawToken: 'Withdraw all unlocked Assets',
     withdraw: 'Withdraw',
+    withdrawAll: 'Withdraw all assets',
     confirm: 'Confirm withdrawal amount',
     enterWithdrawAmount: `Enter the amount of ${TOKEN} you want to withdraw`,
     confirmWithdraw: 'Confirm Withdrawal',
