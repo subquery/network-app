@@ -57,8 +57,7 @@ const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   </>
 );
 
-// TODO: nested ternary operator is lack of readable.
-const getMaxTargetBlock = (cur: number, max?: number) => (max ? (max > cur ? max : cur) : cur);
+const getMaxTargetBlock = (cur: number, max?: number) => Math.max(max ?? 0, cur);
 
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
@@ -101,7 +100,6 @@ const ConnectedRow: React.FC<{
 
     if (!maxTargetHeight || (maxTargetHeight && meta?.targetHeight && meta.targetHeight > maxTargetHeight)) {
       maxTargetHeight = meta?.targetHeight || 0;
-      projectMaxTargetHeightInfoRef.set(deploymentId, maxTargetHeight);
       setProjectMaxTargetHeightInfo(deploymentId, maxTargetHeight);
     }
 
