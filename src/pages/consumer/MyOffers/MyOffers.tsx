@@ -22,11 +22,8 @@ import {
   renderAsync,
   useGetOfferCountQuery,
   useGetOwnExpiredOffersLazyQuery,
-  useGetOwnExpiredOffersQuery,
   useGetOwnFinishedOffersLazyQuery,
-  useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersLazyQuery,
-  useGetOwnOpenOffersQuery,
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
 import i18next from 'i18next';
