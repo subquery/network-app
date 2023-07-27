@@ -345,10 +345,10 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     const refresh = () => {
       fetchMoreOffers();
     };
-    EventBus.$on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+    EventBus.on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
 
     return () => {
-      EventBus.$remove(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+      EventBus.off(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
     };
   }, [fetchMoreOffers, curPage, pageSize]);
 

@@ -9,7 +9,6 @@ import { entryLinks, externalAppLinks, studioLink } from '@utils/links';
 
 import { ChainStatus, Header } from './components';
 import {
-  IndexerRegistryProvider,
   IPFSProvider,
   ProjectMetadataProvider,
   QueryApolloProvider,
@@ -30,9 +29,7 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
           <AppInitProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
-                <IndexerRegistryProvider>
-                  <SQTokenProvider>{children}</SQTokenProvider>
-                </IndexerRegistryProvider>
+                <SQTokenProvider>{children}</SQTokenProvider>
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
           </AppInitProvider>
