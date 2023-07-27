@@ -322,7 +322,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
   };
 
   const refreshAfterCancel = () => {
-    if (data.data?.offers?.nodes.length === 1 && curPage !== 1) {
+    if (data.data?.offers?.nodes.length === 1 && curPage > 1) {
       setCurPage(curPage - 1);
       fetchMoreOffers((curPage - 2) * pageSize);
     } else {

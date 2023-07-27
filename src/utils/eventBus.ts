@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export enum EVENT_TYPE {
-  'CREATED_CONSUMER_OFFER' = 'CREATED_CONSUMER_OFFER',
+  CREATED_CONSUMER_OFFER = 'CREATED_CONSUMER_OFFER',
 }
 
 // simple use document.
