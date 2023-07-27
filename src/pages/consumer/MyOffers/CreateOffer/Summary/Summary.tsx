@@ -80,7 +80,10 @@ export const Summary: React.FC = () => {
           title: 'Offer created!',
           description: t('status.changeValidIn15s'),
         });
-        EventBus.$dispatch(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
+
+        setTimeout(() => {
+          EventBus.$dispatch(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
+        }, 1000);
       });
     } catch (error) {
       openNotification({
