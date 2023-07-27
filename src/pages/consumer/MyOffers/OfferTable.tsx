@@ -10,17 +10,13 @@ import { OfferFieldsFragment } from '@subql/network-query';
 import {
   useGetAcceptedOffersQuery,
   useGetAllOpenOffersLazyQuery,
-  useGetAllOpenOffersQuery,
   useGetDeploymentIndexerQuery,
   useGetOwnExpiredOffersLazyQuery,
-  useGetOwnExpiredOffersQuery,
   useGetOwnFinishedOffersLazyQuery,
-  useGetOwnFinishedOffersQuery,
   useGetOwnOpenOffersLazyQuery,
-  useGetOwnOpenOffersQuery,
   useGetSpecificOpenOffersLazyQuery,
-  useGetSpecificOpenOffersQuery,
 } from '@subql/react-hooks';
+import { EVENT_TYPE, EventBus } from '@utils/eventBus';
 import { TableProps, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -280,6 +276,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
    */
   const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [curOffset, setCurOffset] = React.useState(0);
   const sortedParams = (offset: number) => ({
     consumer: queryParams?.consumer ?? '',
     now,
@@ -287,7 +284,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     offset,
   });
   const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersLazyQuery : queryFn;
-  const [loadSortedOffers, sortedOffers] = sortedFn({ variables: sortedParams(0) });
+  const [loadSortedOffers, sortedOffers] = sortedFn();
 
   const SearchDeployment = () => (
     <div className={styles.indexerSearch}>
@@ -312,9 +309,10 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     return data?.data?.offers?.totalCount ?? 0;
   }, [data]);
 
-  const fetchMoreOffers = async (offset: number) => {
+  const fetchMoreOffers = async (offset?: number) => {
     const res = await loadSortedOffers({
-      variables: sortedParams(offset),
+      variables: sortedParams(offset || curOffset),
+      fetchPolicy: 'network-only',
     });
 
     if (res.data?.offers) {
@@ -329,8 +327,20 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     const interval = setInterval(() => {
       setNow(moment().toDate());
     }, 60000);
+
     return () => clearInterval(interval);
   }, []);
+
+  React.useEffect(() => {
+    const refresh = () => {
+      fetchMoreOffers();
+    };
+    EventBus.$on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+
+    return () => {
+      EventBus.$remove(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+    };
+  }, [fetchMoreOffers, curOffset]);
 
   return (
     <>
@@ -376,6 +386,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
                       total: totalCount,
                       onChange: (page, pageSize) => {
                         fetchMoreOffers?.((page - 1) * pageSize);
+                        setCurOffset((page - 1) * pageSize);
                       },
                     }}
                   />
