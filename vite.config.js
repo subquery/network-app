@@ -3,19 +3,11 @@
 
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
-import checker from 'vite-plugin-checker';
 import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [
-    eslint(),
-    tsconfigPaths(),
-    // checker({
-    //   typescript: true,
-    // }),
-    ...(process.env.analyze ? [visualizer()] : []),
-  ],
+  plugins: [eslint(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
   server: {
     port: 3006,
   },
