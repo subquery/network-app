@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ContractSDK } from '@subql/contract-sdk';
-import { cidToBytes32 } from '@subql/network-clients';
+// import { cidToBytes32 } from '@subql/network-clients';
 import { Status } from '@subql/network-query';
 
 export async function getIsOfflineDeploymentOnContract(
@@ -10,9 +10,11 @@ export async function getIsOfflineDeploymentOnContract(
   deploymentId: string | undefined,
   contract: ContractSDK | undefined,
 ): Promise<boolean> {
-  const isOffline =
-    deploymentId && contract ? await contract?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer) : false;
-  return isOffline;
+  // TODO: will use metric service replace it. hardcode for now.
+  // const isOffline =
+  //   deploymentId && contract ? await contract?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer) : false;
+  // return isOffline;
+  return false;
 }
 
 export function getDeploymentStatus(status: Status, isOfflineOnContract: boolean): string {
