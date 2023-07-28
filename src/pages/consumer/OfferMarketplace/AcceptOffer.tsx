@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StepButtons } from '@components/StepButton';
-import { useProject } from '@hooks';
+import { useIndexerMetadata, useProject } from '@hooks';
 import { Spinner } from '@subql/components';
 import { DeploymentIndexerFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
 import { useGetIndexerQuery } from '@subql/react-hooks';
@@ -140,7 +140,11 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
-  const indexerMetadata = useGetIndexerQuery({ variables: { address: account ?? '' } });
+  const indexerQueryInfo = useGetIndexerQuery({ variables: { address: account ?? '' } });
+  const { indexerMetadata } = useIndexerMetadata(account || '', {
+    cid: indexerQueryInfo.data?.indexer?.metadata,
+    immediate: true,
+  });
 
   const text = {
     title: t('offerMarket.acceptModal.title'),
@@ -181,7 +185,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
         if (curStep === 0) {
           return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer} />;
         }
-        return renderAsync(indexerMetadata, {
+        return renderAsync(indexerQueryInfo, {
           loading: () => <Spinner />,
           error: (error) => (
             <Typography.Text type="danger">{`Failed to get deployment info: ${error.message}`}</Typography.Text>
@@ -190,7 +194,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
             <CheckList
               status={deployment.status}
               deploymentId={deployment.deploymentId}
-              proxyEndpoint={data?.indexer?.metadata?.url ?? ''}
+              proxyEndpoint={indexerMetadata.url ?? ''}
               offerId={offer?.id}
               rewardPerIndexer={offer?.deposit.toString()}
               planDuration={offer?.planTemplate?.period.toString()}
