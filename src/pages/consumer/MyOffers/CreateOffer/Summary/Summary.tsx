@@ -82,7 +82,7 @@ export const Summary: React.FC = () => {
         });
 
         setTimeout(() => {
-          EventBus.$dispatch(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
+          EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
         }, 1000);
       });
     } catch (error) {
