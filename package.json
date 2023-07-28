@@ -6,7 +6,7 @@
     "dev": "vite --mode staging",
     "prod": "vite",
     "build:dev": "vite build --mode staging",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "prepare": "husky install",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
   },
