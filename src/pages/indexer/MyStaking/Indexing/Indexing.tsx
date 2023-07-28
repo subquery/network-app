@@ -24,7 +24,7 @@ export const NotRegisteredIndexer: React.FC = () => {
       title={t('indexer.notRegister')}
       description={[t('indexer.notRegisterDesc1'), t('indexer.notRegisterDesc2')]}
       infoI18nKey={'indexer.learnMore'}
-      infoLinkDesc={t('general.learnMore')}
+      infoLinkDesc={t('general.learnMoreHere')}
       infoLink={URLS.INDEXER}
     ></EmptyList>
   );
@@ -99,6 +99,8 @@ export const Indexing: React.FC<Props> = ({ tableData, showDelegated = false }) 
         <Typography.Text className={styles.grayText}>{t('indexer.topRowData')}</Typography.Text>
         <Typography.Text className={styles.grayText}>
           <Trans
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             i18nKey={'indexer.secondRowData'}
             components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}
           />

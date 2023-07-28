@@ -18,7 +18,7 @@ const Instruction: React.FC<{ step: 1 | 2 | 3 | 4 }> = ({ step }) => {
         {step !== 4 && <div className={styles.line} />}
       </div>
       <Typography variant="h5">{t(`create.step${step}.title`)}</Typography>
-      <Typography variant="body" className={styles.subtitle}>
+      <Typography variant="text" className={styles.subtitle}>
         {t(`create.step${step}.subtitle`)}
       </Typography>
     </div>
@@ -34,7 +34,12 @@ const CreateInstructions: React.FC<Props> = ({ onClick }) => {
   return (
     <div className={styles.container}>
       <Typography variant="h4">{t('create.title')}</Typography>
-      <Typography variant="body" className={styles.mainSubtitle}>
+      <Typography variant="text" className={styles.mainSubtitle}>
+        {/* TODO: this should autofix after using i18n internal ts tips. but that's ok just ignore.
+            if anyone saw this TODO and have changed to i18n internal ts tips. happy to remove the following comments.
+          */}
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <Trans i18nKey="create.subtitle">
           Learn how to create a SubQuery project <a href="/" /* TODO proper link*/>here</a>
         </Trans>

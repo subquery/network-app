@@ -16,7 +16,7 @@ import styles from './ChainStatus.module.css';
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { ethWindowObj } = useWeb3Store();
   const { error, connector } = useWeb3();
-  const { t } = useTranslation('translation');
+  const { t } = useTranslation();
   const connectorWindowObj = getConnectorConfig(connector).windowObj;
 
   const isExtensionInstalled = React.useMemo(
