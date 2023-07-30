@@ -17,7 +17,7 @@ type Props = {
 };
 
 const NewDeployment: React.FC<Props> = (props) => {
-  const { t } = useTranslation('translation');
+  const { t } = useTranslation();
 
   return (
     <ModalContainer title={t('deployment.create.title')} onClose={props.onClose}>

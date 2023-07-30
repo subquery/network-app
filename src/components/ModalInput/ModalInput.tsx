@@ -98,7 +98,7 @@ export const ModalInput: React.FC<Props> = ({
       </Typography>
       <div className={styles.btnContainer}>
         <Button
-          onSubmit={formik.handleSubmit}
+          onSubmit={() => formik.handleSubmit()}
           htmlType="submit"
           shape="round"
           size="large"

@@ -49,6 +49,8 @@ const Description = () => {
   return (
     <div className={styles.description}>
       <Typography.Text type="secondary">
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <Trans i18nKey="myOffers.step_0.description">
           You can copy & paste the deployment ID of your desired project by entering their project detail page from
           <Button type="link" href={ROUTES.EXPLORER} className={styles.descriptionBtn} target="_blank">
@@ -92,7 +94,7 @@ export const SelectDeployment: React.FC = () => {
   if (!createOfferContext) return <></>;
 
   const searchedProjectId = searchedDeployment?.project?.id;
-  const { curStep, onStepChange, totalSteps, updateCreateOffer, offer } = createOfferContext;
+  const { curStep, onStepChange, updateCreateOffer, offer } = createOfferContext;
   const onNext = (step: number) => {
     updateCreateOffer({
       ...offer,

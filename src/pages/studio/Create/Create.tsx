@@ -19,7 +19,7 @@ import Instructions from './Instructions';
 const { STUDIO_PROJECT_NAV } = ROUTES;
 
 const Create: React.FC = () => {
-  const { t } = useTranslation('translation');
+  const { t } = useTranslation();
 
   const query = useRouteQuery();
 

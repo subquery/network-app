@@ -6,10 +6,8 @@
     "dev": "vite --mode staging",
     "prod": "vite",
     "build:dev": "vite build --mode staging",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "prepare": "husky install",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
   },
   "dependencies": {
@@ -81,12 +79,6 @@
     "zustand": "^4.1.5"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "6.4.9",
-    "@storybook/addon-essentials": "6.4.9",
-    "@storybook/addon-links": "6.4.9",
-    "@storybook/addon-viewport": "6.4.9",
-    "@storybook/node-logger": "6.4.9",
-    "@storybook/preset-create-react-app": "3.2.0",
     "@storybook/react": "6.4.9",
     "@types/crypto-js": "^4.1.1",
     "@types/js-yaml": "^4.0.3",

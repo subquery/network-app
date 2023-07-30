@@ -92,7 +92,7 @@ function reduceTotal(rewards: any) {
 export const MyAccount: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const action = (link: string, key: string) => ({
+  const action = (link: string, key: 'delegating' | 'staking' | 'rewards' | 'withdrawn') => ({
     label: t(`account.linkText.${key}`),
     onClick: () => navigate(link),
   });
