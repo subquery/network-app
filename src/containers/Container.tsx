@@ -54,7 +54,6 @@ export function createContainer<V, State = void>(
   function Provider(props: Props<State>) {
     const l = React.useMemo(() => (options?.displayName ? logger.getLogger(options.displayName) : logger), []);
     const value = useHook(l, props.initialState);
-
     return <Ctx.Provider value={value}>{props.children}</Ctx.Provider>;
   }
 

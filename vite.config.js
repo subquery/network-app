@@ -1,13 +1,47 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+const reactContextHmr = () => {
+  const preverseRefFunc = `
+  function __preserveRef(key, v) {
+    if (import.meta.env.PROD) return v;
+    console.warn(key, v)
+    import.meta.hot.data ??= {}
+    import.meta.hot.data.contexts ??= {}
+    const old = import.meta.hot.data.contexts[key];
+    const now = old || v;
+    
+    import.meta.hot.on('vite:beforeUpdate', () => {
+      import.meta.hot.data.contexts[key] = now;
+    });
+    
+    return now;
+  }
+`;
+  const createContextRegEx = /(import.*createContext.*react)|(React.createContext.*\(.*\))/;
+  const oldCreateRegex = /(const|let) (.*) = ((React\.createContext.*)|(createContext.*));/;
+  const newCreateRegex = '$1 $2 = __preserveRef("$2",$3);';
+  return {
+    name: 'preserveRef',
+    transform(code) {
+      if (!code.match(createContextRegEx)) return;
+
+      return {
+        code: (code + preverseRefFunc).replace(oldCreateRegex, newCreateRegex),
+        map: null,
+      };
+    },
+  };
+};
+
 export default defineConfig({
-  plugins: [eslint(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
+  plugins: [react(), reactContextHmr(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
   server: {
     port: 3006,
   },

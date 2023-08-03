@@ -13,8 +13,9 @@ type Props = {
 
 const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, ...rest }) => {
   const [source, setSource] = React.useState<string>();
-  const { catSingle } = useIPFS();
+  const ipfs = useIPFS();
 
+  const { catSingle } = ipfs;
   React.useEffect(() => {
     if (typeof src === 'string') {
       const srcIPFS = src.replace('ipfs://', '');

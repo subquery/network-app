@@ -22,6 +22,7 @@ import styles from './Project.module.css';
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
 const ProjectInner: React.FC = () => {
+  console.warn(77789);
   const { id } = useParams();
   const query = useRouteQuery();
   const navigate = useNavigate();
