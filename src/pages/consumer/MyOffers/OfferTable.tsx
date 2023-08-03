@@ -261,7 +261,7 @@ interface MyOfferTableProps {
     | typeof useGetOwnFinishedOffersLazyQuery
     | typeof useGetOwnExpiredOffersLazyQuery
     | typeof useGetAllOpenOffersLazyQuery;
-  queryParams?: { consumer?: string };
+  queryParams?: { consumer?: string; expireDate?: Date };
   description?: string;
 }
 
@@ -280,7 +280,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
   const [pageSize] = React.useState(10);
   const sortedParams = (offset: number) => ({
     consumer: queryParams?.consumer ?? '',
-    now,
+    now: queryParams?.expireDate ?? now,
     deploymentId: searchDeploymentId ?? '',
     offset,
   });
