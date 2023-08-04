@@ -2912,10 +2912,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.25.24.tgz#8c7688559979f7079aacaf31aa881c3aa410b718"
   integrity sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==
 
-"@subql/apollo-links@0.5.5":
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-0.5.5.tgz#02b4c80c7b4269e07f089710d552e92dea79d339"
-  integrity sha512-2gN/+iY6lOXgvEeH7CHkaa5bQRKkViIEpKAItXy5N9hXWpf5Y9MAHx2mois3JU08EYpKA03ICm2o+5XzihZAoQ==
+"@subql/apollo-links@0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-0.5.7.tgz#4f147f78e6b2151a88a62e8ca21e901954c136c1"
+  integrity sha512-f4IAo8zVBQuof1DEiLSh+taLAiWyNZHInBpPin/OJg61mpgErdob6L5LJSqkupLTZFIBi1S36u0RuWHzVMV5Cg==
   dependencies:
     "@metamask/eth-sig-util" "5.1.0"
     apollo-link-error "^1.1.13"
@@ -9764,9 +9764,9 @@ rollup@^2.77.2:
     fsevents "~2.3.2"
 
 rollup@^3.25.2:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.27.0.tgz#15bd07e2e1cbfa9255bf6a3f04a432621c2f3550"
-  integrity sha512-aOltLCrYZ0FhJDm7fCqwTjIUEVjWjcydKBV/Zeid6Mn8BWgDCUBBWT5beM5ieForYNo/1ZHuGJdka26kvQ3Gzg==
+  version "3.27.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.27.1.tgz#e6c7340889f33042b4c3247a2acb38ebcfc3a98c"
+  integrity sha512-tXNDFwOkN6C2w5Blj1g6ForKeFw6c1mDu5jxoeDO3/pmYjgt+8yvIFjKzH5FQUq70OKZBkOt0zzv0THXL7vwzQ==
   optionalDependencies:
     fsevents "~2.3.2"
 
