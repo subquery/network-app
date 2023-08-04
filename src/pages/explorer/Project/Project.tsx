@@ -7,7 +7,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 're
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
-import { parseError, URLS } from '@utils';
+import { parseError } from '@utils';
 import clsx from 'clsx';
 
 import { ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
