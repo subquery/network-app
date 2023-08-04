@@ -13,6 +13,7 @@ import { App } from './App';
 
 import './config/sentryConf';
 import 'reflect-metadata';
+import '@subql/components/dist/subquery-components.css';
 import './index.less';
 
 window.Buffer = Buffer;
