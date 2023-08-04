@@ -102,8 +102,7 @@
     "node-libs-browser": "^2.2.1",
     "prettier": "^2.4.1",
     "rollup-plugin-visualizer": "^5.9.2",
-    "typescript-plugin-css-modules": "^3.4.0",
-    "vite-plugin-eslint": "^1.8.1"
+    "typescript-plugin-css-modules": "^3.4.0"
   },
   "eslintConfig": {
     "extends": [
