@@ -6,6 +6,7 @@ import { useWeb3 } from '@containers';
 import { openNotification } from '@subql/components';
 import { getAuthReqHeader, requestConsumerHostToken } from '@utils';
 import axios, { AxiosResponse } from 'axios';
+import { BigNumberish } from 'ethers';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,
@@ -17,10 +18,10 @@ export const isConsumerHostError = (res: object): res is ConsumerHostError => {
 
 // Will add more controller along with below TODO
 export type ConsumerHostServicesProps = {
-  alert: boolean;
+  alert?: boolean;
 };
 
-export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesProps) => {
+export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesProps = { alert: false }) => {
   const { account, library } = useWeb3();
   const authHeaders = useRef<{ Authorization: string }>();
 
@@ -121,6 +122,26 @@ export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesP
     return res;
   };
 
+  const createHostingPlanApi = async (params: IPostHostingPlansParams): Promise<AxiosResponse<IGetHostingPlans>> => {
+    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans`, params, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await createHostingPlanApi(params);
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
   useEffect(() => {
     loginConsumerHostToken();
   }, [account]);
@@ -129,8 +150,30 @@ export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesP
     getUserApiKeysApi,
     createNewApiKey,
     deleteNewApiKey,
+    createHostingPlanApi,
   };
 };
+
+export interface IPostHostingPlansParams {
+  deploymentId?: string;
+  price: BigNumberish;
+  expiration: number;
+  maximum: number;
+}
+
+export interface IGetHostingPlans {
+  id: number;
+  user_id: number;
+  deployment_id: number;
+  channels: string;
+  maximum: number;
+  price: BigNumberish;
+  spent: string;
+  expired_at: string;
+  is_actived: true;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface GetUserApiKeys {
   id: number;
