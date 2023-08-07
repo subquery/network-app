@@ -26,6 +26,7 @@ import {
   useGetOwnOpenOffersLazyQuery,
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
 
 import { CreateOffer } from './CreateOffer';
@@ -101,9 +102,10 @@ interface MyOfferProps {
     | typeof useGetOwnExpiredOffersLazyQuery;
   totalCount: number;
   description?: string;
+  queryParams?: { expiredDate?: Date };
 }
 
-const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
+const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description, queryParams }) => {
   const { account } = useWeb3();
 
   const navigate = useNavigate();
@@ -118,7 +120,11 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
     <div className={styles.content}>
       <OfferHeader />
       <div className="contentContainer">
-        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
+        <OfferTable
+          queryFn={queryFn}
+          queryParams={{ consumer: account || '', expireDate: queryParams?.expiredDate }}
+          description={description}
+        />
       </div>
     </div>
   );
@@ -175,6 +181,9 @@ export const MyOffers: React.FC = () => {
                       queryFn={useGetOwnFinishedOffersLazyQuery}
                       description={t('myOffers.closedDescription')}
                       totalCount={totalCount}
+                      queryParams={{
+                        expiredDate: dayjs('1970-1-2').toDate(),
+                      }}
                     />
                   }
                 />
