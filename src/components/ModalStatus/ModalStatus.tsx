@@ -79,7 +79,7 @@ export const ModalStatus: React.FC<ModalStatusProps> = ({
               </Typography>
             </div>
 
-            <Typography variant="body" className={styles.statusDescription}>
+            <Typography variant="text" className={styles.statusDescription}>
               {statusDescription}
             </Typography>
           </div>

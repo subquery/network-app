@@ -5,10 +5,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineWarning } from 'react-icons/ai';
 import { DatePicker, Typography } from 'antd';
+import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
-import moment from 'moment';
 import * as Yup from 'yup';
 
 import { AppTypography, NumberInput } from '../../../../../components';
@@ -35,7 +35,7 @@ const OfferDetailsSchema = Yup.object().shape({
   [INDEXER_CAP]: Yup.number().required().moreThan(0),
   [TOTAL_DEPOSIT]: Yup.string().required(),
   [MINIMUM_INDEXED_HEIGHT]: Yup.number().required().moreThan(0),
-  [EXPIRE_DATE]: Yup.date().required().min(moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT)),
+  [EXPIRE_DATE]: Yup.date().required().min(dayjs().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT)),
 });
 
 export const OfferDetails: React.FC = () => {
@@ -128,14 +128,14 @@ export const OfferDetails: React.FC = () => {
                   </AppTypography>
                   <DatePicker
                     showTime
+                    value={dayjs(expireDate)}
                     disabledDate={(current) => {
                       // Can not select days before today + 24 hours
-                      return current && current < moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT);
+                      return current && current < dayjs().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT);
                     }}
                     size="large"
                     id={EXPIRE_DATE}
                     className={styles.datePicker}
-                    defaultValue={moment(expireDate)}
                     onChange={(value) => setFieldValue(EXPIRE_DATE, value)}
                     status={errors[EXPIRE_DATE] ? 'error' : undefined}
                     placement={'topLeft'}

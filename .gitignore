@@ -16,6 +16,7 @@
 .DS_Store
 .env.local
 .env.development.local
+.env.staging.local
 .env.test.local
 .env.production.local
 
@@ -28,3 +29,5 @@ __generated__
 src/globalTypes.ts
 .env
 dist
+
+stats.html

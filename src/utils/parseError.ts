@@ -3,7 +3,7 @@
 
 import { captureException } from '@sentry/react';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 
 export const walletConnectionErrors = [
   {

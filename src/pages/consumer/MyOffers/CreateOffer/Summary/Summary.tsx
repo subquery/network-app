@@ -6,10 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { assert } from '@polkadot/util';
+import { EVENT_TYPE, EventBus } from '@utils/eventBus';
 import { Typography } from 'antd';
+import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
-import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -53,7 +54,7 @@ export const Summary: React.FC = () => {
     } = offer;
 
     const deposit = parseEther(rewardPerIndexer);
-    const expireDate = moment(expired).unix(); // to seconds
+    const expireDate = dayjs(expired).unix(); // to seconds
 
     try {
       setIsLoading(true);
@@ -79,6 +80,10 @@ export const Summary: React.FC = () => {
           title: 'Offer created!',
           description: t('status.changeValidIn15s'),
         });
+
+        setTimeout(() => {
+          EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
+        }, 1000);
       });
     } catch (error) {
       openNotification({
@@ -135,7 +140,7 @@ export const Summary: React.FC = () => {
     },
     {
       label: t('myOffers.step_2.expireDate'),
-      value: offer?.expireDate ? moment(offer.expireDate).format() : moment(),
+      value: offer?.expireDate ? dayjs(offer.expireDate).format() : dayjs(),
     },
   ];
 

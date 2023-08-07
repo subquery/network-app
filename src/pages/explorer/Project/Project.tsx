@@ -6,49 +6,28 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
-import {
-  useGetDeploymentIndexersQuery,
-  useGetProjectDeploymentsQuery,
-  useGetProjectOngoingServiceAgreementsQuery,
-} from '@subql/react-hooks';
+import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { parseError, URLS } from '@utils';
 import clsx from 'clsx';
 
-import { EmptyList, ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
+import { ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { notEmpty, renderAsync } from '../../../utils';
+import { renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { FlexPlans } from '../FlexPlans';
 import styles from './Project.module.css';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
-const NoIndexers: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <EmptyList
-      title={t('noIndexers.title')}
-      description={t('noIndexers.description')}
-      infoLinkDesc={t('noIndexers.subtitle')}
-      infoI18nKey={t('noIndexers.subtitle')}
-      infoLink={URLS.INDEXER}
-    />
-  );
-};
-
 const ProjectInner: React.FC = () => {
   const { id } = useParams();
   const query = useRouteQuery();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [offset, setOffset] = React.useState(0);
-  const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
   const { t } = useTranslation();
   const { getVersionMetadata } = useProjectMetadata();
-
   const asyncProject = useProjectFromQuery(id ?? '');
   const { data: deployments } = useGetProjectDeploymentsQuery({
     variables: {
@@ -56,20 +35,27 @@ const ProjectInner: React.FC = () => {
     },
   });
 
-  const deploymentId = query.get('deploymentId') || asyncProject.data?.currentDeployment;
+  const [deploymentVersions, setDeploymentVersions] = React.useState<Record<string, string>>();
 
-  const asyncIndexers = useGetDeploymentIndexersQuery({
-    variables: { deploymentId: deploymentId ?? '', offset },
-  });
+  const sortedTabList = React.useMemo(() => {
+    const tabList = [
+      { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
+      { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+      { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
+    ];
+    const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
+    return import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
+  }, [location.search]);
 
-  const fetchMore = (offset: number) => {
-    setOffset(offset);
+  const deploymentId = React.useMemo(() => {
+    return query.get('deploymentId') || asyncProject.data?.currentDeployment;
+  }, [asyncProject]);
+
+  const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
+
+  const handleChangeVersion = (value: string) => {
+    navigate(`${location.pathname}?deploymentId=${value}`);
   };
-
-  const indexers = React.useMemo(
-    () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty),
-    [asyncIndexers.data],
-  );
 
   React.useEffect(() => {
     const getVersions = async () => {
@@ -108,43 +94,7 @@ const ProjectInner: React.FC = () => {
     }
   }, [deploymentVersions, deployments, getVersionMetadata]);
 
-  const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
-
-  const handleChangeVersion = (value: string) => {
-    navigate(`${location.pathname}?deploymentId=${value}`);
-  };
-
-  const indexerDetails = renderAsync(asyncIndexers, {
-    loading: () => <Spinner />,
-    error: (e) => <div>{`Failed to load indexers: ${e.message}`}</div>,
-    data: (data) => {
-      if (!indexers?.length) {
-        return <NoIndexers />;
-      }
-      return (
-        <IndexerDetails
-          indexers={indexers}
-          deploymentId={deploymentId}
-          totalCount={data?.deploymentIndexers?.totalCount}
-          onLoadMore={fetchMore}
-          offset={offset}
-        />
-      );
-    },
-  });
-
-  const tabList = [
-    { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
-    { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
-    { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
-    // { link: `${ROUTE}/${id}/playground${history.location.search}`, label: t('explorer.project.tab3') },
-  ];
-
-  const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
-
-  const sortedTabList = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
-
-  return renderAsync(asyncProject, {
+  const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
     data: (project) => {
@@ -167,6 +117,7 @@ const ProjectInner: React.FC = () => {
             <TabButtons tabs={sortedTabList} />
           </div>
           <div className={clsx('content-width')}>
+            {/* TODO: just render the components rather than routes. */}
             <Routes>
               <Route
                 path={OVERVIEW}
@@ -179,7 +130,7 @@ const ProjectInner: React.FC = () => {
                   />
                 }
               />
-              <Route path={INDEXERS} element={indexerDetails} />
+              <Route path={INDEXERS} element={<IndexerDetails deploymentId={deploymentId}></IndexerDetails>} />
               <Route
                 path={SERVICE_AGREEMENTS}
                 element={
@@ -190,9 +141,7 @@ const ProjectInner: React.FC = () => {
                 }
               />
               <Route path={FLEX_PLANS} element={<FlexPlans />} />
-              {/* <Route path={`${ROUTE}/:id/playground`}>
-                {renderPlayground()}
-              </Route> */}
+
               <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
             </Routes>
           </div>
@@ -200,8 +149,8 @@ const ProjectInner: React.FC = () => {
       );
     },
   });
+
+  return page ? page : <span>Failed to load project: can't find project detail information</span>;
 };
 
-export const Project: React.FC = () => {
-  return <ProjectInner />;
-};
+export default ProjectInner;

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
 import { Typography } from '@subql/components';
-import { renderAsync, useGetAllOpenOffersQuery } from '@subql/react-hooks';
+import { renderAsync, useGetAllOpenOffersLazyQuery, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
 import moment from 'moment';
 
@@ -37,7 +37,7 @@ const NoOffers: React.FC = () => {
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
-  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 }, pollInterval: 10000 });
+  const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
 
   return renderAsync(offers, {
     loading: () => <Spinner />,
@@ -52,7 +52,7 @@ export const Marketplace: React.FC = () => {
             <>
               <Description desc={t('consumerOfferMarket.listDescription')} />
               <div className={styles.offers}>
-                <OfferTable queryFn={useGetAllOpenOffersQuery} />
+                <OfferTable queryFn={useGetAllOpenOffersLazyQuery} />
               </div>
             </>
           ) : (
@@ -63,3 +63,5 @@ export const Marketplace: React.FC = () => {
     },
   });
 };
+
+export default Marketplace;

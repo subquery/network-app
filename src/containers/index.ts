@@ -6,5 +6,4 @@ export { useIPFS, IPFSProvider } from './IPFS';
 export { useProjectMetadata, ProjectMetadataProvider } from './ProjectMetadata';
 export { useQueryRegistry, QueryRegistryProvider } from './QueryRegistry';
 export * from './QueryApolloProvider';
-export { useIndexerRegistry, IndexerRegistryProvider } from './IndexerRegistry';
 export * from './SQToken';

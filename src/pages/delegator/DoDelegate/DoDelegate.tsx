@@ -19,7 +19,7 @@ import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
-import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
+import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -47,9 +47,11 @@ const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval =
 interface DoDelegateProps {
   indexerAddress: string;
   variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
+  delegation?: DelegationFieldsFragment | null;
+  indexer?: IndexerFieldsFragment | null;
 }
 
-export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant }) => {
+export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant, delegation, indexer }) => {
   const { t } = useTranslation();
   const { currentEra } = useEra();
   const { account } = useWeb3();
@@ -57,8 +59,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
   const { stakingAllowance } = useSQToken();
   const requireTokenApproval = stakingAllowance?.data?.isZero();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
-  const delegation = useGetDelegationQuery({ variables: { id: `${account ?? ''}:${indexerAddress}` } });
-  const indexer = useGetIndexerQuery({ variables: { address: indexerAddress ?? '' } });
   const isLogin = useIsLogin();
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
@@ -72,25 +72,26 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(mergeAsync(rewardClaimStatus, delegation, currentEra, indexer), {
+  return renderAsync(mergeAsync(rewardClaimStatus, currentEra), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,
     loading: () => <Spinner />,
     data: (data) => {
-      const [r, d, era, i] = data;
+      const [r, era] = data;
       const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       // if doesn't login will enter wallerRoute logical code process
       const isActionDisabled = isLogin ? !stakingAllowance.data || rewardClaimStatus.loading : false;
 
       let afterDelegatedAmount = 0;
       let indexerCapacity = BigNumber.from(0);
-      if (d?.delegation?.amount) {
-        const rawDelegate = parseRawEraValue(d?.delegation?.amount, era?.index);
+      if (delegation?.amount) {
+        const rawDelegate = parseRawEraValue(delegation?.amount, era?.index);
         const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
         afterDelegatedAmount = delegate.after ?? 0;
       }
 
-      if (i?.indexer?.capacity) {
-        const rawCapacity = parseRawEraValue(i?.indexer?.capacity, era?.index);
+      if (indexer?.capacity) {
+        const rawCapacity = parseRawEraValue(indexer?.capacity, era?.index);
+
         indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
       }
 
@@ -131,6 +132,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
                 indexerAddress={indexerAddress}
                 delegatedAmount={afterDelegatedAmount}
                 indexerCapacity={indexerCapacity}
+                indexerMetadataCid={indexer?.metadata}
                 error={error}
                 curEra={era?.index}
               />
@@ -138,6 +140,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant 
           }}
           variant={isActionDisabled ? 'disabledTextBtn' : variant}
           initialCheck={rewardClaimStatus}
+          width="540px"
         />
       );
     },

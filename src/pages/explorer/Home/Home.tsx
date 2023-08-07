@@ -5,11 +5,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
-import { useGetProjectsQuery } from '@subql/react-hooks';
+import { useGetProjectsLazyQuery } from '@subql/react-hooks';
+import { useInfiniteScroll } from 'ahooks';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
-import { useAsyncMemo, useOnScreen } from '../../../hooks';
+import { useAsyncMemo } from '../../../hooks';
 import { notEmpty } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import styles from './Home.module.css';
@@ -49,30 +50,35 @@ export const Header: React.FC<{ renderRightItem?: () => React.ReactNode }> = ({ 
 };
 
 const Home: React.FC = () => {
-  const { data, loading, error, fetchMore } = useGetProjectsQuery({
+  const [getProjects, { error, loading }] = useGetProjectsLazyQuery({
     variables: { offset: 0 },
   });
   const navigate = useNavigate();
 
-  const bottom = React.useRef<HTMLDivElement>(null);
-  const [endReached, setEndReached] = React.useState<boolean>(false);
-  const projects = React.useMemo(() => data?.projects?.nodes.filter(notEmpty), [data]);
-  const isBottomVisible = useOnScreen(bottom);
+  const [projects, setProjects] = React.useState<Project[]>([]);
 
-  // XXX untested
-  React.useEffect(() => {
-    if (isBottomVisible && !loading && !error && !endReached) {
-      fetchMore({
-        variables: {
-          offset: data?.projects?.nodes.length,
-        },
-      }).then((res) => {
-        if (!res.data.projects?.nodes.length) {
-          setEndReached(true);
-        }
-      });
+  const loadMore = async () => {
+    const res = await getProjects({
+      variables: {
+        offset: projects.length,
+      },
+    });
+
+    if (res.data?.projects?.nodes) {
+      setProjects([...projects, ...res.data.projects?.nodes.filter(notEmpty)]);
     }
-  }, [isBottomVisible, loading, error, fetchMore, data, endReached]);
+
+    return {
+      list: [],
+      isNoMore: !res.error && !res.data?.projects?.nodes.length,
+    };
+  };
+
+  useInfiniteScroll(() => loadMore(), {
+    target: document,
+    isNoMore: (d) => !!d?.isNoMore,
+    threshold: 300,
+  });
 
   return (
     <div className="content-width">
@@ -90,7 +96,6 @@ const Home: React.FC = () => {
           : !loading && <span>No projects</span>}
       </div>
       {loading && <Spinner />}
-      <div style={{ height: 1 }} ref={bottom} />
     </div>
   );
 };

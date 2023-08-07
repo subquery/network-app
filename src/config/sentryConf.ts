@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
-import { isString } from 'lodash';
+import { isString } from 'lodash-es';
 
 const eventLimiter: { [index: string]: boolean } = {};
 
 Sentry.init({
   beforeSend: (event, hint) => {
-    const rawError = hint?.originalException;
+    const rawError = hint?.originalException as Error;
     if (!rawError) return event;
     const msg = isString(rawError) ? rawError : rawError.message;
 
@@ -28,7 +27,7 @@ Sentry.init({
   },
   // this env set on Github workflow.
   dsn: import.meta.env.VITE_SENTRY_DSN,
-  integrations: [new BrowserTracing()],
+  integrations: [new Sentry.BrowserTracing()],
   environment: import.meta.env.MODE,
   // Set tracesSampleRate to 1.0 to capture 100%
   tracesSampleRate: 1.0,

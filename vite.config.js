@@ -1,12 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [eslint(), tsconfigPaths()],
+  plugins: [eslint(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
   server: {
     port: 3006,
   },
@@ -24,9 +25,6 @@ export default defineConfig({
     modules: {
       localIdentName: '[local]_[hash:base64:5]',
     },
-  },
-  define: {
-    'process.env': process.env,
   },
   build: {
     minify: false,

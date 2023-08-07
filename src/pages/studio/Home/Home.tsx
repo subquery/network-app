@@ -5,12 +5,14 @@ import * as React from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router';
 import { Button } from '@subql/components';
-import { useGetProjectsQuery } from '@subql/react-hooks';
+import { ProjectFieldsFragment } from '@subql/network-query';
+import { useGetProjectsLazyQuery } from '@subql/react-hooks';
+import { useInfiniteScroll } from 'ahooks';
 
 import { CreateInstructions, NewProject, ProjectCard, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useProject } from '../../../hooks';
-import { modalStyles, renderAsync } from '../../../utils';
+import { modalStyles, notEmpty, renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
@@ -55,13 +57,40 @@ const Home: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
-  const asyncProjects = useGetProjectsQuery();
+  const [getProjects, asyncProjects] = useGetProjectsLazyQuery({
+    variables: { offset: 0 },
+  });
+
+  const [projects, setProjects] = React.useState<ProjectFieldsFragment[]>([]);
+
+  const loadMore = async () => {
+    const res = await getProjects({
+      variables: {
+        offset: projects.length,
+      },
+    });
+
+    if (res.data?.projects?.nodes) {
+      setProjects([...projects, ...res.data.projects?.nodes.filter(notEmpty)]);
+    }
+
+    return {
+      list: [],
+      isNoMore: !res.error && !res.data?.projects?.nodes.length,
+    };
+  };
 
   const handleCreateProject = (name: string) => {
     navigate(`${STUDIO_CREATE_NAV}?name=${encodeURI(name)}`);
   };
 
   const enableCreateModal = () => setShowCreateModal(true);
+
+  useInfiniteScroll(() => loadMore(), {
+    target: document,
+    isNoMore: (d) => !!d?.isNoMore,
+    threshold: 300,
+  });
 
   return (
     <div className="content-width">
@@ -80,17 +109,17 @@ const Home: React.FC = () => {
         loading: () => <Spinner />,
         error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
         data: (_projects) => {
-          if (!_projects.projects?.nodes.length) {
+          if (!projects?.length) {
             return <CreateInstructions onClick={enableCreateModal} />;
           }
 
-          const projects = _projects.projects?.nodes
+          const renderProjects = projects
             .map((p) => ({ id: p?.id ?? '', owner: p?.owner ?? '' }))
             .filter(({ id, owner }) => account && id && owner === account);
 
           return (
             <div className={styles.list}>
-              {projects.map(({ id }) => (
+              {renderProjects.map(({ id }) => (
                 <Project
                   projectId={id}
                   key={id}

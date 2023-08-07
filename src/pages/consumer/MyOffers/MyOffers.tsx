@@ -21,11 +21,12 @@ import { Typography } from '@subql/components';
 import {
   renderAsync,
   useGetOfferCountQuery,
-  useGetOwnExpiredOffersQuery,
-  useGetOwnFinishedOffersQuery,
-  useGetOwnOpenOffersQuery,
+  useGetOwnExpiredOffersLazyQuery,
+  useGetOwnFinishedOffersLazyQuery,
+  useGetOwnOpenOffersLazyQuery,
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
 
 import { CreateOffer } from './CreateOffer';
@@ -95,13 +96,18 @@ export const OfferHeader: React.FC = () => {
 };
 
 interface MyOfferProps {
-  queryFn: typeof useGetOwnOpenOffersQuery | typeof useGetOwnFinishedOffersQuery | typeof useGetOwnExpiredOffersQuery;
+  queryFn:
+    | typeof useGetOwnOpenOffersLazyQuery
+    | typeof useGetOwnFinishedOffersLazyQuery
+    | typeof useGetOwnExpiredOffersLazyQuery;
   totalCount: number;
   description?: string;
+  queryParams?: { expiredDate?: Date };
 }
 
-const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) => {
+const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description, queryParams }) => {
   const { account } = useWeb3();
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -114,7 +120,11 @@ const MyOffer: React.FC<MyOfferProps> = ({ queryFn, totalCount, description }) =
     <div className={styles.content}>
       <OfferHeader />
       <div className="contentContainer">
-        <OfferTable queryFn={queryFn} queryParams={{ consumer: account || '' }} description={description} />
+        <OfferTable
+          queryFn={queryFn}
+          queryParams={{ consumer: account || '', expireDate: queryParams?.expiredDate }}
+          description={description}
+        />
       </div>
     </div>
   );
@@ -141,7 +151,9 @@ export const MyOffers: React.FC = () => {
   const { offerAllowance } = useSQToken();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
   const requiresTokenApproval = offerAllowance.data?.isZero();
-  const offers = useGetOfferCountQuery({ variables: { consumer: account ?? '' }, pollInterval: 10000 });
+  const offers = useGetOfferCountQuery({
+    variables: { consumer: account ?? '' },
+  });
 
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
 
@@ -159,15 +171,19 @@ export const MyOffers: React.FC = () => {
               <Routes>
                 <Route
                   path={OPEN_OFFERS}
-                  element={<MyOffer queryFn={useGetOwnOpenOffersQuery} totalCount={totalCount} />}
+                  element={<MyOffer key="openOffers" queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />}
                 />
                 <Route
                   path={CLOSE_OFFERS}
                   element={
                     <MyOffer
-                      queryFn={useGetOwnFinishedOffersQuery}
+                      key="closedOffers"
+                      queryFn={useGetOwnFinishedOffersLazyQuery}
                       description={t('myOffers.closedDescription')}
                       totalCount={totalCount}
+                      queryParams={{
+                        expiredDate: dayjs('1970-1-2').toDate(),
+                      }}
                     />
                   }
                 />
@@ -175,7 +191,8 @@ export const MyOffers: React.FC = () => {
                   path={EXPIRED_OFFERS}
                   element={
                     <MyOffer
-                      queryFn={useGetOwnExpiredOffersQuery}
+                      key="expiredOffers"
+                      queryFn={useGetOwnExpiredOffersLazyQuery}
                       description={t('myOffers.expiredDescription')}
                       totalCount={totalCount}
                     />

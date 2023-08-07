@@ -47,3 +47,5 @@ export const Plans: React.FC = () => {
     </div>
   );
 };
+
+export default Plans;

@@ -3,13 +3,14 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
-import { TableTitle } from '@subql/components';
+import { FetcherParams } from '@graphiql/toolkit';
+import { Spinner, TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
+import { renderAsync, useGetConsumerFlexPlanQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { BigNumber } from 'ethers';
-import { FetcherParams } from 'graphiql';
 import i18next from 'i18next';
 
 import { TableText } from '../../../components';
@@ -31,7 +32,7 @@ import { defaultQuery, fetcher } from '../../../utils/eip721SignTokenReq';
 import { POST } from '../../../utils/fetch';
 import { AuthPlayground } from './AuthPlayground';
 
-const { FLEX_PLANS, ONGOING_PLANS_NAV } = ROUTES;
+const { ONGOING_PLANS_NAV } = ROUTES;
 
 const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
@@ -70,22 +71,46 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
 export const FlexPlayground: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const { state } = useLocation();
+  const { id = '' } = useParams();
   const navigate = useNavigate();
+  const consumerFlexPlan = useGetConsumerFlexPlanQuery({
+    variables: {
+      id,
+    },
+  });
+
   const [isCheckingAuth, setIsCheckingAuth] = React.useState<boolean>();
   const [queryable, setQueryable] = React.useState<boolean>();
+  const [sessionToken, setSessionToken] = React.useState<string>('');
 
-  const flexPlan = state as ConsumerFlexPlan;
-  const TOKEN_STORAGE_KEY = `${flexPlan?.id}/${account}`;
-  const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
+  const TOKEN_STORAGE_KEY = React.useMemo(() => {
+    const { data: { stateChannel: flexPlan } = {} } = consumerFlexPlan;
+    return `${flexPlan?.id}/${account}`;
+  }, [consumerFlexPlan, account]);
 
   const { queryUrl, requestTokenUrl } = React.useMemo(() => {
-    const url = process.env.VITE_CONSUMER_HOST_ENDPOINT;
+    const { data: { stateChannel: flexPlan } = {} } = consumerFlexPlan;
+
+    if (!flexPlan)
+      return {
+        queryUrl: '',
+        requestTokenUrl: '',
+      };
+
+    const url = import.meta.env.VITE_CONSUMER_HOST_ENDPOINT;
     return {
-      queryUrl: `${url}/users/channels/${flexPlan?.id}/playground`,
-      requestTokenUrl: wrapProxyEndpoint(`${url}/token`, flexPlan?.indexer),
+      queryUrl: `${url}/users/channels/${flexPlan.id}/playground`,
+      requestTokenUrl: wrapProxyEndpoint(`${url}/token`, flexPlan.indexer),
     };
-  }, [flexPlan?.id, flexPlan?.indexer]);
+  }, [consumerFlexPlan]);
+
+  const requireAuth = React.useMemo(() => {
+    return queryable === false && !isCheckingAuth;
+  }, [isCheckingAuth, queryable]);
+
+  const showPlayground = React.useMemo(() => {
+    return !!(queryable && queryUrl && !isCheckingAuth);
+  }, [queryable, queryUrl, isCheckingAuth]);
 
   /**
    * Query Graphql codes handled
@@ -141,6 +166,12 @@ export const FlexPlayground: React.FC = () => {
     initialQuery();
   }, [TOKEN_STORAGE_KEY, navigate, queryUrl, sessionToken, t]);
 
+  React.useEffect(() => {
+    if (TOKEN_STORAGE_KEY) {
+      setSessionToken(getEncryptStorage(TOKEN_STORAGE_KEY));
+    }
+  }, [TOKEN_STORAGE_KEY]);
+
   const requestAuthWhenTokenExpired = React.useCallback(() => {
     setQueryable(false);
     removeStorage(TOKEN_STORAGE_KEY);
@@ -152,40 +183,45 @@ export const FlexPlayground: React.FC = () => {
     });
   }, [TOKEN_STORAGE_KEY, t]);
 
-  const requireAuth = queryable === false && !isCheckingAuth;
-  const showPlayground = !!(queryable && queryUrl && !isCheckingAuth);
-
-  return (
-    <AuthPlayground
-      headerLink={ONGOING_PLANS_NAV}
-      headerText={t('plans.category.myFlexPlans')}
-      deploymentId={flexPlan?.deployment?.id ?? ''}
-      projectMetadata={flexPlan.deployment?.project?.metadata}
-      columns={columns}
-      dataSource={[flexPlan]}
-      rowKey={'id'}
-      loading={isCheckingAuth}
-      requireAuth={requireAuth}
-      requestTokenProps={{
-        deploymentId: flexPlan?.deployment?.id ?? '',
-        indexer: flexPlan.indexer,
-        consumer: flexPlan.consumer,
-        agreement: flexPlan.id,
-        requestTokenUrl: requestTokenUrl,
-        tokenType: 'ConsumerHostToken',
-        onRequestToken: (token: string) => {
-          setSessionToken(token);
-          setEncryptStorage(TOKEN_STORAGE_KEY, token);
-        },
-      }}
-      graphqlQueryProps={{
-        queryUrl: queryUrl,
-        sessionToken: sessionToken,
-        onSessionTokenExpire: requestAuthWhenTokenExpired,
-        fetcher: async (graphQLParams: FetcherParams) =>
-          fetcher(queryUrl, JSON.stringify(graphQLParams.query), sessionToken),
-      }}
-      playgroundVisible={showPlayground}
-    />
-  );
+  return renderAsync(consumerFlexPlan, {
+    loading: () => <Spinner></Spinner>,
+    error: (e) => <div>{parseError(e)}</div>,
+    data: (fetchedFlexPlan) => {
+      const { stateChannel: flexPlan } = fetchedFlexPlan;
+      if (!flexPlan) return <></>;
+      return (
+        <AuthPlayground
+          headerLink={ONGOING_PLANS_NAV}
+          headerText={t('plans.category.myFlexPlans')}
+          deploymentId={flexPlan?.deployment?.id ?? ''}
+          projectMetadata={flexPlan?.deployment?.project?.metadata}
+          columns={columns}
+          dataSource={[flexPlan]}
+          rowKey={'id'}
+          loading={isCheckingAuth}
+          requireAuth={requireAuth}
+          requestTokenProps={{
+            deploymentId: flexPlan?.deployment?.id ?? '',
+            indexer: flexPlan.indexer,
+            consumer: flexPlan.consumer,
+            agreement: flexPlan.id,
+            requestTokenUrl: requestTokenUrl,
+            tokenType: 'ConsumerHostToken',
+            onRequestToken: (token: string) => {
+              setSessionToken(token);
+              setEncryptStorage(TOKEN_STORAGE_KEY, token);
+            },
+          }}
+          graphqlQueryProps={{
+            queryUrl: queryUrl,
+            sessionToken: sessionToken,
+            onSessionTokenExpire: requestAuthWhenTokenExpired,
+            fetcher: async (graphQLParams: FetcherParams) =>
+              fetcher(queryUrl, JSON.stringify(graphQLParams.query), sessionToken),
+          }}
+          playgroundVisible={showPlayground}
+        />
+      );
+    },
+  });
 };

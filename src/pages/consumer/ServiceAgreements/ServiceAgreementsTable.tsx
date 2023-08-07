@@ -7,44 +7,22 @@ import { useLocation, useNavigate } from 'react-router';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
-import { useAsyncMemo, useGetIndexerQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
-import { RenderResult } from '@subql/react-hooks/dist/utils';
-import { Button, Table, TableProps, Tooltip, Typography as AntDTypography } from 'antd';
+import { useAsyncMemo, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { Button, Table, TableProps } from 'antd';
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
 
-import { Copy, EmptyList } from '../../../components';
+import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer, IndexerName } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsync, renderAsyncArray, wrapProxyEndpoint } from '../../../utils';
+import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
-import styles from './ServiceAgreements.module.css';
 
 type SAProject = NonNullable<NonNullable<ServiceAgreementFieldsFragment['deployment']>['project']>;
 
 const { INDEXER_SA_NAV, CONSUMER_SA_NAV, CONSUMER_SA_PLAYGROUND_NAV, CONSUMER_SA_ONGOING_NAV, INDEXER_SA_ONGOING_NAV } =
   ROUTES;
-
-export const QueryUrl = ({ indexer, deploymentId }: { indexer: string; deploymentId: string }): RenderResult => {
-  const asyncMetadata = useGetIndexerQuery({ variables: { address: indexer } });
-
-  return renderAsync(asyncMetadata, {
-    error: () => <Typography>-</Typography>,
-    loading: () => <Spinner />,
-    data: (data) => {
-      const rawUrl = data?.indexer?.metadata?.url;
-      const queryUrl = wrapProxyEndpoint(`${rawUrl}/query/${deploymentId}`, indexer);
-      return (
-        <Copy value={queryUrl} className={styles.copy} iconClassName={styles.copyIcon}>
-          <Tooltip title={queryUrl}>
-            <AntDTypography.Text ellipsis={true}>{queryUrl ?? '-'}</AntDTypography.Text>
-          </Tooltip>
-        </Copy>
-      );
-    },
-  });
-};
 
 export const Project: React.FC<{ project: SAProject }> = ({ project }) => {
   const { getMetadataFromCid } = useProjectMetadata();
@@ -57,14 +35,9 @@ export const Project: React.FC<{ project: SAProject }> = ({ project }) => {
 interface ServiceAgreementsTableProps {
   queryFn: SA_QUERY_FN | typeof useGetProjectOngoingServiceAgreementsQuery;
   queryParams?: { deploymentId?: string; address?: string };
-  emptyI18nKey?: string;
 }
 
-export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
-  queryFn,
-  queryParams,
-  emptyI18nKey,
-}) => {
+export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ queryFn, queryParams }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -73,6 +46,15 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
   const isOngoingPath = pathname === CONSUMER_SA_ONGOING_NAV || pathname === INDEXER_SA_ONGOING_NAV;
 
   const columns: TableProps<ServiceAgreementFieldsFragment>['columns'] = [
+    {
+      dataIndex: ['deployment', 'id'],
+      key: 'deploymentId',
+      title: <TableTitle title={t('myOffers.table.versionDeployment')} />,
+      width: 480,
+      render: (deploymentId: string, offer) => (
+        <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
+      ),
+    },
     {
       dataIndex: 'id',
       key: 'id',

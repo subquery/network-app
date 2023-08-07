@@ -126,12 +126,6 @@ export function mapAsync<O, T>(scope: (t: T) => O, data: AsyncData<T>): AsyncDat
 
 type RenderResult = React.ReactElement | null;
 
-type Handlers<T> = {
-  loading?: () => RenderResult;
-  error: (error: Error) => RenderResult;
-  data: (data: T, asyncData: AsyncData<T>) => RenderResult;
-};
-
 type HandlersArray<T extends any[]> = {
   loading?: () => RenderResult;
   error: (error: Error) => RenderResult;
@@ -282,7 +276,7 @@ export function wrapProxyEndpoint(endpoint: string | undefined, indexerAddr: str
   )}`;
 }
 
-export function getUseQueryFetchMore<TData = any, TVariables = OperationVariables>(
+export function getUseQueryFetchMore<TData = any, TVariables extends OperationVariables = OperationVariables>(
   queryFn: QueryResult<TData, TVariables>,
   params?: TVariables,
 ): void {

@@ -12,6 +12,7 @@ type Props = {
   href?: string;
   className?: string;
   canCopy?: boolean;
+  children?: React.ReactNode;
 };
 
 const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, children }) => {

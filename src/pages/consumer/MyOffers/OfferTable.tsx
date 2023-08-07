@@ -9,13 +9,14 @@ import { TableTitle } from '@subql/components';
 import { OfferFieldsFragment } from '@subql/network-query';
 import {
   useGetAcceptedOffersQuery,
-  useGetAllOpenOffersQuery,
+  useGetAllOpenOffersLazyQuery,
   useGetDeploymentIndexerQuery,
-  useGetOwnExpiredOffersQuery,
-  useGetOwnFinishedOffersQuery,
-  useGetOwnOpenOffersQuery,
-  useGetSpecificOpenOffersQuery,
+  useGetOwnExpiredOffersLazyQuery,
+  useGetOwnFinishedOffersLazyQuery,
+  useGetOwnOpenOffersLazyQuery,
+  useGetSpecificOpenOffersLazyQuery,
 } from '@subql/react-hooks';
+import { EVENT_TYPE, EventBus } from '@utils/eventBus';
 import { TableProps, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -96,6 +97,7 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
 const getColumns = (
   path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
   connectedAccount?: string | null,
+  onCancelSuccess?: () => void,
 ) => {
   const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
@@ -213,7 +215,7 @@ const getColumns = (
       width: 100,
       render: (id: string) => {
         if (!connectedAccount) return <TableText content="-" />;
-        return <CancelOffer offerId={id} />;
+        return <CancelOffer offerId={id} onSuccess={onCancelSuccess} />;
       },
     },
   ];
@@ -255,11 +257,11 @@ const getColumns = (
 
 interface MyOfferTableProps {
   queryFn:
-    | typeof useGetOwnOpenOffersQuery
-    | typeof useGetOwnFinishedOffersQuery
-    | typeof useGetOwnExpiredOffersQuery
-    | typeof useGetAllOpenOffersQuery;
-  queryParams?: { consumer?: string };
+    | typeof useGetOwnOpenOffersLazyQuery
+    | typeof useGetOwnFinishedOffersLazyQuery
+    | typeof useGetOwnExpiredOffersLazyQuery
+    | typeof useGetAllOpenOffersLazyQuery;
+  queryParams?: { consumer?: string; expireDate?: Date };
   description?: string;
 }
 
@@ -268,21 +270,22 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();
-  const sortedCols = getColumns(pathname, account);
 
   /**
    * SearchInput logic
    */
   const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
   const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [curPage, setCurPage] = React.useState(1);
+  const [pageSize] = React.useState(10);
   const sortedParams = (offset: number) => ({
     consumer: queryParams?.consumer ?? '',
-    now,
+    now: queryParams?.expireDate ?? now,
     deploymentId: searchDeploymentId ?? '',
     offset,
   });
-  const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersQuery : queryFn;
-  const sortedOffers = sortedFn({ variables: sortedParams(0) });
+  const sortedFn = searchDeploymentId ? useGetSpecificOpenOffersLazyQuery : queryFn;
+  const [loadSortedOffers, sortedOffers] = sortedFn();
 
   const SearchDeployment = () => (
     <div className={styles.indexerSearch}>
@@ -303,38 +306,51 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
    */
 
   const [data, setData] = React.useState(sortedOffers);
-  const totalCount = data?.data?.offers?.totalCount ?? 0;
+  const totalCount = React.useMemo(() => {
+    return data?.data?.offers?.totalCount ?? 0;
+  }, [data]);
 
-  const fetchMoreOffers = (offset: number) => {
-    sortedOffers.fetchMore({
-      variables: {
-        offset,
-        ...sortedParams,
-      },
-      updateQuery: (previousOffers, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousOffers;
-        return { ...fetchMoreResult }; // make it as new object then will trigger render
-      },
+  const fetchMoreOffers = async (offset?: number) => {
+    const res = await loadSortedOffers({
+      variables: sortedParams(offset ?? (curPage - 1) * pageSize),
+      fetchPolicy: 'network-only',
     });
+
+    if (res.data?.offers) {
+      setData(res);
+    }
+  };
+
+  const refreshAfterCancel = () => {
+    if (data.data?.offers?.nodes.length === 1 && curPage > 1) {
+      setCurPage(curPage - 1);
+      fetchMoreOffers((curPage - 2) * pageSize);
+    } else {
+      fetchMoreOffers();
+    }
   };
 
   // NOTE: Every 1min to query wit a new timestamp
   React.useEffect(() => {
+    fetchMoreOffers(0);
+
     const interval = setInterval(() => {
       setNow(moment().toDate());
     }, 60000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // NOTE: Every 5min to query wit a new timestamp, manual set cache data which is similar to cache-network fetch policy
   React.useEffect(() => {
-    if (sortedOffers.loading === true && sortedOffers.previousData) {
-      setData({ ...sortedOffers, data: sortedOffers.previousData });
-      sortedOffers.data = sortedOffers.previousData;
-    } else {
-      setData({ ...sortedOffers });
-    }
-  }, [sortedOffers, sortedOffers.loading]);
+    const refresh = () => {
+      fetchMoreOffers();
+    };
+    EventBus.on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+
+    return () => {
+      EventBus.off(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+    };
+  }, [fetchMoreOffers, curPage, pageSize]);
 
   return (
     <>
@@ -375,11 +391,19 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
 
                   <AntDTable
                     customPagination
-                    tableProps={{ columns: sortedCols, dataSource: offerList, scroll: { x: 2000 }, rowKey: 'id' }}
+                    tableProps={{
+                      columns: getColumns(pathname, account, refreshAfterCancel),
+                      dataSource: offerList,
+                      scroll: { x: 2000 },
+                      rowKey: 'id',
+                    }}
                     paginationProps={{
                       total: totalCount,
+                      pageSize,
+                      current: curPage,
                       onChange: (page, pageSize) => {
                         fetchMoreOffers?.((page - 1) * pageSize);
+                        setCurPage(page);
                       },
                     }}
                   />

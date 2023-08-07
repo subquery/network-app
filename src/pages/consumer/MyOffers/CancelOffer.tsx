@@ -18,11 +18,12 @@ import styles from './MyOffers.module.css';
 
 type Props = {
   offerId: string;
+  onSuccess?: () => void;
 };
 
 const { CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
-export const CancelOffer: React.FC<Props> = ({ offerId }) => {
+export const CancelOffer: React.FC<Props> = ({ offerId, onSuccess }) => {
   const [cancelPenalty, setCancelPenalty] = React.useState<string>();
   const [unSpent, setUnSpent] = React.useState<string>();
   const [receive, setReceive] = React.useState<string>();
@@ -104,6 +105,11 @@ export const CancelOffer: React.FC<Props> = ({ offerId }) => {
       text={text}
       actions={[{ label: getCapitalizedStr(actionBtnLabel), key: 'cancel' }]}
       onClick={handleClick}
+      onSuccess={() => {
+        if (onSuccess) {
+          setTimeout(() => onSuccess(), 1000);
+        }
+      }}
       renderContent={(onSubmit, _, isLoading, error) => {
         return (
           <>

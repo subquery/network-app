@@ -3,13 +3,18 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner, Typography } from '@subql/components';
-import { useGetDelegationQuery, useGetDelegationsQuery } from '@subql/react-hooks';
-import { Button, Divider, Select } from 'antd';
+import { BsExclamationCircle } from 'react-icons/bs';
+import { useFetchMetadata } from '@hooks/useFetchMetadata';
+import { Typography } from '@subql/components';
+import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
+import { limitQueue } from '@utils/limitation';
+import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
+
+import { IndexerDetails } from 'src/models';
 
 import { SummaryList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -17,20 +22,23 @@ import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, renderAsync, TOKEN } from '../../../utils';
-import styles from './DoDelegate.module.css';
+import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
+import styles from './DoDelegate.module.less';
 
 export const AddressName: React.FC<{
   address?: string;
-}> = ({ address }) => {
-  const { indexerMetadata: metadata } = useIndexerMetadata(address ?? '');
-  const { account } = useWeb3();
-
+  curAccount: string;
+  metadata?: IndexerDetails;
+}> = ({ curAccount, address, metadata }) => {
   return (
     <div className={clsx('flex-start', styles.option)}>
-      <div className="flex-col">
-        <Typography>{address === account ? 'Your wallet' : metadata?.name ?? 'Indexer'} </Typography>
-        <Typography>{address} </Typography>
+      <div className="col-flex">
+        <Typography style={{ marginBottom: 4 }}>
+          {address === curAccount ? 'Your Wallet ' : metadata?.name ?? 'Indexer'}
+        </Typography>
+        <Typography variant="small" type="secondary">
+          {address}
+        </Typography>
       </div>
     </div>
   );
@@ -51,6 +59,7 @@ type FormProps = {
   onCancel?: () => void;
   error?: string;
   curEra?: number;
+  indexerMetadataCid?: string;
 };
 
 export const DelegateForm: React.FC<FormProps> = ({
@@ -61,22 +70,33 @@ export const DelegateForm: React.FC<FormProps> = ({
   delegatedAmount,
   onCancel,
   error,
+  indexerMetadataCid,
 }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const fetchMetadata = useFetchMetadata();
+  const { indexerMetadata } = useIndexerMetadata(indexerAddress, {
+    cid: indexerMetadataCid,
+    immediate: true,
+  });
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
-  const delegations = useGetDelegationsQuery({
+  const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
   const { balance } = useSQToken();
 
+  const [delegationOptions, setDelegationOptions] = React.useState<
+    { label: React.ReactNode; value: string; name?: string }[]
+  >([]);
   const [delegateFrom, setDelegateFrom] = React.useState(account);
+  const [selectedOption, setSelectedOption] = React.useState<(typeof delegationOptions)[number]>();
 
   const indexerDelegation = useGetDelegationQuery({
     variables: {
       id: `${account ?? ''}:${delegateFrom ?? ''}`,
     },
   });
+
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -84,30 +104,102 @@ export const DelegateForm: React.FC<FormProps> = ({
     return rawDelegate;
   };
 
-  const isYourself = delegateFrom === account;
-  let maxAmount: BigNumberish | undefined;
+  const isYourself = React.useMemo(() => delegateFrom === account, [account, delegateFrom]);
 
-  if (isYourself) {
-    maxAmount = balance.data;
-  } else {
-    const indexerDelegation = getIndexerDelegation();
-    maxAmount = indexerDelegation?.after;
-  }
+  const sortedMaxAmount = React.useMemo(() => {
+    let maxAmount: BigNumberish | undefined;
 
-  const sortedMaxAmount = formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
+    if (isYourself) {
+      maxAmount = balance.data;
+    } else {
+      const indexerDelegation = getIndexerDelegation();
+      maxAmount = indexerDelegation?.after;
+    }
 
-  const maxAmountText = `Max available delegation: ${sortedMaxAmount} ${TOKEN} (next era).`;
+    return formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
+  }, [isYourself, balance, getIndexerDelegation]);
+
+  const maxAmountText = React.useMemo(() => {
+    if (isYourself) {
+      return t('delegate.walletBalance', {
+        balance: formatEther(balance.data, 4),
+        token: TOKEN,
+      });
+    }
+    return t('delegate.amountAvailable', {
+      balance: sortedMaxAmount,
+      token: TOKEN,
+    });
+  }, [isYourself, sortedMaxAmount, TOKEN, balance]);
 
   const summaryList = [
     {
-      label: t('indexer.title'),
+      label: t('delegate.to'),
       value: <ConnectedIndexer id={indexerAddress} />,
+      strong: true,
     },
     {
-      label: 'Your delegation',
+      label: t('delegate.remainingCapacity'),
+      value: ` ${formatEther(indexerCapacity, 4)} ${TOKEN}`,
+      tooltip: t('delegate.remainingTooltip'),
+    },
+    {
+      label: t('delegate.existingDelegation'),
       value: ` ${delegatedAmount} ${TOKEN}`,
+      tooltip: t('delegate.existingDelegationTooltip'),
     },
   ];
+
+  const initDelegations = async () => {
+    if (!account) return;
+    const { data, error } = await loadDelegations();
+    if (!error && data?.delegations?.nodes) {
+      const sortedDelegations = data.delegations.nodes
+        .map((delegation) => ({
+          ...delegation,
+          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, curEra), (v) =>
+            convertStringToNumber(formatEther(v ?? 0)),
+          ),
+        }))
+        .filter(
+          (delegation) =>
+            (delegation.value.current || delegation.value.after) &&
+            delegation.indexerId !== account &&
+            delegation?.indexerId !== indexerAddress,
+        );
+
+      const indexerMetadata = sortedDelegations.map((i) => {
+        const cid = i?.indexer?.metadata;
+        return limitQueue.add(() => fetchMetadata(cid));
+      });
+
+      const allMetadata = await Promise.all(indexerMetadata);
+      setDelegationOptions([
+        {
+          label: <AddressName curAccount={account} address={account} metadata={{ name: '', url: '', image: '' }} />,
+          value: account,
+          name: '',
+        },
+        ...sortedDelegations.map((delegation, index) => {
+          return {
+            label: (
+              <AddressName
+                curAccount={account}
+                address={delegation.indexerId}
+                metadata={allMetadata[index] || undefined}
+              ></AddressName>
+            ),
+            value: delegation.indexerId || '',
+            name: allMetadata[index]?.name,
+          };
+        }),
+      ]);
+    }
+  };
+
+  React.useEffect(() => {
+    initDelegations();
+  }, [account]);
   return (
     <Formik
       initialValues={{
@@ -120,66 +212,38 @@ export const DelegateForm: React.FC<FormProps> = ({
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => (
         <Form>
           <div>
-            <SummaryList title={t('delegate.to')} list={summaryList} />
+            <SummaryList list={summaryList} />
             <Divider className={styles.divider} />
 
             <div className={styles.select}>
-              <Typography className={styles.inputTitle}>{t('delegate.from')} </Typography>
-              <Typography className={'grayText'} variant="medium">
-                {t('delegate.redelegate')}
-              </Typography>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                <Typography>{t('delegate.from')} </Typography>
+                <Tooltip title={t('delegate.selectTooltip')}>
+                  <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+                </Tooltip>
+              </div>
               <Select
                 id="delegator"
-                defaultValue={account}
+                value={delegateFrom}
                 optionFilterProp="children"
-                onChange={(delegator) => {
+                onChange={(delegator, raw) => {
                   resetForm();
                   setDelegateFrom(delegator);
                   setFieldValue('delegator', delegator);
+                  if (!Array.isArray(raw)) {
+                    setSelectedOption(raw);
+                  }
                 }}
-                className={'fullWidth'}
+                className={clsx('fullWidth', styles.delegatorSelect)}
                 loading={indexerDeployments.loading}
                 size="large"
                 allowClear
                 disabled={isSubmitting}
+                options={delegationOptions}
                 // TODO
                 // onSearch={onSearch}
                 // filterOption={() => {}}
-              >
-                {renderAsync(delegations, {
-                  error: (error) => <Typography>{`Failed to get delegation info: ${error.message}`}</Typography>,
-                  loading: () => <Spinner />,
-                  data: (data) => {
-                    const sortedDelegations =
-                      data.delegations?.nodes
-                        .map((delegation) => ({
-                          ...delegation,
-                          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, curEra), (v) =>
-                            convertStringToNumber(formatEther(v ?? 0)),
-                          ),
-                        }))
-                        .filter(
-                          (delegation) =>
-                            (delegation.value.current || delegation.value.after) &&
-                            delegation.indexerId !== account &&
-                            delegation?.indexerId !== indexerAddress,
-                        )
-                        .map((delegation) => delegation?.indexerId) ?? [];
-
-                    const delegationList = [account, ...sortedDelegations];
-
-                    return (
-                      <>
-                        {delegationList?.map((delegating) => (
-                          <Select.Option value={delegating} key={delegating}>
-                            <AddressName address={delegating ?? ''} />
-                          </Select.Option>
-                        ))}
-                      </>
-                    );
-                  },
-                })}
-              </Select>
+              ></Select>
             </div>
 
             <div className={'fullWidth'}>
@@ -208,11 +272,26 @@ export const DelegateForm: React.FC<FormProps> = ({
             </div>
 
             <Typography className={'errorText'}>{error}</Typography>
-            <Typography className={styles.description} variant="medium">
-              {t('delegate.delegateValidNextEra')}
-            </Typography>
+            <Alert
+              className={styles.alertInfo}
+              type="info"
+              message={
+                isYourself
+                  ? t('delegate.delegateFromYourselfInfo', {
+                      indexerName: indexerMetadata.name,
+                    })
+                  : t('delegate.redelegateInfo', {
+                      reIndexerName: selectedOption?.name,
+                      indexerName: indexerMetadata.name,
+                    })
+              }
+              showIcon
+              style={{
+                marginBottom: 32,
+              }}
+            ></Alert>
 
-            <div className={clsx('flex', 'flex-end', styles.btns)}>
+            <div className={clsx('flex', 'flex-end')}>
               <Button
                 onClick={submitForm}
                 loading={isSubmitting}

@@ -94,11 +94,11 @@ export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) 
 const Agreements: React.FC<{
   queryFn: SA_QUERY_FN;
   BASE_ROUTE: string;
-  emptyI18nKey?: string;
   totalCount: number;
   userRole: USER_ROLE;
-}> = ({ queryFn, BASE_ROUTE, emptyI18nKey, totalCount, userRole }) => {
+}> = ({ queryFn, BASE_ROUTE, totalCount, userRole }) => {
   const { account } = useWeb3();
+
   const { t } = useTranslation();
   const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[userRole].intl;
 
@@ -126,11 +126,7 @@ const Agreements: React.FC<{
                   <TabButtons tabs={buttonLinks(BASE_ROUTE)} whiteTab />
                 </div>
                 <div className="contentContainer">
-                  <ServiceAgreementsTable
-                    queryFn={queryFn}
-                    queryParams={{ address: account || '' }}
-                    emptyI18nKey={emptyI18nKey}
-                  />
+                  <ServiceAgreementsTable queryFn={queryFn} queryParams={{ address: account || '' }} />
                 </div>
               </>
             )}
@@ -143,6 +139,7 @@ const Agreements: React.FC<{
 
 export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { account } = useWeb3();
+
   const { BASE_ROUTE } = roleMapping[USER_ROLE];
   const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;
   const serviceAgreements = useTotalCount({ variables: { address: account ?? '' } });
@@ -166,7 +163,6 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
               <Agreements
                 queryFn={useOngoingAgreements}
                 BASE_ROUTE={BASE_ROUTE}
-                emptyI18nKey={'serviceAgreements.nonOngoing'}
                 totalCount={totalCount}
                 userRole={USER_ROLE}
               />
@@ -178,7 +174,6 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
               <Agreements
                 queryFn={useExpiredAgreements}
                 BASE_ROUTE={BASE_ROUTE}
-                emptyI18nKey={'serviceAgreements.nonOngoing'}
                 totalCount={totalCount}
                 userRole={USER_ROLE}
               />
@@ -190,3 +185,7 @@ export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROL
     },
   });
 };
+
+// TODO: arrange this if necessary
+export const ConsumerServiceAgreements = () => <ServiceAgreements USER_ROLE="consumer"></ServiceAgreements>;
+export default ConsumerServiceAgreements;
