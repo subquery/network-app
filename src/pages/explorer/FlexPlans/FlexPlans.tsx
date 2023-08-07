@@ -9,7 +9,7 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { BillingExchangeModal } from '@components/BillingTransferModal';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
-import { IPostHostingPlansParams, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { IGetHostingPlans, IPostHostingPlansParams, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Modal, openNotification, Steps, TableTitle, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { Button, Divider, Form, InputNumber, Space, Table, TableProps } from 'antd';
@@ -75,7 +75,7 @@ export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { consumerHostBalance } = useSQToken();
-  const { createHostingPlanApi } = useConsumerHostServices({ alert: true });
+  const { createHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({ alert: true, autoLogin: false });
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
   const asyncProject = useProjectFromQuery(id ?? '');
 
@@ -84,12 +84,14 @@ export const FlexPlans: React.FC = () => {
 
   const [tokenSym] = React.useState(import.meta.env.VITE_TOKEN);
   const [showCreateFlexPlan, setShowCreateFlexPlan] = React.useState(false);
+  // TODO: part2
+  // const [createdHostingPlan, setCreatedHostingPlan] = React.useState<IGetHostingPlans[]>([]);
 
   const matchedCount = React.useMemo(() => {
     if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
     const count = flexPlans.data.filter((i) => {
       const prices1000 = convertStringToNumber(formatUnits(i.price, tokenDecimals[SQT_TOKEN_ADDRESS])) * 1000;
-      return prices1000 < priceValue;
+      return prices1000 <= priceValue;
     }).length;
     return `Matched indexers: ${count}`;
   }, [priceValue, flexPlans]);
@@ -98,28 +100,41 @@ export const FlexPlans: React.FC = () => {
 
   const createHostingPlan = async () => {
     await form.validateFields();
-
-    await createHostingPlanApi({
+    const res = await createHostingPlanApi({
       ...form.getFieldsValue(),
       // default set as one era.
       expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
-      price: parseEther(`${form.getFieldValue('price')}`),
+      price: parseEther(`${form.getFieldValue('price')}`).toString(),
       deploymentId: asyncProject.data?.currentDeployment,
     });
 
-    openNotification({
-      type: 'success',
-      description: 'Create success',
-    });
+    if (res.data.id) {
+      openNotification({
+        type: 'success',
+        description: 'Create success',
+      });
 
-    setShowCreateFlexPlan(false);
+      setShowCreateFlexPlan(false);
+    }
   };
+
+  // const getHostingPlans = async () => {
+  //   const res = await getHostingPlanApi();
+  //   if (res.data) {
+  //     setCreatedHostingPlan(res.data);
+  //   }
+  // };
 
   React.useEffect(() => {
     if (!id) {
       navigate(ROUTES.EXPLORER);
     }
   }, [navigate, id]);
+
+  // React.useEffect(() => {
+  //   getHostingPlans();
+  // }, []);
+
   return (
     <>
       {renderAsync(flexPlans, {
@@ -153,7 +168,7 @@ export const FlexPlans: React.FC = () => {
                     <img
                       src="/static/thumb.svg"
                       alt=""
-                      style={{ alignSelf: 'flex-start', height: '100%', marginRight: 8 }}
+                      style={{ alignSelf: 'flex-start', height: '100%', marginRight: 8, marginTop: 3 }}
                     ></img>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <Typography variant="text" weight={500}>
@@ -236,7 +251,7 @@ export const FlexPlans: React.FC = () => {
                       name="maximum"
                       rules={[{ required: true }]}
                     >
-                      <InputNumber placeholder="Enter maximum allocated indexers" min="1"></InputNumber>
+                      <InputNumber placeholder="Enter maximum allocated indexers" min="2"></InputNumber>
                     </Form.Item>
                     <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
                       {matchedCount}

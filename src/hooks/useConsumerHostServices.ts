@@ -19,9 +19,12 @@ export const isConsumerHostError = (res: object): res is ConsumerHostError => {
 // Will add more controller along with below TODO
 export type ConsumerHostServicesProps = {
   alert?: boolean;
+  autoLogin?: boolean;
 };
 
-export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesProps = { alert: false }) => {
+export const useConsumerHostServices = (
+  { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
+) => {
   const { account, library } = useWeb3();
   const authHeaders = useRef<{ Authorization: string }>();
 
@@ -142,15 +145,38 @@ export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesP
     return res;
   };
 
+  const getHostingPlanApi = async (): Promise<AxiosResponse<IGetHostingPlans[]>> => {
+    const res = await instance.get<IGetHostingPlans[]>(`/users/hosting-plans`, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await getHostingPlanApi();
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
   useEffect(() => {
-    loginConsumerHostToken();
-  }, [account]);
+    if (autoLogin) {
+      loginConsumerHostToken();
+    }
+  }, [account, autoLogin]);
 
   return {
     getUserApiKeysApi,
     createNewApiKey,
     deleteNewApiKey,
     createHostingPlanApi,
+    getHostingPlanApi,
   };
 };
 
