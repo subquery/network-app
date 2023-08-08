@@ -12,7 +12,7 @@ export const walletConnectionErrors = [
   },
 ];
 
-export const errors = [
+export const errorsMapping = [
   {
     error: 'apply pending changes first',
     message: 'There is pending stake or commission rate changes not finalized by indexer yet.',
@@ -47,6 +47,11 @@ export const errors = [
     message: `The address is not support ENS or invalid.`,
   },
 ];
+
+export enum USER_REJECT {
+  USER_DENIED_SIGNATURE = 'User denied message signature',
+}
+
 function logError(msg: Error): void;
 function logError(msg: Record<string, unknown>): void;
 function logError(msg: string): void;
@@ -60,12 +65,19 @@ function logError(msg: Error | string | Record<string, unknown>): void {
   return console.error(`%c [Error] ${msg}`, 'color:lightgreen;');
 }
 
-export function parseError(error: any, errorsMapping = errors, options = { alert: false }): string | undefined {
+export function parseError(
+  error: any,
+  options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
+    alert: false,
+    defaultGeneralMsg: null,
+    errorMappings: errorsMapping,
+  },
+): string | undefined {
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
 
-  const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
+  const mappingError = () => (options.errorMappings || errorsMapping).find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),
@@ -84,6 +96,14 @@ export function parseError(error: any, errorsMapping = errors, options = { alert
     return;
   };
 
+  const userDeniedSignature = () => {
+    if (rawErrorMsg.toString().match(USER_REJECT.USER_DENIED_SIGNATURE)) {
+      return USER_REJECT.USER_DENIED_SIGNATURE;
+    }
+
+    return;
+  };
+
   const generalErrorMsg = () => {
     try {
       captureException(error);
@@ -92,5 +112,12 @@ export function parseError(error: any, errorsMapping = errors, options = { alert
     }
   };
 
-  return mappingError() ?? mapContractError() ?? callRevert() ?? generalErrorMsg();
+  return (
+    mappingError() ??
+    mapContractError() ??
+    callRevert() ??
+    userDeniedSignature() ??
+    options.defaultGeneralMsg ??
+    generalErrorMsg()
+  );
 }

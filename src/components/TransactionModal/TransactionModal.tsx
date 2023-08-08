@@ -9,6 +9,7 @@ import { NotificationType, openNotification } from '@components/Notification';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/components';
 import { Tooltip } from 'antd';
+import clsx from 'clsx';
 
 import { AsyncData, parseError } from '../../utils';
 import { Modal } from '../Modal';
@@ -30,6 +31,9 @@ export type TransactionModalAction<T extends string> = {
 } & React.ComponentProps<typeof Button>;
 
 export type TransactionModalProps<P, T extends string> = {
+  /**
+   * @param {object} text modal information
+   */
   text: {
     title: string;
     steps: string[];
@@ -43,8 +47,14 @@ export type TransactionModalProps<P, T extends string> = {
   currentStep?: number;
   onClick?: Action<P, T>;
   onClose?: () => void;
+  /**
+   * @param {object} actions render button and button events
+   */
   actions: TransactionModalAction<T>[];
   inputParams?: Omit<React.ComponentProps<typeof ModalInput>, 'inputTitle' | 'submitText' | 'onSubmit' | 'isLoading'>;
+  /**
+   * @param {object} renderContent modal render content
+   */
   renderContent?: (
     onSubmit: (params: P) => void,
     onCancel: () => void,
@@ -58,11 +68,19 @@ export type TransactionModalProps<P, T extends string> = {
   rethrowWhenSubmit?: boolean;
   width?: string;
   className?: string;
+  buttonClassName?: string;
 };
 
-// TODO: review successModalText/failureModalText when move to subql-component
+// TODO: arrange this compoent
+//   No questions aspect: Feature good.
+//   Need some arrange: 1. onClick, actions, renderContent are coupling, those attributes are all having part logic to do same thing.
+//                      1.1 The problem is onClick actually means modal clicked callback and also actually wants to handle the different actions in onClick, but didn't have param to flag what action trigger that.
+//                      1.2 renderContent actually means render modal content and onClick join in this render. and the confuse part is actions also have a onClick field if you don't notice this.
+//                      2. actions and variant have the same problems.
+//                      3. text is not a searchable name.
+//   I am not sure the optimize target. just put those problems now.
 const TransactionModal = <P, T extends string>({
-  renderContent,
+  renderContent, // renderModalContent
   text,
   currentStep,
   actions,
@@ -76,6 +94,7 @@ const TransactionModal = <P, T extends string>({
   rethrowWhenSubmit = false,
   width = '45%',
   className = '',
+  buttonClassName = '',
 }: TransactionModalProps<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -187,13 +206,12 @@ const TransactionModal = <P, T extends string>({
           <div className="flex-center" key={key}>
             <Tooltip title={tooltip}>
               <Button
-                {...rest}
                 label={label}
                 onClick={() => {
                   onClick?.();
                   handleBtnClick(key);
                 }}
-                className={sortedStyle}
+                className={clsx(sortedStyle, buttonClassName)}
                 size="medium"
                 colorScheme="standard"
                 disabled={disabled || isLoading}
@@ -204,6 +222,7 @@ const TransactionModal = <P, T extends string>({
                     tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
                   )
                 }
+                {...rest}
               />
             </Tooltip>
           </div>
