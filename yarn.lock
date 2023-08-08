@@ -2916,10 +2916,10 @@
     ethers "^5.6.8"
     jwt-decode "^3.1.2"
 
-"@subql/components@1.0.3-7":
-  version "1.0.3-7"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.3-7.tgz#65076d8f429dae83fbc7c4603766ab5884707dcb"
-  integrity sha512-WoZ7iBxCUiwAZEen8vrQ6oxW67vMWwEFPeSwJA44N1UJwPWFCQ42nFHszD6YdbKalTnOrE7gYhxIh3muRXJ6JA==
+"@subql/components@1.0.3-8":
+  version "1.0.3-8"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.3-8.tgz#169c40f98cfe5ec70b9cfa3abff08d474b3f6fb9"
+  integrity sha512-VW/HFc87zX/f/gsyZMeQauCcIg+VYjod1XN+iMOAHP2JQvNcUdJkoVnA8kOkXblANR1K1RitEeSp+y94rPhfPQ==
   dependencies:
     "@graphiql/plugin-explorer" "^0.1.20"
     antd "5.0.2"
