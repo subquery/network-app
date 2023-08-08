@@ -181,7 +181,7 @@ export const useConsumerHostServices = (
 };
 
 export interface IPostHostingPlansParams {
-  deploymentId?: string;
+  deploymentId: string;
   price: BigNumberish;
   expiration: number;
   maximum: number;
@@ -190,7 +190,17 @@ export interface IPostHostingPlansParams {
 export interface IGetHostingPlans {
   id: number;
   user_id: number;
-  deployment_id: number;
+  deployment: {
+    created_at: Date;
+    // cid
+    deployment: string;
+    id: number;
+    is_actived: boolean;
+    project_id: number;
+    updated_at: Date;
+    version: string;
+    deployment_id: number;
+  };
   channels: string;
   maximum: number;
   price: BigNumberish;
