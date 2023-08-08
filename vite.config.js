@@ -1,13 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
-import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  plugins: [eslint(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
+  plugins: [react(), tsconfigPaths(), ...(process.env.analyze ? [visualizer()] : [])],
   server: {
     port: 3006,
   },

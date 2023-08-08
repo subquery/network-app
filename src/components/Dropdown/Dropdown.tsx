@@ -47,9 +47,9 @@ export const Dropdown: React.FC<DropdownProps> = ({ menu, menuItem, dropdownCont
   return (
     <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center', styleProps)}>
       {typeof dropdownContent === 'string' || !dropdownContent ? (
-        <Typography>
+        <div>
           {dropdownContent || menu[0]?.label} <AiOutlineDown className={styles.downIcon} />
-        </Typography>
+        </div>
       ) : (
         dropdownContent
       )}

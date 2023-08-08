@@ -6,7 +6,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { AccountActions } from '@components/AccountActions';
 import { ConnectWalletButton } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
-import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components/dist/common';
+import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components';
 import { Divider, Space } from 'antd';
 import clsx from 'clsx';
 

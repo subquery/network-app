@@ -58,7 +58,6 @@ export const CheckOfferAllowance: React.FC = () => {
   const navigate = useNavigate();
   const { offerAllowance } = useSQToken();
   const requiresTokenApproval = offerAllowance.data?.isZero();
-
   if (requiresTokenApproval) {
     return (
       <TransactionModal

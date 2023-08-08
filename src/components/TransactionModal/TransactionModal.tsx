@@ -8,6 +8,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { NotificationType, openNotification } from '@components/Notification';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/components';
+import { ButtonProps } from '@subql/components/dist/common/button/Button';
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
 
@@ -28,7 +29,7 @@ export type TransactionModalAction<T extends string> = {
   key: T;
   onClick?: () => void;
   tooltip?: string;
-} & React.ComponentProps<typeof Button>;
+} & ButtonProps;
 
 export type TransactionModalProps<P, T extends string> = {
   /**
