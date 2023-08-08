@@ -58,7 +58,8 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'status',
       render: (status, deployment) => {
-        const sortedStatus = getDeploymentStatus(status, deployment.isOffline ?? false);
+        // TODO: will use metric service replace it. hardcode for now.
+        const sortedStatus = getDeploymentStatus(status, false);
         return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
       },
     },
