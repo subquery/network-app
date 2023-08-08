@@ -26,6 +26,8 @@ const Instructions: React.FC = () => {
       <p className={styles.content}>{t('createInsturctions.content2')}</p>
       <p className={styles.subtitle}>{t('createInsturctions.title3')}</p>
       <p className={styles.content}>
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <Trans i18nKey="createInsturctions.content3">
           The deployment id, this can be acquired by running <span className={styles.codeInline}>subql publish</span>{' '}
           with the CLI

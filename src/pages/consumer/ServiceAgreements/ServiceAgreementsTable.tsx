@@ -12,7 +12,7 @@ import { Button, Table, TableProps } from 'antd';
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
 
-import { EmptyList } from '../../../components';
+import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer, IndexerName } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
@@ -35,14 +35,9 @@ export const Project: React.FC<{ project: SAProject }> = ({ project }) => {
 interface ServiceAgreementsTableProps {
   queryFn: SA_QUERY_FN | typeof useGetProjectOngoingServiceAgreementsQuery;
   queryParams?: { deploymentId?: string; address?: string };
-  emptyI18nKey?: string;
 }
 
-export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
-  queryFn,
-  queryParams,
-  emptyI18nKey,
-}) => {
+export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ queryFn, queryParams }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -51,6 +46,15 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({
   const isOngoingPath = pathname === CONSUMER_SA_ONGOING_NAV || pathname === INDEXER_SA_ONGOING_NAV;
 
   const columns: TableProps<ServiceAgreementFieldsFragment>['columns'] = [
+    {
+      dataIndex: ['deployment', 'id'],
+      key: 'deploymentId',
+      title: <TableTitle title={t('myOffers.table.versionDeployment')} />,
+      width: 480,
+      render: (deploymentId: string, offer) => (
+        <DeploymentMeta deploymentId={deploymentId} projectMetadata={offer.deployment?.project?.metadata} />
+      ),
+    },
     {
       dataIndex: 'id',
       key: 'id',

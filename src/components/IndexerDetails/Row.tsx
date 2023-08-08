@@ -5,7 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { LazyQueryResult } from '@apollo/client';
+import { WalletRoute } from '@components/WalletRoute';
 import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
+import { useIsLogin } from '@hooks/useIsLogin';
 import { GraphiQL, Modal, Spinner } from '@subql/components';
 import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { Status as DeploymentStatus } from '@subql/network-query';
@@ -77,6 +79,7 @@ const ConnectedRow: React.FC<{
   const { account, library } = useWeb3();
   const { projectMaxTargetHeightInfoRef, setProjectMaxTargetHeightInfo, projectMaxTargetHeightInfo } =
     useProjectStore();
+  const isLogin = useIsLogin();
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
@@ -312,6 +315,8 @@ const ConnectedRow: React.FC<{
             display: 'none',
           },
         }}
+        wrapClassName={isLogin ? '' : styles.reqModal}
+        width={isLogin ? '520px' : '700px'}
         onOk={() => requestPlayground()}
         onCancel={() => {
           setShowReqTokenConfirmModal(false);
@@ -319,7 +324,10 @@ const ConnectedRow: React.FC<{
         title="Request Token"
         submitText="Request Token"
       >
-        <Typography>{t('explorer.flexPlans.requestToken')}</Typography>
+        <WalletRoute
+          componentMode
+          element={<Typography>{t('explorer.flexPlans.requestToken')}</Typography>}
+        ></WalletRoute>
       </Modal>
 
       <AntdModal

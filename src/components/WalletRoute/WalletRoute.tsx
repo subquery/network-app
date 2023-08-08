@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC } from 'react';
+import React from 'react';
 import { Route } from 'react-router';
 import { ConnectWallet } from '@components/ConnectWallet';
 import { useWeb3 } from '@containers';
@@ -29,7 +29,7 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({
 }) => {
   const [errorAlert, setErrorAlert] = React.useState<string>();
 
-  const { account, error } = useWeb3();
+  const { error } = useWeb3();
   const { isInitialAccount } = useWeb3Store();
   const isLogin = useIsLogin();
 
