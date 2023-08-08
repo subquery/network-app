@@ -1,14 +1,14 @@
 .plans {
-  margin: 1rem 0;
+  margin: 16px 0;
 }
 
 .plan {
   border: 1px solid var(--gray300);
   border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1.6rem;
+  padding: 16px;
+  margin-bottom: 26px;
 }
 
 .header {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }

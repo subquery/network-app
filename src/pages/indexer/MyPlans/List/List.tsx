@@ -160,7 +160,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       columns={columns}
       dataSource={data}
       rowKey={'id'}
-      title={() => <Typography variant="h6">{title}</Typography>}
+      title={title ? () => <Typography variant="h6">{title}</Typography> : undefined}
     />
   );
 };
