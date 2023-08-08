@@ -6,9 +6,14 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BillingExchangeModal } from '@components/BillingTransferModal';
 import { useSQToken } from '@containers';
-import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { SQT_TOKEN_ADDRESS, useWeb3 } from '@containers/Web3';
 import { useIndexerFlexPlans, useProjectFromQuery } from '@hooks';
-import { IGetHostingPlans, IPostHostingPlansParams, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import {
+  IGetHostingPlans,
+  IPostHostingPlansParams,
+  isConsumerHostError,
+  useConsumerHostServices,
+} from '@hooks/useConsumerHostServices';
 import { Modal, openNotification, Steps, Typography } from '@subql/components';
 import { convertStringToNumber, formatEther, TOKEN, tokenDecimals } from '@utils';
 import { Button, Divider, Form, InputNumber } from 'antd';
@@ -19,6 +24,7 @@ import { t } from 'i18next';
 import styles from './index.module.less';
 
 const CreateHostingFlexPlan: FC = (props) => {
+  const { account } = useWeb3();
   const { consumerHostBalance } = useSQToken();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -58,7 +64,12 @@ const CreateHostingFlexPlan: FC = (props) => {
     await form.validateFields();
     if (!asyncProject.data?.currentDeployment) return;
     const created = await getHostingPlans();
-    if (created && haveCreatedHostingPlan.checkHaveCreated(created)) return;
+
+    if (!created) return;
+    if (created && haveCreatedHostingPlan.checkHaveCreated(created)) {
+      setShowCreateFlexPlan(false);
+      return;
+    }
 
     const res = await createHostingPlanApi({
       ...form.getFieldsValue(),
@@ -69,6 +80,7 @@ const CreateHostingFlexPlan: FC = (props) => {
     });
 
     if (res.data.id) {
+      await getHostingPlans();
       openNotification({
         type: 'success',
         description: 'Create success',
@@ -80,7 +92,7 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const getHostingPlans = async () => {
     const res = await getHostingPlanApi();
-    if (res.data) {
+    if (!isConsumerHostError(res.data)) {
       setCreatedHostingPlan(res.data);
       return res.data;
     }
@@ -88,7 +100,7 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   React.useEffect(() => {
     getHostingPlans();
-  }, []);
+  }, [account]);
 
   return (
     <>

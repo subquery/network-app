@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 import { useWeb3 } from '@containers';
 import { openNotification } from '@subql/components';
-import { getAuthReqHeader, requestConsumerHostToken } from '@utils';
+import { getAuthReqHeader, requestConsumerHostToken, USER_REJECT } from '@utils';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 
@@ -22,6 +22,12 @@ export type ConsumerHostServicesProps = {
   autoLogin?: boolean;
 };
 
+export enum LOGIN_CONSUMER_HOST_STATUS_MSG {
+  USE_CACHE = 'use cache',
+  OK = 'ok',
+  REJECT_SIGN = USER_REJECT.USER_DENIED_SIGNATURE,
+}
+
 export const useConsumerHostServices = (
   { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
 ) => {
@@ -34,24 +40,45 @@ export const useConsumerHostServices = (
         const cachedToken = localStorage.getItem(`consumer-host-services-token-${account}`);
         if (cachedToken) {
           authHeaders.current = getAuthReqHeader(cachedToken);
-          return;
+          return {
+            status: true,
+            msg: 'use cache',
+          };
         }
       }
 
       const res = await requestConsumerHostToken(account, library);
+      if (res.error) {
+        return {
+          status: false,
+          msg: res.error,
+        };
+      }
+
       if (res.data) {
         authHeaders.current = getAuthReqHeader(res.data);
         localStorage.setItem(`consumer-host-services-token-${account}`, res.data);
+        return {
+          status: true,
+          msg: 'ok',
+        };
       }
     }
+
+    return {
+      status: false,
+      msg: 'unknow error',
+    };
   };
 
   // do not need retry limitation
   // login need user confirm sign, so it's a block operation
   const shouldLogin = async (res: unknown[] | object): Promise<boolean> => {
     if (isConsumerHostError(res) && `${res.code}` === '403') {
-      await loginConsumerHostToken(true);
-      return true;
+      const loginStatus = await loginConsumerHostToken(true);
+      if (loginStatus.status) {
+        return true;
+      }
     }
 
     return false;
