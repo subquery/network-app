@@ -6,6 +6,7 @@ import { useWeb3 } from '@containers';
 import { openNotification } from '@subql/components';
 import { getAuthReqHeader, requestConsumerHostToken } from '@utils';
 import axios, { AxiosResponse } from 'axios';
+import { BigNumberish } from 'ethers';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,
@@ -17,10 +18,19 @@ export const isConsumerHostError = (res: object): res is ConsumerHostError => {
 
 // Will add more controller along with below TODO
 export type ConsumerHostServicesProps = {
-  alert: boolean;
+  alert?: boolean;
+  autoLogin?: boolean;
 };
 
-export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesProps) => {
+export enum LOGIN_CONSUMER_HOST_STATUS_MSG {
+  USE_CACHE = 'use cache',
+  OK = 'ok',
+  REJECT_SIGN = 'User denied message signature',
+}
+
+export const useConsumerHostServices = (
+  { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
+) => {
   const { account, library } = useWeb3();
   const authHeaders = useRef<{ Authorization: string }>();
 
@@ -30,24 +40,45 @@ export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesP
         const cachedToken = localStorage.getItem(`consumer-host-services-token-${account}`);
         if (cachedToken) {
           authHeaders.current = getAuthReqHeader(cachedToken);
-          return;
+          return {
+            status: true,
+            msg: 'use cache',
+          };
         }
       }
 
       const res = await requestConsumerHostToken(account, library);
+      if (res.error) {
+        return {
+          status: false,
+          msg: res.error,
+        };
+      }
+
       if (res.data) {
         authHeaders.current = getAuthReqHeader(res.data);
         localStorage.setItem(`consumer-host-services-token-${account}`, res.data);
+        return {
+          status: true,
+          msg: 'ok',
+        };
       }
     }
+
+    return {
+      status: false,
+      msg: 'unknow error',
+    };
   };
 
   // do not need retry limitation
   // login need user confirm sign, so it's a block operation
   const shouldLogin = async (res: unknown[] | object): Promise<boolean> => {
     if (isConsumerHostError(res) && `${res.code}` === '403') {
-      await loginConsumerHostToken(true);
-      return true;
+      const loginStatus = await loginConsumerHostToken(true);
+      if (loginStatus.status) {
+        return true;
+      }
     }
 
     return false;
@@ -121,16 +152,91 @@ export const useConsumerHostServices = ({ alert = false }: ConsumerHostServicesP
     return res;
   };
 
+  const createHostingPlanApi = async (params: IPostHostingPlansParams): Promise<AxiosResponse<IGetHostingPlans>> => {
+    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans`, params, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await createHostingPlanApi(params);
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
+  const getHostingPlanApi = async (): Promise<AxiosResponse<IGetHostingPlans[]>> => {
+    const res = await instance.get<IGetHostingPlans[]>(`/users/hosting-plans`, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await getHostingPlanApi();
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
   useEffect(() => {
-    loginConsumerHostToken();
-  }, [account]);
+    if (autoLogin) {
+      loginConsumerHostToken();
+    }
+  }, [account, autoLogin]);
 
   return {
     getUserApiKeysApi,
     createNewApiKey,
     deleteNewApiKey,
+    createHostingPlanApi,
+    getHostingPlanApi,
   };
 };
+
+export interface IPostHostingPlansParams {
+  deploymentId: string;
+  price: BigNumberish;
+  expiration: number;
+  maximum: number;
+}
+
+export interface IGetHostingPlans {
+  id: number;
+  user_id: number;
+  deployment: {
+    created_at: Date;
+    // cid
+    deployment: string;
+    id: number;
+    is_actived: boolean;
+    project_id: number;
+    updated_at: Date;
+    version: string;
+    deployment_id: number;
+  };
+  channels: string;
+  maximum: number;
+  price: BigNumberish;
+  spent: string;
+  expired_at: string;
+  is_actived: true;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface GetUserApiKeys {
   id: number;

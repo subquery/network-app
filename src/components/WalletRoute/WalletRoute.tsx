@@ -35,7 +35,11 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({
 
   React.useEffect(() => {
     if (error) {
-      setErrorAlert(parseError(error, walletConnectionErrors) || 'Failed to connect wallet.');
+      setErrorAlert(
+        parseError(error, {
+          errorMappings: walletConnectionErrors,
+        }) || 'Failed to connect wallet.',
+      );
     }
   }, [error]);
 

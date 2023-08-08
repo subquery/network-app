@@ -68,8 +68,11 @@ export async function requestConsumerHostToken(
 
     return { data: sortedResponse?.token };
   } catch (error) {
-    parseError(error);
-    return { error: 'Failed to request token of consumer host.' };
+    return {
+      error: parseError(error, {
+        defaultGeneralMsg: 'Failed to request token of consumer host.',
+      }),
+    };
   }
 }
 
