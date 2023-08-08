@@ -67,13 +67,17 @@ function logError(msg: Error | string | Record<string, unknown>): void {
 
 export function parseError(
   error: any,
-  options: { alert?: boolean; defaultGeneralMsg?: string | null } = { alert: false, defaultGeneralMsg: null },
+  options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
+    alert: false,
+    defaultGeneralMsg: null,
+    errorMappings: errorsMapping,
+  },
 ): string | undefined {
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
 
-  const mappingError = () => errorsMapping.find((e) => rawErrorMsg.match(e.error))?.message;
+  const mappingError = () => (options.errorMappings || errorsMapping).find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),

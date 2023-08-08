@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react';
 import { useWeb3 } from '@containers';
 import { openNotification } from '@subql/components';
-import { getAuthReqHeader, requestConsumerHostToken, USER_REJECT } from '@utils';
+import { getAuthReqHeader, requestConsumerHostToken } from '@utils';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 
@@ -25,7 +25,7 @@ export type ConsumerHostServicesProps = {
 export enum LOGIN_CONSUMER_HOST_STATUS_MSG {
   USE_CACHE = 'use cache',
   OK = 'ok',
-  REJECT_SIGN = USER_REJECT.USER_DENIED_SIGNATURE,
+  REJECT_SIGN = 'User denied message signature',
 }
 
 export const useConsumerHostServices = (
