@@ -202,7 +202,7 @@ const ForumCard = () => {
   return renderAsync(
     {
       loading: !!!topics.length,
-      data: topics,
+      data: !topics.length ? undefined : topics,
     },
     {
       loading: () => <Spinner></Spinner>,
