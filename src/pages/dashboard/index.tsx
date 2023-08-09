@@ -187,18 +187,7 @@ const ActiveCard = () => {
 
 const ForumCard = () => {
   const forumApis = useForumApis();
-  const [topics, setTopics] = useState<IGetLatestTopics['topics']>([
-    {
-      last_posted_at: '2023-08-02T05:29:33.738Z',
-      slug: 'indexer-sponsorship-program-updates',
-      title: 'Indexer Sponsorship Program Updates',
-    },
-    {
-      last_posted_at: '2023-08-02T05:29:33.738Z',
-      slug: 'indexer-sponsorship-program-updates2',
-      title: 'Indexer Sponsorship Program Update2s',
-    },
-  ]);
+  const [topics, setTopics] = useState<IGetLatestTopics['topics']>([]);
 
   const getTopics = async () => {
     const res = await forumApis.getLatestApi();
@@ -210,36 +199,48 @@ const ForumCard = () => {
     getTopics();
   }, []);
 
-  return (
-    <NewCard
-      title={
-        <Typography style={{ display: 'flex', alignItems: 'flex-end' }}>
-          Forum
-          <BsChatLeftDots style={{ fontSize: 20, color: 'var(--sq-blue600)', marginLeft: 10 }}></BsChatLeftDots>
-        </Typography>
-      }
-      width={302}
-      style={{ marginTop: 24 }}
-    >
-      <div className="col-flex">
-        {topics.map((topic) => {
-          return (
-            <Link
-              key={topic.slug}
-              style={{ marginBottom: 16 }}
-              href={`${import.meta.env.VITE_FORUM_DOMAIN}/t/${topic.slug}`}
-              target="_blank"
-            >
-              <Typography variant="medium">{topic.title}</Typography>
-              <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-                {moment(topic.last_posted_at).utc(true).fromNow()}
+  return renderAsync(
+    {
+      loading: !!!topics.length,
+      data: topics,
+    },
+    {
+      loading: () => <Spinner></Spinner>,
+      error: (e) => <>{parseError(e)}</>,
+      data: (topics) => {
+        return (
+          <NewCard
+            title={
+              <Typography style={{ display: 'flex', alignItems: 'flex-end' }}>
+                Forum
+                <BsChatLeftDots style={{ fontSize: 20, color: 'var(--sq-blue600)', marginLeft: 10 }}></BsChatLeftDots>
               </Typography>
-            </Link>
-          );
-        })}
-        <Link href="https://forum.subquery.network/c/kepler-network/16">View Forum</Link>
-      </div>
-    </NewCard>
+            }
+            width={302}
+            style={{ marginTop: 24 }}
+          >
+            <div className="col-flex">
+              {topics.map((topic) => {
+                return (
+                  <Link
+                    key={topic.slug}
+                    style={{ marginBottom: 16 }}
+                    href={`${import.meta.env.VITE_FORUM_DOMAIN}/t/${topic.slug}`}
+                    target="_blank"
+                  >
+                    <Typography variant="medium">{topic.title}</Typography>
+                    <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
+                      {moment(topic.last_posted_at).utc(true).fromNow()}
+                    </Typography>
+                  </Link>
+                );
+              })}
+              <Link href="https://forum.subquery.network/c/kepler-network/16">View Forum</Link>
+            </div>
+          </NewCard>
+        );
+      },
+    },
   );
 };
 

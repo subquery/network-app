@@ -145,7 +145,10 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
               <div>
                 <AntDTable
                   tableProps={{
-                    columns: getColumns(pathname, fetchMoreFlexPlans),
+                    columns: getColumns(
+                      pathname as typeof ONGOING_PLANS_NAV | typeof CLOSED_PLANS_NAV,
+                      fetchMoreFlexPlans,
+                    ),
                     dataSource: flexPlanList,
                     scroll: { x: 2000 },
                     rowKey: 'expiredAt',
