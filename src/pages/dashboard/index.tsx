@@ -1,27 +1,39 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { BsChatLeftDots } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import { CurEra } from '@components';
+import { IPFSImage } from '@components';
+import { getEraProgress, getEraTimeLeft } from '@components/CurEra';
 import LineCharts from '@components/LineCharts';
 import NewCard from '@components/NewCard';
-import { Typography } from '@subql/components';
-import { TOKEN } from '@utils';
+import { useProjectMetadata } from '@containers';
+import { useEra } from '@hooks/useEra';
+import { IGetLatestTopics, useForumApis } from '@hooks/useForumApis';
+import { Spinner, Tooltip, Typography } from '@subql/components';
+import { useGetProjectsQuery } from '@subql/react-hooks';
+import { filterSuccessPromoiseSettledResult, notEmpty, parseError, renderAsync, TOKEN } from '@utils';
 import formatNumber from '@utils/formatNumber';
+import { useInterval } from 'ahooks';
+import { Progress } from 'antd';
 import Link from 'antd/es/typography/Link';
 import clsx from 'clsx';
+import moment from 'moment';
+
+import { ProjectMetadata } from 'src/models';
 
 import styles from './index.module.less';
 
 const BalanceLayout = ({
   mainBalance,
   secondaryBalance,
+  secondaryTooltip = 'Estimated for next Era',
   token = TOKEN,
 }: {
   mainBalance: number;
   secondaryBalance: number;
+  secondaryTooltip?: React.ReactNode;
   token?: string;
 }) => {
   return (
@@ -32,11 +44,202 @@ const BalanceLayout = ({
         </Typography>
         {token}
       </div>
-
-      <Typography variant="small" type="secondary">
-        {formatNumber(secondaryBalance)} {token}
-      </Typography>
+      {secondaryTooltip ? (
+        <Tooltip title={secondaryTooltip} placement="topLeft">
+          <Typography variant="small" type="secondary">
+            {formatNumber(secondaryBalance)} {token}
+          </Typography>
+        </Tooltip>
+      ) : (
+        <Typography variant="small" type="secondary">
+          {formatNumber(secondaryBalance)} {token}
+        </Typography>
+      )}
     </div>
+  );
+};
+
+const EraCard = () => {
+  const { currentEra } = useEra();
+  const [now, setNow] = useState(new Date());
+  useInterval(
+    () => {
+      setNow(new Date());
+    },
+    5000,
+    { immediate: true },
+  );
+
+  return (
+    <>
+      {renderAsync(currentEra, {
+        loading: () => <Spinner></Spinner>,
+        error: (e) => <>{parseError(e)}</>,
+        data: (eraData) => (
+          <NewCard
+            title="Current Era"
+            titleExtra={
+              <div className="col-flex">
+                <Typography variant="h5" style={{ color: 'var(--sq-blue600)' }}>
+                  {eraData.index}
+                </Typography>
+
+                <Typography variant="small" type="secondary" style={{ marginBottom: 12 }}>
+                  {getEraTimeLeft(moment(now), moment(eraData.estEndTime))}
+                </Typography>
+                <Progress
+                  strokeColor={{
+                    '0%': 'var(--gradient-from)',
+                    '100%': 'var(--gradient-to)',
+                  }}
+                  trailColor={'var(--gray300'}
+                  className={styles.progressBar}
+                  percent={getEraProgress(now, eraData.estEndTime, eraData.startTime)}
+                />
+              </div>
+            }
+            tooltip="1 era = 1 hour"
+            width={302}
+          ></NewCard>
+        ),
+      })}
+    </>
+  );
+};
+
+const ActiveCard = () => {
+  const navigate = useNavigate();
+  const { getMetadataFromCid } = useProjectMetadata();
+
+  const projectsQuery = useGetProjectsQuery({
+    variables: {
+      offset: 0,
+    },
+  });
+
+  const [projectsMetadata, setProjectsMetadata] = useState<ProjectMetadata[]>([]);
+
+  const getAllProjectMetadata = async () => {
+    if (!projectsQuery.loading && projectsQuery.data?.projects?.nodes) {
+      const res = await Promise.allSettled(
+        projectsQuery.data?.projects?.nodes.filter(notEmpty).map((i) => getMetadataFromCid(i.metadata)),
+      );
+
+      setProjectsMetadata(res.filter(filterSuccessPromoiseSettledResult).map((i) => i.value));
+    }
+  };
+
+  useEffect(() => {
+    getAllProjectMetadata();
+  }, [projectsQuery]);
+
+  return (
+    <>
+      {renderAsync(projectsQuery, {
+        loading: () => <Spinner></Spinner>,
+        error: (e) => <>{parseError(e)}</>,
+        data: (projects) => {
+          return (
+            <NewCard
+              title="Active Projects"
+              titleExtra={
+                <div style={{ fontSize: 16, display: 'flex', alignItems: 'baseline' }}>
+                  <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
+                    {projects.projects?.totalCount}
+                  </Typography>
+                  Project
+                </div>
+              }
+              tooltip="The number of actively indexed projects across the entire network"
+              width={302}
+              style={{ marginTop: 24 }}
+            >
+              <>
+                <div className={styles.images}>
+                  {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
+                    <IPFSImage
+                      key={project.id}
+                      src={projectsMetadata[index]?.image || '/static/default.project.png'}
+                      className={styles.image}
+                      onClick={() => {
+                        navigate(`/explorer/project/${project.id}`);
+                      }}
+                    />
+                  ))}
+                </div>
+                <div>
+                  <Link
+                    onClick={() => {
+                      navigate('/explorer/home');
+                    }}
+                  >
+                    View All Projects
+                  </Link>
+                </div>
+              </>
+            </NewCard>
+          );
+        },
+      })}
+    </>
+  );
+};
+
+const ForumCard = () => {
+  const forumApis = useForumApis();
+  const [topics, setTopics] = useState<IGetLatestTopics['topics']>([
+    {
+      last_posted_at: '2023-08-02T05:29:33.738Z',
+      slug: 'indexer-sponsorship-program-updates',
+      title: 'Indexer Sponsorship Program Updates',
+    },
+    {
+      last_posted_at: '2023-08-02T05:29:33.738Z',
+      slug: 'indexer-sponsorship-program-updates2',
+      title: 'Indexer Sponsorship Program Update2s',
+    },
+  ]);
+
+  const getTopics = async () => {
+    const res = await forumApis.getLatestApi();
+
+    setTopics(res);
+  };
+
+  useEffect(() => {
+    getTopics();
+  }, []);
+
+  return (
+    <NewCard
+      title={
+        <Typography style={{ display: 'flex', alignItems: 'flex-end' }}>
+          Forum
+          <BsChatLeftDots style={{ fontSize: 20, color: 'var(--sq-blue600)', marginLeft: 10 }}></BsChatLeftDots>
+        </Typography>
+      }
+      width={302}
+      style={{ marginTop: 24 }}
+    >
+      <div className="col-flex">
+        {topics.map((topic) => {
+          return (
+            <Link
+              key={topic.slug}
+              style={{ marginBottom: 16 }}
+              href={`${import.meta.env.VITE_FORUM_DOMAIN}/t/${topic.slug}`}
+              target="_blank"
+            >
+              <Typography variant="medium">{topic.title}</Typography>
+              <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
+                {moment(topic.last_posted_at).utc(true).fromNow()}
+              </Typography>
+            </Link>
+          );
+        })}
+        <Link href="https://forum.subquery.network/c/kepler-network/16">View Forum</Link>
+      </div>
+    </NewCard>
   );
 };
 
@@ -57,7 +260,10 @@ const Dashboard: FC = (props) => {
         <div className={styles.dashboardMainTop}>
           <NewCard
             title="Total Network Rewards"
-            titleExtra={BalanceLayout({ mainBalance: 299999, secondaryBalance: 29999 })}
+            titleExtra={BalanceLayout({
+              mainBalance: 299999,
+              secondaryBalance: 29999,
+            })}
             tooltip="This is the total rewards that have been claimed or are able to be claimed across the entire network right now"
             width={302}
           >
@@ -167,49 +373,9 @@ const Dashboard: FC = (props) => {
             </div>
           </div>
           <div className={styles.dashboardMainBottomRight}>
-            <NewCard title="Current Era" titleExtra={<CurEra />} tooltip="1 era = 1 hour" width={302}></NewCard>
-            <NewCard
-              title="Active Projects"
-              titleExtra={
-                <div style={{ fontSize: 16, display: 'flex', alignItems: 'baseline' }}>
-                  <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
-                    7
-                  </Typography>
-                  Project
-                </div>
-              }
-              tooltip="The number of actively indexed projects across the entire network"
-              width={302}
-              style={{ marginTop: 24 }}
-            >
-              <>
-                <div>
-                  <img src="" alt="" />
-                </div>
-                <div>
-                  <Link
-                    onClick={() => {
-                      navigate('/explorer/home');
-                    }}
-                  >
-                    View All Projects
-                  </Link>
-                </div>
-              </>
-            </NewCard>
-
-            <NewCard
-              title={
-                <Typography style={{ display: 'flex', alignItems: 'flex-end' }}>
-                  Forum
-                  <BsChatLeftDots style={{ fontSize: 20, color: 'var(--sq-blue600)', marginLeft: 10 }}></BsChatLeftDots>
-                </Typography>
-              }
-              width={302}
-              style={{ marginTop: 24 }}
-            >
-              <Link href="https://forum.subquery.network/c/kepler-network/16">View Forum</Link>
-            </NewCard>
+            <EraCard></EraCard>
+            <ActiveCard></ActiveCard>
+            <ForumCard></ForumCard>
           </div>
         </div>
       </div>

@@ -17,4 +17,16 @@
       padding-top: 12px;
     }
   }
+
+  &.withoutBody {
+    :global {
+      .ant-card-head {
+        padding-bottom: 20px;
+      }
+
+      .ant-card-body {
+        display: none;
+      }
+    }
+  }
 }

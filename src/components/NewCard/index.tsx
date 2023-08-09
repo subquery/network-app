@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import { BsInfoCircle } from 'react-icons/bs';
 import { Typography } from '@subql/components';
 import { Card, Tooltip } from 'antd';
+import clsx from 'clsx';
 import { isString } from 'lodash-es';
 
 import styles from './index.module.less';
@@ -22,7 +23,7 @@ interface IProps {
 const NewCard: FC<IProps> = (props) => {
   return (
     <Card
-      className={styles.newCard}
+      className={clsx(styles.newCard, !props.children ? styles.withoutBody : '')}
       title={
         <div className="col-flex">
           <div style={{ display: 'flex', alignItems: 'center' }}>
