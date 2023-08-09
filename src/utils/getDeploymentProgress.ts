@@ -21,6 +21,7 @@ type Metadata = {
   queryNodeVersion: string; // Semver
   specName: string;
   targetHeight: number;
+  startHeight?: number;
 };
 
 export async function getDeploymentMetadata({
