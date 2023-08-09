@@ -1,0 +1,41 @@
+.dashboard {
+  padding: 40px 80px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  
+  &Main {
+    margin-top: 40px;
+    max-width: 1280px;
+    min-width: 1280px;
+    display: flex;
+    flex-direction: column;
+
+    &Top {
+      display: flex; 
+      justify-content: space-between;
+    }
+
+    &Bottom {
+      display: flex;
+      margin-top: 24px;
+      &Left {
+        display: flex;
+        flex-direction: column;
+        width: 953px;
+        flex-shrink: 0;
+        margin-right: 25px;
+      }
+
+      &Right {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+
+  .cardContentLine + .cardContentLine {
+    margin-top: 12px;
+  }
+}
