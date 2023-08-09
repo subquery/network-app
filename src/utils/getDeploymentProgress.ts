@@ -56,6 +56,20 @@ export async function getDeploymentMetadata({
   }
 }
 
+export const deploymentProgessNumber = ({
+  currentHeight,
+  targetHeight,
+  startHeight = 0,
+}: {
+  currentHeight: number;
+  targetHeight: number;
+  startHeight: number;
+}) => {
+  if (!(targetHeight - startHeight)) return 0;
+  const result = Math.min(Math.max((currentHeight - startHeight) / (targetHeight - startHeight), 0), 1);
+  return isNaN(result) ? 0 : result;
+};
+
 export const getDeploymentProgress = async ({
   proxyEndpoint,
   deploymentId,
@@ -67,7 +81,9 @@ export const getDeploymentProgress = async ({
 
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
-  if (!metadata?.lastProcessedHeight || !metadata?.targetHeight) return 0;
-
-  return metadata.lastProcessedHeight / metadata.targetHeight;
+  return deploymentProgessNumber({
+    currentHeight: metadata?.lastProcessedHeight ?? 0,
+    targetHeight: metadata?.targetHeight ?? 0,
+    startHeight: metadata?.startHeight ?? 0,
+  });
 };
