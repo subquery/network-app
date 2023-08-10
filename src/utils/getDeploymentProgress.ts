@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { indexingProgress } from '@subql/network-clients';
 import axios from 'axios';
 
 import { wrapProxyEndpoint } from '.';
@@ -21,6 +22,7 @@ type Metadata = {
   queryNodeVersion: string; // Semver
   specName: string;
   targetHeight: number;
+  startHeight?: number;
 };
 
 export async function getDeploymentMetadata({
@@ -66,7 +68,9 @@ export const getDeploymentProgress = async ({
 
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
-  if (!metadata?.lastProcessedHeight || !metadata?.targetHeight) return 0;
-
-  return metadata.lastProcessedHeight / metadata.targetHeight;
+  return indexingProgress({
+    currentHeight: metadata?.lastProcessedHeight ?? 0,
+    targetHeight: metadata?.targetHeight ?? 0,
+    startHeight: metadata?.startHeight ?? 0,
+  });
 };

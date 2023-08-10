@@ -48,8 +48,6 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
     return asyncIndexers.data?.deploymentIndexers?.totalCount || 0;
   }, [asyncIndexers]);
 
-  // actually i think this need to be refactor, but it works well except not lazy= =.
-  // and indexers query didn't have indexer address filter now. so continue use this for now.
   const [search, sortedIndexer] = useGetDeploymentIndexerLazyQuery();
 
   const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);

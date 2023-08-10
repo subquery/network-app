@@ -121,7 +121,7 @@ const ConnectedRow: React.FC<{
     }
 
     return {
-      startBlock: 0,
+      startBlock: meta?.startHeight ?? 0,
       targetBlock: maxTargetHeight,
       currentBlock: meta?.lastProcessedHeight ?? 0,
     };
