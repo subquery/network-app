@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { indexingProgress } from '@subql/network-clients';
 import axios from 'axios';
 
 import { wrapProxyEndpoint } from '.';
@@ -56,20 +57,6 @@ export async function getDeploymentMetadata({
   }
 }
 
-export const deploymentProgessNumber = ({
-  currentHeight,
-  targetHeight,
-  startHeight = 0,
-}: {
-  currentHeight: number;
-  targetHeight: number;
-  startHeight: number;
-}) => {
-  if (!(targetHeight - startHeight)) return 0;
-  const result = Math.min(Math.max((currentHeight - startHeight) / (targetHeight - startHeight), 0), 1);
-  return isNaN(result) ? 0 : result;
-};
-
 export const getDeploymentProgress = async ({
   proxyEndpoint,
   deploymentId,
@@ -81,7 +68,7 @@ export const getDeploymentProgress = async ({
 
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
-  return deploymentProgessNumber({
+  return indexingProgress({
     currentHeight: metadata?.lastProcessedHeight ?? 0,
     targetHeight: metadata?.targetHeight ?? 0,
     startHeight: metadata?.startHeight ?? 0,

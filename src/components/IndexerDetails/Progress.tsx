@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar, Typography } from '@subql/components';
-import { deploymentProgessNumber, strip } from '@utils';
+import { indexingProgress } from '@subql/network-clients';
+import { strip } from '@utils';
 
 import styles from './IndexerDetails.module.less';
 
@@ -20,7 +21,7 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
   // 99.9978 and 99.9999 are same thing in this situation.
   const maxProgress = React.useMemo(
     () =>
-      deploymentProgessNumber({
+      indexingProgress({
         currentHeight: currentBlock,
         startHeight: startBlock,
         targetHeight: targetBlock,
