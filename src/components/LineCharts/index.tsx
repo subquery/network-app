@@ -1,9 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
+import { useEra } from '@hooks';
+import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
-import formatNumber from '@utils/formatNumber';
+import formatNumber from '@utils/numberFormatters';
 import { Radio } from 'antd';
 import dayjs from 'dayjs';
 import { LineChart } from 'echarts/charts';
@@ -14,52 +16,78 @@ import ReactEChartsCore from 'echarts-for-react/lib/core';
 
 import styles from './index.module.less';
 
+export type DateRangeType = 'l3m' | 'lm' | 'ly';
+export type FilterType = {
+  date: DateRangeType;
+};
 interface IProps {
-  data: number[][];
+  chartData: number[][];
   dataDimensionsName: string[];
-  onTriggerTooltip?: (index: number) => string;
-  onChangeDateRange?: (dateType: 'lw' | 'lm' | 'ly') => void;
+  value?: FilterType;
+  onChange?: (newFilter: FilterType) => void;
+  onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
+  onChangeDateRange?: (dateType: DateRangeType) => void;
   title?: string;
 }
 
 echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
-const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
-  const [filter, setFilter] = useState({
-    date: 'lw',
+const LineCharts: FC<IProps> = ({
+  value,
+  onChange,
+  title,
+  chartData,
+  dataDimensionsName,
+  onChangeDateRange,
+  onTriggerTooltip,
+}) => {
+  const { currentEra } = useEra();
+
+  const [filter, setFilter] = usePropsValue({
+    value,
+    defaultValue: {
+      date: 'lm',
+    },
+    onChange,
   });
 
   const xAxisScales = useMemo(() => {
+    if (!currentEra.data?.period) return;
     const currentDate = dayjs();
-    const makeLastWeek = () => {
-      return new Array(7)
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index, 'day').format('MMM D'))
-        .reverse();
+    // const intervalPeriod = currentEra.data.period < 86400 ? 86400 : currentEra.data.period;
+    const intervalPeriod = 86400 * 7;
+    const getAxisScales = {
+      l3m: () => {
+        return new Array(Math.ceil((90 * 86400) / intervalPeriod))
+          .fill(0)
+          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
+          .reverse();
+      },
+      lm: () => {
+        return new Array(Math.ceil((31 * 86400) / intervalPeriod))
+          .fill(0)
+          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
+          .reverse();
+      },
+      ly: () => {
+        return new Array(Math.ceil((365 * 86400) / intervalPeriod))
+          .fill(0)
+          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
+          .reverse();
+      },
     };
 
-    const makeLastMonth = () => {
-      return new Array(31)
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index, 'day').format('MMM D'))
-        .reverse();
-    };
+    const scales = getAxisScales[filter.date]();
 
-    const makeLastYear = () => {
-      return new Array(12)
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index, 'month').format('MMM'))
-        .reverse();
+    return {
+      rawData: scales,
+      renderData: scales.map((i) => i.format('MMM D')),
     };
-
-    if (filter.date === 'lw') return makeLastWeek();
-    if (filter.date === 'lm') return makeLastMonth();
-    if (filter.date === 'ly') return makeLastYear();
-  }, [filter.date]);
+  }, [filter.date, currentEra.data?.period]);
 
   const renderedSeries = useMemo(() => {
-    return data.map((source, index) => {
+    return chartData.map((source, index) => {
       return {
         smooth: true,
         data: source,
@@ -71,7 +99,7 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
         },
       };
     });
-  }, [data]);
+  }, [chartData]);
 
   return (
     <div className={styles.lineCharts}>
@@ -84,8 +112,8 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
         <span style={{ flex: 1 }}></span>
         <Radio.Group
           options={[
-            { label: 'Last Week', value: 'lw' },
             { label: 'Last Month', value: 'lm' },
+            { label: 'Last 3 Month', value: 'l3m' },
             { label: 'Last Year', value: 'ly' },
           ]}
           onChange={(val) => {
@@ -93,6 +121,7 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
               ...filter,
               date: val.target.value,
             });
+            onChangeDateRange?.(val.target.value);
           }}
           value={filter.date}
           optionType="button"
@@ -109,7 +138,7 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
           );
         })}
       </div>
-      {data.length ? (
+      {chartData.length ? (
         <ReactEChartsCore
           echarts={echarts}
           option={{
@@ -121,7 +150,6 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
             xAxis: {
               axisLabel: {
                 align: 'right',
-                interval: filter.date === 'lm' ? 2 : 0,
               },
               axisLine: {
                 show: false,
@@ -131,7 +159,7 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
               },
               type: 'category',
               boundaryGap: false,
-              data: xAxisScales,
+              data: xAxisScales?.renderData,
             },
             yAxis: {
               type: 'value',
@@ -147,10 +175,12 @@ const LineCharts: FC<IProps> = ({ title, data, dataDimensionsName }) => {
               textStyle: {
                 color: '#fff',
               },
-              formatter: (params) => {
-                // console.warn(params);
-                // const [first]
-                return '123';
+              formatter: (params: [{ dataIndex: number }]) => {
+                const [x] = params;
+
+                const renderString = onTriggerTooltip?.(x.dataIndex, xAxisScales?.rawData[x.dataIndex] as dayjs.Dayjs);
+
+                return renderString;
               },
             },
             series: renderedSeries,

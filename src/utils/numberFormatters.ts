@@ -39,6 +39,29 @@ export function mulToPercentage(value: number | string, mulUnit = 100, decimalPl
   return `${(sortedValue * mulUnit).toFixed(decimalPlaces)} %`;
 }
 
+export const toPercentage = (val: number, total: number) => {
+  if (total === 0) return `100 %`;
+  return ((val / total) * 100).toFixed(2) + '%';
+};
+
 export function extractPercentage(value: string): number {
   return convertStringToNumber(value.replace('%', ''));
+}
+
+export default function formatNumber(num: number, precision = 2) {
+  const map = [
+    { suffix: 'T', threshold: 1e12 },
+    { suffix: 'B', threshold: 1e9 },
+    { suffix: 'M', threshold: 1e6 },
+    { suffix: 'K', threshold: 1e3 },
+    { suffix: '', threshold: 1 },
+  ];
+
+  const found = map.find((x) => Math.abs(num) >= x.threshold);
+  if (found) {
+    const formatted = (num / found.threshold).toFixed(precision) + found.suffix;
+    return formatted;
+  }
+
+  return num;
 }
