@@ -1,7 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import BigNumberJs from 'bignumber.js';
 import { BigNumber, BigNumberish, utils } from 'ethers';
+
+import { tokenDecimals } from './constants';
 
 export function convertStringToNumber(value: string): number {
   return parseFloat(value);
@@ -39,9 +43,15 @@ export function mulToPercentage(value: number | string, mulUnit = 100, decimalPl
   return `${(sortedValue * mulUnit).toFixed(decimalPlaces)} %`;
 }
 
-export const toPercentage = (val: number, total: number) => {
+export const toPercentage = (val: number, total: number, bigNumber = false) => {
   if (total === 0) return `100 %`;
   return ((val / total) * 100).toFixed(2) + '%';
+};
+
+export const formatSQT = (val: string) => {
+  return BigNumberJs(val)
+    .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
+    .toNumber();
 };
 
 export function extractPercentage(value: string): number {

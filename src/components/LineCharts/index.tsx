@@ -55,8 +55,7 @@ const LineCharts: FC<IProps> = ({
   const xAxisScales = useMemo(() => {
     if (!currentEra.data?.period) return;
     const currentDate = dayjs();
-    // const intervalPeriod = currentEra.data.period < 86400 ? 86400 : currentEra.data.period;
-    const intervalPeriod = 86400 * 7;
+    const intervalPeriod = currentEra.data.period < 86400 ? 86400 : currentEra.data.period;
     const getAxisScales = {
       l3m: () => {
         return new Array(Math.ceil((90 * 86400) / intervalPeriod))
@@ -177,10 +176,15 @@ const LineCharts: FC<IProps> = ({
               },
               formatter: (params: [{ dataIndex: number }]) => {
                 const [x] = params;
-
-                const renderString = onTriggerTooltip?.(x.dataIndex, xAxisScales?.rawData[x.dataIndex] as dayjs.Dayjs);
-
-                return renderString;
+                try {
+                  const renderString = onTriggerTooltip?.(
+                    x.dataIndex,
+                    xAxisScales?.rawData[x.dataIndex] as dayjs.Dayjs,
+                  );
+                  return renderString;
+                } catch (e) {
+                  return;
+                }
               },
             },
             series: renderedSeries,

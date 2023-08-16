@@ -10,25 +10,15 @@ import { getEraProgress, getEraTimeLeft } from '@components/CurEra';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import NewCard from '@components/NewCard';
 import { useProjectMetadata } from '@containers';
-import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
-import { useEra } from '@hooks/useEra';
+import { Era, useEra } from '@hooks/useEra';
 import { IGetLatestTopics, useForumApis } from '@hooks/useForumApis';
 import { Spinner, Tooltip, Typography } from '@subql/components';
 import { useGetProjectsQuery } from '@subql/react-hooks';
-import {
-  filterSuccessPromoiseSettledResult,
-  notEmpty,
-  parseError,
-  renderAsync,
-  TOKEN,
-  tokenDecimals,
-  transNumToHex,
-} from '@utils';
-import formatNumber, { toPercentage } from '@utils/numberFormatters';
+import { filterSuccessPromoiseSettledResult, notEmpty, parseError, renderAsync, TOKEN, transNumToHex } from '@utils';
+import formatNumber, { formatSQT, toPercentage } from '@utils/numberFormatters';
 import { useInterval } from 'ahooks';
 import { Progress, Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
-import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import moment from 'moment';
@@ -44,10 +34,30 @@ const BalanceLayout = ({
   token = TOKEN,
 }: {
   mainBalance: number;
-  secondaryBalance: number;
+  secondaryBalance?: number;
   secondaryTooltip?: React.ReactNode;
   token?: string;
 }) => {
+  const secondaryRender = () => {
+    if (!secondaryBalance)
+      return (
+        <Typography variant="small" type="secondary" style={{ visibility: 'hidden' }}>
+          bigo
+        </Typography>
+      );
+    return secondaryTooltip ? (
+      <Tooltip title={secondaryTooltip} placement="topLeft">
+        <Typography variant="small" type="secondary">
+          {formatNumber(secondaryBalance)} {token}
+        </Typography>
+      </Tooltip>
+    ) : (
+      <Typography variant="small" type="secondary">
+        {formatNumber(secondaryBalance)} {token}
+      </Typography>
+    );
+  };
+
   return (
     <div className="col-flex">
       <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
@@ -56,19 +66,83 @@ const BalanceLayout = ({
         </Typography>
         {token}
       </div>
-      {secondaryTooltip ? (
-        <Tooltip title={secondaryTooltip} placement="topLeft">
-          <Typography variant="small" type="secondary">
-            {formatNumber(secondaryBalance)} {token}
-          </Typography>
-        </Tooltip>
-      ) : (
-        <Typography variant="small" type="secondary">
-          {formatNumber(secondaryBalance)} {token}
-        </Typography>
-      )}
+      {secondaryRender()}
     </div>
   );
+};
+
+const getSplitDataByEra = (currentEra: Era) => {
+  const period = currentEra.period;
+  const splitData = 3600 * 24;
+  const getIncludesEras = (lastTimes: dayjs.Dayjs) => {
+    const today = dayjs();
+    const secondFromLastTimes = (+today - +lastTimes) / 1000;
+
+    const eras = Math.floor(secondFromLastTimes / period);
+    const currentEraIndex = currentEra.index || 0;
+    const includesEras = new Array(eras)
+      .fill(0)
+      .map((_, index) => currentEraIndex - index)
+      .filter((i) => i > 0);
+    return {
+      includesErasHex: includesEras.map(transNumToHex),
+      includesEras,
+    };
+  };
+
+  const fillData = (
+    rawData: { keys: string[]; sum: { amount: string } }[],
+    includesErasHex: string[],
+    paddingLength: number,
+  ) => {
+    const amounts = rawData.map((i) => {
+      return {
+        key: i.keys[0],
+        amount: formatSQT(i.sum.amount),
+      };
+    });
+
+    // fill the data that cannot gatherd by Graphql. e.g: includesEras wants to get the data of 0x0c and 0x0d
+    // but Graphql just return the data of 0x0c
+    includesErasHex.forEach((key) => {
+      if (!amounts.find((i) => i.key === key)) {
+        amounts.push({ key: key, amount: 0 });
+      }
+    });
+
+    // Graphql sort is incorrect, because it is a string.
+    let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
+
+    // default eras will greater than one day
+    if (paddingLength > renderAmounts.length) {
+      new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+    }
+
+    // but in dev env will less than one day.
+    if (period < splitData) {
+      const eraCountOneDay = 86400 / period;
+      renderAmounts = renderAmounts.reduce(
+        (acc: { result: number[]; curResult: number }, cur, index) => {
+          acc.curResult += cur;
+          if ((index + 1) % eraCountOneDay === 0 || index === renderAmounts.length - 1) {
+            acc.result.push(acc.curResult);
+            acc.curResult = 0;
+          }
+
+          return acc;
+        },
+        { result: [], curResult: 0 },
+      ).result;
+
+      if (paddingLength > renderAmounts.length) {
+        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+      }
+    }
+
+    return renderAmounts;
+  };
+
+  return { getIncludesEras, fillData };
 };
 
 const EraCard = () => {
@@ -238,7 +312,8 @@ const ForumCard = () => {
                     key={topic.slug}
                     style={{ marginBottom: 16 }}
                     href={`${import.meta.env.VITE_FORUM_DOMAIN}/t/${topic.slug}`}
-                    target="_blank"
+                    target="_import { indexerMetadataSchema } from '../../models';
+blank"
                   >
                     <Typography variant="medium">{topic.title}</Typography>
                     <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
@@ -261,10 +336,7 @@ const TotalRewardsCard = (props: { totalRewards: string; indexerRewards: string;
     <NewCard
       title="Total Network Rewards"
       titleExtra={BalanceLayout({
-        mainBalance: BigNumberJs(props.totalRewards)
-          .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-          .toNumber(),
-        secondaryBalance: 29999,
+        mainBalance: formatSQT(props.totalRewards),
       })}
       tooltip="This is the total rewards that have been claimed or are able to be claimed across the entire network right now"
       width={302}
@@ -275,12 +347,7 @@ const TotalRewardsCard = (props: { totalRewards: string; indexerRewards: string;
             Total Reward to Indexers
           </Typography>
           <Typography variant="small">
-            {formatNumber(
-              BigNumberJs(props.indexerRewards)
-                .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-                .toNumber(),
-            )}{' '}
-            {TOKEN}
+            {formatNumber(formatSQT(props.indexerRewards))} {TOKEN}
           </Typography>
         </div>
 
@@ -289,12 +356,101 @@ const TotalRewardsCard = (props: { totalRewards: string; indexerRewards: string;
             Total Reward to Delegation
           </Typography>
           <Typography variant="small">
-            {formatNumber(
-              BigNumberJs(props.delegationRewards)
-                .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-                .toNumber(),
-            )}{' '}
-            {TOKEN}
+            {formatNumber(formatSQT(props.delegationRewards))} {TOKEN}
+          </Typography>
+        </div>
+      </div>
+    </NewCard>
+  );
+};
+
+const StakeCard = (props: { totalStake: string; nextTotalStake: string; totalCount: number }) => {
+  const navigate = useNavigate();
+
+  return (
+    <NewCard
+      title="Current Network Stake"
+      titleExtra={BalanceLayout({
+        mainBalance: formatSQT(props.totalStake),
+        secondaryBalance: formatSQT(props.nextTotalStake),
+      })}
+      tooltip="This is the total staked SQT across the entire network right now. This includes SQT that has been delegated to Indexers"
+      width={302}
+    >
+      <div className="col-flex">
+        <div className={clsx(styles.cardContentLine, 'flex-between')}>
+          <Typography variant="small" type="secondary">
+            Number of Indexers
+          </Typography>
+          <Typography variant="small">{props.totalCount}</Typography>
+        </div>
+
+        <div className={clsx(styles.cardContentLine, 'flex-between')}>
+          <Link
+            onClick={() => {
+              navigate('/delegator/indexers/all');
+            }}
+          >
+            View Indexers
+          </Link>
+        </div>
+      </div>
+    </NewCard>
+  );
+};
+
+const DelegationsCard = (props: { delegatorStake: string; nextDelegatorStake: string; totalCount: number }) => {
+  const navigate = useNavigate();
+
+  return (
+    <NewCard
+      title="Current Network Delegation"
+      titleExtra={BalanceLayout({
+        mainBalance: formatSQT(props.delegatorStake),
+        secondaryBalance: formatSQT(props.nextDelegatorStake),
+      })}
+      tooltip="This is the total SQT delegated by participants to any Indexer across the entire network right now"
+      width={302}
+    >
+      <div className="col-flex">
+        <div className={clsx(styles.cardContentLine, 'flex-between')}>
+          <Typography variant="small" type="secondary">
+            Number of Delegators
+          </Typography>
+          <Typography variant="small">{props.totalCount}</Typography>
+        </div>
+
+        <div className={clsx(styles.cardContentLine, 'flex-between')}>
+          <Link
+            onClick={() => {
+              navigate('/delegator/indexers/top');
+            }}
+          >
+            Delegate Now
+          </Link>
+        </div>
+      </div>
+    </NewCard>
+  );
+};
+
+const CirculatingCard = (props: { circulatingSupply: string; totalStake: string }) => {
+  return (
+    <NewCard
+      title="Circulating Supply"
+      titleExtra={BalanceLayout({
+        mainBalance: formatSQT(props.circulatingSupply),
+      })}
+      tooltip="This is the total circulating supply of SQT across the entire network right now"
+      width={302}
+    >
+      <div className="col-flex">
+        <div className={clsx(styles.cardContentLine, 'flex-between')}>
+          <Typography variant="small" type="secondary">
+            Percentage Staked
+          </Typography>
+          <Typography variant="small">
+            {toPercentage(formatSQT(props.totalStake), formatSQT(props.circulatingSupply))}
           </Typography>
         </div>
       </div>
@@ -306,7 +462,7 @@ const RewardsLineChart = () => {
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
   const [renderRewards, setRenderRewards] = useState<number[][]>([[]]);
-  const [rawRewardsData, setRawRewardsData] = useState({
+  const [rawRewardsData, setRawRewardsData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
     indexer: [],
     delegation: [],
     total: [],
@@ -342,109 +498,39 @@ const RewardsLineChart = () => {
     }
   `);
 
-  const fetchRewardsByDate = async (filterVal: FilterType | undefined = filter) => {
+  const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
+    if (!currentEra.data) return;
     if (!filterVal) return;
-    // const period = currentEra.data?.period;
-    const period = 3600 * 24 * 7;
-    if (!period) return;
-    const splitData = 3600 * 24;
-    if (period > splitData && period % splitData !== 0) {
-      // i'm not sure how to show if a period is like 1.5 day.
-      // would better do not have this kind of era period. otherwise we must change the statistical dimension
-      return;
-    }
-    if (period < splitData && splitData % period !== 0) {
-      // same to above.
-      return;
-    }
-
-    const getIncludesEras = (lastTimes: dayjs.Dayjs) => {
-      const today = dayjs();
-      const secondFromLastTimes = (+today - +lastTimes) / 1000;
-
-      const eras = Math.floor(secondFromLastTimes / period);
-      // const currentEraIndex = currentEra.data?.index || 0;
-      const currentEraIndex = 17;
-      const includesEras = new Array(eras + 1).fill(0).map((_, index) => currentEraIndex - index);
-
-      return [includesEras.filter((i) => i > 0).map(transNumToHex), includesEras];
-    };
-
-    const [filterIncludesEras, includesEras] = {
-      lm: () => getIncludesEras(dayjs().subtract(1, 'month')),
-      l3m: () => getIncludesEras(dayjs().subtract(3, 'month')),
-      ly: () => getIncludesEras(dayjs().subtract(1, 'year')),
+    const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data);
+    const { includesErasHex } = {
+      lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
+      l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
+      ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
     }[filterVal.date]();
-
     const res = await fetchRewards({
       variables: {
-        eraIds: filterIncludesEras,
+        eraIds: includesErasHex,
       },
       fetchPolicy: 'no-cache',
     });
 
-    const fillData = (rawData) => {
-      const amounts = rawData.map((i) => {
-        return {
-          key: i.keys[0],
-          amount: BigNumberJs(i.sum.amount)
-            .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-            .toNumber(),
-        };
-      });
+    const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
 
-      // fill the data that cannot gatherd by Graphql. e.g: includesEras wants to get the data of 0x0c and 0x0d
-      // but Graphql just return the data of 0x0c
-      filterIncludesEras.forEach((key) => {
-        if (!amounts.find((i) => i.key === key)) {
-          amounts.push({ key: key, amount: 0 });
-        }
-      });
-
-      // Graphql sort is incorrect, because it is a string.
-      let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
-
-      // default eras will greater than one day
-      // but in dev env will less than one day.
-      if (renderAmounts.length < includesEras.length) {
-        new Array(includesEras.length - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
-      }
-      if (period < splitData) {
-        const eraCountOneDay = 86400 / period;
-        renderAmounts = renderAmounts.reduce(
-          (acc: { result: number[]; curResult: number }, cur, index) => {
-            acc.curResult += cur;
-            if ((index + 1) % eraCountOneDay === 0 || index === renderAmounts.length - 1) {
-              acc.result.push(acc.curResult);
-              acc.curResult = 0;
-            }
-
-            return acc;
-          },
-          { result: [], curResult: 0 },
-        ).result;
-
-        new Array({ lm: 31, l3m: 90, ly: 365 }[filter.date] - renderAmounts.length)
-          .fill(0)
-          .forEach((_) => renderAmounts.unshift(0));
-      }
-
-      return renderAmounts;
-    };
-
-    const indexerRewards = fillData(res.data.indexerEraReward.groupedAggregates);
-    const delegationRewards = fillData(res.data.delegationEraReward.groupedAggregates);
+    const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
+      fillData(data, includesErasHex, maxPaddingLength);
+    const indexerRewards = curry(res.data.indexerEraReward.groupedAggregates);
+    const delegationRewards = curry(res.data.delegationEraReward.groupedAggregates);
     setRawRewardsData({
       indexer: indexerRewards,
       delegation: delegationRewards,
-      total: fillData(res.data.eraRewards.groupedAggregates),
+      total: fillData(res.data.eraRewards.groupedAggregates, includesErasHex, maxPaddingLength),
     });
 
     setRenderRewards([indexerRewards, delegationRewards]);
   };
 
   useEffect(() => {
-    fetchRewardsByDate();
+    fetchRewardsByEra();
   }, [currentEra.data?.index]);
 
   return renderAsync(rewardsData, {
@@ -456,7 +542,7 @@ const RewardsLineChart = () => {
           value={filter}
           onChange={(val) => {
             setFilter(val);
-            fetchRewardsByDate(val);
+            fetchRewardsByEra(val);
           }}
           title="Network Rewards"
           dataDimensionsName={['Indexer Rewards', 'Delegation Rewards']}
@@ -490,8 +576,120 @@ const RewardsLineChart = () => {
   });
 };
 
+const StakeAndDelegationLineChart = () => {
+  const { currentEra } = useEra();
+  const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
+
+  const [fetchStakeAndDelegation, stakeAndDelegation] = useLazyQuery(gql`
+    query MyQuery($eraIds: [String!]) {
+      indexerStakeSummaries(filter: { eraId: { in: $eraIds } }) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            delegatorStake
+            indexerStake
+            totalStake
+          }
+          keys
+        }
+      }
+    }
+  `);
+
+  const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
+  const [rawFetchedData, setRawFetchedData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
+    indexer: [],
+    delegation: [],
+    total: [],
+  });
+
+  const fetchStakeAndDelegationByEra = async (filterVal: FilterType | undefined = filter) => {
+    if (!filterVal) return;
+    if (!currentEra.data) return;
+    if (!filterVal) return;
+    const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data);
+
+    const { includesErasHex } = {
+      lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
+      l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
+      ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
+    }[filterVal.date]();
+
+    const res = await fetchStakeAndDelegation({
+      variables: {
+        eraIds: includesErasHex,
+      },
+      fetchPolicy: 'no-cache',
+    });
+
+    const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
+    const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
+      fillData(data, includesErasHex, maxPaddingLength);
+
+    const indexerStakes = curry(
+      res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.indexerStake } })),
+    );
+    const delegationStakes = curry(
+      res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.delegatorStake } })),
+    );
+    setRawFetchedData({
+      indexer: indexerStakes,
+      delegation: delegationStakes,
+      total: curry(
+        res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.totalStake } })),
+      ),
+    });
+
+    setRenderStakeAndDelegation([indexerStakes, delegationStakes]);
+  };
+
+  useEffect(() => {
+    fetchStakeAndDelegationByEra();
+  }, [currentEra.data?.index]);
+
+  return renderAsync(stakeAndDelegation, {
+    loading: () => <Spinner></Spinner>,
+    error: (e) => <Typography>{parseError(e)}</Typography>,
+    data: () => {
+      return (
+        <LineCharts
+          value={filter}
+          onChange={(val) => {
+            setFilter(val);
+            fetchStakeAndDelegationByEra(val);
+          }}
+          title="Network Staking and Delegation"
+          dataDimensionsName={['Staking', 'Delegation']}
+          chartData={renderStakeAndDelegation}
+          onTriggerTooltip={(index, curDate) => {
+            return `<div class="col-flex" style="width: 280px">
+          <span>${curDate.format('MMM D, YYYY')}</span>
+          <div class="flex-between">
+            <span>Total</span>
+            <span>${formatNumber(rawFetchedData.total[index])} ${TOKEN}</span>
+          </div>
+          <div class="flex-between">
+            <span>Index Rewards</span>
+            <span>${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
+              rawFetchedData.indexer[index],
+              rawFetchedData.total[index],
+            )})</span>
+          </div>
+          <div class="flex-between">
+          <span>Delegator Rewards</span>
+          <span>${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
+              rawFetchedData.delegation[index],
+              rawFetchedData.total[index],
+            )})</span>
+        </div>
+        </div>`;
+          }}
+        ></LineCharts>
+      );
+    },
+  });
+};
+
 const Dashboard: FC = () => {
-  const navigate = useNavigate();
   const result = useQuery(gql`
     query MyQuery {
       eraRewards {
@@ -520,16 +718,30 @@ const Dashboard: FC = () => {
         }
       }
 
+      indexerStakeSummary(id: "0x00") {
+        indexerStake
+        nextDelegatorStake
+        nextIndexerStake
+        nextTotalStake
+        totalStake
+        delegatorStake
+      }
+
       sqtokens {
-        totalCount
-        nodes {
-          circulatingSupply
-          id
-          totalSupply
+        aggregates {
+          sum {
+            circulatingSupply
+            totalSupply
+          }
         }
       }
-      planByNodeId(nodeId: "") {
-        id
+
+      indexers {
+        totalCount
+      }
+
+      delegations {
+        totalCount
       }
     }
   `);
@@ -555,81 +767,26 @@ const Dashboard: FC = () => {
                   indexerRewards={fetchedData.rewardsToIndexer.aggregates.sum.amount}
                   delegationRewards={fetchedData.rewardsToDelegation.aggregates.sum.amount}
                 ></TotalRewardsCard>
-                <NewCard
-                  title="Current Network Stake"
-                  titleExtra={BalanceLayout({ mainBalance: 299999, secondaryBalance: 29999 })}
-                  tooltip="This is the total staked SQT across the entire network right now. This includes SQT that has been delegated to Indexers"
-                  width={302}
-                >
-                  <div className="col-flex">
-                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Typography variant="small" type="secondary">
-                        Number of Indexers
-                      </Typography>
-                      <Typography variant="small">50</Typography>
-                    </div>
+                <StakeCard
+                  totalStake={fetchedData.indexerStakeSummary.totalStake}
+                  nextTotalStake={fetchedData.indexerStakeSummary.nextTotalStake}
+                  totalCount={fetchedData.indexers.totalCount}
+                ></StakeCard>
 
-                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Link
-                        onClick={() => {
-                          navigate('/delegator/indexers/all');
-                        }}
-                      >
-                        View Indexers
-                      </Link>
-                    </div>
-                  </div>
-                </NewCard>
+                <DelegationsCard
+                  delegatorStake={fetchedData.indexerStakeSummary.delegatorStake}
+                  nextDelegatorStake={fetchedData.indexerStakeSummary.nextDelegatorStake}
+                  totalCount={fetchedData.delegations.totalCount}
+                ></DelegationsCard>
 
-                <NewCard
-                  title="Current Network Delegation"
-                  titleExtra={BalanceLayout({ mainBalance: 299999, secondaryBalance: 29999 })}
-                  tooltip="This is the total SQT delegated by participants to any Indexer across the entire network right now"
-                  width={302}
-                >
-                  <div className="col-flex">
-                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Typography variant="small" type="secondary">
-                        Number of Delegators
-                      </Typography>
-                      <Typography variant="small">300</Typography>
-                    </div>
-
-                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Link
-                        onClick={() => {
-                          navigate('/delegator/indexers/top');
-                        }}
-                      >
-                        Delegate Now
-                      </Link>
-                    </div>
-                  </div>
-                </NewCard>
-
-                <NewCard
-                  title="Circulating Supply"
-                  titleExtra={BalanceLayout({ mainBalance: 299999, secondaryBalance: 29999 })}
-                  tooltip="This is the total circulating supply of SQT across the entire network right now"
-                  width={302}
-                >
-                  <div className="col-flex">
-                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Typography variant="small" type="secondary">
-                        Percentage Staked
-                      </Typography>
-                      <Typography variant="small">88%</Typography>
-                    </div>
-                  </div>
-                </NewCard>
+                <CirculatingCard
+                  circulatingSupply={fetchedData.sqtokens.aggregates.sum.circulatingSupply}
+                  totalStake={fetchedData.indexerStakeSummary.totalStake}
+                ></CirculatingCard>
               </div>
               <div className={styles.dashboardMainBottom}>
                 <div className={styles.dashboardMainBottomLeft}>
-                  <LineCharts
-                    title="Network Staking and Delegation"
-                    dataDimensionsName={['Staking', 'Delegation']}
-                    chartData={[[820, 932, 901, 934, 1290, 1330, 1320]]}
-                  ></LineCharts>
+                  <StakeAndDelegationLineChart></StakeAndDelegationLineChart>
 
                   <div style={{ marginTop: 24 }}>
                     <RewardsLineChart></RewardsLineChart>
