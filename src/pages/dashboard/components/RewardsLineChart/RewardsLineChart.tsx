@@ -184,11 +184,11 @@ export const RewardsLineChart = () => {
           onTriggerTooltip={(index, curDate) => {
             return `<div class="col-flex" style="width: 280px">
               <span>${curDate.format('MMM D, YYYY')}</span>
-              <div class="flex-between">
+              <div class="flex-between" style="margin-top: 8px;">
                 <span>Total</span>
                 <span>${formatNumber(rawRewardsData.total[index])} ${TOKEN}</span>
               </div>
-              <div class="flex-between">
+              <div class="flex-between" style="margin: 8px 0;">
                 <span>Index Rewards</span>
                 <span>${formatNumber(rawRewardsData.indexer[index])} ${TOKEN} (${toPercentage(
               rawRewardsData.indexer[index],

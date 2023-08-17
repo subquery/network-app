@@ -144,7 +144,7 @@ export type BasicRouteType = {
 };
 
 export const routers: BasicRouteType[] = [
-  { path: '/', redirect: '/explorer/home' },
+  { path: '/', redirect: '/dashboard' },
 
   {
     path: '/dashboard',
