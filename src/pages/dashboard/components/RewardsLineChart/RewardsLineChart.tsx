@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 
 export const getSplitDataByEra = (currentEra: Era) => {
   const period = currentEra.period;
-  const splitData = 3600 * 24;
+  const splitData = 86400;
 
   // TODO:
   //   There have some problems in here
@@ -59,14 +59,18 @@ export const getSplitDataByEra = (currentEra: Era) => {
 
     // Graphql sort is incorrect, because it is a string.
     let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
+
     // default eras will greater than one day
-    if (paddingLength > renderAmounts.length) {
-      new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+    if (period > splitData) {
+      const filledPaddingLength = Math.ceil(Math.ceil((paddingLength * splitData) / period));
+      if (filledPaddingLength > renderAmounts.length) {
+        new Array(filledPaddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+      }
     }
 
     // but in dev env will less than one day.
     if (period < splitData) {
-      const eraCountOneDay = 86400 / period;
+      const eraCountOneDay = splitData / period;
       const filledPaddingLength = eraCountOneDay * paddingLength;
 
       if (filledPaddingLength > renderAmounts.length) {
