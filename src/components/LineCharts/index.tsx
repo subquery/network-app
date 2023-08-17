@@ -162,7 +162,6 @@ const LineCharts: FC<IProps> = ({
             },
             yAxis: {
               type: 'value',
-              // max: 9999999999,
               axisLabel: {
                 formatter: (val: number) => formatNumber(val),
               },

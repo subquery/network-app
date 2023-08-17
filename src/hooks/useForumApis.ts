@@ -17,7 +17,7 @@ export const useForumApis = () => {
     });
 
     if (res.status === 200) {
-      return res.data.topics;
+      return res.data.topic_list.topics;
     }
 
     return [];
@@ -29,9 +29,11 @@ export const useForumApis = () => {
 };
 
 export interface IGetLatestTopics {
-  topics: {
-    last_posted_at: string;
-    title: string;
-    slug: string;
-  }[];
+  topic_list: {
+    topics: {
+      last_posted_at: string;
+      title: string;
+      slug: string;
+    }[];
+  };
 }
