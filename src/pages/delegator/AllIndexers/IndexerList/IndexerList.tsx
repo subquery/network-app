@@ -52,7 +52,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`/${INDEXER}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
@@ -143,6 +143,9 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       width: 100,
       render: (val: string) =>
         val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
+      onCell: (record: SortedIndexerListProps) => ({
+        onClick: () => viewIndexerDetail(record.address),
+      }),
     },
     {
       title: <TableTitle title={t('indexer.totalStake')} />,
