@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router';
 import { IPFSImage } from '@components';
 import NewCard from '@components/NewCard';
 import { useProjectMetadata } from '@containers';
-import { Spinner, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { renderAsync, useGetProjectsQuery } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, notEmpty, parseError } from '@utils';
+import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
 
 import { ProjectMetadata } from 'src/models';
@@ -44,7 +45,7 @@ export const ActiveCard = () => {
   return (
     <>
       {renderAsync(projectsQuery, {
-        loading: () => <Spinner></Spinner>,
+        loading: () => <Skeleton active style={{ marginTop: 30 }}></Skeleton>,
         error: (e) => <>{parseError(e)}</>,
         data: (projects) => {
           return (

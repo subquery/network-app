@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
-import { formatNumber } from '@polkadot/util';
-import { Spinner, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { formatSQT, parseError, TOKEN, toPercentage, transNumToHex } from '@utils';
+import formatNumber from '@utils/numberFormatters';
+import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 
 export const getSplitDataByEra = (currentEra: Era) => {
@@ -168,7 +169,7 @@ export const RewardsLineChart = () => {
   }, [currentEra.data?.index]);
 
   return renderAsync(rewardsData, {
-    loading: () => <Spinner></Spinner>,
+    loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: () => {
       return (

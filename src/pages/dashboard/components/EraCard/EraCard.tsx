@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { getEraProgress, getEraTimeLeft } from '@components';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
-import { Spinner, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { useInterval } from 'ahooks';
-import { Progress } from 'antd';
+import { Progress, Skeleton } from 'antd';
 import moment from 'moment';
 
 export const EraCard = () => {
@@ -26,7 +26,7 @@ export const EraCard = () => {
   return (
     <>
       {renderAsync(currentEra, {
-        loading: () => <Spinner></Spinner>,
+        loading: () => <Skeleton active></Skeleton>,
         error: (e) => <>{parseError(e)}</>,
         data: (eraData) => (
           <NewCard

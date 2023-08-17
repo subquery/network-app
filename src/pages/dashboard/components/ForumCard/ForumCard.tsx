@@ -8,6 +8,7 @@ import { IGetLatestTopics, useForumApis } from '@hooks/useForumApis';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
+import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
 import moment from 'moment';
 
@@ -31,7 +32,7 @@ export const ForumCard = () => {
       data: !topics.length ? undefined : topics,
     },
     {
-      loading: () => <Spinner></Spinner>,
+      loading: () => <Skeleton active paragraph={{ rows: 14 }} style={{ marginTop: 30 }}></Skeleton>,
       error: (e) => <>{parseError(e)}</>,
       data: (topics) => {
         return (

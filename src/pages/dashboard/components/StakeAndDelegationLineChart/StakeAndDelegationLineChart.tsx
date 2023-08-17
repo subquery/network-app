@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import { useEra } from '@hooks';
-import { formatNumber } from '@polkadot/util';
-import { Spinner, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError, TOKEN, toPercentage } from '@utils';
+import formatNumber from '@utils/numberFormatters';
+import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 
 import { getSplitDataByEra } from '../RewardsLineChart/RewardsLineChart';
@@ -84,7 +85,7 @@ export const StakeAndDelegationLineChart = () => {
   }, [currentEra.data?.index]);
 
   return renderAsync(stakeAndDelegation, {
-    loading: () => <Spinner></Spinner>,
+    loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: () => {
       return (

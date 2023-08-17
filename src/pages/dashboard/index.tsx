@@ -257,7 +257,7 @@ const Dashboard: FC = () => {
       </Typography>
 
       {renderAsync(result, {
-        loading: () => <Skeleton active paragraph={{ rows: 10 }} />,
+        loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
         error: (e) => <Typography>{parseError(e)}</Typography>,
         data: (fetchedData) => {
           return (
