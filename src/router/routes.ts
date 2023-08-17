@@ -196,6 +196,8 @@ export const routers: BasicRouteType[] = [
     ],
   },
 
+  { path: '/indexer/:id', component: React.lazy(() => import('../pages/indexer/IndexerProfile/IndexerProfile')) },
+
   {
     path: '/delegator',
     component: React.lazy(() => import('../pages/delegator/index')),
@@ -211,7 +213,6 @@ export const routers: BasicRouteType[] = [
           { path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) },
         ],
       },
-      { path: 'indexer/:id', component: React.lazy(() => import('../pages/delegator/IndexerDetails/IndexerDetails')) },
     ],
   },
 

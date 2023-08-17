@@ -19,7 +19,7 @@ import { RewardsLineChart } from './components/RewardsLineChart/RewardsLineChart
 import { StakeAndDelegationLineChart } from './components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import styles from './index.module.less';
 
-const BalanceLayout = ({
+export const BalanceLayout = ({
   mainBalance,
   secondaryBalance,
   secondaryTooltip = 'Estimated for next Era',

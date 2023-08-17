@@ -14,6 +14,7 @@ import IPFSImage from '../IPFSImage';
 import styles from './IndexerDetails.module.less';
 
 type Props = {
+  size?: 'normal' | 'large';
   name?: string;
   image?: string;
   address: string;
@@ -21,7 +22,14 @@ type Props = {
   onAddressClick?: (address: string) => void;
 };
 
-export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress, onAddressClick }) => {
+export const IndexerName: React.FC<Props> = ({
+  name,
+  image,
+  address,
+  fullAddress,
+  size = 'normal',
+  onAddressClick,
+}) => {
   const { fetchEnsNameOnce, fetchEnsFromCache } = useENS(address);
   const [ensName, setEnsName] = useState<string>();
 
@@ -55,11 +63,23 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
       <IPFSImage
         src={image}
         renderPlaceholder={() => (
-          <Jazzicon paperStyles={{ flexShrink: 0 }} diameter={45} seed={jsNumberForAddress(address)} />
+          <Jazzicon
+            paperStyles={{ flexShrink: 0 }}
+            diameter={size === 'normal' ? 45 : 60}
+            seed={jsNumberForAddress(address)}
+          />
         )}
       />
       <div className={styles.indexerText}>
-        {sortedName && <Typography className={styles.name}>{sortedName}</Typography>}
+        {sortedName && (
+          <Typography
+            className={styles.name}
+            variant={size === 'normal' ? 'text' : 'large'}
+            weight={size === 'normal' ? 400 : 600}
+          >
+            {sortedName}
+          </Typography>
+        )}
         <div>
           <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
             <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
@@ -74,13 +94,15 @@ export const IndexerName: React.FC<Props> = ({ name, image, address, fullAddress
 
 export const ConnectedIndexer: React.FC<{
   id: string;
+  size?: 'large' | 'normal';
   account?: string | null;
   onAddressClick?: (id: string) => void;
-}> = ({ id, account, onAddressClick }) => {
+}> = ({ id, account, size = 'normal', onAddressClick }) => {
   const { indexerMetadata } = useIndexerMetadata(id);
 
   return (
     <IndexerName
+      size={size}
       name={id === account ? 'You' : indexerMetadata?.name}
       image={indexerMetadata?.image}
       address={id}
