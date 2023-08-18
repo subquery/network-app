@@ -248,10 +248,6 @@ const Dashboard: FC = () => {
   `);
   return (
     <div className={styles.dashboard}>
-      {/* layout:
-        top
-        bottom: { left => right }
-      */}
       <Typography variant="h4" weight={600}>
         👋 Welcome to SubQuery Network
       </Typography>

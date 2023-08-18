@@ -181,7 +181,6 @@ const IndexerProfile: FC = () => {
 
       return (
         <div className={styles.indexerProfile}>
-          {/* top to bottom */}
           <div className="col-flex">
             <AccountHeader account={account ?? ''} />
 
