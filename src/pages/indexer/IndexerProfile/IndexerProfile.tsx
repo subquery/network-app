@@ -7,7 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 import { CurEra, IPFSImage } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import NewCard from '@components/NewCard';
-import { useWeb3 } from '@containers';
+import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
@@ -16,12 +16,13 @@ import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAn
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
 import { Spinner, Typography } from '@subql/components';
-import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { renderAsync, useGetIndexerDelegatorsQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { TOKEN } from '@utils/constants';
-import formatNumber, { formatSQT } from '@utils/numberFormatters';
-import { Skeleton } from 'antd';
+import formatNumber, { formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
+import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
+import { t } from 'i18next';
 import { isString } from 'lodash-es';
 
 import { OwnDelegator } from '../MyDelegators/OwnDelegator';
@@ -50,32 +51,65 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   );
 };
 
-const AccountBaseInfo = () => {
+const AccountBaseInfo = (props: { account: string }) => {
   const makeChunk = ({ title, value }: { title: ReactNode; value: ReactNode }) => {
     return (
       <div className="col-flex">
         <Typography variant="small">{title}</Typography>
-        {isString(value) ? (
-          <Typography variant="text" weight={500}>
-            {value}
-          </Typography>
-        ) : (
-          value
-        )}
+
+        <div style={{ marginTop: 8 }}>
+          {isString(value) ? (
+            <Typography variant="text" weight={500}>
+              {value}
+            </Typography>
+          ) : (
+            value
+          )}
+        </div>
       </div>
     );
   };
+
+  const topIndexers = useGetTopIndexersQuery({
+    context: { clientName: TOP_100_INDEXERS },
+  });
+
+  const accountInfos = useMemo(() => {
+    if (!topIndexers.data?.indexerPrograms.length) return;
+    return {
+      infos: topIndexers.data.indexerPrograms.find((i) => i.id === props.account),
+      rank: topIndexers.data.indexerPrograms.findIndex((i) => i.id === props.account) + 1,
+    };
+  }, [topIndexers, props.account]);
+
   return (
     <div className={styles.accountBaseInfo}>
-      {makeChunk({ title: 'Indexer Rank', value: '#4' })}
+      {makeChunk({ title: 'Indexer Rank', value: `# ${accountInfos?.rank}` })}
 
-      {makeChunk({ title: 'Uptime', value: '#4' })}
+      {makeChunk({ title: 'Uptime', value: `${truncateToDecimalPlace(accountInfos?.infos?.uptime || 0, 2)}%` })}
 
-      {makeChunk({ title: 'Era Reward Collection', value: '#4' })}
+      {makeChunk({
+        title: 'Era Reward Collection',
+        value: t(accountInfos?.infos?.rewardCollection === 1 ? 'general.frequent' : 'general.infrequent'),
+      })}
 
-      {makeChunk({ title: 'SSL', value: '#4' })}
+      {makeChunk({
+        title: 'SSL',
+        value: (
+          <Tag color="green">{accountInfos?.infos?.sslEnabled ? t('general.enabled') : t('general.disabled')}</Tag>
+        ),
+      })}
 
-      {makeChunk({ title: 'Social Credibility', value: '#4' })}
+      {makeChunk({
+        title: 'Social Credibility',
+        value: (
+          <div>
+            <Tag color="green">
+              {accountInfos?.infos?.socialCredibility ? t('general.enabled') : t('general.disabled')}
+            </Tag>
+          </div>
+        ),
+      })}
     </div>
   );
 };
@@ -184,7 +218,7 @@ const IndexerProfile: FC = () => {
           <div className="col-flex">
             <AccountHeader account={account ?? ''} />
 
-            <AccountBaseInfo></AccountBaseInfo>
+            <AccountBaseInfo account={account ?? ''}></AccountBaseInfo>
 
             <div className="flex-between" style={{ margin: '24px 0' }}>
               <NewCard
