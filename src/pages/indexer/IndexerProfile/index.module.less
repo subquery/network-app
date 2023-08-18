@@ -25,4 +25,29 @@
   .cardContentLine + .cardContentLine {
     margin-top: 12px;
   }
+
+
+.images {
+  display: flex;
+  margin-bottom: 12px;
+
+  .image {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    margin-left: 0;
+    transition: all .1s linear;
+
+    & + .image {
+      margin-left: -4px;
+    }
+    
+    &:hover + .image {
+      margin-left: 4px;
+    }
+  }
+}
 }
