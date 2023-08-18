@@ -38,7 +38,7 @@ export const getSplitDataByEra = (currentEra: Era) => {
   };
 
   const fillData = (
-    rawData: { keys: string[]; sum: { amount: string; nextAmount?: string } }[],
+    rawData: { keys: string[]; sum: { amount: string } }[],
     includesErasHex: string[],
     paddingLength: number,
   ) => {
@@ -46,7 +46,6 @@ export const getSplitDataByEra = (currentEra: Era) => {
       return {
         key: i.keys[0],
         amount: formatSQT(i.sum.amount),
-        nextAmount: formatSQT(i.sum.nextAmount || '0'),
       };
     });
 
@@ -55,9 +54,9 @@ export const getSplitDataByEra = (currentEra: Era) => {
     // in this situation, the amount and nextAmount of 0x0d is 0x0c's nextAmount
     includesErasHex
       .sort((a, b) => parseInt(a, 16) - parseInt(b, 16))
-      .forEach((key, index) => {
+      .forEach((key) => {
         if (!amounts.find((i) => i.key === key)) {
-          amounts.push({ key: key, amount: 0, nextAmount: 0 });
+          amounts.push({ key: key, amount: 0 });
         }
       });
 
