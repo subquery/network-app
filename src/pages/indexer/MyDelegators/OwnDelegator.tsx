@@ -3,12 +3,14 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
-import { TableText, TableTitle } from '@subql/components';
+import { TableTitle } from '@subql/components';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { convertStringToNumber, mapAsync, mergeAsync, TOKEN } from '@utils';
+import formatNumber from '@utils/numberFormatters';
 import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 
@@ -16,39 +18,35 @@ import styles from './OwnDelegator.module.css';
 
 interface Props {
   indexer: string;
+  showHeader?: boolean;
 }
 
-export const OwnDelegator: React.FC<Props> = ({ indexer }) => {
+export const OwnDelegator: React.FC<Props> = ({ indexer, showHeader = false }) => {
   const { t } = useTranslation();
   const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
   const { currentEra } = useEra();
 
   const columns = [
     {
-      title: <TableTitle title={'#'} />,
-      key: 'idx',
-      width: 30,
-      render: (_: any, record: any, index: number) => <TableText content={index + 1} />,
-    },
-    {
       title: <TableTitle title={t('delegate.delegator')} />,
       dataIndex: 'delegator',
-      render: (delegator: string) => <TableText content={delegator} />,
+      render: (delegator: string) => <ConnectedIndexer id={delegator}></ConnectedIndexer>,
     },
     {
       title: <TableTitle title={t('delegate.amount')} />,
-      children: [
-        {
-          title: <TableTitle title={t('delegate.currentEra')} />,
-          dataIndex: ['value', 'current'],
-          render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
-        },
-        {
-          title: <TableTitle title={t('delegate.nextEra')} />,
-          dataIndex: ['value', 'after'],
-          render: (value: string | number) => <TableText content={`${value ?? 0} ${TOKEN}`} />,
-        },
-      ],
+      dataIndex: 'value',
+      render: (value: { current: number; after: number }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              {formatNumber(value.current)} {TOKEN}
+            </Typography>
+            <Typography type="secondary" variant="small">
+              {formatNumber(value.after)} {TOKEN}
+            </Typography>
+          </div>
+        );
+      },
     },
   ];
 
@@ -72,7 +70,22 @@ export const OwnDelegator: React.FC<Props> = ({ indexer }) => {
           loading: () => <Spinner />,
           empty: () => <Typography>{t('delegate.none')}</Typography>,
           data: (data) => {
-            return <Table columns={columns} dataSource={data} rowKey={'delegator'} />;
+            return (
+              <>
+                {showHeader && (
+                  <div className="flex" style={{ marginBottom: 16 }}>
+                    <Typography variant="large" weight={600}>
+                      Indexer's Delegators
+                    </Typography>
+
+                    <Typography variant="large" weight={600} type="secondary">
+                      ({data.length})
+                    </Typography>
+                  </div>
+                )}
+                <Table columns={columns} dataSource={data} rowKey={'delegator'} />
+              </>
+            );
           },
         },
       )}

@@ -13,7 +13,7 @@ import { useEra, useSortedIndexerDeployments } from '@hooks';
 import { parseRawEraValue } from '@hooks/useEraValue';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
-import { getSplitDataByEra } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
+import { getSplitDataByEra, RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
@@ -27,6 +27,7 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { isString } from 'lodash-es';
 
+import { OwnDelegator } from '../MyDelegators/OwnDelegator';
 import styles from './index.module.less';
 
 const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
@@ -127,119 +128,6 @@ const ActiveCard = (props: { account: string }) => {
         </>
       </NewCard>
     ),
-  });
-};
-
-const StakeChart = (props: { account: string }) => {
-  const { currentEra } = useEra();
-  const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
-
-  const [fetchStakeAndDelegation, stakeAndDelegation] = useLazyQuery(gql`
-    query MyQuery($indexerId: String!, $eraIds: [String!]) {
-      indexerStakeSummaries(filter: { eraId: { in: $eraIds } }, id: { equalTo: $indexerId }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            delegatorStake
-            indexerStake
-            totalStake
-          }
-          keys
-        }
-      }
-    }
-  `);
-
-  const fetchStakeAndDelegationByEra = async (filterVal: FilterType | undefined = filter) => {
-    if (!filterVal) return;
-    if (!currentEra.data) return;
-    if (!filterVal) return;
-    const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data);
-
-    const { includesErasHex } = {
-      lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
-      l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
-      ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
-    }[filterVal.date]();
-
-    const res = await fetchStakeAndDelegation({
-      variables: {
-        eraIds: includesErasHex,
-      },
-      fetchPolicy: 'no-cache',
-    });
-
-    const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
-    const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
-      fillData(data, includesErasHex, maxPaddingLength);
-
-    const indexerStakes = curry(
-      res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.indexerStake } })),
-    );
-    const delegationStakes = curry(
-      res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.delegatorStake } })),
-    );
-    setRawFetchedData({
-      indexer: indexerStakes,
-      delegation: delegationStakes,
-      total: curry(
-        res.data.indexerStakeSummaries.groupedAggregates.map((i) => ({ ...i, sum: { amount: i.sum.totalStake } })),
-      ),
-    });
-
-    setRenderStakeAndDelegation([indexerStakes, delegationStakes]);
-  };
-
-  const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
-  const [rawFetchedData, setRawFetchedData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
-    indexer: [],
-    delegation: [],
-    total: [],
-  });
-
-  useEffect(() => {
-    fetchStakeAndDelegationByEra();
-  }, [currentEra.data?.index]);
-
-  return renderAsync(stakeAndDelegation, {
-    loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
-    error: (e) => <Typography>{parseError(e)}</Typography>,
-    data: () => {
-      return (
-        <LineCharts
-          value={filter}
-          onChange={(val) => {
-            setFilter(val);
-            fetchStakeAndDelegationByEra(val);
-          }}
-          title="Stake"
-          dataDimensionsName={['Own Stake', 'Delegation']}
-          chartData={renderStakeAndDelegation}
-          onTriggerTooltip={(index, curDate) => {
-            return `<div class="col-flex" style="width: 280px">
-          <span>${curDate.format('MMM D, YYYY')}</span>
-          <div class="flex-between" style="margin-top: 8px;">
-            <span>Total Stake</span>
-            <span>${formatNumber(rawFetchedData.total[index])} ${TOKEN}</span>
-          </div>
-          <div class="flex-between" style="margin: 8px 0;">
-            <span>Own Stake</span>
-            <span>${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
-              rawFetchedData.indexer[index],
-              rawFetchedData.total[index],
-            )})</span>
-          </div>
-          <div class="flex-between">
-          <span>Delegation</span>
-          <span>${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
-              rawFetchedData.delegation[index],
-              rawFetchedData.total[index],
-            )})</span>
-        </div>
-        </div>`;
-          }}
-        ></LineCharts>
-      );
-    },
   });
 };
 
@@ -399,23 +287,22 @@ const IndexerProfile: FC = () => {
               <ActiveCard account={account || ''}></ActiveCard>
             </div>
 
-            <StakeChart account={account || ''}></StakeChart>
+            <StakeAndDelegationLineChart
+              account={account}
+              title="Stake"
+              dataDimensionsName={['Own Stake', 'Delegation']}
+            />
 
             <div style={{ marginTop: 24 }}>
-              <StakeAndDelegationLineChart></StakeAndDelegationLineChart>
+              <RewardsLineChart
+                account={account}
+                title="Rewards"
+                dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+              ></RewardsLineChart>
             </div>
 
             <div className={styles.indexerDelegator}>
-              <div className="flex">
-                <Typography variant="large" weight={600}>
-                  Indexer's Delegators
-                </Typography>
-
-                <Typography variant="large" weight={600} type="secondary">
-                  (300)
-                </Typography>
-              </div>
-              <Table></Table>
+              <OwnDelegator indexer={account || ''} showHeader></OwnDelegator>
             </div>
           </div>
         </div>

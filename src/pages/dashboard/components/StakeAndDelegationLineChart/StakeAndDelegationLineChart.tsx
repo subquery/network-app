@@ -14,7 +14,13 @@ import dayjs from 'dayjs';
 
 import { getSplitDataByEra } from '../RewardsLineChart/RewardsLineChart';
 
-export const StakeAndDelegationLineChart = () => {
+export const StakeAndDelegationLineChart = (props: {
+  account?: string;
+  title?: string;
+  dataDimensionsName?: string[];
+}) => {
+  const { title = 'Network Staking and Delegation', dataDimensionsName = ['Staking', 'Delegation'] } = props;
+
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
 
@@ -95,8 +101,8 @@ export const StakeAndDelegationLineChart = () => {
             setFilter(val);
             fetchStakeAndDelegationByEra(val);
           }}
-          title="Network Staking and Delegation"
-          dataDimensionsName={['Staking', 'Delegation']}
+          title={title}
+          dataDimensionsName={dataDimensionsName}
           chartData={renderStakeAndDelegation}
           onTriggerTooltip={(index, curDate) => {
             return `<div class="col-flex" style="width: 280px">
@@ -106,14 +112,14 @@ export const StakeAndDelegationLineChart = () => {
             <span>${formatNumber(rawFetchedData.total[index])} ${TOKEN}</span>
           </div>
           <div class="flex-between" style="margin: 8px 0;">
-            <span>Staking</span>
+            <span>${dataDimensionsName[0]}</span>
             <span>${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
               rawFetchedData.indexer[index],
               rawFetchedData.total[index],
             )})</span>
           </div>
           <div class="flex-between">
-          <span>Delegation</span>
+          <span>${dataDimensionsName[1]}</span>
           <span>${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
               rawFetchedData.delegation[index],
               rawFetchedData.total[index],

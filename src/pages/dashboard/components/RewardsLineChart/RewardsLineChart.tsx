@@ -25,7 +25,7 @@ export const getSplitDataByEra = (currentEra: Era) => {
     const today = dayjs();
     const secondFromLastTimes = (+today - +lastTimes) / 1000;
 
-    const eras = Math.floor(secondFromLastTimes / period);
+    const eras = Math.ceil(secondFromLastTimes / period);
     const currentEraIndex = currentEra.index || 0;
     const includesEras = new Array(eras)
       .fill(0)
@@ -38,7 +38,7 @@ export const getSplitDataByEra = (currentEra: Era) => {
   };
 
   const fillData = (
-    rawData: { keys: string[]; sum: { amount: string } }[],
+    rawData: { keys: string[]; sum: { amount: string; nextAmount?: string } }[],
     includesErasHex: string[],
     paddingLength: number,
   ) => {
@@ -46,16 +46,20 @@ export const getSplitDataByEra = (currentEra: Era) => {
       return {
         key: i.keys[0],
         amount: formatSQT(i.sum.amount),
+        nextAmount: formatSQT(i.sum.nextAmount || '0'),
       };
     });
 
     // fill the data that cannot gatherd by Graphql. e.g: includesEras wants to get the data of 0x0c and 0x0d
     // but Graphql just return the data of 0x0c
-    includesErasHex.forEach((key) => {
-      if (!amounts.find((i) => i.key === key)) {
-        amounts.push({ key: key, amount: 0 });
-      }
-    });
+    // in this situation, the amount and nextAmount of 0x0d is 0x0c's nextAmount
+    includesErasHex
+      .sort((a, b) => parseInt(a, 16) - parseInt(b, 16))
+      .forEach((key, index) => {
+        if (!amounts.find((i) => i.key === key)) {
+          amounts.push({ key: key, amount: 0, nextAmount: 0 });
+        }
+      });
 
     // Graphql sort is incorrect, because it is a string.
     let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
@@ -97,7 +101,8 @@ export const getSplitDataByEra = (currentEra: Era) => {
   return { getIncludesEras, fillData };
 };
 
-export const RewardsLineChart = () => {
+export const RewardsLineChart = (props: { account?: string; title?: string; dataDimensionsName?: string[] }) => {
+  const { title = 'Network Rewards', dataDimensionsName = ['Indexer Rewards', 'Delegation Rewards'] } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
   const [renderRewards, setRenderRewards] = useState<number[][]>([[]]);
@@ -106,6 +111,7 @@ export const RewardsLineChart = () => {
     delegation: [],
     total: [],
   });
+
   const [fetchRewards, rewardsData] = useLazyQuery(gql`
     query MyQuery($eraIds: [String!]) {
       eraRewards(filter: { eraId: { in: $eraIds } }) {
@@ -137,6 +143,41 @@ export const RewardsLineChart = () => {
     }
   `);
 
+  const [fetchRewardsByIndexer, indexerRewardsData] = useLazyQuery(gql`
+    query MyQuery($indexerId: String!, $eraIds: [String!]) {
+      eraRewards(filter: { eraId: { in: $eraIds }, indexerId: { equalTo: $indexerId } }) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      indexerEraReward: eraRewards(
+        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: true }, indexerId: { equalTo: $indexerId } }
+      ) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      delegationEraReward: eraRewards(
+        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: false }, indexerId: { equalTo: $indexerId } }
+      ) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+    }
+  `);
+
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
     if (!filterVal) return;
@@ -146,10 +187,13 @@ export const RewardsLineChart = () => {
       l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
       ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
     }[filterVal.date]();
-    const res = await fetchRewards({
-      variables: {
-        eraIds: includesErasHex,
-      },
+    const apis = props.account ? fetchRewardsByIndexer : fetchRewards;
+    const vars = {
+      eraIds: includesErasHex,
+      indexerId: props.account,
+    };
+    const res = await apis({
+      variables: vars,
       fetchPolicy: 'no-cache',
     });
 
@@ -170,9 +214,9 @@ export const RewardsLineChart = () => {
 
   useEffect(() => {
     fetchRewardsByEra();
-  }, [currentEra.data?.index]);
+  }, [currentEra.data?.index, props.account]);
 
-  return renderAsync(rewardsData, {
+  return renderAsync(props.account ? indexerRewardsData : rewardsData, {
     loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: () => {
@@ -183,8 +227,8 @@ export const RewardsLineChart = () => {
             setFilter(val);
             fetchRewardsByEra(val);
           }}
-          title="Network Rewards"
-          dataDimensionsName={['Indexer Rewards', 'Delegation Rewards']}
+          title={title}
+          dataDimensionsName={dataDimensionsName}
           chartData={renderRewards}
           onTriggerTooltip={(index, curDate) => {
             return `<div class="col-flex" style="width: 280px">
@@ -194,14 +238,14 @@ export const RewardsLineChart = () => {
                 <span>${formatNumber(rawRewardsData.total[index])} ${TOKEN}</span>
               </div>
               <div class="flex-between" style="margin: 8px 0;">
-                <span>Index Rewards</span>
+                <span>${dataDimensionsName[0]}</span>
                 <span>${formatNumber(rawRewardsData.indexer[index])} ${TOKEN} (${toPercentage(
               rawRewardsData.indexer[index],
               rawRewardsData.total[index],
             )})</span>
               </div>
               <div class="flex-between">
-              <span>Delegator Rewards</span>
+              <span>${dataDimensionsName[1]}</span>
               <span>${formatNumber(rawRewardsData.delegation[index])} ${TOKEN} (${toPercentage(
               rawRewardsData.delegation[index],
               rawRewardsData.total[index],
