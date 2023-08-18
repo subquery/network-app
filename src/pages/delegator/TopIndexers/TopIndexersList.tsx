@@ -17,7 +17,7 @@ import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../DoDelegate';
 import styles from './TopIndexersList.module.css';
-const { DELEGATOR, INDEXER } = ROUTES;
+const { INDEXER } = ROUTES;
 
 const getColumns = (
   account: string,
@@ -28,7 +28,7 @@ const getColumns = (
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
     width: 50,
-    render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
+    render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
   },
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,

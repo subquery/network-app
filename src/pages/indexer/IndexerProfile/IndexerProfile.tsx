@@ -1,30 +1,27 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { CurEra, IPFSImage, Table } from '@components';
+import { gql, useQuery } from '@apollo/client';
+import { CurEra, IPFSImage } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import LineCharts, { FilterType } from '@components/LineCharts';
 import NewCard from '@components/NewCard';
-import { useProjectMetadata, useWeb3 } from '@containers';
+import { useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
-import { parseRawEraValue } from '@hooks/useEraValue';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
-import { getSplitDataByEra, RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
+import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
-import { filterSuccessPromoiseSettledResult, notEmpty, parseError } from '@utils';
+import { notEmpty, parseError } from '@utils';
 import { TOKEN } from '@utils/constants';
-import formatNumber, { formatSQT, toPercentage } from '@utils/numberFormatters';
+import formatNumber, { formatSQT } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import { isString } from 'lodash-es';
 
 import { OwnDelegator } from '../MyDelegators/OwnDelegator';
@@ -106,7 +103,7 @@ const ActiveCard = (props: { account: string }) => {
             <div style={{ visibility: 'hidden', height: 18 }}>1</div>
           </>
         }
-        tooltip="The number of actively indexed projects across the entire network"
+        tooltip="The number of actively indexed projects by this indexer"
         width={302}
       >
         <>
@@ -114,7 +111,7 @@ const ActiveCard = (props: { account: string }) => {
             {indexerDeployments.data
               ?.filter(notEmpty)
               .slice(0, 9)
-              .map((project, index) => (
+              .map((project) => (
                 <IPFSImage
                   key={project.id}
                   src={project.projectMeta.image || '/static/default.project.png'}
