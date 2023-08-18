@@ -2935,21 +2935,21 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@^0.13.7":
-  version "0.13.7"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.13.7.tgz#c05bfb33a4b340943cdebc6050e1ed18e2beaded"
-  integrity sha512-Af6Jobsr7hxUIiijwlnS2WmLA6G4NQO1FNJsfItqHwZvmeajZMPllu7DTojYNpYjSbSB5w5I3OfN6YRNCefaMA==
+"@subql/contract-sdk@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.15.0.tgz#a864c0f8adbb549ffc9a889521d6698196c2dc15"
+  integrity sha512-IMgWCocxlseNZoSDMJoWkDTjpBBy/uGYP8c2RATFYwkMI3AFGUKlkjBDCHd57Lq3RqOlPzWzR4gEz2xPJtsbQg==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
-"@subql/network-clients@0.3.16-0":
-  version "0.3.16-0"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.16-0.tgz#c333f4aca07f4a3dc76db846fe99f6a082dad0a4"
-  integrity sha512-aeCDO1iX2Re2E2z79lhEmzr4Qz2JU4I39J78DsuZTwObsSwAwh4Pmvnoiqcj3CrKmwkECcZp+z5urD7G6oEw1w==
+"@subql/network-clients@^0.3.17":
+  version "0.3.17"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.17.tgz#4604a0898df53f74d4c64843b7f2443c24d6795a"
+  integrity sha512-o4fOgnmgLc8wDoUiW/ocUI3N2W2TRW6c1l2AXaP+WAIzy9H1DupfO4CYeSTf8WNPNhpQs/45vlTp5yNB0/qKsg==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
-    "@subql/network-config" "0.3.13"
+    "@subql/network-config" "0.3.14"
     "@subql/network-query" "0.3.16-0"
     axios "^0.27.2"
     buffer "^6.0.3"
@@ -2957,10 +2957,10 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@0.3.13", "@subql/network-config@^0.3.13":
-  version "0.3.13"
-  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.13.tgz#324c58b1f9d1b9ba9ae0f2f332c4f9a316aee103"
-  integrity sha512-jX38TOnhrTmCoKB9gjiW5R/cQgYK6efco1ME2vJfaY3uFm6/p69uvWRN2gUU8kVh9aHdrSqSoSE6Oj/VK7dCOQ==
+"@subql/network-config@0.3.14", "@subql/network-config@^0.3.14":
+  version "0.3.14"
+  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
+  integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
 
 "@subql/network-query@0.3.14-1":
   version "0.3.14-1"
