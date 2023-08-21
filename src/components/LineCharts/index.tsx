@@ -5,7 +5,7 @@ import React, { FC, useMemo } from 'react';
 import { useEra } from '@hooks';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
-import formatNumber from '@utils/numberFormatters';
+import { formatNumber } from '@utils/numberFormatters';
 import { Radio } from 'antd';
 import dayjs from 'dayjs';
 import { LineChart } from 'echarts/charts';

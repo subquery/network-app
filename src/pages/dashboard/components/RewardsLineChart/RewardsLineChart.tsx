@@ -7,8 +7,8 @@ import LineCharts, { FilterType } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
-import { formatSQT, parseError, TOKEN, toPercentage, transNumToHex } from '@utils';
-import formatNumber from '@utils/numberFormatters';
+import { formatSQT, numToHex, parseError, TOKEN, toPercentage } from '@utils';
+import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 
@@ -32,7 +32,7 @@ export const getSplitDataByEra = (currentEra: Era) => {
       .map((_, index) => currentEraIndex - index)
       .filter((i) => i > 0);
     return {
-      includesErasHex: includesEras.map(transNumToHex),
+      includesErasHex: includesEras.map(numToHex),
       includesEras,
     };
   };

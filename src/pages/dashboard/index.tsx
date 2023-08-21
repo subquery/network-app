@@ -7,7 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 import NewCard from '@components/NewCard';
 import { Tooltip, Typography } from '@subql/components';
 import { parseError, renderAsync, TOKEN } from '@utils';
-import formatNumber, { formatSQT, toPercentage } from '@utils/numberFormatters';
+import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
 import clsx from 'clsx';

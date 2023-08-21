@@ -8,7 +8,7 @@ import { useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError, TOKEN, toPercentage } from '@utils';
-import formatNumber from '@utils/numberFormatters';
+import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';

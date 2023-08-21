@@ -301,7 +301,7 @@ export function isNull(val: unknown): boolean {
   return val === null;
 }
 
-export function transNumToHex(val: number) {
+export function numToHex(val: number) {
   // Note: this is equal to the hex algorithm of eraId
   // 105 => 0x69
   // 810 => 0x032a

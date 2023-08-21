@@ -10,7 +10,7 @@ import { TableTitle } from '@subql/components';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { convertStringToNumber, mapAsync, mergeAsync, TOKEN } from '@utils';
-import formatNumber from '@utils/numberFormatters';
+import { formatNumber } from '@utils/numberFormatters';
 import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 

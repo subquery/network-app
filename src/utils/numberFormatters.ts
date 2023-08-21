@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// TODO: migrate all those to client-sdk.
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import BigNumberJs from 'bignumber.js';
 import { BigNumber, BigNumberish, utils } from 'ethers';
@@ -58,7 +59,7 @@ export function extractPercentage(value: string): number {
   return convertStringToNumber(value.replace('%', ''));
 }
 
-export default function formatNumber(num: number, precision = 2) {
+export function formatNumber(num: number, precision = 2) {
   const map = [
     { suffix: 'T', threshold: 1e12 },
     { suffix: 'B', threshold: 1e9 },

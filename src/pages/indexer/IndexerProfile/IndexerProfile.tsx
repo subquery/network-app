@@ -19,7 +19,7 @@ import { Spinner, Typography } from '@subql/components';
 import { renderAsync, useGetIndexerDelegatorsQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { TOKEN } from '@utils/constants';
-import formatNumber, { formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
+import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
 import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
 import { t } from 'i18next';

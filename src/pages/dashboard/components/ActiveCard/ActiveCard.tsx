@@ -65,16 +65,20 @@ export const ActiveCard = () => {
             >
               <>
                 <div className={styles.images}>
-                  {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
-                    <IPFSImage
-                      key={project.id}
-                      src={projectsMetadata[index]?.image || '/static/default.project.png'}
-                      className={styles.image}
-                      onClick={() => {
-                        navigate(`/explorer/project/${project.id}`);
-                      }}
-                    />
-                  ))}
+                  {projects.projects?.nodes
+                    .filter(notEmpty)
+                    // for layout
+                    .slice(0, 9)
+                    .map((project, index) => (
+                      <IPFSImage
+                        key={project.id}
+                        src={projectsMetadata[index]?.image || '/static/default.project.png'}
+                        className={styles.image}
+                        onClick={() => {
+                          navigate(`/explorer/project/${project.id}`);
+                        }}
+                      />
+                    ))}
                 </div>
                 <div>
                   <Link
