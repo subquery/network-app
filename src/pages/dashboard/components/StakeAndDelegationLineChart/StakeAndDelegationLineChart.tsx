@@ -26,8 +26,8 @@ export const StakeAndDelegationLineChart = (props: {
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
 
   const [fetchStakeAndDelegation, stakeAndDelegation] = useLazyQuery(gql`
-    query MyQuery {
-      indexerStakes {
+    query MyQuery($eraIds: [String!]) {
+      indexerStakes(filter: { id: { in: $eraIds } }) {
         groupedAggregates(groupBy: ERA_ID) {
           keys
           sum {
@@ -67,7 +67,7 @@ export const StakeAndDelegationLineChart = (props: {
     if (!filterVal) return;
     const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data);
 
-    const { includesErasHex } = {
+    const { includesErasHex, allErasHex } = {
       lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
       l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
       ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
@@ -78,6 +78,7 @@ export const StakeAndDelegationLineChart = (props: {
     const res = await apis({
       variables: {
         indexerId: props.account,
+        eraIds: allErasHex,
       },
       fetchPolicy: 'no-cache',
     });
@@ -126,7 +127,7 @@ export const StakeAndDelegationLineChart = (props: {
 
     const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
-      fillData(data, includesErasHex, maxPaddingLength);
+      fillData(data, includesErasHex, maxPaddingLength, { fillDevDataByGetMax: true });
 
     const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i.sum.indexerStake } })));
     const delegationStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i.sum.delegatorStake } })));

@@ -34,6 +34,7 @@ export const getSplitDataByEra = (currentEra: Era) => {
     return {
       includesErasHex: includesEras.map(numToHex),
       includesEras,
+      allErasHex: new Array(currentEraIndex).fill(0).map((_, index) => numToHex(index + 1)),
     };
   };
 
@@ -41,6 +42,10 @@ export const getSplitDataByEra = (currentEra: Era) => {
     rawData: { keys: string[]; sum: { amount: string } }[],
     includesErasHex: string[],
     paddingLength: number,
+
+    options?: {
+      fillDevDataByGetMax: boolean;
+    },
   ) => {
     const amounts = rawData.map((i) => {
       return {
@@ -82,7 +87,11 @@ export const getSplitDataByEra = (currentEra: Era) => {
 
       renderAmounts = renderAmounts.reduce(
         (acc: { result: number[]; curResult: number }, cur, index) => {
-          acc.curResult += cur;
+          if (options?.fillDevDataByGetMax) {
+            acc.curResult = Math.max(cur, acc.curResult);
+          } else {
+            acc.curResult += cur;
+          }
           if ((index + 1) % eraCountOneDay === 0 || index === renderAmounts.length - 1) {
             acc.result.push(acc.curResult);
             acc.curResult = 0;
