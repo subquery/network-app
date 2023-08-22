@@ -110,7 +110,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
         mainBalance: formatSQT(props.totalStake),
         secondaryBalance: formatSQT(props.nextTotalStake),
       })}
-      tooltip="This is the total staked SQT across the entire network right now. This includes SQT that has been delegated to Indexers"
+      tooltip={`This is the total staked ${TOKEN} across the entire network right now. This includes ${TOKEN} that has been delegated to Indexers`}
       width={302}
     >
       <div className="col-flex">
@@ -149,7 +149,7 @@ const DelegationsCard = (props: {
         mainBalance: formatSQT(props.delegatorStake),
         secondaryBalance: formatSQT(props.nextDelegatorStake),
       })}
-      tooltip="This is the total SQT delegated by participants to any Indexer across the entire network right now"
+      tooltip={`This is the total ${TOKEN} delegated by participants to any Indexer across the entire network right now`}
       width={302}
     >
       <div className="col-flex">
@@ -181,7 +181,7 @@ const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake
       titleExtra={BalanceLayout({
         mainBalance: formatSQT(props.circulatingSupply),
       })}
-      tooltip="This is the total circulating supply of SQT across the entire network right now"
+      tooltip={`This is the total circulating supply of ${TOKEN} across the entire network right now`}
       width={302}
     >
       <div className="col-flex">
