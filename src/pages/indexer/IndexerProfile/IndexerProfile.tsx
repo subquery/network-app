@@ -84,7 +84,12 @@ const AccountBaseInfo = (props: { account: string }) => {
 
   return (
     <div className={styles.accountBaseInfo}>
-      {makeChunk({ title: 'Indexer Rank', value: `# ${accountInfos?.rank}` })}
+      {(accountInfos?.rank ?? 0) <= 100
+        ? makeChunk({ title: 'Indexer Rank', value: `# ${accountInfos?.rank}` })
+        : makeChunk({
+            title: 'Score',
+            value: accountInfos?.infos?.totalPoints ?? 0,
+          })}
 
       {makeChunk({ title: 'Uptime', value: `${truncateToDecimalPlace(accountInfos?.infos?.uptime || 0, 2)}%` })}
 
