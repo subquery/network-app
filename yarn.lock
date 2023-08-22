@@ -2962,13 +2962,6 @@
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
   integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
 
-"@subql/network-query@0.3.14-1":
-  version "0.3.14-1"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.14-1.tgz#888a825532027a4d63438bda039af551beec2c93"
-  integrity sha512-8/QSIBEig92QRtdzCKkfBQvbkPn3S+kYdin57uMWinBehUXeL4H1ZPIjXOSCRDHwX0dtHd1n9XRMfX95GfxACQ==
-  dependencies:
-    graphql "^16.5.0"
-
 "@subql/network-query@0.3.16-0":
   version "0.3.16-0"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-0.tgz#19b7eae9f0955f2621183b0d98b6dfc352c8d0b9"
@@ -2976,15 +2969,22 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.16-4":
-  version "0.3.16-4"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-4.tgz#f9fdcf9fc539f3ff691cf2bbdb615c2a07f25403"
-  integrity sha512-HuF5AWC8JyT/5J6j1tFJ6UZiBrNwsoukmweoyBvAU4BtJC446DNNFGJzRc+pb7DXvyHXl60u8fqgkwAdonvjbQ==
+"@subql/network-query@0.3.16-1":
+  version "0.3.16-1"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-1.tgz#de14ca99104c966c664c435fade8130f6917b990"
+  integrity sha512-k1IADXU2BFOnVENu93kB/hzMe4er3kaHBHpmYcEFdjgrU9RxtHpDvIGZsuh6u9347OMgmUKcpvJHw/XlP7JMUQ==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/react-hooks@0.3.16-5":
+  version "0.3.16-5"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-5.tgz#1ceee3233de38ed59bad19f55c7c389652282cbd"
+  integrity sha512-O+L56yWd6O1gin4sEaE7Pub2Ntk84liAXNfPXki8yKH/68h9NYx/vy4BZIKYSB1gnf6cHmhoW65Cn57ZceZfTA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.16-0"
+    "@subql/network-query" "0.3.16-1"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 

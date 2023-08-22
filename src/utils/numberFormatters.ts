@@ -49,8 +49,9 @@ export const toPercentage = (val: number, total: number, bigNumber = false) => {
   return ((val / total) * 100).toFixed(2) + '%';
 };
 
-export const formatSQT = (val: string) => {
-  return BigNumberJs(val)
+export const formatSQT = (val: string | bigint) => {
+  const transVal = typeof val === 'bigint' ? val.toString() : val;
+  return BigNumberJs(transVal)
     .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
     .toNumber();
 };

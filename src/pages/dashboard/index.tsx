@@ -3,9 +3,9 @@
 
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router';
-import { gql, useQuery } from '@apollo/client';
 import NewCard from '@components/NewCard';
 import { Tooltip, Typography } from '@subql/components';
+import { useGetDashboardQuery } from '@subql/react-hooks';
 import { parseError, renderAsync, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
@@ -63,7 +63,11 @@ export const BalanceLayout = ({
   );
 };
 
-const TotalRewardsCard = (props: { totalRewards: string; indexerRewards: string; delegationRewards: string }) => {
+const TotalRewardsCard = (props: {
+  totalRewards: string | bigint;
+  indexerRewards: string | bigint;
+  delegationRewards: string | bigint;
+}) => {
   return (
     <NewCard
       title="Total Network Rewards"
@@ -96,7 +100,7 @@ const TotalRewardsCard = (props: { totalRewards: string; indexerRewards: string;
   );
 };
 
-const StakeCard = (props: { totalStake: string; nextTotalStake: string; totalCount: number }) => {
+const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string | bigint; totalCount: number }) => {
   const navigate = useNavigate();
 
   return (
@@ -131,7 +135,11 @@ const StakeCard = (props: { totalStake: string; nextTotalStake: string; totalCou
   );
 };
 
-const DelegationsCard = (props: { delegatorStake: string; nextDelegatorStake: string; totalCount: number }) => {
+const DelegationsCard = (props: {
+  delegatorStake: string | bigint;
+  nextDelegatorStake: string | bigint;
+  totalCount: number;
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -166,7 +174,7 @@ const DelegationsCard = (props: { delegatorStake: string; nextDelegatorStake: st
   );
 };
 
-const CirculatingCard = (props: { circulatingSupply: string; totalStake: string }) => {
+const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake: string | bigint }) => {
   return (
     <NewCard
       title="Circulating Supply"
@@ -191,68 +199,15 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
 };
 
 const Dashboard: FC = () => {
-  const result = useQuery(gql`
-    query MyQuery {
-      eraRewards {
-        aggregates {
-          sum {
-            amount
-          }
-        }
-      }
+  const dashboardData = useGetDashboardQuery();
 
-      rewardsToIndexer: eraRewards(filter: { isIndexer: { equalTo: true } }) {
-        totalCount
-        aggregates {
-          sum {
-            amount
-          }
-        }
-      }
-
-      rewardsToDelegation: eraRewards(filter: { isIndexer: { equalTo: false } }) {
-        totalCount
-        aggregates {
-          sum {
-            amount
-          }
-        }
-      }
-
-      indexerStakeSummary(id: "0x00") {
-        indexerStake
-        nextDelegatorStake
-        nextIndexerStake
-        nextTotalStake
-        totalStake
-        delegatorStake
-      }
-
-      sqtokens {
-        aggregates {
-          sum {
-            circulatingSupply
-            totalSupply
-          }
-        }
-      }
-
-      indexers {
-        totalCount
-      }
-
-      delegations {
-        totalCount
-      }
-    }
-  `);
   return (
     <div className={styles.dashboard}>
       <Typography variant="h4" weight={600}>
         👋 Welcome to SubQuery Network
       </Typography>
 
-      {renderAsync(result, {
+      {renderAsync(dashboardData, {
         loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
         error: (e) => <Typography>{parseError(e)}</Typography>,
         data: (fetchedData) => {
@@ -260,25 +215,25 @@ const Dashboard: FC = () => {
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
                 <TotalRewardsCard
-                  totalRewards={fetchedData.eraRewards.aggregates.sum.amount}
-                  indexerRewards={fetchedData.rewardsToIndexer.aggregates.sum.amount}
-                  delegationRewards={fetchedData.rewardsToDelegation.aggregates.sum.amount}
+                  totalRewards={fetchedData?.eraRewards?.aggregates?.sum?.amount || '0'}
+                  indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
+                  delegationRewards={fetchedData.rewardsToDelegation?.aggregates?.sum?.amount || '0'}
                 ></TotalRewardsCard>
                 <StakeCard
-                  totalStake={fetchedData.indexerStakeSummary.totalStake}
-                  nextTotalStake={fetchedData.indexerStakeSummary.nextTotalStake}
-                  totalCount={fetchedData.indexers.totalCount}
+                  totalStake={fetchedData?.indexerStakeSummary?.totalStake || '0'}
+                  nextTotalStake={fetchedData?.indexerStakeSummary?.nextTotalStake || '0'}
+                  totalCount={fetchedData?.indexers?.totalCount || 0}
                 ></StakeCard>
 
                 <DelegationsCard
-                  delegatorStake={fetchedData.indexerStakeSummary.delegatorStake}
-                  nextDelegatorStake={fetchedData.indexerStakeSummary.nextDelegatorStake}
-                  totalCount={fetchedData.delegations.totalCount}
+                  delegatorStake={fetchedData?.indexerStakeSummary?.delegatorStake || '0'}
+                  nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
+                  totalCount={fetchedData?.delegations?.totalCount || 0}
                 ></DelegationsCard>
 
                 <CirculatingCard
-                  circulatingSupply={fetchedData.sqtokens.aggregates.sum.circulatingSupply}
-                  totalStake={fetchedData.indexerStakeSummary.totalStake}
+                  circulatingSupply={fetchedData?.sqtokens?.aggregates?.sum?.circulatingSupply || '0'}
+                  totalStake={fetchedData?.indexerStakeSummary?.totalStake || '0'}
                 ></CirculatingCard>
               </div>
               <div className={styles.dashboardMainBottom}>
