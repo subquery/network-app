@@ -7,7 +7,7 @@ import { useWeb3Store } from 'src/stores';
 
 import { useAsyncMemo } from './useAsyncMemo';
 
-type Era = {
+export type Era = {
   startTime: Date;
   estEndTime: Date;
   index: number;

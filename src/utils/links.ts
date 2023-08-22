@@ -24,6 +24,10 @@ export const studioLink = {
 
 export const entryLinks = [
   {
+    link: ROUTES.DASHBOARD,
+    label: t('dashboardHeader.title'),
+  },
+  {
     link: ROUTES.EXPLORER,
     label: t('header.explorer'),
   },

@@ -392,7 +392,11 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
                   <AntDTable
                     customPagination
                     tableProps={{
-                      columns: getColumns(pathname, account, refreshAfterCancel),
+                      columns: getColumns(
+                        pathname as typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
+                        account,
+                        refreshAfterCancel,
+                      ),
                       dataSource: offerList,
                       scroll: { x: 2000 },
                       rowKey: 'id',

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import consumerTranslations from './consumer';
+import dashboardTrans from './dashboard';
 import delegatorTranslations from './delegator';
 import explorerTranslations from './explorer';
 import globalTransaltions from './global';
@@ -14,6 +15,7 @@ export const en = {
     ...indexerTranslations,
     ...globalTransaltions,
     ...explorerTranslations,
+    ...dashboardTrans,
   },
 } as const;
 

@@ -18,7 +18,7 @@ const INDEXER = {
   OFFER_MARKETPLACE: 'offers',
   SERVICE_AGREEMENTS: 'service-agreements',
   ONGOING_PLANS: 'ongoing',
-};
+} as const;
 
 // NOTE: Consumer tab
 const CONSUMER = {
@@ -35,7 +35,7 @@ const CONSUMER = {
   EXPIRED_OFFERS: 'expired',
   CREATE_OFFER: 'create',
   OFFER_MARKETPLACE: 'offers',
-};
+} as const;
 
 const DELEGATOR = {
   DELEGATOR: 'delegator',
@@ -43,13 +43,13 @@ const DELEGATOR = {
   INDEXERS: 'indexers',
   ALL_INDEXERS: 'all',
   TOP_INDEXERS: 'top',
-};
+} as const;
 
 const MY_ACCOUNT = {
   MY_ACCOUNT: 'my-account',
   REWARDS: 'rewards',
   WITHDRAWN: 'withdrawn',
-};
+} as const;
 
 // TODO: Remove or ReOrg the “old” paths once renovation done
 const PATHS = {
@@ -58,6 +58,7 @@ const PATHS = {
   ...CONSUMER,
   ...MY_ACCOUNT,
   // ROOT PATHS
+  DASHBOARD: '/dashboard',
   EXPLORER: '/explorer',
   STUDIO: '/studio',
   SWAP: '/swap',
@@ -81,7 +82,7 @@ const PATHS = {
   DEPLOYMENTS: 'deployments',
   SELL: 'sell',
   BUY: 'buy',
-};
+} as const;
 
 const NAV_LINKS = {
   // NAVIGATION LINKS
@@ -118,7 +119,7 @@ const NAV_LINKS = {
   MY_ACCOUNT_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}`,
   MY_ACCOUNT_REWARDS_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}/${MY_ACCOUNT.REWARDS}`,
   MY_ACCOUNT_WITHDRAWN_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}/${MY_ACCOUNT.WITHDRAWN}`,
-};
+} as const;
 
 export const ROUTES = {
   ...PATHS,
@@ -143,7 +144,12 @@ export type BasicRouteType = {
 };
 
 export const routers: BasicRouteType[] = [
-  { path: '/', redirect: '/explorer/home' },
+  { path: '/', redirect: '/dashboard' },
+
+  {
+    path: '/dashboard',
+    component: React.lazy(() => import('../pages/dashboard/index')),
+  },
 
   {
     path: '/explorer',
@@ -190,6 +196,8 @@ export const routers: BasicRouteType[] = [
     ],
   },
 
+  { path: '/indexer/:id', component: React.lazy(() => import('../pages/indexer/IndexerProfile/IndexerProfile')) },
+
   {
     path: '/delegator',
     component: React.lazy(() => import('../pages/delegator/index')),
@@ -205,7 +213,6 @@ export const routers: BasicRouteType[] = [
           { path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) },
         ],
       },
-      { path: 'indexer/:id', component: React.lazy(() => import('../pages/delegator/IndexerDetails/IndexerDetails')) },
     ],
   },
 

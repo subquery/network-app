@@ -17,7 +17,7 @@ import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../DoDelegate';
 import styles from './TopIndexersList.module.css';
-const { DELEGATOR, INDEXER } = ROUTES;
+const { INDEXER } = ROUTES;
 
 const getColumns = (
   account: string,
@@ -28,7 +28,7 @@ const getColumns = (
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
     width: 50,
-    render: (_: string, __: any, index: number) => <TableText>{index + 1}</TableText>,
+    render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
   },
   {
     title: <TableTitle title={i18next.t('indexer.title')} />,
@@ -204,7 +204,7 @@ interface props {
 export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`/${INDEXER}/${id}`);
   const [filterParams, setFilterParams] = React.useState<{ address: string }>({
     address: '',
   });

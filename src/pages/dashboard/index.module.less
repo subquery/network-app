@@ -1,0 +1,49 @@
+.dashboard {
+  padding: 40px 80px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 1440px;
+  
+  &Main {
+    margin-top: 40px;
+    max-width: 1280px;
+    min-width: 1280px;
+    display: flex;
+    flex-direction: column;
+
+    &Top {
+      display: flex; 
+      justify-content: space-between;
+    }
+
+    &Bottom {
+      display: flex;
+      margin-top: 24px;
+      &Left {
+        display: flex;
+        flex-direction: column;
+        width: 953px;
+        flex-shrink: 0;
+        margin-right: 25px;
+      }
+
+      &Right {
+        display: flex;
+        flex-direction: column;
+
+        :global {
+          .ant-progress-text {
+            font-size: 12px;
+            color: var(--sq-gray500);
+            font-family: var(--sq-font-family);
+          }
+        }
+      }
+    }
+  }
+
+  .cardContentLine + .cardContentLine {
+    margin-top: 12px;
+  }
+}

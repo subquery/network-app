@@ -13,7 +13,7 @@ import { CurrentEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersQuery } from '@subql/react-hooks';
+import { useGetAllDelegationsQuery, useGetIndexerQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
 import { TableProps } from 'antd';
@@ -22,7 +22,7 @@ import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
 import styles from './IndexerList.module.css';
-const { DELEGATOR, INDEXER } = ROUTES;
+const { INDEXER } = ROUTES;
 
 interface SortedIndexerListProps {
   commission: CurrentEraValue<number>;
@@ -52,7 +52,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const viewIndexerDetail = (id: string) => navigate(`/${DELEGATOR}/${INDEXER}/${id}`);
+  const viewIndexerDetail = (id: string) => navigate(`/${INDEXER}/${id}`);
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
@@ -131,7 +131,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 20,
-      render: (_: string, __: any, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
+      render: (_: string, __: unknown, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
       onCell: (record: SortedIndexerListProps) => ({
         onClick: () => viewIndexerDetail(record.address),
       }),
@@ -143,6 +143,9 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       width: 100,
       render: (val: string) =>
         val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
+      onCell: (record: SortedIndexerListProps) => ({
+        onClick: () => viewIndexerDetail(record.address),
+      }),
     },
     {
       title: <TableTitle title={t('indexer.totalStake')} />,
