@@ -3,40 +3,61 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, TableText } from '@components';
+import { AppPageHeader, TableText } from '@components';
 import { BreadcrumbNav } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { RewardFieldsFragment as Reward, UnclaimedRewardFieldsFragment as UnclaimedReward } from '@subql/network-query';
-import { useGetRewardsQuery } from '@subql/react-hooks';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray, ROUTES } from '@utils';
+import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
+import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
+import { ExcludeNull, formatEther, notEmpty, ROUTES } from '@utils';
+import { useUpdate } from 'ahooks';
 import { Table, TableProps, Tag } from 'antd';
+import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
 
-function isClaimedReward(reward: Reward | UnclaimedReward): reward is Reward {
-  return !!(reward as Reward).claimedTime;
-}
-
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
-  const filterParams = { address: delegator };
+  const update = useUpdate();
+  const filterParams = { address: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || delegator };
   const rewards = useGetRewardsQuery({ variables: filterParams });
+  const queryParams = React.useRef({
+    offset: 0,
+    pageSize: 10,
+    indexerId: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || account,
+    totalCount: 0,
+  });
+  const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
   const { t } = useTranslation();
 
-  const columns: TableProps<Reward | UnclaimedReward>['columns'] = [
-    {
-      title: <TableTitle title={'#'} />,
-      key: 'idx',
-      render: (t, r, index) => <TableText content={index + 1} />,
-    },
+  const totalUnclaimedRewards = React.useMemo(() => {
+    return rewards.data?.unclaimedRewards?.totalCount || 0;
+  }, [rewards]);
+
+  const unclaimedRewards = React.useMemo(() => {
+    return rewards?.data?.unclaimedRewards?.nodes?.reduce(
+      (result, unclaimedReward) => {
+        const totalUnclaimed = result.totalAmount.add(BigNumber.from(unclaimedReward?.amount ?? '0'));
+        const sortedIndexers = [...result.indexers, unclaimedReward?.indexerAddress];
+        return { indexers: sortedIndexers, totalAmount: totalUnclaimed };
+      },
+      {
+        indexers: [] as Array<string | undefined>,
+        totalAmount: BigNumber.from('0'),
+      },
+    );
+  }, [rewards]);
+
+  const columns: TableProps<
+    ExcludeNull<ExcludeNull<GetEraRewardsByIndexerAndPageQuery['eraRewards']>['nodes'][number]>
+  >['columns'] = [
     {
       title: <TableTitle title={t('rewards.indexer')} />,
-      dataIndex: 'indexerAddress',
+      dataIndex: 'indexerId',
       key: 'indexer',
       render: (text: string) => <TableText content={text} />,
     },
@@ -47,16 +68,47 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       render: (amount: bigint) => <TokenAmount value={formatEther(amount)} />,
     },
     {
+      title: <TableTitle title={t('rewards.era')} />,
+      dataIndex: 'eraId',
+      key: 'eraId',
+      render: (eraId: string) => <Typography>{parseInt(eraId, 16)}</Typography>,
+    },
+    {
+      title: <TableTitle title={t('rewards.time')} />,
+      dataIndex: 'createdTimestamp',
+      key: 'createdTimestamp',
+      render: (createdTimestamp: Date) => <Typography>{dayjs(createdTimestamp).format('YYYY-MM-DD HH:mm')}</Typography>,
+    },
+    {
       title: <TableTitle title={t('rewards.action')} />,
       dataIndex: 'action',
       key: 'action',
-      render: (_, reward: Reward | UnclaimedReward) => {
-        const hasClaimed = isClaimedReward(reward);
-        const tagColor = hasClaimed ? 'green' : 'blue';
-        return <Tag color={tagColor}>{hasClaimed ? t('rewards.claimed') : t('rewards.unclaimed')}</Tag>;
+      render: (_, reward) => {
+        const tagColor = reward.claimed ? 'green' : 'blue';
+        return <Tag color={tagColor}>{reward.claimed ? t('rewards.claimed') : t('rewards.unclaimed')}</Tag>;
       },
     },
   ];
+
+  const fetchIndexerEraRewards = async () => {
+    const res = await fetchIndexerEraRewardsApi({
+      variables: queryParams.current,
+    });
+    queryParams.current = {
+      ...queryParams.current,
+      offset: queryParams.current.offset + queryParams.current.pageSize,
+      totalCount: res.data?.eraRewards?.totalCount || 0,
+    };
+    update();
+  };
+
+  React.useEffect(() => {
+    if (!account) return;
+    if (account !== queryParams.current.indexerId) {
+      queryParams.current.offset = 0;
+      fetchIndexerEraRewards();
+    }
+  }, [account]);
 
   return (
     <div className={styles.rewardsContainer}>
@@ -68,53 +120,51 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       <AppPageHeader title={t('rewards.claim.title')} desc={t('rewards.description')} />
 
       <div className={styles.rewardsList}>
-        {renderAsyncArray(
-          mapAsync(
-            (data) =>
-              ((data.unclaimedRewards?.nodes.filter(notEmpty) as Array<UnclaimedReward | Reward>) ?? []).concat(
-                (data.rewards?.nodes.filter(notEmpty) as Array<Reward>) ?? [],
-              ),
-            rewards,
-          ),
-          {
-            error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
-            loading: () => <Spinner />,
-            empty: () => <EmptyList title={t('withdrawals.noRewards')} />,
-            data: (data) => {
-              const totalUnclaimedRewards = rewards?.data?.unclaimedRewards?.totalCount || 0;
-              const unclaimedRewards = rewards?.data?.unclaimedRewards?.nodes?.reduce(
-                (result, unclaimedReward) => {
-                  const totalUnclaimed = result.totalAmount.add(BigNumber.from(unclaimedReward?.amount ?? '0'));
-                  const sortedIndexers = [...result.indexers, unclaimedReward?.indexerAddress];
-                  return { indexers: sortedIndexers, totalAmount: totalUnclaimed };
-                },
-                {
-                  indexers: [] as Array<string | undefined>,
-                  totalAmount: BigNumber.from('0'),
-                },
-              );
-              return (
-                <>
-                  <div className={styles.claim}>
-                    <Typography variant="h6" className={styles.header}>
-                      {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
-                    </Typography>
+        {renderAsync(indexerEraRewards, {
+          error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
+          loading: () => <Spinner />,
+          data: (data) => {
+            const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
+            return (
+              <>
+                <div className={styles.claim}>
+                  <Typography variant="h6" className={styles.header}>
+                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                  </Typography>
 
-                    {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
-                      <ClaimRewards
-                        indexers={unclaimedRewards?.indexers as string[]}
-                        account={account ?? ''}
-                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
-                      />
-                    )}
-                  </div>
+                  {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
+                    <ClaimRewards
+                      indexers={unclaimedRewards?.indexers as string[]}
+                      account={account ?? ''}
+                      totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                    />
+                  )}
+                </div>
 
-                  <Table columns={columns} dataSource={data} scroll={{ x: 600 }} rowKey="id" />
-                </>
-              );
-            },
+                <Table
+                  columns={columns}
+                  dataSource={filterEmptyData || []}
+                  scroll={{ x: 600 }}
+                  rowKey="id"
+                  pagination={{
+                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize),
+                    pageSize: queryParams.current.pageSize,
+                    total: queryParams.current.totalCount,
+                    onChange(page, pageSize) {
+                      const offset = pageSize !== queryParams.current.pageSize ? 0 : (page - 1) * pageSize;
+                      queryParams.current = {
+                        ...queryParams.current,
+                        pageSize: pageSize,
+                        offset,
+                      };
+                      fetchIndexerEraRewards();
+                    },
+                  }}
+                />
+              </>
+            );
           },
-        )}
+        })}
       </div>
     </div>
   );

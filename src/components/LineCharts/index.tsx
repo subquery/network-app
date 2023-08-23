@@ -142,7 +142,7 @@ const LineCharts: FC<IProps> = ({
           echarts={echarts}
           option={{
             grid: {
-              left: 50,
+              left: 65,
               right: 20,
               top: 50,
             },

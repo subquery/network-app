@@ -5,7 +5,11 @@ import { useEffect, useState } from 'react';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
-import { renderAsync, useGetEraRewardsByIndexerLazyQuery, useGetEraRewardsLazyQuery } from '@subql/react-hooks';
+import {
+  renderAsync,
+  useGetAggregatesEraRewardsByIndexerLazyQuery,
+  useGetAggregatesEraRewardsLazyQuery,
+} from '@subql/react-hooks';
 import { formatSQT, numToHex, parseError, TOKEN, toPercentage } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
@@ -126,9 +130,9 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     total: [],
   });
 
-  const [fetchRewards, rewardsData] = useGetEraRewardsLazyQuery();
+  const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
-  const [fetchRewardsByIndexer, indexerRewardsData] = useGetEraRewardsByIndexerLazyQuery();
+  const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
