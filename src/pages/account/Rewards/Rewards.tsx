@@ -28,7 +28,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
-    indexerId: account,
+    indexerId: account || '',
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
