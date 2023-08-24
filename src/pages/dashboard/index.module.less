@@ -47,3 +47,45 @@
     margin-top: 12px;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .dashboard {
+    min-width: 100vw;
+    max-width: 100vw;
+    padding: 30px 20px;
+
+    &Main {
+      max-width: 100%;
+      min-width: 100%;
+      
+      &Top {
+        flex-direction: column;
+
+        :global {
+          .ant-card-bordered {
+            width: 100%!important;
+            margin-bottom: 24px;
+          }
+        }
+      }
+
+      &Bottom {
+        width: 100%;
+        flex-direction: column;
+        margin-top:0;
+        &Left {
+          width: 100%;
+        }
+        
+        &Right {
+          :global {
+            .ant-card-bordered {
+              width: 100%!important;
+              margin-top: 24px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,159 @@
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: inset 0px -1px 0px rgba(26, 32, 44, 0.06);
+  padding: 1rem 1.25rem;
+
+  .expandIcon {
+    display: none;
+    font-size: 40px;
+  }
+
+  &Inner {
+    width: 100%;
+  }
+
+  &Logo {
+    display: flex;
+  }
+
+  &Right {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    transition: all 0.2s linear;
+
+  }
+
+  .leftHeader {
+    display: inline-flex;
+  }
+}
+
+.justifyBetween {
+  justify-content: space-between;
+}
+
+.flexCenter {
+  display: flex;
+  align-items: center;
+}
+
+.leftElement {
+  margin-left: 2rem;
+  position: relative;
+}
+
+.appDropdown {
+  margin: 1rem;
+}
+
+.menuOverlay {
+  padding: 1rem !important;
+}
+
+.dropMenu {
+  width: 300px !important;
+}
+
+.navLink {
+  text-decoration: none;
+  margin: 0 1vw;
+  display: flex;
+  color: var(--gray700);
+  width: fit-content;
+}
+
+.navLink:hover {
+  text-decoration: underline;
+  color: var(--sq-primary-blue);
+}
+
+.navLinkCurrent {
+  font-weight: 500;
+  color: var(--sq-info);
+}
+
+@media  screen and (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    .expandIcon {
+      display: inline-block;
+    }
+
+    .middleHeader {
+      width: 100%;
+    }
+
+    &Logo {
+      width: 100%;
+    }
+
+    &Inner {
+      flex-direction: column;
+      width: 100vw;
+      padding: 0 20px;
+      .middleHeader {
+        flex-direction: column;
+      }
+
+      :global {
+          #leftHeader {
+            margin-left: 0;
+          }
+      }
+
+      .appDropdown {
+        width: 100%;
+        margin: 0;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--sq-gray200);
+        :global {
+          .ant-space.ant-dropdown-trigger {
+            margin: 0 1vw;
+          }
+        }
+      }
+    }
+
+    &Right {
+      flex-direction: column;
+    }
+
+    &Item {
+      width: 100%;
+      padding: 14px 0;
+      border-top: 1px solid var(--sq-gray200);
+      border-bottom: 1px solid var(--sq-gray200);
+
+      & + .headerItem {
+        margin-top: -1px;
+      }
+    }
+
+    .hideOnMobile {
+      height: 0;
+      overflow: hidden;
+    }
+
+    .showExpand {
+      height: 570px;
+    }
+
+    .right {
+      width: 100%;
+      margin-bottom: 8px;
+      
+      &>a {
+        width: 100%;
+      }
+    }
+
+    .leftHeader {
+      border-top: 1px solid var(--sq-gray200);
+      padding: 14px 0;
+      width: 100%;
+    }
+  }
+}

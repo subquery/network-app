@@ -4,7 +4,7 @@
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
-import { Tooltip, Typography } from '@subql/components';
+import { Footer, Tooltip, Typography } from '@subql/components';
 import { useGetDashboardQuery } from '@subql/react-hooks';
 import { parseError, renderAsync, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
@@ -254,6 +254,7 @@ const Dashboard: FC = () => {
           );
         },
       })}
+      <Footer simple />
     </div>
   );
 };
