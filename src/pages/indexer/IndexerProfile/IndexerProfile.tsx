@@ -261,7 +261,7 @@ const IndexerProfile: FC = () => {
                   mainBalance: sortedIndexer.data.totalStake.current,
                   secondaryBalance: sortedIndexer.data.totalStake.after,
                 })}
-                tooltip="This is the total staked SQT by this indexer. This includes SQT that has been delegated to this Indexer"
+                tooltip={`This is the total staked ${TOKEN} by this indexer. This includes ${TOKEN} that has been delegated to this Indexer`}
                 width={302}
               >
                 <div className="col-flex">
@@ -297,7 +297,7 @@ const IndexerProfile: FC = () => {
                   mainBalance: sortedIndexer.data.totalDelegations.current,
                   secondaryBalance: sortedIndexer.data.totalDelegations.after,
                 })}
-                tooltip="This is the total SQT delegated by participants to this Indexer right now."
+                tooltip={`This is the total ${TOKEN} delegated by participants to this Indexer right now.`}
                 width={302}
               >
                 <div className="col-flex">

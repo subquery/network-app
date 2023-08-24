@@ -2962,13 +2962,6 @@
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
   integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
 
-"@subql/network-query@0.3.14-1":
-  version "0.3.14-1"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.14-1.tgz#888a825532027a4d63438bda039af551beec2c93"
-  integrity sha512-8/QSIBEig92QRtdzCKkfBQvbkPn3S+kYdin57uMWinBehUXeL4H1ZPIjXOSCRDHwX0dtHd1n9XRMfX95GfxACQ==
-  dependencies:
-    graphql "^16.5.0"
-
 "@subql/network-query@0.3.16-0":
   version "0.3.16-0"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-0.tgz#19b7eae9f0955f2621183b0d98b6dfc352c8d0b9"
@@ -2976,15 +2969,22 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.16-4":
+"@subql/network-query@0.3.16-4":
   version "0.3.16-4"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-4.tgz#f9fdcf9fc539f3ff691cf2bbdb615c2a07f25403"
-  integrity sha512-HuF5AWC8JyT/5J6j1tFJ6UZiBrNwsoukmweoyBvAU4BtJC446DNNFGJzRc+pb7DXvyHXl60u8fqgkwAdonvjbQ==
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-4.tgz#f34709a7489c985f68a5d4693ee7fc670052843e"
+  integrity sha512-0RYbLpzt2blSXu9RYifRCH+GApAMuf5OL5FARLfOpKZpuc7LXrOpNDlpkdHHIEfv2hd6pIvxFoGDadyluuATYw==
+  dependencies:
+    graphql "^16.5.0"
+
+"@subql/react-hooks@0.3.16-8":
+  version "0.3.16-8"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-8.tgz#5f9197f3d9d8039c1c34c524fc46d1f273892153"
+  integrity sha512-T5ZwGbnH4XlGQnK5/leQ1EmdCaMpOfAe+NY45l8xx7bMfuOWlvha1KW9VwZsIkbV7+o1P9GjOWmplg1rMDPrHA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.16-0"
+    "@subql/network-query" "0.3.16-4"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 

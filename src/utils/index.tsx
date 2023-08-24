@@ -5,6 +5,7 @@ import { OperationVariables, QueryResult } from '@apollo/client';
 import { Spinner } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { BigNumber, BigNumberish, utils } from 'ethers';
+import { cloneDeep } from 'lodash-es';
 
 import { parseError } from './parseError';
 export * from './numberFormatters';
@@ -308,4 +309,12 @@ export function numToHex(val: number) {
   return BigNumber.from(val).toHexString();
 }
 
+export const DeepCloneAndChangeReadonlyToMutable = <T extends object>(val: T): Mutable<T> => {
+  return cloneDeep<Mutable<T>>(val);
+};
+
 export type ExcludeNull<T> = T extends null ? never : T;
+
+export type Mutable<T> = {
+  -readonly [K in keyof T]: Mutable<T[K]>;
+};

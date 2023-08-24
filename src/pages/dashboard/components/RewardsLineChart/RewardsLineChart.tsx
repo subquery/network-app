@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
-import { renderAsync } from '@subql/react-hooks';
+import {
+  renderAsync,
+  useGetAggregatesEraRewardsByIndexerLazyQuery,
+  useGetAggregatesEraRewardsLazyQuery,
+} from '@subql/react-hooks';
 import { formatSQT, numToHex, parseError, TOKEN, toPercentage } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
@@ -39,7 +42,10 @@ export const getSplitDataByEra = (currentEra: Era) => {
   };
 
   const fillData = (
-    rawData: { keys: string[]; sum: { amount: string } }[],
+    rawData: readonly {
+      readonly keys: readonly string[] | null;
+      readonly sum: { readonly amount: string | bigint } | null;
+    }[],
     includesErasHex: string[],
     paddingLength: number,
 
@@ -47,10 +53,14 @@ export const getSplitDataByEra = (currentEra: Era) => {
       fillDevDataByGetMax: boolean;
     },
   ) => {
+    if (rawData.some((i) => !i.keys || !i.sum)) {
+      return [];
+    }
+
     const amounts = rawData.map((i) => {
       return {
-        key: i.keys[0],
-        amount: formatSQT(i.sum.amount),
+        key: (i.keys as string[])[0],
+        amount: formatSQT((i.sum as { amount: string | bigint }).amount),
       };
     });
 
@@ -120,71 +130,9 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     total: [],
   });
 
-  const [fetchRewards, rewardsData] = useLazyQuery(gql`
-    query MyQuery($eraIds: [String!]) {
-      eraRewards(filter: { eraId: { in: $eraIds } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
+  const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
-      indexerEraReward: eraRewards(filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: true } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      delegationEraReward: eraRewards(filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: false } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-    }
-  `);
-
-  const [fetchRewardsByIndexer, indexerRewardsData] = useLazyQuery(gql`
-    query MyQuery($indexerId: String!, $eraIds: [String!]) {
-      eraRewards(filter: { eraId: { in: $eraIds }, indexerId: { equalTo: $indexerId } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      indexerEraReward: eraRewards(
-        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: true }, indexerId: { equalTo: $indexerId } }
-      ) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      delegationEraReward: eraRewards(
-        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: false }, indexerId: { equalTo: $indexerId } }
-      ) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-    }
-  `);
+  const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
@@ -198,7 +146,7 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     const apis = props.account ? fetchRewardsByIndexer : fetchRewards;
     const vars = {
       eraIds: includesErasHex,
-      indexerId: props.account,
+      indexerId: props.account || '',
     };
     const res = await apis({
       variables: vars,
@@ -209,12 +157,12 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
 
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, includesErasHex, maxPaddingLength);
-    const indexerRewards = curry(res.data.indexerEraReward.groupedAggregates);
-    const delegationRewards = curry(res.data.delegationEraReward.groupedAggregates);
+    const indexerRewards = curry(res?.data?.indexerEraReward?.groupedAggregates || []);
+    const delegationRewards = curry(res?.data?.delegationEraReward?.groupedAggregates || []);
     setRawRewardsData({
       indexer: indexerRewards,
       delegation: delegationRewards,
-      total: fillData(res.data.eraRewards.groupedAggregates, includesErasHex, maxPaddingLength),
+      total: fillData(res?.data?.eraRewards?.groupedAggregates || [], includesErasHex, maxPaddingLength),
     });
 
     setRenderRewards([indexerRewards, delegationRewards]);

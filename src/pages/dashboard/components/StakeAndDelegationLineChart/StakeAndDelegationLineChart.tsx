@@ -2,12 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType } from '@components/LineCharts';
 import { useEra } from '@hooks';
+import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
-import { renderAsync } from '@subql/react-hooks';
-import { parseError, TOKEN, toPercentage } from '@utils';
+import {
+  renderAsync,
+  useGetIndexerStakesByErasLazyQuery,
+  useGetIndexerStakesByIndexerLazyQuery,
+} from '@subql/react-hooks';
+import { DeepCloneAndChangeReadonlyToMutable, parseError, TOKEN, toPercentage } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
@@ -25,35 +29,9 @@ export const StakeAndDelegationLineChart = (props: {
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
 
-  const [fetchStakeAndDelegation, stakeAndDelegation] = useLazyQuery(gql`
-    query MyQuery($eraIds: [String!]) {
-      indexerStakes(filter: { id: { in: $eraIds } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          keys
-          sum {
-            delegatorStake
-            indexerStake
-            totalStake
-          }
-        }
-      }
-    }
-  `);
+  const [fetchStakeAndDelegation, stakeAndDelegation] = useGetIndexerStakesByErasLazyQuery();
 
-  const [fetchStakeAndDelegationByIndexer, stakeAndDelegationByIndexer] = useLazyQuery(gql`
-    query MyQuery($indexerId: String!) {
-      indexerStakes(filter: { id: { includes: $indexerId } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          keys
-          sum {
-            delegatorStake
-            indexerStake
-            totalStake
-          }
-        }
-      }
-    }
-  `);
+  const [fetchStakeAndDelegationByIndexer, stakeAndDelegationByIndexer] = useGetIndexerStakesByIndexerLazyQuery();
 
   const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
   const [rawFetchedData, setRawFetchedData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
@@ -77,29 +55,39 @@ export const StakeAndDelegationLineChart = (props: {
 
     const res = await apis({
       variables: {
-        indexerId: props.account,
+        indexerId: props.account || '',
         eraIds: allErasHex,
       },
       fetchPolicy: 'no-cache',
     });
 
+    if (!res?.data?.indexerStakes?.groupedAggregates) return;
+
     const padLostEraData = (
       groupedData: {
-        keys: [string];
-        sum: { delegatorStake: string; indexerStake: string; totalStake: string };
+        keys: string[] | null;
+        sum: { delegatorStake: string | bigint; indexerStake: string | bigint; totalStake: string | bigint } | null;
         fixme?: true;
       }[],
     ) => {
       const copyed = cloneDeep(groupedData);
 
-      let currentSums = {
+      if (copyed.some((i) => !i.keys || !i.sum)) {
+        return [];
+      }
+
+      let currentSums: {
+        delegatorStake: string | bigint;
+        indexerStake: string | bigint;
+        totalStake: string | bigint;
+      } = {
         delegatorStake: '0',
         indexerStake: '0',
         totalStake: '0',
       };
 
       includesErasHex.forEach((item) => {
-        if (!copyed.find((i) => i.keys[0] === item)) {
+        if (!copyed.find((i) => i?.keys?.[0] === item)) {
           copyed.push({
             keys: [item],
             sum: { ...currentSums },
@@ -109,9 +97,13 @@ export const StakeAndDelegationLineChart = (props: {
       });
 
       return copyed
-        .sort((a, b) => parseInt(a.keys[0], 16) - parseInt(b.keys[0], 16))
+        .sort((a, b) => parseInt(a?.keys?.[0] || '0x00', 16) - parseInt(b?.keys?.[0] || '0x00', 16))
         .map((item) => {
           if (!item.fixme) {
+            if (!item.sum) {
+              captureMessage('fetched stake and delegation data, please confirm.');
+              return item;
+            }
             currentSums = { ...item.sum };
           }
           if (item.fixme) {
@@ -123,18 +115,20 @@ export const StakeAndDelegationLineChart = (props: {
         .slice(copyed.length - includesErasHex.length, copyed.length);
     };
 
-    const paddedData = padLostEraData(res.data.indexerStakes.groupedAggregates);
+    const paddedData = padLostEraData(
+      DeepCloneAndChangeReadonlyToMutable(res?.data?.indexerStakes?.groupedAggregates) || [],
+    );
 
     const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, includesErasHex, maxPaddingLength, { fillDevDataByGetMax: true });
 
-    const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i.sum.indexerStake } })));
-    const delegationStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i.sum.delegatorStake } })));
+    const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.indexerStake || '0' } })));
+    const delegationStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
     setRawFetchedData({
       indexer: indexerStakes,
       delegation: delegationStakes,
-      total: curry(paddedData.map((i) => ({ ...i, sum: { amount: i.sum.totalStake } }))),
+      total: curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } }))),
     });
 
     setRenderStakeAndDelegation([indexerStakes, delegationStakes]);
