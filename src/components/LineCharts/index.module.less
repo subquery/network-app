@@ -41,3 +41,38 @@
   }
 
 }
+
+@media screen and (max-width: 600px) { 
+  .lineCharts {
+    padding: 20px;
+
+    .headers {
+      flex-direction: column;
+
+      :global {
+        .ant-radio-group {
+          margin-top: 16px;
+        }
+
+        .ant-radio-button-wrapper {
+          padding: 0 11px;
+        }
+      }
+    }
+
+    :global {
+      .lineChartToolTip {
+        width: 174px;
+        height: 82px;
+
+        &>div {
+          width: 220px!important;
+          font-size: 12px;
+          transform: scale(0.66);
+          margin-left: -40px;
+          margin-top: -23px;
+        }
+      }
+    }
+  }
+}

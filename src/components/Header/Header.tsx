@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { BsList, BsX } from 'react-icons/bs';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AccountActions } from '@components/AccountActions';
 import { ConnectWalletButton } from '@components/ConnectWallet';
@@ -10,7 +11,7 @@ import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components';
 import { Divider, Space } from 'antd';
 import clsx from 'clsx';
 
-import styles from './Header.module.css';
+import styles from './Header.module.less';
 
 export interface AppLink {
   label: string;
@@ -86,11 +87,11 @@ const LeftHeader = ({ leftElement, dropdownLinks, showDivider }: LeftHeaderProps
   );
 
   return (
-    <Space>
+    <div className={styles.leftHeader}>
       <>{leftElement}</>
       <>{sortedDropdownLinks}</>
       {showDivider && <Divider type="vertical" />}
-    </Space>
+    </div>
   );
 };
 
@@ -102,7 +103,7 @@ const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
   const navigate = useNavigate();
 
   const sortedAppNavigation = !middleElement && appNavigation && (
-    <Space className={clsx(styles.flexCenter, styles.headerHeight)}>
+    <div className={clsx(styles.flexCenter, styles.headerHeight, styles.middleHeader)}>
       {appNavigation.map((nav, idx) => {
         if (nav.dropdown) {
           const dropdownMenu = nav.dropdown.map((menu) => ({ key: menu.link, label: menu.label }));
@@ -122,9 +123,13 @@ const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
             </div>
           );
         }
-        return <div key={idx}>{renderLink(nav.link ?? '/', nav.label)}</div>;
+        return (
+          <div key={idx} className={styles.headerItem}>
+            {renderLink(nav.link ?? '/', nav.label)}
+          </div>
+        );
       })}
-    </Space>
+    </div>
   );
 
   return (
@@ -155,18 +160,36 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   className,
 }) => {
   const { account } = useWeb3();
+  const [showExpand, setShowExpand] = React.useState(false);
+
   return (
     <div className={clsx(styles.header, styles.flexCenter, rightElement && styles.justifyBetween, className)}>
-      <div className={clsx(styles.flexCenter)}>
-        <div>
+      <div className={clsx(styles.flexCenter, styles.headerInner)}>
+        <div className={styles.headerLogo}>
           <a href={logoLink ?? '/'}>
             <img src={'/static/logo.png'} alt="SubQuery Logo" width={140} />
           </a>
+          <span style={{ flex: 1 }}></span>
+
+          <div
+            className={styles.expandIcon}
+            onClick={() => {
+              setShowExpand(!showExpand);
+            }}
+          >
+            {showExpand ? <BsX></BsX> : <BsList></BsList>}
+          </div>
         </div>
-        <LeftHeader leftElement={leftElement} dropdownLinks={dropdownLinks} showDivider />
-        <MiddleHeader middleElement={middleElement} appNavigation={appNavigation} />
+
+        <div className={clsx(styles.headerRight, showExpand ? styles.showExpand : styles.hideOnMobile)}>
+          <LeftHeader leftElement={leftElement} dropdownLinks={dropdownLinks} showDivider />
+          <MiddleHeader middleElement={middleElement} appNavigation={appNavigation} />
+          <span style={{ flex: 1 }}></span>
+          <div className={clsx(styles.right)}>
+            {account ? <AccountActions account={account} /> : <ConnectWalletButton />}
+          </div>
+        </div>
       </div>
-      <div className={styles.right}>{account ? <AccountActions account={account} /> : <ConnectWalletButton />}</div>
     </div>
   );
 };

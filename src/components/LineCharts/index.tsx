@@ -173,6 +173,7 @@ const LineCharts: FC<IProps> = ({
               textStyle: {
                 color: '#fff',
               },
+              className: 'lineChartToolTip',
               formatter: (params: [{ dataIndex: number }]) => {
                 const [x] = params;
                 try {
