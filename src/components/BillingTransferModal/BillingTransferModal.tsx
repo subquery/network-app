@@ -1,8 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { assert } from '@polkadot/util';
+import { openNotification } from '@subql/components';
+import { constants } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
@@ -21,7 +24,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
   const sortedBalance = balance.data;
   const sortedConsumerHostBalance = consumerHostBalance.data?.balance;
   const requireTokenApproval = consumerHostAllowance?.data?.isZero();
-
+  const [loadingIncreateAllowance, setLoadingIncreateAllowance] = useState(false);
   const getModalText = (action: TransferAction) => {
     if (action === 'Transfer') {
       return {
@@ -68,6 +71,23 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
     const sortedAmount = parseEther(amount.toString());
 
     if (action === 'Transfer') {
+      if (consumerHostAllowance?.data?.lt(sortedAmount)) {
+        setLoadingIncreateAllowance(true);
+        try {
+          openNotification({
+            type: 'info',
+            description: 'Allowance not enough, increase allowance first',
+            duration: 5000,
+          });
+          const tx = await contracts.sqToken.increaseAllowance(
+            contracts[ApproveContract.ConsumerHost].address,
+            sortedAmount,
+          );
+          await tx.wait();
+        } finally {
+          setLoadingIncreateAllowance(false);
+        }
+      }
       return contracts.consumerHost.deposit(sortedAmount, true);
     }
 
@@ -76,6 +96,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
 
   return (
     <TransactionModal
+      currentConfirmButtonLoading={loadingIncreateAllowance}
       text={getModalText(action)}
       actions={[getActionBtn(action)]}
       onClick={handleClick}

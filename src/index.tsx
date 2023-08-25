@@ -8,12 +8,12 @@ import TagManager from 'react-gtm-module';
 import { Buffer } from 'buffer';
 
 import './i18n';
+import '@subql/components/dist/subquery-components.css';
 
 import { App } from './App';
 
 import './config/sentryConf';
 import 'reflect-metadata';
-import '@subql/components/dist/subquery-components.css';
 import './index.less';
 
 window.Buffer = Buffer;

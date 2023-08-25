@@ -70,6 +70,7 @@ export type TransactionModalProps<P, T extends string> = {
   width?: string;
   className?: string;
   buttonClassName?: string;
+  currentConfirmButtonLoading?: boolean;
 };
 
 // TODO: arrange this compoent
@@ -96,6 +97,7 @@ const TransactionModal = <P, T extends string>({
   width = '45%',
   className = '',
   buttonClassName = '',
+  currentConfirmButtonLoading = false,
 }: TransactionModalProps<P, T>): React.ReactElement | null => {
   const { t } = useTranslation();
   const [showModal, setShowModal] = React.useState<T | undefined>();
@@ -190,7 +192,7 @@ const TransactionModal = <P, T extends string>({
                 inputBottomText={text.inputBottomText}
                 failureModalText={failureModalText}
                 onSubmit={wrapTxAction(onClick, true)}
-                isLoading={isLoading}
+                isLoading={isLoading || currentConfirmButtonLoading}
               /> //NOTE: slowly deprecate it and use NumberInput only
             )
           }
