@@ -12,7 +12,7 @@ import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
 import { ExcludeNull, formatEther, notEmpty, ROUTES } from '@utils';
-import { useUpdate } from 'ahooks';
+import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
@@ -22,9 +22,10 @@ import styles from './Rewards.module.css';
 
 export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
+
   const update = useUpdate();
   const filterParams = { address: delegator };
-  const rewards = useGetRewardsQuery({ variables: filterParams });
+  const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
@@ -93,6 +94,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const fetchIndexerEraRewards = async () => {
     const res = await fetchIndexerEraRewardsApi({
       variables: queryParams.current,
+      fetchPolicy: 'network-only',
     });
     queryParams.current = {
       ...queryParams.current,
@@ -104,11 +106,13 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
 
   React.useEffect(() => {
     if (!account) return;
-    if (account !== queryParams.current.indexerId) {
-      queryParams.current.offset = 0;
-      fetchIndexerEraRewards();
-    }
+    queryParams.current.offset = 0;
+    fetchIndexerEraRewards();
   }, [account]);
+
+  useMount(() => {
+    fetchIndexerEraRewards();
+  });
 
   return (
     <div className={styles.rewardsContainer}>
