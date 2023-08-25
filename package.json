@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite --mode staging",
+    "dev": "vite --mode development",
+    "staging": "vite --mode staging",
     "prod": "vite",
-    "build:dev": "tsc && vite build --mode staging",
+    "build:dev": "tsc && vite build --mode development",
+    "build:staging": "tsc && vite build --mode staging",
     "build": "tsc && vite build",
     "prepare": "husky install",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
