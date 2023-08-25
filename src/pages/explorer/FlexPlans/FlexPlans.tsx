@@ -63,7 +63,7 @@ export const FlexPlans: React.FC = () => {
         loading: () => <Spinner />,
         error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
         data: (flexPlans) => {
-          // if (!flexPlans.length) return <EmptyList description={t('explorer.flexPlans.non')} />;
+          if (!flexPlans.length) return <EmptyList description={t('explorer.flexPlans.non')} />;
           return (
             <>
               <CreateHostingFlexPlan></CreateHostingFlexPlan>
