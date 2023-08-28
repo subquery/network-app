@@ -5,7 +5,7 @@ import * as React from 'react';
 import Countdown from 'react-countdown';
 import { useTranslation } from 'react-i18next';
 import type { Fetcher } from '@graphiql/toolkit';
-import { GraphiQL } from '@subql/components';
+import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
 import { Tooltip, Typography } from 'antd';
 import jwt_decode from 'jwt-decode';
 
