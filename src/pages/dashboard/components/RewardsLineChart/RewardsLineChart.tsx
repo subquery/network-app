@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
-import LineCharts, { FilterType } from '@components/LineCharts';
+import { useEffect, useMemo, useState } from 'react';
+import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import {
@@ -130,6 +130,17 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     total: [],
   });
 
+  const rewardsLineXScales = useMemo(() => {
+    const getDefaultScales = xAxisScalesFunc(currentEra.data?.period);
+
+    const result = getDefaultScales[filter.date]();
+    const slicedResult = result.slice(0, result.length - 1);
+    return {
+      renderData: slicedResult.map((i) => i.format('MMM D')),
+      rawData: slicedResult,
+    };
+  }, [filter.date, currentEra]);
+
   const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
   const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
@@ -183,6 +194,7 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
             setFilter(val);
             fetchRewardsByEra(val);
           }}
+          xAxisScales={rewardsLineXScales}
           title={title}
           dataDimensionsName={dataDimensionsName}
           chartData={renderRewards}

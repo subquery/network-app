@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { useEra } from '@hooks';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
@@ -24,6 +24,10 @@ interface IProps {
   chartData: number[][];
   dataDimensionsName: string[];
   value?: FilterType;
+  xAxisScales?: {
+    rawData: dayjs.Dayjs[];
+    renderData: string[];
+  };
   onChange?: (newFilter: FilterType) => void;
   onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
   onChangeDateRange?: (dateType: DateRangeType) => void;
@@ -33,9 +37,30 @@ interface IProps {
 echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
+export const xAxisScalesFunc = (eraPeriod = 86400) => {
+  const currentDate = dayjs();
+  const intervalPeriod = eraPeriod < 86400 ? 86400 : eraPeriod;
+  const getAxisScales = (dateCount: number) => {
+    return new Array(Math.ceil((dateCount * 86400) / intervalPeriod))
+      .fill(0)
+      .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
+      .reverse();
+  };
+
+  return {
+    lm: () => getAxisScales(31),
+    l3m: () => getAxisScales(90),
+    ly: () => getAxisScales(365),
+  };
+};
+
 const LineCharts: FC<IProps> = ({
   value,
   onChange,
+  xAxisScales = {
+    renderData: [],
+    rawData: [],
+  },
   title,
   chartData,
   dataDimensionsName,
@@ -43,7 +68,6 @@ const LineCharts: FC<IProps> = ({
   onTriggerTooltip,
 }) => {
   const { currentEra } = useEra();
-
   const [filter, setFilter] = usePropsValue({
     value,
     defaultValue: {
@@ -52,30 +76,11 @@ const LineCharts: FC<IProps> = ({
     onChange,
   });
 
-  const xAxisScales = useMemo(() => {
+  const xAxisScalesInner = useMemo(() => {
+    if (xAxisScales.renderData.length) return xAxisScales;
     if (!currentEra.data?.period) return;
-    const currentDate = dayjs();
-    const intervalPeriod = currentEra.data.period < 86400 ? 86400 : currentEra.data.period;
-    const getAxisScales = {
-      l3m: () => {
-        return new Array(Math.ceil((90 * 86400) / intervalPeriod))
-          .fill(0)
-          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-          .reverse();
-      },
-      lm: () => {
-        return new Array(Math.ceil((31 * 86400) / intervalPeriod))
-          .fill(0)
-          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-          .reverse();
-      },
-      ly: () => {
-        return new Array(Math.ceil((365 * 86400) / intervalPeriod))
-          .fill(0)
-          .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-          .reverse();
-      },
-    };
+
+    const getAxisScales = xAxisScalesFunc(currentEra.data.period);
 
     const scales = getAxisScales[filter.date]();
 
@@ -158,7 +163,7 @@ const LineCharts: FC<IProps> = ({
               },
               type: 'category',
               boundaryGap: false,
-              data: xAxisScales?.renderData,
+              data: xAxisScalesInner?.renderData,
             },
             yAxis: {
               type: 'value',
@@ -179,7 +184,7 @@ const LineCharts: FC<IProps> = ({
                 try {
                   const renderString = onTriggerTooltip?.(
                     x.dataIndex,
-                    xAxisScales?.rawData[x.dataIndex] as dayjs.Dayjs,
+                    xAxisScalesInner?.rawData[x.dataIndex] as dayjs.Dayjs,
                   );
                   return renderString;
                 } catch (e) {

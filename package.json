@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite --mode development",
+    "dev": "vite --mode testnet",
     "staging": "vite --mode staging",
     "prod": "vite",
-    "build:dev": "tsc && vite build --mode development",
+    "build:dev": "tsc && vite build --mode testnet",
     "build:staging": "tsc && vite build --mode staging",
     "build": "tsc && vite build",
     "prepare": "husky install",

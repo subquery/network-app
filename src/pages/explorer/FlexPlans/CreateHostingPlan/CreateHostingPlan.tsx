@@ -3,6 +3,7 @@
 
 import React, { FC } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { BsExclamationCircle, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BillingExchangeModal } from '@components/BillingTransferModal';
 import { useSQToken } from '@containers';
@@ -16,7 +17,8 @@ import {
 } from '@hooks/useConsumerHostServices';
 import { Modal, openNotification, Steps, Typography } from '@subql/components';
 import { convertStringToNumber, formatEther, TOKEN, tokenDecimals } from '@utils';
-import { Button, Divider, Form, InputNumber } from 'antd';
+import { Button, Divider, Form, InputNumber, Tooltip } from 'antd';
+import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
 import { t } from 'i18next';
@@ -106,10 +108,20 @@ const CreateHostingFlexPlan: FC = (props) => {
     <>
       <div className={styles.billingCard}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="text" type="secondary">
-              {t('flexPlans.billBalance').toUpperCase()}
-            </Typography>
+          <div className="col-flex">
+            <div className="flex">
+              <Typography variant="text" type="secondary">
+                {t('flexPlans.billBalance').toUpperCase()}
+              </Typography>
+
+              <Tooltip
+                overlay={t('flexPlans.billingAccountTooltip', {
+                  token: TOKEN,
+                })}
+              >
+                <BsExclamationCircle style={{ marginLeft: '8px', color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+              </Tooltip>
+            </div>
 
             <Typography variant="h6" style={{ marginTop: '12px' }}>
               {`${formatEther(balance, 4)} ${TOKEN}`}
@@ -129,7 +141,7 @@ const CreateHostingFlexPlan: FC = (props) => {
             alt=""
             style={{ alignSelf: 'flex-start', height: '100%', marginRight: 8, marginTop: 3 }}
           ></img>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="col-flex">
             <Typography variant="text" weight={500}>
               {t('flexPlans.flexPlan')}
             </Typography>
@@ -156,6 +168,7 @@ const CreateHostingFlexPlan: FC = (props) => {
               onClick={() => {
                 setShowCreateFlexPlan(true);
               }}
+              disabled={formatEther(balance, 4) === '0.0'}
             >
               {t('flexPlans.createFlexPlan')}
             </Button>

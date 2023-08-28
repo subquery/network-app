@@ -9,7 +9,7 @@ import { TableTitle } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { Space, Table, TableProps } from 'antd';
 import { BigNumber } from 'ethers';
-import i18next from 'i18next';
+import i18next, { t } from 'i18next';
 
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -63,7 +63,7 @@ export const FlexPlans: React.FC = () => {
         loading: () => <Spinner />,
         error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
         data: (flexPlans) => {
-          if (!flexPlans.length) return <EmptyList description={'explorer.flexPlans.non'} />;
+          if (!flexPlans.length) return <EmptyList description={t('explorer.flexPlans.non')} />;
           return (
             <>
               <CreateHostingFlexPlan></CreateHostingFlexPlan>
