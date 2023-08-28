@@ -32,7 +32,7 @@ const getColumns = (
     title: <TableTitle title={'#'} />,
     key: 'idx',
     width: 50,
-    render: (_: string, __: any, index: number) => <TableText content={index + 1} />,
+    render: (_: string, __: unknown, index: number) => <TableText content={index + 1} />,
   },
   {
     title: <TableTitle title={t('indexer.title')} />,

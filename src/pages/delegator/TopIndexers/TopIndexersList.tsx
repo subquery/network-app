@@ -59,11 +59,11 @@ const getColumns = (
     ),
   },
   {
-    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.score')} />,
-    dataIndex: 'totalPoints',
-    render: (ranking) => <TableText>{ranking.toFixed(2)}</TableText>,
+    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.rank')} />,
+    dataIndex: 'rank',
+    render: (rank) => <TableText>{rank}</TableText>,
 
-    sorter: (a, b) => a.totalPoints - b.totalPoints,
+    sorter: (a, b) => a.rank - b.rank,
     showSorterTooltip: false,
   },
   {

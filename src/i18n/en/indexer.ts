@@ -123,7 +123,7 @@ const translation = {
   topIndexers: {
     desc: 'View the top 100 ranked Indexers and all other Indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
     nonData: 'There is no data to display',
-    score: 'indexer score',
+    rank: 'indexer rank',
     uptime: 'uptime',
     ownStake: 'own stake',
     delegated: 'delegated',
@@ -132,7 +132,7 @@ const translation = {
     ssl: 'ssl',
     socialCredibility: 'social credibility',
     tooltip: {
-      rank: 'A ranking (out of a maxium of 100) that indicates the overall performance of the Indexer. Determined based off the other factors. Higher score is better.',
+      rank: 'The ranking of the Indexer compared to all other Indexers based of a variety of factors. A ranking of 1 means that they have historically operated as the best Indexer, however this does not indicate future performance.',
       uptime: 'Based on the avaliability of an Indexer’s proxy service endpoint overtime',
       ownStake: `The percentage of all staked ${TOKEN} that is the Indexer’s own SQT. Higher score is better.`,
       delegated:

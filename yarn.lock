@@ -2956,22 +2956,22 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@0.3.16-4":
-  version "0.3.16-4"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-4.tgz#f34709a7489c985f68a5d4693ee7fc670052843e"
-  integrity sha512-0RYbLpzt2blSXu9RYifRCH+GApAMuf5OL5FARLfOpKZpuc7LXrOpNDlpkdHHIEfv2hd6pIvxFoGDadyluuATYw==
+"@subql/network-query@0.3.16-5":
+  version "0.3.16-5"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-5.tgz#a8b41159ea2abcbf09e0f25cb44902b0a5eaa371"
+  integrity sha512-bEH8XPRm5ETTHqDcDUoEao2/J1HeyzoAVJ9zn2+FeEm8C11Ox/no9iMCFOEtwibeUv0keLckNsIYCHVc3oTogA==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.16-8":
-  version "0.3.16-8"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-8.tgz#5f9197f3d9d8039c1c34c524fc46d1f273892153"
-  integrity sha512-T5ZwGbnH4XlGQnK5/leQ1EmdCaMpOfAe+NY45l8xx7bMfuOWlvha1KW9VwZsIkbV7+o1P9GjOWmplg1rMDPrHA==
+"@subql/react-hooks@0.3.16-9":
+  version "0.3.16-9"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.3.16-9.tgz#f6ba027aa3117a85b85755345328ea1e147beef7"
+  integrity sha512-C/Bun9mAar7s+G5ED2pHdxkrrCpxa9Fx8vbMj0ckaryrkw0OA1pQTj4L8QgK3Xvbki2U9K3k9vq9C2JuyaHv6g==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.16-4"
+    "@subql/network-query" "0.3.16-5"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 
