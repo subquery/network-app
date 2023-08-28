@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { MoreOutlined } from '@ant-design/icons';
+import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import { Dropdown, Menu } from 'antd';
 
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
