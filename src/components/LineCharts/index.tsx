@@ -38,31 +38,20 @@ echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRend
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
 export const xAxisScalesFunc = (eraPeriod = 86400) => {
-  // if (!currentEra.data?.period) return;
   const currentDate = dayjs();
   const intervalPeriod = eraPeriod < 86400 ? 86400 : eraPeriod;
-  const getAxisScales = {
-    l3m: () => {
-      return new Array(Math.ceil((90 * 86400) / intervalPeriod))
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-        .reverse();
-    },
-    lm: () => {
-      return new Array(Math.ceil((31 * 86400) / intervalPeriod))
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-        .reverse();
-    },
-    ly: () => {
-      return new Array(Math.ceil((365 * 86400) / intervalPeriod))
-        .fill(0)
-        .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-        .reverse();
-    },
+  const getAxisScales = (dateCount: number) => {
+    return new Array(Math.ceil((dateCount * 86400) / intervalPeriod))
+      .fill(0)
+      .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
+      .reverse();
   };
 
-  return getAxisScales;
+  return {
+    lm: () => getAxisScales(31),
+    l3m: () => getAxisScales(90),
+    ly: () => getAxisScales(365),
+  };
 };
 
 const LineCharts: FC<IProps> = ({
