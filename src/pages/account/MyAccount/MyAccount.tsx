@@ -3,7 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { EmptyList } from '@components';
 import { useWeb3 } from '@containers';
 import { useSortedIndexer } from '@hooks';

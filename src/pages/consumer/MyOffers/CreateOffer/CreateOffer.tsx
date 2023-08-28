@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LeftOutlined } from '@ant-design/icons';
+import LeftOutlined from '@ant-design/icons/LeftOutlined';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { Steps } from 'antd';
 import i18next from 'i18next';

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdErrorOutline } from 'react-icons/md';
-import { LoadingOutlined } from '@ant-design/icons';
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import { NotificationType, openNotification } from '@components/Notification';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button } from '@subql/components';

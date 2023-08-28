@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { Card } from '@subql/components';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { Alert, Button } from 'antd';
