@@ -196,7 +196,10 @@ export const routers: BasicRouteType[] = [
     ],
   },
 
-  { path: '/indexer/:id', component: React.lazy(() => import('../pages/indexer/IndexerProfile/IndexerProfile')) },
+  {
+    path: '/indexer/:id',
+    component: React.lazy(() => import('../pages/indexer/IndexerProfile/IndexerProfile')),
+  },
 
   {
     path: '/delegator',
