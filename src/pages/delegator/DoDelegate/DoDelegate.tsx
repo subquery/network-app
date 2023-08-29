@@ -21,6 +21,7 @@ import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { TFunction } from 'i18next';
@@ -71,6 +72,14 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
 
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
+
+  if (!account) {
+    return (
+      <Button disabled type="text">
+        {t('delegate.title')}
+      </Button>
+    );
+  }
 
   return renderAsync(mergeAsync(rewardClaimStatus, currentEra), {
     error: (error) => <Typography>{`Error: ${error}`}</Typography>,

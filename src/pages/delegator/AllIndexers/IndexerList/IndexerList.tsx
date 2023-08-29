@@ -144,6 +144,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       //'t('indexer.title')'
       title: <TableTitle title={t('indexer.title')} />,
       dataIndex: 'address',
+      key: 'address',
       width: 100,
       render: (val: string) =>
         val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
@@ -153,10 +154,12 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.totalStake')} />,
+      key: 'totalStakeKey',
       children: [
         {
           title: <TableTitle title={t('general.current')} />,
           dataIndex: ['totalStake', 'current'],
+          key: 'totalStake',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -167,7 +170,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         {
           title: <TableTitle title={t('general.next')} />,
           dataIndex: ['totalStake', 'after'],
-
+          key: 'totalStakeAfter',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -179,12 +182,12 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.ownStake')} />,
-
+      key: 'ownStakeKey',
       children: [
         {
           title: <TableTitle title={t('general.current')} />,
           dataIndex: ['ownStake', 'current'],
-
+          key: 'ownStake',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -194,7 +197,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         {
           title: <TableTitle title={t('general.next')} />,
           dataIndex: ['ownStake', 'after'],
-
+          key: 'ownStakeAfter',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -205,11 +208,12 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.delegated')} />,
+      key: 'delegatedKey',
       children: [
         {
           title: <TableTitle title={t('general.current')} />,
           dataIndex: ['delegated', 'current'],
-
+          key: 'delegated',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -219,7 +223,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         {
           title: <TableTitle title={t('general.next')} />,
           dataIndex: ['delegated', 'after'],
-
+          key: 'delegatedAfter',
           width: 40,
           render: (value) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -230,11 +234,12 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.commission')} />,
+      key: 'commissionKey',
       children: [
         {
           title: <TableTitle title={t('general.current')} />,
           dataIndex: ['commission', 'current'],
-
+          key: 'commission',
           width: 40,
           render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
           onCell: (record) => ({
@@ -245,7 +250,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         {
           title: <TableTitle title={t('general.next')} />,
           dataIndex: ['commission', 'after'],
-
+          key: 'commissionAfter',
           width: 40,
           render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
           onCell: (record) => ({
@@ -257,10 +262,12 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.capacity')} />,
+      key: 'capacityKey',
       children: [
         {
           title: <TableTitle title={t('general.current')} />,
           dataIndex: ['capacity', 'current'],
+          key: 'capacity',
           width: 40,
           render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -270,6 +277,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         {
           title: <TableTitle title={t('general.next')} />,
           dataIndex: ['capacity', 'after'],
+          key: 'capacityAfter',
           width: 40,
           render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
           onCell: (record) => ({
@@ -280,6 +288,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
     {
       title: <TableTitle title={t('indexer.action')} />,
+      key: 'addressKey',
       dataIndex: 'address',
       fixed: 'right' as FixedType,
       width: 40,
@@ -312,7 +321,9 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         customPagination
         tableProps={{
           columns,
-          rowKey: 'address',
+          rowKey: (record) => {
+            return record?.address || `${Math.random()}${+new Date()}`;
+          },
           dataSource: [...orderedIndexerList],
           scroll: { x: 1600 },
           loading: !!isLoading,
