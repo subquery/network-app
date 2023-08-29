@@ -31,7 +31,7 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: dist
-          bucket: kepler.thechaindata.com
+          bucket: dev.thechaindata.com
           bucket-region: ap-southeast-2
           invalidation: /*
           dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
