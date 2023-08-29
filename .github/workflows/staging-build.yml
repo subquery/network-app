@@ -33,7 +33,7 @@ jobs:
           bucket: kepler.thechaindata.com
           bucket-region: ap-southeast-2
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
+          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_STAGING }}
           delete-removed: false
           no-cache: true
           private: true
