@@ -53,8 +53,6 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const { account } = useWeb3();
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => {
-    // TODO: FIXME
-    return;
     navigate(`/${INDEXER}/${id}`);
   };
   const [pageStartIndex, setPageStartIndex] = React.useState(0);
