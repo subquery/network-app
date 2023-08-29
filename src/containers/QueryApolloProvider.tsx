@@ -28,7 +28,7 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
     httpOptions,
     authUrl: import.meta.env.VITE_AUTH_URL,
     fallbackServiceUrl,
-  });
+  }).link;
 };
 
 export const swapLink = getDecentraliseLink(

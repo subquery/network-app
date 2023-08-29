@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { assert } from '@polkadot/util';
 import { openNotification } from '@subql/components';
-import { constants } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
