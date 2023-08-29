@@ -205,8 +205,6 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const viewIndexerDetail = (id: string) => {
-    // TODO: FIXME
-    return;
     navigate(`/${INDEXER}/${id}`);
   };
   const [filterParams, setFilterParams] = React.useState<{ address: string }>({
