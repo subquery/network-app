@@ -30,6 +30,7 @@ export function useEra(): {
     loading: boolean;
     error?: Error | undefined;
   };
+  refetch: () => void;
 } {
   const { contracts } = useWeb3Store();
 
@@ -59,5 +60,6 @@ export function useEra(): {
 
   return {
     currentEra,
+    refetch,
   };
 }

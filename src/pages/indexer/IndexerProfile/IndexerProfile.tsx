@@ -216,7 +216,7 @@ const IndexerProfile: FC = () => {
     loading: () => <Spinner></Spinner>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: (fetchedResult) => {
-      if (!sortedIndexer.data) return <></>;
+      if (!sortedIndexer.data) return <>Something Wrong Please refresh the page</>;
 
       return (
         <div className={styles.indexerProfile}>
