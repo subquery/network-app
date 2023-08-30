@@ -20,7 +20,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
-import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import { convertStringToNumber, mergeAsync, parseError, renderAsync } from '@utils';
 import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -54,7 +54,7 @@ interface DoDelegateProps {
 
 export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant, delegation, indexer }) => {
   const { t } = useTranslation();
-  const { currentEra } = useEra();
+  const { currentEra, refetch } = useEra();
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
@@ -82,7 +82,20 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
   }
 
   return renderAsync(mergeAsync(rewardClaimStatus, currentEra), {
-    error: (error) => <Typography>{`Error: ${error}`}</Typography>,
+    error: (error) => (
+      <Typography>
+        {`Network Error: Click to `}
+        <span
+          onClick={() => {
+            rewardClaimStatus.refetch();
+            refetch();
+          }}
+          style={{ color: 'var(--sq-blue600)' }}
+        >
+          retry
+        </span>
+      </Typography>
+    ),
     loading: () => <Spinner />,
     data: (data) => {
       const [r, era] = data;
