@@ -84,7 +84,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
   return renderAsync(mergeAsync(rewardClaimStatus, currentEra), {
     error: (error) => (
       <Typography>
-        {`Network Error: Click to `}
+        {`Error: Click to `}
         <span
           onClick={() => {
             rewardClaimStatus.refetch();
