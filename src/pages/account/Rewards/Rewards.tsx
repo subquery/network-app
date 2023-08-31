@@ -86,14 +86,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       key: 'createdTimestamp',
       render: (createdTimestamp: Date) => <Typography>{dayjs(createdTimestamp).format('YYYY-MM-DD HH:mm')}</Typography>,
     },
-    // {
-    //   title: <TableTitle title="type"></TableTitle>,
-    //   dataIndex: 'indexerId',
-    //   key: 'indexerId',
-    //   render: (indexerId, record) => (
-    //     <Typography>{indexerId === record.delegatorId ? 'toIndexer' : 'toDelegator'}</Typography>
-    //   ),
-    // },
     {
       title: <TableTitle title={t('rewards.action')} />,
       dataIndex: 'action',
