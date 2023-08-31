@@ -24,12 +24,12 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
 
   const update = useUpdate();
-  const filterParams = { address: delegator };
+  const filterParams = { address: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || delegator };
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
-    indexerId: account || '',
+    indexerId: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || account || '',
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
@@ -63,6 +63,12 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       render: (text: string) => <TableText content={text} />,
     },
     {
+      title: <TableTitle title={t('rewards.delegator')} />,
+      dataIndex: 'delegatorId',
+      key: 'indexer',
+      render: (text: string) => <TableText content={text} />,
+    },
+    {
       title: <TableTitle title={t('rewards.amount')} />,
       dataIndex: 'amount',
       key: 'amount',
@@ -80,6 +86,14 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       key: 'createdTimestamp',
       render: (createdTimestamp: Date) => <Typography>{dayjs(createdTimestamp).format('YYYY-MM-DD HH:mm')}</Typography>,
     },
+    // {
+    //   title: <TableTitle title="type"></TableTitle>,
+    //   dataIndex: 'indexerId',
+    //   key: 'indexerId',
+    //   render: (indexerId, record) => (
+    //     <Typography>{indexerId === record.delegatorId ? 'toIndexer' : 'toDelegator'}</Typography>
+    //   ),
+    // },
     {
       title: <TableTitle title={t('rewards.action')} />,
       dataIndex: 'action',
@@ -98,7 +112,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
     });
     queryParams.current = {
       ...queryParams.current,
-      offset: queryParams.current.offset + queryParams.current.pageSize,
       totalCount: res.data?.eraRewards?.totalCount || 0,
     };
     update();
@@ -151,7 +164,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
                   scroll={{ x: 600 }}
                   rowKey="id"
                   pagination={{
-                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize),
+                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
                     pageSize: queryParams.current.pageSize,
                     total: queryParams.current.totalCount,
                     onChange(page, pageSize) {
