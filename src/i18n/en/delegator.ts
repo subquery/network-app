@@ -90,6 +90,7 @@ const translation = {
   rewards: {
     none: `You don't have any rewards.`,
     indexer: 'Indexer',
+    delegator: 'Delegator',
     amount: 'Amount',
     time: 'Time',
     era: 'Era',

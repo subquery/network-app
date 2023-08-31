@@ -63,6 +63,12 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
       render: (text: string) => <TableText content={text} />,
     },
     {
+      title: <TableTitle title={t('rewards.delegator')} />,
+      dataIndex: 'delegatorId',
+      key: 'indexer',
+      render: (text: string) => <TableText content={text} />,
+    },
+    {
       title: <TableTitle title={t('rewards.amount')} />,
       dataIndex: 'amount',
       key: 'amount',
@@ -98,7 +104,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
     });
     queryParams.current = {
       ...queryParams.current,
-      offset: queryParams.current.offset + queryParams.current.pageSize,
       totalCount: res.data?.eraRewards?.totalCount || 0,
     };
     update();
@@ -151,7 +156,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
                   scroll={{ x: 600 }}
                   rowKey="id"
                   pagination={{
-                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize),
+                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
                     pageSize: queryParams.current.pageSize,
                     total: queryParams.current.totalCount,
                     onChange(page, pageSize) {
