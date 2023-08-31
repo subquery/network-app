@@ -24,12 +24,12 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const { account } = useWeb3();
 
   const update = useUpdate();
-  const filterParams = { address: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || delegator };
+  const filterParams = { address: delegator };
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
-    indexerId: '0x92E4888B6789EB52Da0BebDD82AfE660bf3E8d8f' || account || '',
+    indexerId: account || '',
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
