@@ -90,13 +90,12 @@ const translation = {
   rewards: {
     none: `You don't have any rewards.`,
     indexer: 'Indexer',
-    delegator: 'Delegator',
     amount: 'Amount',
     time: 'Time',
     era: 'Era',
     description:
       'View and claim your rewards earned by participating in the SubQuery Network through delegating or staking',
-    action: 'Action',
+    status: 'Status',
     claim: {
       title: 'Claim Rewards',
       step1: 'Confirm claim',
