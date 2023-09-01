@@ -29,7 +29,7 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
-    indexerId: account || '',
+    delegatorId: account || '',
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
@@ -59,12 +59,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
     {
       title: <TableTitle title={t('rewards.indexer')} />,
       dataIndex: 'indexerId',
-      key: 'indexer',
-      render: (text: string) => <TableText content={text} />,
-    },
-    {
-      title: <TableTitle title={t('rewards.delegator')} />,
-      dataIndex: 'delegatorId',
       key: 'indexer',
       render: (text: string) => <TableText content={text} />,
     },
