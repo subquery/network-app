@@ -70,7 +70,9 @@ export const StakeAndDelegationLineChart = (props: {
         fixme?: true;
       }[],
     ) => {
-      const copyed = cloneDeep(groupedData);
+      if (!currentEra.data?.index) return [];
+      const eraIndex = currentEra.data.index;
+      const copyed = cloneDeep(groupedData).filter((i) => parseInt(i?.keys?.[0] || '0x00', 16) <= eraIndex);
 
       if (copyed.some((i) => !i.keys || !i.sum)) {
         return [];
