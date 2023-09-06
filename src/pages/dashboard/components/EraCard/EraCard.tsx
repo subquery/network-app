@@ -10,6 +10,7 @@ import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { useInterval } from 'ahooks';
 import { Progress, Skeleton } from 'antd';
+import { t } from 'i18next';
 import moment from 'moment';
 
 export const EraCard = () => {
@@ -50,7 +51,7 @@ export const EraCard = () => {
                 />
               </div>
             }
-            tooltip="1 era = 1 hour"
+            tooltip={t('era.tooltip', { hour: eraData.period / 3600 })}
             width={302}
           ></NewCard>
         ),
