@@ -80,19 +80,9 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
     // Graphql sort is incorrect, because it is a string.
     let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
 
-    // default eras will greater than one day
-    if (period > splitData) {
-      // const filledPaddingLength = Math.ceil(Math.ceil((paddingLength * splitData) / period));
-      if (paddingLength > renderAmounts.length) {
-        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
-      }
-    }
-
     // but in dev env will less than one day.
     if (period < splitData) {
       const eraCountOneDay = splitData / period;
-      // const filledPaddingLength = eraCountOneDay * paddingLength;
-
       renderAmounts = renderAmounts.reduce(
         (acc: { result: number[]; curResult: number }, cur, index) => {
           if (options?.fillDevDataByGetMax) {
@@ -109,10 +99,10 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
         },
         { result: [], curResult: 0 },
       ).result;
+    }
 
-      if (paddingLength > renderAmounts.length) {
-        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
-      }
+    if (paddingLength > renderAmounts.length) {
+      new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
     }
 
     return renderAmounts;
