@@ -135,7 +135,7 @@ export const StakeAndDelegationLineChart = (props: {
     const paddedData = padLostEraData(
       DeepCloneAndChangeReadonlyToMutable(res?.data?.indexerStakes?.groupedAggregates) || [],
     );
-    // const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
+
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(
         data,

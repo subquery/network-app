@@ -93,10 +93,6 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
       const eraCountOneDay = splitData / period;
       // const filledPaddingLength = eraCountOneDay * paddingLength;
 
-      if (paddingLength > renderAmounts.length) {
-        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
-      }
-
       renderAmounts = renderAmounts.reduce(
         (acc: { result: number[]; curResult: number }, cur, index) => {
           if (options?.fillDevDataByGetMax) {
@@ -113,6 +109,10 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
         },
         { result: [], curResult: 0 },
       ).result;
+
+      if (paddingLength > renderAmounts.length) {
+        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+      }
     }
 
     return renderAmounts;
