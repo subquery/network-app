@@ -156,7 +156,7 @@ const ActiveCard = (props: { account: string }) => {
                   src={project.projectMeta.image || '/static/default.project.png'}
                   className={styles.image}
                   onClick={() => {
-                    navigate(`/explorer/project/${project.id}`);
+                    navigate(`/explorer/project/${project.projectId}`);
                   }}
                 />
               ))}

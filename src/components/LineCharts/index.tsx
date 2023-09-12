@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useEra } from '@hooks';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
@@ -103,7 +103,7 @@ const LineCharts: FC<IProps> = ({
         },
       };
     });
-  }, [chartData]);
+  }, [chartData, xAxisScalesInner]);
 
   return (
     <div className={styles.lineCharts}>

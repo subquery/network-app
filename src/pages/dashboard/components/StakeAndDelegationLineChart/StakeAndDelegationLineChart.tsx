@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
-import LineCharts, { FilterType } from '@components/LineCharts';
+import { useEffect, useMemo, useState } from 'react';
+import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { useEra } from '@hooks';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
@@ -40,10 +40,27 @@ export const StakeAndDelegationLineChart = (props: {
     total: [],
   });
 
-  const fetchStakeAndDelegationByEra = async (filterVal: FilterType | undefined = filter) => {
+  const stakeLineXScales = useMemo(() => {
+    const getLatestXScales = (period: number, filterVal: FilterType) => {
+      const defaultXScalesFunc = xAxisScalesFunc(period)[filterVal.date];
+      const futureEraEndTime = (period || 0) < 86400 ? dayjs().add(1, 'day') : dayjs().add(period || 0, 'seconds');
+      return [...defaultXScalesFunc(), futureEraEndTime];
+    };
+
+    const xScalesVal = getLatestXScales(currentEra.data?.period || 0, filter);
+    return {
+      val: {
+        renderData: xScalesVal.map((i) => i.format('MMM D')),
+        rawData: xScalesVal,
+      },
+      getLatestXScales,
+    };
+  }, [currentEra, filter.date]);
+
+  const fetchStakeAndDelegationByEra = async (filterVal: FilterType = filter) => {
     if (!currentEra.data) return;
     if (!filterVal) return;
-    const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data);
+    const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data, true);
 
     const { includesErasHex, allErasHex } = {
       lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
@@ -101,7 +118,7 @@ export const StakeAndDelegationLineChart = (props: {
         .map((item) => {
           if (!item.fixme) {
             if (!item.sum) {
-              captureMessage('fetched stake and delegation data, please confirm.');
+              captureMessage('fetched stake and delegation data error, please confirm.');
               return item;
             }
             currentSums = { ...item.sum };
@@ -119,9 +136,15 @@ export const StakeAndDelegationLineChart = (props: {
       DeepCloneAndChangeReadonlyToMutable(res?.data?.indexerStakes?.groupedAggregates) || [],
     );
 
-    const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
-      fillData(data, includesErasHex, maxPaddingLength, { fillDevDataByGetMax: true });
+      fillData(
+        data,
+        includesErasHex,
+        stakeLineXScales.getLatestXScales(currentEra.data?.period || 0, filterVal).length,
+        {
+          fillDevDataByGetMax: true,
+        },
+      );
 
     const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.indexerStake || '0' } })));
     const delegationStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
@@ -149,6 +172,7 @@ export const StakeAndDelegationLineChart = (props: {
             setFilter(val);
             fetchStakeAndDelegationByEra(val);
           }}
+          xAxisScales={stakeLineXScales.val}
           title={title}
           dataDimensionsName={dataDimensionsName}
           chartData={renderStakeAndDelegation}
