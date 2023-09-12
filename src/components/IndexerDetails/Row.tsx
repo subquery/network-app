@@ -19,7 +19,7 @@ import { Modal as AntdModal, Typography } from 'antd';
 import assert from 'assert';
 import axios from 'axios';
 import clsx from 'clsx';
-import { TFunction } from 'i18next';
+import { t } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
 import { useProjectStore } from 'src/stores/project';
@@ -52,14 +52,13 @@ type ErrorMsgProps = {
   deploymentId: string | undefined;
   metadata: IndexerDetails;
   error: Error;
-  t: TFunction;
 };
 
 const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   <>
-    <Tooltip title={`${msg.t('indexers.tooltip.connection')}${msg.metadata?.url}/metadata/${msg.deploymentId}`}>
+    <Tooltip title={`${t('indexers.tooltip.connection')}${msg.metadata?.url}/metadata/${msg.deploymentId}`}>
       <Typography.Text type="danger">Error: </Typography.Text>
-      <Typography.Text type="secondary">{msg.t('indexers.tooltip.error')}</Typography.Text>
+      <Typography.Text type="secondary">{t('indexers.tooltip.error')}</Typography.Text>
     </Tooltip>
   </>
 );
@@ -149,7 +148,7 @@ const ConnectedRow: React.FC<{
         <>
           {renderAsync(progressInfo, {
             loading: () => <Spinner />,
-            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, t, metadata: indexerMetadata }} />,
+            error: (error) => <ErrorMsg msg={{ indexer, deploymentId, error, metadata: indexerMetadata }} />,
             data: (info) =>
               info ? (
                 <Progress
