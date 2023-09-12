@@ -15,10 +15,11 @@ import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 
-export const getSplitDataByEra = (currentEra: Era) => {
+export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   const period = currentEra.period;
   const splitData = 86400;
 
+  const plusedEra = period > splitData ? 1 : Math.floor(splitData / period);
   // TODO:
   //   There have some problems in here
   //   1. secondFromLastTimes / period is just a fuzzy result. also we can get the exactly result by Graphql.
@@ -26,10 +27,11 @@ export const getSplitDataByEra = (currentEra: Era) => {
   //   3. based on 1. and 2. also need to do a lots of things for compatite dev env(1 era < 1 day).
   const getIncludesEras = (lastTimes: dayjs.Dayjs) => {
     const today = dayjs();
-    const secondFromLastTimes = (+today - +lastTimes) / 1000;
+    const secondsFromLastTimes = (+today - +lastTimes) / 1000;
 
-    const eras = Math.ceil(secondFromLastTimes / period);
-    const currentEraIndex = currentEra.index || 0;
+    const eras = Math.ceil(secondsFromLastTimes / period) + (includeNextEra ? plusedEra : 0);
+
+    const currentEraIndex = includeNextEra ? currentEra.index + plusedEra : currentEra.index;
     const includesEras = new Array(eras)
       .fill(0)
       .map((_, index) => currentEraIndex - index)
@@ -80,19 +82,19 @@ export const getSplitDataByEra = (currentEra: Era) => {
 
     // default eras will greater than one day
     if (period > splitData) {
-      const filledPaddingLength = Math.ceil(Math.ceil((paddingLength * splitData) / period));
-      if (filledPaddingLength > renderAmounts.length) {
-        new Array(filledPaddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+      // const filledPaddingLength = Math.ceil(Math.ceil((paddingLength * splitData) / period));
+      if (paddingLength > renderAmounts.length) {
+        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
       }
     }
 
     // but in dev env will less than one day.
     if (period < splitData) {
       const eraCountOneDay = splitData / period;
-      const filledPaddingLength = eraCountOneDay * paddingLength;
+      // const filledPaddingLength = eraCountOneDay * paddingLength;
 
-      if (filledPaddingLength > renderAmounts.length) {
-        new Array(filledPaddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
+      if (paddingLength > renderAmounts.length) {
+        new Array(paddingLength - renderAmounts.length).fill(0).forEach((_) => renderAmounts.unshift(0));
       }
 
       renderAmounts = renderAmounts.reduce(
@@ -131,13 +133,19 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
   });
 
   const rewardsLineXScales = useMemo(() => {
-    const getDefaultScales = xAxisScalesFunc(currentEra.data?.period);
+    const getXScales = (period: number, filterVal: FilterType) => {
+      const getDefaultScales = xAxisScalesFunc(period);
 
-    const result = getDefaultScales[filter.date]();
-    const slicedResult = result.slice(0, result.length - 1);
+      const result = getDefaultScales[filterVal.date]();
+      return result.slice(0, result.length - 1);
+    };
+    const slicedResult = getXScales(currentEra.data?.period || 0, filter);
     return {
-      renderData: slicedResult.map((i) => i.format('MMM D')),
-      rawData: slicedResult,
+      val: {
+        renderData: slicedResult.map((i) => i.format('MMM D')),
+        rawData: slicedResult,
+      },
+      getXScales,
     };
   }, [filter.date, currentEra]);
 
@@ -164,16 +172,17 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
       fetchPolicy: 'no-cache',
     });
 
-    const maxPaddingLength = { lm: 31, l3m: 90, ly: 365 }[filterVal.date];
-
+    const maxPaddingLength = rewardsLineXScales.getXScales(currentEra.data.period, filterVal).length;
+    // rewards don't want to show lastest era data
+    const removedLastEras = includesErasHex.slice(1, includesErasHex.length);
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
-      fillData(data, includesErasHex, maxPaddingLength);
+      fillData(data, removedLastEras, maxPaddingLength);
     const indexerRewards = curry(res?.data?.indexerEraReward?.groupedAggregates || []);
     const delegationRewards = curry(res?.data?.delegationEraReward?.groupedAggregates || []);
     setRawRewardsData({
       indexer: indexerRewards,
       delegation: delegationRewards,
-      total: fillData(res?.data?.eraRewards?.groupedAggregates || [], includesErasHex, maxPaddingLength),
+      total: fillData(res?.data?.eraRewards?.groupedAggregates || [], removedLastEras, maxPaddingLength),
     });
 
     setRenderRewards([indexerRewards, delegationRewards]);
@@ -194,7 +203,7 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
             setFilter(val);
             fetchRewardsByEra(val);
           }}
-          xAxisScales={rewardsLineXScales}
+          xAxisScales={rewardsLineXScales.val}
           title={title}
           dataDimensionsName={dataDimensionsName}
           chartData={renderRewards}
