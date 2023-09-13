@@ -22,6 +22,7 @@ import { TOKEN } from '@utils/constants';
 import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
 import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
+import { toChecksumAddress } from 'ethereum-checksum-address';
 import { t } from 'i18next';
 import { isString } from 'lodash-es';
 
@@ -169,9 +170,12 @@ const ActiveCard = (props: { account: string }) => {
 
 const IndexerProfile: FC = () => {
   const { id: account } = useParams();
+  const checksumAddress = useMemo(() => {
+    return toChecksumAddress(account || '');
+  }, [account]);
   const { currentEra } = useEra();
-  const sortedIndexer = useSortedIndexer(account || '');
-  const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });
+  const sortedIndexer = useSortedIndexer(checksumAddress);
+  const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: checksumAddress, offset: 0 } });
   const result = useQuery(
     gql`
       query MyQuery($indexerId: String!) {
@@ -207,7 +211,7 @@ const IndexerProfile: FC = () => {
     `,
     {
       variables: {
-        indexerId: account,
+        indexerId: checksumAddress,
       },
     },
   );
