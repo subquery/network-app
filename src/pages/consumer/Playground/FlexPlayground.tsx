@@ -34,40 +34,6 @@ import { AuthPlayground } from './AuthPlayground';
 
 const { ONGOING_PLANS_NAV } = ROUTES;
 
-const columns: TableProps<ConsumerFlexPlan>['columns'] = [
-  {
-    dataIndex: 'indexer',
-    title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
-    render: (indexer: ConsumerFlexPlan['indexer']) => <ConnectedIndexer id={indexer} size="small" />,
-  },
-  {
-    dataIndex: 'price',
-    title: <TableTitle title={i18next.t('general.price')} />,
-    key: 'price',
-    render: (price) => <TableText content={getFlexPlanPrice(price)} />,
-  },
-  {
-    dataIndex: 'expiredAt',
-    title: <TableTitle title={i18next.t('flexPlans.validityPeriod')} />,
-    key: 'validity',
-    render: (expiredAt: ConsumerFlexPlan['expiredAt']) => <TableText content={formatDate(expiredAt)} />,
-  },
-  {
-    dataIndex: 'spent',
-    title: <TableTitle title={i18next.t('flexPlans.spent')} />,
-    key: 'spent',
-    render: (spent: ConsumerFlexPlan['spent']) => <TableText content={`${formatEther(spent)} ${TOKEN}`} />,
-  },
-  {
-    dataIndex: 'spent',
-    title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
-    render: (spent, plan) => {
-      const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
-      return <TableText content={`${formatEther(sortedRemaining, 4)} ${TOKEN}`} />;
-    },
-  },
-];
-
 export const FlexPlayground: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -111,6 +77,48 @@ export const FlexPlayground: React.FC = () => {
   const showPlayground = React.useMemo(() => {
     return !!(queryable && queryUrl && !isCheckingAuth);
   }, [queryable, queryUrl, isCheckingAuth]);
+
+  const columns: TableProps<ConsumerFlexPlan>['columns'] = [
+    {
+      dataIndex: 'indexer',
+      title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
+      render: (indexer: ConsumerFlexPlan['indexer']) => (
+        <ConnectedIndexer
+          id={indexer}
+          size="small"
+          onClick={() => {
+            navigate(`/indexer/${indexer}`);
+          }}
+        />
+      ),
+    },
+    {
+      dataIndex: 'price',
+      title: <TableTitle title={i18next.t('general.price')} />,
+      key: 'price',
+      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
+    },
+    {
+      dataIndex: 'expiredAt',
+      title: <TableTitle title={i18next.t('flexPlans.validityPeriod')} />,
+      key: 'validity',
+      render: (expiredAt: ConsumerFlexPlan['expiredAt']) => <TableText content={formatDate(expiredAt)} />,
+    },
+    {
+      dataIndex: 'spent',
+      title: <TableTitle title={i18next.t('flexPlans.spent')} />,
+      key: 'spent',
+      render: (spent: ConsumerFlexPlan['spent']) => <TableText content={`${formatEther(spent)} ${TOKEN}`} />,
+    },
+    {
+      dataIndex: 'spent',
+      title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
+      render: (spent, plan) => {
+        const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
+        return <TableText content={`${formatEther(sortedRemaining, 4)} ${TOKEN}`} />;
+      },
+    },
+  ];
 
   /**
    * Query Graphql codes handled
