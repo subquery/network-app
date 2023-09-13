@@ -10,8 +10,6 @@ import { deploymentHttpLink } from '@subql/apollo-links';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
-export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
-
 export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
@@ -30,11 +28,6 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
     fallbackServiceUrl,
   }).link;
 };
-
-export const swapLink = getDecentraliseLink(
-  import.meta.env.VITE_EXCHANGE_DEPLOYMENT_ID,
-  import.meta.env.VITE_QUERY_SWAP_EXCHANGE_PROJECT,
-);
 
 export const networkLink = getDecentraliseLink(
   import.meta.env.VITE_NETWORK_DEPLOYMENT_ID,
@@ -65,15 +58,9 @@ const links = ApolloLink.from([
     });
   }),
   ApolloLink.split(
-    (operation) => operation.getContext().clientName === SWAP_EXCHANGE_CLIENT,
-    swapLink,
-
-    ApolloLink.split(
-      (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
-      top100IndexersLink,
-
-      networkLink,
-    ),
+    (operation) => operation.getContext().clientName === TOP_100_INDEXERS,
+    top100IndexersLink,
+    networkLink,
   ),
 ]);
 
