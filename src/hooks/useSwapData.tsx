@@ -108,7 +108,6 @@ export function useSwapOrderId(swapFrom: string): { orderId: string | undefined;
       swapFrom,
       now,
     },
-    context: { clientName: SWAP_EXCHANGE_CLIENT },
   });
 
   React.useEffect(() => {
