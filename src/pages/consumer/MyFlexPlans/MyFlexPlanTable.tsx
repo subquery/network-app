@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { TableTitle } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { ChannelStatus } from '@subql/network-query';
@@ -23,91 +23,6 @@ import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
 
 const { ONGOING_PLANS_NAV, CLOSED_PLANS_NAV } = ROUTES;
 
-const getColumns = (path: typeof ONGOING_PLANS_NAV | typeof CLOSED_PLANS_NAV, onSuccess: () => void) => {
-  const columns: TableProps<ConsumerFlexPlan>['columns'] = [
-    {
-      dataIndex: 'id',
-      title: <TableTitle title={'#'} />,
-      width: 20,
-      render: (_, __, idx: number) => <TableText content={idx + 1} />,
-    },
-    {
-      dataIndex: 'deployment',
-      width: 80,
-      title: <TableTitle title={i18next.t('flexPlans.project')} />,
-      render: ({ id, project }) => <DeploymentMeta deploymentId={id} projectMetadata={project.metadata} />,
-    },
-    {
-      dataIndex: 'indexer',
-      width: 50,
-      title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
-      render: (indexer) => <ConnectedIndexer id={indexer} />,
-    },
-    {
-      dataIndex: 'price',
-      width: 30,
-      title: <TableTitle title={i18next.t('general.price')} />,
-      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
-    },
-    {
-      dataIndex: 'expiredAt',
-      width: 30,
-      title: (
-        <TableTitle title={i18next.t(path === ONGOING_PLANS_NAV ? 'flexPlans.validityPeriod' : 'flexPlans.duration')} />
-      ),
-      render: (expiredAt) => {
-        return <TableText content={formatDate(expiredAt)} />;
-      },
-    },
-    {
-      dataIndex: 'spent',
-      width: 30,
-      title: <TableTitle title={i18next.t('flexPlans.spent')} />,
-      render: (spent) => <TableText content={`${formatEther(spent, 4)} ${TOKEN}`} />,
-    },
-    {
-      dataIndex: 'spent',
-      width: 30,
-      title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
-      render: (spent, plan) => {
-        const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
-        return <TableText content={`${formatEther(sortedRemaining, 4)} ${TOKEN}`} />;
-      },
-    },
-    {
-      dataIndex: 'status',
-      width: 30,
-      title: <TableTitle title={i18next.t('flexPlans.channelStatus')} />,
-      render: (status: ChannelStatus, plan) => {
-        if (path === ONGOING_PLANS_NAV) {
-          return <Tag color="green">{i18next.t('general.active')}</Tag>;
-        } else if (status === ChannelStatus.FINALIZED) {
-          return <Tag color="blue">{i18next.t('general.completed')}</Tag>;
-        } else if (status === ChannelStatus.TERMINATING) {
-          return <Tag color="yellow">{i18next.t('general.terminating')}</Tag>;
-        } else {
-          return <Tag color="red">{i18next.t('general.terminated')}</Tag>;
-        }
-      },
-    },
-    {
-      title: <TableTitle title={i18next.t('general.action')} />,
-      dataIndex: 'deploymentId',
-      fixed: 'right',
-      width: path === CLOSED_PLANS_NAV ? 20 : 40,
-      render: (_, plan) => {
-        if (path === CLOSED_PLANS_NAV) {
-          return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
-        }
-
-        return <OngoingFlexPlanActions flexPlan={plan} onSuccess={onSuccess} />;
-      },
-    },
-  ];
-
-  return columns;
-};
-
 interface MyFlexPlanTableProps {
   queryFn: typeof useGetConsumerOngoingFlexPlansLazyQuery | typeof useGetConsumerClosedFlexPlansLazyQuery;
 }
@@ -115,6 +30,7 @@ interface MyFlexPlanTableProps {
 export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
   const { account } = useWeb3();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [now] = React.useState<Date>(moment().toDate());
   const sortedParams = { consumer: account ?? '', now, offset: 0 };
@@ -122,6 +38,101 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
 
   const fetchMoreFlexPlans = () => {
     loadFlexPlan();
+  };
+
+  const getColumns = (path: typeof ONGOING_PLANS_NAV | typeof CLOSED_PLANS_NAV, onSuccess: () => void) => {
+    const columns: TableProps<ConsumerFlexPlan>['columns'] = [
+      {
+        dataIndex: 'id',
+        title: <TableTitle title={'#'} />,
+        width: 20,
+        render: (_, __, idx: number) => <TableText content={idx + 1} />,
+      },
+      {
+        dataIndex: 'deployment',
+        width: 80,
+        title: <TableTitle title={i18next.t('flexPlans.project')} />,
+        render: ({ id, project }) => <DeploymentMeta deploymentId={id} projectMetadata={project.metadata} />,
+      },
+      {
+        dataIndex: 'indexer',
+        width: 50,
+        title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
+        render: (indexer) => (
+          <ConnectedIndexer
+            id={indexer}
+            size="small"
+            onClick={() => {
+              navigate(`/indexer/${indexer}`);
+            }}
+          />
+        ),
+      },
+      {
+        dataIndex: 'price',
+        width: 30,
+        title: <TableTitle title={i18next.t('general.price')} />,
+        render: (price) => <TableText content={getFlexPlanPrice(price)} />,
+      },
+      {
+        dataIndex: 'expiredAt',
+        width: 30,
+        title: (
+          <TableTitle
+            title={i18next.t(path === ONGOING_PLANS_NAV ? 'flexPlans.validityPeriod' : 'flexPlans.duration')}
+          />
+        ),
+        render: (expiredAt) => {
+          return <TableText content={formatDate(expiredAt)} />;
+        },
+      },
+      {
+        dataIndex: 'spent',
+        width: 30,
+        title: <TableTitle title={i18next.t('flexPlans.spent')} />,
+        render: (spent) => <TableText content={`${formatEther(spent, 4)} ${TOKEN}`} />,
+      },
+      {
+        dataIndex: 'spent',
+        width: 30,
+        title: <TableTitle title={i18next.t('flexPlans.remainDeposit')} />,
+        render: (spent, plan) => {
+          const sortedRemaining = BigNumber.from(plan?.total).sub(BigNumber.from(spent));
+          return <TableText content={`${formatEther(sortedRemaining, 4)} ${TOKEN}`} />;
+        },
+      },
+      {
+        dataIndex: 'status',
+        width: 30,
+        title: <TableTitle title={i18next.t('flexPlans.channelStatus')} />,
+        render: (status: ChannelStatus, plan) => {
+          if (path === ONGOING_PLANS_NAV) {
+            return <Tag color="green">{i18next.t('general.active')}</Tag>;
+          } else if (status === ChannelStatus.FINALIZED) {
+            return <Tag color="blue">{i18next.t('general.completed')}</Tag>;
+          } else if (status === ChannelStatus.TERMINATING) {
+            return <Tag color="yellow">{i18next.t('general.terminating')}</Tag>;
+          } else {
+            return <Tag color="red">{i18next.t('general.terminated')}</Tag>;
+          }
+        },
+      },
+      {
+        title: <TableTitle title={i18next.t('general.action')} />,
+        dataIndex: 'deploymentId',
+        fixed: 'right',
+        width: path === CLOSED_PLANS_NAV ? 20 : 40,
+        render: (_, plan) => {
+          if (path === CLOSED_PLANS_NAV) {
+            return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
+          }
+
+          return <OngoingFlexPlanActions flexPlan={plan} onSuccess={onSuccess} />;
+        },
+      },
+    ];
+
+    return columns;
   };
 
   React.useEffect(() => {

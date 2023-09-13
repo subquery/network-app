@@ -34,7 +34,7 @@ const getColumns = (
     title: <TableTitle title={i18next.t('indexer.title')} />,
     dataIndex: 'id',
     width: 250,
-    render: (val) => <ConnectedIndexer id={val} account={account} />,
+    render: (val) => <ConnectedIndexer id={val} account={account} size="small" />,
   },
   {
     title: (

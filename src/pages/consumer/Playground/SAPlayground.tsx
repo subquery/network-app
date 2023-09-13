@@ -31,35 +31,6 @@ import { AuthPlayground } from './AuthPlayground';
 
 const { CONSUMER_SA_NAV, SA_NAV } = ROUTES;
 
-const columns: TableProps<ServiceAgreement>['columns'] = [
-  {
-    dataIndex: 'consumerAddress',
-    title: i18next.t('serviceAgreements.headers.consumer').toUpperCase(),
-    key: 'consumer',
-    render: (consumer: ServiceAgreement['consumerAddress']) => <ConnectedIndexer id={consumer} />,
-  },
-  {
-    dataIndex: 'indexerAddress',
-    title: i18next.t('serviceAgreements.headers.indexer').toUpperCase(),
-    key: 'indexer',
-    render: (indexer: ServiceAgreement['indexerAddress']) => <ConnectedIndexer id={indexer} />,
-  },
-  {
-    dataIndex: 'period',
-    title: i18next.t('serviceAgreements.headers.expiry').toUpperCase(),
-    key: 'expiry',
-    render: (_, sa: ServiceAgreement) => {
-      return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
-    },
-  },
-  {
-    dataIndex: 'lockedAmount',
-    title: i18next.t('serviceAgreements.headers.price').toUpperCase(),
-    key: 'price',
-    render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
-  },
-];
-
 export const SAPlayground: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -96,6 +67,42 @@ export const SAPlayground: React.FC = () => {
     }
     return {};
   }, [url, serviceAgreement?.deploymentId, serviceAgreement?.indexerAddress]);
+
+  const columns: TableProps<ServiceAgreement>['columns'] = [
+    {
+      dataIndex: 'consumerAddress',
+      title: i18next.t('serviceAgreements.headers.consumer').toUpperCase(),
+      key: 'consumer',
+      render: (consumer: ServiceAgreement['consumerAddress']) => <ConnectedIndexer id={consumer} />,
+    },
+    {
+      dataIndex: 'indexerAddress',
+      title: i18next.t('serviceAgreements.headers.indexer').toUpperCase(),
+      key: 'indexer',
+      render: (indexer: ServiceAgreement['indexerAddress']) => (
+        <ConnectedIndexer
+          id={indexer}
+          onClick={() => {
+            navigate(`/indexer/${indexer}`);
+          }}
+        />
+      ),
+    },
+    {
+      dataIndex: 'period',
+      title: i18next.t('serviceAgreements.headers.expiry').toUpperCase(),
+      key: 'expiry',
+      render: (_, sa: ServiceAgreement) => {
+        return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
+      },
+    },
+    {
+      dataIndex: 'lockedAmount',
+      title: i18next.t('serviceAgreements.headers.price').toUpperCase(),
+      key: 'price',
+      render: (price: ServiceAgreement['lockedAmount']) => <TableText content={`${formatEther(price)} ${TOKEN}`} />,
+    },
+  ];
 
   /**
    * Query Graphql

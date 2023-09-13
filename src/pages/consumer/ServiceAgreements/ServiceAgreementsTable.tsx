@@ -67,14 +67,21 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'Consumer',
       title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
       width: 150,
-      render: (consumer: string) => <IndexerName address={consumer}></IndexerName>,
+      render: (consumer: string) => <IndexerName address={consumer} size="small"></IndexerName>,
     },
     {
       dataIndex: 'indexerAddress',
       title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
       key: 'Indexer',
       width: 200,
-      render: (indexer: string) => <IndexerName address={indexer}></IndexerName>,
+      render: (indexer: string) => (
+        <IndexerName
+          address={indexer}
+          onClick={() => {
+            navigate(`/indexer/${indexer}`);
+          }}
+        ></IndexerName>
+      ),
     },
     {
       dataIndex: 'startTime',
@@ -146,7 +153,15 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
     title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
     key: 'indexer',
     width: 200,
-    render: (indexer: ServiceAgreementFieldsFragment['indexerAddress']) => <ConnectedIndexer id={indexer} />,
+    render: (indexer: ServiceAgreementFieldsFragment['indexerAddress']) => (
+      <ConnectedIndexer
+        id={indexer}
+        size="small"
+        onClick={() => {
+          navigate(`/indexer/${indexer}`);
+        }}
+      />
+    ),
   };
 
   const consumerCol = {
@@ -173,7 +188,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       roleCol = indexerCol;
     }
     // TODO think a better way to do.
-    return roleCol ? [columns[0], roleCol, ...columns.slice(3)] : columns;
+    return roleCol ? [columns[0], roleCol, ...columns.slice(4)] : columns;
   }, [columns, pathname, consumerCol, indexerCol]);
 
   const sortedCols = React.useMemo(() => {

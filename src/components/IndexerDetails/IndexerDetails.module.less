@@ -1,6 +1,8 @@
 .indexer {
   display: flex;
   flex-direction: row;
+  cursor: pointer;
+
 }
 
 .name {
@@ -8,10 +10,17 @@
 }
 
 .indexerText {
-  padding-left: 10px;
+  padding-left: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  .name {
+    transition: all .1s ease-in-out;
+    &:hover {
+      color: var(--sq-blue600);
+    }
+  }
 }
 
 .indexersPagination {
