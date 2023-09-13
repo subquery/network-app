@@ -217,7 +217,7 @@ export const FlexPlayground: React.FC = () => {
             sessionToken: sessionToken,
             onSessionTokenExpire: requestAuthWhenTokenExpired,
             fetcher: async (graphQLParams: FetcherParams) =>
-              fetcher(queryUrl, JSON.stringify(graphQLParams.query), sessionToken),
+              fetcher(queryUrl, JSON.stringify(graphQLParams), sessionToken),
           }}
           playgroundVisible={showPlayground}
         />
