@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
@@ -25,12 +26,20 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showHeader = false }) =
   const { t } = useTranslation();
   const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
   const { currentEra } = useEra();
+  const navigate = useNavigate();
 
   const columns = [
     {
       title: <TableTitle title={t('delegate.delegator')} />,
       dataIndex: 'delegator',
-      render: (delegator: string) => <ConnectedIndexer id={delegator}></ConnectedIndexer>,
+      render: (delegator: string) => (
+        <ConnectedIndexer
+          id={delegator}
+          onClick={() => {
+            navigate(`/indexer/${delegator}`);
+          }}
+        ></ConnectedIndexer>
+      ),
     },
     {
       title: <TableTitle title={t('delegate.amount')} />,

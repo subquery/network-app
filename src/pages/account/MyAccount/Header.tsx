@@ -4,6 +4,7 @@
 import ReactJazzicon from 'react-jazzicon';
 import { Link } from 'react-router-dom';
 import { Copy, CurEra } from '@components';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
 import { Typography } from '@subql/components';
 import { truncateAddress } from '@utils';
@@ -15,21 +16,7 @@ export const AccountHeader: React.FC = () => {
 
   return (
     <div className={styles.header}>
-      <div className={styles.accountContainer}>
-        <div className={styles.icon}>
-          <ReactJazzicon diameter={70} />
-        </div>
-        <div className={styles.account}>
-          <Copy value={account ?? ''} iconClassName={styles.copyIcon}>
-            <Typography variant="h5" weight={900}>
-              {truncateAddress(account ?? '')}
-            </Typography>
-          </Copy>
-          {/* <Typography variant="medium" className={styles.link}>
-            <Link to={'/'}>{'Manage Controller Account'}</Link>
-          </Typography> */}
-        </div>
-      </div>
+      <ConnectedIndexer id={account || ''} account={account} size="large"></ConnectedIndexer>
       <CurEra />
     </div>
   );

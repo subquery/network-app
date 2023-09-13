@@ -145,7 +145,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       key: 'address',
       width: 100,
       render: (val: string) =>
-        val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} /> : <></>,
+        val ? <ConnectedIndexer id={val} account={account} onAddressClick={viewIndexerDetail} size="small" /> : <></>,
       onCell: (record: SortedIndexerListProps) => ({
         onClick: () => viewIndexerDetail(record.address),
       }),

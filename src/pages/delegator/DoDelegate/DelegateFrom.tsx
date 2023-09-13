@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
+import { useNavigate } from 'react-router';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
@@ -22,7 +23,7 @@ import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
+import { convertStringToNumber, formatEther, TOKEN } from '../../../utils';
 import styles from './DoDelegate.module.less';
 
 export const AddressName: React.FC<{
@@ -73,6 +74,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   indexerMetadataCid,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { account } = useWeb3();
   const fetchMetadata = useFetchMetadata();
   const { indexerMetadata } = useIndexerMetadata(indexerAddress, {
@@ -135,7 +137,14 @@ export const DelegateForm: React.FC<FormProps> = ({
   const summaryList = [
     {
       label: t('delegate.to'),
-      value: <ConnectedIndexer id={indexerAddress} />,
+      value: (
+        <ConnectedIndexer
+          id={indexerAddress}
+          onClick={() => {
+            navigate(`/indexer/${indexerAddress}`);
+          }}
+        />
+      ),
       strong: true,
     },
     {

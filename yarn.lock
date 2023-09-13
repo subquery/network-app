@@ -2905,10 +2905,10 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/components@1.0.3-11":
-  version "1.0.3-11"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-1.0.3-11.tgz#deb63932f37cbef2818f791b69b0ec450972bdc6"
-  integrity sha512-zmH9qIFOSZvJUCNoui9+/46ewdKAXowRbxgGKO59iGKNC/eE5C4+6FP+Gc9Xm8q1w9ICgbZpobr8AbIzi/eoAA==
+"@subql/components@1.0.3-16":
+  version "1.0.3-16"
+  resolved "https://registry.npmjs.org/@subql/components/-/components-1.0.3-16.tgz#310e2cb69434e283e3ba6bd8381cec1988c3dc77"
+  integrity sha512-d7SZyCklD4Y1XkT4y0rvwl+upYqr5vLIoOUBvhdEHluMb0zFhvUHxNybAjCL2yt8MWpPjJS1q4KrRyI1DjFsHw==
   dependencies:
     "@graphiql/plugin-explorer" "^0.1.20"
     antd "^5.8.4"

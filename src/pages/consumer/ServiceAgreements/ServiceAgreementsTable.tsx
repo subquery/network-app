@@ -67,14 +67,22 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'Consumer',
       title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
       width: 150,
-      render: (consumer: string) => <IndexerName address={consumer}></IndexerName>,
+      render: (consumer: string) => <IndexerName address={consumer} size="small"></IndexerName>,
     },
     {
       dataIndex: 'indexerAddress',
       title: <TableTitle title={t('serviceAgreements.headers.indexer')} />,
       key: 'Indexer',
       width: 200,
-      render: (indexer: string) => <IndexerName address={indexer}></IndexerName>,
+      render: (indexer: string) => (
+        <IndexerName
+          address={indexer}
+          size="small"
+          onClick={() => {
+            navigate(`indexer/${indexer}`);
+          }}
+        ></IndexerName>
+      ),
     },
     {
       dataIndex: 'startTime',
