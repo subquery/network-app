@@ -10,8 +10,6 @@ import { deploymentHttpLink } from '@subql/apollo-links';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
-export const SWAP_EXCHANGE_CLIENT = 'swapExchange';
-
 export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 

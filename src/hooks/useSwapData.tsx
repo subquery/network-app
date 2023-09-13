@@ -12,7 +12,6 @@ import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
-import { SWAP_EXCHANGE_CLIENT } from '../containers';
 import { convertStringToNumber, tokenDecimals, tokenNames } from '../utils';
 import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
