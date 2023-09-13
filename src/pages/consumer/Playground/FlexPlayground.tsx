@@ -38,7 +38,7 @@ const columns: TableProps<ConsumerFlexPlan>['columns'] = [
   {
     dataIndex: 'indexer',
     title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
-    render: (indexer: ConsumerFlexPlan['indexer']) => <ConnectedIndexer id={indexer} />,
+    render: (indexer: ConsumerFlexPlan['indexer']) => <ConnectedIndexer id={indexer} size="small" />,
   },
   {
     dataIndex: 'price',

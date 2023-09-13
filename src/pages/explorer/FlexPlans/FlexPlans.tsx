@@ -18,38 +18,44 @@ import { formatSecondsDuration, getFlexPlanPrice, ROUTES } from '../../../utils'
 import CreateHostingFlexPlan from './CreateHostingPlan/CreateHostingPlan';
 import styles from './FlexPlans.module.less';
 
-// TODO: confirm score threadThread with consumer host service
-const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
-  {
-    dataIndex: 'indexer',
-    title: <TableTitle>{i18next.t('explorer.flexPlans.indexer')}</TableTitle>,
-    render: (indexer, indexerFlexPlans) => {
-      return (
-        <Space className="flex">
-          <div className={styles.starContainer}>
-            {indexerFlexPlans.score >= 150 && <BsStarFill className={styles.star} />}
-          </div>
-          <ConnectedIndexer id={indexer} />
-        </Space>
-      );
-    },
-  },
-  {
-    dataIndex: 'price',
-    title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
-    render: (price) => <TableText content={getFlexPlanPrice(price)} />,
-  },
-  {
-    dataIndex: 'max_time',
-    title: <TableTitle>{i18next.t('flexPlans.validityPeriod')}</TableTitle>,
-    render: (max) => <TableText>{formatSecondsDuration(max)}</TableText>,
-  },
-];
-
 export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
+
+  // TODO: confirm score threadThread with consumer host service
+  const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
+    {
+      dataIndex: 'indexer',
+      title: <TableTitle>{i18next.t('explorer.flexPlans.indexer')}</TableTitle>,
+      render: (indexer, indexerFlexPlans) => {
+        return (
+          <Space className="flex">
+            <div className={styles.starContainer}>
+              {indexerFlexPlans.score >= 150 && <BsStarFill className={styles.star} />}
+            </div>
+            <ConnectedIndexer
+              id={indexer}
+              size="small"
+              onClick={() => {
+                navigate(`/indexer/${indexer}`);
+              }}
+            />
+          </Space>
+        );
+      },
+    },
+    {
+      dataIndex: 'price',
+      title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
+      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
+    },
+    {
+      dataIndex: 'max_time',
+      title: <TableTitle>{i18next.t('flexPlans.validityPeriod')}</TableTitle>,
+      render: (max) => <TableText>{formatSecondsDuration(max)}</TableText>,
+    },
+  ];
 
   React.useEffect(() => {
     if (!id) {

@@ -41,7 +41,7 @@ const getColumns = (path: typeof ONGOING_PLANS_NAV | typeof CLOSED_PLANS_NAV, on
       dataIndex: 'indexer',
       width: 50,
       title: <TableTitle title={i18next.t('flexPlans.indexer')} />,
-      render: (indexer) => <ConnectedIndexer id={indexer} />,
+      render: (indexer) => <ConnectedIndexer id={indexer} size="small" />,
     },
     {
       dataIndex: 'price',
