@@ -13,7 +13,7 @@ import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DeploymentMeta, EmptyList } from '../../../components';
-import { ConnectedIndexer, IndexerName } from '../../../components/IndexerDetails/IndexerName';
+import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -67,7 +67,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'Consumer',
       title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
       width: 150,
-      render: (consumer: string) => <IndexerName address={consumer} size="small"></IndexerName>,
+      render: (consumer: string) => <ConnectedIndexer id={consumer} size="small"></ConnectedIndexer>,
     },
     {
       dataIndex: 'indexerAddress',
@@ -75,12 +75,13 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'Indexer',
       width: 200,
       render: (indexer: string) => (
-        <IndexerName
-          address={indexer}
+        <ConnectedIndexer
+          size="small"
+          id={indexer}
           onClick={() => {
             navigate(`/indexer/${indexer}`);
           }}
-        ></IndexerName>
+        ></ConnectedIndexer>
       ),
     },
     {
