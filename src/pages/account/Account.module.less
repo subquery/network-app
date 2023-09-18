@@ -1,0 +1,41 @@
+.account {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.page {
+  min-height: 90vh;
+}
+
+.tab {
+  margin-top: 24px;
+
+  :global {
+    .ant-tabs-tab {
+      padding: 0;
+      line-height: 22px;
+      margin-bottom: 8px;
+
+      &-btn {
+        font-family: var(--sq-font-family);
+        color: var(--sq-gray600);
+
+        &:hover {
+          color: var(--sq-blue600)
+
+        }
+      }
+
+      &-active {
+        .ant-tabs-tab-btn.ant-tabs-tab-btn.ant-tabs-tab-btn   {
+          color: var(--sq-blue600)
+        }
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      background: var(--sq-blue600);
+    }
+  }
+}

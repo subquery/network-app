@@ -23,9 +23,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const sortedWindowObj = getConnectorConfig(connector).windowObj;
 
   const handleDisconnect = () => deactivate();
-  const handleNavRewards = () => navigate(ROUTES.MY_ACCOUNT_REWARDS_NAV);
-  const handleNavWithdrawn = () => navigate(ROUTES.MY_ACCOUNT_WITHDRAWN_NAV);
-  const handleNavAccount = () => navigate(ROUTES.MY_ACCOUNT);
+  const handleNavRewards = () => navigate(ROUTES.MY_PROFILE_REWARDS_NAV);
+  const handleNavWithdrawn = () => navigate(ROUTES.MY_PROFILE_WITHDRAWN_NAV);
+  const handleNavAccount = () => navigate(ROUTES.MY_PROFILE);
   const handleAddToken = () => {
     sortedWindowObj?.request({
       method: 'wallet_watchAsset',

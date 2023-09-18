@@ -45,8 +45,8 @@ const DELEGATOR = {
   TOP_INDEXERS: 'top',
 } as const;
 
-const MY_ACCOUNT = {
-  MY_ACCOUNT: 'my-account',
+const MY_PROFILE = {
+  MY_PROFILE: 'profile',
   REWARDS: 'rewards',
   WITHDRAWN: 'withdrawn',
 } as const;
@@ -56,7 +56,7 @@ const PATHS = {
   ...INDEXER,
   ...DELEGATOR,
   ...CONSUMER,
-  ...MY_ACCOUNT,
+  ...MY_PROFILE,
   // ROOT PATHS
   DASHBOARD: '/dashboard',
   EXPLORER: '/explorer',
@@ -70,7 +70,6 @@ const PATHS = {
   INDEXERS: 'indexers',
   INDEXING: 'indexing',
   DELEGATE: 'delegate',
-  MY_PROFILE: 'my-profile',
   MY_PLANS: 'my-plans',
   DEFAULT_PLANS: 'default',
   SPECIFIC_PLANS: 'specific',
@@ -116,9 +115,9 @@ const NAV_LINKS = {
   INDEXER_SA_ONGOING_NAV: `/${INDEXER.INDEXER}/${INDEXER.SERVICE_AGREEMENTS}/${INDEXER.ONGOING_PLANS}`,
   INDEXER_OFFER_MARKETPLACE_NAV: `/${INDEXER.INDEXER}/${INDEXER.OFFER_MARKETPLACE}`,
 
-  MY_ACCOUNT_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}`,
-  MY_ACCOUNT_REWARDS_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}/${MY_ACCOUNT.REWARDS}`,
-  MY_ACCOUNT_WITHDRAWN_NAV: `/${MY_ACCOUNT.MY_ACCOUNT}/${MY_ACCOUNT.WITHDRAWN}`,
+  MY_PROFILE_NAV: `/${MY_PROFILE.MY_PROFILE}`,
+  MY_PROFILE_REWARDS_NAV: `/${MY_PROFILE.MY_PROFILE}/${MY_PROFILE.REWARDS}`,
+  MY_PROFILE_WITHDRAWN_NAV: `/${MY_PROFILE.MY_PROFILE}/${MY_PROFILE.WITHDRAWN}`,
 } as const;
 
 export const ROUTES = {
@@ -161,8 +160,15 @@ export const routers: BasicRouteType[] = [
     ],
   },
 
-  { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
-  { path: '/my-account/*', component: React.lazy(() => import('../pages/account/index')) },
+  {
+    path: '/profile',
+    component: React.lazy(() => import('../pages/account')),
+    children: [
+      { path: 'staking', component: React.lazy(() => import('../pages/account/Staking')) },
+      { path: 'rewards', component: React.lazy(() => import('../pages/account/Rewards/Rewards')) },
+      { path: 'withdrawn', component: React.lazy(() => import('../pages/account/Withdrawn/Withdrawn')) },
+    ],
+  },
 
   {
     path: '/indexer',
@@ -221,4 +227,5 @@ export const routers: BasicRouteType[] = [
 
   { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
   { path: '/swap/*', component: React.lazy(() => import('../pages/swap/Swap')) },
+  { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
 ];

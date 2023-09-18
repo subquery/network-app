@@ -3,15 +3,14 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, TableText } from '@components';
-import { BreadcrumbNav } from '@components';
+import { TableText } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
-import { ExcludeNull, formatEther, notEmpty, ROUTES } from '@utils';
+import { ExcludeNull, formatEther, notEmpty } from '@utils';
 import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag } from 'antd';
 import dayjs from 'dayjs';
@@ -20,11 +19,11 @@ import { BigNumber } from 'ethers';
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
 
-export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
+export const Rewards: React.FC = () => {
   const { account } = useWeb3();
 
   const update = useUpdate();
-  const filterParams = { address: delegator };
+  const filterParams = { address: account || '' };
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const queryParams = React.useRef({
     offset: 0,
@@ -115,13 +114,6 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
 
   return (
     <div className={styles.rewardsContainer}>
-      <BreadcrumbNav
-        backLink={`${ROUTES.MY_ACCOUNT_NAV}`}
-        backLinkText={t('indexer.indexers')}
-        childText={t('rewards.claim.title')}
-      />
-      <AppPageHeader title={t('rewards.claim.title')} desc={t('rewards.description')} />
-
       <div className={styles.rewardsList}>
         {renderAsync(indexerEraRewards, {
           error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
@@ -172,3 +164,5 @@ export const Rewards: React.FC<{ delegator: string }> = ({ delegator }) => {
     </div>
   );
 };
+
+export default Rewards;

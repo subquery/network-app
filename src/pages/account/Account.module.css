@@ -1,9 +1,0 @@
-.account {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.page {
-  min-height: 90vh;
-}
