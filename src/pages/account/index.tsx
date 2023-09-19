@@ -83,7 +83,7 @@ export const MyAccount: React.FC = () => {
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('Rewards');
 
   useEffect(() => {
-    Object.keys(activeKeyLinks).map((key) => {
+    Object.keys(activeKeyLinks).forEach((key) => {
       if (
         matchPath(
           {
@@ -95,8 +95,8 @@ export const MyAccount: React.FC = () => {
         setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawls');
       }
     });
-  }, []);
-
+  }, [window.location.pathname]);
+  console.warn(activeKey);
   return renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
     loading: () => <Spinner />,
     error: (e) => {
