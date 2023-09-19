@@ -80,7 +80,7 @@ export const MyAccount: React.FC = () => {
     variables: { delegator: account ?? '', status: WithdrawalStatus.CLAIMED, offset: 0 },
   });
 
-  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('SD');
+  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('Rewards');
 
   useEffect(() => {
     Object.keys(activeKeyLinks).map((key) => {
@@ -165,7 +165,7 @@ export const MyAccount: React.FC = () => {
             <Tabs
               className={styles.tab}
               items={[
-                { key: 'SD', label: 'Staking and Delegation' },
+                // { key: 'SD', label: 'Staking and Delegation' },
                 { key: 'Rewards', label: 'Rewards' },
                 { key: 'Withdrawls', label: 'Withdrawls' },
               ]}

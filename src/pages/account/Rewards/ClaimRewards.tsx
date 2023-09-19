@@ -11,7 +11,7 @@ import { useWeb3Store } from 'src/stores';
 
 import TransactionModal from '../../../components/TransactionModal';
 import { TOKEN } from '../../../utils';
-import styles from './ClaimRewards.module.css';
+import styles from './ClaimRewards.module.less';
 
 type Props = {
   account: string;
@@ -48,6 +48,7 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
     <TransactionModal
       variant="button"
       text={text}
+      buttonClassName={styles.claimButton}
       actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
       onClick={handleClick}
       rethrowWhenSubmit

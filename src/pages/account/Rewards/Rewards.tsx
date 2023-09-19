@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { TableText } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
@@ -122,11 +123,10 @@ export const Rewards: React.FC = () => {
             const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
             return (
               <>
-                <div className={styles.claim}>
-                  <Typography variant="h6" className={styles.header}>
-                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
-                  </Typography>
-
+                <div className="flex">
+                  <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
+                  <Typography type="secondary">{t('rewards.info')}</Typography>
+                  <span style={{ flex: 1 }}></span>
                   {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
                     <ClaimRewards
                       indexers={unclaimedRewards?.indexers as string[]}
@@ -134,6 +134,11 @@ export const Rewards: React.FC = () => {
                       totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
                     />
                   )}
+                </div>
+                <div className={styles.claim}>
+                  <Typography className={styles.header}>
+                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                  </Typography>
                 </div>
 
                 <Table

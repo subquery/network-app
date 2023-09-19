@@ -220,6 +220,10 @@ const IndexerProfile: FC = () => {
     loading: () => <Spinner></Spinner>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: (fetchedResult) => {
+      if (sortedIndexer.loading) {
+        return <Spinner></Spinner>;
+      }
+
       if (!sortedIndexer.data)
         return (
           <div>

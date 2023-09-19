@@ -41,7 +41,6 @@
 .header,
 .accountContainer {
   display: flex;
-  height: 15vh;
   justify-content: space-between;
   align-items: center;
 }

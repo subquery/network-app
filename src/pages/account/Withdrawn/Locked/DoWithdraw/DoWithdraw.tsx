@@ -43,6 +43,7 @@ export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled
         actions={[{ label: t('withdrawals.withdrawAll'), key: 'claim', disabled: disabled }]}
         variant={disabled ? 'disabledButton' : 'button'}
         onClick={handleClick}
+        buttonClassName={styles.withdrawButton}
         renderContent={(onSubmit, _, isLoading, error) => {
           return (
             <>
