@@ -1,10 +1,9 @@
 .rewardsContainer {
   width: 100%;
-  padding: 1rem 4rem;
 }
 
 .rewardsList {
-  margin: 2rem 0;
+  margin: 8px 0;
 }
 
 .text {
@@ -16,16 +15,8 @@
 }
 
 .header {
-  margin-bottom: 2rem;
-}
-
-.rewardsContainer {
-  width: 100%;
-  padding: 1rem 4rem;
-}
-
-.rewardsList {
-  margin-top: 2rem;
+  margin-bottom: 8px;
+  margin-top: 16px;
 }
 
 .claim {

@@ -5,3 +5,16 @@
 .unlockedAmount {
   margin: 1rem 0;
 }
+
+.withdrawButton {
+  padding: 16px 32px;
+  line-height: 16px;
+  background: var(--sq-blue600);
+  font-size: 16px;
+
+  :global {
+    .anticon-spin {
+      background: var(--sq-blue600);
+    }
+  }
+}

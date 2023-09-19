@@ -81,7 +81,7 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     const [currentEraValue, indexer, delegation] = data;
 
     if (!currentEraValue || !indexer || !delegation) {
-      throw new Error('Missing expected async data');
+      return { loading: true };
     }
 
     if (!indexer.indexer) {

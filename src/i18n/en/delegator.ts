@@ -81,6 +81,7 @@ const translation = {
     aboutToWithdraw: `You are about to withdraw {{amount}} ${TOKEN}.`,
     unstaking: 'Staking Withdrawl',
     unDelegation: 'Delegation Withdrawl',
+    info: 'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.',
   },
 
   projects: {
@@ -108,6 +109,7 @@ const translation = {
     totalUnclaimReward_other: 'You have {{count}} unclaimed rewards',
     claimed: 'Claimed',
     unclaimed: 'Unclaimed',
+    info: 'View and claim your rewards earned by participating in the SubQuery Network through delegating or staking',
   },
 
   missions: {

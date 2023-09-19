@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { EmptyList } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
@@ -194,11 +195,16 @@ export const Locked: React.FC = () => {
 
             return (
               <div className={styles.container}>
-                <div className={styles.header}>
-                  <Typography variant="h6" className={styles.title}>
-                    {headerTitle}
+                <div className="flex" style={{ alignItems: 'flex-start' }}>
+                  <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8, marginTop: 5 }} />
+                  <Typography type="secondary" style={{ maxWidth: 820 }}>
+                    {t('withdrawals.info')}
                   </Typography>
+                  <span style={{ flex: 1 }}></span>
                   <DoWithdraw unlockedAmount={sortedWithdrawalsAmount} disabled={!hasUnlockedRewards} />
+                </div>
+                <div className={styles.header}>
+                  <Typography className={styles.title}>{headerTitle}</Typography>
                 </div>
                 <Table columns={columns} dataSource={sortedData} rowKey="idx" />
               </div>

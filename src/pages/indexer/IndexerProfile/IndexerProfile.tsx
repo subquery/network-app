@@ -16,7 +16,13 @@ import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAn
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
 import { Spinner, Typography } from '@subql/components';
-import { renderAsync, useGetIndexerDelegatorsQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
+import {
+  renderAsync,
+  useGetAllDelegationsQuery,
+  useGetIndexerDelegatorsQuery,
+  useGetIndexersQuery,
+  useGetTopIndexersQuery,
+} from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { TOKEN } from '@utils/constants';
 import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
@@ -32,6 +38,12 @@ import styles from './index.module.less';
 const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
   const canDelegate = useMemo(() => connectedAccount !== account, [connectedAccount, account]);
+  const delegations = useGetAllDelegationsQuery();
+  const allIndexers = useGetIndexersQuery({
+    variables: {
+      filter: { id: { in: [account] } },
+    },
+  });
 
   return (
     <div className="flex" style={{ width: '100%' }}>
@@ -40,7 +52,11 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
       </div>
       {canDelegate && (
         <div className="flex" style={{ marginLeft: 16 }}>
-          <DoDelegate indexerAddress={account} />
+          <DoDelegate
+            indexerAddress={account}
+            delegation={delegations.data?.delegations?.nodes.find((i) => i?.id === `${connectedAccount}:${account}`)}
+            indexer={allIndexers.data?.indexers?.nodes[0]}
+          />
           <DoUndelegate indexerAddress={account} variant={'button'} />
         </div>
       )}
@@ -220,6 +236,10 @@ const IndexerProfile: FC = () => {
     loading: () => <Spinner></Spinner>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: (fetchedResult) => {
+      if (sortedIndexer.loading) {
+        return <Spinner></Spinner>;
+      }
+
       if (!sortedIndexer.data)
         return (
           <div>

@@ -60,7 +60,7 @@ export function extractPercentage(value: string): number {
   return convertStringToNumber(value.replace('%', ''));
 }
 
-export function formatNumber(num: number, precision = 2) {
+export function formatNumber(num: number | string, precision = 2) {
   const map = [
     { suffix: 'T', threshold: 1e12 },
     { suffix: 'B', threshold: 1e9 },
@@ -69,9 +69,9 @@ export function formatNumber(num: number, precision = 2) {
     { suffix: '', threshold: 1 },
   ];
 
-  const found = map.find((x) => Math.abs(num) >= x.threshold);
+  const found = map.find((x) => Math.abs(+num) >= x.threshold);
   if (found) {
-    const formatted = (num / found.threshold).toFixed(precision) + found.suffix;
+    const formatted = (+num / found.threshold).toFixed(precision) + found.suffix;
     return formatted;
   }
 

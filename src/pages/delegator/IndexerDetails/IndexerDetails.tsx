@@ -22,7 +22,7 @@ import styles from './IndexerDetails.module.css';
 
 const { DELEGATOR, INDEXERS } = ROUTES;
 
-const NoDelegator: React.FC = () => {
+export const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
   return (
     <EmptyList title={t('myDelegators.noDelegatorsTitle')} description={t('myDelegators.noDelegatorsDescription')} />

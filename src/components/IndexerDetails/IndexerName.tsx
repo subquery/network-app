@@ -89,15 +89,13 @@ export const IndexerName: React.FC<Props> = ({
             {sortedName}
           </Typography>
         )}
-        {(size !== 'small' || !sortedName) && (
-          <div>
-            <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
-              <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
-                {fullAddress ? address : truncateAddress(address)}
-              </Typography>
-            </Copy>
-          </div>
-        )}
+        <div>
+          <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
+            <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
+              {fullAddress ? address : truncateAddress(address)}
+            </Typography>
+          </Copy>
+        </div>
       </div>
     </div>
   );

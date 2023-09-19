@@ -178,21 +178,21 @@ export const StakeAndDelegationLineChart = (props: {
           chartData={renderStakeAndDelegation}
           onTriggerTooltip={(index, curDate) => {
             return `<div class="col-flex" style="width: 280px">
-          <span>${curDate.format('MMM D, YYYY')}</span>
+          <span style="font-size:12px;">${curDate.format('MMM D, YYYY')}</span>
           <div class="flex-between" style="margin-top: 8px;">
-            <span>Total</span>
-            <span>${formatNumber(rawFetchedData.total[index])} ${TOKEN}</span>
+            <span style="font-size:12px;">Total</span>
+            <span style="font-size:12px;">${formatNumber(rawFetchedData.total[index])} ${TOKEN}</span>
           </div>
           <div class="flex-between" style="margin: 8px 0;">
-            <span>${dataDimensionsName[0]}</span>
-            <span>${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
+            <span style="font-size:12px;">${dataDimensionsName[0]}</span>
+            <span style="font-size:12px;">${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
               rawFetchedData.indexer[index],
               rawFetchedData.total[index],
             )})</span>
           </div>
           <div class="flex-between">
-          <span>${dataDimensionsName[1]}</span>
-          <span>${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
+          <span style="font-size:12px;">${dataDimensionsName[1]}</span>
+          <span style="font-size:12px;">${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
               rawFetchedData.delegation[index],
               rawFetchedData.total[index],
             )})</span>
