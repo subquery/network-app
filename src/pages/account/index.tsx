@@ -96,7 +96,6 @@ export const MyAccount: React.FC = () => {
       }
     });
   }, [window.location.pathname]);
-  console.warn(activeKey);
   return renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
     loading: () => <Spinner />,
     error: (e) => {
