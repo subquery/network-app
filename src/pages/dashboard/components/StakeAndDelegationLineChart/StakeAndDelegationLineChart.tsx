@@ -7,11 +7,12 @@ import { useEra } from '@hooks';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
 import {
-  renderAsync,
+  useGetEraQueryLazyQuery,
   useGetIndexerStakesByErasLazyQuery,
   useGetIndexerStakesByIndexerLazyQuery,
 } from '@subql/react-hooks';
-import { DeepCloneAndChangeReadonlyToMutable, parseError, TOKEN, toPercentage } from '@utils';
+import { DeepCloneAndChangeReadonlyToMutable, parseError, renderAsyncArray, TOKEN, toPercentage } from '@utils';
+import { mergeAsync } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
@@ -23,8 +24,13 @@ export const StakeAndDelegationLineChart = (props: {
   account?: string;
   title?: string;
   dataDimensionsName?: string[];
+  showDelegatedToOthers?: boolean;
 }) => {
-  const { title = 'Network Staking and Delegation', dataDimensionsName = ['Staking', 'Delegation'] } = props;
+  const {
+    title = 'Network Staking and Delegation',
+    dataDimensionsName = ['Staking', 'Delegation'],
+    showDelegatedToOthers = false,
+  } = props;
 
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
@@ -32,6 +38,8 @@ export const StakeAndDelegationLineChart = (props: {
   const [fetchStakeAndDelegation, stakeAndDelegation] = useGetIndexerStakesByErasLazyQuery();
 
   const [fetchStakeAndDelegationByIndexer, stakeAndDelegationByIndexer] = useGetIndexerStakesByIndexerLazyQuery();
+
+  const [fetchDelegateToOthersQuery, delegateToOthers] = useGetEraQueryLazyQuery();
 
   const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
   const [rawFetchedData, setRawFetchedData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
@@ -57,6 +65,17 @@ export const StakeAndDelegationLineChart = (props: {
     };
   }, [currentEra, filter.date]);
 
+  const fetchDelegateToOthers = async () => {
+    const res = await fetchDelegateToOthersQuery({
+      variables: {
+        account: props.account || '',
+      },
+      fetchPolicy: 'no-cache',
+    });
+
+    return res?.data?.eraStakes?.groupedAggregates || [];
+  };
+
   const fetchStakeAndDelegationByEra = async (filterVal: FilterType = filter) => {
     if (!currentEra.data) return;
     if (!filterVal) return;
@@ -79,11 +98,17 @@ export const StakeAndDelegationLineChart = (props: {
     });
 
     if (!res?.data?.indexerStakes?.groupedAggregates) return;
+    const delegatorToOthersData = showDelegatedToOthers ? await fetchDelegateToOthers() : [];
 
     const padLostEraData = (
       groupedData: {
         keys: string[] | null;
-        sum: { delegatorStake: string | bigint; indexerStake: string | bigint; totalStake: string | bigint } | null;
+        sum: {
+          delegatorStake?: string | bigint;
+          indexerStake?: string | bigint;
+          totalStake?: string | bigint;
+          stake?: string | bigint;
+        } | null;
         fixme?: true;
       }[],
     ) => {
@@ -94,13 +119,15 @@ export const StakeAndDelegationLineChart = (props: {
       }
 
       let currentSums: {
-        delegatorStake: string | bigint;
-        indexerStake: string | bigint;
-        totalStake: string | bigint;
+        delegatorStake?: string | bigint;
+        indexerStake?: string | bigint;
+        totalStake?: string | bigint;
+        stake?: string | bigint;
       } = {
         delegatorStake: '0',
         indexerStake: '0',
         totalStake: '0',
+        stake: '0',
       };
 
       includesErasHex.forEach((item) => {
@@ -135,6 +162,7 @@ export const StakeAndDelegationLineChart = (props: {
     const paddedData = padLostEraData(
       DeepCloneAndChangeReadonlyToMutable(res?.data?.indexerStakes?.groupedAggregates) || [],
     );
+    const paddedDelegatorToOthersData = padLostEraData(DeepCloneAndChangeReadonlyToMutable(delegatorToOthersData));
 
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(
@@ -147,11 +175,22 @@ export const StakeAndDelegationLineChart = (props: {
       );
 
     const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.indexerStake || '0' } })));
-    const delegationStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
+    const delegationStakes = showDelegatedToOthers
+      ? curry(
+          paddedDelegatorToOthersData.map((i) => ({
+            ...i,
+            sum: { amount: i?.sum?.stake || '0' },
+          })),
+        )
+      : curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
+
+    const total = showDelegatedToOthers
+      ? indexerStakes.map((cur, index) => cur + delegationStakes[index])
+      : curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } })));
     setRawFetchedData({
       indexer: indexerStakes,
       delegation: delegationStakes,
-      total: curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } }))),
+      total,
     });
 
     setRenderStakeAndDelegation([indexerStakes, delegationStakes]);
@@ -161,23 +200,32 @@ export const StakeAndDelegationLineChart = (props: {
     fetchStakeAndDelegationByEra();
   }, [currentEra.data?.index, props.account]);
 
-  return renderAsync(props.account ? stakeAndDelegationByIndexer : stakeAndDelegation, {
-    loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
-    error: (e) => <Typography>{parseError(e)}</Typography>,
-    data: () => {
-      return (
-        <LineCharts
-          value={filter}
-          onChange={(val) => {
-            setFilter(val);
-            fetchStakeAndDelegationByEra(val);
-          }}
-          xAxisScales={stakeLineXScales.val}
-          title={title}
-          dataDimensionsName={dataDimensionsName}
-          chartData={renderStakeAndDelegation}
-          onTriggerTooltip={(index, curDate) => {
-            return `<div class="col-flex" style="width: 280px">
+  return renderAsyncArray(
+    mergeAsync(
+      props.account ? stakeAndDelegationByIndexer : stakeAndDelegation,
+      // it doesn't matter, don't use the data.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      showDelegatedToOthers ? delegateToOthers : { loading: false, data: 1 },
+    ),
+    {
+      loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
+      error: (e) => <Typography>{parseError(e)}</Typography>,
+      empty: () => <Typography></Typography>,
+      data: () => {
+        return (
+          <LineCharts
+            value={filter}
+            onChange={(val) => {
+              setFilter(val);
+              fetchStakeAndDelegationByEra(val);
+            }}
+            xAxisScales={stakeLineXScales.val}
+            title={title}
+            dataDimensionsName={dataDimensionsName}
+            chartData={renderStakeAndDelegation}
+            onTriggerTooltip={(index, curDate) => {
+              return `<div class="col-flex" style="width: 280px">
           <span style="font-size:12px;">${curDate.format('MMM D, YYYY')}</span>
           <div class="flex-between" style="margin-top: 8px;">
             <span style="font-size:12px;">Total</span>
@@ -186,21 +234,22 @@ export const StakeAndDelegationLineChart = (props: {
           <div class="flex-between" style="margin: 8px 0;">
             <span style="font-size:12px;">${dataDimensionsName[0]}</span>
             <span style="font-size:12px;">${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
-              rawFetchedData.indexer[index],
-              rawFetchedData.total[index],
-            )})</span>
+                rawFetchedData.indexer[index],
+                rawFetchedData.total[index],
+              )})</span>
           </div>
           <div class="flex-between">
           <span style="font-size:12px;">${dataDimensionsName[1]}</span>
           <span style="font-size:12px;">${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
-              rawFetchedData.delegation[index],
-              rawFetchedData.total[index],
-            )})</span>
+                rawFetchedData.delegation[index],
+                rawFetchedData.total[index],
+              )})</span>
         </div>
         </div>`;
-          }}
-        ></LineCharts>
-      );
+            }}
+          ></LineCharts>
+        );
+      },
     },
-  });
+  );
 };
