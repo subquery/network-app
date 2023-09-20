@@ -91,7 +91,11 @@ export const IndexerName: React.FC<Props> = ({
         )}
         <div>
           <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
-            <Typography variant="small" className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}>
+            <Typography
+              variant="small"
+              className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
+              style={{ cursor: 'copy' }}
+            >
               {fullAddress ? address : truncateAddress(address)}
             </Typography>
           </Copy>

@@ -12,7 +12,7 @@ import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/R
 import { Footer, Spinner, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/react-hooks';
-import { formatEther, formatNumber, formatSQT, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
+import { formatEther, formatNumber, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
 import { Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
 import { BigNumber } from 'ethers';
@@ -80,7 +80,7 @@ export const MyAccount: React.FC = () => {
     variables: { delegator: account ?? '', status: WithdrawalStatus.CLAIMED, offset: 0 },
   });
 
-  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('Rewards');
+  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('SD');
 
   useEffect(() => {
     Object.keys(activeKeyLinks).forEach((key) => {
@@ -104,7 +104,6 @@ export const MyAccount: React.FC = () => {
     },
     data: (data) => {
       const [d, i, r, w] = data;
-      // const totalCount = idexerDelagation?.indexer?.delegations?.totalCount || 0;
       const totalDelegating = formatEther(d, 4);
       const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
       const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
@@ -121,7 +120,7 @@ export const MyAccount: React.FC = () => {
                 title="Your Total Rewards"
                 tooltip={t('account.tooltip.rewards')}
                 titleExtra={BalanceLayout({
-                  mainBalance: formatSQT(totalRewards),
+                  mainBalance: +totalRewards,
                 })}
               >
                 <div className="col-flex">
@@ -164,7 +163,7 @@ export const MyAccount: React.FC = () => {
             <Tabs
               className={styles.tab}
               items={[
-                // { key: 'SD', label: 'Staking and Delegation' },
+                { key: 'SD', label: 'Staking and Delegation' },
                 { key: 'Rewards', label: 'Rewards' },
                 { key: 'Withdrawls', label: 'Withdrawls' },
               ]}

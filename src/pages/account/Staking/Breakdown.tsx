@@ -41,7 +41,7 @@ const Breakdown: FC<IProps> = (props) => {
               },
               itemStyle: {
                 color: (params: { dataIndex: number }) => {
-                  return params.dataIndex === 0 ? '#C7DBF5' : '#7BACE7';
+                  return params.dataIndex === 0 ? '#7BACE7' : '#C7DBF5';
                 },
               },
             },

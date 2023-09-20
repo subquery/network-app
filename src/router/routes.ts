@@ -164,7 +164,7 @@ export const routers: BasicRouteType[] = [
     path: '/profile',
     component: React.lazy(() => import('../pages/account')),
     children: [
-      { path: '', component: React.lazy(() => import('../pages/account/Rewards/Rewards')) },
+      { path: '', component: React.lazy(() => import('../pages/account/Staking')) },
       { path: 'staking', component: React.lazy(() => import('../pages/account/Staking')) },
       { path: 'rewards', component: React.lazy(() => import('../pages/account/Rewards/Rewards')) },
       { path: 'withdrawn', component: React.lazy(() => import('../pages/account/Withdrawn/Withdrawn')) },
