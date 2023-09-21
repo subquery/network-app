@@ -30,13 +30,18 @@ export default defineConfig({
     minify: true,
     sourcemap: false,
     rollupOptions: {
-      maxParallelFileOps: 2,
       cache: false,
       output: {
         sourcemap: false,
         manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            return 'vendor';
+          if (!id.includes('node_modules') && id.includes('src/pages')) {
+            return 'pages';
+          }
+          if (!id.includes('node_modules') && id.includes('src/components')) {
+            return 'components';
+          }
+          if (!id.includes('node_modules') && /src\/.+/.test(id)) {
+            return 'others';
           }
         },
       },

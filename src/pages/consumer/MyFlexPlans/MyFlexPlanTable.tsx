@@ -61,7 +61,6 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         render: (indexer) => (
           <ConnectedIndexer
             id={indexer}
-            size="small"
             onClick={() => {
               navigate(`/indexer/${indexer}`);
             }}

@@ -9,11 +9,11 @@ import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Footer, Spinner, Typography } from '@subql/components';
+import { Footer, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/react-hooks';
 import { formatEther, formatNumber, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
-import { Tabs } from 'antd';
+import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
@@ -55,6 +55,7 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
         onClick={() => {
           navigate(link);
         }}
+        style={{ fontSize: 12, color: 'var(--sq-blue600)' }}
       >
         {linkName}
       </Link>
@@ -96,28 +97,37 @@ export const MyAccount: React.FC = () => {
       }
     });
   }, [window.location.pathname]);
-  return renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
-    loading: () => <Spinner />,
-    error: (e) => {
-      console.error('e', e);
-      return <Typography>{`Failed to load account details: ${e}`}</Typography>;
-    },
-    data: (data) => {
-      const [d, i, r, w] = data;
-      const totalDelegating = formatEther(d, 4);
-      const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
-      const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
-      const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
+  return (
+    <div
+      className="col-flex"
+      style={{ maxWidth: 1280, margin: '0 auto', padding: 24, width: '100%', height: 'calc(100vh - 90px)' }}
+    >
+      <AccountHeader />
 
-      return (
-        <div className="col-flex" style={{ width: '100%' }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto', padding: 24, width: '100%' }}>
-            <AccountHeader />
+      <div className="flex">
+        {renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
+          loading: () => (
+            <Skeleton style={{ width: 304, marginRight: 24, flexShrink: 0 }} paragraph={{ rows: 9 }}></Skeleton>
+          ),
+          error: (e) => {
+            console.error('e', e);
+            return <Typography>{`Failed to load account details: ${e}`}</Typography>;
+          },
+          data: (data) => {
+            const [d, i, r, w] = data;
+            const totalDelegating = formatEther(d, 4);
+            const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
+            const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
+            const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
-            <div className="flex">
+            return (
               <NewCard
                 style={{ marginRight: 24, minHeight: 426, minWidth: 304 }}
-                title="Your Total Rewards"
+                title={
+                  <Typography variant="large" weight={600}>
+                    Your Total Rewards
+                  </Typography>
+                }
                 tooltip={t('account.tooltip.rewards')}
                 titleExtra={BalanceLayout({
                   mainBalance: +totalRewards,
@@ -146,40 +156,41 @@ export const MyAccount: React.FC = () => {
                     title="Total withdrawls"
                     amount={formatNumber(totalWithdrawn)}
                     linkName="View Withdrawls"
-                    link="/profile/withdrawls"
+                    link="/profile/withdrawn"
                   ></FormatCardLine>
                 </div>
               </NewCard>
-              {account && (
-                <div style={{ width: '100%' }}>
-                  <RewardsLineChart
-                    account={account}
-                    title="Rewards"
-                    dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
-                  ></RewardsLineChart>
-                </div>
-              )}
-            </div>
-            <Tabs
-              className={styles.tab}
-              items={[
-                { key: 'SD', label: 'Staking and Delegation' },
-                { key: 'Rewards', label: 'Rewards' },
-                { key: 'Withdrawls', label: 'Withdrawls' },
-              ]}
-              activeKey={activeKey}
-              onTabClick={(key) => {
-                setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawls');
-                navigate(activeKeyLinks[key]);
-              }}
-            ></Tabs>
-            <Outlet></Outlet>
-            <Footer simple></Footer>
+            );
+          },
+        })}
+        {account && (
+          <div style={{ width: '100%' }}>
+            <RewardsLineChart
+              account={account}
+              title="Rewards"
+              dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+            ></RewardsLineChart>
           </div>
-        </div>
-      );
-    },
-  });
+        )}
+      </div>
+      <Tabs
+        className={styles.tab}
+        items={[
+          { key: 'SD', label: 'Staking and Delegation' },
+          { key: 'Rewards', label: 'Rewards' },
+          { key: 'Withdrawls', label: 'Withdrawls' },
+        ]}
+        activeKey={activeKey}
+        onTabClick={(key) => {
+          setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawls');
+          navigate(activeKeyLinks[key]);
+        }}
+      ></Tabs>
+      <Outlet></Outlet>
+      <span style={{ flex: 1 }}></span>
+      <Footer simple></Footer>
+    </div>
+  );
 };
 
 export default MyAccount;

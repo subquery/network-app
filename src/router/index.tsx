@@ -9,7 +9,21 @@ import { BasicRouteType, routers } from './routes';
 
 const LazyComponent = (Component: LazyExoticComponent<FC>) => {
   return (
-    <Suspense fallback={<Spinner></Spinner>}>
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: '100vh',
+            minWidth: '100vw',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Spinner></Spinner>
+        </div>
+      }
+    >
       <Component></Component>
     </Suspense>
   );

@@ -67,7 +67,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'Consumer',
       title: <TableTitle title={t('serviceAgreements.headers.consumer')} />,
       width: 150,
-      render: (consumer: string) => <ConnectedIndexer id={consumer} size="small"></ConnectedIndexer>,
+      render: (consumer: string) => <ConnectedIndexer id={consumer}></ConnectedIndexer>,
     },
     {
       dataIndex: 'indexerAddress',
@@ -76,7 +76,6 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       width: 200,
       render: (indexer: string) => (
         <ConnectedIndexer
-          size="small"
           id={indexer}
           onClick={() => {
             navigate(`/indexer/${indexer}`);
@@ -157,7 +156,6 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
     render: (indexer: ServiceAgreementFieldsFragment['indexerAddress']) => (
       <ConnectedIndexer
         id={indexer}
-        size="small"
         onClick={() => {
           navigate(`/indexer/${indexer}`);
         }}

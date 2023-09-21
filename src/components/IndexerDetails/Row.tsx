@@ -145,7 +145,6 @@ const ConnectedRow: React.FC<{
           name={indexerMetadata?.name}
           image={indexerMetadata?.image}
           address={indexer.indexerId}
-          size="small"
           onClick={() => {
             navigate(`/indexer/${indexer.indexerId}`);
           }}

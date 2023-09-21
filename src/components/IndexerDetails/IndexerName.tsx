@@ -14,7 +14,7 @@ import IPFSImage from '../IPFSImage';
 import styles from './IndexerDetails.module.less';
 
 type Props = {
-  size?: 'normal' | 'small' | 'large';
+  size?: 'normal' | 'large';
   name?: string;
   image?: string;
   address: string;
@@ -42,7 +42,7 @@ export const IndexerName: React.FC<Props> = ({
   const [ensName, setEnsName] = useState<string>();
 
   const sortedName = useMemo(() => {
-    return ensName || name;
+    return ensName || name || `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
   }, [name, ensName]);
 
   const fetchEns = async () => {
@@ -92,7 +92,7 @@ export const IndexerName: React.FC<Props> = ({
         <div>
           <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
             <Typography
-              variant="small"
+              variant={size === 'large' ? 'medium' : 'small'}
               className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
               style={{ cursor: 'copy' }}
             >
@@ -107,7 +107,7 @@ export const IndexerName: React.FC<Props> = ({
 
 export const ConnectedIndexer: React.FC<{
   id: string;
-  size?: 'large' | 'small' | 'normal';
+  size?: 'large' | 'normal';
   account?: string | null;
   onAddressClick?: (id: string) => void;
   onClick?: (address: string) => void;

@@ -1,13 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { FC, useMemo, useRef } from 'react';
+import { FC, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '@containers';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
-import { NoDelegator } from '@pages/delegator/IndexerDetails/IndexerDetails';
-import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
 import { useGetEraQueryQuery, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
@@ -15,7 +13,6 @@ import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAs
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
-import { t } from 'i18next';
 
 import Breakdown from './Breakdown';
 import styles from './index.module.less';
@@ -31,11 +28,6 @@ const Staking: FC = () => {
       account: account || '',
     },
   });
-  const delegatorsRef = useRef<HTMLDivElement>(null);
-
-  const totalCount = useMemo(() => {
-    return indexerDelegators.data?.indexer?.delegations.totalCount || 0;
-  }, [indexerDelegators]);
 
   const totalStaked = useMemo(() => {
     return sortedIndexer.data?.totalStake;
@@ -103,7 +95,7 @@ const Staking: FC = () => {
                     </Typography>
                     <Link
                       onClick={() => {
-                        delegatorsRef.current?.scrollIntoView();
+                        navigate('/indexer/my-delegators');
                       }}
                       style={{ fontSize: 12, marginLeft: 24 }}
                     >
@@ -152,14 +144,6 @@ const Staking: FC = () => {
               showDelegatedToOthers
             ></StakeAndDelegationLineChart>
           )}
-
-          <div className={styles.myDelegators} ref={delegatorsRef}>
-            <div className={styles.delegatorHeader}>
-              <Typography variant="h5">{t('indexer.myDelegators')}</Typography>
-            </div>
-            {totalCount <= 0 && <NoDelegator />}
-            {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
-          </div>
         </div>
       );
     },

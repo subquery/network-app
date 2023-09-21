@@ -40,22 +40,21 @@ const links = ApolloLink.from([
     // If community link goes error, apollo-links will try until all failed.
     // So Just catch the error caused by fallback service.
     try {
-      const {
-        response: { url },
-      } = operation.getContext();
+      const res = operation.getContext();
+      const url = res?.response?.url || res.url;
 
       if (url && url.match(/.+\/(query)|(payg)\/[0-9a-zA-Z]{46}/)) return;
-    } finally {
+      captureException(`Query fetch`, {
+        extra: {
+          graphqlError: graphQLErrors?.reduce((a, b) => ({ message: a.message + ' ' + b.message }), { message: '' })
+            .message,
+          operation: operation.query.loc?.source.body,
+          url: url,
+        },
+      });
+    } catch {
       // don't care there have errors.
     }
-
-    captureException(`Query fetch`, {
-      extra: {
-        graphqlError: graphQLErrors?.reduce((a, b) => ({ message: a.message + ' ' + b.message }), { message: '' })
-          .message,
-        operation: operation.query.loc?.source.body,
-      },
-    });
   }),
   ApolloLink.split(
     (operation) => operation.getContext().clientName === TOP_100_INDEXERS,

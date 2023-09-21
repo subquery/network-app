@@ -36,7 +36,6 @@ export const FlexPlans: React.FC = () => {
             </div>
             <ConnectedIndexer
               id={indexer}
-              size="small"
               onClick={() => {
                 navigate(`/indexer/${indexer}`);
               }}
