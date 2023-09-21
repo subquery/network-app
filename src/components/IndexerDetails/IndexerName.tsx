@@ -90,7 +90,13 @@ export const IndexerName: React.FC<Props> = ({
           </Typography>
         )}
         <div>
-          <Copy position={'flex-start'} value={address} className={styles.copy} iconClassName={styles.copyIcon}>
+          <Copy
+            position={'flex-start'}
+            value={address}
+            className={styles.copy}
+            iconClassName={styles.copyIcon}
+            iconSize={6}
+          >
             <Typography
               variant={size === 'large' ? 'medium' : 'small'}
               className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
