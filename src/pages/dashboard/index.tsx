@@ -4,6 +4,7 @@
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
+import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
 import { useGetDashboardQuery } from '@subql/react-hooks';
 import { parseError, renderAsync, TOKEN } from '@utils';
@@ -200,7 +201,7 @@ const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake
 
 const Dashboard: FC = () => {
   const dashboardData = useGetDashboardQuery();
-
+  const { currentEra } = useEra();
   return (
     <div className={styles.dashboard}>
       <Typography variant="h4" weight={600}>
@@ -211,6 +212,17 @@ const Dashboard: FC = () => {
         loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
         error: (e) => <Typography>{parseError(e)}</Typography>,
         data: (fetchedData) => {
+          const delegatorsTotalCount =
+            +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -
+            (fetchedData.indexers?.totalCount || 0);
+
+          const currentEraIdx = currentEra.data?.index;
+
+          const totalStake =
+            currentEraIdx === fetchedData.indexerStakeSummary?.eraIdx
+              ? fetchedData.indexerStakeSummary?.totalStake
+              : fetchedData.indexerStakeSummary?.nextTotalStake;
+
           return (
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
@@ -219,8 +231,9 @@ const Dashboard: FC = () => {
                   indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
                   delegationRewards={fetchedData.rewardsToDelegation?.aggregates?.sum?.amount || '0'}
                 ></TotalRewardsCard>
+
                 <StakeCard
-                  totalStake={fetchedData?.indexerStakeSummary?.totalStake || '0'}
+                  totalStake={totalStake || '0'}
                   nextTotalStake={fetchedData?.indexerStakeSummary?.nextTotalStake || '0'}
                   totalCount={fetchedData?.indexers?.totalCount || 0}
                 ></StakeCard>
@@ -228,12 +241,12 @@ const Dashboard: FC = () => {
                 <DelegationsCard
                   delegatorStake={fetchedData?.indexerStakeSummary?.delegatorStake || '0'}
                   nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
-                  totalCount={fetchedData?.delegations?.totalCount || 0}
+                  totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
                 ></DelegationsCard>
 
                 <CirculatingCard
                   circulatingSupply={fetchedData?.sqtokens?.aggregates?.sum?.circulatingSupply || '0'}
-                  totalStake={fetchedData?.indexerStakeSummary?.totalStake || '0'}
+                  totalStake={totalStake || '0'}
                 ></CirculatingCard>
               </div>
               <div className={styles.dashboardMainBottom}>
