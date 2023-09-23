@@ -20,7 +20,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
-import { convertStringToNumber, mergeAsync, parseError, renderAsync } from '@utils';
+import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -90,7 +90,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
             rewardClaimStatus.refetch();
             refetch();
           }}
-          style={{ color: 'var(--sq-blue600)' }}
+          style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
         >
           retry
         </span>

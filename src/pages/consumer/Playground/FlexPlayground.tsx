@@ -85,7 +85,6 @@ export const FlexPlayground: React.FC = () => {
       render: (indexer: ConsumerFlexPlan['indexer']) => (
         <ConnectedIndexer
           id={indexer}
-          size="small"
           onClick={() => {
             navigate(`/indexer/${indexer}`);
           }}

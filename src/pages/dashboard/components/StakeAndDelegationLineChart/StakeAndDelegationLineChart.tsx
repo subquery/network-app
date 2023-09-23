@@ -42,9 +42,9 @@ export const StakeAndDelegationLineChart = (props: {
   const [fetchDelegateToOthersQuery, delegateToOthers] = useGetEraQueryLazyQuery();
 
   const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
-  const [rawFetchedData, setRawFetchedData] = useState<{ indexer: number[]; delegation: number[]; total: number[] }>({
-    indexer: [],
-    delegation: [],
+  const [rawFetchedData, setRawFetchedData] = useState<{ one: number[]; two: number[]; total: number[] }>({
+    one: [],
+    two: [],
     total: [],
   });
 
@@ -174,26 +174,29 @@ export const StakeAndDelegationLineChart = (props: {
         },
       );
 
+    const delegateToMe = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
+    const IDelegateToOthers = curry(
+      paddedDelegatorToOthersData.map((i) => ({
+        ...i,
+        sum: { amount: i?.sum?.stake || '0' },
+      })),
+    );
     const indexerStakes = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.indexerStake || '0' } })));
-    const delegationStakes = showDelegatedToOthers
-      ? curry(
-          paddedDelegatorToOthersData.map((i) => ({
-            ...i,
-            sum: { amount: i?.sum?.stake || '0' },
-          })),
-        )
-      : curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
+
+    const one = showDelegatedToOthers ? delegateToMe : indexerStakes;
+    const two = showDelegatedToOthers ? IDelegateToOthers : delegateToMe;
 
     const total = showDelegatedToOthers
-      ? indexerStakes.map((cur, index) => cur + delegationStakes[index])
+      ? one.map((cur, index) => cur + two[index])
       : curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } })));
+
     setRawFetchedData({
-      indexer: indexerStakes,
-      delegation: delegationStakes,
+      one,
+      two,
       total,
     });
 
-    setRenderStakeAndDelegation([indexerStakes, delegationStakes]);
+    setRenderStakeAndDelegation([one, two]);
   };
 
   useEffect(() => {
@@ -233,15 +236,15 @@ export const StakeAndDelegationLineChart = (props: {
           </div>
           <div class="flex-between" style="margin: 8px 0;">
             <span style="font-size:12px;">${dataDimensionsName[0]}</span>
-            <span style="font-size:12px;">${formatNumber(rawFetchedData.indexer[index])} ${TOKEN} (${toPercentage(
-                rawFetchedData.indexer[index],
+            <span style="font-size:12px;">${formatNumber(rawFetchedData.one[index])} ${TOKEN} (${toPercentage(
+                rawFetchedData.one[index],
                 rawFetchedData.total[index],
               )})</span>
           </div>
           <div class="flex-between">
           <span style="font-size:12px;">${dataDimensionsName[1]}</span>
-          <span style="font-size:12px;">${formatNumber(rawFetchedData.delegation[index])} ${TOKEN} (${toPercentage(
-                rawFetchedData.delegation[index],
+          <span style="font-size:12px;">${formatNumber(rawFetchedData.two[index])} ${TOKEN} (${toPercentage(
+                rawFetchedData.two[index],
                 rawFetchedData.total[index],
               )})</span>
         </div>

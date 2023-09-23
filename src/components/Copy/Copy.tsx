@@ -38,7 +38,7 @@ const Copy: React.FC<Props> = ({ value, className, iconClassName, children, icon
   };
 
   return (
-    <div className={position} onClick={(e) => handleClick(e)}>
+    <div className={position} onClick={(e) => handleClick(e)} style={{ alignItems: 'center' }}>
       {children}
       <div className={clsx(styles.container, className)}>
         <div className={clsx(styles.copy, iconClassName)}>
