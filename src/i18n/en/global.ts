@@ -45,6 +45,9 @@ const translation = {
     cancelUnstaking: 'Cancel Staking Withdrawl',
     cancelUnstakingTips:
       'If you cancel unstaking process, the following amount will be returned to staking and you will continue to earn staking rewards.',
+    cancelCommission: 'Cancel Commission Withdrawl',
+    cancelCommissionTips:
+      'If you cancel commission processs, the following amount will be returned to staking and you will continue to earn staking rewards.',
   },
   status: {
     success: 'Success!',
