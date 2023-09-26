@@ -102,7 +102,9 @@ const translation = {
       // tab3: 'Playground',
     },
     home: {
-      header: 'SubQuery projects',
+      header: 'SubQuery Explorer',
+      headerDesc:
+        'Explore some of the SubQuery Projects hosted and run in a decentralised, trustless, and verifiable way by indexers around the world',
     },
     flexPlans: {
       indexer: 'indexer',

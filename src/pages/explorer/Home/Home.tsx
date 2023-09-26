@@ -4,9 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { Typography } from '@subql/components';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
 import { useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { useInfiniteScroll } from 'ahooks';
+import { Input } from 'antd';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
@@ -36,15 +38,14 @@ const ProjectItem: React.FC<{ project: Project; onClick?: () => void }> = ({ pro
 };
 
 // TODO move to components
-export const Header: React.FC<{ renderRightItem?: () => React.ReactNode }> = ({ renderRightItem }) => {
+export const Header: React.FC = () => {
   const { t } = useTranslation();
   return (
     <div className={styles.header}>
-      <div>
-        <p className={styles.headerTitle}>{t('explorer.home.header')}</p>
-        <div className={styles.line} />
-      </div>
-      <div>{renderRightItem?.()}</div>
+      <Typography variant="h3">{t('explorer.home.header')}</Typography>
+      <Typography style={{ width: 439, textAlign: 'center', marginTop: 16 }} type="secondary">
+        {t('explorer.home.headerDesc')}
+      </Typography>
     </div>
   );
 };
@@ -81,9 +82,13 @@ const Home: React.FC = () => {
   });
 
   return (
-    <div className="content-width">
+    <div className={styles.explorer}>
       <Header />
       {error && <span>{`We have an error: ${error.message}`}</span>}
+
+      {/* <div>
+        <Input></Input>
+      </div> */}
       <div className={styles.list}>
         {projects?.length
           ? projects.map((project) => (
