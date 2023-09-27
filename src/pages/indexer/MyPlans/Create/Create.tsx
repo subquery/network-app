@@ -22,6 +22,7 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
+  STABLE_TOKEN_DECIMAL,
   TOKEN,
 } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
@@ -29,6 +30,7 @@ import { Radio, Select, Table, TableProps } from 'antd';
 import assert from 'assert';
 import clsx from 'clsx';
 import { constants } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
 import i18next from 'i18next';
 import * as yup from 'yup';
@@ -324,9 +326,15 @@ export const Create: React.FC = () => {
     if (!templates || templates.error) {
       throw templates.error;
     }
+    const selectedTemplateInfo = templates.data?.planTemplates?.nodes.filter(notEmpty).find((i) => i.id === templateId);
+
+    const sortedAmount =
+      selectedTemplateInfo?.priceToken === contracts.sqToken.address
+        ? parseEther(amount)
+        : parseUnits(amount, STABLE_TOKEN_DECIMAL);
 
     return contracts.planManager.createPlan(
-      parseEther(amount),
+      sortedAmount,
       templateId,
       deploymentId ? cidToBytes32(deploymentId) : constants.HashZero,
     );

@@ -74,11 +74,11 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
     },
     {
       label: t('plans.headers.price'),
-      value: `${transPrice(plan.planTemplate?.priceToken, formatSQT(plan.price)).sqtPrice} ${TOKEN}`,
+      value: `${transPrice(plan.planTemplate?.priceToken, plan.price).sqtPrice} ${TOKEN}`,
     },
     {
       label: t('plans.headers.toUSDC'),
-      value: `${transPrice(plan.planTemplate?.priceToken, formatSQT(plan.price)).usdcPrice} ${STABLE_TOKEN}`,
+      value: `${transPrice(plan.planTemplate?.priceToken, plan.price).usdcPrice} ${STABLE_TOKEN}`,
     },
     {
       label: t('plans.headers.period'),
@@ -185,7 +185,7 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
       title: t('plans.headers.price'),
       align: 'center',
       render: (value: PlanTemplate, record) => (
-        <TableText content={`${transPrice(value.priceToken, formatSQT(record.price)).sqtPrice} ${TOKEN}`} />
+        <TableText content={`${transPrice(value.priceToken, record.price).sqtPrice} ${TOKEN}`} />
       ),
     },
     {
@@ -193,7 +193,7 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
       key: 'toUSDC',
       title: t('plans.headers.toUSDC'),
       render: (value: PlanTemplate, record) => (
-        <TableText content={`${transPrice(value.priceToken, formatSQT(record.price)).usdcPrice} ${STABLE_TOKEN}`} />
+        <TableText content={`${transPrice(value.priceToken, record.price).usdcPrice} ${STABLE_TOKEN}`} />
       ),
     },
     {

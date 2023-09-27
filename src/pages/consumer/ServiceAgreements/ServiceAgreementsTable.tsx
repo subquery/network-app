@@ -16,7 +16,7 @@ import { FixedType } from 'rc-table/lib/interface';
 import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
-import { formatEther, formatSQT, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { formatSQT, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
 
@@ -118,7 +118,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'price',
       width: 100,
       render: (price: ServiceAgreementFieldsFragment['lockedAmount'], record) => (
-        <TableText content={`${transPrice(record.planTemplate?.priceToken, formatSQT(price)).sqtPrice} ${TOKEN}`} />
+        <TableText content={`${transPrice(record.planTemplate?.priceToken, price).sqtPrice} ${TOKEN}`} />
       ),
     },
   ];

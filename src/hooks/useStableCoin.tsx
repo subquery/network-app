@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo, useState } from 'react';
-import { STABLE_TOKEN, STABLE_TOKEN_ADDRESS, STABLE_TOKEN_DECIMAL, TOKEN } from '@utils';
+import { formatSQT, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, STABLE_TOKEN_DECIMAL, TOKEN } from '@utils';
 import { useInterval } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -42,26 +42,30 @@ export const useStableCoin = () => {
   };
 
   const transPrice = (fromAddress: string | undefined, price: string | number | bigint) => {
-    const resultCalc = BigNumber(price.toString()).multipliedBy(
+    const sortedPrice =
+      fromAddress === contracts?.sqToken.address
+        ? formatSQT(price.toString())
+        : formatUnits(price, STABLE_TOKEN_DECIMAL);
+
+    const resultCalc = BigNumber(sortedPrice).multipliedBy(
       fromAddress === contracts?.sqToken.address ? rates.sqtToUsdc : rates.usdcToSqt,
     );
     return {
-      usdcPrice: (fromAddress === contracts?.sqToken.address ? resultCalc.toFixed() : price).toString(),
-      sqtPrice: (fromAddress === contracts?.sqToken.address ? price : resultCalc.toFixed()).toString(),
+      usdcPrice: (fromAddress === contracts?.sqToken.address ? resultCalc.toFixed() : sortedPrice).toString(),
+      sqtPrice: (fromAddress === contracts?.sqToken.address ? sortedPrice : resultCalc.toFixed()).toString(),
     };
   };
 
   const pricePreview = (fromAddress: string | undefined, price: string | number | bigint) => {
     const sqtTokenAddress = contracts?.sqToken.address;
-    const resultCalc = BigNumber(price.toString()).multipliedBy(
-      fromAddress === sqtTokenAddress ? rates.sqtToUsdc : rates.usdcToSqt,
-    );
-
     if (!price) {
       return `1 ${fromAddress === sqtTokenAddress ? TOKEN : STABLE_TOKEN} = ${
         fromAddress === sqtTokenAddress ? rates.sqtToUsdc : rates.usdcToSqt
       } ${fromAddress === sqtTokenAddress ? STABLE_TOKEN : TOKEN} | ${(now || dayjs()).format('HH:mm:ss A')}`;
     }
+    const resultCalc = BigNumber(price.toString()).multipliedBy(
+      fromAddress === sqtTokenAddress ? rates.sqtToUsdc : rates.usdcToSqt,
+    );
 
     return `${price} ${fromAddress === sqtTokenAddress ? TOKEN : STABLE_TOKEN} = ${resultCalc.toFixed()} ${
       fromAddress === sqtTokenAddress ? STABLE_TOKEN : TOKEN
