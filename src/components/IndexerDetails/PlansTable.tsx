@@ -18,7 +18,6 @@ import {
   AsyncData,
   convertBigNumberToNumber,
   formatEther,
-  formatSQT,
   renderAsync,
   renderAsyncArray,
   STABLE_TOKEN,
