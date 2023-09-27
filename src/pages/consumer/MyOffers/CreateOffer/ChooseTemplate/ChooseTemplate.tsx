@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getPlanTemplateColumns } from '@pages/indexer/MyPlans/Create';
+import { useGetPlanTemplateColumns } from '@pages/indexer/MyPlans/Create';
 import { Spinner } from '@subql/components';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
@@ -22,22 +22,23 @@ export const ChooseTemplate: React.FC = () => {
   );
   const [selectedTemplate, setSelectedTemplate] = React.useState<PlanTemplate | undefined>();
 
-  if (!createOfferContext) return <></>;
-  const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
-  const onNext = (step: number) => {
-    updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '', planTemplate: selectedTemplate });
-    onStepChange(step);
-  };
-
   const onChooseTemplate = (templateId: string, template?: PlanTemplate) => {
     setSelectedTemplateId(templateId);
     template && setSelectedTemplate(template);
   };
 
-  const columns = getPlanTemplateColumns(
+  const columns = useGetPlanTemplateColumns(
     (templateId, _, template) => onChooseTemplate(templateId, template),
     selectedTemplateId,
   );
+
+  if (!createOfferContext) return <></>;
+
+  const { curStep, onStepChange, offer, updateCreateOffer } = createOfferContext;
+  const onNext = (step: number) => {
+    updateCreateOffer({ ...offer, templateId: selectedTemplateId ?? '', planTemplate: selectedTemplate });
+    onStepChange(step);
+  };
 
   return (
     <div>

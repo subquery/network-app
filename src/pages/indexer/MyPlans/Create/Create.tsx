@@ -9,6 +9,7 @@ import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
+import { useStableCoin } from '@hooks/useStableCoin';
 import { Button, Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
@@ -21,6 +22,7 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
+  TOKEN,
 } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { Radio, Select, Table, TableProps } from 'antd';
@@ -35,42 +37,50 @@ import { useWeb3Store } from 'src/stores';
 
 import styles from './Create.module.css';
 
-export const getPlanTemplateColumns = (
+export const useGetPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
   selectedTemplateId?: string,
-): TableProps<Template>['columns'] => [
-  {
-    title: <TableTitle title={'#'} />,
-    dataIndex: 'id',
-    render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
-  },
-  {
-    dataIndex: 'period',
-    title: <TableTitle title={i18next.t('plans.headers.period').toUpperCase()} />,
-    render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
-  },
-  {
-    dataIndex: 'dailyReqCap',
-    title: <TableTitle title={i18next.t('plans.headers.dailyReqCap').toUpperCase()} />,
-    render: (dailyReqCap: string) => (
-      <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
-    ),
-  },
-  {
-    dataIndex: 'rateLimit',
-    title: <TableTitle title={i18next.t('plans.headers.rateLimit').toUpperCase()} />,
-    render: (rateLimit: string) => (
-      <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
-    ),
-  },
-  {
-    dataIndex: 'id',
-    title: <TableTitle title={i18next.t('general.choose').toUpperCase()} />,
-    render: (id: string, template: Template, idx: number) => (
-      <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
-    ),
-  },
-];
+): TableProps<Template>['columns'] => {
+  const { coinsAddressDict } = useStableCoin();
+  return [
+    {
+      title: <TableTitle title={'#'} />,
+      dataIndex: 'id',
+      render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
+    },
+    {
+      dataIndex: 'period',
+      title: <TableTitle title={i18next.t('plans.headers.period').toUpperCase()} />,
+      render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
+    },
+    {
+      dataIndex: 'dailyReqCap',
+      title: <TableTitle title={i18next.t('plans.headers.dailyReqCap').toUpperCase()} />,
+      render: (dailyReqCap: string) => (
+        <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
+      ),
+    },
+    {
+      dataIndex: 'rateLimit',
+      title: <TableTitle title={i18next.t('plans.headers.rateLimit').toUpperCase()} />,
+      render: (rateLimit: string) => (
+        <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
+      ),
+    },
+    {
+      dataIndex: 'priceToken',
+      title: <TableTitle title={i18next.t('plans.headers.priceToken').toUpperCase()} />,
+      render: (priceToken: string) => coinsAddressDict[priceToken],
+    },
+    {
+      dataIndex: 'id',
+      title: <TableTitle title={i18next.t('general.choose').toUpperCase()} />,
+      render: (id: string, template: Template, idx: number) => (
+        <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
+      ),
+    },
+  ];
+};
 
 const ChooseTemplateStep = ({
   selectedTemplateId,
@@ -86,7 +96,7 @@ const ChooseTemplateStep = ({
   disabled?: boolean;
 }) => {
   const { t } = useTranslation();
-  const columns = getPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
+  const columns = useGetPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
   return (
     <Form>
       <div className={styles.templateList}>
@@ -118,7 +128,6 @@ const ChooseTemplateStep = ({
 };
 
 const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (deploymentId: string) => void }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
 
@@ -181,6 +190,8 @@ type FormProps = {
 const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
+  const { coinsAddressDict, pricePreview } = useStableCoin();
+
   const template = templates[selectedTemplateIdx];
 
   const onFirstStep = () => onStepChange(0);
@@ -201,7 +212,6 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
       value: ` ${template.rateLimit} queries/sec`,
     },
   ];
-
   return (
     <Formik
       initialValues={{
@@ -214,7 +224,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
     >
       {({ submitForm, isValid, isSubmitting, setFieldValue, values }) => {
         const selectedTemplateId = values.templateId;
-
+        const selectedTemplateInfo = templates.find((i) => i.id === selectedTemplateId);
         // First step: choose planTemplate
         if (curStep === 0) {
           const onChooseTemplate = (templateId: string, idx: number) => {
@@ -241,6 +251,8 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
 
               <NumberInput
                 title={t('plans.create.priceTitle')}
+                unit={selectedTemplateInfo?.priceToken ? coinsAddressDict[selectedTemplateInfo.priceToken] : TOKEN}
+                description={pricePreview(selectedTemplateInfo?.priceToken, values.price)}
                 inputParams={{
                   onChange: (price) => {
                     onSecondStep();
