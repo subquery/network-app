@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { SearchOutlined } from '@ant-design/icons';
 import { Typography } from '@subql/components';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
 import { useGetProjectsLazyQuery } from '@subql/react-hooks';
@@ -86,9 +87,19 @@ const Home: React.FC = () => {
       <Header />
       {error && <span>{`We have an error: ${error.message}`}</span>}
 
-      {/* <div>
-        <Input></Input>
-      </div> */}
+      <div style={{ display: 'flex', marginBottom: 32 }}>
+        <span style={{ flex: 1 }}></span>
+        <Input
+          style={{ width: 200, height: 48, padding: 12 }}
+          prefix={<SearchOutlined style={{ color: 'var(--sq-gray500)' }} />}
+          placeholder="Search"
+          onKeyUp={(e) => {
+            if (e.key.toUpperCase() === 'ENTER') {
+              console.warn('search');
+            }
+          }}
+        ></Input>
+      </div>
       <div className={styles.list}>
         {projects?.length
           ? projects.map((project) => (
