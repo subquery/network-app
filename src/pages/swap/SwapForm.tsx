@@ -51,6 +51,7 @@ interface ISwapForm {
   usdcLimitation?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
   onUpdateSwapData?: () => void;
+  kycStatus: boolean;
 }
 
 interface PairFrom {
@@ -75,6 +76,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onIncreaseAllowance,
   onUpdateSwapData,
   usdcLimitation,
+  kycStatus,
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -203,7 +205,8 @@ export const SwapForm: React.FC<ISwapForm> = ({
           enableReinitialize
         >
           {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
-            const isActionDisabled = !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
+            const isActionDisabled =
+              !kycStatus || !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
             const summaryList = [
               {
                 label: t('swap.from'),
@@ -225,7 +228,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
-                  description={`The maximum swap amount: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
+                  description={`The maximum swap amount: ${!kycStatus ? 0 : truncFormatEtherStr(pair.fromMax)} ${
+                    pair.from
+                  }`}
                   onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}
@@ -256,6 +261,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
                         label: t('swap.swapButton'),
                         key: 'swap',
                         disabled: isActionDisabled,
+                        tooltip: !kycStatus ? "Sorry, you can't make this trade." : undefined,
                       },
                     ]}
                     onClick={() => onTradeOrder(values[FROM_INPUT_ID])}
