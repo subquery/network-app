@@ -7,6 +7,7 @@ import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, EmptyList, Spinner, TabButtons, WalletRoute } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { useAirdropKyc } from '@hooks/useAirdropKyc';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
 import {
   useSellSQTQuota,
@@ -16,7 +17,7 @@ import {
   useSwapToken,
   useSwapTradeLimitation,
 } from '@hooks/useSwapData';
-import { Footer } from '@subql/components';
+import { Footer, openNotification } from '@subql/components';
 import {
   formatEther,
   mergeAsync,
@@ -25,11 +26,15 @@ import {
   ROUTES,
   STABLE_TOKEN,
   STABLE_TOKEN_ADDRESS,
+  STABLE_TOKEN_DECIMAL,
   TOKEN,
 } from '@utils';
 import { Typography } from 'antd';
 import { BigNumber, BigNumberish } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import i18next, { TFunction } from 'i18next';
+
+import { useWeb3Store } from 'src/stores';
 
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
@@ -83,9 +88,62 @@ const getStats = ({
   ];
 };
 
-const SellAUSD = () => {
-  const { t } = useTranslation();
+const useGetUSDCTradeLimitation = () => {
+  const { account } = useWeb3();
+  const { contracts } = useWeb3Store();
+  const aUSDBalance = useAUSDBalance();
+  const [maxTradelimitation, setMaxTradeLimitation] = React.useState(0);
 
+  const initMaxTradeLimitation = async () => {
+    try {
+      if (!aUSDBalance.data) return 0;
+
+      // returned values are USDC
+      const tradeLimitationPerAccount =
+        (await contracts?.permissionedExchange.tradeLimitationPerAccount()) || BigNumber.from(0);
+      const accumulatedTrades =
+        (await contracts?.permissionedExchange.accumulatedTrades(account || '')) || BigNumber.from(0);
+
+      const tradeLimitation = (await contracts?.permissionedExchange.tradeLimitation()) || BigNumber.from(0);
+
+      const formatedTradeLimitation = formatUnits(tradeLimitation, STABLE_TOKEN_DECIMAL);
+      const formtedTradelimitationPerAccount = formatUnits(tradeLimitationPerAccount, STABLE_TOKEN_DECIMAL);
+      const formatedAccumulatedTrades = formatUnits(accumulatedTrades, STABLE_TOKEN_DECIMAL);
+
+      return Math.min(
+        +aUSDBalance.data,
+        +formatedTradeLimitation,
+        +formtedTradelimitationPerAccount - +formatedAccumulatedTrades,
+      );
+    } catch (e) {
+      console.warn(e);
+      openNotification({
+        type: 'error',
+        description: 'Fetch trade limitation failed, please change your RPC Endpoint and try again.',
+      });
+
+      return 0;
+    }
+  };
+
+  const init = async () => {
+    const res = await initMaxTradeLimitation();
+
+    setMaxTradeLimitation(res);
+  };
+
+  React.useEffect(() => {
+    init();
+  }, [account, aUSDBalance.data]);
+
+  return maxTradelimitation;
+};
+
+const USDCToSqt = () => {
+  const { t } = useTranslation();
+  const { account } = useWeb3();
+  const [kycStatus, setKycStatus] = React.useState(false);
+  const maxTradeLimitation = useGetUSDCTradeLimitation();
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
@@ -97,6 +155,20 @@ const SellAUSD = () => {
   const aUSDBalance = useAUSDBalance();
   const aUSDTotalSupply = useAUSDTotalSupply();
   const usdcToSqtLimitation = useSwapTradeLimitation();
+  const { getKycStatus } = useAirdropKyc();
+
+  const initKyc = async (address: string) => {
+    const res = await getKycStatus(address);
+    setKycStatus(res);
+  };
+
+  React.useEffect(() => {
+    setKycStatus(false);
+    if (account) {
+      initKyc(account);
+    }
+  }, [account, aUSDBalance.data]);
+
   if (fetchingOrderId) return <Spinner />;
 
   if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
@@ -109,15 +181,15 @@ const SellAUSD = () => {
       },
       empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
       data: (data) => {
-        const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply, usdcToSqtLimitation] = data;
+        const [sqtAUSDRate, sqtPoolSize, tokens, _, aUSDSupply, usdcToSqtLimitation] = data;
         if (sqtAUSDRate === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-        const sortedAUSDBalance = aUSDAmount ?? '0';
+        // const sortedAUSDBalance = aUSDAmount ?? '0';
         const sortedRate = sqtAUSDRate ?? 0;
         const sortedPoolSize = sqtPoolSize ?? '0';
         const pair = {
           from: STABLE_TOKEN,
-          fromMax: sortedAUSDBalance,
+          fromMax: maxTradeLimitation.toString(),
           to: TOKEN,
           toMax: formatEther(sortedPoolSize),
         };
@@ -147,6 +219,7 @@ const SellAUSD = () => {
               swapPool.refetch(true);
               aUSDBalance.refetch(true);
             }}
+            kycStatus={kycStatus}
           />
         );
       },
@@ -155,7 +228,7 @@ const SellAUSD = () => {
 };
 
 // TODO: Improve useSwapToken function: as current use TOKEN in util / useSwapToken two places
-const GetAUSD = () => {
+const SqtToUSDC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { permissionExchangeAllowance } = useSQToken();
@@ -222,6 +295,7 @@ const GetAUSD = () => {
             aUSDBalance.refetch(true);
             tradableQuota.refetch(true);
           }}
+          kycStatus
         />
       );
     },
@@ -239,12 +313,13 @@ const Swap: React.FC = () => {
                 <TabButtons tabs={buttonLinks} whiteTab />
               </div>
               <Routes>
-                <Route index path={BUY} element={<SellAUSD />} />
-                <Route path={SELL} element={<GetAUSD />} />
+                <Route index path={BUY} element={<USDCToSqt />} />
+                <Route path={SELL} element={<SqtToUSDC />} />
                 <Route path={'/'} element={<Navigate replace to={BUY} />} />
               </Routes>
             </div>
           </div>
+
           <Footer simple />
         </div>
       }

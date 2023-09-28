@@ -81,6 +81,8 @@ const translation = {
     aboutToWithdraw: `You are about to withdraw {{amount}} ${TOKEN}.`,
     unstaking: 'Staking Withdrawl',
     unDelegation: 'Delegation Withdrawl',
+    commission: 'Commission',
+    merge: 'Merge',
     info: 'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.',
   },
 
