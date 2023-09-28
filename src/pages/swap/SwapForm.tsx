@@ -51,6 +51,10 @@ interface ISwapForm {
   usdcLimitation?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
   onUpdateSwapData?: () => void;
+  lifetimeLimitationInfo?: {
+    isOut: boolean;
+    limitation: number;
+  };
   kycStatus: boolean;
 }
 
@@ -77,6 +81,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onUpdateSwapData,
   usdcLimitation,
   kycStatus,
+  lifetimeLimitationInfo,
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -110,9 +115,18 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
-      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
-      .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
-        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
+      .test(
+        'isOutLifetimeLimitation',
+        `You have exceeded your lifetime swap limit of ${lifetimeLimitationInfo?.limitation.toLocaleString()} ${
+          pair.from
+        } (${((lifetimeLimitationInfo?.limitation || 0) * fromRate).toLocaleString()} kSQT)`,
+        (from) => {
+          if (lifetimeLimitationInfo) {
+            return !lifetimeLimitationInfo.isOut;
+          }
+
+          return true;
+        },
       )
       .test(
         'isOutOfLimatation',
@@ -127,6 +141,10 @@ export const SwapForm: React.FC<ISwapForm> = ({
           }
           return true;
         },
+      )
+      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
+      .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
+        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
       )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
@@ -261,7 +279,6 @@ export const SwapForm: React.FC<ISwapForm> = ({
                         label: t('swap.swapButton'),
                         key: 'swap',
                         disabled: isActionDisabled,
-                        tooltip: !kycStatus ? "Sorry, you can't make this trade." : undefined,
                       },
                     ]}
                     onClick={() => onTradeOrder(values[FROM_INPUT_ID])}

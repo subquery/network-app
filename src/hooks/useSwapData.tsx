@@ -27,11 +27,11 @@ export function useSwapToken(
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-    const { tokenGet, tokenGive } = await limitContract(
+    const { tokenGet, tokenGive, tokenGiveBalance } = await limitContract(
       () => contracts.permissionedExchange.orders(orderId),
       makeCacheKey(orderId, { type: 'swapOrders' }),
     );
-    return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
+    return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive], leftTokenGiveBalance: tokenGiveBalance };
   }, [contracts, orderId]);
 }
 
