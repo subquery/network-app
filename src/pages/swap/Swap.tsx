@@ -241,7 +241,6 @@ const SqtToUSDC = () => {
   const tradableQuota = useSellSQTQuota(account ?? '');
   const { balance } = useSQToken();
   const aUSDBalance = useAUSDBalance();
-  const maxTradeLimitation = useGetUSDCTradeLimitation();
 
   if (fetchingOrderId) return <Spinner />;
 
@@ -303,22 +302,6 @@ const SqtToUSDC = () => {
 };
 
 const Swap: React.FC = () => {
-  const { contracts } = useWeb3Store();
-  const triggerContract = async () => {
-    // await contracts?.permissionedExchange.createPairOrders(
-    //   '0x7E65A71046170A5b1AaB5C5cC64242EDF95CaBEA',
-    //   '0x15b64D7036667695Ee68D6619CEb162aEaFAdbA6',
-    //   BigNumber.from(1000000),
-    //   BigNumber.from('50000000000000000000'),
-    //   1696550400,
-    //   BigNumber.from(100000000),
-    // );
-    await contracts?.sqToken.increaseAllowance(
-      contracts.permissionedExchange.address,
-      BigNumber.from('999000000000000000000000'),
-    );
-  };
-
   return (
     <WalletRoute
       element={
@@ -335,13 +318,7 @@ const Swap: React.FC = () => {
               </Routes>
             </div>
           </div>
-          {/* <button
-            onClick={() => {
-              triggerContract();
-            }}
-          >
-            Create Pair orders
-          </button> */}
+
           <Footer simple />
         </div>
       }
