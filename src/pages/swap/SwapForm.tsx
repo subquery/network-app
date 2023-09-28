@@ -156,11 +156,16 @@ export const SwapForm: React.FC<ISwapForm> = ({
       .required()
       .test(
         'hasLeft',
-        `Out of this order's total amount, left amount is ${leftOrdersAmountInfo?.leftOrderAmount.toString()}`,
+        `Out of this order's total amount, left amount is ${formatUnits(
+          leftOrdersAmountInfo?.leftOrderAmount || '0',
+          STABLE_TOKEN_DECIMAL,
+        )}`,
         (to) => {
           if (leftOrdersAmountInfo) {
             if (!leftOrdersAmountInfo.isOut) {
-              return leftOrdersAmountInfo.leftOrderAmount.gt(BigNumber.from(to));
+              return leftOrdersAmountInfo.leftOrderAmount.gte(
+                BigNumber.from(parseUnits(to || '0', STABLE_TOKEN_DECIMAL)),
+              );
             }
 
             if (leftOrdersAmountInfo.isOut) return false;
