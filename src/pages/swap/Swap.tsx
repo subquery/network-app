@@ -263,12 +263,13 @@ const SqtToUSDC = () => {
       const sortedPoolSize = tradeQuota ?? BigNumber.from('0');
 
       const fromMax = sortedBalance.gt(sortedPoolSize) ? tradeQuota : sortedBalance;
+      const toMax = aUSDAmount ?? '0';
 
       const pair = {
         from: TOKEN,
         fromMax: formatEther(fromMax),
         to: STABLE_TOKEN,
-        toMax: aUSDAmount,
+        toMax,
       };
 
       const stats = getStats({
