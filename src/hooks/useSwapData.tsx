@@ -21,7 +21,7 @@ export function formatToken(value: BigNumberish, unit = 18): number {
 
 export function useSwapToken(
   orderId: string | undefined,
-): AsyncMemoReturn<{ tokenGet: string; tokenGive: string } | undefined> {
+): AsyncMemoReturn<{ tokenGet: string; tokenGive: string; leftTokenGiveBalance: BigNumber } | undefined> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     if (!orderId) return undefined;

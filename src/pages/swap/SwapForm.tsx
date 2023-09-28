@@ -55,6 +55,10 @@ interface ISwapForm {
     isOut: boolean;
     limitation: number;
   };
+  leftOrdersAmountInfo?: {
+    isOut: boolean;
+    leftOrderAmount: BigNumber;
+  };
   kycStatus: boolean;
 }
 
@@ -82,6 +86,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
   usdcLimitation,
   kycStatus,
   lifetimeLimitationInfo,
+  leftOrdersAmountInfo,
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -149,6 +154,17 @@ export const SwapForm: React.FC<ISwapForm> = ({
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
+      .test('hasLeft', "Out of this order's total amount", (to) => {
+        if (leftOrdersAmountInfo) {
+          if (!leftOrdersAmountInfo.isOut) {
+            return leftOrdersAmountInfo.leftOrderAmount.gt(BigNumber.from(to));
+          }
+
+          if (leftOrdersAmountInfo.isOut) return false;
+        }
+
+        return true;
+      })
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
       .test('isValid', `There is not enough ${pair.to} to swap.`, (to) => {
         if (pair.to === STABLE_TOKEN) {

@@ -318,6 +318,8 @@ const SqtToUSDC = () => {
         t,
       });
 
+      const leftOrderAmount = tokens?.leftTokenGiveBalance;
+      console.warn(leftOrderAmount);
       return (
         <SwapForm
           stats={stats}
@@ -332,6 +334,10 @@ const SqtToUSDC = () => {
             balance.refetch(true);
             aUSDBalance.refetch(true);
             tradableQuota.refetch(true);
+          }}
+          leftOrdersAmountInfo={{
+            isOut: !!leftOrderAmount?.eq(0),
+            leftOrderAmount: leftOrderAmount || BigNumber.from(0),
           }}
           kycStatus
         />
