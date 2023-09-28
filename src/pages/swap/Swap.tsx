@@ -319,7 +319,6 @@ const SqtToUSDC = () => {
       });
 
       const leftOrderAmount = tokens?.leftTokenGiveBalance;
-      console.warn(leftOrderAmount);
       return (
         <SwapForm
           stats={stats}
