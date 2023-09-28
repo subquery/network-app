@@ -3,7 +3,7 @@
 
 import React, { FC } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { BsExclamationCircle, BsInfoSquare } from 'react-icons/bs';
+import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BillingExchangeModal } from '@components/BillingTransferModal';
 import { useSQToken } from '@containers';
@@ -18,7 +18,6 @@ import {
 import { Modal, openNotification, Steps, Typography } from '@subql/components';
 import { convertStringToNumber, formatEther, TOKEN, tokenDecimals } from '@utils';
 import { Button, Divider, Form, InputNumber, Tooltip } from 'antd';
-import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
 import { t } from 'i18next';
@@ -77,7 +76,9 @@ const CreateHostingFlexPlan: FC = (props) => {
       ...form.getFieldsValue(),
       // default set as one era.
       expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
-      price: parseEther(`${form.getFieldValue('price')}`).toString(),
+      price: parseEther(`${form.getFieldValue('price')}`)
+        .div(1000)
+        .toString(),
       deploymentId: asyncProject.data.currentDeployment,
     });
 
