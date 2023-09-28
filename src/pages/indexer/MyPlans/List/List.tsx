@@ -5,11 +5,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SummaryList, TableText } from '@components';
 import TransactionModal from '@components/TransactionModal';
+import { useStableCoin } from '@hooks/useStableCoin';
 import { Button, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
-import { convertBigNumberToNumber, formatEther, TOKEN } from '@utils';
+import { convertBigNumberToNumber, formatEther, STABLE_TOKEN, TOKEN } from '@utils';
+import { formatSQT } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { Table, TableProps } from 'antd';
 import assert from 'assert';
@@ -29,7 +31,7 @@ type Props = {
 const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
-
+  const { transPrice } = useStableCoin();
   const handleRemovePlan = async (id: string) => {
     assert(contracts, 'Contracts not available');
 
@@ -49,13 +51,23 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       dataIndex: 'id',
       title: <TableTitle title={'#'} />,
       width: 30,
-      render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
+      render: (text: string, _: unknown, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'price',
+      dataIndex: 'planTemplate',
       key: 'price',
       title: <TableTitle title={t('plans.headers.price')} />,
-      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: PlanTemplate, record) => {
+        return <TableText content={`${transPrice(value.priceToken, record.price).sqtPrice} ${TOKEN}`} />;
+      },
+    },
+    {
+      dataIndex: 'planTemplate',
+      key: 'toUSDC',
+      title: <TableTitle title={t('plans.headers.toUSDC')} />,
+      render: (value: PlanTemplate, record) => (
+        <TableText content={`${transPrice(value.priceToken, record.price).usdcPrice} ${STABLE_TOKEN}`} />
+      ),
     },
     {
       dataIndex: 'planTemplate',
@@ -107,7 +119,11 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
               },
               {
                 label: t('plans.headers.price'),
-                value: `${formatEther(plan.price)} ${TOKEN}`,
+                value: `${transPrice(plan.planTemplate?.priceToken, plan.price).sqtPrice} ${TOKEN}`,
+              },
+              {
+                label: t('plans.headers.toUSDC'),
+                value: `${transPrice(plan.planTemplate?.priceToken, plan.price).usdcPrice} ${STABLE_TOKEN}`,
               },
               {
                 label: t('plans.headers.period'),

@@ -35,7 +35,7 @@
 
 .templateList {
   height: 350px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .project {

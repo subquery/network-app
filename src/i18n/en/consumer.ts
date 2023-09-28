@@ -33,8 +33,10 @@ const translation = {
       period: 'Period',
       dailyReqCap: 'Daily Request Cap',
       rateLimit: 'Rate Limit',
+      priceToken: 'Token',
       action: 'Action',
       deploymentId: 'Deployment Id',
+      toUSDC: 'To USDC Price',
     },
     create: {
       action: 'Create',

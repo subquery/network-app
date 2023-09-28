@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { LazyQueryResult } from '@apollo/client';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractTransaction } from '@ethersproject/contracts';
+import { useStableCoin } from '@hooks/useStableCoin';
 import { Button, Spinner, Typography } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
@@ -13,7 +14,15 @@ import { Table, TableProps } from 'antd';
 import { last } from 'ramda';
 
 import { IndexerDetails } from '../../models';
-import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
+import {
+  AsyncData,
+  convertBigNumberToNumber,
+  formatEther,
+  renderAsync,
+  renderAsyncArray,
+  STABLE_TOKEN,
+  TOKEN,
+} from '../../utils';
 import { formatSecondsDuration } from '../../utils/dateFormatters';
 import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
 import { SummaryList } from '../SummaryList';
@@ -45,6 +54,7 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   deploymentId,
 }) => {
   const { t } = useTranslation();
+  const { transPrice } = useStableCoin();
 
   const requiresTokenApproval = planManagerAllowance.data?.isZero();
 
@@ -63,7 +73,11 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
     },
     {
       label: t('plans.headers.price'),
-      value: `${formatEther(plan.price)} ${TOKEN}`,
+      value: `${transPrice(plan.planTemplate?.priceToken, plan.price).sqtPrice} ${TOKEN}`,
+    },
+    {
+      label: t('plans.headers.toUSDC'),
+      value: `${transPrice(plan.planTemplate?.priceToken, plan.price).usdcPrice} ${STABLE_TOKEN}`,
     },
     {
       label: t('plans.headers.period'),
@@ -144,6 +158,7 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
 
 export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
+  const { transPrice } = useStableCoin();
 
   React.useEffect(() => {
     if (!asyncPlans.called) loadPlans();
@@ -164,11 +179,21 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
       render: (_: string, __: Plan, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'price',
+      dataIndex: 'planTemplate',
       key: 'price',
       title: t('plans.headers.price'),
       align: 'center',
-      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: PlanTemplate, record) => (
+        <TableText content={`${transPrice(value.priceToken, record.price).sqtPrice} ${TOKEN}`} />
+      ),
+    },
+    {
+      dataIndex: 'planTemplate',
+      key: 'toUSDC',
+      title: t('plans.headers.toUSDC'),
+      render: (value: PlanTemplate, record) => (
+        <TableText content={`${transPrice(value.priceToken, record.price).usdcPrice} ${STABLE_TOKEN}`} />
+      ),
     },
     {
       dataIndex: 'planTemplate',

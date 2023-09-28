@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
+import { useStableCoin } from '@hooks/useStableCoin';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
@@ -15,7 +16,7 @@ import { FixedType } from 'rc-table/lib/interface';
 import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import { mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
 
@@ -42,6 +43,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { account } = useWeb3();
+  const { transPrice } = useStableCoin();
 
   const isOngoingPath = pathname === CONSUMER_SA_ONGOING_NAV || pathname === INDEXER_SA_ONGOING_NAV;
 
@@ -115,8 +117,8 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       title: <TableTitle title={t('serviceAgreements.headers.price')} />,
       key: 'price',
       width: 100,
-      render: (price: ServiceAgreementFieldsFragment['lockedAmount']) => (
-        <TableText content={`${formatEther(price)} SQT`} />
+      render: (price: ServiceAgreementFieldsFragment['lockedAmount'], record) => (
+        <TableText content={`${transPrice(record.planTemplate?.priceToken, price).sqtPrice} ${TOKEN}`} />
       ),
     },
   ];
