@@ -16,7 +16,7 @@ import { FixedType } from 'rc-table/lib/interface';
 import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
-import { formatSQT, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
+import { mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
 
