@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo, useState } from 'react';
-import { formatSQT, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, STABLE_TOKEN_DECIMAL, TOKEN } from '@utils';
+import { formatEther, formatSQT, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, STABLE_TOKEN_DECIMAL, TOKEN } from '@utils';
 import { useInterval } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -32,7 +32,8 @@ export const useStableCoin = () => {
     if (!contracts) return;
     const assetPrice = await contracts.priceOracle.getAssetPrice(STABLE_TOKEN_ADDRESS, contracts.sqToken.address);
 
-    const oneUsdcToOneSqt = +formatUnits(assetPrice.toString(), STABLE_TOKEN_DECIMAL);
+    const oneUsdcToOneSqt = +formatEther(assetPrice.toString());
+
     setRates({
       usdcToSqt: BigNumber(oneUsdcToOneSqt).decimalPlaces(2).toNumber(),
       sqtToUsdc: BigNumber(1 / oneUsdcToOneSqt)
