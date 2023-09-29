@@ -49,7 +49,6 @@
     "ethers": "^5.4.7",
     "eventemitter3": "^5.0.1",
     "formik": "^2.2.9",
-    "graphiql": "^2.4",
     "graphql-ws": "^5.8.2",
     "i18next": "^22.4.6",
     "i18next-browser-languagedetector": "^7.0.1",
