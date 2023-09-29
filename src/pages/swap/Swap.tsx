@@ -30,6 +30,8 @@ import {
   STABLE_TOKEN_DECIMAL,
   TOKEN,
 } from '@utils';
+import { limitContract } from '@utils/limitation';
+import { makeCacheKey } from '@utils/limitation';
 import { Typography } from 'antd';
 import { BigNumber, BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
@@ -97,16 +99,20 @@ const useGetUSDCTradeLimitation = () => {
   const [maxTradelimitation, setMaxTradeLimitation] = React.useState(0);
   const [leftTradeAmount, setLeftTradeAmount] = React.useState(0);
   const [totalTradeAmountUser, setTotalTradeAmountUser] = React.useState(0);
-
   const initMaxTradeLimitation = async () => {
     try {
-      if (!aUSDBalance.data) return 0;
-
+      if (!aUSDBalance.data || !contracts || !account) return 0;
       // returned values are USDC
       const tradeLimitationPerAccount =
-        (await contracts?.permissionedExchange.tradeLimitationPerAccount()) || BigNumber.from(0);
+        (await limitContract(
+          () => contracts.permissionedExchange.tradeLimitationPerAccount(),
+          makeCacheKey(account, { type: 'perAccountTrade' }),
+        )) || BigNumber.from(0);
       const accumulatedTrades =
-        (await contracts?.permissionedExchange.accumulatedTrades(account || '')) || BigNumber.from(0);
+        (await limitContract(
+          () => contracts.permissionedExchange.accumulatedTrades(account),
+          makeCacheKey(account, { type: 'accumulated' }),
+        )) || BigNumber.from(0);
 
       const tradeLimitation = totalLimitation.data || BigNumber.from(0);
 
@@ -139,16 +145,16 @@ const useGetUSDCTradeLimitation = () => {
 
   React.useEffect(() => {
     init();
-  }, [account, aUSDBalance.data]);
+  }, [account, aUSDBalance.data, totalLimitation.data, contracts]);
 
-  return { maxTradelimitation, leftTradeAmount, totalTradeAmountUser };
+  return { maxTradelimitation, leftTradeAmount, totalTradeAmountUser, refresh: init };
 };
 
 const USDCToSqt = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [kycStatus, setKycStatus] = React.useState(false);
-  const { maxTradelimitation, leftTradeAmount, totalTradeAmountUser } = useGetUSDCTradeLimitation();
+  const { maxTradelimitation, leftTradeAmount, totalTradeAmountUser, refresh } = useGetUSDCTradeLimitation();
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
@@ -255,6 +261,7 @@ const USDCToSqt = () => {
                 swapTokens.refetch(true);
                 swapPool.refetch(true);
                 aUSDBalance.refetch(true);
+                refresh();
               }}
               kycStatus={kycStatus}
               lifetimeLimitationInfo={{
