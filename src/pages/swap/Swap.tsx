@@ -220,10 +220,14 @@ const USDCToSqt = () => {
 
                 <div className="col-flex" style={{ justifyContent: 'flex-start' }}>
                   <SubqlTypography type="secondary">
-                    Only participants that have been KYC’d and then whitelisted can participate in the SubQuery Kepler
+                    Only participants that have been KYC-ed and then whitelisted can participate in the SubQuery Kepler
                     Swap.
                   </SubqlTypography>
                   <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
+                    You can see a list of all whitelisted participants{' '}
+                    <a href="#fixme" style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}>
+                      here.
+                    </a>{' '}
                     If you think that you should be able to participate, please contact us in #kepler-swap-support in
                     our{' '}
                     <a
