@@ -32,7 +32,6 @@ export const useStableCoin = () => {
     if (!contracts) return;
     const assetPrice = await contracts.priceOracle.getAssetPrice(STABLE_TOKEN_ADDRESS, contracts.sqToken.address);
 
-    // const oneUsdcToOneSqt = +formatUnits(assetPrice.toString(), STABLE_TOKEN_DECIMAL);
     const oneUsdcToOneSqt = +formatEther(assetPrice.toString());
 
     setRates({
