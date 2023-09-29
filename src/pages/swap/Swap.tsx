@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsExclamationTriangle } from 'react-icons/bs';
 import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, EmptyList, Spinner, TabButtons, WalletRoute } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
@@ -17,7 +18,7 @@ import {
   useSwapToken,
   useSwapTradeLimitation,
 } from '@hooks/useSwapData';
-import { Footer, openNotification } from '@subql/components';
+import { Footer, openNotification, Typography as SubqlTypography } from '@subql/components';
 import {
   formatEther,
   mergeAsync,
@@ -92,7 +93,10 @@ const useGetUSDCTradeLimitation = () => {
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const aUSDBalance = useAUSDBalance();
+  const totalLimitation = useSwapTradeLimitation();
   const [maxTradelimitation, setMaxTradeLimitation] = React.useState(0);
+  const [leftTradeAmount, setLeftTradeAmount] = React.useState(0);
+  const [totalTradeAmountUser, setTotalTradeAmountUser] = React.useState(0);
 
   const initMaxTradeLimitation = async () => {
     try {
@@ -104,12 +108,13 @@ const useGetUSDCTradeLimitation = () => {
       const accumulatedTrades =
         (await contracts?.permissionedExchange.accumulatedTrades(account || '')) || BigNumber.from(0);
 
-      const tradeLimitation = (await contracts?.permissionedExchange.tradeLimitation()) || BigNumber.from(0);
+      const tradeLimitation = totalLimitation.data || BigNumber.from(0);
 
       const formatedTradeLimitation = formatUnits(tradeLimitation, STABLE_TOKEN_DECIMAL);
       const formtedTradelimitationPerAccount = formatUnits(tradeLimitationPerAccount, STABLE_TOKEN_DECIMAL);
       const formatedAccumulatedTrades = formatUnits(accumulatedTrades, STABLE_TOKEN_DECIMAL);
-
+      setLeftTradeAmount(+formtedTradelimitationPerAccount - +formatedAccumulatedTrades);
+      setTotalTradeAmountUser(+formtedTradelimitationPerAccount);
       return Math.min(
         +aUSDBalance.data,
         +formatedTradeLimitation,
@@ -136,14 +141,14 @@ const useGetUSDCTradeLimitation = () => {
     init();
   }, [account, aUSDBalance.data]);
 
-  return maxTradelimitation;
+  return { maxTradelimitation, leftTradeAmount, totalTradeAmountUser };
 };
 
 const USDCToSqt = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const [kycStatus, setKycStatus] = React.useState(false);
-  const maxTradeLimitation = useGetUSDCTradeLimitation();
+  const { maxTradelimitation, leftTradeAmount, totalTradeAmountUser } = useGetUSDCTradeLimitation();
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
@@ -189,7 +194,7 @@ const USDCToSqt = () => {
         const sortedPoolSize = sqtPoolSize ?? '0';
         const pair = {
           from: STABLE_TOKEN,
-          fromMax: maxTradeLimitation.toString(),
+          fromMax: maxTradelimitation.toString(),
           to: TOKEN,
           toMax: formatEther(sortedPoolSize),
         };
@@ -203,24 +208,61 @@ const USDCToSqt = () => {
         });
 
         return (
-          <SwapForm
-            stats={stats}
-            pair={pair}
-            fromRate={sortedRate}
-            usdcLimitation={usdcToSqtLimitation as BigNumber}
-            orderId={orderId}
-            requireTokenApproval={!!requireTokenApproval}
-            contract={ApproveContract.PermissionedExchange}
-            onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
-            onApproveAllowance={() => aUSDAllowance?.refetch()}
-            increaseAllowanceAmount={aUSDSupply}
-            onUpdateSwapData={() => {
-              swapTokens.refetch(true);
-              swapPool.refetch(true);
-              aUSDBalance.refetch(true);
-            }}
-            kycStatus={kycStatus}
-          />
+          <>
+            {!kycStatus && (
+              <div
+                className="flex"
+                style={{ alignItems: 'flex-start', borderRadius: 8, background: 'var(--sq-gray200)', padding: 16 }}
+              >
+                <BsExclamationTriangle
+                  style={{ color: 'var(--sq-warning)', fontSize: 16, marginRight: 16, marginTop: 3 }}
+                ></BsExclamationTriangle>
+
+                <div className="col-flex" style={{ justifyContent: 'flex-start' }}>
+                  <SubqlTypography type="secondary">
+                    Only participants that have been KYC-ed and then whitelisted can participate in the SubQuery Kepler
+                    Swap.
+                  </SubqlTypography>
+                  <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
+                    You can see a list of all whitelisted participants{' '}
+                    <a href="#fixme" style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}>
+                      here.
+                    </a>{' '}
+                    If you think that you should be able to participate, please contact us in #kepler-swap-support in
+                    our{' '}
+                    <a
+                      href="https://discord.com/invite/subquery"
+                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                    >
+                      Discord.
+                    </a>
+                  </SubqlTypography>
+                </div>
+              </div>
+            )}
+            <SwapForm
+              stats={stats}
+              pair={pair}
+              fromRate={sortedRate}
+              usdcLimitation={usdcToSqtLimitation as BigNumber}
+              orderId={orderId}
+              requireTokenApproval={!!requireTokenApproval}
+              contract={ApproveContract.PermissionedExchange}
+              onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
+              onApproveAllowance={() => aUSDAllowance?.refetch()}
+              increaseAllowanceAmount={aUSDSupply}
+              onUpdateSwapData={() => {
+                swapTokens.refetch(true);
+                swapPool.refetch(true);
+                aUSDBalance.refetch(true);
+              }}
+              kycStatus={kycStatus}
+              lifetimeLimitationInfo={{
+                isOut: leftTradeAmount === 0,
+                limitation: totalTradeAmountUser,
+              }}
+            />
+          </>
         );
       },
     },
@@ -280,6 +322,8 @@ const SqtToUSDC = () => {
         t,
       });
 
+      const leftOrderAmount = tokens?.leftTokenGiveBalance;
+
       return (
         <SwapForm
           stats={stats}
@@ -294,6 +338,10 @@ const SqtToUSDC = () => {
             balance.refetch(true);
             aUSDBalance.refetch(true);
             tradableQuota.refetch(true);
+          }}
+          leftOrdersAmountInfo={{
+            isOut: !!leftOrderAmount?.eq(0),
+            leftOrderAmount: leftOrderAmount || BigNumber.from(0),
           }}
           kycStatus
         />
