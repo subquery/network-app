@@ -192,7 +192,7 @@ type FormProps = {
 const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
-  const { coinsAddressDict, pricePreview } = useStableCoin();
+  const { coinsAddressDict } = useStableCoin();
 
   const template = templates[selectedTemplateIdx];
 
@@ -254,7 +254,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
               <NumberInput
                 title={t('plans.create.priceTitle')}
                 unit={selectedTemplateInfo?.priceToken ? coinsAddressDict[selectedTemplateInfo.priceToken] : TOKEN}
-                description={pricePreview(selectedTemplateInfo?.priceToken, values.price)}
+                // description={pricePreview(selectedTemplateInfo?.priceToken, values.price)}
                 inputParams={{
                   onChange: (price) => {
                     onSecondStep();
