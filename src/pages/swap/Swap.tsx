@@ -231,11 +231,16 @@ const USDCToSqt = () => {
                   </SubqlTypography>
                   <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
                     You can see a list of all whitelisted participants{' '}
-                    <a href="#fixme" style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}>
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1Y01iu2M6fq5bat38efj2glvmXVo7W3Z2gYHHTmbES3Q/edit?usp=sharing"
+                      target="_blank"
+                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                      rel="noreferrer"
+                    >
                       here.
                     </a>{' '}
-                    If you think that you should be able to participate, please contact us in #kepler-swap-support in
-                    our{' '}
+                    If you think that you should be able to participate (e.g. you have completed KYC before), please
+                    contact us in #kepler-swap-support in our{' '}
                     <a
                       href="https://discord.com/invite/subquery"
                       style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
