@@ -52,7 +52,7 @@ export const useStableCoin = () => {
       fromAddress === contracts?.sqToken.address ? rates.sqtToUsdc : rates.usdcToSqt,
     );
     return {
-      usdcPrice: (fromAddress === contracts?.sqToken.address ? resultCalc.toFixed() : sortedPrice).toString(),
+      // usdcPrice: (fromAddress === contracts?.sqToken.address ? resultCalc.toFixed() : sortedPrice).toString(),
       sqtPrice: (fromAddress === contracts?.sqToken.address ? sortedPrice : resultCalc.toFixed()).toString(),
     };
   };
