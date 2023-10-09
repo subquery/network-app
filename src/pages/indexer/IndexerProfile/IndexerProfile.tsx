@@ -118,7 +118,9 @@ const AccountBaseInfo = (props: { account: string }) => {
       {makeChunk({
         title: 'SSL',
         value: (
-          <Tag color="green">{accountInfos?.infos?.sslEnabled ? t('general.enabled') : t('general.disabled')}</Tag>
+          <Tag color={accountInfos?.infos?.sslEnabled ? 'green' : 'default'}>
+            {accountInfos?.infos?.sslEnabled ? t('general.enabled') : t('general.disabled')}
+          </Tag>
         ),
       })}
 
@@ -126,7 +128,7 @@ const AccountBaseInfo = (props: { account: string }) => {
         title: 'Social Credibility',
         value: (
           <div>
-            <Tag color="green">
+            <Tag color={accountInfos?.infos?.socialCredibility ? 'green' : 'default'}>
               {accountInfos?.infos?.socialCredibility ? t('general.enabled') : t('general.disabled')}
             </Tag>
           </div>
