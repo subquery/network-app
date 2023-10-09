@@ -37,6 +37,8 @@ const translation = {
       action: 'Action',
       deploymentId: 'Deployment Id',
       toUSDC: 'To USDC Price',
+      paymentAmount: 'Paymeny Amount',
+      paymentTips: 'This rate may vary at the time of payment',
     },
     create: {
       action: 'Create',

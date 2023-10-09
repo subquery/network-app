@@ -3185,10 +3185,15 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@0.3.14", "@subql/network-config@^0.3.14":
+"@subql/network-config@0.3.14":
   version "0.3.14"
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
   integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
+
+"@subql/network-config@0.3.17-0":
+  version "0.3.17-0"
+  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-0.3.17-0.tgz#c7d5232cb093da1d264364632026594bed830a3e"
+  integrity sha512-gGGH2GuWJzyiZKshmHHxujrjvhK+p6J/MkFJFXa/6AJPn5esxTJGrTW283maCedFaZOXFbq/SMwmvho9NC50Og==
 
 "@subql/network-query@0.3.16-0":
   version "0.3.16-0"
@@ -3204,15 +3209,17 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.16-15":
-  version "0.3.16-15"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.3.16-15.tgz#6a56802b05e2543b2a571719cf38670a9208bf76"
-  integrity sha512-/GbPWcEgl9Duxoq4ve/HLW6919QqE5k09E4wLgZt70MSW7ZvVSt7ksaHdKVl/MW8TrK9TxiEWQFoonpkhuBKog==
+"@subql/react-hooks@0.3.16-16":
+  version "0.3.16-16"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.3.16-16.tgz#6688848c3c9389d265fec929129636ffd69a4137"
+  integrity sha512-xKt0RsF5oJRm4cipSazO/ddHZihuAL/iZcnftejGwOD8pMu3omiTIxmII2eJNrxWPtpEr4rcfzxjj7qArR2fKg==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
     "@subql/network-query" "0.3.16-11"
+    ahooks "^3.7.8"
+    bignumber.js "^9.1.2"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
 
@@ -4492,6 +4499,11 @@ bignumber.js@^9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.1.1.tgz#c4df7dc496bd849d4c9464344c1aa74228b4dac6"
   integrity sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==
+
+bignumber.js@^9.1.2:
+  version "9.1.2"
+  resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.1.2.tgz#b7c4242259c008903b13707983b5f4bbd31eda0c"
+  integrity sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==
 
 binary-extensions@^2.0.0:
   version "2.2.0"

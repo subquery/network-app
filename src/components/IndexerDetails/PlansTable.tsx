@@ -4,25 +4,20 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyQueryResult } from '@apollo/client';
+import { NETWORK_NAME } from '@containers/Web3';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractTransaction } from '@ethersproject/contracts';
-import { useStableCoin } from '@hooks/useStableCoin';
 import { Button, Spinner, Typography } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
+import { useStableCoin } from '@subql/react-hooks';
 import { Table, TableProps } from 'antd';
 import { last } from 'ramda';
 
+import { useWeb3Store } from 'src/stores';
+
 import { IndexerDetails } from '../../models';
-import {
-  AsyncData,
-  convertBigNumberToNumber,
-  formatEther,
-  renderAsync,
-  renderAsyncArray,
-  STABLE_TOKEN,
-  TOKEN,
-} from '../../utils';
+import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
 import { formatSecondsDuration } from '../../utils/dateFormatters';
 import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '../ModalApproveToken';
 import { SummaryList } from '../SummaryList';
@@ -54,7 +49,8 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   deploymentId,
 }) => {
   const { t } = useTranslation();
-  const { transPrice } = useStableCoin();
+  const { contracts } = useWeb3Store();
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
 
   const requiresTokenApproval = planManagerAllowance.data?.isZero();
 
@@ -72,13 +68,20 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
       value: <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />,
     },
     {
-      label: t('plans.headers.price'),
-      value: `${transPrice(plan.planTemplate?.priceToken, plan.price).sqtPrice} ${TOKEN}`,
+      label: t('plans.headers.paymentAmount'),
+      value: (
+        <Typography className={styles.paymentAmount} variant="medium">
+          {pricePreview(plan.planTemplate?.priceToken, plan.price)}
+          {plan.planTemplate?.priceToken !== contracts?.sqToken.address ? (
+            <>
+              <br></br> ({t('plans.headers.paymentTips')})
+            </>
+          ) : (
+            ''
+          )}
+        </Typography>
+      ),
     },
-    // {
-    //   label: t('plans.headers.toUSDC'),
-    //   value: `${transPrice(plan.planTemplate?.priceToken, plan.price).usdcPrice} ${STABLE_TOKEN}`,
-    // },
     {
       label: t('plans.headers.period'),
       value: formatSecondsDuration(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),
@@ -158,7 +161,9 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
 
 export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
-  const { transPrice } = useStableCoin();
+  const { contracts } = useWeb3Store();
+
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
 
   React.useEffect(() => {
     if (!asyncPlans.called) loadPlans();
@@ -182,19 +187,8 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
       dataIndex: 'planTemplate',
       key: 'price',
       title: t('plans.headers.price'),
-      align: 'center',
-      render: (value: PlanTemplate, record) => (
-        <TableText content={`${transPrice(value.priceToken, record.price).sqtPrice} ${TOKEN}`} />
-      ),
+      render: (value: PlanTemplate, record) => <TableText content={pricePreview(value?.priceToken, record.price)} />,
     },
-    // {
-    //   dataIndex: 'planTemplate',
-    //   key: 'toUSDC',
-    //   title: t('plans.headers.toUSDC'),
-    //   render: (value: PlanTemplate, record) => (
-    //     <TableText content={`${transPrice(value.priceToken, record.price).usdcPrice} ${STABLE_TOKEN}`} />
-    //   ),
-    // },
     {
       dataIndex: 'planTemplate',
       key: 'period',

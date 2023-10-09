@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { Typography } from '@subql/components';
 import { Button, InputNumber, InputNumberProps } from 'antd';
-import { BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 
 import { AppTypography } from '../Typography';
 import styles from './NumberInput.module.css';
@@ -15,7 +15,7 @@ interface NumberInputProps extends InputNumberProps {
   tooltip?: string;
   description?: string;
   subDescription?: string;
-  unit?: string;
+  unit?: React.ReactNode;
   errorMsg?: string;
   onClickMax?: (amount: number | BigNumberish) => void;
   maxAmount?: number | BigNumberish;
@@ -37,7 +37,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   const Suffix = () => (
     <div className={styles.prefix}>
-      {maxAmount > 0 && (
+      {BigNumber.from(maxAmount).gt(0) && (
         <Button
           shape="round"
           size="small"
@@ -56,8 +56,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
-  const maxText =
-    maxAmount > 0 ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}` : undefined;
+  const maxText = BigNumber.from(maxAmount).gt(0)
+    ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
+    : undefined;
   const inputBottomText = description ?? maxAmountText ?? maxText;
   const DescriptionText = ({ text }: { text: string }) => (
     <Typography className={styles.inputBottomText} variant="medium">
