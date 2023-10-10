@@ -4,11 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { useStableCoin } from '@hooks/useStableCoin';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { formatSQT } from '@subql/react-hooks/dist/utils';
 import { Button, Table, TableProps } from 'antd';
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
@@ -43,7 +43,6 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { account } = useWeb3();
-  const { transPrice } = useStableCoin();
 
   const isOngoingPath = pathname === CONSUMER_SA_ONGOING_NAV || pathname === INDEXER_SA_ONGOING_NAV;
 
@@ -117,8 +116,8 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       title: <TableTitle title={t('serviceAgreements.headers.price')} />,
       key: 'price',
       width: 100,
-      render: (price: ServiceAgreementFieldsFragment['lockedAmount'], record) => (
-        <TableText content={`${transPrice(record.planTemplate?.priceToken, price).sqtPrice} ${TOKEN}`} />
+      render: (price: ServiceAgreementFieldsFragment['lockedAmount']) => (
+        <TableText content={`${formatSQT(price)} ${TOKEN}`} />
       ),
     },
   ];

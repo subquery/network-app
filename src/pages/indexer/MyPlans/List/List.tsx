@@ -5,12 +5,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SummaryList, TableText } from '@components';
 import TransactionModal from '@components/TransactionModal';
-import { useStableCoin } from '@hooks/useStableCoin';
+import { NETWORK_NAME } from '@containers/Web3';
 import { Button, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
-import { convertBigNumberToNumber, STABLE_TOKEN, TOKEN } from '@utils';
+import { useStableCoin } from '@subql/react-hooks';
+import { convertBigNumberToNumber, TOKEN } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { Table, TableProps } from 'antd';
 import assert from 'assert';
@@ -30,7 +31,7 @@ type Props = {
 const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
-  const { transPrice } = useStableCoin();
+  const { transPrice, pricePreview } = useStableCoin(contracts, NETWORK_NAME);
   const handleRemovePlan = async (id: string) => {
     assert(contracts, 'Contracts not available');
 
@@ -57,17 +58,9 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       key: 'price',
       title: <TableTitle title={t('plans.headers.price')} />,
       render: (value: PlanTemplate, record) => {
-        return <TableText content={`${transPrice(value.priceToken, record.price).sqtPrice} ${TOKEN}`} />;
+        return <TableText content={pricePreview(value.priceToken, record.price)} />;
       },
     },
-    // {
-    //   dataIndex: 'planTemplate',
-    //   key: 'toUSDC',
-    //   title: <TableTitle title={t('plans.headers.toUSDC')} />,
-    //   render: (value: PlanTemplate, record) => (
-    //     <TableText content={`${transPrice(value.priceToken, record.price).usdcPrice} ${STABLE_TOKEN}`} />
-    //   ),
-    // },
     {
       dataIndex: 'planTemplate',
       key: 'period',
@@ -118,12 +111,10 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
               },
               {
                 label: t('plans.headers.price'),
-                value: `${transPrice(plan.planTemplate?.priceToken, plan.price).sqtPrice} ${TOKEN}`,
+                value: (
+                  <div style={{ textAlign: 'end' }}>{pricePreview(plan.planTemplate?.priceToken, plan.price)}</div>
+                ),
               },
-              // {
-              //   label: t('plans.headers.toUSDC'),
-              //   value: `${transPrice(plan.planTemplate?.priceToken, plan.price).usdcPrice} ${STABLE_TOKEN}`,
-              // },
               {
                 label: t('plans.headers.period'),
                 value: formatSecondsDuration(convertBigNumberToNumber(plan.planTemplate?.period ?? 0)),

@@ -20,6 +20,7 @@ export interface IIndexerFlexPlan {
   create_at: Date;
   updated_at: Date;
   online: boolean;
+  price_token: string;
 }
 
 export function useIndexerFlexPlans(projectId: string): AsyncData<Array<IIndexerFlexPlan>> {

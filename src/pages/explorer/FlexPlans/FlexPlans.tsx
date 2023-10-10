@@ -5,6 +5,7 @@ import * as React from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import { useGetFlexPlanPrice } from '@hooks/useGetFlexPlanPrice';
 import { TableTitle } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { Space, Table, TableProps } from 'antd';
@@ -14,7 +15,7 @@ import i18next, { t } from 'i18next';
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { IIndexerFlexPlan, useIndexerFlexPlans } from '../../../hooks';
-import { formatSecondsDuration, getFlexPlanPrice, ROUTES } from '../../../utils';
+import { formatSecondsDuration, ROUTES } from '../../../utils';
 import CreateHostingFlexPlan from './CreateHostingPlan/CreateHostingPlan';
 import styles from './FlexPlans.module.less';
 
@@ -22,7 +23,7 @@ export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
-
+  const { getFlexPlanPrice } = useGetFlexPlanPrice();
   // TODO: confirm score threadThread with consumer host service
   const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
     {
@@ -47,7 +48,7 @@ export const FlexPlans: React.FC = () => {
     {
       dataIndex: 'price',
       title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
-      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
+      render: (price, record) => <TableText content={getFlexPlanPrice(price, record.price_token)} />,
     },
     {
       dataIndex: 'max_time',

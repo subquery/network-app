@@ -7,13 +7,13 @@ import { SummaryList, TableText } from '@components';
 import { NumberInput } from '@components/NumberInput';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
+import { NETWORK_NAME } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
-import { useStableCoin } from '@hooks/useStableCoin';
 import { Button, Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
-import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
+import { useGetPlanTemplatesQuery, useStableCoin } from '@subql/react-hooks';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -26,7 +26,7 @@ import {
   TOKEN,
 } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
-import { Radio, Select, Table, TableProps } from 'antd';
+import { Alert, Radio, Select, Table, TableProps } from 'antd';
 import assert from 'assert';
 import clsx from 'clsx';
 import { constants } from 'ethers';
@@ -37,13 +37,15 @@ import * as yup from 'yup';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './Create.module.css';
+import styles from './Create.module.less';
 
 export const useGetPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
   selectedTemplateId?: string,
 ): TableProps<Template>['columns'] => {
-  const { coinsAddressDict } = useStableCoin();
+  const { contracts } = useWeb3Store();
+
+  const { coinsAddressDict } = useStableCoin(contracts, NETWORK_NAME);
   return [
     {
       title: <TableTitle title={'#'} />,
@@ -192,10 +194,10 @@ type FormProps = {
 const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
-  const { coinsAddressDict } = useStableCoin();
+  const { contracts } = useWeb3Store();
+  const { coinsAddressDict } = useStableCoin(contracts, NETWORK_NAME);
 
   const template = templates[selectedTemplateIdx];
-
   const onFirstStep = () => onStepChange(0);
   const onSecondStep = () => onStepChange(1);
   const onThirdStep = () => onStepChange(2);
@@ -227,6 +229,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
       {({ submitForm, isValid, isSubmitting, setFieldValue, values }) => {
         const selectedTemplateId = values.templateId;
         const selectedTemplateInfo = templates.find((i) => i.id === selectedTemplateId);
+        const isUSDCToken = selectedTemplateInfo?.priceToken !== contracts?.sqToken.address;
         // First step: choose planTemplate
         if (curStep === 0) {
           const onChooseTemplate = (templateId: string, idx: number) => {
@@ -253,8 +256,18 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
 
               <NumberInput
                 title={t('plans.create.priceTitle')}
-                unit={selectedTemplateInfo?.priceToken ? coinsAddressDict[selectedTemplateInfo.priceToken] : TOKEN}
-                // description={pricePreview(selectedTemplateInfo?.priceToken, values.price)}
+                unit={
+                  <span className="flex">
+                    <img
+                      src={isUSDCToken ? '/static/usdc.png' : '/static/sqt.svg'}
+                      alt=""
+                      width="24"
+                      height="24"
+                      style={{ marginRight: 8 }}
+                    ></img>
+                    {selectedTemplateInfo?.priceToken ? coinsAddressDict[selectedTemplateInfo.priceToken] : TOKEN}
+                  </span>
+                }
                 inputParams={{
                   onChange: (price) => {
                     onSecondStep();
@@ -266,7 +279,23 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
                   name: 'price',
                 }}
               />
-
+              {isUSDCToken ? (
+                <Alert
+                  className={styles.usdcAlert}
+                  showIcon
+                  type="info"
+                  message={
+                    <Typography variant="small" style={{ color: 'var(--sq-gray700)' }}>
+                      Please note that this is just an indicative rate. <br />
+                      <br />
+                      The actual price depends on the exact exchange rate when consumer makes payment. The final payment
+                      will always be paid by SQT.
+                    </Typography>
+                  }
+                ></Alert>
+              ) : (
+                ''
+              )}
               <DeploymentIdOptions
                 onChooseSpecificPlan={(deploymentId: string) => {
                   onSecondStep();
