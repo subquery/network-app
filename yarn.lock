@@ -3209,10 +3209,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.3.16-16":
-  version "0.3.16-16"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.3.16-16.tgz#6688848c3c9389d265fec929129636ffd69a4137"
-  integrity sha512-xKt0RsF5oJRm4cipSazO/ddHZihuAL/iZcnftejGwOD8pMu3omiTIxmII2eJNrxWPtpEr4rcfzxjj7qArR2fKg==
+"@subql/react-hooks@0.3.16-17":
+  version "0.3.16-17"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.3.16-17.tgz#b8dd809f41fb080a4cf444e8648b32aecb66325e"
+  integrity sha512-4gfHN36WtQE4Z+AdcEcQBqb/RgVfFi4VucJB4WoR8UMqFk1577sKdRl1jNC7oo3Tryzj0kUi4DcU1rEb7QiezQ==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
@@ -3222,6 +3222,7 @@
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"
     class-validator "^0.14.0"
+    ethereum-checksum-address "^0.0.8"
 
 "@testing-library/dom@^7.28.1":
   version "7.31.2"

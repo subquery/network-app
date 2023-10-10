@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { Typography } from '@subql/components';
 import { Button, InputNumber, InputNumberProps } from 'antd';
-import { BigNumber, BigNumberish } from 'ethers';
+import BigNumber from 'bignumber.js';
+import { BigNumberish } from 'ethers';
 
 import { AppTypography } from '../Typography';
 import styles from './NumberInput.module.css';
@@ -37,7 +38,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 }) => {
   const Suffix = () => (
     <div className={styles.prefix}>
-      {BigNumber.from(maxAmount).gt(0) && (
+      {BigNumber(maxAmount.toString()).gt(0) && (
         <Button
           shape="round"
           size="small"
@@ -56,7 +57,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     </div>
   );
 
-  const maxText = BigNumber.from(maxAmount).gt(0)
+  const maxText = BigNumber(maxAmount.toString()).gt(0)
     ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
     : undefined;
   const inputBottomText = description ?? maxAmountText ?? maxText;
