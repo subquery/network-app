@@ -5,6 +5,7 @@ import { NETWORK_NAME } from '@containers/Web3';
 import { Typography } from '@subql/components';
 import { STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';
 import { useStableCoin } from '@subql/react-hooks';
+import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber, BigNumberish } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
@@ -16,7 +17,7 @@ export function useGetFlexPlanPrice() {
   const getFlexPlanPrice = (price: BigNumberish, fromAddress: string) => {
     const { sqtPrice, usdcPrice } = transPrice(fromAddress, BigNumber.from(price).mul(1000).toString());
 
-    if (contracts?.sqToken.address === fromAddress) {
+    if (toChecksumAddress(contracts?.sqToken.address || '') === toChecksumAddress(fromAddress)) {
       return (
         <Typography variant="medium">
           {sqtPrice} {TOKEN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts
