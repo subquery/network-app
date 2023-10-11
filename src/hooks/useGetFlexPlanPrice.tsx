@@ -6,7 +6,7 @@ import { Spinner, Typography } from '@subql/components';
 import { STABLE_COIN_ADDRESSES, STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';
 import { useStableCoin } from '@subql/react-hooks';
 import { toChecksumAddress } from 'ethereum-checksum-address';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, constants } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -19,10 +19,7 @@ export function useGetFlexPlanPrice() {
       return <Spinner></Spinner>;
     }
 
-    const fromAdd =
-      !fromAddress || fromAddress === '0x0000000000000000000000000000000000000000'
-        ? contracts?.sqToken.address
-        : fromAddress;
+    const fromAdd = !fromAddress || fromAddress === constants.AddressZero ? contracts?.sqToken.address : fromAddress;
     const { sqtPrice, usdcPrice } = transPrice(fromAdd, BigNumber.from(price).mul(1000).toString());
 
     if (toChecksumAddress(STABLE_COIN_ADDRESSES[NETWORK_NAME]) !== toChecksumAddress(fromAdd)) {
