@@ -189,7 +189,7 @@ const ActiveCard = (props: { account: string }) => {
 const IndexerProfile: FC = () => {
   const { id: account } = useParams();
   const checksumAddress = useMemo(() => {
-    return toChecksumAddress(account || '');
+    return toChecksumAddress(account || '0x0000000000000000000000000000000000000000');
   }, [account]);
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
