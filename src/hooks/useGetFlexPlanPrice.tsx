@@ -31,13 +31,15 @@ export function useGetFlexPlanPrice() {
     }
 
     return (
-      <Typography variant="medium">
-        {usdcPrice} {STABLE_COIN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts
+      <div>
+        <Typography variant="medium">
+          {usdcPrice} {STABLE_COIN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts
+        </Typography>
         <br></br>
         <Typography variant="medium" type="secondary">
           = {sqtPrice} {TOKEN_SYMBOLS[NETWORK_NAME]} | {fetchedTime?.format('HH:mm:ss A')}
         </Typography>
-      </Typography>
+      </div>
     );
   };
 
