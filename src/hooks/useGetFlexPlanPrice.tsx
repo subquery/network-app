@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NETWORK_NAME } from '@containers/Web3';
-import { Typography } from '@subql/components';
-import { STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';
+import { Spinner, Typography } from '@subql/components';
+import { STABLE_COIN_ADDRESSES, STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';
 import { useStableCoin } from '@subql/react-hooks';
-import { BigNumber, BigNumberish } from 'ethers';
+import { toChecksumAddress } from 'ethereum-checksum-address';
+import { BigNumber, BigNumberish, constants } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -14,9 +15,14 @@ export function useGetFlexPlanPrice() {
   const { transPrice, fetchedTime } = useStableCoin(contracts, NETWORK_NAME);
 
   const getFlexPlanPrice = (price: BigNumberish, fromAddress: string) => {
-    const { sqtPrice, usdcPrice } = transPrice(fromAddress, BigNumber.from(price).mul(1000).toString());
+    if (!contracts?.sqToken.address) {
+      return <Spinner></Spinner>;
+    }
 
-    if (contracts?.sqToken.address === fromAddress) {
+    const fromAdd = !fromAddress || fromAddress === constants.AddressZero ? contracts?.sqToken.address : fromAddress;
+    const { sqtPrice, usdcPrice } = transPrice(fromAdd, BigNumber.from(price).mul(1000).toString());
+
+    if (toChecksumAddress(STABLE_COIN_ADDRESSES[NETWORK_NAME]) !== toChecksumAddress(fromAdd)) {
       return (
         <Typography variant="medium">
           {sqtPrice} {TOKEN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts

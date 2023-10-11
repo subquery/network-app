@@ -31,7 +31,7 @@ type Props = {
 const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
-  const { transPrice, pricePreview } = useStableCoin(contracts, NETWORK_NAME);
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
   const handleRemovePlan = async (id: string) => {
     assert(contracts, 'Contracts not available');
 
