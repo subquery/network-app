@@ -29,6 +29,7 @@ import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFo
 import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
 import { toChecksumAddress } from 'ethereum-checksum-address';
+import { constants } from 'ethers';
 import { t } from 'i18next';
 import { isString } from 'lodash-es';
 
@@ -189,7 +190,7 @@ const ActiveCard = (props: { account: string }) => {
 const IndexerProfile: FC = () => {
   const { id: account } = useParams();
   const checksumAddress = useMemo(() => {
-    return toChecksumAddress(account || '0x0000000000000000000000000000000000000000');
+    return toChecksumAddress(account || constants.AddressZero);
   }, [account]);
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
