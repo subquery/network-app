@@ -32,7 +32,25 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
       <Address address={project.owner} size="small" />
 
       <div className={styles.line}></div>
-
+      <div className="flex" style={{ marginBottom: 12 }}>
+        <div className="flex">
+          <Typography variant="small">
+            {project.deployments.nodes.reduce((cur, add) => cur + (add?.indexers.totalCount || 0), 0)}
+          </Typography>
+          <Typography variant="small" type="secondary" style={{ marginLeft: 5 }}>
+            Indexers
+          </Typography>
+        </div>
+        <span style={{ flex: 1 }}></span>
+        <div className="flex">
+          <Typography variant="small">
+            {project.deployments.nodes.reduce((cur, add) => cur + (add?.serviceAgreements.totalCount || 0), 0)}
+          </Typography>
+          <Typography variant="small" type="secondary" style={{ marginLeft: 5 }}>
+            Agreements
+          </Typography>
+        </div>
+      </div>
       <div className="flex">
         <Typography variant="small" type="secondary">
           Last updated

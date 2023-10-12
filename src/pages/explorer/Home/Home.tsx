@@ -65,8 +65,9 @@ const Home: React.FC = () => {
         offset: projects.length,
       },
     });
-
+    // implement a sorting for projects
     if (res.data?.projects?.nodes) {
+      // const sorted
       setProjects([...projects, ...res.data.projects?.nodes.filter(notEmpty)]);
     }
 
