@@ -192,6 +192,26 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const getUserChannelState = async (channelId: string): Promise<AxiosResponse<IGetUserChannelState>> => {
+    const res = await instance.get<IGetUserChannelState>(`/users/channels/${channelId}/state`, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await getUserChannelState(channelId);
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
   useEffect(() => {
     if (autoLogin) {
       loginConsumerHostToken();
@@ -204,8 +224,17 @@ export const useConsumerHostServices = (
     deleteNewApiKey,
     createHostingPlanApi,
     getHostingPlanApi,
+    getUserChannelState,
   };
 };
+
+export interface IGetUserChannelState {
+  channelId: string;
+  consumerSign: string;
+  indexerSign: string;
+  isFinal: boolean;
+  spent: string;
+}
 
 export interface IPostHostingPlansParams {
   deploymentId: string;
