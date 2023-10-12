@@ -382,7 +382,7 @@ export const Create: React.FC = () => {
       onClose={() => setCurStep(0)}
       renderContent={(onSubmit, onCancel, isLoading, error) =>
         renderAsync(
-          mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty), templates),
+          mapAsync((d) => d.planTemplates?.nodes.filter(notEmpty).filter((item) => item.active), templates),
           {
             error: (e) => <Typography>{`Failed to get plan template: ${e.message}`}</Typography>,
             loading: () => <Spinner />,
