@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { BillingExchangeModal } from '@components/BillingTransferModal';
 import { useSQToken } from '@containers';
 import { SQT_TOKEN_ADDRESS, useWeb3 } from '@containers/Web3';
-import { useIndexerFlexPlans, useProjectFromQuery } from '@hooks';
+import { useAsyncMemo, useProjectFromQuery, useRouteQuery } from '@hooks';
 import {
   IGetHostingPlans,
   IPostHostingPlansParams,
@@ -29,8 +29,9 @@ const CreateHostingFlexPlan: FC = (props) => {
   const { consumerHostBalance } = useSQToken();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  // There have cache. for following two query.
-  const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
+  const query = useRouteQuery();
+  const { getProjects } = useConsumerHostServices({ autoLogin: false });
+
   const asyncProject = useProjectFromQuery(id ?? '');
   const { createHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({ alert: true, autoLogin: false });
 
@@ -40,6 +41,21 @@ const CreateHostingFlexPlan: FC = (props) => {
   const [showCreateFlexPlan, setShowCreateFlexPlan] = React.useState(false);
 
   const [createdHostingPlan, setCreatedHostingPlan] = React.useState<IGetHostingPlans[]>([]);
+
+  const flexPlans = useAsyncMemo(async () => {
+    try {
+      const res = await getProjects({
+        projectId: BigNumber.from(id).toString(),
+        deployment: query.get('deploymentId') || undefined,
+      });
+
+      if (res.data?.indexers?.length) {
+        return res.data.indexers;
+      }
+    } catch (e) {
+      return [];
+    }
+  }, [id, query]);
 
   const matchedCount = React.useMemo(() => {
     if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
