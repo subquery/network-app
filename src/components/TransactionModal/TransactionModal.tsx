@@ -29,6 +29,7 @@ export type TransactionModalAction<T extends string> = {
   key: T;
   onClick?: () => void;
   tooltip?: string;
+  defaultOpenTooltips?: boolean;
 } & ButtonProps;
 
 export type TransactionModalProps<P, T extends string> = {
@@ -201,13 +202,13 @@ const TransactionModal = <P, T extends string>({
         />
       )}
 
-      {actions.map(({ label, key, onClick, disabled, tooltip, ...rest }) => {
+      {actions.map(({ label, key, onClick, disabled, tooltip, defaultOpenTooltips, ...rest }) => {
         const isTextButton = variant.match(/text|Text/);
         const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
 
         return (
           <div className="flex-center" key={key}>
-            <Tooltip title={tooltip}>
+            <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips}>
               <Button
                 label={label}
                 onClick={() => {

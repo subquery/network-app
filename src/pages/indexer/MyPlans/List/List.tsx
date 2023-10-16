@@ -11,7 +11,7 @@ import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { useStableCoin } from '@subql/react-hooks';
-import { convertBigNumberToNumber, TOKEN } from '@utils';
+import { convertBigNumberToNumber } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { Table, TableProps } from 'antd';
 import assert from 'assert';
@@ -20,7 +20,7 @@ import { last } from 'ramda';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './List.module.css';
+import styles from './List.module.less';
 
 type Props = {
   data: Plan[];
@@ -95,7 +95,14 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       align: 'center',
       render: (id: string, plan: Plan) => (
         <TransactionModal
-          actions={[{ label: t('plans.remove.action'), key: 'remove' }]}
+          actions={[
+            {
+              label: t('plans.remove.action'),
+              key: 'remove',
+              tooltip: !plan.planTemplate?.active ? t('plans.inactiveTemplateTip') : '',
+              defaultOpenTooltips: !plan.planTemplate?.active,
+            },
+          ]}
           text={{
             title: t('plans.remove.title'),
             steps: [], // Should ui have this?

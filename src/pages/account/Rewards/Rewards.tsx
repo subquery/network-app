@@ -113,6 +113,7 @@ export const Rewards: React.FC = () => {
   React.useEffect(() => {
     if (!account) return;
     queryParams.current.offset = 0;
+    queryParams.current.delegatorId = account;
     fetchIndexerEraRewards();
   }, [account]);
 

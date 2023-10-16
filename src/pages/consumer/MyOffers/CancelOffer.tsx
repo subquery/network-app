@@ -19,11 +19,12 @@ import styles from './MyOffers.module.css';
 type Props = {
   offerId: string;
   onSuccess?: () => void;
+  active?: boolean;
 };
 
 const { CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPEN_OFFERS_NAV } = ROUTES;
 
-export const CancelOffer: React.FC<Props> = ({ offerId, onSuccess }) => {
+export const CancelOffer: React.FC<Props> = ({ offerId, active, onSuccess }) => {
   const [cancelPenalty, setCancelPenalty] = React.useState<string>();
   const [unSpent, setUnSpent] = React.useState<string>();
   const [receive, setReceive] = React.useState<string>();
@@ -103,7 +104,14 @@ export const CancelOffer: React.FC<Props> = ({ offerId, onSuccess }) => {
     <TransactionModal
       variant={buttonVariant}
       text={text}
-      actions={[{ label: getCapitalizedStr(actionBtnLabel), key: 'cancel' }]}
+      actions={[
+        {
+          label: getCapitalizedStr(actionBtnLabel),
+          key: 'cancel',
+          tooltip: !active ? t('myOffers.inactiveOffer') : '',
+          defaultOpenTooltips: !active,
+        },
+      ]}
       onClick={handleClick}
       onSuccess={() => {
         if (onSuccess) {

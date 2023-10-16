@@ -146,6 +146,21 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
     immediate: true,
   });
 
+  const disableAcceptInfo = React.useMemo(() => {
+    const status = disabled || !offer.planTemplate?.active;
+    let tooltip = undefined;
+    if (disabled) {
+      tooltip = t('offerMarket.alreadyAcceptedOffer');
+    } else if (!offer.planTemplate?.active) {
+      tooltip = t('offerMarket.offerInactive');
+    }
+
+    return {
+      status,
+      tooltip,
+    };
+  }, [offer, disabled]);
+
   const text = {
     title: t('offerMarket.acceptModal.title'),
     steps: [
@@ -174,8 +189,8 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
         {
           label: getCapitalizedStr(t('offerMarket.accept')),
           key: 'acceptOffer',
-          disabled: disabled,
-          tooltip: disabled ? t('offerMarket.alreadyAcceptedOffer') : undefined,
+          disabled: disableAcceptInfo.status,
+          tooltip: disableAcceptInfo.tooltip,
         },
       ]}
       onSuccess={() => onAcceptOffer()}
