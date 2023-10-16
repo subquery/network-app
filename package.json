@@ -18,7 +18,7 @@
     "@apollo/react-testing": "^4.0.0",
     "@polkadot/util": "^7.8.2",
     "@sentry/react": "^7.57.0",
-    "@subql/apollo-links": "^1.0.8",
+    "@subql/apollo-links": "^1.2.0",
     "@subql/components": "1.0.3-17",
     "@subql/contract-sdk": "0.16.2",
     "@subql/network-clients": "^0.3.17",
