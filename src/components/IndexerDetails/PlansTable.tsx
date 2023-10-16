@@ -111,7 +111,14 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   return (
     <TransactionModal
       variant="textBtn"
-      actions={[{ label: t('plans.purchase.submit'), key: 'purchase' }]}
+      actions={[
+        {
+          label: t('plans.purchase.submit'),
+          key: 'purchase',
+          disabled: !plan.planTemplate?.active,
+          tooltip: !plan.planTemplate?.active ? t('plans.inactiveTemplate') : '',
+        },
+      ]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
       renderContent={(onSubmit, onCancel, isLoading, error) => {

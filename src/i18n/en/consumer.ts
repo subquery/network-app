@@ -72,6 +72,8 @@ const translation = {
       failureFetchPlans: 'Failed to get plans for indexer',
       notReadyToBePurchased: `This plan cannot be purchased until the Indexer status is 'Ready'`,
     },
+    inactiveTemplate: 'This template has mark as inactive.',
+    inactiveTemplateTip: 'This template has mark as inactive, please delete it.',
   },
   flexPlans: {
     project: 'project',
@@ -195,6 +197,7 @@ const translation = {
     faliedToFetchServiceAgreement: 'Failed to request token for service agreement.',
   },
   myOffers: {
+    inactiveOffer: 'This template has mark as inactive, please cancel it.',
     title: 'My Offers',
     open: 'Open',
     openTooltip: 'Offers that are still open to Indexers to accept',
@@ -315,6 +318,7 @@ const translation = {
     accept: 'Accept',
     searchByDeploymentId: 'Search by deployment Id',
     alreadyAcceptedOffer: 'You have already accepted this offer',
+    offerInactive: 'This offer has mark as inactive',
     acceptModal: {
       nonCriteriaData: 'There is no criteria data available',
       moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',

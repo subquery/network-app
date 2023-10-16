@@ -8,7 +8,7 @@ import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
-import { formatSQT } from '@subql/react-hooks/dist/utils';
+import { formatSQT } from '@subql/react-hooks';
 import { Button, Table, TableProps } from 'antd';
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
