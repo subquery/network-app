@@ -18,7 +18,6 @@ import { WithdrawalStatus } from '@subql/react-hooks/dist/graphql';
 import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
 import { Button, Table, TableProps, Tag } from 'antd';
 import assert from 'assert';
-import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
 import { capitalize } from 'lodash-es';
@@ -36,6 +35,25 @@ interface SortedWithdrawals extends Withdrawls {
 }
 
 const dateFormat = 'MMMM Do YY, h:mm:ss a';
+
+const cancelWithdrwalsTextAndTips = {
+  [WithdrawalType.UNDELEGATION]: {
+    text: t('general.cancelUndelegation'),
+    tips: t('general.cancelUndelegationTips'),
+  },
+  [WithdrawalType.UNSTAKE]: {
+    text: t('general.cancelUnstaking'),
+    tips: t('general.cancelUnstakingTips'),
+  },
+  [WithdrawalType.COMMISSION]: {
+    text: t('general.cancelCommission'),
+    tips: t('general.cancelCommissionTips'),
+  },
+  [WithdrawalType.MERGE]: {
+    text: t('general.cancelUnstaking'),
+    tips: t('general.cancelUnstakingTips'),
+  },
+};
 
 const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: () => void }> = ({
   id,
@@ -68,15 +86,11 @@ const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: 
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                 <BsExclamationCircle color="var(--sq-info)" fontSize={22}></BsExclamationCircle>
                 <Typography style={{ marginLeft: 16 }} variant="text">
-                  {type === WithdrawalType.UNDELEGATION
-                    ? t('general.cancelUndelegation')
-                    : t('general.cancelUnstaking')}
+                  {cancelWithdrwalsTextAndTips[type].text}
                 </Typography>
               </div>
               <Typography variant="medium" style={{ marginLeft: 38, marginBottom: 32, color: 'var(--sq--gray700)' }}>
-                {type === WithdrawalType.UNDELEGATION
-                  ? t('general.cancelUndelegationTips')
-                  : t('general.cancelUnstakingTips')}
+                {cancelWithdrwalsTextAndTips[type].tips}
               </Typography>
               <div className="flex-end">
                 <Button onClick={onCancel} loading={isLoading} shape="round">
@@ -98,6 +112,13 @@ const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: 
       ></TransactionModal>
     </div>
   );
+};
+
+const withdrwalsTypeText = {
+  [WithdrawalType.UNSTAKE]: t('withdrawals.unstaking'),
+  [WithdrawalType.UNDELEGATION]: t('withdrawals.unDelegation'),
+  [WithdrawalType.COMMISSION]: t('withdrawals.commission'),
+  [WithdrawalType.MERGE]: t('withdrawals.merge'),
 };
 
 export const Locked: React.FC = () => {
@@ -137,11 +158,7 @@ export const Locked: React.FC = () => {
       title: <TableTitle title={t('withdrawals.type')} />,
       dataIndex: 'type',
       width: '15%',
-      render: (value: string) => (
-        <TableText>
-          {value === WithdrawalType.UNSTAKE ? t('withdrawals.unstaking') : t('withdrawals.unDelegation')}
-        </TableText>
-      ),
+      render: (value: WithdrawalType) => <TableText>{withdrwalsTypeText[value]}</TableText>,
     },
     {
       title: <TableTitle title={t('withdrawals.status')} />,

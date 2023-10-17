@@ -185,3 +185,18 @@
     }
   }
 }
+
+.paymentAmount {
+  text-align: end;
+  color: var(--sq-gray700);
+  :global {
+    span {
+      display: inline-flex;
+      color: var(--sq-gray700)!important;
+    }
+
+    br ~ span {
+      margin-left: 4px;
+    }
+  }
+}

@@ -13,7 +13,7 @@ import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
 import { ExcludeNull, formatEther, notEmpty } from '@utils';
 import { useMount, useUpdate } from 'ahooks';
-import { Table, TableProps, Tag } from 'antd';
+import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 
@@ -86,6 +86,13 @@ export const Rewards: React.FC = () => {
       key: 'action',
       render: (_, reward) => {
         const tagColor = reward.claimed ? 'green' : 'blue';
+        if (reward.isCommission) {
+          return (
+            <Tooltip title="Please go withdrawls page to check this reward">
+              <Tag color={tagColor}>{t('withdrawals.commission')}</Tag>
+            </Tooltip>
+          );
+        }
         return <Tag color={tagColor}>{reward.claimed ? t('rewards.claimed') : t('rewards.unclaimed')}</Tag>;
       },
     },
@@ -106,6 +113,7 @@ export const Rewards: React.FC = () => {
   React.useEffect(() => {
     if (!account) return;
     queryParams.current.offset = 0;
+    queryParams.current.delegatorId = account;
     fetchIndexerEraRewards();
   }, [account]);
 

@@ -213,9 +213,10 @@ const getColumns = (
       fixed: 'right',
       align: 'center',
       width: 100,
-      render: (id: string) => {
+      render: (id: string, record) => {
         if (!connectedAccount) return <TableText content="-" />;
-        return <CancelOffer offerId={id} onSuccess={onCancelSuccess} />;
+
+        return <CancelOffer offerId={id} onSuccess={onCancelSuccess} active={record.planTemplate?.active} />;
       },
     },
   ];

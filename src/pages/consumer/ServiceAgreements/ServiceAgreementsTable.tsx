@@ -8,6 +8,7 @@ import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { formatSQT } from '@subql/react-hooks';
 import { Button, Table, TableProps } from 'antd';
 import moment from 'moment';
 import { FixedType } from 'rc-table/lib/interface';
@@ -15,7 +16,7 @@ import { FixedType } from 'rc-table/lib/interface';
 import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
-import { formatEther, mapAsync, notEmpty, renderAsyncArray } from '../../../utils';
+import { mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { SA_QUERY_FN } from './ServiceAgreements';
 
@@ -116,7 +117,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       key: 'price',
       width: 100,
       render: (price: ServiceAgreementFieldsFragment['lockedAmount']) => (
-        <TableText content={`${formatEther(price)} SQT`} />
+        <TableText content={`${formatSQT(price)} ${TOKEN}`} />
       ),
     },
   ];

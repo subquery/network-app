@@ -21,17 +21,17 @@ export function formatToken(value: BigNumberish, unit = 18): number {
 
 export function useSwapToken(
   orderId: string | undefined,
-): AsyncMemoReturn<{ tokenGet: string; tokenGive: string } | undefined> {
+): AsyncMemoReturn<{ tokenGet: string; tokenGive: string; leftTokenGiveBalance: BigNumber } | undefined> {
   const { contracts } = useWeb3Store();
   return useAsyncMemo(async () => {
     if (!orderId) return undefined;
 
     assert(contracts, 'Contracts not available');
-    const { tokenGet, tokenGive } = await limitContract(
+    const { tokenGet, tokenGive, tokenGiveBalance } = await limitContract(
       () => contracts.permissionedExchange.orders(orderId),
       makeCacheKey(orderId, { type: 'swapOrders' }),
     );
-    return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive] };
+    return { tokenGet: tokenNames[tokenGet], tokenGive: tokenNames[tokenGive], leftTokenGiveBalance: tokenGiveBalance };
   }, [contracts, orderId]);
 }
 

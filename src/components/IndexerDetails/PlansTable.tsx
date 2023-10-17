@@ -4,13 +4,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyQueryResult } from '@apollo/client';
+import { NETWORK_NAME } from '@containers/Web3';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractTransaction } from '@ethersproject/contracts';
 import { Button, Spinner, Typography } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
+import { useStableCoin } from '@subql/react-hooks';
 import { Table, TableProps } from 'antd';
 import { last } from 'ramda';
+
+import { useWeb3Store } from 'src/stores';
 
 import { IndexerDetails } from '../../models';
 import { AsyncData, convertBigNumberToNumber, formatEther, renderAsync, renderAsyncArray, TOKEN } from '../../utils';
@@ -45,6 +49,8 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   deploymentId,
 }) => {
   const { t } = useTranslation();
+  const { contracts } = useWeb3Store();
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
 
   const requiresTokenApproval = planManagerAllowance.data?.isZero();
 
@@ -62,8 +68,19 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
       value: <IndexerName name={indexerDetails?.name} image={indexerDetails?.image} address={plan.creator} />,
     },
     {
-      label: t('plans.headers.price'),
-      value: `${formatEther(plan.price)} ${TOKEN}`,
+      label: t('plans.headers.paymentAmount'),
+      value: (
+        <Typography className={styles.paymentAmount} variant="medium">
+          {pricePreview(plan.planTemplate?.priceToken, plan.price)}
+          {plan.planTemplate?.priceToken !== contracts?.sqToken.address ? (
+            <>
+              <br></br> ({t('plans.headers.paymentTips')})
+            </>
+          ) : (
+            ''
+          )}
+        </Typography>
+      ),
     },
     {
       label: t('plans.headers.period'),
@@ -94,7 +111,14 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   return (
     <TransactionModal
       variant="textBtn"
-      actions={[{ label: t('plans.purchase.submit'), key: 'purchase' }]}
+      actions={[
+        {
+          label: t('plans.purchase.submit'),
+          key: 'purchase',
+          disabled: !plan.planTemplate?.active,
+          tooltip: !plan.planTemplate?.active ? t('plans.inactiveTemplate') : '',
+        },
+      ]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
       renderContent={(onSubmit, onCancel, isLoading, error) => {
@@ -144,6 +168,9 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
 
 export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, planManagerAllowance, ...rest }) => {
   const { t } = useTranslation();
+  const { contracts } = useWeb3Store();
+
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
 
   React.useEffect(() => {
     if (!asyncPlans.called) loadPlans();
@@ -164,11 +191,10 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
       render: (_: string, __: Plan, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'price',
+      dataIndex: 'planTemplate',
       key: 'price',
       title: t('plans.headers.price'),
-      align: 'center',
-      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: PlanTemplate, record) => <TableText content={pricePreview(value?.priceToken, record.price)} />,
     },
     {
       dataIndex: 'planTemplate',

@@ -5,11 +5,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SummaryList, TableText } from '@components';
 import TransactionModal from '@components/TransactionModal';
+import { NETWORK_NAME } from '@containers/Web3';
 import { Button, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
-import { convertBigNumberToNumber, formatEther, TOKEN } from '@utils';
+import { useStableCoin } from '@subql/react-hooks';
+import { convertBigNumberToNumber } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
 import { Table, TableProps } from 'antd';
 import assert from 'assert';
@@ -18,7 +20,7 @@ import { last } from 'ramda';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './List.module.css';
+import styles from './List.module.less';
 
 type Props = {
   data: Plan[];
@@ -29,7 +31,7 @@ type Props = {
 const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
-
+  const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
   const handleRemovePlan = async (id: string) => {
     assert(contracts, 'Contracts not available');
 
@@ -49,13 +51,15 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       dataIndex: 'id',
       title: <TableTitle title={'#'} />,
       width: 30,
-      render: (text: string, _: any, idx: number) => <TableText content={idx + 1} />,
+      render: (text: string, _: unknown, idx: number) => <TableText content={idx + 1} />,
     },
     {
-      dataIndex: 'price',
+      dataIndex: 'planTemplate',
       key: 'price',
       title: <TableTitle title={t('plans.headers.price')} />,
-      render: (value: bigint) => <TableText content={`${formatEther(value)} SQT`} />,
+      render: (value: PlanTemplate, record) => {
+        return <TableText content={pricePreview(value.priceToken, record.price)} />;
+      },
     },
     {
       dataIndex: 'planTemplate',
@@ -91,7 +95,14 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       align: 'center',
       render: (id: string, plan: Plan) => (
         <TransactionModal
-          actions={[{ label: t('plans.remove.action'), key: 'remove' }]}
+          actions={[
+            {
+              label: t('plans.remove.action'),
+              key: 'remove',
+              tooltip: !plan.planTemplate?.active ? t('plans.inactiveTemplateTip') : '',
+              defaultOpenTooltips: !plan.planTemplate?.active,
+            },
+          ]}
           text={{
             title: t('plans.remove.title'),
             steps: [], // Should ui have this?
@@ -107,7 +118,9 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
               },
               {
                 label: t('plans.headers.price'),
-                value: `${formatEther(plan.price)} ${TOKEN}`,
+                value: (
+                  <div style={{ textAlign: 'end' }}>{pricePreview(plan.planTemplate?.priceToken, plan.price)}</div>
+                ),
               },
               {
                 label: t('plans.headers.period'),

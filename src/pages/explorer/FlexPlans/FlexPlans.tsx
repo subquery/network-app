@@ -5,24 +5,27 @@ import * as React from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import { IIndexerFlexPlan, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { useGetFlexPlanPrice } from '@hooks/useGetFlexPlanPrice';
 import { TableTitle } from '@subql/components';
-import { renderAsync } from '@subql/react-hooks';
+import { renderAsync, useAsyncMemo } from '@subql/react-hooks';
 import { Space, Table, TableProps } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next, { t } from 'i18next';
 
 import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
-import { IIndexerFlexPlan, useIndexerFlexPlans } from '../../../hooks';
-import { formatSecondsDuration, getFlexPlanPrice, ROUTES } from '../../../utils';
+import { useRouteQuery } from '../../../hooks';
+import { formatSecondsDuration, ROUTES } from '../../../utils';
 import CreateHostingFlexPlan from './CreateHostingPlan/CreateHostingPlan';
 import styles from './FlexPlans.module.less';
 
 export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const flexPlans = useIndexerFlexPlans(BigNumber.from(id).toString());
-
+  const query = useRouteQuery();
+  const { getProjects } = useConsumerHostServices({ autoLogin: false });
+  const { getFlexPlanPrice } = useGetFlexPlanPrice();
   // TODO: confirm score threadThread with consumer host service
   const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
     {
@@ -47,7 +50,7 @@ export const FlexPlans: React.FC = () => {
     {
       dataIndex: 'price',
       title: <TableTitle>{i18next.t('general.price')}</TableTitle>,
-      render: (price) => <TableText content={getFlexPlanPrice(price)} />,
+      render: (price, record) => <TableText content={getFlexPlanPrice(price, record.price_token)} />,
     },
     {
       dataIndex: 'max_time',
@@ -55,6 +58,21 @@ export const FlexPlans: React.FC = () => {
       render: (max) => <TableText>{formatSecondsDuration(max)}</TableText>,
     },
   ];
+
+  const flexPlans = useAsyncMemo(async () => {
+    try {
+      const res = await getProjects({
+        projectId: BigNumber.from(id).toString(),
+        deployment: query.get('deploymentId') || undefined,
+      });
+
+      if (res.data?.indexers?.length) {
+        return res.data.indexers;
+      }
+    } catch (e) {
+      return [];
+    }
+  }, [id, query]);
 
   React.useEffect(() => {
     if (!id) {

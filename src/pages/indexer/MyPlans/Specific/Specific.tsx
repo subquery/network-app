@@ -50,6 +50,7 @@ const Specific: React.FC = () => {
                   {deployments.map((deployment) => {
                     if (!deployment) return null;
                     const plans = deployment?.plans.nodes.filter(notEmpty);
+
                     return (
                       <div key={deployment.id} className={styles.plan}>
                         <div className={styles.header}>

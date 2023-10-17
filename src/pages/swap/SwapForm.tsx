@@ -51,6 +51,15 @@ interface ISwapForm {
   usdcLimitation?: BigNumber;
   onIncreaseAllowance?: (address: string, allowance: BigNumber) => Promise<ContractTransaction>;
   onUpdateSwapData?: () => void;
+  lifetimeLimitationInfo?: {
+    isOut: boolean;
+    limitation: number;
+  };
+  leftOrdersAmountInfo?: {
+    isOut: boolean;
+    leftOrderAmount: BigNumber;
+  };
+  kycStatus: boolean;
 }
 
 interface PairFrom {
@@ -75,6 +84,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
   onIncreaseAllowance,
   onUpdateSwapData,
   usdcLimitation,
+  kycStatus,
+  lifetimeLimitationInfo,
+  leftOrdersAmountInfo,
 }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -108,9 +120,18 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const SwapFormSchema = Yup.object().shape({
     from: Yup.string()
       .required()
-      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
-      .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
-        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
+      .test(
+        'isOutLifetimeLimitation',
+        `You have exceeded your lifetime swap limit of ${lifetimeLimitationInfo?.limitation.toLocaleString()} ${
+          pair.from
+        } (${((lifetimeLimitationInfo?.limitation || 0) * fromRate).toLocaleString()} kSQT)`,
+        (from) => {
+          if (lifetimeLimitationInfo) {
+            return !lifetimeLimitationInfo.isOut;
+          }
+
+          return true;
+        },
       )
       .test(
         'isOutOfLimatation',
@@ -126,9 +147,33 @@ export const SwapForm: React.FC<ISwapForm> = ({
           return true;
         },
       )
+      .test('isMin', 'From should be greater than 0.', (from) => (from ? parseFloat(from) > 0 : false))
+      .test('isMax', `There is not enough ${pair.from} to swap.`, (from) =>
+        from ? parseFloat(from) <= parseFloat(pair.fromMax) : false,
+      )
       .typeError('Please input valid from amount.'),
     to: Yup.string()
       .required()
+      .test(
+        'hasLeft',
+        `Out of this order's total amount, left amount is ${formatUnits(
+          leftOrdersAmountInfo?.leftOrderAmount || '0',
+          STABLE_TOKEN_DECIMAL,
+        )}`,
+        (to) => {
+          if (leftOrdersAmountInfo) {
+            if (!leftOrdersAmountInfo.isOut) {
+              return leftOrdersAmountInfo.leftOrderAmount.gte(
+                BigNumber.from(parseUnits(to || '0', STABLE_TOKEN_DECIMAL)),
+              );
+            }
+
+            if (leftOrdersAmountInfo.isOut) return false;
+          }
+
+          return true;
+        },
+      )
       .test('isMin', 'To should be greater than 0.', (to) => (to ? parseFloat(to) > 0 : false))
       .test('isValid', `There is not enough ${pair.to} to swap.`, (to) => {
         if (pair.to === STABLE_TOKEN) {
@@ -203,7 +248,8 @@ export const SwapForm: React.FC<ISwapForm> = ({
           enableReinitialize
         >
           {({ isValid, isSubmitting, setErrors, values, errors, setValues, resetForm }) => {
-            const isActionDisabled = !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
+            const isActionDisabled =
+              !kycStatus || !isValid || !orderId || !values[FROM_INPUT_ID] || !values[TO_INPUT_ID];
             const summaryList = [
               {
                 label: t('swap.from'),
@@ -225,7 +271,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
                   stringMode
                   maxAmount={pair.fromMax}
                   value={values.from}
-                  description={`The maximum swap amount: ${truncFormatEtherStr(pair.fromMax)} ${pair.from}`}
+                  description={`The maximum swap amount: ${!kycStatus ? 0 : truncFormatEtherStr(pair.fromMax)} ${
+                    pair.from
+                  }`}
                   onChange={(value) => updateFieldVal(FROM_INPUT_ID, value, setValues, setErrors)}
                   errorMsg={errors[FROM_INPUT_ID]}
                   onClickMax={(value) => updateFieldVal(FROM_INPUT_ID, value.toString(), setValues, setErrors)}

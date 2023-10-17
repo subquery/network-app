@@ -3,10 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsExclamationTriangle } from 'react-icons/bs';
 import { Navigate, Route, Routes } from 'react-router';
 import { ApproveContract, EmptyList, Spinner, TabButtons, WalletRoute } from '@components';
 import { useSQToken, useWeb3 } from '@containers';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { useAirdropKyc } from '@hooks/useAirdropKyc';
 import { useAUSDAllowance, useAUSDBalance, useAUSDContract, useAUSDTotalSupply } from '@hooks/useASUDContract';
 import {
   useSellSQTQuota,
@@ -16,7 +18,7 @@ import {
   useSwapToken,
   useSwapTradeLimitation,
 } from '@hooks/useSwapData';
-import { Footer } from '@subql/components';
+import { Footer, openNotification, Typography as SubqlTypography } from '@subql/components';
 import {
   formatEther,
   mergeAsync,
@@ -25,11 +27,17 @@ import {
   ROUTES,
   STABLE_TOKEN,
   STABLE_TOKEN_ADDRESS,
+  STABLE_TOKEN_DECIMAL,
   TOKEN,
 } from '@utils';
+import { limitContract } from '@utils/limitation';
+import { makeCacheKey } from '@utils/limitation';
 import { Typography } from 'antd';
 import { BigNumber, BigNumberish } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import i18next, { TFunction } from 'i18next';
+
+import { useWeb3Store } from 'src/stores';
 
 import styles from './Swap.module.css';
 import { SwapForm } from './SwapForm';
@@ -83,9 +91,70 @@ const getStats = ({
   ];
 };
 
-const SellAUSD = () => {
-  const { t } = useTranslation();
+const useGetUSDCTradeLimitation = () => {
+  const { account } = useWeb3();
+  const { contracts } = useWeb3Store();
+  const aUSDBalance = useAUSDBalance();
+  const totalLimitation = useSwapTradeLimitation();
+  const [maxTradelimitation, setMaxTradeLimitation] = React.useState(0);
+  const [leftTradeAmount, setLeftTradeAmount] = React.useState(0);
+  const [totalTradeAmountUser, setTotalTradeAmountUser] = React.useState(0);
+  const initMaxTradeLimitation = async () => {
+    try {
+      if (!aUSDBalance.data || !contracts || !account) return 0;
+      // returned values are USDC
+      const tradeLimitationPerAccount =
+        (await limitContract(
+          () => contracts.permissionedExchange.tradeLimitationPerAccount(),
+          makeCacheKey(account, { type: 'perAccountTrade' }),
+        )) || BigNumber.from(0);
+      const accumulatedTrades =
+        (await limitContract(
+          () => contracts.permissionedExchange.accumulatedTrades(account),
+          makeCacheKey(account, { type: 'accumulated' }),
+        )) || BigNumber.from(0);
 
+      const tradeLimitation = totalLimitation.data || BigNumber.from(0);
+
+      const formatedTradeLimitation = formatUnits(tradeLimitation, STABLE_TOKEN_DECIMAL);
+      const formtedTradelimitationPerAccount = formatUnits(tradeLimitationPerAccount, STABLE_TOKEN_DECIMAL);
+      const formatedAccumulatedTrades = formatUnits(accumulatedTrades, STABLE_TOKEN_DECIMAL);
+      setLeftTradeAmount(+formtedTradelimitationPerAccount - +formatedAccumulatedTrades);
+      setTotalTradeAmountUser(+formtedTradelimitationPerAccount);
+      return Math.min(
+        +aUSDBalance.data,
+        +formatedTradeLimitation,
+        +formtedTradelimitationPerAccount - +formatedAccumulatedTrades,
+      );
+    } catch (e) {
+      console.warn(e);
+      openNotification({
+        type: 'error',
+        description: 'Fetch trade limitation failed, please change your RPC Endpoint and try again.',
+      });
+
+      return 0;
+    }
+  };
+
+  const init = async () => {
+    const res = await initMaxTradeLimitation();
+
+    setMaxTradeLimitation(res);
+  };
+
+  React.useEffect(() => {
+    init();
+  }, [account, aUSDBalance.data, totalLimitation.data, contracts]);
+
+  return { maxTradelimitation, leftTradeAmount, totalTradeAmountUser, refresh: init };
+};
+
+const USDCToSqt = () => {
+  const { t } = useTranslation();
+  const { account } = useWeb3();
+  const [kycStatus, setKycStatus] = React.useState(false);
+  const { maxTradelimitation, leftTradeAmount, totalTradeAmountUser, refresh } = useGetUSDCTradeLimitation();
   const aUSDContract = useAUSDContract();
   const aUSDAllowance = useAUSDAllowance();
   const requireTokenApproval = aUSDAllowance?.data?.isZero();
@@ -97,6 +166,20 @@ const SellAUSD = () => {
   const aUSDBalance = useAUSDBalance();
   const aUSDTotalSupply = useAUSDTotalSupply();
   const usdcToSqtLimitation = useSwapTradeLimitation();
+  const { getKycStatus } = useAirdropKyc();
+
+  const initKyc = async (address: string) => {
+    const res = await getKycStatus(address);
+    setKycStatus(res);
+  };
+
+  React.useEffect(() => {
+    setKycStatus(false);
+    if (account) {
+      initKyc(account);
+    }
+  }, [account, aUSDBalance.data]);
+
   if (fetchingOrderId) return <Spinner />;
 
   if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
@@ -109,15 +192,15 @@ const SellAUSD = () => {
       },
       empty: () => <Typography.Text type="danger">{`There is no data available`}</Typography.Text>,
       data: (data) => {
-        const [sqtAUSDRate, sqtPoolSize, tokens, aUSDAmount, aUSDSupply, usdcToSqtLimitation] = data;
+        const [sqtAUSDRate, sqtPoolSize, tokens, _, aUSDSupply, usdcToSqtLimitation] = data;
         if (sqtAUSDRate === undefined || sqtPoolSize === undefined || fetchingOrderId) return <Spinner />;
 
-        const sortedAUSDBalance = aUSDAmount ?? '0';
+        // const sortedAUSDBalance = aUSDAmount ?? '0';
         const sortedRate = sqtAUSDRate ?? 0;
         const sortedPoolSize = sqtPoolSize ?? '0';
         const pair = {
           from: STABLE_TOKEN,
-          fromMax: sortedAUSDBalance,
+          fromMax: maxTradelimitation.toString(),
           to: TOKEN,
           toMax: formatEther(sortedPoolSize),
         };
@@ -131,23 +214,67 @@ const SellAUSD = () => {
         });
 
         return (
-          <SwapForm
-            stats={stats}
-            pair={pair}
-            fromRate={sortedRate}
-            usdcLimitation={usdcToSqtLimitation as BigNumber}
-            orderId={orderId}
-            requireTokenApproval={!!requireTokenApproval}
-            contract={ApproveContract.PermissionedExchange}
-            onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
-            onApproveAllowance={() => aUSDAllowance?.refetch()}
-            increaseAllowanceAmount={aUSDSupply}
-            onUpdateSwapData={() => {
-              swapTokens.refetch(true);
-              swapPool.refetch(true);
-              aUSDBalance.refetch(true);
-            }}
-          />
+          <>
+            {!kycStatus && (
+              <div
+                className="flex"
+                style={{ alignItems: 'flex-start', borderRadius: 8, background: 'var(--sq-gray200)', padding: 16 }}
+              >
+                <BsExclamationTriangle
+                  style={{ color: 'var(--sq-warning)', fontSize: 16, marginRight: 16, marginTop: 3 }}
+                ></BsExclamationTriangle>
+
+                <div className="col-flex" style={{ justifyContent: 'flex-start' }}>
+                  <SubqlTypography type="secondary">
+                    Only participants that have been KYC-ed and then whitelisted can participate in the SubQuery Kepler
+                    Swap.
+                  </SubqlTypography>
+                  <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
+                    You can see a list of all whitelisted participants{' '}
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1Y01iu2M6fq5bat38efj2glvmXVo7W3Z2gYHHTmbES3Q/edit?usp=sharing"
+                      target="_blank"
+                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                      rel="noreferrer"
+                    >
+                      here.
+                    </a>{' '}
+                    If you think that you should be able to participate (e.g. you have completed KYC before), please
+                    contact us in #kepler-swap-support in our{' '}
+                    <a
+                      href="https://discord.com/invite/subquery"
+                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                    >
+                      Discord.
+                    </a>
+                  </SubqlTypography>
+                </div>
+              </div>
+            )}
+            <SwapForm
+              stats={stats}
+              pair={pair}
+              fromRate={sortedRate}
+              usdcLimitation={usdcToSqtLimitation as BigNumber}
+              orderId={orderId}
+              requireTokenApproval={!!requireTokenApproval}
+              contract={ApproveContract.PermissionedExchange}
+              onIncreaseAllowance={aUSDContract?.data?.increaseAllowance}
+              onApproveAllowance={() => aUSDAllowance?.refetch()}
+              increaseAllowanceAmount={aUSDSupply}
+              onUpdateSwapData={() => {
+                swapTokens.refetch(true);
+                swapPool.refetch(true);
+                aUSDBalance.refetch(true);
+                refresh();
+              }}
+              kycStatus={kycStatus}
+              lifetimeLimitationInfo={{
+                isOut: leftTradeAmount === 0,
+                limitation: totalTradeAmountUser,
+              }}
+            />
+          </>
         );
       },
     },
@@ -155,7 +282,7 @@ const SellAUSD = () => {
 };
 
 // TODO: Improve useSwapToken function: as current use TOKEN in util / useSwapToken two places
-const GetAUSD = () => {
+const SqtToUSDC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const { permissionExchangeAllowance } = useSQToken();
@@ -207,6 +334,8 @@ const GetAUSD = () => {
         t,
       });
 
+      const leftOrderAmount = tokens?.leftTokenGiveBalance;
+
       return (
         <SwapForm
           stats={stats}
@@ -222,6 +351,11 @@ const GetAUSD = () => {
             aUSDBalance.refetch(true);
             tradableQuota.refetch(true);
           }}
+          leftOrdersAmountInfo={{
+            isOut: !!leftOrderAmount?.eq(0),
+            leftOrderAmount: leftOrderAmount || BigNumber.from(0),
+          }}
+          kycStatus
         />
       );
     },
@@ -239,12 +373,13 @@ const Swap: React.FC = () => {
                 <TabButtons tabs={buttonLinks} whiteTab />
               </div>
               <Routes>
-                <Route index path={BUY} element={<SellAUSD />} />
-                <Route path={SELL} element={<GetAUSD />} />
+                <Route index path={BUY} element={<USDCToSqt />} />
+                <Route path={SELL} element={<SqtToUSDC />} />
                 <Route path={'/'} element={<Navigate replace to={BUY} />} />
               </Routes>
             </div>
           </div>
+
           <Footer simple />
         </div>
       }

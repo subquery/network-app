@@ -29,6 +29,7 @@ import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFo
 import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
 import { toChecksumAddress } from 'ethereum-checksum-address';
+import { constants } from 'ethers';
 import { t } from 'i18next';
 import { isString } from 'lodash-es';
 
@@ -118,7 +119,9 @@ const AccountBaseInfo = (props: { account: string }) => {
       {makeChunk({
         title: 'SSL',
         value: (
-          <Tag color="green">{accountInfos?.infos?.sslEnabled ? t('general.enabled') : t('general.disabled')}</Tag>
+          <Tag color={accountInfos?.infos?.sslEnabled ? 'green' : 'default'}>
+            {accountInfos?.infos?.sslEnabled ? t('general.enabled') : t('general.disabled')}
+          </Tag>
         ),
       })}
 
@@ -126,7 +129,7 @@ const AccountBaseInfo = (props: { account: string }) => {
         title: 'Social Credibility',
         value: (
           <div>
-            <Tag color="green">
+            <Tag color={accountInfos?.infos?.socialCredibility ? 'green' : 'default'}>
               {accountInfos?.infos?.socialCredibility ? t('general.enabled') : t('general.disabled')}
             </Tag>
           </div>
@@ -187,7 +190,7 @@ const ActiveCard = (props: { account: string }) => {
 const IndexerProfile: FC = () => {
   const { id: account } = useParams();
   const checksumAddress = useMemo(() => {
-    return toChecksumAddress(account || '');
+    return toChecksumAddress(account || constants.AddressZero);
   }, [account]);
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);

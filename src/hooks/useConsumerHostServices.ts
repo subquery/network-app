@@ -28,6 +28,7 @@ export enum LOGIN_CONSUMER_HOST_STATUS_MSG {
   REJECT_SIGN = 'User denied message signature',
 }
 
+// TODO: add cache for api request
 export const useConsumerHostServices = (
   { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
 ) => {
@@ -192,6 +193,43 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const getProjects = async (params: { projectId: string; deployment?: string }) => {
+    const res = await instance.get<{ indexers: IIndexerFlexPlan[] }>(`/projects/${params.projectId}`, {
+      headers: authHeaders.current,
+      params,
+    });
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
+  const getUserChannelState = async (channelId: string): Promise<AxiosResponse<IGetUserChannelState>> => {
+    const res = await instance.get<IGetUserChannelState>(`/users/channels/${channelId}/state`, {
+      headers: authHeaders.current,
+    });
+
+    const sdLogin = await shouldLogin(res.data);
+
+    if (sdLogin) return await getUserChannelState(channelId);
+
+    if (alert && isConsumerHostError(res.data)) {
+      openNotification({
+        type: 'error',
+        description: res.data.error,
+        duration: 5000,
+      });
+    }
+
+    return res;
+  };
+
   useEffect(() => {
     if (autoLogin) {
       loginConsumerHostToken();
@@ -204,8 +242,18 @@ export const useConsumerHostServices = (
     deleteNewApiKey,
     createHostingPlanApi,
     getHostingPlanApi,
+    getUserChannelState,
+    getProjects,
   };
 };
+
+export interface IGetUserChannelState {
+  channelId: string;
+  consumerSign: string;
+  indexerSign: string;
+  isFinal: boolean;
+  spent: string;
+}
 
 export interface IPostHostingPlansParams {
   deploymentId: string;
@@ -246,6 +294,25 @@ export interface GetUserApiKeys {
   times: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface IIndexerFlexPlan {
+  id: number;
+  deployment_id: number;
+  indexer_id: number;
+  indexer: string;
+  price: string;
+  max_time: number;
+  block_height: string;
+  status: number;
+  status_at: Date;
+  score: number;
+  reality: number;
+  is_active: boolean;
+  create_at: Date;
+  updated_at: Date;
+  online: boolean;
+  price_token: string;
 }
 
 export type ConsumerHostError =

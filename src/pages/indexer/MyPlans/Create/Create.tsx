@@ -7,12 +7,13 @@ import { SummaryList, TableText } from '@components';
 import { NumberInput } from '@components/NumberInput';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
+import { NETWORK_NAME } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
 import { Button, Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
-import { useGetPlanTemplatesQuery } from '@subql/react-hooks';
+import { useGetPlanTemplatesQuery, useStableCoin } from '@subql/react-hooks';
 import {
   cidToBytes32,
   convertBigNumberToNumber,
@@ -21,56 +22,69 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
+  STABLE_TOKEN_DECIMAL,
+  TOKEN,
 } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
-import { Radio, Select, Table, TableProps } from 'antd';
+import { Alert, Radio, Select, Table, TableProps } from 'antd';
 import assert from 'assert';
 import clsx from 'clsx';
 import { constants } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
 import i18next from 'i18next';
 import * as yup from 'yup';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './Create.module.css';
+import styles from './Create.module.less';
 
-export const getPlanTemplateColumns = (
+export const useGetPlanTemplateColumns = (
   onChooseTemplate: (templateId: string, idx: number, template: Template) => void,
   selectedTemplateId?: string,
-): TableProps<Template>['columns'] => [
-  {
-    title: <TableTitle title={'#'} />,
-    dataIndex: 'id',
-    render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
-  },
-  {
-    dataIndex: 'period',
-    title: <TableTitle title={i18next.t('plans.headers.period').toUpperCase()} />,
-    render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
-  },
-  {
-    dataIndex: 'dailyReqCap',
-    title: <TableTitle title={i18next.t('plans.headers.dailyReqCap').toUpperCase()} />,
-    render: (dailyReqCap: string) => (
-      <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
-    ),
-  },
-  {
-    dataIndex: 'rateLimit',
-    title: <TableTitle title={i18next.t('plans.headers.rateLimit').toUpperCase()} />,
-    render: (rateLimit: string) => (
-      <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
-    ),
-  },
-  {
-    dataIndex: 'id',
-    title: <TableTitle title={i18next.t('general.choose').toUpperCase()} />,
-    render: (id: string, template: Template, idx: number) => (
-      <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
-    ),
-  },
-];
+): TableProps<Template>['columns'] => {
+  const { contracts } = useWeb3Store();
+
+  const { coinsAddressDict } = useStableCoin(contracts, NETWORK_NAME);
+  return [
+    {
+      title: <TableTitle title={'#'} />,
+      dataIndex: 'id',
+      render: (_: string, __: Template, idx: number) => <TableText content={idx + 1} />,
+    },
+    {
+      dataIndex: 'period',
+      title: <TableTitle title={i18next.t('plans.headers.period').toUpperCase()} />,
+      render: (period: string) => <TableText content={formatSecondsDuration(convertStringToNumber(period))} />,
+    },
+    {
+      dataIndex: 'dailyReqCap',
+      title: <TableTitle title={i18next.t('plans.headers.dailyReqCap').toUpperCase()} />,
+      render: (dailyReqCap: string) => (
+        <TableText content={i18next.t('plans.default.query', { count: convertBigNumberToNumber(dailyReqCap) })} />
+      ),
+    },
+    {
+      dataIndex: 'rateLimit',
+      title: <TableTitle title={i18next.t('plans.headers.rateLimit').toUpperCase()} />,
+      render: (rateLimit: string) => (
+        <TableText content={`${convertBigNumberToNumber(rateLimit)} ${i18next.t('plans.default.requestPerMin')}`} />
+      ),
+    },
+    {
+      dataIndex: 'priceToken',
+      title: <TableTitle title={i18next.t('plans.headers.priceToken').toUpperCase()} />,
+      render: (priceToken: string) => coinsAddressDict[priceToken],
+    },
+    {
+      dataIndex: 'id',
+      title: <TableTitle title={i18next.t('general.choose').toUpperCase()} />,
+      render: (id: string, template: Template, idx: number) => (
+        <Radio onClick={() => onChooseTemplate(id, idx, template)} checked={id === selectedTemplateId} />
+      ),
+    },
+  ];
+};
 
 const ChooseTemplateStep = ({
   selectedTemplateId,
@@ -86,7 +100,7 @@ const ChooseTemplateStep = ({
   disabled?: boolean;
 }) => {
   const { t } = useTranslation();
-  const columns = getPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
+  const columns = useGetPlanTemplateColumns(onChooseTemplate, selectedTemplateId);
   return (
     <Form>
       <div className={styles.templateList}>
@@ -118,7 +132,6 @@ const ChooseTemplateStep = ({
 };
 
 const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (deploymentId: string) => void }) => {
-  const { t } = useTranslation();
   const { account } = useWeb3();
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
 
@@ -181,8 +194,10 @@ type FormProps = {
 const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep, onStepChange, error }) => {
   const { t } = useTranslation();
   const [selectedTemplateIdx, setSelectedTemplateIdx] = React.useState<number>(0);
-  const template = templates[selectedTemplateIdx];
+  const { contracts } = useWeb3Store();
+  const { coinsAddressDict } = useStableCoin(contracts, NETWORK_NAME);
 
+  const template = templates[selectedTemplateIdx];
   const onFirstStep = () => onStepChange(0);
   const onSecondStep = () => onStepChange(1);
   const onThirdStep = () => onStepChange(2);
@@ -201,7 +216,6 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
       value: ` ${template.rateLimit} queries/sec`,
     },
   ];
-
   return (
     <Formik
       initialValues={{
@@ -214,7 +228,8 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
     >
       {({ submitForm, isValid, isSubmitting, setFieldValue, values }) => {
         const selectedTemplateId = values.templateId;
-
+        const selectedTemplateInfo = templates.find((i) => i.id === selectedTemplateId);
+        const isUSDCToken = selectedTemplateInfo?.priceToken !== contracts?.sqToken.address;
         // First step: choose planTemplate
         if (curStep === 0) {
           const onChooseTemplate = (templateId: string, idx: number) => {
@@ -241,6 +256,18 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
 
               <NumberInput
                 title={t('plans.create.priceTitle')}
+                unit={
+                  <span className="flex">
+                    <img
+                      src={isUSDCToken ? '/static/usdc.png' : '/static/sqt.svg'}
+                      alt=""
+                      width="24"
+                      height="24"
+                      style={{ marginRight: 8 }}
+                    ></img>
+                    {selectedTemplateInfo?.priceToken ? coinsAddressDict[selectedTemplateInfo.priceToken] : TOKEN}
+                  </span>
+                }
                 inputParams={{
                   onChange: (price) => {
                     onSecondStep();
@@ -252,7 +279,23 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
                   name: 'price',
                 }}
               />
-
+              {isUSDCToken ? (
+                <Alert
+                  className={styles.usdcAlert}
+                  showIcon
+                  type="info"
+                  message={
+                    <Typography variant="small" style={{ color: 'var(--sq-gray700)' }}>
+                      Please note that this is just an indicative rate. <br />
+                      <br />
+                      The actual price depends on the exact exchange rate when consumer makes payment. The final payment
+                      will always be paid by SQT.
+                    </Typography>
+                  }
+                ></Alert>
+              ) : (
+                ''
+              )}
               <DeploymentIdOptions
                 onChooseSpecificPlan={(deploymentId: string) => {
                   onSecondStep();
@@ -312,9 +355,15 @@ export const Create: React.FC = () => {
     if (!templates || templates.error) {
       throw templates.error;
     }
+    const selectedTemplateInfo = templates.data?.planTemplates?.nodes.filter(notEmpty).find((i) => i.id === templateId);
+
+    const sortedAmount =
+      selectedTemplateInfo?.priceToken === contracts.sqToken.address
+        ? parseEther(amount)
+        : parseUnits(amount, STABLE_TOKEN_DECIMAL);
 
     return contracts.planManager.createPlan(
-      parseEther(amount),
+      sortedAmount,
       templateId,
       deploymentId ? cidToBytes32(deploymentId) : constants.HashZero,
     );
