@@ -3191,10 +3191,10 @@
   resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
   integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
 
-"@subql/network-config@0.3.17-0":
-  version "0.3.17-0"
-  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-0.3.17-0.tgz#c7d5232cb093da1d264364632026594bed830a3e"
-  integrity sha512-gGGH2GuWJzyiZKshmHHxujrjvhK+p6J/MkFJFXa/6AJPn5esxTJGrTW283maCedFaZOXFbq/SMwmvho9NC50Og==
+"@subql/network-config@0.3.17-2":
+  version "0.3.17-2"
+  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-0.3.17-2.tgz#b2a156843b83c140a65b910b702ebcfd2c9b47b4"
+  integrity sha512-ZF8PS88UbJy5BiOmULgoDQmuJBO8a5KoPTKvQ4lhn3UhDI7HEMenhYPlZbbX0AzBQUne5uYmQu9GSuUspUBHCg==
 
 "@subql/network-query@0.3.16-0":
   version "0.3.16-0"
