@@ -40,7 +40,8 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 };
 
 const RenderRouter: React.FC = () => {
-  const studioEnabled = useStudioEnabled();
+  // const studioEnabled = useStudioEnabled();
+  const studioEnabled = true;
   const calEntryLinks = useMemo(() => (studioEnabled ? [...entryLinks, studioLink] : [...entryLinks]), [studioEnabled]);
 
   return (
