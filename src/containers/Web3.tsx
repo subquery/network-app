@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { PropsWithChildren } from 'react';
-import { networks } from '@subql/contract-sdk';
 import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
-import { SQNetworks } from '@subql/network-config';
+import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
 import { parseError } from '@utils/parseError';
 import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
@@ -20,9 +19,9 @@ import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 export const NETWORK_NAME: SQNetworks = import.meta.env.VITE_NETWORK;
 export const isMainnet = import.meta.env.VITE_NETWORK === 'kepler';
 export const SUPPORTED_NETWORK = (isMainnet ? 'kepler' : 'testnet') as SQNetworks;
-export const defaultChainId = parseInt(networks[SUPPORTED_NETWORK].chainId, 16);
+export const defaultChainId = parseInt(NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].chainId, 16);
 
-export const ECOSYSTEM_NETWORK = networks[SUPPORTED_NETWORK].chainName;
+export const ECOSYSTEM_NETWORK = NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].chainName;
 
 export const NETWORK_DEPLOYMENT_DETAILS = isMainnet ? keplerJSON : testnetJSON;
 
@@ -129,7 +128,7 @@ export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
     if (e?.code === 4902) {
       await ethWindowObj.request({
         method: ethMethods.addChain,
-        params: [networks[SUPPORTED_NETWORK]],
+        params: [NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK]],
       });
     }
   }
