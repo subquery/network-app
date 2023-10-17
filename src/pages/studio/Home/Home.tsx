@@ -18,11 +18,12 @@ import { Header } from '../../explorer/Home/Home';
 import styles from './Home.module.css';
 const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
 
-const Project: React.FC<{ projectId: string; account: string; onClick?: () => void }> = ({
-  projectId,
-  account,
-  onClick,
-}) => {
+const Project: React.FC<{
+  projectId: string;
+  account: string;
+  onClick?: () => void;
+  projectDetails: ProjectFieldsFragment;
+}> = ({ projectId, account, onClick, projectDetails }) => {
   const asyncProject = useProject(projectId);
 
   return (
@@ -37,6 +38,8 @@ const Project: React.FC<{ projectId: string; account: string; onClick?: () => vo
             <ProjectCard
               onClick={onClick}
               project={{
+                ...projectDetails,
+                metadata: undefined,
                 id: projectId,
                 owner: account,
               }}
@@ -46,7 +49,15 @@ const Project: React.FC<{ projectId: string; account: string; onClick?: () => vo
         },
         data: (project) => {
           if (!project) return null;
-          return <ProjectCard project={project} onClick={onClick} />;
+          return (
+            <ProjectCard
+              project={{
+                ...projectDetails,
+                ...project,
+              }}
+              onClick={onClick}
+            />
+          );
         },
       })}
     </div>
@@ -94,7 +105,12 @@ const Home: React.FC = () => {
 
   return (
     <div className="content-width">
-      <Header renderRightItem={() => <Button type="primary" label="Create a project" onClick={enableCreateModal} />} />
+      <div className="col-flex" style={{ marginBottom: 24 }}>
+        <Header />
+        <div className="flex" style={{ justifyContent: 'center' }}>
+          <Button type="primary" label="Create a project" onClick={enableCreateModal} />
+        </div>
+      </div>
 
       <Modal
         isOpen={showCreateModal}
@@ -113,18 +129,17 @@ const Home: React.FC = () => {
             return <CreateInstructions onClick={enableCreateModal} />;
           }
 
-          const renderProjects = projects
-            .map((p) => ({ id: p?.id ?? '', owner: p?.owner ?? '' }))
-            .filter(({ id, owner }) => account && id && owner === account);
+          const renderProjects = projects.filter(({ id, owner }) => account && id && owner === account);
 
           return (
             <div className={styles.list}>
-              {renderProjects.map(({ id }) => (
+              {renderProjects.map((proj) => (
                 <Project
-                  projectId={id}
-                  key={id}
-                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${id}`)}
+                  projectId={proj.id}
+                  key={proj.id}
+                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${proj.id}`)}
                   account={account ?? ''}
+                  projectDetails={proj}
                 />
               ))}
             </div>

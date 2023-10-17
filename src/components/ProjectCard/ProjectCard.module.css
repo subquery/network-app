@@ -1,13 +1,15 @@
 .card {
-  border: 1px solid var(--weak);
+  border: 1px solid var(--sq-gray200);
   border-radius: 8px;
   padding: 16px;
-  width: 227px;
-  height: 317px;
+  width: 237px;
   cursor: pointer;
-  margin-right: 38px;
+  margin-right: 24px;
   box-sizing: border-box;
-  box-shadow: 0px 10px 30px #f4f6f8;
+  box-shadow: 0px 0px 6px 0px rgba(157, 190, 239, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card:hover {
@@ -16,13 +18,13 @@
 
 .image {
   width: 100%;
-  height: 193px;
+  height: 205px;
   border-radius: 8px;
   background-color: white;
+  flex-shrink: 0;
 }
 
 .details {
-  padding-top: 24px;
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -41,4 +43,11 @@
   line-height: 30px;
   font-weight: 500;
   padding-top: 8px;
+}
+
+.line {
+  width: 100%;
+  height: 1px;
+  background: var(--sq-gray200);
+  margin: 12px 0;
 }

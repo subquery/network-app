@@ -1,16 +1,23 @@
+.explorer {
+  padding: 72px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
 .list {
   display: flex;
   flex-wrap: wrap;
   /* note: the outter set padding is 2rem. and width is 100% */
   /* not robust */
-  margin-right: -2rem;
+  margin-right: -80px;
 }
 
 .header {
   display: flex;
-  margin: 1rem 0;
   justify-content: space-between;
   align-items: center;
+  flex-direction: column;
+  margin-bottom: 72px;
 }
 
 .headerTitle {
@@ -27,5 +34,5 @@
 }
 
 .card {
-  padding-bottom: 24px;
+  padding-bottom: 32px;
 }
