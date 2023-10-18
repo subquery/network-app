@@ -55,16 +55,25 @@ export const Header: React.FC = () => {
 };
 
 const sortProjects = (projects: Project[]) => {
-  return projects
-    .map((proj) => ({
-      ...proj,
-      amount: proj.deployments.nodes.reduce((cur, add) => {
-        const lockedAmount = BigNumber(add?.serviceAgreements?.aggregates?.sum?.lockedAmount.toString() || '0');
-
-        return cur.plus(lockedAmount);
-      }, BigNumber('0')),
-    }))
-    .sort((a, b) => (a.amount.gt(b.amount) ? -1 : 1));
+  return (
+    projects
+      .map((proj) => ({
+        ...proj,
+        amount: proj.deployments.nodes.reduce((cur, add) => {
+          const lockedAmount = BigNumber(add?.serviceAgreements?.aggregates?.sum?.lockedAmount.toString() || '0');
+          return cur.plus(lockedAmount);
+        }, BigNumber('0')),
+      }))
+      // For kepler network project, top it.
+      // don't care in testnet
+      .map((proj) => {
+        return {
+          ...proj,
+          amount: proj.id === '0x06' ? BigNumber('Infinity') : proj.amount,
+        };
+      })
+      .sort((a, b) => (a.amount.gt(b.amount) ? -1 : 1))
+  );
 };
 
 const useCachedProjects = () => {
