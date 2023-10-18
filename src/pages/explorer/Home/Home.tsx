@@ -72,7 +72,12 @@ const sortProjects = (projects: Project[]) => {
           amount: proj.id === '0x06' ? BigNumber('Infinity') : proj.amount,
         };
       })
-      .sort((a, b) => (a.amount.gt(b.amount) ? -1 : 1))
+      .sort((a, b) => {
+        if (a.amount.eq(b.amount)) {
+          return +new Date(a.updatedTimestamp) > +new Date(b.updatedTimestamp) ? -1 : 1;
+        }
+        return a.amount.gt(b.amount) ? -1 : 1;
+      })
   );
 };
 
