@@ -22,7 +22,7 @@ const translation = {
     delegateAmount: 'Amount',
     confirmDelegate: 'Confirm Delegation',
     undelegateValidNextEra:
-      'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. ',
+      'Tokens will be undelegated from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards. Note, you can instead redelegate to another indexer without waiting for the undelegation period',
     undelegateAmount: `Enter the amount of ${TOKEN} you want to undelegate`,
     confirmUndelegate: 'Confirm Undelegation',
     delegateFailure: 'Sorry, the delegation has failed.',
