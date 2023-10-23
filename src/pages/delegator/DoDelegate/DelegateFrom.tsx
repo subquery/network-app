@@ -209,6 +209,9 @@ export const DelegateForm: React.FC<FormProps> = ({
   React.useEffect(() => {
     initDelegations();
   }, [account]);
+
+  console.warn(1213);
+
   return (
     <Formik
       initialValues={{
@@ -218,104 +221,103 @@ export const DelegateForm: React.FC<FormProps> = ({
       validationSchema={delegateSchema}
       onSubmit={onSubmit}
     >
-      {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => (
-        <Form>
-          <div>
-            <SummaryList list={summaryList} />
-            <Divider className={styles.divider} />
+      {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => {
+        return (
+          <Form>
+            <div>
+              <SummaryList list={summaryList} />
+              <Divider className={styles.divider} />
 
-            <div className={styles.select}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                <Typography>{t('delegate.from')} </Typography>
-                <Tooltip title={t('delegate.selectTooltip')}>
-                  <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
-                </Tooltip>
+              <div className={styles.select}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                  <Typography>{t('delegate.from')} </Typography>
+                  <Tooltip title={t('delegate.selectTooltip')}>
+                    <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+                  </Tooltip>
+                </div>
+                <Select
+                  id="delegator"
+                  value={delegateFrom}
+                  optionFilterProp="children"
+                  onChange={(delegator, raw) => {
+                    resetForm();
+                    setDelegateFrom(delegator);
+                    setFieldValue('delegator', delegator);
+                    if (!Array.isArray(raw)) {
+                      setSelectedOption(raw);
+                    }
+                  }}
+                  className={clsx('fullWidth', styles.delegatorSelect)}
+                  loading={indexerDeployments.loading}
+                  size="large"
+                  allowClear
+                  disabled={isSubmitting}
+                  options={delegationOptions}
+                ></Select>
               </div>
-              <Select
-                id="delegator"
-                value={delegateFrom}
-                optionFilterProp="children"
-                onChange={(delegator, raw) => {
-                  resetForm();
-                  setDelegateFrom(delegator);
-                  setFieldValue('delegator', delegator);
-                  if (!Array.isArray(raw)) {
-                    setSelectedOption(raw);
-                  }
-                }}
-                className={clsx('fullWidth', styles.delegatorSelect)}
-                loading={indexerDeployments.loading}
-                size="large"
-                allowClear
-                disabled={isSubmitting}
-                options={delegationOptions}
-                // TODO
-                // onSearch={onSearch}
-                // filterOption={() => {}}
-              ></Select>
-            </div>
 
-            <div className={'fullWidth'}>
-              <NumberInput
-                title={t('delegate.delegateAmount')}
-                inputParams={{
-                  name: 'input',
-                  id: 'input',
-                  onChange: (value) => {
+              <div className={'fullWidth'}>
+                <NumberInput
+                  title={t('delegate.delegateAmount')}
+                  inputParams={{
+                    name: 'input',
+                    id: 'input',
+                    onChange: (value) => {
+                      setErrors({ input: undefined });
+                      setFieldValue('input', value);
+                    },
+                    value: values.input,
+                    disabled: isSubmitting,
+                    stringMode: true,
+                    max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
+                    min: 0,
+                  }}
+                  maxAmount={account ? sortedMaxAmount : undefined}
+                  maxAmountText={maxAmountText}
+                  onClickMax={(value) => {
                     setErrors({ input: undefined });
                     setFieldValue('input', value);
-                  },
-                  value: values.input,
-                  disabled: isSubmitting,
-                  stringMode: true,
-                  max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
-                  min: 0,
-                }}
-                maxAmount={account ? sortedMaxAmount : undefined}
-                maxAmountText={maxAmountText}
-                onClickMax={(value) => {
-                  setErrors({ input: undefined });
-                  setFieldValue('input', value);
-                }}
-              />
-            </div>
+                  }}
+                />
+              </div>
 
-            <Typography className={'errorText'}>{error}</Typography>
-            <Alert
-              className={styles.alertInfo}
-              type="info"
-              message={
-                isYourself
-                  ? t('delegate.delegateFromYourselfInfo', {
-                      indexerName: indexerMetadata.name,
-                    })
-                  : t('delegate.redelegateInfo', {
-                      reIndexerName: selectedOption?.name,
-                      indexerName: indexerMetadata.name,
-                    })
-              }
-              showIcon
-              style={{
-                marginBottom: 32,
-              }}
-            ></Alert>
+              <Typography className={'errorText'}>{error}</Typography>
+              <Alert
+                className={styles.alertInfo}
+                type="info"
+                message={
+                  isYourself
+                    ? t('delegate.delegateFromYourselfInfo', {
+                        indexerName: indexerMetadata.name,
+                      })
+                    : t('delegate.redelegateInfo', {
+                        reIndexerName: selectedOption?.name,
+                        indexerName: indexerMetadata.name,
+                      })
+                }
+                showIcon
+                style={{
+                  marginBottom: 32,
+                }}
+              ></Alert>
 
-            <div className={clsx('flex', 'flex-end')}>
-              <Button
-                onClick={submitForm}
-                loading={isSubmitting}
-                disabled={!isValid || isSubmitting}
-                className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
-                type="primary"
-                shape="round"
-                size="large"
-              >
-                {t('delegate.title')}
-              </Button>
+              <div className={clsx('flex', 'flex-end')}>
+                <Button
+                  onClick={submitForm}
+                  loading={isSubmitting}
+                  disabled={!isValid || isSubmitting}
+                  className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
+                  type="primary"
+                  shape="round"
+                  size="large"
+                >
+                  {t('delegate.title')}
+                </Button>
+              </div>
             </div>
-          </div>
-        </Form>
-      )}
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

@@ -55,16 +55,15 @@ export function useIndexerMetadata(
 
   const refresh = async () => {
     await localforage.removeItem(`${address}-metadata`);
-    init();
+    init('contract');
   };
 
-  const init = async () => {
+  const init = async (mode: 'cache-first' | 'contract' = 'cache-first') => {
     if (options.immediate) {
-      // fetch cid from cache first and use it for render.
+      // fetch cid from cache(& options.cid) first and use it for render.
       // then will fetch newest data from contract.
       let indexerCid = options.cid || (await fetchCidFromCache());
-
-      if (!indexerCid) {
+      if (mode === 'contract') {
         indexerCid = (await limitQueue.add(() => fetchCid())) as string;
       } else {
         // refresh at next tick.

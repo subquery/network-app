@@ -3,8 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { useEra } from '@hooks';
@@ -22,71 +23,87 @@ import { TFunction } from 'i18next';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
 
-const getColumns = (
-  t: TFunction,
-): TableProps<{
-  value: CurrentEraValue<string>;
-  indexer: string;
-}>['columns'] => [
-  {
-    title: <TableTitle title={'#'} />,
-    key: 'idx',
-    width: 50,
-    render: (_: string, __: unknown, index: number) => <TableText content={index + 1} />,
-  },
-  {
-    title: <TableTitle title={t('indexer.title')} />,
-    dataIndex: 'indexer',
-    width: 250,
-    render: (text: string) => <TableText content={text} />,
-  },
-  {
-    title: <TableTitle title={t('delegate.yourDelegateAmount')} />,
-    width: 200,
-    children: [
-      {
-        title: <TableTitle title={t('delegate.currentEra')} />,
-        dataIndex: ['value', 'current'],
-        key: 'currentValue',
-        width: 100,
-        render: (text: string) => <TokenAmount value={text} />,
-      },
-      {
-        title: <TableTitle title={t('delegate.nextEra')} />,
-        dataIndex: ['value', 'after'],
-        key: 'afterValue',
-        width: 100,
-        render: (text: string) => <TokenAmount value={text} />,
-      },
-    ],
-  },
-  {
-    title: <TableTitle title={t('general.status')} />,
-    dataIndex: 'indexerActive',
-    key: 'indexerActive',
-    width: 100,
-    render: (active: string) => {
-      const tagColor = active ? 'success' : 'default';
-      const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
+const useGetColumn = () => {
+  const navigate = useNavigate();
+  const getColumns = (
+    t: TFunction,
+  ): TableProps<{
+    value: CurrentEraValue<string>;
+    indexer: string;
+  }>['columns'] => [
+    {
+      title: <TableTitle title={'#'} />,
+      key: 'idx',
+      width: 50,
+      render: (_: string, __: unknown, index: number) => <TableText content={index + 1} />,
+    },
+    {
+      title: <TableTitle title={t('indexer.title')} />,
+      dataIndex: 'indexer',
+      width: 250,
+      render: (indexer: string) => (
+        <ConnectedIndexer
+          id={indexer}
+          onClick={() => {
+            navigate(`/indexer/${indexer}`);
+          }}
+        ></ConnectedIndexer>
+      ),
+    },
+    {
+      title: <TableTitle title={t('delegate.yourDelegateAmount')} />,
+      width: 200,
+      children: [
+        {
+          title: <TableTitle title={t('delegate.currentEra')} />,
+          dataIndex: ['value', 'current'],
+          key: 'currentValue',
+          width: 100,
+          render: (text: string) => <TokenAmount value={text} />,
+        },
+        {
+          title: <TableTitle title={t('delegate.nextEra')} />,
+          dataIndex: ['value', 'after'],
+          key: 'afterValue',
+          width: 100,
+          render: (text: string) => <TokenAmount value={text} />,
+        },
+      ],
+    },
+    {
+      title: <TableTitle title={t('general.status')} />,
+      dataIndex: 'indexerActive',
+      key: 'indexerActive',
+      width: 100,
+      render: (active: string) => {
+        const tagColor = active ? 'success' : 'default';
+        const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
 
-      return <Tag color={tagColor}>{tagText}</Tag>;
+        return <Tag color={tagColor}>{tagText}</Tag>;
+      },
     },
-  },
-  {
-    title: <TableTitle title={t('indexer.action')} />,
-    dataIndex: 'indexer',
-    key: 'operation',
-    fixed: 'right',
-    width: 100,
-    render: (id: string, record) => {
-      if ((record?.value?.after ?? 0) === 0) {
-        return <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>;
-      } else {
-        return <DoUndelegate indexerAddress={id} />;
-      }
+    {
+      title: <TableTitle title={t('indexer.action')} />,
+      dataIndex: 'indexer',
+      key: 'operation',
+      fixed: 'right',
+      width: 100,
+      render: (id: string, record) => {
+        if ((record?.value?.after ?? 0) === 0) {
+          return (
+            <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>
+          );
+        } else {
+          return <DoUndelegate indexerAddress={id} />;
+        }
+      },
     },
-  },
-];
+  ];
+
+  return {
+    getColumns,
+  };
+};
 
 export const MyDelegation: React.FC = () => {
   const { currentEra } = useEra();
@@ -94,7 +111,7 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const delegating = useDelegating(account ?? '');
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
-
+  const { getColumns } = useGetColumn();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
 
   // TODO: refresh when do some actions.

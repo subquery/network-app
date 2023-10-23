@@ -8,6 +8,7 @@ import { Card } from '@subql/components';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { Alert, Button } from 'antd';
 import assert from 'assert';
+import BigNumberJs from 'bignumber.js';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
@@ -94,8 +95,9 @@ export const SwapForm: React.FC<ISwapForm> = ({
   const calWithRate = (value: string | number, reverseCal = false): string => {
     if (fromRate === 0) return '0';
     const strValue = value.toString();
-    const calValue = reverseCal ? parseFloat(strValue) / fromRate : parseFloat(strValue) * fromRate;
-    return truncFormatEtherStr(calValue.toString(), STABLE_TOKEN_DECIMAL);
+    const calValue = BigNumberJs(reverseCal ? parseFloat(strValue) / fromRate : parseFloat(strValue) * fromRate);
+
+    return truncFormatEtherStr(calValue.toFixed(), STABLE_TOKEN_DECIMAL);
   };
 
   const initialPairValues: PairFrom = {
@@ -164,7 +166,7 @@ export const SwapForm: React.FC<ISwapForm> = ({
           if (leftOrdersAmountInfo) {
             if (!leftOrdersAmountInfo.isOut) {
               return leftOrdersAmountInfo.leftOrderAmount.gte(
-                BigNumber.from(parseUnits(to || '0', STABLE_TOKEN_DECIMAL)),
+                BigNumber.from(parseUnits(BigNumberJs(to || '0').toFixed(6), STABLE_TOKEN_DECIMAL)),
               );
             }
 
