@@ -22,6 +22,11 @@ export const useFetchMetadata = () => {
       return decodeMetadata;
     } catch (e) {
       parseError(e);
+      return {
+        name: '',
+        url: '',
+        image: '',
+      };
     }
   };
 

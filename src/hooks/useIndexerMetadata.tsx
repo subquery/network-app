@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { bytes32ToCid } from '@utils';
 import { limitQueue } from '@utils/limitation';
 import assert from 'assert';
@@ -26,18 +26,19 @@ export async function getIndexerMetadata(
 
 export function useIndexerMetadata(
   address: string,
-  options: {
+  options?: {
     cid?: string;
     immediate?: boolean;
-  } = { immediate: true },
+  },
 ): {
   indexerMetadata: IndexerDetails;
   refresh: () => void;
+  loading: boolean;
 } {
   const { contracts } = useWeb3Store();
   const fetchMetadata = useFetchMetadata();
   const [metadata, setMetadata] = useState<IndexerDetails>();
-
+  const [loading, setLoading] = useState(false);
   const fetchCid = async () => {
     assert(contracts, 'Contracts not available');
     const res = await contracts.indexerRegistry.metadata(address);
@@ -45,6 +46,9 @@ export function useIndexerMetadata(
     localforage.setItem(`${address}-metadata`, decodeCid);
     return decodeCid;
   };
+  const optionWithDefault = useMemo(() => {
+    return { immediate: true, ...options };
+  }, [options]);
 
   const fetchCidFromCache = async () => {
     const cacheCid = await localforage.getItem<string>(`${address}-metadata`);
@@ -59,10 +63,11 @@ export function useIndexerMetadata(
   };
 
   const init = async (mode: 'cache-first' | 'contract' = 'cache-first') => {
-    if (options.immediate) {
+    try {
+      setLoading(true);
       // fetch cid from cache(& options.cid) first and use it for render.
       // then will fetch newest data from contract.
-      let indexerCid = options.cid || (await fetchCidFromCache());
+      let indexerCid = optionWithDefault.cid || (await fetchCidFromCache());
       if (mode === 'contract') {
         indexerCid = (await limitQueue.add(() => fetchCid())) as string;
       } else {
@@ -70,15 +75,24 @@ export function useIndexerMetadata(
         setTimeout(() => refresh());
       }
       const res = await fetchMetadata(indexerCid);
+
       if (res) {
         setMetadata(res);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    init();
-  }, [options.immediate]);
+    if (optionWithDefault.immediate) {
+      init();
+    }
+  }, [optionWithDefault.immediate]);
+
+  useEffect(() => {
+    refresh();
+  }, [address]);
 
   return {
     indexerMetadata: {
@@ -88,5 +102,6 @@ export function useIndexerMetadata(
       ...metadata,
     },
     refresh,
+    loading,
   };
 }

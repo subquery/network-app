@@ -118,12 +118,12 @@ export const ConnectedIndexer: React.FC<{
   onAddressClick?: (id: string) => void;
   onClick?: (address: string) => void;
 }> = ({ id, account, size = 'normal', onAddressClick, onClick }) => {
-  const { indexerMetadata } = useIndexerMetadata(id);
+  const { indexerMetadata, loading } = useIndexerMetadata(id);
 
   return (
     <IndexerName
       size={size}
-      name={id === account ? 'You' : indexerMetadata?.name}
+      name={loading ? undefined : id === account ? 'You' : indexerMetadata?.name}
       image={indexerMetadata?.image}
       address={id}
       onAddressClick={onAddressClick}

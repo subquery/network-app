@@ -102,7 +102,6 @@ const Home: React.FC = () => {
   });
 
   useMount(() => {
-    console.warn(import.meta.env.MODE);
     if (import.meta.env.MODE !== 'testnet') {
       updateNetworkProject();
     }
