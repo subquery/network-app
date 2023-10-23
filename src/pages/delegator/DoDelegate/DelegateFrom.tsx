@@ -210,8 +210,6 @@ export const DelegateForm: React.FC<FormProps> = ({
     initDelegations();
   }, [account]);
 
-  console.warn(1213);
-
   return (
     <Formik
       initialValues={{
