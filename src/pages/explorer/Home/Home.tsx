@@ -4,15 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { SearchOutlined } from '@ant-design/icons';
 import { Typography } from '@subql/components';
-import { ProjectFieldsFragment as Project, ProjectUpdateFieldFragment } from '@subql/network-query';
-import { useGetProjectsAllLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
-import { makeCacheKey } from '@utils/limitation';
-import { useInfiniteScroll } from 'ahooks';
-import { Input } from 'antd';
-import BigNumber from 'bignumber.js';
-import localforage from 'localforage';
+import { ProjectFieldsFragment as Project, ProjectsOrderBy } from '@subql/network-query';
+import { useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
+import { useInfiniteScroll, useMount } from 'ahooks';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
@@ -54,124 +49,44 @@ export const Header: React.FC = () => {
   );
 };
 
-const sortProjects = (projects: Project[]) => {
-  return (
-    projects
-      .map((proj) => ({
-        ...proj,
-        amount: proj.deployments.nodes.reduce((cur, add) => {
-          const lockedAmount = BigNumber(add?.serviceAgreements?.aggregates?.sum?.lockedAmount.toString() || '0');
-          return cur.plus(lockedAmount);
-        }, BigNumber('0')),
-      }))
-      // For kepler network project, top it.
-      // don't care in testnet
-      .map((proj) => {
-        return {
-          ...proj,
-          amount: proj.id === '0x06' ? BigNumber('Infinity') : proj.amount,
-        };
-      })
-      .sort((a, b) => {
-        if (a.amount.eq(b.amount)) {
-          return +new Date(a.updatedTimestamp) > +new Date(b.updatedTimestamp) ? -1 : 1;
-        }
-        return a.amount.gt(b.amount) ? -1 : 1;
-      })
-  );
-};
-
-const useCachedProjects = () => {
-  const cacheKey = React.useRef(makeCacheKey('projects'));
-
-  const getCachedProjects: () => Promise<Project[]> = async () => {
-    try {
-      const result = await localforage.getItem<Project[]>(cacheKey.current);
-      return result || [];
-    } catch {
-      return [];
-    }
-  };
-
-  const setCachedProjectgs = async (
-    data: (ProjectUpdateFieldFragment | Project)[],
-    mode: 'merge' | 'update' = 'merge',
-  ) => {
-    try {
-      const old = await getCachedProjects();
-
-      // for merge mode, suppose the data is Project[]
-      if (mode === 'merge') {
-        return await localforage.setItem(cacheKey.current, sortProjects([...old, ...(data as Project[])]));
-      } else if (mode === 'update') {
-        const newData = old.map((item) => {
-          return {
-            ...item,
-            ...data.find((i) => i.id === item.id),
-          };
-        });
-        return await localforage.setItem(cacheKey.current, sortProjects(newData));
-      }
-    } catch (e) {
-      console.error('Set Cached failed');
-      console.error(e);
-    }
-  };
-
-  return {
-    getCachedProjects,
-    setCachedProjectgs,
-  };
-};
-
 const Home: React.FC = () => {
   const [getProjects, { error, loading }] = useGetProjectsLazyQuery({
     variables: { offset: 0 },
   });
 
-  const [getSpecFiledOfProjects, { error: updateError, loading: updateLoading }] = useGetProjectsAllLazyQuery();
+  const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
 
   const navigate = useNavigate();
-  const times = React.useRef(0);
-  const { getCachedProjects, setCachedProjectgs } = useCachedProjects();
 
+  const [topProject, setTopProject] = React.useState<Project>();
   const [projects, setProjects] = React.useState<Project[]>([]);
 
-  const loadMore = async () => {
-    // there have a flow:
-    //   1. Load cache, when first time call this function
-    //   2. If there have cached data, then request a update request for exist data and update it then set to Projects.
-    //   3. When the second times or not have cached data, getProject with variable that not in cached data.
-    if (times.current === 0) {
-      let cachedProjects = await getCachedProjects();
-      times.current = 1;
-      if (cachedProjects.length) {
-        const updatedData = await getSpecFiledOfProjects();
-        cachedProjects =
-          (await setCachedProjectgs(updatedData.data?.projects?.nodes.filter(notEmpty) || [], 'update')) || [];
-      }
-      setProjects(cachedProjects);
-
-      return {
-        list: [],
-        isNoMore: false,
-      };
+  const updateNetworkProject = async () => {
+    // this is a hard code, for kepler-network project.
+    // we want to top it.
+    const res = await getProject({
+      variables: {
+        id: '0x06',
+      },
+    });
+    if (res.data?.project) {
+      setTopProject(res.data?.project);
     }
+  };
 
+  const loadMore = async () => {
     const res = await getProjects({
       variables: {
-        offset: 0,
-        ids: projects.map((i) => i.id),
+        offset: projects.length,
+        orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
+        ids: ['0x06'],
       },
     });
     // implement a sorting for projects
     if (res.data?.projects?.nodes) {
       const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
-      // be care of this part, do not set cached data when non-first fetch.
-      // the flow will be break & pages will show flush and confuse to user.
-      await setCachedProjectgs(nonEmptyProjects);
-      const sorted = sortProjects(nonEmptyProjects);
-      setProjects([...projects, ...sorted]);
+
+      setProjects([...projects, ...nonEmptyProjects]);
     }
 
     return {
@@ -186,10 +101,16 @@ const Home: React.FC = () => {
     threshold: 300,
   });
 
+  useMount(() => {
+    if (import.meta.env.MODE !== 'development') {
+      updateNetworkProject();
+    }
+  });
+
   return (
     <div className={styles.explorer}>
       <Header />
-      {(error || updateError) && <span>{`We have an error: ${updateError?.message || error?.message}`}</span>}
+      {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
       {/* TODO: finish this part */}
       {/* <div style={{ display: 'flex', marginBottom: 32 }}>
         <span style={{ flex: 1 }}></span>
@@ -205,6 +126,13 @@ const Home: React.FC = () => {
         ></Input>
       </div> */}
       <div className={styles.list}>
+        {topProject && (
+          <ProjectItem
+            project={topProject}
+            key={topProject.id}
+            onClick={() => navigate(`${PROJECT_NAV}/${topProject.id}`)}
+          />
+        )}
         {projects?.length
           ? projects.map((project) => (
               <ProjectItem
@@ -215,7 +143,7 @@ const Home: React.FC = () => {
             ))
           : ''}
       </div>
-      {(loading || updateLoading) && <Spinner />}
+      {loading || (topLoading && <Spinner />)}
     </div>
   );
 };
