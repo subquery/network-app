@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Typography } from '@subql/components';
 import { Button, InputNumber, InputNumberProps } from 'antd';
 import BigNumber from 'bignumber.js';
@@ -36,31 +37,40 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
-  const Suffix = () => (
-    <div className={styles.prefix}>
-      {BigNumber(maxAmount.toString()).gt(0) && (
-        <Button
-          shape="round"
-          size="small"
-          type={'primary'}
-          onClick={() => onClickMax && onClickMax(maxAmount)}
-          disabled={inputParams?.disabled}
-        >
-          Max
-        </Button>
-      )}
-      {unit && (
-        <AppTypography className={styles.unit} type="secondary">
-          {unit}
-        </AppTypography>
-      )}
-    </div>
+  const Suffix = React.useCallback(
+    () => (
+      <div className={styles.prefix}>
+        {BigNumber(maxAmount.toString()).gt(0) && (
+          <Button
+            shape="round"
+            size="small"
+            type={'primary'}
+            onClick={() => {
+              onClickMax && onClickMax(maxAmount);
+            }}
+            disabled={inputParams?.disabled}
+          >
+            Max
+          </Button>
+        )}
+        {unit && (
+          <AppTypography className={styles.unit} type="secondary">
+            {unit}
+          </AppTypography>
+        )}
+      </div>
+    ),
+    [maxAmount, inputParams, unit],
+  );
+  const maxText = useMemo(
+    () =>
+      BigNumber(maxAmount.toString()).gt(0)
+        ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
+        : undefined,
+    [maxAmount, unit],
   );
 
-  const maxText = BigNumber(maxAmount.toString()).gt(0)
-    ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
-    : undefined;
-  const inputBottomText = description ?? maxAmountText ?? maxText;
+  const inputBottomText = useMemo(() => description ?? maxAmountText ?? maxText, [description, maxAmountText]);
   const DescriptionText = ({ text }: { text: string }) => (
     <Typography className={styles.inputBottomText} variant="medium">
       {text}
@@ -90,7 +100,11 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         status={errorMsg && 'error'}
       />
 
-      {inputBottomText && <DescriptionText text={inputBottomText} />}
+      {inputBottomText && (
+        <Typography className={styles.inputBottomText} variant="medium">
+          {inputBottomText}
+        </Typography>
+      )}
       {subDescription && <DescriptionText text={subDescription} />}
       {errorMsg && <ErrorText />}
     </div>

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { SummaryList, TableText } from '@components';
 import TransactionModal from '@components/TransactionModal';
 import { NETWORK_NAME } from '@containers/Web3';
-import { Button, Typography } from '@subql/components';
+import { Button, Tag, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
@@ -88,6 +88,34 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
       ),
     },
     {
+      dataIndex: 'planTemplate',
+      key: 'status',
+      title: <TableTitle title={t('general.status')}></TableTitle>,
+      align: 'center',
+      render: (val: PlanTemplate, record) => {
+        const text = () => {
+          if (val.active && record.active) {
+            return 'active';
+          }
+
+          if (!record.active) {
+            return 'inactive';
+          }
+
+          if (!val.active) {
+            return 'template inactive';
+          }
+
+          return 'inactive';
+        };
+        return (
+          <Tag state={text().includes('inactive') ? 'error' : 'success'} style={{ textTransform: 'uppercase' }}>
+            {text()}
+          </Tag>
+        );
+      },
+    },
+    {
       dataIndex: 'id',
       key: 'action',
       title: <TableTitle title={t('plans.headers.action')} />,
@@ -99,8 +127,6 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
             {
               label: t('plans.remove.action'),
               key: 'remove',
-              tooltip: !plan.planTemplate?.active ? t('plans.inactiveTemplateTip') : '',
-              defaultOpenTooltips: !plan.planTemplate?.active,
             },
           ]}
           text={{
