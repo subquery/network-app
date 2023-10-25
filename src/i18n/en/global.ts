@@ -39,13 +39,13 @@ const translation = {
     connectAccount: 'Please connect account.',
     learnMoreHere: 'Learn more <1>here</1>',
     progress: 'progress',
-    cancelUndelegation: 'Cancel Dekegation Withdrawl',
+    cancelUndelegation: 'Cancel Dekegation Withdrawal',
     cancelUndelegationTips:
       'If you cancel undelegation process, the following amount will be returned to delegation and you will continue to earn delegation rewards.',
-    cancelUnstaking: 'Cancel Staking Withdrawl',
+    cancelUnstaking: 'Cancel Staking Withdrawal',
     cancelUnstakingTips:
       'If you cancel unstaking process, the following amount will be returned to staking and you will continue to earn staking rewards.',
-    cancelCommission: 'Cancel Commission Withdrawl',
+    cancelCommission: 'Cancel Commission Withdrawal',
     cancelCommissionTips:
       'If you cancel commission processs, the following amount will be returned to staking and you will continue to earn staking rewards.',
   },
