@@ -75,6 +75,11 @@ export const QueryApolloProvider: React.FC<PropsWithChildren> = ({ children }) =
         },
       },
     }),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'network-only',
+      },
+    },
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
