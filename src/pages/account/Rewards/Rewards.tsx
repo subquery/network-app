@@ -88,7 +88,7 @@ export const Rewards: React.FC = () => {
         const tagColor = reward.claimed ? 'green' : 'blue';
         if (reward.isCommission) {
           return (
-            <Tooltip title="Please go withdrawls page to check this reward">
+            <Tooltip title="Please go withdrawals page to check this reward">
               <Tag color={tagColor}>{t('withdrawals.commission')}</Tag>
             </Tooltip>
           );

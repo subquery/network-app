@@ -64,11 +64,11 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
 };
 
 const activeKeyLinks: {
-  [key: string]: string;
+  [key: string]: string | string[];
 } = {
-  SD: '/profile/staking',
+  SD: ['/profile/staking', '/profile'],
   Rewards: '/profile/rewards',
-  Withdrawls: '/profile/withdrawn',
+  Withdrawals: '/profile/withdrawn',
 };
 
 export const MyAccount: React.FC = () => {
@@ -81,19 +81,34 @@ export const MyAccount: React.FC = () => {
     variables: { delegator: account ?? '', status: WithdrawalStatus.CLAIMED, offset: 0 },
   });
 
-  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawls'>('SD');
+  const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
 
   useEffect(() => {
     Object.keys(activeKeyLinks).forEach((key) => {
-      if (
-        matchPath(
-          {
-            path: activeKeyLinks[key],
-          },
-          window.location.pathname,
-        )
-      ) {
-        setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawls');
+      if (Array.isArray(activeKeyLinks[key])) {
+        (activeKeyLinks[key] as string[]).forEach((path) => {
+          if (
+            matchPath(
+              {
+                path,
+              },
+              window.location.pathname,
+            )
+          ) {
+            setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawals');
+          }
+        });
+      } else {
+        if (
+          matchPath(
+            {
+              path: activeKeyLinks[key] as string,
+            },
+            window.location.pathname,
+          )
+        ) {
+          setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawals');
+        }
       }
     });
   }, [window.location.pathname]);
@@ -153,7 +168,7 @@ export const MyAccount: React.FC = () => {
                     link="/indexer/my-staking"
                   ></FormatCardLine>
                   <FormatCardLine
-                    title="Total withdrawls"
+                    title="Total withdrawals"
                     amount={formatNumber(totalWithdrawn)}
                     linkName="View Withdrawls"
                     link="/profile/withdrawn"
@@ -178,12 +193,12 @@ export const MyAccount: React.FC = () => {
         items={[
           { key: 'SD', label: 'Staking and Delegation' },
           { key: 'Rewards', label: 'Rewards' },
-          { key: 'Withdrawls', label: 'Withdrawls' },
+          { key: 'Withdrawals', label: 'Withdrawals' },
         ]}
         activeKey={activeKey}
         onTabClick={(key) => {
-          setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawls');
-          navigate(activeKeyLinks[key]);
+          setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawals');
+          navigate(Array.isArray(activeKeyLinks[key]) ? activeKeyLinks[key][0] : (activeKeyLinks[key] as string));
         }}
       ></Tabs>
       <Outlet></Outlet>
