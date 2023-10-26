@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from '@components/Markdown';
 import { Button } from '@subql/components';
 
 import { ProjectMetadata } from '../../models';
@@ -19,7 +20,9 @@ const ProjectDetail: React.FC<Props> = ({ metadata, onEdit }) => {
   return (
     <div className={styles.container}>
       <div className={styles.column}>
-        <Detail label={t('projectDetail.description')} value={metadata.description} />
+        <Detail label={t('projectDetail.description')}>
+          <Markdown>{metadata.description}</Markdown>
+        </Detail>
         <div className={styles.left}>
           <div className={styles.column}>
             <Detail
