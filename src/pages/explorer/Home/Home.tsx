@@ -143,7 +143,7 @@ const Home: React.FC = () => {
             ))
           : ''}
       </div>
-      {loading || (topLoading && <Spinner />)}
+      {(loading || topLoading) && <Spinner />}
     </div>
   );
 };
