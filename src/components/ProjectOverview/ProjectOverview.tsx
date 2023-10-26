@@ -3,11 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from '@components/Markdown';
 import moment from 'moment';
 
 import { ProjectMetadata } from '../../models';
 import Detail from '../Detail';
-import styles from './ProjectOverview.module.css';
+import styles from './ProjectOverview.module.less';
 
 type Props = {
   metadata: ProjectMetadata;
@@ -44,7 +45,11 @@ const ProjectOverview: React.FC<Props> = ({ metadata, deploymentDescription, cre
       </div>
 
       <div className={styles.column}>
-        <Detail label={t('projectOverview.deploymentDescription')} value={deploymentDescription || 'N/A'} />
+        <Detail label={t('projectOverview.deploymentDescription')}>
+          <div style={{ width: 670 }}>
+            <Markdown>{deploymentDescription || 'N/A'}</Markdown>
+          </div>
+        </Detail>
       </div>
     </div>
   );

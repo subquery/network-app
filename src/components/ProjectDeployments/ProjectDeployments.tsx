@@ -3,12 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from '@components/Markdown';
 import moment from 'moment';
 
 import { NewDeployment } from '../../models';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
 import { Copy } from '..';
-import styles from './ProjectDeployments.module.css';
+import styles from './ProjectDeployments.module.less';
 
 type Deployment = NewDeployment & { createdAt?: Date };
 
@@ -33,7 +34,9 @@ const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
         </div>
       </TableCell>
       <TableCell>
-        <p className={styles.value}>{deployment.description}</p>
+        <div className={styles.descriptionMarkdown}>
+          <Markdown>{deployment.description}</Markdown>
+        </div>
       </TableCell>
       <TableCell>
         <p className={styles.value}>{createdAt}</p>
