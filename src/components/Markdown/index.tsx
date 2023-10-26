@@ -2,18 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC } from 'react';
-import MarkdownCompiler from 'react-markdown';
+import MarkdownCompiler, { Options } from 'react-markdown';
 
 import styles from './index.module.less';
 
-interface IProps {
-  children: string | null | undefined;
-}
-
-const Markdown: FC<IProps> = (props) => {
+const Markdown: FC<Options> = (props) => {
   return (
     <div className={styles.markdown}>
-      <MarkdownCompiler>{props.children}</MarkdownCompiler>
+      <MarkdownCompiler {...props}></MarkdownCompiler>
     </div>
   );
 };
