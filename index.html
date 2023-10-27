@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      const loadSw = () => {
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register(`/sw.js`)
+            .then(function(registration) {
+              console.log('[success] scope: ', registration.scope);
+            }, function(err) {
+              console.log('[fail]: ', err);
+            });
+          })
+        }
+      }
+      loadSw()
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

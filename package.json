@@ -97,6 +97,7 @@
     "@types/react-modal": "^3.13.1",
     "@types/react-router": "^5.1.16",
     "@types/react-router-dom": "^5.3.0",
+    "@types/workbox-sw": "^4.3.6",
     "@vitejs/plugin-react": "^4.0.4",
     "apollo": "^2.34.0",
     "echarts-for-react": "^3.0.2",
