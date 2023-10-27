@@ -19,14 +19,14 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
   /\.js(?!\.json)(?=\?|$)/,
-  new workbox.strategies.StaleWhileRevalidate({
+  new workbox.strategies.CacheFirst({
     cacheName: 'workbox:js',
   }),
 );
 
 workbox.routing.registerRoute(
   /\.css/,
-  new workbox.strategies.StaleWhileRevalidate({
+  new workbox.strategies.CacheFirst({
     cacheName: 'workbox:css',
   }),
 );
