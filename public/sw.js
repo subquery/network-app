@@ -10,7 +10,7 @@ workbox.setConfig({
 // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing#registerRoute
 workbox.routing.registerRoute(
   //,
-  /((localhost:3006)|((dev)|(kepler)\.thechaindata\.com)|(kepler.subquery.network))\/((dashboard)|(explorer)|(profile)|(indexer)|(delegator)|(consumer)|(swap)|(studio)).*/g,
+  /((localhost:3006)|((dev|kepler)\.thechaindata\.com)|(kepler.subquery.network))\/((dashboard)|(explorer)|(profile)|(indexer)|(delegator)|(consumer)|(swap)|(studio)).*/g,
   // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies
   new workbox.strategies.NetworkFirst({
     cacheName: 'workbox:html',
