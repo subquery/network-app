@@ -9,8 +9,9 @@ workbox.setConfig({
 
 // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.routing#registerRoute
 workbox.routing.registerRoute(
-  //,
-  /((localhost:3006)|((dev|kepler)\.thechaindata\.com)|(kepler\.subquery\.network))\/((dashboard)|(explorer)|(profile)|(indexer)|(delegator)|(consumer)|(swap)|(studio)).*/g,
+  // \/{0,1} will also match dev.thechaindata.comxxxyyy, but this is would not a valid suffix, so it can be use.
+  // for match dev.thechaindata.com & dev.thechaindata.com/
+  /((localhost:3006)|((dev|kepler)\.thechaindata\.com)|(kepler\.subquery\.network))\/{0,1}(?=((dashboard)|(explorer)|(profile)|(indexer)|(delegator)|(consumer)|(swap)|(studio))|\?|$).*/g,
   // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies
   new workbox.strategies.NetworkFirst({
     cacheName: 'workbox:html',
