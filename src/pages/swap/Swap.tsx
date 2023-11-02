@@ -226,27 +226,41 @@ const USDCToSqt = () => {
 
                 <div className="col-flex" style={{ justifyContent: 'flex-start' }}>
                   <SubqlTypography type="secondary">
-                    Only participants that have been KYC-ed and then whitelisted can participate in the SubQuery Kepler
-                    Swap.
-                  </SubqlTypography>
-                  <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
-                    You can see a list of all whitelisted participants{' '}
+                    Only participants that have been KYC’d and whitelisted can participate in the SubQuery Kepler Swap.
+                    You can see a list of all existing whitelisted participants{' '}
                     <a
                       href="https://docs.google.com/spreadsheets/d/1Y01iu2M6fq5bat38efj2glvmXVo7W3Z2gYHHTmbES3Q/edit?usp=sharing"
                       target="_blank"
                       style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
                       rel="noreferrer"
                     >
-                      here.
+                      here
+                    </a>
+                    .
+                  </SubqlTypography>
+                  <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
+                    If you’re new here, check out{' '}
+                    <a
+                      href="https://blog.subquery.network/kepler-milestone-your-invitation-to-join/?lng=en"
+                      target="_blank"
+                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                      rel="noreferrer"
+                    >
+                      this article
                     </a>{' '}
-                    If you think that you should be able to participate (e.g. you have completed KYC before), please
-                    contact us in #kepler-swap-support in our{' '}
+                    and follow the instructions on how to join.
+                  </SubqlTypography>
+                  <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
+                    If you need any help, you can reach out on the #kepler-swap-support channel in our{' '}
                     <a
                       href="https://discord.com/invite/subquery"
+                      target="_blank"
                       style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
+                      rel="noreferrer"
                     >
-                      Discord.
+                      Discord
                     </a>
+                    .
                   </SubqlTypography>
                 </div>
               </div>
