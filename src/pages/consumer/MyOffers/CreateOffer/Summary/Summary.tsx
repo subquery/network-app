@@ -22,9 +22,9 @@ import {
   formatEther,
   formatSecondsDuration,
   parseError,
+  ROUTES,
   TOKEN,
 } from '../../../../../utils';
-import { ROUTES } from '../../../../../utils';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';
 import { DeploymentProject } from '../SelectDeployment';
 import styles from './Summary.module.css';
@@ -37,6 +37,9 @@ export const Summary: React.FC = () => {
   const navigate = useNavigate();
   const { contracts } = useWeb3Store();
   const createOfferContext = React.useContext(CreateOfferContext);
+
+  // TODO: need to add a new field in the offer form to set the minimum staking amount
+  const minimumStakingAmount = 0;
 
   if (!createOfferContext) return <></>;
   const { curStep, onStepChange, offer } = createOfferContext;
@@ -64,6 +67,7 @@ export const Summary: React.FC = () => {
         deposit,
         limit,
         BigNumber.from(minimumIndexedHeight),
+        BigNumber.from(minimumStakingAmount),
         expireDate,
       );
 

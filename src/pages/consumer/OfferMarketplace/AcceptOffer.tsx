@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { StepButtons } from '@components/StepButton';
 import { useIndexerMetadata, useProject } from '@hooks';
 import { Spinner } from '@subql/components';
-import { DeploymentIndexerFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
+import { IndexerDeploymentFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
 import { useGetIndexerQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
 import assert from 'assert';
@@ -129,7 +129,7 @@ export const DeploymentProject: React.FC<{ projectId: string; title?: string; de
 
 type Props = {
   offer: OfferFieldsFragment;
-  deployment: DeploymentIndexerFieldsFragment;
+  deployment: IndexerDeploymentFieldsFragment;
   requiredBlockHeight: number;
   disabled: boolean;
   onAcceptOffer: () => void;

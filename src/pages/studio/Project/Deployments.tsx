@@ -34,12 +34,12 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
 
     if (currentDeployment && !projectDeployments.find((d) => d.id === currentDeployment.deployment)) {
       projectDeployments = uniqBy(
-        (d) => d.id + d.version,
+        (d) => d.id + d.metadata,
         [
           {
             __typename: 'Deployment',
             id: currentDeployment.deployment,
-            version: currentDeployment.version,
+            metadata: currentDeployment.version,
             createdTimestamp: new Date(), // TODO come up with a timestamp
           },
           ...projectDeployments,
@@ -51,9 +51,9 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
       projectDeployments.map(async (deployment) => {
         let result = { version: '', description: '' };
         try {
-          result = (await getDeploymentMetadata(catSingle, deployment.version)) ?? result;
+          result = (await getDeploymentMetadata(catSingle, deployment.metadata)) ?? result;
         } catch {
-          console.error(`Failed to get deployment version for ${deployment.version}`);
+          console.error(`Failed to get deployment version for ${deployment.metadata}`);
         }
 
         return {

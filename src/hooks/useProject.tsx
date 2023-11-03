@@ -27,8 +27,8 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     const listener = (owner: string, queryId: unknown) => {
       setCacheBreak((val) => val + 1);
     };
-    const deploymentFilter = contracts?.projectRegistry.filters.UpdateQueryDeployment(null, id);
-    const metadataFilter = contracts?.projectRegistry.filters.UpdateQueryMetadata(null, id);
+    const deploymentFilter = contracts?.projectRegistry.filters.UpdateProjectDeployment(null, id);
+    const metadataFilter = contracts?.projectRegistry.filters.UpdateProjectMetadata(null, id);
 
     contracts.projectRegistry.on(deploymentFilter, listener);
     contracts.projectRegistry.on(metadataFilter, listener);
