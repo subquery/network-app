@@ -129,9 +129,7 @@ export const URLS = {
   HOW_TO_INDEX_PROJECTS: 'https://academy.subquery.network/subquery_network/kepler/indexers/index-project.html',
   INDEXER: 'https://academy.subquery.network/subquery_network/kepler/indexers/become-an-indexer.html',
   PLANS_OFFERS: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
-  LEARN_SERVICE_AGREEMENTS_DOC:
-    'https://academy.subquery.network/subquery_network/kepler/consumers.html#how-to-make-a-use-of-your-purchased-plan-and-indexed-data',
-  DELEGATOR: 'https://academy.subquery.network/subquery_network/kepler/delegators.html',
+  DELEGATOR: 'https://academy.subquery.network/subquery_network/delegators/introduction.html',
   OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
 };
 
