@@ -12,7 +12,7 @@ export async function getIsOfflineDeploymentOnContract(
 ): Promise<boolean> {
   // TODO: will use metric service replace it. hardcode for now.
   // const isOffline =
-  //   deploymentId && contract ? await contract?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer) : false;
+  //   deploymentId && contract ? await contract?.projectRegistry.isOffline(cidToBytes32(deploymentId), indexer) : false;
   // return isOffline;
   return false;
 }

@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
 
-import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
+import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
 import { FormCreateProjectMetadata, ProjectMetadata } from '../models';
 
 type P = FormCreateProjectMetadata & { versionDescription: string };
@@ -12,7 +12,7 @@ type P = FormCreateProjectMetadata & { versionDescription: string };
 export function useCreateProject(): (params: P) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
-  const { registerQuery } = useQueryRegistry();
+  const { registerQuery } = useProjectRegistry();
 
   const createProject = React.useCallback(
     async function (project: P): Promise<BigNumberish> {

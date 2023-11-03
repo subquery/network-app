@@ -1,8 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Status } from '@subql/network-query';
-import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql/network-query';
+import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer, Status } from '@subql/network-query';
 import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
 
 import { useWeb3Store } from 'src/stores';
@@ -67,7 +66,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
 
         const deploymentId = indexerDeployment?.deployment?.id;
         const isOffline = deploymentId
-          ? await contracts?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer)
+          ? await contracts?.projectRegistry.isOffline(cidToBytes32(deploymentId), indexer)
           : false;
         const { indexingProgress, indexingProgressErr } = await fetchDeploymentProgress(
           indexer,

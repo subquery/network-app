@@ -11,8 +11,8 @@ import { ChainStatus, Header } from './components';
 import {
   IPFSProvider,
   ProjectMetadataProvider,
+  ProjectRegistryProvider,
   QueryApolloProvider,
-  QueryRegistryProvider,
   SQTokenProvider,
   Web3Provider,
 } from './containers';
@@ -28,9 +28,9 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
         <Web3Provider>
           <AppInitProvider>
             <ProjectMetadataProvider>
-              <QueryRegistryProvider>
+              <ProjectRegistryProvider>
                 <SQTokenProvider>{children}</SQTokenProvider>
-              </QueryRegistryProvider>
+              </ProjectRegistryProvider>
             </ProjectMetadataProvider>
           </AppInitProvider>
         </Web3Provider>
