@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
-import { SerivceStatus } from '@subql/network-query';
+import { ServiceStatus } from '@subql/network-query';
 import { Button, Typography } from 'antd';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -123,7 +123,7 @@ export const CheckList: React.FC<ICheckList> = ({
   const { account: indexer } = useWeb3();
   const { contractClient } = useWeb3Store();
 
-  const REQUIRED_STATUS = SerivceStatus.READY;
+  const REQUIRED_STATUS = ServiceStatus.READY;
   const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
   const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
