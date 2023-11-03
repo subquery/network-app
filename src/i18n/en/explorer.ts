@@ -77,6 +77,7 @@ const translation = {
   studio: {
     create: {
       name: 'Name',
+      type: 'Type',
       image: 'Upload Logo',
       subtitle: 'Subtitle',
       description: 'Description',
