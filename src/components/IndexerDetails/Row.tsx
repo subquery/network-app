@@ -7,14 +7,13 @@ import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
 import { WalletRoute } from '@components/WalletRoute';
-import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Modal, Spinner } from '@subql/components';
 import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
 import {
   GetDeploymentIndexersQuery,
   PlansNodeFieldsFragment as Plan,
-  Status as DeploymentStatus,
+  ServiceStatus as DeploymentStatus,
 } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
@@ -87,7 +86,6 @@ const ConnectedRow: React.FC<{
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
-  const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
   const [loadDeploymentPlans, deploymentPlans] = useGetDeploymentPlansLazyQuery({
     variables: {
       deploymentId: deploymentId ?? '',
@@ -178,14 +176,9 @@ const ConnectedRow: React.FC<{
     {
       width: '13%',
       render: () => {
-        return renderAsync(isOfflineDeploymentOnContract, {
-          error: (error) => <Status text="Error" color={deploymentStatus.NOTINDEXING} />,
-          loading: () => <Spinner />,
-          data: (data) => {
-            const sortedStatus = getDeploymentStatus(indexer.status, data);
-            return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
-          },
-        });
+        // TODO: offline status need to get from external api
+        const sortedStatus = getDeploymentStatus(indexer.status, false);
+        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
       },
     },
     {
