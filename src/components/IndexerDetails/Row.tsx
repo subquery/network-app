@@ -11,12 +11,14 @@ import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContr
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Modal, Spinner } from '@subql/components';
 import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
-import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
-import { Status as DeploymentStatus } from '@subql/network-query';
+import {
+  GetDeploymentIndexersQuery,
+  PlansNodeFieldsFragment as Plan,
+  Status as DeploymentStatus,
+} from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
-import { Table, TableProps, Tooltip } from 'antd';
-import { Modal as AntdModal, Typography } from 'antd';
+import { Modal as AntdModal, Table, TableProps, Tooltip, Typography } from 'antd';
 import assert from 'assert';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -49,7 +51,7 @@ import { PlansTable } from './PlansTable';
 import Progress from './Progress';
 
 type ErrorMsgProps = {
-  indexer: ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number];
+  indexer: ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number];
   deploymentId: string | undefined;
   metadata: IndexerDetails;
   error: Error;
@@ -73,7 +75,7 @@ export interface QueryLimit {
 }
 
 const ConnectedRow: React.FC<{
-  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
+  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]>;
   deploymentId?: string;
 }> = ({ indexer, deploymentId }) => {
   const { t } = useTranslation();

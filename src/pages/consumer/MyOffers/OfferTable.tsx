@@ -4,13 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { Spinner } from '@subql/components';
-import { TableTitle } from '@subql/components';
+import { Spinner, TableTitle } from '@subql/components';
 import { OfferFieldsFragment } from '@subql/network-query';
 import {
   useGetAcceptedOffersQuery,
   useGetAllOpenOffersLazyQuery,
-  useGetDeploymentIndexerQuery,
+  useGetIndexerDeploymentQuery,
   useGetOwnExpiredOffersLazyQuery,
   useGetOwnFinishedOffersLazyQuery,
   useGetOwnOpenOffersLazyQuery,
@@ -37,9 +36,9 @@ import {
   notEmpty,
   parseError,
   renderAsyncArray,
+  ROUTES,
   URLS,
 } from '../../../utils';
-import { ROUTES } from '../../../utils';
 import { AcceptOffer } from '../OfferMarketplace/AcceptOffer';
 import { CancelOffer } from './CancelOffer';
 import styles from './OfferTable.module.css';
@@ -48,7 +47,7 @@ const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPE
 
 const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
   const { account } = useWeb3();
-  const indexerDeploymentResult = useGetDeploymentIndexerQuery({
+  const indexerDeploymentResult = useGetIndexerDeploymentQuery({
     variables: {
       indexerAddress: account ?? '',
       deploymentId: offer.deployment?.id ?? '',
@@ -66,7 +65,7 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
         data: (data) => {
           const [deployment, acceptedOffers] = data;
 
-          const deploymentIndexer = deployment?.deploymentIndexers?.nodes[0];
+          const deploymentIndexer = deployment?.indexerDeployments?.nodes[0];
           const acceptedOffersCount = acceptedOffers?.acceptedOffers?.nodes.length ?? 0;
 
           // TODO: filter the project that not indexing
