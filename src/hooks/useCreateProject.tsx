@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { ProjectType } from '@subql/network-query';
 
 import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
 import { FormCreateProjectMetadata, ProjectMetadata } from '../models';
@@ -12,7 +13,7 @@ type P = FormCreateProjectMetadata & { versionDescription: string };
 export function useCreateProject(): (params: P) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
-  const { registerQuery } = useProjectRegistry();
+  const { registerProject } = useProjectRegistry();
 
   const createProject = React.useCallback(
     async function (project: P): Promise<BigNumberish> {
@@ -30,7 +31,7 @@ export function useCreateProject(): (params: P) => Promise<BigNumberish> {
       });
 
       const metadata = await uploadMetadata(project as ProjectMetadata);
-      const tx = await registerQuery(metadata, project.deploymentId, versionCid);
+      const tx = await registerProject(project.type as ProjectType, metadata, project.deploymentId, versionCid);
       const receipt = await tx.wait(1);
       const event = receipt.events?.[0];
 
@@ -44,7 +45,7 @@ export function useCreateProject(): (params: P) => Promise<BigNumberish> {
 
       return event.args?.['queryId'];
     },
-    [ipfs, uploadMetadata, registerQuery, uploadVersionMetadata],
+    [ipfs, uploadMetadata, registerProject, uploadVersionMetadata],
   );
 
   return createProject;

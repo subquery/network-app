@@ -3,16 +3,24 @@
 
 import * as React from 'react';
 import { cidToBytes32 } from '@subql/network-clients';
+import { ProjectType as InputProjectType } from '@subql/network-query';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 
+import { ProjectType } from 'src/models';
 import { useWeb3Store } from 'src/stores';
 
 import { bytes32ToCid } from '../utils';
 import { createContainer, Logger } from './Container';
 
-enum ProjectType {
-  SUBQUERY,
-  RPC,
+function projectTypeTransform(type: InputProjectType): ProjectType {
+  switch (type) {
+    case InputProjectType.SUBQUERY:
+      return ProjectType.SUBQUERY;
+    case InputProjectType.RPC:
+      return ProjectType.RPC;
+    default:
+      return ProjectType.SUBQUERY;
+  }
 }
 
 type QueryDetails = {
@@ -28,7 +36,8 @@ function useProjectRegistryImpl(logger: Logger) {
 
   const projectCache = React.useRef<Record<string, QueryDetails>>({});
 
-  const registerQuery = async (
+  const registerProject = async (
+    type: InputProjectType,
     metadataCid: string,
     deploymentId: string,
     deploymentMetadata: string,
@@ -42,7 +51,7 @@ function useProjectRegistryImpl(logger: Logger) {
       metadataCid,
       cidToBytes32(deploymentMetadata),
       cidToBytes32(deploymentId),
-      ProjectType.SUBQUERY,
+      projectTypeTransform(type),
     );
   };
 
@@ -142,7 +151,7 @@ function useProjectRegistryImpl(logger: Logger) {
   // );
 
   return {
-    registerQuery,
+    registerProject,
     getQuery,
     // getUserQueries,
     updateQueryMetadata,
