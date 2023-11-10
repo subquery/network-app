@@ -4006,10 +4006,10 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@^0.100.2":
-  version "0.100.2"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.100.2.tgz#d66b01a6cb43bf02547ed87ed4697136e425d3e7"
-  integrity sha512-LPn8qJUMzeOgWJFDZpbqs4P14ibwSGIh7aqWB5yfkpNOr7TvUv9Wv7wYcGkTjQY/NxuBxpAq6OcdOAjbX2QzpA==
+"@subql/contract-sdk@^0.100.3":
+  version "0.100.3"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.100.3.tgz#a6e6708ad3a545823b54b7eaa1d95a8d6d6b183d"
+  integrity sha512-kMXFLFBdF0bByc5ub77iOMi4uE5+iDteaSlCSEn+VZiG1Wc/nrw2ezCrmiZ7Qn3OUxn/4+bpZLos3oBUwP3v2A==
 
 "@subql/network-clients@^0.100.0":
   version "0.100.0"
