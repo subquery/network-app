@@ -3,7 +3,6 @@
 
 import { FC, useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { useWeb3 } from '@containers';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { captureMessage } from '@sentry/react';
@@ -13,12 +12,13 @@ import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAs
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
+import { useAccount } from 'wagmi';
 
 import Breakdown from './Breakdown';
 import styles from './index.module.less';
 
 const Staking: FC = () => {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
 
   const navigate = useNavigate();
   const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });

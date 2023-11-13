@@ -3,10 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Typography } from '@subql/components';
 import clsx from 'clsx';
+import { useConnect } from 'wagmi';
 
-import { ALL_SUPPORTED_CONNECTORS, useConnectNetwork } from '../../containers/Web3';
+import { ALL_SUPPORTED_CONNECTORS } from '../../containers/Web3';
 import styles from './ConnectWallet.module.css';
 
 type Props = {
@@ -45,7 +47,7 @@ const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => voi
 
 export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
   const { t } = useTranslation();
-  const { onNetworkConnect } = useConnectNetwork();
+  const { connect } = useConnect();
 
   return (
     <div className={clsx(styles.container, className)}>
@@ -55,15 +57,24 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) =
       <Typography variant="text" className={styles.subtitle}>
         {subTitle || t('connectWallet.subtitle')}
       </Typography>
+
       {ALL_SUPPORTED_CONNECTORS.map((supportConnector) => {
         const { description, icon } = supportConnector;
         return (
-          <Wallet
-            key={description}
-            description={description}
-            icon={icon ?? '/static/metamask.png'}
-            onClick={() => onNetworkConnect(supportConnector)}
-          />
+          <ConnectButton.Custom>
+            {({ openConnectModal }) => {
+              return (
+                <Wallet
+                  key={description}
+                  description={description}
+                  icon={icon ?? '/static/metamask.png'}
+                  onClick={() => {
+                    openConnectModal();
+                  }}
+                />
+              );
+            }}
+          </ConnectButton.Custom>
         );
       })}
     </div>

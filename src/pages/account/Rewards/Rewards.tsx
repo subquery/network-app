@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { TableText } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
-import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
@@ -16,12 +15,13 @@ import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
 
 export const Rewards: React.FC = () => {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
 
   const update = useUpdate();
   const filterParams = { address: account || '' };

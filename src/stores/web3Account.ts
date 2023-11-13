@@ -33,9 +33,10 @@ interface Web3Store {
 const ethProviderJsonRPC = 'https://rpc.ankr.com/eth';
 export const useWeb3Store = create<Web3Store>()((set) => ({
   ethWindowObj: window?.ethereum,
-
+  contracts: undefined,
   isInitialAccount: false,
   ethProvider: new ethers.providers.JsonRpcProvider(ethProviderJsonRPC),
+
   setIsInitialAccount: (isInitialAccount: boolean) => set((state) => ({ ...state, isInitialAccount })),
 
   setEthWindowObj: (ethWindowObj: any) => set((state) => ({ ...state, ethWindowObj })),

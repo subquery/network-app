@@ -3,13 +3,13 @@
 
 import { CurEra } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import { useWeb3 } from '@containers';
 import { Typography } from '@subql/components';
+import { useAccount } from 'wagmi';
 
 import styles from './Headers.module.css';
 
 export const AccountHeader: React.FC = () => {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
 
   return (
     <div className={styles.header}>

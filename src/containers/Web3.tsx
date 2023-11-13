@@ -1,18 +1,13 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
 import { parseError } from '@utils/parseError';
-import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types';
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { NetworkConnector } from '@web3-react/network-connector';
-import { providers } from 'ethers';
-
-import { useWeb3Store } from 'src/stores';
+import { useAccount } from 'wagmi';
 
 import { TalismanConnector, TalismanWindow } from '../utils/TalismanConnector';
 
@@ -71,43 +66,12 @@ export const ALL_SUPPORTED_CONNECTORS = Object.keys(SUPPORTED_CONNECTORS).map(
   (supportConnector) => SUPPORTED_CONNECTORS[supportConnector],
 );
 
-const networkConnector = new NetworkConnector({
-  urls: RPC_URLS,
-  defaultChainId,
-});
-
-function getLibrary(provider: providers.ExternalProvider): providers.Web3Provider {
-  // Acala would use https://github.com/AcalaNetwork/bodhi.js here
-  return new providers.Web3Provider(provider);
-}
-
-export const useWeb3 = (): Web3ReactContextInterface<providers.Web3Provider> => useWeb3React();
-
-const InitProvider: React.FC = () => {
-  const { activate } = useWeb3();
-
-  React.useEffect(() => {
-    async function activateInitialConnector() {
-      const isInjectedConnectorAuthorized = await injectedConntector.isAuthorized();
-      if (isInjectedConnectorAuthorized) {
-        await activate(injectedConntector);
-      } else {
-        await activate(networkConnector);
-      }
-    }
-
-    activateInitialConnector();
-  }, [activate]);
-
-  return null;
+export const useWeb3 = () => {
+  const { address } = useAccount();
+  return {
+    account: address,
+  };
 };
-
-export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => (
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <InitProvider />
-    {children}
-  </Web3ReactProvider>
-);
 
 export const ethMethods = {
   requestAccount: 'eth_requestAccounts',
@@ -132,28 +96,4 @@ export const handleSwitchNetwork = async (ethWindowObj = window?.ethereum) => {
       });
     }
   }
-};
-
-export const useConnectNetwork = () => {
-  const { account, activate, deactivate } = useWeb3();
-  const { setEthWindowObj } = useWeb3Store();
-  const onNetworkConnect = React.useCallback(
-    async (connector: SupportedConnectorsReturn) => {
-      console.log('onNetworkConnect', connector.windowObj);
-      if (account) {
-        deactivate();
-        return;
-      }
-
-      try {
-        setEthWindowObj(connector.windowObj);
-        await activate(connector.connector);
-      } catch (e) {
-        parseError(e);
-      }
-    },
-    [account, deactivate, setEthWindowObj, activate],
-  );
-
-  return { onNetworkConnect };
 };

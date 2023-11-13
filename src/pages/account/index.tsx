@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 import { matchPath, Outlet, useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
-import { useWeb3 } from '@containers';
 import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
@@ -17,6 +16,7 @@ import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
+import { useAccount } from 'wagmi';
 
 import { AccountHeader } from './AccountHeaders/Header';
 import styles from './Account.module.less';
@@ -72,7 +72,7 @@ const activeKeyLinks: {
 };
 
 export const MyAccount: React.FC = () => {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
