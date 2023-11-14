@@ -4,27 +4,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppTypography } from '@components/Typography';
-import { getConnectorConfig } from '@utils/getNetworkConnector';
-import { UnsupportedChainIdError } from '@web3-react/core';
 import { Button } from 'antd';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
-import { useWeb3Store } from 'src/stores';
-
-import { ECOSYSTEM_NETWORK, handleSwitchNetwork, useWeb3 } from '../../containers/Web3';
+import { ECOSYSTEM_NETWORK } from '../../containers/Web3';
 import styles from './ChainStatus.module.css';
 
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { ethWindowObj } = useWeb3Store();
-  const { error, connector } = useWeb3();
+  const { chain } = useNetwork();
+  const { chains, switchNetwork } = useSwitchNetwork();
   const { t } = useTranslation();
-  const connectorWindowObj = getConnectorConfig(connector).windowObj;
 
-  const isExtensionInstalled = React.useMemo(
-    () => !!connectorWindowObj?.isMetaMask || !!connectorWindowObj?.isTalisman,
-    [connectorWindowObj?.isMetaMask, connectorWindowObj?.isTalisman],
-  );
-
-  if (error instanceof UnsupportedChainIdError) {
+  if (chain?.unsupported) {
     return (
       <div className={styles.container}>
         <div className={styles.content}>
@@ -33,11 +24,16 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
             <AppTypography className={styles.description}>
               {t('unsupportedNetwork.subtitle', { supportNetwork: ECOSYSTEM_NETWORK })}
             </AppTypography>
-            {isExtensionInstalled && (
-              <Button onClick={() => handleSwitchNetwork(ethWindowObj)} type="primary" size="large" shape="round">
-                {t('unsupportedNetwork.button')}
-              </Button>
-            )}
+            <Button
+              onClick={() => {
+                switchNetwork?.(chains[0].id);
+              }}
+              type="primary"
+              size="large"
+              shape="round"
+            >
+              {t('unsupportedNetwork.button')}
+            </Button>
           </div>
         </div>
       </div>

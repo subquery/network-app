@@ -3,10 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
 import { Button, Typography } from 'antd';
 
 import { useWeb3 } from '../../../containers';
-import { requestConsumerHostToken, requestServiceAgreementToken } from '../../../utils/eip721SignTokenReq';
 import styles from './Playground.module.css';
 
 export interface RequestTokenProps {
@@ -30,10 +31,11 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
   onRequestToken,
 }) => {
   const { t } = useTranslation();
-  const { library, account } = useWeb3();
+  const { account } = useWeb3();
   const [loading, setLoading] = React.useState<boolean>();
   const [error, setError] = React.useState<string | undefined>();
-
+  const { requestConsumerHostToken } = useConsumerHostServices({ autoLogin: false });
+  const { requestServiceAgreementToken } = useRequestServiceAgreementToken();
   const resetError = () => {
     setError(undefined);
   };
@@ -44,11 +46,10 @@ export const RequestToken: React.FC<RequestTokenProps> = ({
     let sortedResponse;
 
     if (tokenType === 'ConsumerHostToken') {
-      sortedResponse = await requestConsumerHostToken(account ?? '', library);
+      sortedResponse = await requestConsumerHostToken(account ?? '');
     } else if (tokenType === 'ServiceAgreementToken') {
       sortedResponse = await requestServiceAgreementToken(
         account ?? '',
-        library,
         requestTokenUrl,
         indexer,
         agreement,

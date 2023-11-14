@@ -8,26 +8,26 @@ import { BsBoxArrowLeft } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import { Address } from '@subql/components';
+import { useDisconnect, useWalletClient } from 'wagmi';
 
-import { useSQToken, useWeb3 } from '../../containers';
+import { useSQToken } from '../../containers';
 import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
-import { getConnectorConfig } from '../../utils/getNetworkConnector';
 import { Dropdown } from '../Dropdown';
 import styles from './AccountActions.module.css';
 
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { t } = useTranslation();
-  const { deactivate, connector } = useWeb3();
+  const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const { balance } = useSQToken();
-  const sortedWindowObj = getConnectorConfig(connector).windowObj;
+  const { data: walletClient } = useWalletClient();
 
-  const handleDisconnect = () => deactivate();
+  const handleDisconnect = () => disconnect();
   const handleNavRewards = () => navigate(ROUTES.MY_PROFILE_REWARDS_NAV);
   const handleNavWithdrawn = () => navigate(ROUTES.MY_PROFILE_WITHDRAWN_NAV);
   const handleNavAccount = () => navigate(ROUTES.MY_PROFILE);
   const handleAddToken = () => {
-    sortedWindowObj?.request({
+    walletClient?.request({
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC20',
@@ -35,14 +35,13 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
           address: SQT_TOKEN_ADDRESS,
           symbol: TOKEN,
           decimals: tokenDecimals[SQT_TOKEN_ADDRESS],
-          // image: 'https://foo.io/token-image.svg',
         },
       },
     });
   };
 
   const handleAddStableToken = () => {
-    sortedWindowObj?.request({
+    walletClient?.request({
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC20',

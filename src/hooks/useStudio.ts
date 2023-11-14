@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useState } from 'react';
-import { useWeb3 } from '@containers';
+import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
 export function useStudioEnabled() {
   const { contracts } = useWeb3Store();
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
   const [studioEnabled, setStudioEnabled] = useState(false);
 
   const checkStudioEnabled = useCallback(async () => {

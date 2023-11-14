@@ -13,7 +13,7 @@ export interface SAMessage {
   consumer?: string;
 }
 
-const EIP712Domain = [
+export const EIP712Domain = [
   { name: 'name', type: 'string' },
   { name: 'chainId', type: 'uint256' },
 ];
@@ -43,7 +43,7 @@ const IndexerMessageType = [
   { name: 'deploymentId', type: 'string' },
 ];
 
-const domain = {
+export const domain = {
   name: 'Subquery',
   chainId: defaultChainId,
 };

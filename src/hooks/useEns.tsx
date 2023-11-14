@@ -16,7 +16,7 @@ export function useENS(address: string): {
 
   const fetchEnsName = async () => {
     if (!address || !ethProvider) return undefined;
-    const ens = await ethProvider.lookupAddress(address);
+    const ens = await ethProvider().lookupAddress(address);
     localforage.setItem(`ens-${address}`, ens);
     return ens;
   };
