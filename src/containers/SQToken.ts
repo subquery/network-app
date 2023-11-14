@@ -3,15 +3,15 @@
 
 import { limitContract } from '@utils/limitation';
 import assert from 'assert';
+import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
 import { useAsyncMemo } from '../hooks';
 import { createContainer } from './Container';
-import { useWeb3 } from '.';
 
 function useSQTokenImpl() {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
   const { contracts } = useWeb3Store();
   const balance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');

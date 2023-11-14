@@ -4,11 +4,11 @@
 import React from 'react';
 import { Route } from 'react-router';
 import { ConnectWallet } from '@components/ConnectWallet';
-import { useWeb3 } from '@containers';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Spinner, Toast } from '@subql/components';
 import { parseError, walletConnectionErrors } from '@utils';
 import clsx from 'clsx';
+import { useConnect } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -29,7 +29,7 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({
 }) => {
   const [errorAlert, setErrorAlert] = React.useState<string>();
 
-  const { error } = useWeb3();
+  const { error } = useConnect();
   const { isInitialAccount } = useWeb3Store();
   const isLogin = useIsLogin();
 

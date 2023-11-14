@@ -45,6 +45,11 @@ const ProjectOverview: React.FC<Props> = ({ metadata, deploymentDescription, cre
       </div>
 
       <div className={styles.column}>
+        <Detail label={'Project Description'}>
+          <div style={{ width: 670 }}>
+            <Markdown>{metadata.description || 'N/A'}</Markdown>
+          </div>
+        </Detail>
         <Detail label={t('projectOverview.deploymentDescription')}>
           <div style={{ width: 670 }}>
             <Markdown>{deploymentDescription || 'N/A'}</Markdown>

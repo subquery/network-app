@@ -5,11 +5,11 @@ import * as React from 'react';
 import { BsList, BsX } from 'react-icons/bs';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AccountActions } from '@components/AccountActions';
-import { ConnectWalletButton } from '@components/ConnectWallet';
-import { useWeb3 } from '@containers';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components';
-import { Divider, Space } from 'antd';
+import { Divider } from 'antd';
 import clsx from 'clsx';
+import { useAccount } from 'wagmi';
 
 import styles from './Header.module.less';
 
@@ -159,7 +159,7 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   rightElement,
   className,
 }) => {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
   const [showExpand, setShowExpand] = React.useState(false);
 
   return (
@@ -186,7 +186,23 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           <MiddleHeader middleElement={middleElement} appNavigation={appNavigation} />
           <span style={{ flex: 1 }}></span>
           <div className={clsx(styles.right)}>
-            {account ? <AccountActions account={account} /> : <ConnectWalletButton />}
+            {account ? (
+              <AccountActions account={account} />
+            ) : (
+              <ConnectButton.Custom>
+                {({ openConnectModal }) => {
+                  return (
+                    <Button
+                      onClick={() => {
+                        openConnectModal();
+                      }}
+                      type="secondary"
+                      label="Connect"
+                    ></Button>
+                  );
+                }}
+              </ConnectButton.Custom>
+            )}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useStudioEnabled } from '@hooks';
 import { entryLinks, externalAppLinks, studioLink } from '@utils/links';
 
+import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';
 import {
   IPFSProvider,
@@ -14,7 +15,6 @@ import {
   QueryApolloProvider,
   QueryRegistryProvider,
   SQTokenProvider,
-  Web3Provider,
 } from './containers';
 import RouterComponent from './router';
 
@@ -25,7 +25,7 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <IPFSProvider initialState={{ gateway: import.meta.env.VITE_IPFS_GATEWAY }}>
       <QueryApolloProvider>
-        <Web3Provider>
+        <RainbowProvider>
           <AppInitProvider>
             <ProjectMetadataProvider>
               <QueryRegistryProvider>
@@ -33,7 +33,7 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
               </QueryRegistryProvider>
             </ProjectMetadataProvider>
           </AppInitProvider>
-        </Web3Provider>
+        </RainbowProvider>
       </QueryApolloProvider>
     </IPFSProvider>
   );

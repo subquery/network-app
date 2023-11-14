@@ -4,10 +4,10 @@
 import { limitContract } from '@utils/limitation';
 import { BigNumber, Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
+import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useWeb3 } from '../containers';
 import { AsyncData, initialAUSDContract, STABLE_TOKEN_DECIMAL } from '../utils';
 import { AsyncMemoReturn, useAsyncMemo } from './useAsyncMemo';
 
@@ -24,7 +24,7 @@ export function useAUSDContract(): AsyncData<Contract> {
  * @returns balance
  */
 export function useAUSDBalance(): AsyncMemoReturn<string | undefined> {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
   return useAsyncMemo(async () => {
     const aUSDContract = await initialAUSDContract();
     if (!aUSDContract || !account) return undefined;
@@ -37,7 +37,8 @@ export function useAUSDBalance(): AsyncMemoReturn<string | undefined> {
  * @returns useAUSDAllowance
  */
 export function useAUSDAllowance(): AsyncMemoReturn<BigNumber> {
-  const { account } = useWeb3();
+  const { address: account } = useAccount();
+
   const { contracts } = useWeb3Store();
 
   return useAsyncMemo(async () => {

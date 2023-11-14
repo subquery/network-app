@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef } from 'react';
-import { useWeb3 } from '@containers';
 import { openNotification } from '@subql/components';
-import { getAuthReqHeader, requestConsumerHostToken } from '@utils';
+import { getAuthReqHeader, parseError, POST } from '@utils';
+import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
+import { useAccount, useSignTypedData } from 'wagmi';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,
@@ -32,8 +33,55 @@ export enum LOGIN_CONSUMER_HOST_STATUS_MSG {
 export const useConsumerHostServices = (
   { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
 ) => {
-  const { account, library } = useWeb3();
+  const { address: account } = useAccount();
+  const { signTypedDataAsync } = useSignTypedData();
   const authHeaders = useRef<{ Authorization: string }>();
+
+  const requestConsumerHostToken = async (account: string) => {
+    try {
+      const tokenRequestUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/login`;
+      const timestamp = new Date().getTime();
+
+      const signMsg = {
+        consumer: account,
+        timestamp,
+      };
+
+      const eip721Signature = await signTypedDataAsync({
+        types: {
+          EIP712Domain,
+          messageType: ConsumerHostMessageType,
+        },
+        primaryType: 'messageType',
+        // TODO: FIX, it seems is wagmi bug.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        domain,
+        message: signMsg,
+      });
+
+      if (!eip721Signature) throw new Error();
+
+      const { response, error } = await POST({
+        endpoint: tokenRequestUrl,
+        requestBody: withChainIdRequestBody(signMsg, eip721Signature),
+      });
+
+      const sortedResponse = response && (await response.json());
+
+      if (error || !response?.ok || sortedResponse?.error) {
+        throw new Error(sortedResponse?.error ?? error);
+      }
+
+      return { data: sortedResponse?.token };
+    } catch (error) {
+      return {
+        error: parseError(error, {
+          defaultGeneralMsg: 'Failed to request token of consumer host.',
+        }),
+      };
+    }
+  };
 
   const loginConsumerHostToken = async (refresh = false) => {
     if (account) {
@@ -48,7 +96,7 @@ export const useConsumerHostServices = (
         }
       }
 
-      const res = await requestConsumerHostToken(account, library);
+      const res = await requestConsumerHostToken(account);
       if (res.error) {
         return {
           status: false,
@@ -244,6 +292,7 @@ export const useConsumerHostServices = (
     getHostingPlanApi,
     getUserChannelState,
     getProjects,
+    requestConsumerHostToken,
   };
 };
 
