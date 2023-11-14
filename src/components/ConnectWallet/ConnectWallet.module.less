@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  padding: 2rem 3rem;
+  background: white;
+  margin: 1rem 0;
+  border-radius: 8px;
+}
+
+.connectButton {
+  will-change: transform;
+  font-weight: 700;
+  line-height: 1;
+  height: 44px;
+  transition-timing-function: ease;
+  transition-duration: .1s;
+  font-family: var(--sq-font-family);
+  padding: 0 24px;
+  border-radius: 9999px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  gap: 8px;
+}
+
+.connectButton + .connectButton {
+  margin-top: 20px;
+}

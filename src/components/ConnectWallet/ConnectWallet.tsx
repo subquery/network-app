@@ -3,11 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Typography } from '@subql/components';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Typography } from '@subql/components';
 import clsx from 'clsx';
 
-import { ALL_SUPPORTED_CONNECTORS, useConnectNetwork } from '../../containers/Web3';
-import styles from './ConnectWallet.module.css';
+import styles from './ConnectWallet.module.less';
 
 type Props = {
   title?: string;
@@ -15,37 +15,27 @@ type Props = {
   className?: string;
 };
 
-const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => void }> = ({
-  icon,
-  onClick,
-  description,
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <Button
-      type="secondary"
-      className={styles.walletContainer}
-      onClick={onClick}
-      leftItem={
-        <div className={styles.wallet}>
-          <div>
-            <img src={icon} alt="wallet logo" className={styles.walletIcon} />
-
-            <Typography variant="text" className={styles.walletSubtitle}>
-              {description ?? t('connectWallet.metamaskDesc')}
-            </Typography>
-          </div>
-          <i className={['bi-arrow-right', styles.arrow].join(' ')} role="img" aria-label="arrow right" />
-        </div>
-      }
-    />
-  );
-};
+export const SUPPORTED_NETWORKS = [
+  {
+    icon: '/static/metaMask.svg',
+    name: 'MetaMask',
+  },
+  {
+    icon: '/static/walletConnect.svg',
+    name: 'WalletConnect',
+  },
+  {
+    icon: '/static/talisman.png',
+    name: 'Talisman',
+  },
+  {
+    icon: '/static/rainbow.svg',
+    name: 'Rainbow',
+  },
+];
 
 export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
   const { t } = useTranslation();
-  const { onNetworkConnect } = useConnectNetwork();
 
   return (
     <div className={clsx(styles.container, className)}>
@@ -55,15 +45,25 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) =
       <Typography variant="text" className={styles.subtitle}>
         {subTitle || t('connectWallet.subtitle')}
       </Typography>
-      {ALL_SUPPORTED_CONNECTORS.map((supportConnector) => {
-        const { description, icon } = supportConnector;
+
+      {SUPPORTED_NETWORKS.map((supportConnector) => {
+        const { icon, name } = supportConnector;
         return (
-          <Wallet
-            key={description}
-            description={description}
-            icon={icon ?? '/static/metamask.png'}
-            onClick={() => onNetworkConnect(supportConnector)}
-          />
+          <ConnectButton.Custom key={name}>
+            {({ openConnectModal }) => {
+              return (
+                <button
+                  onClick={() => {
+                    openConnectModal();
+                  }}
+                  className={styles.connectButton}
+                >
+                  <img src={icon} alt="" style={{ width: '24px', height: '24px' }}></img>
+                  {name}
+                </button>
+              );
+            }}
+          </ConnectButton.Custom>
         );
       })}
     </div>

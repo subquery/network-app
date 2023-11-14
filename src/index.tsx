@@ -5,19 +5,17 @@
 // eslint-disable-next-line simple-import-sort/imports
 import ReactDOM from 'react-dom/client';
 import TagManager from 'react-gtm-module';
-import { Buffer } from 'buffer';
 
 import './i18n';
 import '@subql/components/dist/subquery-components.css';
 
-import { App } from './App';
-
+import './config/polyfill';
 import './config/sentryConf';
 import './config/dayjsConf';
 import 'reflect-metadata';
 import './index.less';
 
-window.Buffer = Buffer;
+import { App } from './App';
 
 const tagManagerArgs = {
   gtmId: 'G-DK4PX8F61X',

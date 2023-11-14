@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
 import { WalletRoute } from '@components/WalletRoute';
 import { useIsLogin } from '@hooks/useIsLogin';
+import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
 import { Modal, Spinner } from '@subql/components';
 import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
 import {
@@ -22,6 +23,7 @@ import assert from 'assert';
 import axios from 'axios';
 import clsx from 'clsx';
 import { t } from 'i18next';
+import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 import { useProjectStore } from 'src/stores/project';
@@ -38,7 +40,6 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
-  requestServiceAgreementToken,
   wrapProxyEndpoint,
 } from '../../utils';
 import Copy from '../Copy';
@@ -78,7 +79,7 @@ const ConnectedRow: React.FC<{
   deploymentId?: string;
 }> = ({ indexer, deploymentId }) => {
   const { t } = useTranslation();
-  const { account, library } = useWeb3();
+  const { address: account } = useAccount();
   const navigate = useNavigate();
   const { projectMaxTargetHeightInfoRef, setProjectMaxTargetHeightInfo, projectMaxTargetHeightInfo } =
     useProjectStore();
@@ -86,6 +87,8 @@ const ConnectedRow: React.FC<{
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
+  const { requestServiceAgreementToken } = useRequestServiceAgreementToken();
+
   const [loadDeploymentPlans, deploymentPlans] = useGetDeploymentPlansLazyQuery({
     variables: {
       deploymentId: deploymentId ?? '',
@@ -280,7 +283,6 @@ const ConnectedRow: React.FC<{
     if (account && deploymentId) {
       const res = await requestServiceAgreementToken(
         account,
-        library,
         wrapProxyEndpoint(`${indexerMetadata.url}/token`, indexer.indexerId),
         indexer.indexerId,
         '',
