@@ -8,31 +8,26 @@ import { BsBoxArrowLeft } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import { Address } from '@subql/components';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useDisconnect, useWalletClient } from 'wagmi';
 
-import { useSQToken, useWeb3 } from '../../containers';
+import { useSQToken } from '../../containers';
 import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
-import { getConnectorConfig } from '../../utils/getNetworkConnector';
 import { Dropdown } from '../Dropdown';
 import styles from './AccountActions.module.css';
 
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { t } = useTranslation();
-  const { connector } = useAccount();
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
   const { balance } = useSQToken();
-  // TODO: Fix this type
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const sortedWindowObj = getConnectorConfig(connector).windowObj;
+  const { data: walletClient } = useWalletClient();
 
   const handleDisconnect = () => disconnect();
   const handleNavRewards = () => navigate(ROUTES.MY_PROFILE_REWARDS_NAV);
   const handleNavWithdrawn = () => navigate(ROUTES.MY_PROFILE_WITHDRAWN_NAV);
   const handleNavAccount = () => navigate(ROUTES.MY_PROFILE);
   const handleAddToken = () => {
-    sortedWindowObj?.request({
+    walletClient?.request({
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC20',
@@ -46,7 +41,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   };
 
   const handleAddStableToken = () => {
-    sortedWindowObj?.request({
+    walletClient?.request({
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC20',

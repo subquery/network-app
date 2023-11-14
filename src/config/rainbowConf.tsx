@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { metaMaskWallet, talismanWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -15,15 +16,20 @@ const supportedChains = import.meta.env.VITE_NETWORK === 'testnet' ? [polygonMum
 // @ts-ignore
 const { chains, publicClient } = configureChains(supportedChains, [publicProvider()]);
 
-const { connectors } = getDefaultWallets({
-  appName: 'SubQuery Explorer',
-  projectId: 'c7ea561f79adc119587d163a68860570',
+const talismanWalletConnector = talismanWallet({
   chains,
 });
 
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Recommended',
+    wallets: [metaMaskWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }), talismanWalletConnector],
+  },
+]);
+
 const wagmiConfig = createConfig({
   autoConnect: true,
-  connectors,
+  connectors: [...connectors()],
   publicClient,
 });
 

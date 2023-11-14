@@ -9,18 +9,18 @@ import { parseError } from '@utils';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useEthersProvider } from './useEthersProvider';
+import { useEthersSigner } from './useEthersProvider';
 
 export function useInitContracts(): { loading: boolean } {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const { setContracts, setContractClient } = useWeb3Store();
-  const provider = useEthersProvider();
+  const { signer } = useEthersSigner();
 
   React.useEffect(() => {
     function initContract() {
-      if (provider) {
+      if (signer) {
         try {
-          const contractInstance = ContractSDK.create(provider, { network: NETWORK_NAME });
+          const contractInstance = ContractSDK.create(signer, { network: NETWORK_NAME });
           setContracts(contractInstance);
 
           const sortedContractClient = ContractClient.create(contractInstance);
@@ -35,7 +35,7 @@ export function useInitContracts(): { loading: boolean } {
     setIsLoading(true);
     initContract();
     setIsLoading(false);
-  }, [provider, setContractClient, setContracts]);
+  }, [signer, setContractClient, setContracts]);
 
   return { loading: isLoading };
 }

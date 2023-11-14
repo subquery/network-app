@@ -8,7 +8,7 @@ import { sleep, waitForSomething } from './waitForSomething';
 
 const limit = plimit(3);
 export const limitQueue = new PQueue({
-  concurrency: 12,
+  concurrency: 6,
   interval: 1500,
 });
 

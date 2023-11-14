@@ -22,7 +22,7 @@ interface Web3Store {
   isInitialAccount?: boolean;
   setIsInitialAccount: (isInitialAccount: boolean) => void;
 
-  ethProvider?: ethers.providers.JsonRpcProvider;
+  ethProvider?: () => ethers.providers.JsonRpcProvider;
 
   contracts?: ContractSDK;
   setContracts: (contracts: ContractSDK) => void;
@@ -30,12 +30,22 @@ interface Web3Store {
   setContractClient: (contracts: ContractClient) => void;
 }
 
-const ethProviderJsonRPC = 'https://rpc.ankr.com/eth';
 export const useWeb3Store = create<Web3Store>()((set) => ({
   ethWindowObj: window?.ethereum,
   contracts: undefined,
   isInitialAccount: false,
-  ethProvider: new ethers.providers.JsonRpcProvider(ethProviderJsonRPC),
+  ethProvider: () => {
+    const providers = [
+      new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com'),
+      new ethers.providers.JsonRpcProvider('https://ethereum.blockpi.network/v1/rpc/public'),
+      new ethers.providers.JsonRpcProvider('https://rpc.payload.de'),
+      new ethers.providers.JsonRpcProvider('https://ethereum.publicnode.com'),
+      new ethers.providers.JsonRpcProvider('https://eth.drpc.org'),
+      new ethers.providers.JsonRpcProvider('https://eth.merkle.io'),
+    ];
+
+    return providers[Math.floor(Math.random() * providers.length)];
+  },
 
   setIsInitialAccount: (isInitialAccount: boolean) => set((state) => ({ ...state, isInitialAccount })),
 
