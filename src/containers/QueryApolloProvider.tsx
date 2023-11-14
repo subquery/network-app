@@ -26,7 +26,6 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
     httpOptions,
     authUrl: import.meta.env.VITE_AUTH_URL,
     fallbackServiceUrl,
-    useImmediateFallbackOnError: true,
   }).link;
 };
 
