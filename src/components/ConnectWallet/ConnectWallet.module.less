@@ -55,3 +55,26 @@
   font-size: 30px;
   color: var(--gray900);
 }
+
+.connectButton {
+  will-change: transform;
+  font-weight: 700;
+  line-height: 1;
+  height: 44px;
+  transition-timing-function: ease;
+  transition-duration: .1s;
+  font-family: var(--sq-font-family);
+  padding: 0 24px;
+  border-radius: 9999px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  gap: 8px;
+}
+
+.connectButton + .connectButton {
+  margin-top: 20px;
+}

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { metaMaskWallet, talismanWallet } from '@rainbow-me/rainbowkit/wallets';
+import { metaMaskWallet, rainbowWallet, talismanWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -23,7 +23,12 @@ const talismanWalletConnector = talismanWallet({
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
-    wallets: [metaMaskWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }), talismanWalletConnector],
+    wallets: [
+      metaMaskWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
+      walletConnectWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
+      talismanWalletConnector,
+      rainbowWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
+    ],
   },
 ]);
 

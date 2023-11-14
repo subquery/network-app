@@ -28,23 +28,6 @@ export interface SupportedConnectorsReturn {
   description?: string;
   icon?: string;
 }
-export const SUPPORTED_CONNECTORS: { [key: string]: SupportedConnectorsReturn } = {
-  INJECTED: {
-    title: 'Connect with Metamask',
-    description: 'Connect with Metamask browser extension',
-    icon: '/static/metamask.png',
-  },
-
-  TALISMAN: {
-    title: 'Connect with Talisman',
-    description: 'Connect with Talisman browser extension',
-    icon: '/static/talisman.png',
-  },
-};
-
-export const ALL_SUPPORTED_CONNECTORS = Object.keys(SUPPORTED_CONNECTORS).map(
-  (supportConnector) => SUPPORTED_CONNECTORS[supportConnector],
-);
 
 export const useWeb3 = () => {
   const { address } = useAccount();

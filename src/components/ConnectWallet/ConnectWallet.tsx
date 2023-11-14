@@ -8,8 +8,7 @@ import { Button, Typography } from '@subql/components';
 import clsx from 'clsx';
 import { useConnect } from 'wagmi';
 
-import { ALL_SUPPORTED_CONNECTORS } from '../../containers/Web3';
-import styles from './ConnectWallet.module.css';
+import styles from './ConnectWallet.module.less';
 
 type Props = {
   title?: string;
@@ -31,7 +30,7 @@ const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => voi
       onClick={onClick}
       leftItem={
         <div className={styles.wallet}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <img src={icon} alt="wallet logo" className={styles.walletIcon} />
 
             <Typography variant="text" className={styles.walletSubtitle}>
@@ -45,9 +44,27 @@ const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => voi
   );
 };
 
+export const SUPPORTED_NETWORKS = [
+  {
+    icon: '/static/metaMask.svg',
+    name: 'MetaMask',
+  },
+  {
+    icon: '/static/walletConnect.svg',
+    name: 'WalletConnect',
+  },
+  {
+    icon: '/static/talisman.png',
+    name: 'Talisman',
+  },
+  {
+    icon: '/static/rainbow.svg',
+    name: 'Rainbow',
+  },
+];
+
 export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
   const { t } = useTranslation();
-  const { connect } = useConnect();
 
   return (
     <div className={clsx(styles.container, className)}>
@@ -58,20 +75,21 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) =
         {subTitle || t('connectWallet.subtitle')}
       </Typography>
 
-      {ALL_SUPPORTED_CONNECTORS.map((supportConnector) => {
-        const { description, icon } = supportConnector;
+      {SUPPORTED_NETWORKS.map((supportConnector) => {
+        const { icon, name } = supportConnector;
         return (
-          <ConnectButton.Custom>
+          <ConnectButton.Custom key={name}>
             {({ openConnectModal }) => {
               return (
-                <Wallet
-                  key={description}
-                  description={description}
-                  icon={icon ?? '/static/metamask.png'}
+                <button
                   onClick={() => {
                     openConnectModal();
                   }}
-                />
+                  className={styles.connectButton}
+                >
+                  <img src={icon} alt="" style={{ width: '24px', height: '24px' }}></img>
+                  {name}
+                </button>
               );
             }}
           </ConnectButton.Custom>
