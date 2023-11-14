@@ -4,9 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Button, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import clsx from 'clsx';
-import { useConnect } from 'wagmi';
 
 import styles from './ConnectWallet.module.less';
 
@@ -14,34 +13,6 @@ type Props = {
   title?: string;
   subTitle?: string;
   className?: string;
-};
-
-const Wallet: React.FC<{ description?: string; icon: string; onClick?: () => void }> = ({
-  icon,
-  onClick,
-  description,
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <Button
-      type="secondary"
-      className={styles.walletContainer}
-      onClick={onClick}
-      leftItem={
-        <div className={styles.wallet}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <img src={icon} alt="wallet logo" className={styles.walletIcon} />
-
-            <Typography variant="text" className={styles.walletSubtitle}>
-              {description ?? t('connectWallet.metamaskDesc')}
-            </Typography>
-          </div>
-          <i className={['bi-arrow-right', styles.arrow].join(' ')} role="img" aria-label="arrow right" />
-        </div>
-      }
-    />
-  );
 };
 
 export const SUPPORTED_NETWORKS = [

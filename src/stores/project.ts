@@ -1,11 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ESMap } from 'typescript';
 import { create } from 'zustand';
 
 export type ProjectStore = {
-  projectMaxTargetHeightInfoRef: ESMap<string, number>;
+  projectMaxTargetHeightInfoRef: Map<string, number>;
   projectMaxTargetHeightInfo: {
     [key: string]: number;
   };
