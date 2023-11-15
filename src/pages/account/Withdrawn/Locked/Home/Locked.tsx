@@ -124,6 +124,7 @@ const withdrwalsTypeText = {
 export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+
   const filterParams = {
     delegator: account || '',
     status: WithdrawalStatus.ONGOING,
