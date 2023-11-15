@@ -39,7 +39,7 @@ const translation = {
     connectAccount: 'Please connect account.',
     learnMoreHere: 'Learn more <1>here</1>',
     progress: 'progress',
-    cancelUndelegation: 'Cancel Dekegation Withdrawal',
+    cancelUndelegation: 'Cancel Delegation Withdrawal',
     cancelUndelegationTips:
       'If you cancel undelegation process, the following amount will be returned to delegation and you will continue to earn delegation rewards.',
     cancelUnstaking: 'Cancel Staking Withdrawal',
@@ -53,7 +53,7 @@ const translation = {
     success: 'Success!',
     error: 'Sorry, there is something wrong',
     txSubmitted: 'Transaction has been submitted. Please wait for the transaction confirmed.',
-    changeValidIn15s: 'Change will be reflected on dashboard in 15s.',
+    changeValidIn15s: 'Change will be reflected on dashboard in around 15s.',
   },
   transaction: {
     submmited: 'Your transaction has been submitted! Please wait for around 30s.',
