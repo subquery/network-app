@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Typography } from '@subql/components';
+import { Button, Typography } from '@subql/components';
 import clsx from 'clsx';
 
 import styles from './ConnectWallet.module.less';
@@ -19,20 +19,55 @@ export const SUPPORTED_NETWORKS = [
   {
     icon: '/static/metaMask.svg',
     name: 'MetaMask',
+    desc: 'Connect with Metamask browser extension',
   },
   {
     icon: '/static/walletConnect.svg',
     name: 'WalletConnect',
+    desc: 'Connect with WalletConnect browser extension',
   },
   {
     icon: '/static/talisman.png',
     name: 'Talisman',
+    desc: 'Connect with Talisman browser extension',
   },
   {
     icon: '/static/rainbow.svg',
     name: 'Rainbow',
+    desc: 'Connect with Rainbow browser extension',
   },
 ];
+
+const Wallet: React.FC<{ description?: string; name: string; icon: string; onClick?: () => void }> = ({
+  icon,
+  name,
+  onClick,
+  description,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      type="secondary"
+      className={styles.walletContainer}
+      onClick={onClick}
+      leftItem={
+        <div className={styles.wallet}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={icon} alt="wallet logo" style={{ width: 36, height: 36, marginRight: 10 }} />
+            <Typography variant="h4" style={{ color: '#000' }}>
+              {name}
+            </Typography>
+          </div>
+          <Typography variant="text" className={styles.walletSubtitle}>
+            {description ?? t('connectWallet.metamaskDesc')}
+          </Typography>
+          <i className={['bi-arrow-right', styles.arrow].join(' ')} role="img" aria-label="arrow right" />
+        </div>
+      }
+    />
+  );
+};
 
 export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
   const { t } = useTranslation();
@@ -47,20 +82,19 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) =
       </Typography>
 
       {SUPPORTED_NETWORKS.map((supportConnector) => {
-        const { icon, name } = supportConnector;
+        const { icon, name, desc } = supportConnector;
         return (
           <ConnectButton.Custom key={name}>
             {({ openConnectModal }) => {
               return (
-                <button
+                <Wallet
+                  icon={icon}
+                  name={name}
+                  description={desc}
                   onClick={() => {
                     openConnectModal();
                   }}
-                  className={styles.connectButton}
-                >
-                  <img src={icon} alt="" style={{ width: '24px', height: '24px' }}></img>
-                  {name}
-                </button>
+                ></Wallet>
               );
             }}
           </ConnectButton.Custom>
