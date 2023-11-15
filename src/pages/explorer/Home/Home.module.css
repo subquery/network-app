@@ -7,9 +7,8 @@
 .list {
   display: flex;
   flex-wrap: wrap;
-  /* note: the outter set padding is 2rem. and width is 100% */
-  /* not robust */
-  margin-right: -80px;
+  row-gap: 32px;
+  column-gap: 24px;
 }
 
 .header {
@@ -31,8 +30,4 @@
   margin-top: 24px;
   width: 48px;
   height: 10px;
-}
-
-.card {
-  padding-bottom: 32px;
 }
