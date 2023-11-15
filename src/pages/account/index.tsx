@@ -78,7 +78,7 @@ export const MyAccount: React.FC = () => {
   const delegating = useDelegating(account ?? '');
   const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
   const withdrawals = useGetWithdrawlsQuery({
-    variables: { delegator: account ?? '', status: WithdrawalStatus.CLAIMED, offset: 0 },
+    variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
 
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
