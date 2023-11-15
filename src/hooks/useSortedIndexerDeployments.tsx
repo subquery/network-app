@@ -1,15 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Status } from '@subql/network-query';
-import { DeploymentIndexerNodeFieldsFragment as DeploymentIndexer } from '@subql/network-query';
+import { IndexerDeploymentNodeFieldsFragment as DeploymentIndexer, ServiceStatus } from '@subql/network-query';
 import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
-
-import { useWeb3Store } from 'src/stores';
 
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
-import { AsyncData, cidToBytes32, getDeploymentProgress } from '../utils';
+import { AsyncData, getDeploymentProgress } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
@@ -48,27 +45,25 @@ export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentInd
 // TODO: apply with query hook
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
-  const { contracts } = useWeb3Store();
   const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({ variables: { indexerAddress: indexer } });
   const { indexerMetadata } = useIndexerMetadata(indexer);
   const proxyEndpoint = indexerMetadata?.url;
 
   const sortedIndexerDeployments = useAsyncMemo(async () => {
-    if (!indexerDeployments?.data?.deploymentIndexers?.nodes) return [];
+    if (!indexerDeployments?.data?.indexerDeployments?.nodes) return [];
 
-    const filteredDeployments = indexerDeployments?.data?.deploymentIndexers?.nodes?.filter(
-      (deployment) => deployment?.status !== Status.TERMINATED,
+    const filteredDeployments = indexerDeployments?.data?.indexerDeployments?.nodes?.filter(
+      (deployment) => deployment?.status !== ServiceStatus.TERMINATED,
     );
     return await Promise.all(
       filteredDeployments.map(async (indexerDeployment) => {
         const metadata: ProjectMetadata = indexerDeployment?.deployment?.project
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
-          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
+          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '', type: 'SUBQUERY' };
 
         const deploymentId = indexerDeployment?.deployment?.id;
-        const isOffline = deploymentId
-          ? await contracts?.queryRegistry.isOffline(cidToBytes32(deploymentId), indexer)
-          : false;
+        // TODO: get `offline` status from external api call
+        const isOffline = false;
         const { indexingProgress, indexingProgressErr } = await fetchDeploymentProgress(
           indexer,
           proxyEndpoint,

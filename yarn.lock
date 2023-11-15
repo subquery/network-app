@@ -3505,11 +3505,6 @@
   resolved "https://registry.yarnpkg.com/@oclif/screen/-/screen-3.0.4.tgz#663db0ecaf23f3184e7f01886ed578060e4a7f1c"
   integrity sha512-IMsTN1dXEXaOSre27j/ywGbBjrzx0FNd1XmuhCWCB9NTPrhWI1Ifbz+YLSEcstfQfocYsrbrIessxXb2oon4lA==
 
-"@openzeppelin/contracts-upgradeable@^4.5.2":
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.2.tgz#edef522bdbc46d478481391553bababdd2199e27"
-  integrity sha512-zIggnBwemUmmt9IS73qxi+tumALxCY4QEs3zLCII78k0Gfse2hAOdAkuAeLUzvWUpneMUfFE5sGHzEUSTvn4Ag==
-
 "@parcel/watcher-android-arm64@2.3.0":
   version "2.3.0"
   resolved "https://registry.npmjs.org/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.3.0.tgz#d82e74bb564ebd4d8a88791d273a3d2bd61e27ab"
@@ -4447,10 +4442,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/apollo-links@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.npmjs.org/@subql/apollo-links/-/apollo-links-1.2.2.tgz#3be385b44fda926216f94ad1616b21c64884769c"
-  integrity sha512-iXUSfHX4qwVBN6aCa5oPGS0vRX4SZCDFFQk/ZcVEv6fgsBtrhSiwf6UZ9vlG7E12C3fMLeUMIh883WJe1LcMzQ==
+"@subql/apollo-links@^1.100.0":
+  version "1.100.0"
+  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-1.100.0.tgz#6c592fbe3e4dc5a8b5919fa33e6060798d3f15dd"
+  integrity sha512-f1xN35rh4Zx4lkYMzlfIRobAVUa7yXcRuAxY8fnA7hj5jqvKJ6Fc6a3pTKpsbsERN4e/WvIoqRO0xn7RP+X02A==
   dependencies:
     "@metamask/eth-sig-util" "5.1.0"
     apollo-link-error "^1.1.13"
@@ -4483,61 +4478,47 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.16.2.tgz#98ec9bb15b7863767fbe38c86d8a1d70d6e41d4f"
-  integrity sha512-OHSlV+bEyIlk+iZAUBqOMIhENdILrkTTM2+iovumvpM7mUXKGtLvey5tf9t4h4ShGDZQEH5t3crP8FGyvuP07A==
-  dependencies:
-    "@openzeppelin/contracts-upgradeable" "^4.5.2"
+"@subql/contract-sdk@^0.100.3":
+  version "0.100.3"
+  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-0.100.3.tgz#a6e6708ad3a545823b54b7eaa1d95a8d6d6b183d"
+  integrity sha512-kMXFLFBdF0bByc5ub77iOMi4uE5+iDteaSlCSEn+VZiG1Wc/nrw2ezCrmiZ7Qn3OUxn/4+bpZLos3oBUwP3v2A==
 
-"@subql/network-clients@^0.3.17":
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.3.17.tgz#4604a0898df53f74d4c64843b7f2443c24d6795a"
-  integrity sha512-o4fOgnmgLc8wDoUiW/ocUI3N2W2TRW6c1l2AXaP+WAIzy9H1DupfO4CYeSTf8WNPNhpQs/45vlTp5yNB0/qKsg==
+"@subql/network-clients@^0.100.0":
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-0.100.0.tgz#de68cef8bf0f6fa7f806e136f69d781ec9b4ce15"
+  integrity sha512-lXvKdqCAjXwjAiuxI31e29P712elimyNA6OxACs9Lw743fni5gXH4ojF8o8jnoj4bRVKXuwvfKavODfMDKVH4g==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
-    "@subql/network-config" "0.3.14"
-    "@subql/network-query" "0.3.16-0"
+    "@subql/network-config" "0.100.0"
+    "@subql/network-query" "0.100.0"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@0.3.14":
-  version "0.3.14"
-  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.3.14.tgz#b04778145414618c7b91a10bcf00c04f0c7c339f"
-  integrity sha512-kRgsyhBFB/7fylCtgUB7URyfd1m1GtPVzDMIDNCuoaq8N7cp+yxnhfODkZIqjgvnGiw2x7T9EiVJbhUQAK6lsQ==
+"@subql/network-config@0.100.0", "@subql/network-config@^0.100.0":
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/@subql/network-config/-/network-config-0.100.0.tgz#1b400c0fce56f5845b4629d00467aeecf3665924"
+  integrity sha512-tTUgIC3fCZnmsx1+7vlrD2DpDbLOFPbJScfywpH642mtDPfuBeNbsEDW+MbzDB1SWWMEELsNZ3euTV8Wyh3eRA==
 
-"@subql/network-config@0.3.17-2":
-  version "0.3.17-2"
-  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-0.3.17-2.tgz#b2a156843b83c140a65b910b702ebcfd2c9b47b4"
-  integrity sha512-ZF8PS88UbJy5BiOmULgoDQmuJBO8a5KoPTKvQ4lhn3UhDI7HEMenhYPlZbbX0AzBQUne5uYmQu9GSuUspUBHCg==
-
-"@subql/network-query@0.3.16-0":
-  version "0.3.16-0"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.3.16-0.tgz#19b7eae9f0955f2621183b0d98b6dfc352c8d0b9"
-  integrity sha512-DUHjxAYWAD00grxKJJ59nad81MMECFQFWpCD7ow5npFk3BgPzffZmYLiiZ+NSbz8rQT4EE954OMTpBFLWFGlcA==
+"@subql/network-query@0.100.0", "@subql/network-query@^0.100.0":
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-0.100.0.tgz#f22c57156ea65fbf0d5469d2f783da347016ebdb"
+  integrity sha512-6zj/RTWq/qrNEAHOVifrZsgRGs8Ujo52/AKmJ6ywl8xXZnSC7jM1UEjtUmu63kB/hbsDmOnxKaNnhHSh4Ghx5g==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@0.3.16-15":
-  version "0.3.16-15"
-  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-0.3.16-15.tgz#289b214d5d2274ac694b2a4b63a7958bac412c4a"
-  integrity sha512-PgsHrrunjVsQ9FOb3KRDtePBnjb6GBlLbfdvCrl7YNUzaiB/ErXUNhiWa7zzAQIGvl4rLPZ3fxLmJykELp4PSQ==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/react-hooks@0.3.16-23":
-  version "0.3.16-23"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.3.16-23.tgz#ab7e2bd9b539f65b4ba8ef8605a3e9989401bb07"
-  integrity sha512-kdG1qWBBxEItKd/NUnzl2IeCFs9FPDrtNg9ybmU77Q9h5kK5k+cW4NVcrIi6/tTRkWxJMjpWXzlzJmLcGwh9Sw==
+"@subql/react-hooks@^0.100.0":
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-0.100.0.tgz#24d9867a23933f802bc0437e68178d7b98640e80"
+  integrity sha512-38ULmNvrcu1upfbR0FLiKjNhK/vCHU/So9RVM+AkA3OjMoJON/f2A38SOnt7Gi29ER9VaiqaWNDbWVpUuRAwbg==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.3.16-15"
+    "@subql/network-query" "0.100.0"
     ahooks "^3.7.8"
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"

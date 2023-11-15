@@ -35,8 +35,8 @@ export function useDeploymentMetadata(deploymentId: string | undefined): AsyncDa
   const { catSingle } = useIPFS();
   const [loadDeployment, asyncDeployment] = useGetDeploymentLazyQuery();
   const asyncMetadata = useAsyncMemo(
-    () => getDeploymentMetadata(catSingle, asyncDeployment.data?.deployment?.version),
-    [catSingle, asyncDeployment.data?.deployment?.version],
+    () => getDeploymentMetadata(catSingle, asyncDeployment.data?.deployment?.metadata),
+    [catSingle, asyncDeployment.data?.deployment?.metadata],
   );
 
   useEffect(() => {

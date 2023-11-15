@@ -86,7 +86,7 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
 
 export const VersionDeployment: React.FC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
   const { catSingle } = useIPFS();
-  const deploymentVersion = deployment?.version;
+  const deploymentVersion = deployment?.metadata;
   const meta = useAsyncMemo(async () => {
     if (!deploymentVersion) return null;
     return await getDeploymentMetadata(catSingle, deploymentVersion);

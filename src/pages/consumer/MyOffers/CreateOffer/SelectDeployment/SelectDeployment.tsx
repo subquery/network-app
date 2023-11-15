@@ -111,7 +111,7 @@ export const SelectDeployment: React.FC = () => {
       <div className={styles.searchDeployment}>
         <SearchAddress />
         {searchedProjectId && (
-          <DeploymentProject projectId={searchedProjectId} deploymentVersion={searchedDeployment.version} />
+          <DeploymentProject projectId={searchedProjectId} deploymentVersion={searchedDeployment.metadata} />
         )}
         <StepButtons curStep={curStep} onStepChange={onNext} disabled={!searchedProjectId} />
       </div>
