@@ -8,6 +8,7 @@ import { Typography } from '@subql/components';
 import { ProjectFieldsFragment as Project, ProjectsOrderBy } from '@subql/network-query';
 import { useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { useInfiniteScroll, useMount } from 'ahooks';
+import { Skeleton } from 'antd';
 
 import { ProjectCard, Spinner } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
@@ -91,7 +92,7 @@ const Home: React.FC = () => {
 
     return {
       list: [],
-      isNoMore: !res.error && !res.data?.projects?.nodes.length,
+      isNoMore: res.error || !res.data?.projects?.nodes.length,
     };
   };
 
@@ -110,7 +111,6 @@ const Home: React.FC = () => {
   return (
     <div className={styles.explorer}>
       <Header />
-      {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
       {/* TODO: finish this part */}
       {/* <div style={{ display: 'flex', marginBottom: 32 }}>
         <span style={{ flex: 1 }}></span>
@@ -125,24 +125,30 @@ const Home: React.FC = () => {
           }}
         ></Input>
       </div> */}
-      <div className={styles.list}>
-        {topProject && (
-          <ProjectItem
-            project={topProject}
-            key={topProject.id}
-            onClick={() => navigate(`${PROJECT_NAV}/${topProject.id}`)}
-          />
-        )}
-        {projects?.length
-          ? projects.map((project) => (
-              <ProjectItem
-                project={project}
-                key={project.id}
-                onClick={() => navigate(`${PROJECT_NAV}/${project.id}`)}
-              />
-            ))
-          : ''}
-      </div>
+      {
+        <div className={styles.list}>
+          {topProject ? (
+            <ProjectItem
+              project={topProject}
+              key={topProject.id}
+              onClick={() => navigate(`${PROJECT_NAV}/${topProject.id}`)}
+            />
+          ) : (
+            <Skeleton style={{ width: 272, height: 400 }}></Skeleton>
+          )}
+          {projects?.length
+            ? projects.map((project) => (
+                <ProjectItem
+                  project={project}
+                  key={project.id}
+                  onClick={() => navigate(`${PROJECT_NAV}/${project.id}`)}
+                />
+              ))
+            : ''}
+        </div>
+      }
+      {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
+
       {(loading || topLoading) && <Spinner />}
     </div>
   );
