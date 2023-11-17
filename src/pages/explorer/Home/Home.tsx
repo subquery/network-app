@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import RpcError from '@components/RpcError';
 import { Typography } from '@subql/components';
 import { ProjectFieldsFragment as Project, ProjectsOrderBy } from '@subql/network-query';
 import { useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';

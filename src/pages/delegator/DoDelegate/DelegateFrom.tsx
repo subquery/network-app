@@ -248,9 +248,15 @@ export const DelegateForm: React.FC<FormProps> = ({
                   className={clsx('fullWidth', styles.delegatorSelect)}
                   loading={indexerDeployments.loading}
                   size="large"
-                  allowClear
                   disabled={isSubmitting}
                   options={delegationOptions}
+                  showSearch
+                  filterOption={(input, option) => {
+                    const searchLabel = `${
+                      option?.name?.toString().toLowerCase() || 'your wallet'
+                    } ${option?.value.toLowerCase()}`;
+                    return searchLabel.includes(input.toLowerCase());
+                  }}
                 ></Select>
               </div>
 
