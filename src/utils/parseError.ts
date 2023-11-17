@@ -65,6 +65,23 @@ function logError(msg: Error | string | Record<string, unknown>): void {
   return console.error(`%c [Error] ${msg}`, 'color:lightgreen;');
 }
 
+export const isRPCError = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+
+  if (msg instanceof Error) {
+    if (msg.message.includes('event=') || msg.message.includes('Transaction reverted without a reason string')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg.includes('event=') || msg.includes('Transaction reverted without a reason string')) {
+    return true;
+  }
+
+  return false;
+};
+
 export function parseError(
   error: any,
   options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
@@ -112,12 +129,17 @@ export function parseError(
     }
   };
 
+  const RpcUnavailableMsg = () => {
+    if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable';
+  };
+
   return (
     mappingError() ??
     mapContractError() ??
     callRevert() ??
     userDeniedSignature() ??
     options.defaultGeneralMsg ??
+    RpcUnavailableMsg() ??
     generalErrorMsg()
   );
 }

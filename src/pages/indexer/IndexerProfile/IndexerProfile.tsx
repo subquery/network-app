@@ -7,6 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 import { CurEra, IPFSImage } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import NewCard from '@components/NewCard';
+import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
@@ -24,6 +25,7 @@ import {
   useGetTopIndexersQuery,
 } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
+import { isRPCError } from '@utils';
 import { TOKEN } from '@utils/constants';
 import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
 import { Skeleton, Tag } from 'antd';
@@ -237,140 +239,148 @@ const IndexerProfile: FC = () => {
 
   return (
     <div className={styles.indexerProfile}>
-      <div className="col-flex">
-        <AccountHeader account={account ?? ''} />
+      {isRPCError(currentEra.error) ? (
+        <RpcError></RpcError>
+      ) : (
+        <div className="col-flex">
+          <AccountHeader account={account ?? ''} />
 
-        <AccountBaseInfo account={account ?? ''}></AccountBaseInfo>
+          <AccountBaseInfo account={account ?? ''}></AccountBaseInfo>
 
-        <div className="flex-between" style={{ margin: '24px 0' }}>
-          {renderAsync(result, {
-            loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
-            error: (e) => <Typography>{parseError(e)}</Typography>,
-            data: (fetchedResult) => (
-              <NewCard
-                title="Total Rewards"
-                titleExtra={BalanceLayout({
-                  mainBalance: formatSQT(fetchedResult.eraRewards.aggregates.sum.amount),
-                })}
-                tooltip="This is the total rewards that have been claimed or are able to be claimed by this indexer right now"
-                width={302}
-              >
-                <div className="col-flex">
-                  <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                    <Typography variant="small" type="secondary">
-                      Current Commission Rate
-                    </Typography>
-                    <Typography variant="small">
-                      {getCommission(fetchedResult.indexer.commission, currentEra.data?.index).current} %
-                    </Typography>
-                  </div>
-
-                  <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                    <Typography variant="small" type="secondary">
-                      Total Rewards to Delegators
-                    </Typography>
-                    <Typography variant="small">
-                      {formatNumber(formatSQT(fetchedResult.delegatorEraRewards.aggregates.sum.amount))} {TOKEN}
-                    </Typography>
-                  </div>
-                </div>
-              </NewCard>
-            ),
-          })}
-
-          {renderAsync(sortedIndexer, {
-            loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
-            error: (e) => <Typography>{parseError(e)}</Typography>,
-            data: (fetchedSortedIndexer) => (
-              <NewCard
-                title="Current Total Stake"
-                titleExtra={BalanceLayout({
-                  mainBalance: fetchedSortedIndexer.totalStake.current,
-                  secondaryBalance: fetchedSortedIndexer.totalStake.after,
-                })}
-                tooltip={`This is the total staked ${TOKEN} by this indexer. This includes ${TOKEN} that has been delegated to this Indexer`}
-                width={302}
-              >
-                <div className="col-flex">
-                  <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                    <Typography variant="small" type="secondary">
-                      Own Stake
-                    </Typography>
-                    <Typography variant="small">
-                      {formatNumber(fetchedSortedIndexer.ownStake.current)} {TOKEN}
-                    </Typography>
-                  </div>
-
-                  {fetchedSortedIndexer.ownStake.after && (
+          <div className="flex-between" style={{ margin: '24px 0' }}>
+            {renderAsync(result, {
+              loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
+              error: (e) => <Typography>{parseError(e)}</Typography>,
+              data: (fetchedResult) => (
+                <NewCard
+                  title="Total Rewards"
+                  titleExtra={BalanceLayout({
+                    mainBalance: formatSQT(fetchedResult.eraRewards.aggregates.sum.amount),
+                  })}
+                  tooltip="This is the total rewards that have been claimed or are able to be claimed by this indexer right now"
+                  width={302}
+                >
+                  <div className="col-flex">
                     <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                      <Typography variant="small" style={{ visibility: 'hidden' }}>
-                        bigo
+                      <Typography variant="small" type="secondary">
+                        Current Commission Rate
                       </Typography>
-                      <Typography
-                        variant="small"
-                        type="secondary"
-                        style={{ transform: 'scale(0.83333) translateX(7px)', marginLeft: 3 }}
-                      >
-                        {formatNumber(fetchedSortedIndexer.ownStake.after)} {TOKEN}
+                      <Typography variant="small">
+                        {getCommission(fetchedResult.indexer.commission, currentEra.data?.index).current} %
                       </Typography>
                     </div>
-                  )}
-                </div>
-              </NewCard>
-            ),
-          })}
 
-          {renderAsync(sortedIndexer, {
-            loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
-            error: (e) => <Typography>{parseError(e)}</Typography>,
-            data: (fetchedSortedIndexer) => (
-              <NewCard
-                title="Current Total Delegation"
-                titleExtra={BalanceLayout({
-                  mainBalance: fetchedSortedIndexer.totalDelegations.current,
-                  secondaryBalance: fetchedSortedIndexer.totalDelegations.after,
-                })}
-                tooltip={`This is the total ${TOKEN} delegated by participants to this Indexer right now.`}
-                width={302}
-              >
-                <div className="col-flex">
-                  <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                    <Typography variant="small" type="secondary">
-                      Remaining Capacity
-                    </Typography>
-                    <Typography variant="small">
-                      {formatNumber(fetchedSortedIndexer.capacity.current)} {TOKEN}
-                    </Typography>
+                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                      <Typography variant="small" type="secondary">
+                        Total Rewards to Delegators
+                      </Typography>
+                      <Typography variant="small">
+                        {formatNumber(formatSQT(fetchedResult.delegatorEraRewards.aggregates.sum.amount))} {TOKEN}
+                      </Typography>
+                    </div>
                   </div>
+                </NewCard>
+              ),
+            })}
 
-                  <div className={clsx(styles.cardContentLine, 'flex-between')}>
-                    <Typography variant="small" type="secondary">
-                      Number of Delegators
-                    </Typography>
-                    <Typography variant="small">{indexerDelegators.data?.indexer?.delegations.totalCount}</Typography>
+            {renderAsync(sortedIndexer, {
+              loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
+              error: (e) => <Typography>{parseError(e)}</Typography>,
+              data: (fetchedSortedIndexer) => (
+                <NewCard
+                  title="Current Total Stake"
+                  titleExtra={BalanceLayout({
+                    mainBalance: fetchedSortedIndexer.totalStake.current,
+                    secondaryBalance: fetchedSortedIndexer.totalStake.after,
+                  })}
+                  tooltip={`This is the total staked ${TOKEN} by this indexer. This includes ${TOKEN} that has been delegated to this Indexer`}
+                  width={302}
+                >
+                  <div className="col-flex">
+                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                      <Typography variant="small" type="secondary">
+                        Own Stake
+                      </Typography>
+                      <Typography variant="small">
+                        {formatNumber(fetchedSortedIndexer.ownStake.current)} {TOKEN}
+                      </Typography>
+                    </div>
+
+                    {fetchedSortedIndexer.ownStake.after && (
+                      <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                        <Typography variant="small" style={{ visibility: 'hidden' }}>
+                          bigo
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          type="secondary"
+                          style={{ transform: 'scale(0.83333) translateX(7px)', marginLeft: 3 }}
+                        >
+                          {formatNumber(fetchedSortedIndexer.ownStake.after)} {TOKEN}
+                        </Typography>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </NewCard>
-            ),
-          })}
+                </NewCard>
+              ),
+            })}
 
-          <ActiveCard account={account || ''}></ActiveCard>
-        </div>
+            {renderAsync(sortedIndexer, {
+              loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
+              error: (e) => <Typography>{parseError(e)}</Typography>,
+              data: (fetchedSortedIndexer) => (
+                <NewCard
+                  title="Current Total Delegation"
+                  titleExtra={BalanceLayout({
+                    mainBalance: fetchedSortedIndexer.totalDelegations.current,
+                    secondaryBalance: fetchedSortedIndexer.totalDelegations.after,
+                  })}
+                  tooltip={`This is the total ${TOKEN} delegated by participants to this Indexer right now.`}
+                  width={302}
+                >
+                  <div className="col-flex">
+                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                      <Typography variant="small" type="secondary">
+                        Remaining Capacity
+                      </Typography>
+                      <Typography variant="small">
+                        {formatNumber(fetchedSortedIndexer.capacity.current)} {TOKEN}
+                      </Typography>
+                    </div>
 
-        <StakeAndDelegationLineChart account={account} title="Stake" dataDimensionsName={['Own Stake', 'Delegation']} />
+                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                      <Typography variant="small" type="secondary">
+                        Number of Delegators
+                      </Typography>
+                      <Typography variant="small">{indexerDelegators.data?.indexer?.delegations.totalCount}</Typography>
+                    </div>
+                  </div>
+                </NewCard>
+              ),
+            })}
 
-        <div style={{ marginTop: 24 }}>
-          <RewardsLineChart
+            <ActiveCard account={account || ''}></ActiveCard>
+          </div>
+
+          <StakeAndDelegationLineChart
             account={account}
-            title="Rewards"
-            dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
-          ></RewardsLineChart>
-        </div>
+            title="Stake"
+            dataDimensionsName={['Own Stake', 'Delegation']}
+          />
 
-        <div className={styles.indexerDelegator}>
-          <OwnDelegator indexer={account || ''} showHeader></OwnDelegator>
+          <div style={{ marginTop: 24 }}>
+            <RewardsLineChart
+              account={account}
+              title="Rewards"
+              dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+            ></RewardsLineChart>
+          </div>
+
+          <div className={styles.indexerDelegator}>
+            <OwnDelegator indexer={account || ''} showHeader></OwnDelegator>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

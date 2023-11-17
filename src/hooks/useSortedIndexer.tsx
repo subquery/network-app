@@ -60,14 +60,20 @@ export interface UseSortedIndexerReturn {
   capacity: CurrentEraValue<number>;
 }
 
-export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> {
-  const { currentEra } = useEra();
+export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> & { refresh?: () => void } {
+  const { currentEra, refetch } = useEra();
   const indexerQueryParams = { address: account ?? '' };
   const indexerData = useGetIndexerQuery({ variables: indexerQueryParams, pollInterval: 10000 });
   const delegationQueryParams = { id: `${account ?? ''}:${account}` };
   const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams });
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
+
+  const refresh = async () => {
+    refetch();
+    indexerData.refetch();
+    indexerDelegation.refetch();
+  };
 
   if (loading) {
     return { loading: true, data: undefined };
@@ -105,8 +111,9 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
         totalDelegations,
         capacity,
       },
+      refresh,
     };
   } catch (e) {
-    return { loading: false, error: e as Error };
+    return { loading: false, error: e as Error, refresh };
   }
 }

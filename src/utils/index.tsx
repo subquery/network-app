@@ -167,7 +167,7 @@ export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: 
     return handlers.loading ? handlers.loading() : defaultLoading();
   }
 
-  return null;
+  return handlers.empty();
 }
 
 export function concatU8A(a: Uint8Array, b: Uint8Array): Uint8Array {
