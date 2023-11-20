@@ -4,12 +4,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import RpcError from '@components/RpcError';
 import { Typography } from '@subql/components';
 import { ProjectFieldsFragment as Project, ProjectsOrderBy } from '@subql/network-query';
 import { useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { useInfiniteScroll, useMount } from 'ahooks';
+import { Skeleton } from 'antd';
 
-import { ProjectCard, Spinner } from '../../../components';
+import { ProjectCard } from '../../../components';
 import { useProjectMetadata } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { notEmpty } from '../../../utils';
@@ -24,15 +26,13 @@ const ProjectItem: React.FC<{ project: Project; onClick?: () => void }> = ({ pro
   const { data: metadata } = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project]);
 
   return (
-    <div className={styles.card}>
-      <ProjectCard
-        onClick={onClick}
-        project={{
-          ...project,
-          metadata,
-        }}
-      />
-    </div>
+    <ProjectCard
+      onClick={onClick}
+      project={{
+        ...project,
+        metadata,
+      }}
+    />
   );
 };
 
@@ -50,17 +50,23 @@ export const Header: React.FC = () => {
 };
 
 const Home: React.FC = () => {
-  const [getProjects, { error, loading }] = useGetProjectsLazyQuery({
+  const [getProjects, { error }] = useGetProjectsLazyQuery({
     variables: { offset: 0 },
   });
 
-  const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
+  const [getProject, { error: topError }] = useGetProjectLazyQuery();
 
   const navigate = useNavigate();
 
   const [topProject, setTopProject] = React.useState<Project>();
   const [projects, setProjects] = React.useState<Project[]>([]);
-
+  // Note why don't use Apollo client's loading.
+  // Apollo client's loading seems have some delay.
+  // If use it would not update by project's update.
+  // would give a flush for user.
+  const [loading, setLoading] = React.useState(false);
+  // assum there at lease have 11 projects
+  const [total, setTotal] = React.useState(10);
   const updateNetworkProject = async () => {
     // this is a hard code, for kepler-network project.
     // we want to top it.
@@ -75,24 +81,33 @@ const Home: React.FC = () => {
   };
 
   const loadMore = async () => {
-    const res = await getProjects({
-      variables: {
-        offset: projects.length,
-        orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
-        ids: ['0x06'],
-      },
-    });
-    // implement a sorting for projects
-    if (res.data?.projects?.nodes) {
-      const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
+    try {
+      setLoading(true);
+      const res = await getProjects({
+        variables: {
+          offset: projects.length,
+          orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
+          ids: ['0x06'],
+        },
+      });
 
-      setProjects([...projects, ...nonEmptyProjects]);
+      let updatedLength = projects.length;
+      // implement a sorting for projects
+      if (res.data?.projects?.nodes) {
+        const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
+        const mergered = [...projects, ...nonEmptyProjects];
+        setProjects(mergered);
+        updatedLength = mergered.length;
+        setTotal(res.data?.projects?.totalCount);
+      }
+
+      return {
+        list: [],
+        isNoMore: res.error || !res.data?.projects?.nodes.length || updatedLength >= res.data.projects.totalCount,
+      };
+    } finally {
+      setLoading(false);
     }
-
-    return {
-      list: [],
-      isNoMore: !res.error && !res.data?.projects?.nodes.length,
-    };
   };
 
   useInfiniteScroll(() => loadMore(), {
@@ -110,28 +125,16 @@ const Home: React.FC = () => {
   return (
     <div className={styles.explorer}>
       <Header />
-      {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
-      {/* TODO: finish this part */}
-      {/* <div style={{ display: 'flex', marginBottom: 32 }}>
-        <span style={{ flex: 1 }}></span>
-        <Input
-          style={{ width: 200, height: 48, padding: 12 }}
-          prefix={<SearchOutlined style={{ color: 'var(--sq-gray500)' }} />}
-          placeholder="Search"
-          onKeyUp={(e) => {
-            if (e.key.toUpperCase() === 'ENTER') {
-              console.warn('search');
-            }
-          }}
-        ></Input>
-      </div> */}
+
       <div className={styles.list}>
-        {topProject && (
+        {topProject ? (
           <ProjectItem
             project={topProject}
             key={topProject.id}
             onClick={() => navigate(`${PROJECT_NAV}/${topProject.id}`)}
           />
+        ) : (
+          <Skeleton paragraph={{ rows: 7 }} style={{ width: 236, height: 400 }} active></Skeleton>
         )}
         {projects?.length
           ? projects.map((project) => (
@@ -142,8 +145,13 @@ const Home: React.FC = () => {
               />
             ))
           : ''}
+        {loading &&
+          new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
+            return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
+          })}
       </div>
-      {(loading || topLoading) && <Spinner />}
+
+      {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
     </div>
   );
 };

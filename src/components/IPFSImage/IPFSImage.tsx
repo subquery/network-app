@@ -37,7 +37,7 @@ const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, ...rest }) => {
     return <>{renderPlaceholder()}</>;
   }
 
-  return <img src={source} alt="ipfs" {...rest} />;
+  return <img src={source} alt="" {...rest} />;
 };
 
 export default IPFSImage;

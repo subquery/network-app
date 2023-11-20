@@ -20,11 +20,25 @@ type Props = {
 };
 
 const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
+  const ipfsImage = React.useMemo(() => {
+    if (!project.metadata) {
+      return '';
+    }
+
+    if (!project.metadata.image) return '/static/default.project.png';
+
+    return project.metadata.image;
+  }, [project.metadata]);
+
   return (
     <div className={styles.card} onClick={onClick}>
-      <IPFSImage src={project.metadata?.image || '/static/default.project.png'} className={styles.image} />
+      <IPFSImage
+        src={ipfsImage}
+        className={styles.image}
+        renderPlaceholder={() => <div style={{ width: '100%', height: '205px', background: '#fff' }}></div>}
+      />
       <div style={{ flex: 1 }}>
-        <Typography style={{ marginTop: 16, marginBottom: 6 }} weight={600}>
+        <Typography style={{ marginTop: 16, marginBottom: 6, height: 48 }} weight={600}>
           {project.metadata?.name || project.id}
         </Typography>
       </div>

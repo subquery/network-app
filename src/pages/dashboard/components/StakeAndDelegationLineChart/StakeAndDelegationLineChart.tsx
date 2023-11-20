@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
+import RpcError from '@components/RpcError';
 import { useEra } from '@hooks';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
@@ -11,7 +12,14 @@ import {
   useGetIndexerStakesByErasLazyQuery,
   useGetIndexerStakesByIndexerLazyQuery,
 } from '@subql/react-hooks';
-import { DeepCloneAndChangeReadonlyToMutable, parseError, renderAsyncArray, TOKEN, toPercentage } from '@utils';
+import {
+  DeepCloneAndChangeReadonlyToMutable,
+  isRPCError,
+  parseError,
+  renderAsyncArray,
+  TOKEN,
+  toPercentage,
+} from '@utils';
 import { mergeAsync } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
@@ -77,7 +85,7 @@ export const StakeAndDelegationLineChart = (props: {
   };
 
   const fetchStakeAndDelegationByEra = async (filterVal: FilterType = filter) => {
-    if (!currentEra.data) return;
+    if (!currentEra.data) return currentEra.error;
     if (!filterVal) return;
     const { getIncludesEras, fillData } = getSplitDataByEra(currentEra.data, true);
 
@@ -203,6 +211,10 @@ export const StakeAndDelegationLineChart = (props: {
     fetchStakeAndDelegationByEra();
   }, [currentEra.data?.index, props.account]);
 
+  if (isRPCError(currentEra.error)) {
+    return <RpcError></RpcError>;
+  }
+
   return renderAsyncArray(
     mergeAsync(
       props.account ? stakeAndDelegationByIndexer : stakeAndDelegation,
@@ -213,7 +225,9 @@ export const StakeAndDelegationLineChart = (props: {
     ),
     {
       loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
-      error: (e) => <Typography>{parseError(e)}</Typography>,
+      error: (e) => (
+        <Typography>{isRPCError(currentEra.error) ? <RpcError size="small"></RpcError> : parseError(e)}</Typography>
+      ),
       empty: () => <Typography></Typography>,
       data: () => {
         return (

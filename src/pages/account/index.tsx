@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { matchPath, Outlet, useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
+import RpcError from '@components/RpcError';
 import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
@@ -11,7 +12,7 @@ import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/R
 import { Footer, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/react-hooks';
-import { formatEther, formatNumber, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
+import { formatEther, formatNumber, isRPCError, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
 import { BigNumber } from 'ethers';
@@ -78,7 +79,7 @@ export const MyAccount: React.FC = () => {
   const delegating = useDelegating(account ?? '');
   const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
   const withdrawals = useGetWithdrawlsQuery({
-    variables: { delegator: account ?? '', status: WithdrawalStatus.CLAIMED, offset: 0 },
+    variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
 
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
@@ -112,6 +113,7 @@ export const MyAccount: React.FC = () => {
       }
     });
   }, [window.location.pathname]);
+
   return (
     <div
       className="col-flex"
@@ -125,7 +127,19 @@ export const MyAccount: React.FC = () => {
             <Skeleton style={{ width: 304, marginRight: 24, flexShrink: 0 }} paragraph={{ rows: 9 }}></Skeleton>
           ),
           error: (e) => {
-            console.error('e', e);
+            if (isRPCError(e)) {
+              return (
+                <RpcError
+                  size="small"
+                  tryAgain={() => {
+                    delegating.refetch();
+                    sortedIndexer?.refresh?.();
+                    rewards.refetch();
+                    withdrawals.refetch();
+                  }}
+                ></RpcError>
+              );
+            }
             return <Typography>{`Failed to load account details: ${e}`}</Typography>;
           },
           data: (data) => {
