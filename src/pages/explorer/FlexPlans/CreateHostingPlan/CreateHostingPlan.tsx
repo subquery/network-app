@@ -68,7 +68,7 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const haveCreatedHostingPlan = React.useMemo(() => {
     const checkHaveCreated = (hostingPlans: IGetHostingPlans[]) =>
-      !!hostingPlans.find((i) => i.deployment.deployment === asyncProject.data?.currentDeployment);
+      !!hostingPlans.find((i) => i.deployment.deployment === asyncProject.data?.deploymentId);
     return {
       haveCreated: checkHaveCreated(createdHostingPlan),
       checkHaveCreated,
@@ -79,7 +79,7 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const createHostingPlan = async () => {
     await form.validateFields();
-    if (!asyncProject.data?.currentDeployment) return;
+    if (!asyncProject.data?.deploymentId) return;
     const created = await getHostingPlans();
 
     if (!created) return;
@@ -95,7 +95,7 @@ const CreateHostingFlexPlan: FC = (props) => {
       price: parseEther(`${form.getFieldValue('price')}`)
         .div(1000)
         .toString(),
-      deploymentId: asyncProject.data.currentDeployment,
+      deploymentId: asyncProject.data.deploymentId,
     });
 
     if (res.data.id) {
@@ -171,7 +171,7 @@ const CreateHostingFlexPlan: FC = (props) => {
             <Typography
               style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
               onClick={() => {
-                navigate(`/consumer/flex-plans?deploymentCid=${asyncProject.data?.currentDeployment}`);
+                navigate(`/consumer/flex-plans?deploymentCid=${asyncProject.data?.deploymentId}`);
               }}
             >
               View My Flex Plan

@@ -12,8 +12,7 @@ import { Form, Formik } from 'formik';
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useRouteQuery } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
-import { isEthError, parseError } from '../../../utils';
-import { ROUTES } from '../../../utils';
+import { isEthError, parseError, ROUTES } from '../../../utils';
 import styles from './Create.module.css';
 import Instructions from './Instructions';
 const { STUDIO_PROJECT_NAV } = ROUTES;
@@ -54,6 +53,7 @@ const Create: React.FC = () => {
       <Formik
         initialValues={{
           name: query.get('name') ?? '',
+          type: 'SUBQUERY',
           description: '',
           websiteUrl: undefined,
           codeUrl: undefined,
@@ -86,6 +86,7 @@ const Create: React.FC = () => {
             <div className={clsx(styles.form, 'content-width')}>
               <div className={styles.fields}>
                 <FTextInput label={t('studio.create.name')} id="name" />
+                <FTextInput label={t('studio.create.type')} placeholder="SUBQUERY" id="type" />
                 <FTextInput label={t('studio.create.description')} id="description" base="textarea" />
                 <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
                 <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />

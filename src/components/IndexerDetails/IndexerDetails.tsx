@@ -4,10 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyList } from '@components/EmptyList';
-import { Spinner, Typography } from '@subql/components';
-import { TableTitle } from '@subql/components';
-import { Status } from '@subql/network-query';
-import { renderAsync, useGetDeploymentIndexerLazyQuery, useGetDeploymentIndexersLazyQuery } from '@subql/react-hooks';
+import { Spinner, TableTitle, Typography } from '@subql/components';
+import { ServiceStatus } from '@subql/network-query';
+import { renderAsync, useGetDeploymentIndexersLazyQuery, useGetIndexerDeploymentLazyQuery } from '@subql/react-hooks';
 import { Pagination, Table, TableProps } from 'antd';
 
 import { notEmpty, URLS } from '../../utils';
@@ -45,15 +44,15 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
     offset: 0,
   });
   const totalCount = React.useMemo(() => {
-    return asyncIndexers.data?.deploymentIndexers?.totalCount || 0;
+    return asyncIndexers.data?.indexerDeployments?.totalCount || 0;
   }, [asyncIndexers]);
 
-  const [search, sortedIndexer] = useGetDeploymentIndexerLazyQuery();
+  const [search, sortedIndexer] = useGetIndexerDeploymentLazyQuery();
 
-  const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.deploymentIndexers?.nodes, [sortedIndexer]);
+  const searchedIndexer = React.useMemo(() => sortedIndexer?.data?.indexerDeployments?.nodes, [sortedIndexer]);
 
   const indexers = React.useMemo(
-    () => asyncIndexers.data?.deploymentIndexers?.nodes.filter(notEmpty),
+    () => asyncIndexers.data?.indexerDeployments?.nodes.filter(notEmpty),
     [asyncIndexers.data],
   );
 
@@ -155,7 +154,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
           <>
             {indexerList
               .filter(notEmpty)
-              .sort((indexer) => (indexer.status === Status.READY ? -1 : 1))
+              .sort((indexer) => (indexer.status === ServiceStatus.READY ? -1 : 1))
               .map((indexer) => (
                 <Row indexer={indexer} key={indexer.indexerId} deploymentId={deploymentId} />
               ))}

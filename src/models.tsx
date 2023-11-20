@@ -5,8 +5,14 @@ import * as yup from 'yup';
 
 import { CIDv0 } from './utils';
 
+export enum ProjectType {
+  SUBQUERY,
+  RPC,
+}
+
 export const projectMetadataSchema = yup.object({
   name: yup.string().defined(),
+  type: yup.string().oneOf(['SUBQUERY', 'RPC'], 'Only RPC and SUBQUERY are allowed.').required(),
   image: yup.string().optional(),
   description: yup.string().default('').optional(),
   websiteUrl: yup.string().optional().url(),

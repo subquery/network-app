@@ -14,8 +14,7 @@ import { ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../co
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
-import { renderAsync } from '../../../utils';
-import { ROUTES } from '../../../utils';
+import { renderAsync, ROUTES } from '../../../utils';
 import { FlexPlans } from '../FlexPlans';
 import styles from './Project.module.css';
 
@@ -48,7 +47,7 @@ const ProjectInner: React.FC = () => {
   }, [location.search]);
 
   const deploymentId = React.useMemo(() => {
-    return query.get('deploymentId') || asyncProject.data?.currentDeployment;
+    return query.get('deploymentId') || asyncProject.data?.deploymentId;
   }, [asyncProject]);
 
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
@@ -64,8 +63,8 @@ const ProjectInner: React.FC = () => {
 
         const result = await Promise.allSettled(
           versions.map(async (d) => {
-            const versionResult = await getVersionMetadata(d?.version ?? '');
-            return { ...d, versionHash: d?.version, version: versionResult };
+            const versionResult = await getVersionMetadata(d?.metadata ?? '');
+            return { ...d, versionHash: d?.metadata, version: versionResult };
           }),
         );
 

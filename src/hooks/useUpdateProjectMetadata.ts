@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 
-import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
+import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
 import { FormProjectMetadata, ProjectMetadata } from '../models';
 
 export function useUpdateProjectMetadata(projectId: string): (params: FormProjectMetadata) => Promise<void> {
   const { uploadMetadata } = useProjectMetadata();
   const { ipfs } = useIPFS();
-  const { updateQueryMetadata } = useQueryRegistry();
+  const { updateQueryMetadata } = useProjectRegistry();
 
   const updateMetadata = React.useCallback(
     async function (project: FormProjectMetadata): Promise<void> {

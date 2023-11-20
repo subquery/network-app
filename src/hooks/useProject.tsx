@@ -5,13 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useIPFS, useProjectMetadata, useQueryRegistry } from '../containers';
+import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
 import { ProjectDetails } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 
 export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
-  const { getQuery } = useQueryRegistry();
+  const { getQuery } = useProjectRegistry();
   const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
   const { contracts } = useWeb3Store();
@@ -27,15 +27,15 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     const listener = (owner: string, queryId: unknown) => {
       setCacheBreak((val) => val + 1);
     };
-    const deploymentFilter = contracts?.queryRegistry.filters.UpdateQueryDeployment(null, id);
-    const metadataFilter = contracts?.queryRegistry.filters.UpdateQueryMetadata(null, id);
+    const deploymentFilter = contracts?.projectRegistry.filters.ProjectDeploymentUpdated(null, id);
+    const metadataFilter = contracts?.projectRegistry.filters.ProjectMetadataUpdated(null, id);
 
-    contracts.queryRegistry.on(deploymentFilter, listener);
-    contracts.queryRegistry.on(metadataFilter, listener);
+    contracts.projectRegistry.on(deploymentFilter, listener);
+    contracts.projectRegistry.on(metadataFilter, listener);
 
     return () => {
-      contracts.queryRegistry.off(deploymentFilter, listener);
-      contracts.queryRegistry.off(metadataFilter, listener);
+      contracts.projectRegistry.off(deploymentFilter, listener);
+      contracts.projectRegistry.off(metadataFilter, listener);
     };
   }, [contracts, id]);
 

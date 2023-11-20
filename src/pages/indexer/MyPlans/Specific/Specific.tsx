@@ -7,8 +7,7 @@ import { DeploymentMeta, EmptyList } from '@components';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
-import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
-import { URLS } from '@utils';
+import { mapAsync, notEmpty, renderAsyncArray, URLS } from '@utils';
 
 import List from '../List';
 import styles from './Specific.module.css';
@@ -25,7 +24,7 @@ const Specific: React.FC = () => {
       {renderAsyncArray(
         mapAsync(
           (d) =>
-            d.deploymentIndexers?.nodes
+            d.indexerDeployments?.nodes
               .filter(notEmpty)
               .map((d) => d.deployment)
               .filter((d) => d?.plans.nodes.filter(notEmpty).length), // Filter out indexed projects that have 0 plans

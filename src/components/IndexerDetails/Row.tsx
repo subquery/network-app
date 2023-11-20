@@ -7,17 +7,18 @@ import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
 import { WalletRoute } from '@components/WalletRoute';
-import { useDeploymentStatusOnContract } from '@hooks/useDeploymentStatusOnContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
 import { Modal, Spinner } from '@subql/components';
 import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
-import { GetDeploymentIndexersQuery, PlansNodeFieldsFragment as Plan } from '@subql/network-query';
-import { Status as DeploymentStatus } from '@subql/network-query';
+import {
+  GetDeploymentIndexersQuery,
+  PlansNodeFieldsFragment as Plan,
+  ServiceStatus as DeploymentStatus,
+} from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
-import { Table, TableProps, Tooltip } from 'antd';
-import { Modal as AntdModal, Typography } from 'antd';
+import { Modal as AntdModal, Table, TableProps, Tooltip, Typography } from 'antd';
 import assert from 'assert';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -50,7 +51,7 @@ import { PlansTable } from './PlansTable';
 import Progress from './Progress';
 
 type ErrorMsgProps = {
-  indexer: ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number];
+  indexer: ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number];
   deploymentId: string | undefined;
   metadata: IndexerDetails;
   error: Error;
@@ -74,7 +75,7 @@ export interface QueryLimit {
 }
 
 const ConnectedRow: React.FC<{
-  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['deploymentIndexers']>['nodes'][number]>;
+  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]>;
   deploymentId?: string;
 }> = ({ indexer, deploymentId }) => {
   const { t } = useTranslation();
@@ -86,8 +87,8 @@ const ConnectedRow: React.FC<{
   const { balance, planAllowance } = useSQToken();
   const { contracts } = useWeb3Store();
   const { indexerMetadata } = useIndexerMetadata(indexer.indexerId);
-  const isOfflineDeploymentOnContract = useDeploymentStatusOnContract(indexer.indexerId, deploymentId);
   const { requestServiceAgreementToken } = useRequestServiceAgreementToken();
+
   const [loadDeploymentPlans, deploymentPlans] = useGetDeploymentPlansLazyQuery({
     variables: {
       deploymentId: deploymentId ?? '',
@@ -178,14 +179,9 @@ const ConnectedRow: React.FC<{
     {
       width: '13%',
       render: () => {
-        return renderAsync(isOfflineDeploymentOnContract, {
-          error: (error) => <Status text="Error" color={deploymentStatus.NOTINDEXING} />,
-          loading: () => <Spinner />,
-          data: (data) => {
-            const sortedStatus = getDeploymentStatus(indexer.status, data);
-            return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
-          },
-        });
+        // TODO: offline status need to get from external api
+        const sortedStatus = getDeploymentStatus(indexer.status, false);
+        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
       },
     },
     {
