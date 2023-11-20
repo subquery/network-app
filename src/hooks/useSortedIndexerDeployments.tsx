@@ -63,7 +63,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
       filteredDeployments.map(async (indexerDeployment) => {
         const metadata: ProjectMetadata = indexerDeployment?.deployment?.project
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
-          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '' };
+          : { name: '', image: '', description: '', websiteUrl: '', codeUrl: '', versionDescription: '' };
 
         const deploymentId = indexerDeployment?.deployment?.id;
         const isOffline = deploymentId
