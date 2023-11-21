@@ -88,6 +88,11 @@ const Home: React.FC = () => {
   const loadMore = async (options?: { refresh?: boolean }) => {
     try {
       setLoading(true);
+      if (searchKeywords.length) {
+        setInSearchMode(true);
+      } else {
+        setInSearchMode(false);
+      }
       const api = searchKeywords.length ? getProjectBySearch : getProjects;
 
       const params = searchKeywords.length
@@ -118,12 +123,6 @@ const Home: React.FC = () => {
         setProjects(mergered);
         updatedLength = mergered.length;
         setTotal(res.data?.projects?.totalCount);
-      }
-
-      if (searchKeywords.length) {
-        setInSearchMode(true);
-      } else {
-        setInSearchMode(false);
       }
 
       return {
@@ -194,6 +193,12 @@ const Home: React.FC = () => {
             return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
           })}
       </div>
+
+      {inSearchMode && !projects.length && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography>No projects match your search</Typography>
+        </div>
+      )}
 
       {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
     </div>
