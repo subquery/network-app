@@ -17,7 +17,7 @@ type Props = {
   versions?: Record<string, string>;
   currentVersion?: string;
   onChangeVersion?: (key: string) => void;
-  isUnsafeDeployment: boolean;
+  isUnsafeDeployment?: boolean;
 };
 
 const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isUnsafeDeployment, onChangeVersion }) => {
