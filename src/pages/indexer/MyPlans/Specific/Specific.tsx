@@ -15,7 +15,8 @@ import styles from './Specific.module.css';
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
-  const { account } = useWeb3();
+  // const { account } = useWeb3();
+  const account = '0xf5eE0f401C9488B07eCfC04F0A961f19a711D9d4';
 
   // TODO find a way to query indexed projects that only have plans
   const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
@@ -47,24 +48,29 @@ const Specific: React.FC = () => {
               <>
                 <Typography variant="h6">{t('plans.specific.title')}</Typography>
                 <div className={styles.plans}>
-                  {deployments.map((deployment) => {
-                    if (!deployment) return null;
-                    const plans = deployment?.plans.nodes.filter(notEmpty);
+                  {deployments
+                    .sort((a, b) => parseInt(a?.project?.id || '0x00', 16) - parseInt(b?.project?.id || '0x00', 16))
+                    .map((deployment) => {
+                      if (!deployment) return null;
+                      const plans = deployment?.plans.nodes.filter(notEmpty);
 
-                    return (
-                      <div key={deployment.id} className={styles.plan}>
-                        <div className={styles.header}>
-                          <DeploymentMeta deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
+                      return (
+                        <div key={deployment.id} className={styles.plan}>
+                          <div className={styles.header}>
+                            <DeploymentMeta
+                              deploymentId={deployment.id}
+                              projectMetadata={deployment.project?.metadata}
+                            />
+                          </div>
+
+                          {plans ? (
+                            <List data={plans} onRefresh={specificPlans.refetch} />
+                          ) : (
+                            <Typography>{t('plans.specific.nonDeployment')}</Typography>
+                          )}
                         </div>
-
-                        {plans ? (
-                          <List data={plans} onRefresh={specificPlans.refetch} />
-                        ) : (
-                          <Typography>{t('plans.specific.nonDeployment')}</Typography>
-                        )}
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </>
             );
