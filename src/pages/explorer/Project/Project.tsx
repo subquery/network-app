@@ -92,7 +92,7 @@ const ProjectInner: React.FC = () => {
     if (deployments && !deploymentVersions) {
       getVersions();
     }
-  }, [deploymentVersions, deployments, getVersionMetadata]);
+  }, [deployments, getVersionMetadata]);
 
   const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
