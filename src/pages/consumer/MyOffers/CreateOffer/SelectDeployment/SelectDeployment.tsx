@@ -12,13 +12,14 @@ import { renderAsync, ROUTES } from '../../../../../utils';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
 import styles from './SelectDeployment.module.css';
 
-export const DeploymentProject: React.FC<{ projectId: string; title?: string; deploymentVersion?: string }> = ({
-  title,
-  projectId,
-  deploymentVersion,
-}) => {
+export const DeploymentProject: React.FC<{
+  projectId: string;
+  title?: string;
+  deploymentVersion?: string;
+}> = ({ title, projectId, deploymentVersion }) => {
   const { t } = useTranslation();
   const asyncProject = useProject(projectId);
+
   return (
     <div className={styles.deploymentInfoContainer}>
       <Typography.Title level={5}>{title ?? t('myOffers.step_0.selectedId')}</Typography.Title>
