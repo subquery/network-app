@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import UnsafeWarn from '@components/UnsafeWarn';
 import { Address, Typography } from '@subql/components';
 
 import { ProjectWithMetadata } from '../../models';
@@ -16,9 +17,10 @@ type Props = {
   versions?: Record<string, string>;
   currentVersion?: string;
   onChangeVersion?: (key: string) => void;
+  isUnsafeDeployment: boolean;
 };
 
-const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, onChangeVersion }) => {
+const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isUnsafeDeployment, onChangeVersion }) => {
   const { t } = useTranslation();
 
   const VersionDropdown = () => {
@@ -51,6 +53,7 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, onC
             <Typography variant="h4" className={styles.name}>
               {project.metadata.name}
             </Typography>
+            {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
           </div>
           <Address address={project.owner} size="small" />

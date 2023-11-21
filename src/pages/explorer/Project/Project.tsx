@@ -112,6 +112,7 @@ const ProjectInner: React.FC = () => {
                 versions={deploymentVersions}
                 currentVersion={deploymentId}
                 onChangeVersion={handleChangeVersion}
+                isUnsafeDeployment={!!asyncDeploymentMetadata.data?.unsafe}
               />
             </div>
             <TabButtons tabs={sortedTabList} />
