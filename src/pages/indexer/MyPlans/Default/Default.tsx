@@ -30,7 +30,13 @@ export const Default: React.FC = () => {
               infoI18nKey={'indexerPlans.learnMore'}
             />
           ),
-          data: (data) => <List data={data} onRefresh={plans.refetch} title={t('plans.default.title')} />,
+          data: (data) => (
+            <List
+              data={data.sort((a, b) => parseInt(a.id || '0x00', 16) - parseInt(b.id || '0x00', 16))}
+              onRefresh={plans.refetch}
+              title={t('plans.default.title')}
+            />
+          ),
         },
       )}
     </div>

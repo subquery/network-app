@@ -47,24 +47,29 @@ const Specific: React.FC = () => {
               <>
                 <Typography variant="h6">{t('plans.specific.title')}</Typography>
                 <div className={styles.plans}>
-                  {deployments.map((deployment) => {
-                    if (!deployment) return null;
-                    const plans = deployment?.plans.nodes.filter(notEmpty);
+                  {deployments
+                    .sort((a, b) => parseInt(a?.project?.id || '0x00', 16) - parseInt(b?.project?.id || '0x00', 16))
+                    .map((deployment) => {
+                      if (!deployment) return null;
+                      const plans = deployment?.plans.nodes.filter(notEmpty);
 
-                    return (
-                      <div key={deployment.id} className={styles.plan}>
-                        <div className={styles.header}>
-                          <DeploymentMeta deploymentId={deployment.id} projectMetadata={deployment.project?.metadata} />
+                      return (
+                        <div key={deployment.id} className={styles.plan}>
+                          <div className={styles.header}>
+                            <DeploymentMeta
+                              deploymentId={deployment.id}
+                              projectMetadata={deployment.project?.metadata}
+                            />
+                          </div>
+
+                          {plans ? (
+                            <List data={plans} onRefresh={specificPlans.refetch} />
+                          ) : (
+                            <Typography>{t('plans.specific.nonDeployment')}</Typography>
+                          )}
                         </div>
-
-                        {plans ? (
-                          <List data={plans} onRefresh={specificPlans.refetch} />
-                        ) : (
-                          <Typography>{t('plans.specific.nonDeployment')}</Typography>
-                        )}
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </>
             );
