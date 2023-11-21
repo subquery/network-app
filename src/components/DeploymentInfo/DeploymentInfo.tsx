@@ -3,18 +3,17 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import UnsafeWarn from '@components/UnsafeWarn';
 import { Spinner, Typography } from '@subql/components';
-import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { Tooltip } from 'antd';
 
-import { useIPFS, useProjectMetadata } from '../../containers';
+import { useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
-import { getDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
+import { useDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 import { ProjectMetadata } from '../../models';
-import { getTrimmedStr, parseError, renderAsync } from '../../utils';
+import { parseError, renderAsync } from '../../utils';
 import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
-import { TableText } from '../TableText';
 import styles from './DeploymentInfo.module.css';
 
 type Props = {
@@ -25,12 +24,8 @@ type Props = {
 
 export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploymentVersion }) => {
   const { t } = useTranslation();
-  const { catSingle } = useIPFS();
-  const deploymentMeta = useAsyncMemo(async () => {
-    if (!deploymentVersion) return null;
-    return await getDeploymentMetadata(catSingle, deploymentVersion);
-  }, [deploymentVersion, catSingle]);
 
+  const deploymentMeta = useDeploymentMetadata(deploymentId);
   const versionHeader = deploymentMeta.data?.version
     ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
     : t('projects.deploymentId');
@@ -41,7 +36,14 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
 
       <Tooltip title={deploymentId}>
         <div className={styles.projectTextInfo}>
-          {project?.name && <Typography variant="large">{project?.name}</Typography>}
+          <div style={{ display: 'flex', height: 22 }}>
+            {project?.name && (
+              <Typography variant="large" style={{ marginRight: 10 }}>
+                {project?.name}
+              </Typography>
+            )}
+            {!!deploymentMeta.data?.unsafe && <UnsafeWarn></UnsafeWarn>}
+          </div>
           <div className={project?.name ? '' : styles.deployment}>
             <Typography variant="small" className={styles.text}>
               {versionHeader}
@@ -82,23 +84,4 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
       return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} />;
     },
   });
-};
-
-export const VersionDeployment: React.FC<{ deployment: ServiceAgreement['deployment'] }> = ({ deployment }) => {
-  const { catSingle } = useIPFS();
-  const deploymentVersion = deployment?.version;
-  const meta = useAsyncMemo(async () => {
-    if (!deploymentVersion) return null;
-    return await getDeploymentMetadata(catSingle, deploymentVersion);
-  }, [deploymentVersion, catSingle]);
-
-  return (
-    <TableText
-      content={
-        <Copy value={deployment?.id} position={'flex-start'}>
-          {`${meta.data?.version ? meta.data?.version + ' - ' : ''}${getTrimmedStr(deployment?.id)}`}
-        </Copy>
-      }
-    />
-  );
 };
