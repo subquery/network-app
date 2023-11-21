@@ -91,7 +91,7 @@ const ProjectInner: React.FC = () => {
     if (deployments && !deploymentVersions) {
       getVersions();
     }
-  }, [deploymentVersions, deployments, getVersionMetadata]);
+  }, [deployments, getVersionMetadata]);
 
   const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
@@ -111,6 +111,7 @@ const ProjectInner: React.FC = () => {
                 versions={deploymentVersions}
                 currentVersion={deploymentId}
                 onChangeVersion={handleChangeVersion}
+                isUnsafeDeployment={!!asyncDeploymentMetadata.data?.unsafe}
               />
             </div>
             <TabButtons tabs={sortedTabList} />
