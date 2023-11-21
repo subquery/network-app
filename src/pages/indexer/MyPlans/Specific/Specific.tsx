@@ -15,8 +15,7 @@ import styles from './Specific.module.css';
 
 const Specific: React.FC = () => {
   const { t } = useTranslation();
-  // const { account } = useWeb3();
-  const account = '0xf5eE0f401C9488B07eCfC04F0A961f19a711D9d4';
+  const { account } = useWeb3();
 
   // TODO find a way to query indexed projects that only have plans
   const specificPlans = useGetSpecificPlansQuery({ variables: { address: account ?? '' }, pollInterval: 10000 });
