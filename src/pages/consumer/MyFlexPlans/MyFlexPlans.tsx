@@ -5,23 +5,23 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
 import { useIsLogin } from '@hooks/useIsLogin';
-import { useGetConsumerClosedFlexPlansLazyQuery, useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
+import { useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
 import i18next from 'i18next';
 
 import { AppPageHeader, Card, TabButtons, WalletRoute } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
+import MyHostedPlan from './MyHostedPlan/MyHostedPlan';
 import ApiKeys from './apiKeys';
 import { BillingAction } from './BillingAction';
 import styles from './MyFlexPlans.module.css';
 import { MyFlexPlanTable } from './MyFlexPlanTable';
 
-const { ONGOING_PLANS, EXPIRED_PLANS, API_KEY } = ROUTES;
+const { ONGOING_PLANS, API_KEY } = ROUTES;
 
 const buttonLinks = [
   { label: i18next.t('myFlexPlans.ongoing'), link: ONGOING_PLANS },
-  { label: i18next.t('myFlexPlans.closed'), link: EXPIRED_PLANS },
   { label: i18next.t('myFlexPlans.apiKey'), link: API_KEY },
 ];
 
@@ -32,16 +32,6 @@ const BalanceCards = () => {
   const { loading: loadingBalance, data: balanceData } = balance;
   const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
   const [billBalance] = billingBalanceData ?? [];
-
-  // TODO: confirm whether need this part
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     balance.refetch();
-  //     consumerHostBalance.refetch();
-
-  //   }, 15000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   return (
     <div className={styles.cards}>
@@ -86,14 +76,11 @@ export const MyFlexPlans: React.FC = () => {
         componentMode
         element={
           <Routes>
+            <Route path={ONGOING_PLANS} element={<MyHostedPlan></MyHostedPlan>} />
             <Route
-              path={ONGOING_PLANS}
+              path={`${ONGOING_PLANS}/details/:id`}
               element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansLazyQuery} />}
-            />
-            <Route
-              path={EXPIRED_PLANS}
-              element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansLazyQuery} />}
-            />
+            ></Route>
             <Route path={API_KEY} element={<ApiKeys />} />
             <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
           </Routes>
