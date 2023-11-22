@@ -28,7 +28,7 @@ import { useAccount } from 'wagmi';
 import { useWeb3Store } from 'src/stores';
 import { useProjectStore } from 'src/stores/project';
 
-import { useSQToken, useWeb3 } from '../../containers';
+import { useSQToken } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
 import PlaygroundIcon from '../../images/playground';
 import { IndexerDetails } from '../../models';
