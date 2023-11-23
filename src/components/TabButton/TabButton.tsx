@@ -6,7 +6,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 
 import { AppTypography } from '..';
-import styles from './TabButton.module.css';
+import styles from './TabButton.module.less';
 
 interface TabButtonProps {
   label: string;
