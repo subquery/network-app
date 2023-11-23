@@ -196,7 +196,7 @@ const translation = {
   projectOverview: {
     createdAt: 'Created',
     updatedAt: 'Last Updated',
-    deploymentDescription: 'Deployment Description',
+    deploymentDescription: 'Deployment Details',
   },
   projectDetail: {
     description: 'Description',

@@ -3,7 +3,8 @@
 
 import * as React from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
-import { Tooltip, Typography as AntdTypography } from 'antd';
+import { Typography } from '@subql/components';
+import { Tooltip } from 'antd';
 import { TextProps } from 'antd/lib/typography/Text';
 import clsx from 'clsx';
 
@@ -38,9 +39,9 @@ export const AppTypography: React.FC<Props> = ({
 }) => {
   const rawContent = content === undefined ? children : content;
   const sortedContent = ['string', 'number'].includes(typeof rawContent) ? (
-    <AntdTypography.Text className={clsx(styles.text, className)} {...typographyProps}>
+    <Typography className={clsx(styles.text, className)} {...typographyProps} weight={500}>
       {rawContent}
-    </AntdTypography.Text>
+    </Typography>
   ) : (
     <>{rawContent}</>
   );

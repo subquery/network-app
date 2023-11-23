@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
+import { Typography } from '@subql/components';
 import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { parseError } from '@utils';
-import clsx from 'clsx';
+import { Breadcrumb } from 'antd';
 
 import { ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
@@ -17,7 +18,7 @@ import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../..
 import { renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { FlexPlans } from '../FlexPlans';
-import styles from './Project.module.css';
+import styles from './Project.module.less';
 
 const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
 
@@ -106,6 +107,25 @@ const ProjectInner: React.FC = () => {
       return (
         <div className={styles.container}>
           <div className={styles.upper}>
+            <Breadcrumb
+              items={[
+                {
+                  key: 'explorer',
+                  title: (
+                    <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
+                      Explorer
+                    </Typography>
+                  ),
+                  onClick: () => {
+                    navigate('/explorer/home');
+                  },
+                },
+                {
+                  key: 'current',
+                  title: project.metadata.name,
+                },
+              ]}
+            ></Breadcrumb>
             <div className={styles.projectHeader}>
               <ProjectHeader
                 project={project}
@@ -117,17 +137,16 @@ const ProjectInner: React.FC = () => {
             </div>
             <TabButtons tabs={sortedTabList} />
           </div>
-          <div className={clsx('content-width')}>
+          <div style={{ padding: '0 78px 24px 78px' }}>
             {/* TODO: just render the components rather than routes. */}
             <Routes>
               <Route
                 path={OVERVIEW}
                 element={
                   <ProjectOverview
+                    project={project}
                     metadata={project.metadata}
                     deploymentDescription={asyncDeploymentMetadata?.data?.description}
-                    createdAt={project.createdTimestamp}
-                    updatedAt={project.updatedTimestamp}
                   />
                 }
               />

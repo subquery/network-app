@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { Typography } from '@subql/components';
 
 import Copy from '../Copy';
 import styles from './Details.module.css';
@@ -26,7 +27,11 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
     }
 
     if (value) {
-      return <p className={styles.value}>{value}</p>;
+      return (
+        <Typography className={styles.value} variant="medium">
+          {value}
+        </Typography>
+      );
     }
 
     return children;
@@ -34,7 +39,9 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
 
   return (
     <div className={[styles.detail, className].join(' ')}>
-      <span className="label">{label}</span>
+      <Typography type="secondary" variant="medium">
+        {label}
+      </Typography>
       <div className={styles.valueCont}>
         {renderValue()}
         {canCopy && <Copy value={href ?? value} className={styles.copy} />}

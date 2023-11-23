@@ -9,7 +9,7 @@ import { ProjectMetadata } from '../models';
 import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 
-type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
+export type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
   metadata: ProjectMetadata;
 };
 
