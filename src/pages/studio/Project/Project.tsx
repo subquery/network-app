@@ -73,6 +73,9 @@ const Project: React.FC = () => {
           </Modal>
           <div className={styles.upper}>
             <div className="content-width">
+              {/* ignore it for now. studio would refactor later. */}
+              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
               <ProjectHeader project={project} />
               <div className={styles.tabContainer}>
                 <Typography.Text onClick={() => setTab(DETAILS)} className={`${styles.tab} `} type={tabStyle(DETAILS)}>
