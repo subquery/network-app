@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { AiOutlineDown } from 'react-icons/ai';
+import { BsChevronDown } from 'react-icons/bs';
 import { Typography } from '@subql/components';
 import { Dropdown as AntdDropdown, Menu } from 'antd';
 import clsx from 'clsx';
@@ -48,7 +48,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ menu, menuItem, dropdownCont
     <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center', styleProps)}>
       {typeof dropdownContent === 'string' || !dropdownContent ? (
         <div>
-          {dropdownContent || menu[0]?.label} <AiOutlineDown className={styles.downIcon} />
+          {dropdownContent || menu[0]?.label} <BsChevronDown className={styles.downIcon} />
         </div>
       ) : (
         dropdownContent

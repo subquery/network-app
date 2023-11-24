@@ -3,58 +3,118 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsGithub, BsGlobe } from 'react-icons/bs';
 import Markdown from '@components/Markdown';
-import moment from 'moment';
+import NewCard from '@components/NewCard';
+import { useRouteQuery } from '@hooks';
+import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
+import { BalanceLayout } from '@pages/dashboard';
+import { Typography } from '@subql/components';
+import { formatSQT, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
 
 import { ProjectMetadata } from '../../models';
-import Detail from '../Detail';
 import styles from './ProjectOverview.module.less';
 
 type Props = {
+  project: ProjectDetailsQuery;
   metadata: ProjectMetadata;
   deploymentDescription?: string;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
   return (
     <div className={styles.linkContainer}>
-      <i className={`bi-${icon}`} role="img" aria-label={icon} />
-      <a className={styles.link} href={link} target="_blank" rel="noreferrer">
-        {link || 'N/A'}
-      </a>
+      {icon === 'github' ? (
+        <BsGithub style={{ color: 'var(--sq-blue600)', marginRight: 8 }}></BsGithub>
+      ) : (
+        <BsGlobe style={{ color: 'var(--sq-blue600)', marginRight: 8 }}></BsGlobe>
+      )}
+      <Typography.Link href={link as string}>{link || 'N/A'}</Typography.Link>
     </div>
   );
 };
 
-const ProjectOverview: React.FC<Props> = ({ metadata, deploymentDescription, createdAt, updatedAt }) => {
+const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription }) => {
   const { t } = useTranslation();
-  const createdAtStr = React.useMemo(() => moment(createdAt).utc(true).fromNow(), [createdAt]);
-  const updatedAtStr = React.useMemo(() => moment(updatedAt).utc(true).fromNow(), [updatedAt]);
+  const query = useRouteQuery();
+
+  const deploymentId = React.useMemo(() => {
+    return query.get('deploymentId') || project.deploymentId;
+  }, [project, query]);
+
+  const [getOfferCounts, offerCounts] = useGetOfferCountByDeploymentIdLazyQuery({
+    variables: {
+      deploymentId,
+    },
+    defaultOptions: {
+      fetchPolicy: 'network-only',
+    },
+  });
+
+  React.useEffect(() => {
+    getOfferCounts({
+      variables: {
+        deploymentId,
+      },
+    });
+  }, [deploymentId]);
 
   return (
     <div className={styles.container}>
-      <div className={styles.column}>
-        <ExternalLink icon="globe" link={metadata.websiteUrl} />
-        <ExternalLink icon="github" link={metadata.codeUrl} />
-        <div className={styles.left}>
-          <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />
-          <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: 720 }}>
+          <Markdown>{metadata.description || 'N/A'}</Markdown>
+        </div>
+        <div className={styles.column} style={{ marginTop: 16 }}>
+          <ExternalLink icon="globe" link={metadata.websiteUrl} />
+          <ExternalLink icon="github" link={metadata.codeUrl} />
+        </div>
+        <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
+        <div className={styles.column}>
+          <Typography variant="medium" weight={600}>
+            {t('projectOverview.deploymentDescription')}
+          </Typography>
+          <div style={{ width: 670, marginTop: 8 }}>
+            <Markdown>{deploymentDescription || 'N/A'}</Markdown>
+          </div>
         </div>
       </div>
 
-      <div className={styles.column}>
-        <Detail label={'Project Description'}>
-          <div style={{ width: 670 }}>
-            <Markdown>{metadata.description || 'N/A'}</Markdown>
+      <div style={{ marginLeft: 48, width: '100%' }}>
+        <NewCard
+          style={{ width: '100%' }}
+          title="Total Rewards"
+          titleExtra={BalanceLayout({
+            mainBalance: formatSQT(project.totalReward),
+          })}
+        >
+          <div className="col-flex">
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
+              <Typography variant="small" type="secondary">
+                Total Indexers
+              </Typography>
+              <Typography variant="small">
+                {project.deployments.nodes.find((i) => i?.id === deploymentId)?.indexers.totalCount || 0}
+              </Typography>
+            </div>
+
+            <div className="flex" style={{ justifyContent: 'space-between', margin: '12px 0' }}>
+              <Typography variant="small" type="secondary">
+                Total Agreements
+              </Typography>
+              <Typography variant="small">
+                {project.deployments.nodes.find((i) => i?.id === deploymentId)?.serviceAgreements.totalCount || 0}
+              </Typography>
+            </div>
+
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
+              <Typography variant="small" type="secondary">
+                Total Offers
+              </Typography>
+              <Typography variant="small">{offerCounts.data?.offers?.totalCount || 0}</Typography>
+            </div>
           </div>
-        </Detail>
-        <Detail label={t('projectOverview.deploymentDescription')}>
-          <div style={{ width: 670 }}>
-            <Markdown>{deploymentDescription || 'N/A'}</Markdown>
-          </div>
-        </Detail>
+        </NewCard>
       </div>
     </div>
   );
