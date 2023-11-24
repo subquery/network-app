@@ -26,8 +26,8 @@ export const BalanceLayout = ({
   secondaryTooltip = 'Estimated for next Era',
   token = TOKEN,
 }: {
-  mainBalance: number;
-  secondaryBalance?: number;
+  mainBalance: number | string;
+  secondaryBalance?: number | string;
   secondaryTooltip?: React.ReactNode;
   token?: string;
 }) => {

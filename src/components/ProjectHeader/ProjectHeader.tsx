@@ -4,16 +4,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
+import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Address, Typography } from '@subql/components';
+import dayjs from 'dayjs';
 
-import { ProjectWithMetadata } from '../../models';
 import Detail from '../Detail';
 import { Dropdown } from '../Dropdown';
 import IPFSImage from '../IPFSImage';
-import styles from './ProjectHeader.module.css';
+import styles from './ProjectHeader.module.less';
 
 type Props = {
-  project: Required<ProjectWithMetadata>;
+  project: ProjectDetailsQuery;
   versions?: Record<string, string>;
   currentVersion?: string;
   onChangeVersion?: (key: string) => void;
@@ -22,6 +23,9 @@ type Props = {
 
 const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isUnsafeDeployment, onChangeVersion }) => {
   const { t } = useTranslation();
+
+  const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).fromNow(), [project]);
+  const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).fromNow(), [project]);
 
   const VersionDropdown = () => {
     if (!versions) return <></>;
@@ -50,7 +54,7 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isU
       <div className={styles.inner}>
         <div className={styles.upper}>
           <div className={styles.titleVersion}>
-            <Typography variant="h4" className={styles.name}>
+            <Typography variant="h4" className={styles.name} weight={600}>
               {project.metadata.name}
             </Typography>
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
@@ -60,6 +64,8 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isU
         </div>
         <div className={styles.lower}>
           {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}
+          <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
+          <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />
         </div>
       </div>
     </div>
