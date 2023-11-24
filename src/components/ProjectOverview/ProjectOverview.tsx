@@ -39,7 +39,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   const query = useRouteQuery();
 
   const deploymentId = React.useMemo(() => {
-    return query.get('deploymentId') || project.currentDeployment;
+    return query.get('deploymentId') || project.deploymentId;
   }, [project, query]);
 
   const [getOfferCounts, offerCounts] = useGetOfferCountByDeploymentIdLazyQuery({
