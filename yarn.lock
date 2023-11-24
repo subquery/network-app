@@ -4597,10 +4597,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@0.100.2":
-  version "0.100.2"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.100.2.tgz#b1f08f1befd03c8e526cf6b653032fd2c94d9367"
-  integrity sha512-mOmaL6s9mPj+2A61TLrXDNpqdWZbN4Vh0Drivvtmc2P2qKfFm3BQK6fCNhfyy370KIo/e3+9qp9WQ6ZlVCNGHA==
+"@subql/react-hooks@0.100.3-0":
+  version "0.100.3-0"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.100.3-0.tgz#c399ae23e54470abeb91d0841190fed5fdcc767a"
+  integrity sha512-lvpoz1CURkf/iaqXaXc5SvYUB55ncUQq5crsnngvJXC9gCdsYt6gn69ZqPYC3TolWMsQhdJ+hygw36bpxd1akA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
