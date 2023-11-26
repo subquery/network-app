@@ -1,10 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { createWeb3Name } from '@web3-name-sdk/core';
 import localforage from 'localforage';
 import { once } from 'lodash-es';
-
-import { useWeb3Store } from 'src/stores';
 
 type EnsReturnFuncType = () => Promise<string | null | undefined>;
 export function useENS(address: string): {
@@ -12,11 +11,20 @@ export function useENS(address: string): {
   fetchEnsNameOnce: EnsReturnFuncType;
   fetchEnsFromCache: EnsReturnFuncType;
 } {
-  const { ethProvider } = useWeb3Store();
+  const web3Name = createWeb3Name();
 
   const fetchEnsName = async () => {
-    if (!address || !ethProvider) return undefined;
-    const ens = await ethProvider().lookupAddress(address);
+    if (!address || !web3Name) return undefined;
+
+    let ens = await web3Name.getDomainName({
+      address,
+      queryTldList: ['ens'],
+    });
+
+    // If there is no domain for ENS
+    if (ens === null) {
+      ens = await web3Name.getDomainName({ address });
+    }
     localforage.setItem(`ens-${address}`, ens);
     return ens;
   };
