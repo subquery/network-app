@@ -39,11 +39,19 @@ export const TabButton: React.FC<TabButtonProps> = ({ label, link, whiteTab, too
 interface TabButtonsProps {
   tabs: Array<TabButtonProps>;
   whiteTab?: boolean;
+  withUnderline?: boolean;
 }
 
-export const TabButtons: React.FC<TabButtonsProps> = ({ tabs, whiteTab }) => {
+export const TabButtons: React.FC<TabButtonsProps> = ({ tabs, whiteTab, withUnderline = false }) => {
   return (
-    <div className={clsx(styles.tabContainer, whiteTab && styles.whiteTabContainer)}>
+    <div
+      className={clsx(
+        styles.tabContainer,
+        whiteTab && styles.whiteTabContainer,
+        withUnderline ? styles.withUnderline : '',
+        'tabButtons',
+      )}
+    >
       {tabs.map((tab) => (
         <TabButton key={tab.link} {...tab} whiteTab={whiteTab} />
       ))}

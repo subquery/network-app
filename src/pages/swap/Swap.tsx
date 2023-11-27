@@ -39,7 +39,7 @@ import i18next, { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './Swap.module.css';
+import styles from './Swap.module.less';
 import { SwapForm } from './SwapForm';
 
 const { SWAP, SELL, BUY } = ROUTES;
