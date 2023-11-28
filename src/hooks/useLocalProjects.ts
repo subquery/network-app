@@ -46,8 +46,11 @@ export const useLocalProjects = () => {
       const res = await getProjects({
         variables: {
           offset: length,
-          orderBy: [ProjectsOrderBy.ID_DESC],
+          orderBy: [ProjectsOrderBy.ID_ASC],
           ids: [],
+        },
+        defaultOptions: {
+          fetchPolicy: 'network-only',
         },
       });
 
@@ -68,7 +71,6 @@ export const useLocalProjects = () => {
         const mergered = uniqWith([...projects.current, ...projectsWithMetadata], (x, y) => x.id === y.id);
         projects.current = mergered;
         await localforage.setItem(cacheKey, mergered);
-
         if (mergered.length >= res.data.projects.totalCount) {
           loading.current = false;
           return;
