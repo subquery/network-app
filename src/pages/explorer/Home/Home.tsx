@@ -95,7 +95,6 @@ const Home: React.FC = () => {
       } else {
         setInSearchMode(false);
       }
-      console.warn(options);
       const api = searchKeywords.length ? getProjectBySearch : getProjects;
 
       const params = searchKeywords.length
