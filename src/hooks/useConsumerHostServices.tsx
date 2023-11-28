@@ -228,6 +228,16 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const updateHostingPlanApi = async (
+    params: IPostHostingPlansParams & { id: string | number },
+  ): Promise<AxiosResponse<IGetHostingPlans>> => {
+    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans/${params.id}`, params, {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  };
+
   const getHostingPlanApi = async (): Promise<AxiosResponse<IGetHostingPlans[]>> => {
     const res = await instance.get<IGetHostingPlans[]>(`/users/hosting-plans`, {
       headers: authHeaders.current,
@@ -298,6 +308,7 @@ export const useConsumerHostServices = (
     createNewApiKey: alertResDecorator(loginResDecorator(createNewApiKey)),
     deleteNewApiKey: alertResDecorator(loginResDecorator(deleteNewApiKey)),
     createHostingPlanApi: alertResDecorator(loginResDecorator(createHostingPlanApi)),
+    updateHostingPlanApi: alertResDecorator(loginResDecorator(updateHostingPlanApi)),
     getHostingPlanApi: alertResDecorator(loginResDecorator(getHostingPlanApi)),
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
