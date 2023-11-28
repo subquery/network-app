@@ -14,7 +14,7 @@ export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
 const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) => {
-  const httpOptions = { fetch, fetchOptions: { timeout: 5000 } };
+  const httpOptions = { fetchOptions: { timeout: 5000 } };
 
   // this is just a test env varible set in your local env file.
   if (import.meta.env.VITE_USE_FALLBACKURL) {
@@ -26,6 +26,8 @@ const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) 
     httpOptions,
     authUrl: import.meta.env.VITE_AUTH_URL,
     fallbackServiceUrl,
+    useImmediateFallbackOnError: true,
+    timeout: 5000,
   }).link;
 };
 
