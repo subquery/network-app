@@ -4599,17 +4599,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-<<<<<<< HEAD
-"@subql/apollo-links@^1.100.0":
-  version "1.100.0"
-  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-1.100.0.tgz#6c592fbe3e4dc5a8b5919fa33e6060798d3f15dd"
-  integrity sha512-f1xN35rh4Zx4lkYMzlfIRobAVUa7yXcRuAxY8fnA7hj5jqvKJ6Fc6a3pTKpsbsERN4e/WvIoqRO0xn7RP+X02A==
-=======
 "@subql/apollo-links@^1.2.3":
   version "1.2.3"
   resolved "https://registry.npmjs.org/@subql/apollo-links/-/apollo-links-1.2.3.tgz#4e77659ed32770d91b7c8c3eb43f5a7bcf27f2ff"
   integrity sha512-k9y76GErUWoXojCzGHHXAamLsrGyHR7eCjn6J76ZAabzWwZu3fBsLXX7/hud2Xdex2vYvVxm/OxuCxOhHT07fA==
->>>>>>> main
   dependencies:
     "@metamask/eth-sig-util" "5.1.0"
     "@subql/network-support" "0.1.0"
