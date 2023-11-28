@@ -166,6 +166,7 @@ const Home: React.FC = () => {
               mutate(res);
             }
           }}
+          disabled={loading}
           onChange={(e) => {
             setSearchKeywords(e.target.value);
           }}
