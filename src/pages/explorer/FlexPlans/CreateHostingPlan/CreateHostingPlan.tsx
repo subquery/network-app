@@ -30,10 +30,12 @@ const CreateHostingFlexPlan: FC = (props) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const query = useRouteQuery();
-  const { getProjects } = useConsumerHostServices({ autoLogin: false });
+  const { getProjects, createHostingPlanApi, getHostingPlanApi, hasLogin } = useConsumerHostServices({
+    alert: true,
+    autoLogin: false,
+  });
 
   const asyncProject = useProjectFromQuery(id ?? '');
-  const { createHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({ alert: true, autoLogin: false });
 
   const [form] = Form.useForm<IPostHostingPlansParams>();
   const priceValue = Form.useWatch<number>('price', form);
@@ -44,6 +46,7 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const flexPlans = useAsyncMemo(async () => {
     try {
+      if (!hasLogin) return [];
       const res = await getProjects({
         projectId: BigNumber.from(id).toString(),
         deployment: query.get('deploymentId') || undefined,
@@ -110,6 +113,7 @@ const CreateHostingFlexPlan: FC = (props) => {
   };
 
   const getHostingPlans = async () => {
+    if (!hasLogin) return;
     const res = await getHostingPlanApi();
     if (!isConsumerHostError(res.data)) {
       setCreatedHostingPlan(res.data);

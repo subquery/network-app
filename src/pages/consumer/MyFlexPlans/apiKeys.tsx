@@ -29,9 +29,12 @@ const EmptyApiKeys: FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const ApiKeysFC: FC = () => {
-  const { getUserApiKeysApi, createNewApiKey, deleteNewApiKey } = useConsumerHostServices({
-    alert: true,
-  });
+  const { getUserApiKeysApi, createNewApiKey, deleteNewApiKey, requestTokenLayout, hasLogin } = useConsumerHostServices(
+    {
+      alert: true,
+      autoLogin: false,
+    },
+  );
 
   const [openCreateNew, setOpenCreateNew] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
@@ -40,8 +43,8 @@ const ApiKeysFC: FC = () => {
   const [apiKeys, setApiKeys] = useState<GetUserApiKeys[]>([]);
 
   const init = async () => {
+    if (!hasLogin) return;
     const res = await getUserApiKeysApi();
-
     if (!isConsumerHostError(res.data)) {
       setApiKeys(res.data);
     }
@@ -49,7 +52,7 @@ const ApiKeysFC: FC = () => {
 
   useEffect(() => {
     init();
-  }, []);
+  }, [hasLogin]);
 
   return (
     <div className={styles.apiKeys}>
@@ -113,7 +116,7 @@ const ApiKeysFC: FC = () => {
             rowKey={'id'}
           ></Table>
         </div>
-      ) : (
+      ) : hasLogin ? (
         <EmptyApiKeys>
           <Button
             style={{ marginTop: 24 }}
@@ -124,6 +127,8 @@ const ApiKeysFC: FC = () => {
             Create API Key
           </Button>
         </EmptyApiKeys>
+      ) : (
+        requestTokenLayout('API Key')
       )}
 
       <Modal
