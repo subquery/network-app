@@ -93,7 +93,6 @@ export function parseError(
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
-
   const mappingError = () => (options.errorMappings || errorsMapping).find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
