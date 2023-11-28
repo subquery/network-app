@@ -135,7 +135,7 @@ const ProjectInner: React.FC = () => {
                 isUnsafeDeployment={!!asyncDeploymentMetadata.data?.unsafe}
               />
             </div>
-            <TabButtons tabs={sortedTabList} />
+            <TabButtons tabs={sortedTabList} withUnderline />
           </div>
           <div style={{ padding: '0 78px 24px 78px' }}>
             {/* TODO: just render the components rather than routes. */}

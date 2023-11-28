@@ -61,6 +61,8 @@ const Home: React.FC = () => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [topProject, setTopProject] = React.useState<Project>();
   const [projects, setProjects] = React.useState<Project[]>([]);
+  // ref for fetch, state for render.
+  const fetchedProejcts = React.useRef<Project[]>([]);
   // Note why don't use Apollo client's loading.
   // Apollo client's loading seems have some delay.
   // If use it would not update by project's update.
@@ -93,34 +95,36 @@ const Home: React.FC = () => {
       } else {
         setInSearchMode(false);
       }
+
       const api = searchKeywords.length ? getProjectBySearch : getProjects;
 
       const params = searchKeywords.length
         ? {
-            offset: options?.refresh ? 0 : projects.length,
+            offset: options?.refresh ? 0 : fetchedProejcts.current.length,
             keywords: searchKeywords,
           }
         : {
             variables: {
-              offset: options?.refresh ? 0 : projects.length,
+              offset: options?.refresh ? 0 : fetchedProejcts.current.length,
               orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
               ids: ['0x06'],
             },
+            defaultOptions: { fetchPolicy: 'network-only' },
           };
-
       // The type define at top.
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const res = await api(params);
 
-      let updatedLength = projects.length;
+      let updatedLength = fetchedProejcts.current.length;
       // implement a sorting for projects
       if (res.data?.projects?.nodes) {
         // it seems have something wrong with TypeScript
         // filter once or twice is the same.
         const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty).filter(notEmpty);
-        const mergered = options?.refresh ? [...nonEmptyProjects] : [...projects, ...nonEmptyProjects];
+        const mergered = options?.refresh ? [...nonEmptyProjects] : [...fetchedProejcts.current, ...nonEmptyProjects];
         setProjects(mergered);
+        fetchedProejcts.current = mergered;
         updatedLength = mergered.length;
         setTotal(res.data?.projects?.totalCount);
       }
@@ -137,7 +141,7 @@ const Home: React.FC = () => {
   const { mutate } = useInfiniteScroll(() => loadMore(), {
     target: document,
     isNoMore: (d) => !!d?.isNoMore,
-    threshold: 300,
+    threshold: 500,
   });
 
   useMount(() => {
@@ -162,6 +166,7 @@ const Home: React.FC = () => {
               mutate(res);
             }
           }}
+          disabled={loading}
           onChange={(e) => {
             setSearchKeywords(e.target.value);
           }}
@@ -194,7 +199,7 @@ const Home: React.FC = () => {
           })}
       </div>
 
-      {inSearchMode && !projects.length && (
+      {inSearchMode && !loading && !projects.length && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Typography>No projects match your search</Typography>
         </div>
