@@ -95,7 +95,7 @@ const Home: React.FC = () => {
       } else {
         setInSearchMode(false);
       }
-      console.warn(options);
+
       const api = searchKeywords.length ? getProjectBySearch : getProjects;
 
       const params = searchKeywords.length
@@ -198,7 +198,7 @@ const Home: React.FC = () => {
           })}
       </div>
 
-      {inSearchMode && !projects.length && (
+      {inSearchMode && !loading && !projects.length && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Typography>No projects match your search</Typography>
         </div>
