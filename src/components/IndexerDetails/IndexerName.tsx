@@ -7,7 +7,7 @@ import { limitQueue } from '@utils/limitation';
 import { toSvg } from 'jdenticon';
 
 import { useIndexerMetadata } from '../../hooks';
-import { useENS } from '../../hooks/useEns';
+import { useWeb3Name } from '../../hooks/useSpaceId';
 import { truncateAddress } from '../../utils';
 import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
@@ -38,38 +38,38 @@ export const IndexerName: React.FC<Props> = ({
   onClick,
   onAddressClick,
 }) => {
-  const { fetchEnsNameOnce, fetchEnsFromCache } = useENS(address);
-  const [ensName, setEnsName] = useState<string>();
+  const { fetchWeb3NameOnce, fetchWeb3NameFromCache } = useWeb3Name(address);
+  const [web3Name, setWeb3Name] = useState<string>();
 
   const sortedName = useMemo(() => {
-    return ensName || name || `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
-  }, [name, ensName]);
+    return web3Name || name || `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
+  }, [name, web3Name]);
 
-  const fetchEns = async () => {
-    const fetchedEns = await limitQueue.add(() => fetchEnsNameOnce());
-    if (fetchedEns) {
-      setEnsName(fetchedEns);
+  const fetchWeb3 = async () => {
+    const fetchedWeb3 = await limitQueue.add(() => fetchWeb3NameOnce());
+    if (fetchedWeb3) {
+      setWeb3Name(fetchedWeb3);
     }
   };
 
-  const initEns = async () => {
-    const cachedName = await fetchEnsFromCache();
+  const initWeb3 = async () => {
+    const cachedName = await fetchWeb3NameFromCache();
     if (cachedName) {
-      setEnsName(cachedName);
+      setWeb3Name(cachedName);
       return;
     }
 
-    fetchEns();
+    fetchWeb3();
   };
 
   useEffect(() => {
-    initEns();
+    initWeb3();
   }, []);
 
   return (
     <div
       className={styles.indexer}
-      onMouseEnter={fetchEns}
+      onMouseEnter={fetchWeb3}
       onClick={() => {
         onClick?.(address);
       }}
