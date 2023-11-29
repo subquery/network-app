@@ -243,7 +243,7 @@ const CreateHostingFlexPlan = forwardRef<
                 onClick={() => {
                   setShowCreateFlexPlan(true);
                 }}
-                disabled={formatEther(balance, 4) === '0.0'}
+                disabled={formatEther(balance, 4) === '0.0' || !hasLogin}
               >
                 {t('flexPlans.createFlexPlan')}
               </Button>
