@@ -3,11 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes, useMatch, useNavigate, useParams } from 'react-router';
+import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router';
 import { useRouteQuery } from '@hooks';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Typography } from '@subql/components';
-import { useGetConsumerClosedFlexPlansLazyQuery, useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
+import { useGetConsumerFlexPlansByDeploymentIdLazyQuery } from '@subql/react-hooks';
 import { Breadcrumb } from 'antd';
 import i18next from 'i18next';
 
@@ -96,23 +96,6 @@ const Header = () => {
               },
             ]}
           ></Breadcrumb>
-          <TabButtons
-            tabs={[
-              {
-                label: i18next.t('myFlexPlans.ongoing'),
-                link: `ongoing/details/${query.get('id')}/ongoing?id=${query.get('id')}&deploymentId=${query.get(
-                  'deploymentId',
-                )}`,
-              },
-              {
-                label: i18next.t('myFlexPlans.closed'),
-                link: `ongoing/details/${query.get('id')}/closed?id=${query.get('id')}&deploymentId=${query.get(
-                  'deploymentId',
-                )}`,
-              },
-            ]}
-            whiteTab
-          />
         </div>
       )}
     </>
@@ -128,14 +111,7 @@ export const MyFlexPlans: React.FC = () => {
         element={
           <Routes>
             <Route path={ONGOING_PLANS} element={<MyHostedPlan></MyHostedPlan>} />
-            <Route
-              path={`${ONGOING_PLANS}/details/:id/ongoing`}
-              element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansLazyQuery} />}
-            ></Route>
-            <Route
-              path={`${ONGOING_PLANS}/details/:id/closed`}
-              element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansLazyQuery} />}
-            ></Route>
+            <Route path={`${ONGOING_PLANS}/details/:id`} element={<MyFlexPlanTable />}></Route>
             <Route path={API_KEY} element={<ApiKeys />} />
             <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
           </Routes>

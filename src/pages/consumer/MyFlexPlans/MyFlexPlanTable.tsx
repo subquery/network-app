@@ -4,14 +4,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { TableTitle } from '@subql/components';
+import { useRouteQuery } from '@hooks';
+import { TableTitle, Typography } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { ChannelStatus } from '@subql/network-query';
-import { useGetConsumerClosedFlexPlansLazyQuery, useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
-import { TableProps, Tag, Typography } from 'antd';
+import { useGetConsumerFlexPlansByDeploymentIdLazyQuery } from '@subql/react-hooks';
+import { TableProps, Tag } from 'antd';
+import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
-import moment from 'moment';
 
 import { AntDTable, DeploymentMeta, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -23,18 +24,22 @@ import { OngoingFlexPlanActions } from './OngoingFlexPlanActions';
 
 const { ONGOING_PLANS_NAV, CLOSED_PLANS_NAV } = ROUTES;
 
-interface MyFlexPlanTableProps {
-  queryFn: typeof useGetConsumerOngoingFlexPlansLazyQuery | typeof useGetConsumerClosedFlexPlansLazyQuery;
-}
-
-export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => {
+export const MyFlexPlanTable: React.FC = () => {
   const { account } = useWeb3();
   const { pathname } = useLocation();
+  const query = useRouteQuery();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [now] = React.useState<Date>(moment().toDate());
-  const sortedParams = { consumer: account ?? '', now, offset: 0 };
-  const [loadFlexPlan, flexPlans] = queryFn({ variables: sortedParams, fetchPolicy: 'no-cache' });
+  const sortedParams = {
+    consumer: account ?? '',
+    now: dayjs('1970-1-1').toDate(),
+    offset: 0,
+    deploymentId: query.get('deploymentId') || '',
+  };
+  const [loadFlexPlan, flexPlans] = useGetConsumerFlexPlansByDeploymentIdLazyQuery({
+    variables: sortedParams,
+    fetchPolicy: 'no-cache',
+  });
 
   const fetchMoreFlexPlans = () => {
     loadFlexPlan();
@@ -76,11 +81,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
       {
         dataIndex: 'expiredAt',
         width: 30,
-        title: (
-          <TableTitle
-            title={i18next.t(path === ONGOING_PLANS_NAV ? 'flexPlans.validityPeriod' : 'flexPlans.duration')}
-          />
-        ),
+        title: <TableTitle title={i18next.t('flexPlans.validityPeriod')} />,
         render: (expiredAt) => {
           return <TableText content={formatDate(expiredAt)} />;
         },
@@ -148,11 +149,21 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         }, flexPlans),
         {
           loading: () => <Spinner />,
-          error: (e) => <Typography.Text type="danger">{`Failed to load flex plans: ${e}`}</Typography.Text>,
+          error: (e) => <Typography type="danger">{`Failed to load flex plans: ${e}`}</Typography>,
           empty: () => <EmptyList title={t('flexPlans.non')} description={t('myFlexPlans.description')} />,
           data: (flexPlanList) => {
             return (
-              <div>
+              <div
+                style={{
+                  borderRadius: 8,
+                  border: '1px solid var(--Card-boder, rgba(223, 227, 232, 0.60))',
+                  background: '#fff',
+                  padding: 24,
+                }}
+              >
+                <Typography variant="large" style={{ marginBottom: 22 }}>
+                  {query.get('projectName')}
+                </Typography>
                 <AntDTable
                   tableProps={{
                     columns: getColumns(

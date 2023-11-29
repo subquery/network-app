@@ -122,7 +122,7 @@ const MyHostedPlan: FC = (props) => {
                     style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
                     onClick={() => {
                       navigate(
-                        `/consumer/flex-plans/ongoing/details/${record.id}/ongoing?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
+                        `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
                       );
                     }}
                   >
