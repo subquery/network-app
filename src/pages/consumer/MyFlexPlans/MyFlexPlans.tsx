@@ -7,7 +7,6 @@ import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router';
 import { useRouteQuery } from '@hooks';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Typography } from '@subql/components';
-import { useGetConsumerFlexPlansByDeploymentIdLazyQuery } from '@subql/react-hooks';
 import { Breadcrumb } from 'antd';
 import i18next from 'i18next';
 
