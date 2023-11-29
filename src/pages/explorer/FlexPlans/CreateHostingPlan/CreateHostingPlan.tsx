@@ -108,7 +108,7 @@ const CreateHostingFlexPlan = forwardRef<
     await form.validateFields();
 
     if (!props.edit) {
-      if (!asyncProject.data?.deploymentId) return;
+      if (!asyncProject.data?.currentDeployment) return;
       const created = await getHostingPlans();
 
       if (!created) return;
@@ -127,8 +127,8 @@ const CreateHostingFlexPlan = forwardRef<
         .div(1000)
         .toString(),
 
-      // props.deploymentId or asyncProject.deploymentId must have one.
-      deploymentId: props.deploymentId || asyncProject?.data?.deploymentId || '',
+      // these must be have one.
+      deploymentId: props.deploymentId || asyncProject.data?.currentDeployment || '',
 
       // if is create, id is would not use.
       id: `${props.editInformation?.id}` || '0',
@@ -229,7 +229,7 @@ const CreateHostingFlexPlan = forwardRef<
               <Typography
                 style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
                 onClick={() => {
-                  navigate(`/consumer/flex-plans?deploymentCid=${asyncProject.data?.deploymentId}`);
+                  navigate(`/consumer/flex-plans?deploymentCid=${deploymentId}`);
                 }}
               >
                 View My Flex Plan
