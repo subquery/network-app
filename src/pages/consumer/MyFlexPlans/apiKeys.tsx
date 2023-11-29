@@ -4,7 +4,7 @@
 import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import PasswordField from '@components/PasswordField';
 import { GetUserApiKeys, isConsumerHostError, useConsumerHostServices } from '@hooks/useConsumerHostServices';
-import { Modal, openNotification, TextInput, Typography } from '@subql/components';
+import { Modal, openNotification, Spinner, TextInput, Typography } from '@subql/components';
 import { Table } from 'antd';
 import moment from 'moment';
 
@@ -29,30 +29,50 @@ const EmptyApiKeys: FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const ApiKeysFC: FC = () => {
-  const { getUserApiKeysApi, createNewApiKey, deleteNewApiKey, requestTokenLayout, hasLogin } = useConsumerHostServices(
-    {
-      alert: true,
-      autoLogin: false,
-    },
-  );
+  const {
+    getUserApiKeysApi,
+    createNewApiKey,
+    deleteNewApiKey,
+    requestTokenLayout,
+    hasLogin,
+    loading: consumerHostLoading,
+  } = useConsumerHostServices({
+    alert: true,
+    autoLogin: false,
+  });
 
   const [openCreateNew, setOpenCreateNew] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const currentApiKey = useRef<number>();
   const [newApiKeyName, setNewApiKeyName] = useState('');
   const [apiKeys, setApiKeys] = useState<GetUserApiKeys[]>([]);
 
   const init = async () => {
-    if (!hasLogin) return;
-    const res = await getUserApiKeysApi();
-    if (!isConsumerHostError(res.data)) {
-      setApiKeys(res.data);
+    try {
+      setLoading(true);
+      if (!hasLogin) return;
+      const res = await getUserApiKeysApi();
+      if (!isConsumerHostError(res.data)) {
+        setApiKeys(res.data);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    init();
+    if (hasLogin) {
+      init();
+    }
   }, [hasLogin]);
+
+  if (consumerHostLoading || loading)
+    return (
+      <div className={styles.apiKeys}>
+        <Spinner></Spinner>
+      </div>
+    );
 
   return (
     <div className={styles.apiKeys}>
