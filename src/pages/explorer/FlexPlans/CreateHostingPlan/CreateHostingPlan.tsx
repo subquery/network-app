@@ -162,7 +162,7 @@ const CreateHostingFlexPlan = forwardRef<
 
   React.useEffect(() => {
     getHostingPlans();
-  }, [account]);
+  }, [account, hasLogin]);
 
   useEffect(() => {
     if (props.editInformation) {

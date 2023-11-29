@@ -105,7 +105,7 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         width: 30,
         title: <TableTitle title={i18next.t('flexPlans.channelStatus')} />,
         render: (status: ChannelStatus, plan) => {
-          if (path === ONGOING_PLANS_NAV) {
+          if (status === ChannelStatus.OPEN && +new Date(plan.expiredAt) > +new Date()) {
             return <Tag color="green">{i18next.t('general.active')}</Tag>;
           } else if (status === ChannelStatus.FINALIZED) {
             return <Tag color="blue">{i18next.t('general.completed')}</Tag>;
@@ -120,13 +120,13 @@ export const MyFlexPlanTable: React.FC<MyFlexPlanTableProps> = ({ queryFn }) => 
         title: <TableTitle title={i18next.t('general.action')} />,
         dataIndex: 'deploymentId',
         fixed: 'right',
-        width: path === CLOSED_PLANS_NAV ? 20 : 40,
+        width: 40,
         render: (_, plan) => {
-          if (path === CLOSED_PLANS_NAV) {
-            return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
+          if (plan.status === ChannelStatus.OPEN && +new Date(plan.expiredAt) > +new Date()) {
+            return <OngoingFlexPlanActions flexPlan={plan} onSuccess={onSuccess} />;
           }
 
-          return <OngoingFlexPlanActions flexPlan={plan} onSuccess={onSuccess} />;
+          return <ClaimFlexPlan flexPlan={plan} onSuccess={onSuccess} />;
         },
       },
     ];

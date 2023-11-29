@@ -40,6 +40,7 @@ export const useConsumerHostServices = (
     getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || ''),
   );
   const [hasLogin, setHasLogin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const requestConsumerHostToken = async (account: string) => {
     try {
@@ -147,13 +148,18 @@ export const useConsumerHostServices = (
   };
 
   const checkIfHasLogin = async () => {
-    // this api do not need argements. so use it to check if need login.
-    const res = await getUserApiKeysApi();
-    if (isConsumerHostError(res.data) && `${res.data.code}` === '403') {
-      setHasLogin(false);
-      return;
+    // this api do not need arguements. so use it to check if need login.
+    try {
+      setLoading(true);
+      const res = await getUserApiKeysApi();
+      if (isConsumerHostError(res.data) && `${res.data.code}` === '403') {
+        setHasLogin(false);
+        return;
+      }
+      setHasLogin(true);
+    } finally {
+      setLoading(false);
     }
-    setHasLogin(true);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -279,6 +285,7 @@ export const useConsumerHostServices = (
         <Button
           shape="round"
           type="primary"
+          style={{ background: 'var(--sq-blue600)', borderColor: 'var(--sq-blue600)' }}
           onClick={async () => {
             const res = await loginConsumerHost(true);
             if (!res.status) {
@@ -317,6 +324,7 @@ export const useConsumerHostServices = (
     loginConsumerHost,
     requestTokenLayout,
     hasLogin,
+    loading,
   };
 };
 
@@ -348,6 +356,10 @@ export interface IGetHostingPlans {
     updated_at: Date;
     version: string;
     deployment_id: number;
+  };
+  project: {
+    metadata: string;
+    id: number;
   };
   channels: string;
   maximum: number;

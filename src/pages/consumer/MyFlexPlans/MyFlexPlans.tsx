@@ -3,9 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes } from 'react-router';
+import { Navigate, Route, Routes, useMatch, useNavigate, useParams } from 'react-router';
+import { useRouteQuery } from '@hooks';
 import { useIsLogin } from '@hooks/useIsLogin';
-import { useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
+import { Typography } from '@subql/components';
+import { useGetConsumerClosedFlexPlansLazyQuery, useGetConsumerOngoingFlexPlansLazyQuery } from '@subql/react-hooks';
+import { Breadcrumb } from 'antd';
 import i18next from 'i18next';
 
 import { AppPageHeader, Card, TabButtons, WalletRoute } from '../../../components';
@@ -53,16 +56,64 @@ const BalanceCards = () => {
 const Header = () => {
   const { t } = useTranslation();
   const isLogin = useIsLogin();
+  const match = useMatch(`/consumer/flex-plans/${ONGOING_PLANS}/details/:id/*`);
+  const navigate = useNavigate();
+  const query = useRouteQuery();
+
   return (
     <>
-      <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
-      {isLogin && (
+      {!match ? (
         <>
-          <BalanceCards />
-          <div className={styles.tabs}>
-            <TabButtons tabs={buttonLinks} whiteTab />
-          </div>
+          <AppPageHeader title={t('plans.category.myFlexPlans')} desc={t('myFlexPlans.description')} />
+          {isLogin && (
+            <>
+              <BalanceCards />
+              <div className={styles.tabs}>
+                <TabButtons tabs={buttonLinks} whiteTab />
+              </div>
+            </>
+          )}
         </>
+      ) : (
+        <div style={{ marginTop: 14 }}>
+          <Breadcrumb
+            style={{ marginBottom: 50 }}
+            items={[
+              {
+                key: 'My Flex Plans',
+                title: (
+                  <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
+                    Explorer
+                  </Typography>
+                ),
+                onClick: () => {
+                  navigate('/consumer/flex-plans/ongoing');
+                },
+              },
+              {
+                key: 'current',
+                title: query.get('projectName'),
+              },
+            ]}
+          ></Breadcrumb>
+          <TabButtons
+            tabs={[
+              {
+                label: i18next.t('myFlexPlans.ongoing'),
+                link: `ongoing/details/${query.get('id')}/ongoing?id=${query.get('id')}&deploymentId=${query.get(
+                  'deploymentId',
+                )}`,
+              },
+              {
+                label: i18next.t('myFlexPlans.closed'),
+                link: `ongoing/details/${query.get('id')}/closed?id=${query.get('id')}&deploymentId=${query.get(
+                  'deploymentId',
+                )}`,
+              },
+            ]}
+            whiteTab
+          />
+        </div>
       )}
     </>
   );
@@ -78,8 +129,12 @@ export const MyFlexPlans: React.FC = () => {
           <Routes>
             <Route path={ONGOING_PLANS} element={<MyHostedPlan></MyHostedPlan>} />
             <Route
-              path={`${ONGOING_PLANS}/details/:id`}
+              path={`${ONGOING_PLANS}/details/:id/ongoing`}
               element={<MyFlexPlanTable queryFn={useGetConsumerOngoingFlexPlansLazyQuery} />}
+            ></Route>
+            <Route
+              path={`${ONGOING_PLANS}/details/:id/closed`}
+              element={<MyFlexPlanTable queryFn={useGetConsumerClosedFlexPlansLazyQuery} />}
             ></Route>
             <Route path={API_KEY} element={<ApiKeys />} />
             <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />

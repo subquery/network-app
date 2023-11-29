@@ -18,16 +18,24 @@ import styles from './MyHostedPlan.module.less';
 
 const MyHostedPlan: FC = (props) => {
   const navigate = useNavigate();
-  const { updateHostingPlanApi, getHostingPlanApi, hasLogin } = useConsumerHostServices({
+  const {
+    updateHostingPlanApi,
+    getHostingPlanApi,
+    hasLogin,
+    loading: consumerHostLoading,
+    requestTokenLayout,
+  } = useConsumerHostServices({
     alert: true,
     autoLogin: false,
   });
 
   const [loading, setLoading] = useState(false);
-  const [createdHostingPlan, setCreatedHostingPlan] = useState<IGetHostingPlans[]>([]);
+  const [createdHostingPlan, setCreatedHostingPlan] = useState<(IGetHostingPlans & { projectName: string | number })[]>(
+    [],
+  );
   const [currentEditInfo, setCurrentEditInfo] = useState<IGetHostingPlans>();
+  const { getMetadataFromCid } = useProjectMetadata();
   const ref = useRef<CreateHostingFlexPlanRef>(null);
-  // const { getMetadataFromCid } = useProjectMetadata()
   const init = async () => {
     try {
       setLoading(true);
@@ -36,7 +44,21 @@ const MyHostedPlan: FC = (props) => {
       }
 
       const res = await getHostingPlanApi();
-      setCreatedHostingPlan(res.data);
+      const allMetadata = await Promise.allSettled(
+        res.data.map((i) => {
+          return getMetadataFromCid(i.project.metadata);
+        }),
+      );
+      setCreatedHostingPlan(
+        res.data.map((raw, index) => {
+          const result = allMetadata[index];
+          const name = result.status === 'fulfilled' ? result.value.name : raw.id;
+          return {
+            ...raw,
+            projectName: name,
+          };
+        }),
+      );
     } finally {
       setLoading(false);
     }
@@ -46,15 +68,19 @@ const MyHostedPlan: FC = (props) => {
     init();
   }, [hasLogin]);
 
+  if (!hasLogin && !consumerHostLoading) return requestTokenLayout('Hosting Plan');
+
   return (
     <div className={styles.myHostedPlan}>
       <Table
+        rowKey={(record) => record.id}
         style={{ marginTop: 40 }}
-        loading={loading}
+        loading={loading || consumerHostLoading}
         dataSource={createdHostingPlan}
         columns={[
           {
             title: 'Project',
+            dataIndex: 'projectName',
           },
           {
             title: 'Maximum Price',
@@ -95,7 +121,9 @@ const MyHostedPlan: FC = (props) => {
                   <Typography
                     style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
                     onClick={() => {
-                      navigate(`/consumer/flex-plans/ongoing/details/1`);
+                      navigate(
+                        `/consumer/flex-plans/ongoing/details/${record.id}/ongoing?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
+                      );
                     }}
                   >
                     View Details
@@ -107,19 +135,30 @@ const MyHostedPlan: FC = (props) => {
                       ref.current?.showModal();
                     }}
                   >
-                    Edit
+                    {record.price === '0' ? 'Restart' : 'Edit'}
                   </Typography>
 
                   <Typography
-                    style={{ color: 'var(--sq-error)', padding: '6px 10px', marginLeft: 16 }}
-                    onClick={() => {
-                      updateHostingPlanApi({
-                        id: record.id,
-                        deploymentId: record.deployment.deployment,
-                        price: '0',
-                        maximum: 2,
-                        expiration: 0,
-                      });
+                    style={{
+                      color: record.price === '0' ? 'var(--sq-gray400)' : 'var(--sq-error)',
+                      padding: '6px 10px',
+                      marginLeft: 16,
+                    }}
+                    onClick={async () => {
+                      if (record.price === '0') return;
+                      try {
+                        setLoading(true);
+                        await updateHostingPlanApi({
+                          id: record.id,
+                          deploymentId: record.deployment.deployment,
+                          price: '0',
+                          maximum: 2,
+                          expiration: 0,
+                        });
+                        init();
+                      } finally {
+                        setLoading(false);
+                      }
                     }}
                   >
                     Stop
