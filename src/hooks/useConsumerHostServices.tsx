@@ -1,10 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useRef } from 'react';
-import { openNotification } from '@subql/components';
+import { useEffect, useRef, useState } from 'react';
+import { openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
 import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
+import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 import { useAccount, useSignTypedData } from 'wagmi';
@@ -35,7 +36,11 @@ export const useConsumerHostServices = (
 ) => {
   const { address: account } = useAccount();
   const { signTypedDataAsync } = useSignTypedData();
-  const authHeaders = useRef<{ Authorization: string }>();
+  const authHeaders = useRef<{ Authorization: string }>(
+    getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || ''),
+  );
+  const [hasLogin, setHasLogin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const requestConsumerHostToken = async (account: string) => {
     try {
@@ -72,18 +77,23 @@ export const useConsumerHostServices = (
       if (error || !response?.ok || sortedResponse?.error) {
         throw new Error(sortedResponse?.error ?? error);
       }
-
       return { data: sortedResponse?.token };
     } catch (error) {
       return {
         error: parseError(error, {
           defaultGeneralMsg: 'Failed to request token of consumer host.',
+          errorMappings: [
+            {
+              error: 'Missing consumer',
+              message: 'Please deposit first',
+            },
+          ],
         }),
       };
     }
   };
 
-  const loginConsumerHostToken = async (refresh = false) => {
+  const loginConsumerHost = async (refresh = false) => {
     if (account) {
       if (!refresh) {
         const cachedToken = localStorage.getItem(`consumer-host-services-token-${account}`);
@@ -97,6 +107,7 @@ export const useConsumerHostServices = (
       }
 
       const res = await requestConsumerHostToken(account);
+
       if (res.error) {
         return {
           status: false,
@@ -107,6 +118,7 @@ export const useConsumerHostServices = (
       if (res.data) {
         authHeaders.current = getAuthReqHeader(res.data);
         localStorage.setItem(`consumer-host-services-token-${account}`, res.data);
+        setHasLogin(true);
         return {
           status: true,
           msg: 'ok',
@@ -116,41 +128,78 @@ export const useConsumerHostServices = (
 
     return {
       status: false,
-      msg: 'unknow error',
+      msg: 'Please check your wallet if works',
     };
   };
 
   // do not need retry limitation
   // login need user confirm sign, so it's a block operation
-  const shouldLogin = async (res: unknown[] | object): Promise<boolean> => {
+  const checkLoginStatusAndLogin = async (res: unknown[] | object): Promise<boolean> => {
     if (isConsumerHostError(res) && `${res.code}` === '403') {
-      const loginStatus = await loginConsumerHostToken(true);
+      const loginStatus = await loginConsumerHost(true);
       if (loginStatus.status) {
         return true;
       }
+    } else {
+      setHasLogin(true);
     }
 
     return false;
   };
 
-  // TODO: should reuse the login logic.
-  // but I am not sure how to write = =.
+  const checkIfHasLogin = async () => {
+    // this api do not need arguements. so use it to check if need login.
+    try {
+      setLoading(true);
+      const res = await getUserApiKeysApi();
+      if (isConsumerHostError(res.data) && `${res.data.code}` === '403') {
+        setHasLogin(false);
+        return;
+      }
+      setHasLogin(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const alertResDecorator = <T extends (...args: any) => any>(
+    func: T,
+  ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
+    return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
+      const res = await func(...args);
+
+      if (alert && isConsumerHostError(res.data)) {
+        openNotification({
+          type: 'error',
+          description: res.data.error,
+          duration: 5000,
+        });
+      }
+
+      return res;
+    };
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loginResDecorator = <T extends (...args: any) => any>(
+    func: T,
+  ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
+    return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
+      const res = await func(...args);
+      const sdLogin = await checkLoginStatusAndLogin(res.data);
+
+      if (sdLogin) return await func(...args);
+
+      return res;
+    };
+  };
+
+  // the apis can use useCallback to speed up for re-render. if necessary
   const getUserApiKeysApi = async (): Promise<AxiosResponse<GetUserApiKeys[] | ConsumerHostError>> => {
     const res = await instance.get<GetUserApiKeys[] | ConsumerHostError>('/users/apikeys', {
       headers: authHeaders.current,
     });
-
-    const sdLogin = await shouldLogin(res.data);
-
-    if (sdLogin) return await getUserApiKeysApi();
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
 
     return res;
   };
@@ -161,18 +210,6 @@ export const useConsumerHostServices = (
     const res = await instance.post<GetUserApiKeys>('/users/apikeys/new', params, {
       headers: authHeaders.current,
     });
-
-    const sdLogin = await shouldLogin(res.data);
-
-    if (sdLogin) return await createNewApiKey(params);
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
 
     return res;
   };
@@ -186,18 +223,6 @@ export const useConsumerHostServices = (
       },
     );
 
-    const sdLogin = await shouldLogin(res.data);
-
-    if (sdLogin) return await createNewApiKey(apikeyId);
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
-
     return res;
   };
 
@@ -206,17 +231,15 @@ export const useConsumerHostServices = (
       headers: authHeaders.current,
     });
 
-    const sdLogin = await shouldLogin(res.data);
+    return res;
+  };
 
-    if (sdLogin) return await createHostingPlanApi(params);
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
+  const updateHostingPlanApi = async (
+    params: IPostHostingPlansParams & { id: string | number },
+  ): Promise<AxiosResponse<IGetHostingPlans>> => {
+    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans/${params.id}`, params, {
+      headers: authHeaders.current,
+    });
 
     return res;
   };
@@ -225,18 +248,6 @@ export const useConsumerHostServices = (
     const res = await instance.get<IGetHostingPlans[]>(`/users/hosting-plans`, {
       headers: authHeaders.current,
     });
-
-    const sdLogin = await shouldLogin(res.data);
-
-    if (sdLogin) return await getHostingPlanApi();
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
 
     return res;
   };
@@ -247,14 +258,6 @@ export const useConsumerHostServices = (
       params,
     });
 
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
-
     return res;
   };
 
@@ -263,36 +266,65 @@ export const useConsumerHostServices = (
       headers: authHeaders.current,
     });
 
-    const sdLogin = await shouldLogin(res.data);
-
-    if (sdLogin) return await getUserChannelState(channelId);
-
-    if (alert && isConsumerHostError(res.data)) {
-      openNotification({
-        type: 'error',
-        description: res.data.error,
-        duration: 5000,
-      });
-    }
-
     return res;
   };
 
+  const requestTokenLayout = (pageTitle: string) => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="h5" weight={500}>
+          Session Token
+        </Typography>
+
+        <Typography
+          style={{ color: 'var(--sq-gray700)', marginTop: 16, marginBottom: 40, width: 344, textAlign: 'center' }}
+        >
+          To access {pageTitle}, you need to request a session token.
+        </Typography>
+
+        <Button
+          shape="round"
+          type="primary"
+          style={{ background: 'var(--sq-blue600)', borderColor: 'var(--sq-blue600)' }}
+          onClick={async () => {
+            const res = await loginConsumerHost(true);
+            if (!res.status) {
+              openNotification({
+                type: 'error',
+                title: 'Login failed',
+                description: res.msg,
+              });
+            }
+          }}
+        >
+          Request Session token
+        </Button>
+      </div>
+    );
+  };
+
   useEffect(() => {
+    checkIfHasLogin();
     if (autoLogin) {
-      loginConsumerHostToken();
+      loginConsumerHost();
     }
   }, [account, autoLogin]);
 
   return {
-    getUserApiKeysApi,
-    createNewApiKey,
-    deleteNewApiKey,
-    createHostingPlanApi,
-    getHostingPlanApi,
-    getUserChannelState,
-    getProjects,
+    getUserApiKeysApi: alertResDecorator(loginResDecorator(getUserApiKeysApi)),
+    createNewApiKey: alertResDecorator(loginResDecorator(createNewApiKey)),
+    deleteNewApiKey: alertResDecorator(loginResDecorator(deleteNewApiKey)),
+    createHostingPlanApi: alertResDecorator(loginResDecorator(createHostingPlanApi)),
+    updateHostingPlanApi: alertResDecorator(loginResDecorator(updateHostingPlanApi)),
+    getHostingPlanApi: alertResDecorator(loginResDecorator(getHostingPlanApi)),
+    getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
+    getProjects: alertResDecorator(getProjects),
     requestConsumerHostToken,
+    checkIfHasLogin,
+    loginConsumerHost,
+    requestTokenLayout,
+    hasLogin,
+    loading,
   };
 };
 
@@ -324,6 +356,10 @@ export interface IGetHostingPlans {
     updated_at: Date;
     version: string;
     deployment_id: number;
+  };
+  project: {
+    metadata: string;
+    id: number;
   };
   channels: string;
   maximum: number;

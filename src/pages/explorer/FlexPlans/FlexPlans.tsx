@@ -24,7 +24,7 @@ export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const query = useRouteQuery();
-  const { getProjects } = useConsumerHostServices({ autoLogin: false });
+  const { getProjects, requestTokenLayout, hasLogin, loading } = useConsumerHostServices({ autoLogin: false });
   const { getFlexPlanPrice } = useGetFlexPlanPrice();
   // TODO: confirm score threadThread with consumer host service
   const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
@@ -61,6 +61,7 @@ export const FlexPlans: React.FC = () => {
 
   const flexPlans = useAsyncMemo(async () => {
     try {
+      if (!hasLogin) return [];
       const res = await getProjects({
         projectId: BigNumber.from(id).toString(),
         deployment: query.get('deploymentId') || undefined,
@@ -72,7 +73,7 @@ export const FlexPlans: React.FC = () => {
     } catch (e) {
       return [];
     }
-  }, [id, query]);
+  }, [id, query, hasLogin]);
 
   React.useEffect(() => {
     if (!id) {
@@ -80,21 +81,33 @@ export const FlexPlans: React.FC = () => {
     }
   }, [navigate, id]);
 
+  if (!flexPlans.data && !flexPlans.loading && !loading) return <CreateHostingFlexPlan></CreateHostingFlexPlan>;
+
   return (
     <>
-      {renderAsync(flexPlans, {
-        loading: () => <Spinner />,
-        error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
-        data: (flexPlans) => {
-          if (!flexPlans.length) return <EmptyList description={t('explorer.flexPlans.non')} />;
-          return (
-            <>
-              <CreateHostingFlexPlan></CreateHostingFlexPlan>
-              <Table columns={getColumns()} dataSource={flexPlans} rowKey={'id'} />
-            </>
-          );
+      {renderAsync(
+        {
+          ...flexPlans,
+          loading: flexPlans.loading || loading,
         },
-      })}
+        {
+          loading: () => <Spinner />,
+          error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
+          data: (flexPlans) => {
+            if (!flexPlans.length && hasLogin) return <EmptyList description={t('explorer.flexPlans.non')} />;
+            return (
+              <>
+                <CreateHostingFlexPlan></CreateHostingFlexPlan>
+                {!hasLogin ? (
+                  requestTokenLayout('flex plan')
+                ) : (
+                  <Table columns={getColumns()} dataSource={flexPlans} rowKey={'id'} />
+                )}
+              </>
+            );
+          },
+        },
+      )}
     </>
   );
 };

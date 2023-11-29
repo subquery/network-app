@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,24 +16,50 @@ import {
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { Modal, openNotification, Steps, Typography } from '@subql/components';
+import { formatSQT } from '@subql/react-hooks';
 import { convertStringToNumber, formatEther, TOKEN, tokenDecimals } from '@utils';
 import { Button, Divider, Form, InputNumber, Tooltip } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
 import { t } from 'i18next';
 
 import styles from './index.module.less';
 
-const CreateHostingFlexPlan: FC = (props) => {
+export interface CreateHostingFlexPlanRef {
+  showModal: () => void;
+}
+
+const CreateHostingFlexPlan = forwardRef<
+  CreateHostingFlexPlanRef,
+  {
+    id?: string;
+    deploymentId?: string;
+    editInformation?: IGetHostingPlans;
+    edit?: boolean;
+    hideBoard?: boolean;
+    onSubmit?: () => void;
+  }
+>((props, ref) => {
   const { account } = useWeb3();
   const { consumerHostBalance } = useSQToken();
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const query = useRouteQuery();
-  const { getProjects } = useConsumerHostServices({ autoLogin: false });
+  const { getProjects, createHostingPlanApi, updateHostingPlanApi, getHostingPlanApi, hasLogin } =
+    useConsumerHostServices({
+      alert: true,
+      autoLogin: false,
+    });
+
+  const id = useMemo(() => {
+    return props.id || params.id;
+  }, [params, props]);
+  const deploymentId = useMemo(() => {
+    return props.deploymentId || query.get('deploymentId') || undefined;
+  }, [query, props]);
 
   const asyncProject = useProjectFromQuery(id ?? '');
-  const { createHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({ alert: true, autoLogin: false });
 
   const [form] = Form.useForm<IPostHostingPlansParams>();
   const priceValue = Form.useWatch<number>('price', form);
@@ -44,9 +70,10 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const flexPlans = useAsyncMemo(async () => {
     try {
+      if (!hasLogin) return [];
       const res = await getProjects({
         projectId: BigNumber.from(id).toString(),
-        deployment: query.get('deploymentId') || undefined,
+        deployment: deploymentId,
       });
 
       if (res.data?.indexers?.length) {
@@ -55,7 +82,7 @@ const CreateHostingFlexPlan: FC = (props) => {
     } catch (e) {
       return [];
     }
-  }, [id, query]);
+  }, [id, query, hasLogin]);
 
   const matchedCount = React.useMemo(() => {
     if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
@@ -79,23 +106,32 @@ const CreateHostingFlexPlan: FC = (props) => {
 
   const createHostingPlan = async () => {
     await form.validateFields();
-    if (!asyncProject.data?.currentDeployment) return;
-    const created = await getHostingPlans();
 
-    if (!created) return;
-    if (created && haveCreatedHostingPlan.checkHaveCreated(created)) {
-      setShowCreateFlexPlan(false);
-      return;
+    if (!props.edit) {
+      if (!asyncProject.data?.currentDeployment) return;
+      const created = await getHostingPlans();
+
+      if (!created) return;
+      if (created && haveCreatedHostingPlan.checkHaveCreated(created)) {
+        setShowCreateFlexPlan(false);
+        return;
+      }
     }
 
-    const res = await createHostingPlanApi({
+    const api = props.edit ? updateHostingPlanApi : createHostingPlanApi;
+    const res = await api({
       ...form.getFieldsValue(),
       // default set as one era.
       expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
       price: parseEther(`${form.getFieldValue('price')}`)
         .div(1000)
         .toString(),
-      deploymentId: asyncProject.data.currentDeployment,
+
+      // these must be have one.
+      deploymentId: props.deploymentId || asyncProject.data?.currentDeployment || '',
+
+      // if is create, id is would not use.
+      id: `${props.editInformation?.id}` || '0',
     });
 
     if (res.data.id) {
@@ -110,6 +146,7 @@ const CreateHostingFlexPlan: FC = (props) => {
   };
 
   const getHostingPlans = async () => {
+    if (!hasLogin) return;
     const res = await getHostingPlanApi();
     if (!isConsumerHostError(res.data)) {
       setCreatedHostingPlan(res.data);
@@ -117,86 +154,109 @@ const CreateHostingFlexPlan: FC = (props) => {
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    showModal: () => {
+      setShowCreateFlexPlan(true);
+    },
+  }));
+
   React.useEffect(() => {
     getHostingPlans();
-  }, [account]);
+  }, [account, hasLogin]);
+
+  useEffect(() => {
+    if (props.editInformation) {
+      form.setFieldValue(
+        'price',
+        +formatSQT(
+          BigNumberJs(props.editInformation.price.toString() || '0')
+            .multipliedBy(1000)
+            .toString(),
+        ),
+      );
+      form.setFieldValue('maximum', props.editInformation.maximum);
+    }
+  }, [props.editInformation]);
 
   return (
     <>
-      <div className={styles.billingCard}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div className="col-flex">
-            <div className="flex">
-              <Typography variant="text" type="secondary">
-                {t('flexPlans.billBalance').toUpperCase()}
+      {!props.hideBoard && (
+        <div className={styles.billingCard}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="col-flex">
+              <div className="flex">
+                <Typography variant="text" type="secondary">
+                  {t('flexPlans.billBalance').toUpperCase()}
+                </Typography>
+
+                <Tooltip
+                  overlay={t('flexPlans.billingAccountTooltip', {
+                    token: TOKEN,
+                  })}
+                >
+                  <BsExclamationCircle style={{ marginLeft: '8px', color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+                </Tooltip>
+              </div>
+
+              <Typography variant="h6" style={{ marginTop: '12px' }}>
+                {`${formatEther(balance, 4)} ${TOKEN}`}
               </Typography>
-
-              <Tooltip
-                overlay={t('flexPlans.billingAccountTooltip', {
-                  token: TOKEN,
-                })}
-              >
-                <BsExclamationCircle style={{ marginLeft: '8px', color: 'var(--sq-gray500)' }}></BsExclamationCircle>
-              </Tooltip>
             </div>
-
-            <Typography variant="h6" style={{ marginTop: '12px' }}>
-              {`${formatEther(balance, 4)} ${TOKEN}`}
-            </Typography>
-          </div>
-          <Button type="primary" shape="round" size="large" className={styles.billingButton}>
-            {t('flexPlans.deposit')}
-            <div style={{ opacity: 0, position: 'absolute', left: 0, top: 0 }}>
-              <BillingExchangeModal action="Transfer" />
-            </div>
-          </Button>
-        </div>
-        <Divider style={{ margin: '16px 0' }}></Divider>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src="/static/thumb.svg"
-            alt=""
-            style={{ alignSelf: 'flex-start', height: '100%', marginRight: 8, marginTop: 3 }}
-          ></img>
-          <div className="col-flex">
-            <Typography variant="text" weight={500}>
-              {t('flexPlans.flexPlan')}
-            </Typography>
-            <Typography variant="text" type="secondary">
-              {t('flexPlans.flexPlanDesc')}
-            </Typography>
-          </div>
-          <span style={{ flex: 1 }}></span>
-          {haveCreatedHostingPlan.haveCreated ? (
-            <Typography
-              style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
-              onClick={() => {
-                navigate(`/consumer/flex-plans?deploymentCid=${asyncProject.data?.currentDeployment}`);
-              }}
-            >
-              View My Flex Plan
-            </Typography>
-          ) : (
-            <Button
-              type="primary"
-              shape="round"
-              size="large"
-              className={styles.billingButton}
-              onClick={() => {
-                setShowCreateFlexPlan(true);
-              }}
-              disabled={formatEther(balance, 4) === '0.0'}
-            >
-              {t('flexPlans.createFlexPlan')}
+            <Button type="primary" shape="round" size="large" className={styles.billingButton}>
+              {t('flexPlans.deposit')}
+              <div style={{ opacity: 0, position: 'absolute', left: 0, top: 0 }}>
+                <BillingExchangeModal action="Transfer" />
+              </div>
             </Button>
-          )}
+          </div>
+          <Divider style={{ margin: '16px 0' }}></Divider>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img
+              src="/static/thumb.svg"
+              alt=""
+              style={{ alignSelf: 'flex-start', height: '100%', marginRight: 8, marginTop: 3 }}
+            ></img>
+            <div className="col-flex">
+              <Typography variant="text" weight={500}>
+                {t('flexPlans.flexPlan')}
+              </Typography>
+              <Typography variant="text" type="secondary">
+                {t('flexPlans.flexPlanDesc')}
+              </Typography>
+            </div>
+            <span style={{ flex: 1 }}></span>
+            {haveCreatedHostingPlan.haveCreated ? (
+              <Typography
+                style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
+                onClick={() => {
+                  navigate(`/consumer/flex-plans?deploymentCid=${deploymentId}`);
+                }}
+              >
+                View My Flex Plan
+              </Typography>
+            ) : (
+              <Button
+                type="primary"
+                shape="round"
+                size="large"
+                className={styles.billingButton}
+                onClick={() => {
+                  setShowCreateFlexPlan(true);
+                }}
+                disabled={formatEther(balance, 4) === '0.0' || !hasLogin}
+              >
+                {t('flexPlans.createFlexPlan')}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <Modal
         open={showCreateFlexPlan}
-        submitText="Create"
+        submitText={props.edit ? 'Update' : 'Create'}
         onSubmit={async () => {
           await createHostingPlan();
+          props.onSubmit?.();
         }}
         onCancel={() => {
           setShowCreateFlexPlan(false);
@@ -259,5 +319,5 @@ const CreateHostingFlexPlan: FC = (props) => {
       </Modal>
     </>
   );
-};
+});
 export default CreateHostingFlexPlan;
