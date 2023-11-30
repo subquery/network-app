@@ -9,7 +9,6 @@ const instance = axios.create({
 
 export const useAirdropKyc = () => {
   const getKycStatus = async (account: string) => {
-    return true;
     try {
       const res = await instance.get<{ status: boolean; reason: string }>(`/kyc/status/${account}`);
 
