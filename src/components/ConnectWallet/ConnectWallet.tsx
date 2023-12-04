@@ -22,7 +22,7 @@ export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) =
   return (
     <div className={clsx(styles.container, className)}>
       <img
-        src="/public/static/connect.png"
+        src="/static/connectWallet.png"
         alt="connect wallet"
         width="238"
         height="238"
