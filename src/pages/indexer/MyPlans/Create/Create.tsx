@@ -143,7 +143,7 @@ const DeploymentIdOptions = ({ onChooseSpecificPlan }: { onChooseSpecificPlan: (
         placeholder="Select specific deployment Id"
         optionFilterProp="children"
         onChange={(deploymentId) => onChooseSpecificPlan(deploymentId)}
-        className={clsx('fullWidth', 'flex')}
+        className={clsx('fullWidth', 'flex', styles.planSelector)}
         loading={indexerDeployments.loading}
         size="large"
         allowClear
