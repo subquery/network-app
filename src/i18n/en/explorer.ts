@@ -210,8 +210,9 @@ const translation = {
     deploymentId: 'Deployment ID',
   },
   connectWallet: {
-    title: 'Connect wallet',
-    subtitle: 'To participate in our test network, please start by connecting your wallet first.',
+    title: 'Connect your wallet',
+    subtitle:
+      "To continue, please connect your wallet to the SubQuery Network. If you don't have a wallet, you can select a provider and create one now.",
     connectWith: 'Connect With:',
     metamaskDesc: 'Connect with Metamask browser extension',
     talismanDesc: 'Connect with Talisman browser extension',

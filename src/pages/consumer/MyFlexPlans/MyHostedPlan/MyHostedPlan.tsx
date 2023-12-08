@@ -9,6 +9,7 @@ import CreateHostingFlexPlan, {
   CreateHostingFlexPlanRef,
 } from '@pages/explorer/FlexPlans/CreateHostingPlan/CreateHostingPlan';
 import { Typography } from '@subql/components';
+import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import { Table } from 'antd';
@@ -46,7 +47,10 @@ const MyHostedPlan: FC = (props) => {
       const res = await getHostingPlanApi();
       const allMetadata = await Promise.allSettled(
         res.data.map((i) => {
-          return getMetadataFromCid(i.project.metadata);
+          const cid = i.project.metadata.startsWith('Qm')
+            ? i.project.metadata
+            : bytes32ToCid(`0x${i.project.metadata}`);
+          return getMetadataFromCid(cid);
         }),
       );
       setCreatedHostingPlan(

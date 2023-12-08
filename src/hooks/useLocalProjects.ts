@@ -6,14 +6,16 @@ import { useProjectMetadata } from '@containers';
 import { ProjectFieldsFragment, ProjectsOrderBy } from '@subql/network-query';
 import { useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { notEmpty } from '@utils';
-import { filterSuccessPromoiseSettledResult } from '@utils';
 import { makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
-import { useInterval, useMount } from 'ahooks';
+import { useMount } from 'ahooks';
 import localforage from 'localforage';
 import { uniqWith } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 
 const cacheKey = makeCacheKey('localProjectWithMetadata');
+
+type ProjectWithMetadata = { description: string; versionDescription: string; name: string } & ProjectFieldsFragment;
 
 export const useLocalProjects = () => {
   // this hooks want to do these things:
@@ -35,64 +37,80 @@ export const useLocalProjects = () => {
   });
   const { getMetadataFromCid } = useProjectMetadata();
 
-  const projects = useRef<
-    ({ description: string; versionDescription: string; name: string } & ProjectFieldsFragment)[]
-  >([]);
+  const projects = useRef<ProjectWithMetadata[]>([]);
 
-  const fetchAllProjects = async (length = 0) => {
-    try {
-      loading.current = true;
+  const fetchAllProjects = async (cachedProjects?: ProjectWithMetadata[], withLoading = true) => {
+    const innerFetch: (fetchedProjects: ProjectWithMetadata[]) => Promise<ProjectWithMetadata[]> = async (
+      fetchedProjects,
+    ) => {
+      let tempProjects = cloneDeep(fetchedProjects) || [];
 
-      const res = await getProjects({
-        variables: {
-          offset: length,
-          orderBy: [ProjectsOrderBy.ID_DESC],
-          ids: [],
-        },
-      });
-
-      if (res.data?.projects?.nodes) {
-        const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
-        const allMetadata = await Promise.allSettled(nonEmptyProjects.map((i) => getMetadataFromCid(i.metadata)));
-        const projectsWithMetadata = nonEmptyProjects.map((project, index) => {
-          const rawMetadata = allMetadata[index];
-          const metadata =
-            rawMetadata.status === 'fulfilled'
-              ? rawMetadata.value
-              : { name: '', description: '', versionDescription: '' };
-          return {
-            ...project,
-            ...metadata,
-          };
-        });
-        const mergered = uniqWith([...projects.current, ...projectsWithMetadata], (x, y) => x.id === y.id);
-        projects.current = mergered;
-        await localforage.setItem(cacheKey, mergered);
-
-        if (mergered.length >= res.data.projects.totalCount) {
-          loading.current = false;
-          return;
+      try {
+        if (withLoading) {
+          loading.current = true;
         }
 
-        window.requestIdleCallback(() => fetchAllProjects(mergered.length));
+        const res = await getProjects({
+          variables: {
+            offset: tempProjects.length,
+            orderBy: [ProjectsOrderBy.ID_ASC],
+            ids: [],
+          },
+          defaultOptions: {
+            fetchPolicy: 'network-only',
+          },
+        });
+
+        if (res.data?.projects?.nodes) {
+          const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
+          const allMetadata = await Promise.allSettled(nonEmptyProjects.map((i) => getMetadataFromCid(i.metadata)));
+          const projectsWithMetadata = nonEmptyProjects.map((project, index) => {
+            const rawMetadata = allMetadata[index];
+            const metadata =
+              rawMetadata.status === 'fulfilled'
+                ? rawMetadata.value
+                : { name: '', description: '', versionDescription: '' };
+            return {
+              ...project,
+              ...metadata,
+            };
+          });
+          const mergered = uniqWith([...tempProjects, ...projectsWithMetadata], (x, y) => x.id === y.id);
+          tempProjects = mergered;
+          if (mergered.length >= res.data.projects.totalCount) {
+            loading.current = false;
+            return tempProjects;
+          }
+
+          return await innerFetch(tempProjects);
+        }
+      } catch (e) {
+        setError(e);
+        loading.current = false;
+        return tempProjects;
       }
-    } catch (e) {
-      setError(e);
-      loading.current = false;
-    }
+
+      return tempProjects;
+    };
+
+    const res = await innerFetch(cachedProjects || []);
+
+    projects.current = res;
+    await localforage.setItem(cacheKey, res);
   };
 
   const init = async () => {
     // When first estiblish the local cache. We need to fetch all of it.
     // See fetchAllProject. It's a low-priority(requestsIdleCallback) fetch
-    // if there have cache, just add & update metadata.
+    // if there have cache, use cache first, and then fetch from initial to update.
     const cached = await localforage.getItem<
       ({ description: string; versionDescription: string; name: string } & ProjectFieldsFragment)[]
     >(cacheKey);
-
     if (cached) {
       projects.current = cached;
-      fetchAllProjects(cached.length);
+      await fetchAllProjects(cached);
+      // update for next search
+      window.requestIdleCallback(() => fetchAllProjects([], false));
       return;
     }
     fetchAllProjects();
@@ -117,38 +135,9 @@ export const useLocalProjects = () => {
     };
   };
 
-  const updateExistMetadata = async () => {
-    await waitForSomething({ func: () => !loading.current });
-    // IPFS can be cache. So fetch all of it would ok.
-    const allMetadata = await Promise.allSettled(
-      projects.current.map(async (i) => {
-        const data = await getMetadataFromCid(i.metadata);
-        return {
-          [i.id]: data,
-        };
-      }),
-    );
-    const successData = allMetadata.filter(filterSuccessPromoiseSettledResult);
-
-    const newProjectsData = projects.current.map((i) => {
-      const find = successData.find((x) => x.value[i.id]);
-      return {
-        ...i,
-        ...find,
-      };
-    });
-    await localforage.setItem(cacheKey, newProjectsData);
-
-    projects.current = newProjectsData;
-  };
-
   useMount(() => {
     window.requestIdleCallback(() => init());
   });
-
-  useInterval(() => {
-    window.requestIdleCallback(() => updateExistMetadata());
-  }, 60000);
 
   return {
     loading,
