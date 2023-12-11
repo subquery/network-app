@@ -222,7 +222,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => {
         return (
           <Form>
-            <div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <SummaryList list={summaryList} />
               <Divider className={styles.divider} />
 

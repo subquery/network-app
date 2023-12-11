@@ -165,6 +165,7 @@ const Home: React.FC = () => {
               mutate(res);
             }
           }}
+          disabled={loading}
           onChange={(e) => {
             setSearchKeywords(e.target.value);
           }}
@@ -197,7 +198,7 @@ const Home: React.FC = () => {
           })}
       </div>
 
-      {inSearchMode && !projects.length && (
+      {inSearchMode && !loading && !projects.length && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Typography>No projects match your search</Typography>
         </div>

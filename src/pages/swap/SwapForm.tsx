@@ -25,7 +25,7 @@ import {
 } from '../../components';
 import TransactionModal from '../../components/TransactionModal';
 import { STABLE_TOKEN, STABLE_TOKEN_DECIMAL, TOKEN, tokenDecimals, truncFormatEtherStr } from '../../utils';
-import styles from './SwapForm.module.css';
+import styles from './SwapForm.module.less';
 
 interface Stats {
   title: string;
