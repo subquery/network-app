@@ -4,12 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
-import { Navigate, Route, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Button } from '@subql/components';
 import { Typography } from 'antd';
 import clsx from 'clsx';
 
-import { NewDeployment, ProjectDetail, ProjectEdit, ProjectHeader, Spinner } from '../../../components';
+import { ProjectDetail, ProjectEdit, ProjectHeader, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject, useUpdateProjectMetadata } from '../../../hooks';
 import { FormProjectMetadata, NewDeployment as NewDeploymentParams } from '../../../models';
@@ -25,7 +25,7 @@ const Project: React.FC = () => {
   const { account } = useWeb3();
   const asyncProject = useProject(id ?? '');
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
   const [tab, setTab] = React.useState<typeof DETAILS | typeof DEPLOYMENTS>(DETAILS);
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [editing, setEditing] = React.useState<boolean>(false);
@@ -57,9 +57,10 @@ const Project: React.FC = () => {
         return <span>Project doesn't exist</span>;
       }
 
-      if (project.owner !== account) {
-        return <Route element={<Navigate replace to="studio" />} />;
-      }
+      // @ts-expect-error
+      // if (project.owner !== account) {
+      //   navigate('/studio');
+      // }
 
       return (
         <div>
@@ -69,7 +70,7 @@ const Project: React.FC = () => {
             onRequestClose={() => setDeploymentModal(false)}
             closeTimeoutMS={200}
           >
-            <NewDeployment onSubmit={handleSubmitCreate} onClose={() => setDeploymentModal(false)} />
+            {/* <NewDeployment onSubmit={handleSubmitCreate} onClose={() => setDeploymentModal(false)} /> */}
           </Modal>
           <div className={styles.upper}>
             <div className="content-width">

@@ -2,150 +2,88 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import Modal from 'react-modal';
 import { useNavigate } from 'react-router';
-import { Button } from '@subql/components';
-import { ProjectFieldsFragment } from '@subql/network-query';
-import { useGetProjectsLazyQuery } from '@subql/react-hooks';
-import { useInfiniteScroll } from 'ahooks';
+import { useProjectList } from '@hooks/useProjectList';
+import { Typography } from '@subql/components';
+import { Button, Form, Input, Modal } from 'antd';
+import { useForm } from 'antd/es/form/Form';
 
-import { CreateInstructions, NewProject, ProjectCard, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
-import { useProject } from '../../../hooks';
-import { modalStyles, notEmpty, renderAsync } from '../../../utils';
 import { ROUTES } from '../../../utils';
-import { Header } from '../../explorer/Home/Home';
-import styles from './Home.module.css';
+
 const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
-
-const Project: React.FC<{
-  projectId: string;
-  account: string;
-  onClick?: () => void;
-  projectDetails: ProjectFieldsFragment;
-}> = ({ projectId, account, onClick, projectDetails }) => {
-  const asyncProject = useProject(projectId);
-
-  return (
-    <div className={styles.card}>
-      {renderAsync(asyncProject, {
-        error: (e) => {
-          console.log('ERROR loading project', e);
-          return <span>{`Failed to load project: ${e.message}`}</span>;
-        },
-        loading: () => {
-          return (
-            <ProjectCard
-              onClick={onClick}
-              project={{
-                ...projectDetails,
-                metadata: undefined,
-                id: projectId,
-                owner: account,
-              }}
-            />
-          );
-          // return <span>{`Loading project id: ${projectId}`}</span>
-        },
-        data: (project) => {
-          if (!project) return null;
-          return (
-            <ProjectCard
-              project={{
-                ...projectDetails,
-                ...project,
-              }}
-              onClick={onClick}
-            />
-          );
-        },
-      })}
-    </div>
-  );
-};
 
 const Home: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
-  const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
-  const [getProjects, asyncProjects] = useGetProjectsLazyQuery({
-    variables: { offset: 0 },
+  const { listsWithSearch } = useProjectList({
+    // @ts-ignore
+    account: '0x70d0AFeE4A6A314d71046DA9B4BbcFB8Fd1722Ce',
+    onProjectClick: (projectId) => {
+      navigate(`${STUDIO_PROJECT_NAV}/${projectId}`);
+    },
   });
 
-  const [projects, setProjects] = React.useState<ProjectFieldsFragment[]>([]);
-
-  const loadMore = async () => {
-    const res = await getProjects({
-      variables: {
-        offset: projects.length,
-      },
-    });
-
-    if (res.data?.projects?.nodes) {
-      setProjects([...projects, ...res.data.projects?.nodes.filter(notEmpty)]);
-    }
-
-    return {
-      list: [],
-      isNoMore: !res.error && !res.data?.projects?.nodes.length,
-    };
+  const [form] = useForm();
+  const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
+  const handleCreateProject = () => {
+    navigate(
+      `${STUDIO_CREATE_NAV}?name=${encodeURI(form.getFieldValue('projectName'))}&deploymentId=${form.getFieldValue(
+        'deploymentId',
+      )}`,
+    );
   };
-
-  const handleCreateProject = (name: string) => {
-    navigate(`${STUDIO_CREATE_NAV}?name=${encodeURI(name)}`);
-  };
-
   const enableCreateModal = () => setShowCreateModal(true);
 
-  useInfiniteScroll(() => loadMore(), {
-    target: document,
-    isNoMore: (d) => !!d?.isNoMore,
-    threshold: 300,
-  });
-
   return (
-    <div className="content-width">
-      <div className="col-flex" style={{ marginBottom: 24 }}>
-        <Header />
-        <div className="flex" style={{ justifyContent: 'center' }}>
-          <Button type="primary" label="Create a project" onClick={enableCreateModal} />
-        </div>
+    <div className="content-width" style={{ padding: '80px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40 }}>
+        <Typography variant="h4">My Projects</Typography>
+        <Button type="primary" onClick={enableCreateModal} shape="round" size="large">
+          Publish New Project
+        </Button>
       </div>
 
       <Modal
-        isOpen={showCreateModal}
-        style={modalStyles}
-        onRequestClose={() => setShowCreateModal(false)}
-        closeTimeoutMS={200}
+        title="Publish New Project to the Decentralised Network"
+        width={572}
+        open={showCreateModal}
+        onCancel={() => setShowCreateModal(false)}
+        onOk={async () => {
+          await form.validateFields();
+
+          handleCreateProject();
+        }}
+        okText={'Next'}
+        okButtonProps={{
+          shape: 'round',
+          size: 'large',
+        }}
+        cancelButtonProps={{
+          style: { display: 'none' },
+        }}
       >
-        <NewProject onSubmit={handleCreateProject} onClose={() => setShowCreateModal(false)} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0' }}>
+          <Typography style={{ color: 'var(--sq-gray700)' }}>
+            Please enter the deployment ID of your SubQuery project below. To get the deployment ID, run subql publish
+            from your project code to publish it to IPFS. Learn how to publish a SubQuery project here.
+          </Typography>
+
+          <Form layout="vertical" form={form}>
+            <Form.Item label="Deployment ID" name="deploymentId" rules={[{ required: true }]}>
+              <Input placeholder="Deployment ID" size="large"></Input>
+            </Form.Item>
+            <div>
+              <Form.Item label="Project Name" name="projectName" rules={[{ required: true }]}>
+                <Input placeholder="Project Name" size="large"></Input>
+              </Form.Item>
+              <Typography variant="medium">Project names should be unique, you can edit this later.</Typography>
+            </div>
+          </Form>
+        </div>
       </Modal>
 
-      {renderAsync(asyncProjects, {
-        loading: () => <Spinner />,
-        error: (error) => <p>{`Failed to load projects: ${error.message}`}</p>,
-        data: (_projects) => {
-          if (!projects?.length) {
-            return <CreateInstructions onClick={enableCreateModal} />;
-          }
-
-          const renderProjects = projects.filter(({ id, owner }) => account && id && owner === account);
-
-          return (
-            <div className={styles.list}>
-              {renderProjects.map((proj) => (
-                <Project
-                  projectId={proj.id}
-                  key={proj.id}
-                  onClick={() => navigate(`${STUDIO_PROJECT_NAV}/${proj.id}`)}
-                  account={account ?? ''}
-                  projectDetails={proj}
-                />
-              ))}
-            </div>
-          );
-        },
-      })}
+      {listsWithSearch}
     </div>
   );
 };
