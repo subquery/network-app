@@ -75,7 +75,7 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
         return <div>There has no deployments for this project</div>;
       }
 
-      return <ProjectDeployments deployments={deployments} />;
+      return <ProjectDeployments deployments={deployments} projectId={projectId} />;
     },
   });
 };

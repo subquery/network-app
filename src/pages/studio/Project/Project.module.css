@@ -9,13 +9,11 @@
   margin-top: 32px;
 }
 
-.upper {
-  padding-top: 80px;
-  background: var(--sq-background-gradient);
-}
-
 .content {
-  padding-bottom: 80px;
+  padding: 0 80px 80px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .tabContainer {

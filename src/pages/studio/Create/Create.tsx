@@ -151,16 +151,6 @@ const Create: React.FC = () => {
                           onChange={(e) => {
                             form.setFieldValue(field.name, e);
                           }}
-                          inputProps={{
-                            placeholder: `You can provide a detailed description of your SubQuery project.
-
-# hello world
-- you can use lists
-- *Italics*
-- *bold*
-- [Links](http://subquery.network)
-                    `,
-                          }}
                         />
                       );
                     }}
@@ -185,16 +175,6 @@ const Create: React.FC = () => {
                           value={field.value}
                           onChange={(e) => {
                             form.setFieldValue(field.name, e);
-                          }}
-                          inputProps={{
-                            placeholder: `You can provide a detailed description of your SubQuery project.
-
-# hello world
-- you can use lists
-- *Italics*
-- *bold*
-- [Links](http://subquery.network)
-                    `,
                           }}
                         />
                       );
