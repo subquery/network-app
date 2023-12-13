@@ -10,8 +10,6 @@ import IndexerProgress from './IndexerProgress';
 import IPFSImage from './IPFSImage';
 import ProjectCard from './ProjectCard';
 import ProjectDeployments from './ProjectDeployments';
-import ProjectDetail from './ProjectDetail';
-import ProjectEdit from './ProjectEdit';
 import ProjectHeader from './ProjectHeader';
 import ProjectOverview from './ProjectOverview';
 import Spinner from './Spinner';
@@ -53,8 +51,6 @@ export {
   IPFSImage,
   ProjectHeader,
   ProjectCard,
-  ProjectDetail,
-  ProjectEdit,
   ProjectDeployments,
   ProjectOverview,
   IndexerProgress,

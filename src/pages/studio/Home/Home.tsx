@@ -17,8 +17,7 @@ const Home: React.FC = () => {
   const { account } = useWeb3();
   const navigate = useNavigate();
   const { listsWithSearch } = useProjectList({
-    // @ts-ignore
-    account: '0x70d0AFeE4A6A314d71046DA9B4BbcFB8Fd1722Ce',
+    account,
     onProjectClick: (projectId) => {
       navigate(`${STUDIO_PROJECT_NAV}/${projectId}`);
     },

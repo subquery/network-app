@@ -108,7 +108,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         // filter once or twice is the same.
         const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty).filter(notEmpty);
         const mergered = options?.refresh ? [...nonEmptyProjects] : [...fetchedProejcts.current, ...nonEmptyProjects];
-        setProjects(mergered);
+        setProjects(mergered.filter((proj) => (account ? account.toLowerCase() === proj.owner.toLowerCase() : true)));
         fetchedProejcts.current = mergered;
         updatedLength = mergered.length;
         setTotal(res.data?.projects?.totalCount);
@@ -172,18 +172,17 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         <div className={styles.list}>
           {topProjectItem}
           {projects?.length
-            ? projects
-                .filter((proj) => (account ? account.toLowerCase() === proj.owner.toLowerCase() : true))
-                .map((project) => (
-                  <ProjectItem
-                    project={project}
-                    key={project.id}
-                    onClick={() => {
-                      onProjectClick?.(project.id);
-                    }}
-                  />
-                ))
-            : ''}
+            ? projects.map((project) => (
+                <ProjectItem
+                  project={project}
+                  key={project.id}
+                  onClick={() => {
+                    onProjectClick?.(project.id);
+                  }}
+                />
+              ))
+            : // TODO: update UI
+              'No Projects'}
           {loading &&
             new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
               return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
