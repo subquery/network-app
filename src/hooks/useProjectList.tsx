@@ -182,7 +182,9 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
                 />
               ))
             : // TODO: update UI
-              ''}
+            loading
+            ? ''
+            : 'No projects'}
           {loading &&
             new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
               return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
