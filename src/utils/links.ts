@@ -29,7 +29,9 @@ export const entryLinks = [
   },
   {
     link: ROUTES.EXPLORER,
+    key: 'explorer',
     label: t('header.explorer'),
+    dropdown: [studioLink],
   },
   {
     link: ROUTES.INDEXER,

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 46px 30px;
+  padding: 0 80px 80px 80px;
 }
 
 .deployment {
@@ -11,19 +11,14 @@
   font-size: 18px;
   line-height: 28px;
   color: var(--gray900);
-  padding: 24px 0;
-}
-
-.upper {
-  padding-top: 80px;
-  background: var(--sq-background-gradient);
+  margin-top: 8px;
 }
 
 .header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: 64px;
+  padding: 64px 80px 40px 80px;
 }
 
 .name {
@@ -39,11 +34,13 @@
 .details {
   display: flex;
   flex-direction: row;
+  gap: 22px;
 }
 
 .fields {
-  border-right: 1px solid var(--gray300);
-  margin-right: 24px;
-  padding-right: 24px;
-  flex-grow: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 845px;
+  flex: 1;
 }

@@ -21,7 +21,7 @@ const translation = {
         "Use SubQuery's Managed Service to host your SubQuery project, upgrade existing projects, and view detailed analytics on how your SubQuery Project is operating.",
     },
     explorer: 'Explorer',
-    studio: 'Studio',
+    studio: 'My Project',
     staking: 'Stake & Delegate',
     plans: 'Plan & Offer',
     missions: 'Missions',
@@ -76,13 +76,15 @@ const translation = {
   },
   studio: {
     create: {
-      name: 'Name',
       type: 'Type',
+      name: 'Project Name',
       image: 'Upload Logo',
       subtitle: 'Subtitle',
-      description: 'Description',
+      description: 'Project Description',
       websiteUrl: 'Website URL',
-      codeUrl: 'Code URL',
+      codeUrl: 'Source Code URL',
+      versionDesc: 'Deployment Description',
+      deploymentId: 'deployment ID',
     },
     project: {
       tab1: 'Details',
