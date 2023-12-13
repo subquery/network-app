@@ -80,6 +80,7 @@ function useProjectRegistryImpl(logger: Logger) {
     id: BigNumberish,
     deploymentId: string,
     version: string,
+    recommended?: boolean,
   ): Promise<ContractTransaction> => {
     if (!contracts) {
       throw new Error('ProjectRegistry contract not available');
@@ -90,7 +91,7 @@ function useProjectRegistryImpl(logger: Logger) {
       id,
       cidToBytes32(deploymentId),
       cidToBytes32(version),
-      true,
+      !!recommended,
     );
 
     tx.wait().then((receipt) => {
@@ -122,7 +123,11 @@ function useProjectRegistryImpl(logger: Logger) {
         projectRegistry.tokenURI(id),
       ]);
 
-      const deploymentInfo = await projectRegistry.deploymentInfos(cidToBytes32(project.latestDeploymentId));
+      const deploymentInfo = await projectRegistry.deploymentInfos(
+        project.latestDeploymentId.startsWith('Qm')
+          ? cidToBytes32(project.latestDeploymentId)
+          : project.latestDeploymentId,
+      );
 
       projectCache.current[BigNumber.from(id).toString()] = {
         owner,

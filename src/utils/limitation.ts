@@ -23,13 +23,11 @@ export const makeCacheKey = (
     type?: string; // maybe need to make a const varible. gerneral/sqt/flexplan such as.
   } = {},
 ) => {
-  // const prefix = options.prefix ?? import.meta.env.MODE
-  // const type = options.type ?? 'gerneral'
-  // const suffix = options
   const { prefix = import.meta.env.MODE, type = 'gerneral', suffix = '' } = options;
   return `${prefix}-${type}-${key}-${suffix}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cachedResult: Map<string, any> = new Map();
 
 export enum limitContractCacheEnum {

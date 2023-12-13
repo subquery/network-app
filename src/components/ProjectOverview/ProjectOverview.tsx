@@ -4,12 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
-import Markdown from '@components/Markdown';
 import NewCard from '@components/NewCard';
 import { useRouteQuery } from '@hooks';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
-import { Typography } from '@subql/components';
+import { Markdown, Typography } from '@subql/components';
 import { formatSQT, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
 
 import { ProjectMetadata } from '../../models';
@@ -21,7 +20,7 @@ type Props = {
   deploymentDescription?: string;
 };
 
-const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
+export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
   return (
     <div className={styles.linkContainer}>
       {icon === 'github' ? (
@@ -63,7 +62,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     <div className={styles.container}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 720 }}>
-          <Markdown>{metadata.description || 'N/A'}</Markdown>
+          <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
         </div>
         <div className={styles.column} style={{ marginTop: 16 }}>
           <ExternalLink icon="globe" link={metadata.websiteUrl} />
@@ -75,7 +74,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
             {t('projectOverview.deploymentDescription')}
           </Typography>
           <div style={{ width: 670, marginTop: 8 }}>
-            <Markdown>{deploymentDescription || 'N/A'}</Markdown>
+            <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
           </div>
         </div>
       </div>

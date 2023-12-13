@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useGetProjectDeploymentsQuery } from '@subql/react-hooks';
+import { forwardRef, useImperativeHandle } from 'react';
+import { useGetProjectDeploymentsLazyQuery } from '@subql/react-hooks';
 import { uniqBy } from 'ramda';
 
 import { ProjectDeployments, Spinner } from '../../../components';
@@ -18,8 +19,12 @@ type Props = {
   };
 };
 
-const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
-  const query = useGetProjectDeploymentsQuery({
+export interface DeploymendRef {
+  refresh: () => void;
+}
+
+const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment }, ref) => {
+  const [getProjDeployments] = useGetProjectDeploymentsLazyQuery({
     variables: {
       projectId,
     },
@@ -27,7 +32,10 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
   const { catSingle } = useIPFS();
 
   const asyncDeployments = useAsyncMemo(async () => {
-    let projectDeployments = query.data?.project?.deployments.nodes.filter(notEmpty);
+    const res = await getProjDeployments({
+      fetchPolicy: 'network-only',
+    });
+    let projectDeployments = res.data?.project?.deployments.nodes.filter(notEmpty);
     if (!projectDeployments) {
       return [];
     }
@@ -61,10 +69,18 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
           createdAt: deployment.createdTimestamp,
           version: result.version,
           description: result.description,
+          // TODO: backend support
+          recommended: true,
         };
       }),
     );
-  }, [query, currentDeployment]);
+  }, [currentDeployment]);
+
+  useImperativeHandle(ref, () => ({
+    refresh: () => {
+      return asyncDeployments.refetch();
+    },
+  }));
 
   return renderAsync(asyncDeployments, {
     loading: () => <Spinner />,
@@ -75,9 +91,17 @@ const DeploymentsTab: React.FC<Props> = ({ projectId, currentDeployment }) => {
         return <div>There has no deployments for this project</div>;
       }
 
-      return <ProjectDeployments deployments={deployments} />;
+      return (
+        <ProjectDeployments
+          deployments={deployments}
+          projectId={projectId}
+          onRefresh={async () => {
+            await asyncDeployments.refetch();
+          }}
+        />
+      );
     },
   });
-};
+});
 
 export default DeploymentsTab;

@@ -3,66 +3,142 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from '@components/Markdown';
-import moment from 'moment';
+import { useCreateDeployment } from '@hooks';
+import { Markdown, Typography } from '@subql/components';
+import { Form, Modal, Radio } from 'antd';
+import { useForm } from 'antd/es/form/Form';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import { NewDeployment } from '../../models';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
 import { Copy } from '..';
 import styles from './ProjectDeployments.module.less';
 
+dayjs.extend(utc);
+
 type Deployment = NewDeployment & { createdAt?: Date };
 
 type Props = {
   deployments: Deployment[];
+  projectId: string;
+  onRefresh: () => Promise<void>;
 };
 
-const Row: React.FC<{ deployment: Deployment }> = ({ deployment }) => {
-  const createdAt = React.useMemo(
-    () => (deployment.createdAt ? moment(deployment.createdAt).utc(true).fromNow() : 'N/A'),
-    [deployment],
-  );
-  return (
-    <TableRow>
-      <TableCell>
-        <p className={styles.value}>{deployment.version}</p>
-      </TableCell>
-      <TableCell>
-        <div className={styles.deploymentId}>
-          <p className={styles.value}>{deployment.deploymentId}</p>
-          <Copy value={deployment.deploymentId} className={styles.copy} />
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className={styles.descriptionMarkdown}>
-          <Markdown>{deployment.description}</Markdown>
-        </div>
-      </TableCell>
-      <TableCell>
-        <p className={styles.value}>{createdAt}</p>
-      </TableCell>
-    </TableRow>
-  );
-};
-
-const ProjectDeployments: React.FC<Props> = ({ deployments }) => {
+const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh }) => {
   const { t } = useTranslation();
+  const updateDeployment = useCreateDeployment(projectId);
+  const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
+  const [form] = useForm();
+  const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
+  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
+
+  const handleSubmitUpdate = async () => {
+    try {
+      setAddDeploymentsLoading(true);
+      await form.validateFields();
+      await updateDeployment({
+        ...currentDeployment,
+        ...form.getFieldsValue(),
+      });
+      await onRefresh();
+      form.resetFields();
+      setDeploymentModal(false);
+    } finally {
+      setAddDeploymentsLoading(false);
+    }
+  };
+
   return (
-    <Table aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          <TableCell>{t('deployments.header1')}</TableCell>
-          <TableCell>{t('deployments.header2')}</TableCell>
-          <TableCell>{t('deployments.header3')}</TableCell>
-          <TableCell>{t('deployments.header4')}</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {deployments.map((indexer, index) => (
-          <Row deployment={indexer} key={index} />
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Modal
+        open={deploymentModal}
+        onCancel={() => setDeploymentModal(false)}
+        title="Edit Deployment"
+        width={572}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        okText="Update"
+        okButtonProps={{
+          shape: 'round',
+          size: 'large',
+          loading: addDeploymentsLoading,
+        }}
+        onOk={() => {
+          handleSubmitUpdate();
+        }}
+      >
+        <div style={{ padding: '12px 0' }}>
+          <Form form={form} layout="vertical">
+            <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
+              <Markdown
+                value={form.getFieldValue('description')}
+                onChange={(e) => {
+                  form.setFieldValue('description', e);
+                }}
+              ></Markdown>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>{t('deployments.header1')}</TableCell>
+            <TableCell>RECOMMENDED</TableCell>
+            <TableCell>{t('deployments.header2')}</TableCell>
+            <TableCell>{t('deployments.header3')}</TableCell>
+            <TableCell>{t('deployments.header4')}</TableCell>
+            <TableCell>{t('general.action')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {deployments.map((deployment, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <p className={styles.value}>{deployment.version}</p>
+              </TableCell>
+              <TableCell>
+                <p className={styles.value}>
+                  <Radio checked>RECOMMENDED</Radio>
+                </p>
+              </TableCell>
+              <TableCell>
+                <div className={styles.deploymentId}>
+                  <p className={styles.value}>{deployment.deploymentId}</p>
+                  <Copy value={deployment.deploymentId} className={styles.copy} />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className={styles.descriptionMarkdown}>
+                  <Markdown.Preview>{deployment.description}</Markdown.Preview>
+                </div>
+              </TableCell>
+              <TableCell>
+                <p className={styles.value}>
+                  {deployment.createdAt ? dayjs(deployment.createdAt).utc(true).fromNow() : 'N/A'}
+                </p>
+              </TableCell>
+              <TableCell>
+                <Typography.Link
+                  active
+                  onClick={() => {
+                    form.setFieldValue('description', deployment.description || '');
+                    setCurrentDeployment(deployment);
+                    setDeploymentModal(true);
+                  }}
+                >
+                  Edit
+                </Typography.Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 };
 
