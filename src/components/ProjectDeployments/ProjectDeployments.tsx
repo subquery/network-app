@@ -3,7 +3,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Markdown } from '@subql/components';
+import { useCreateDeployment } from '@hooks';
+import { Markdown, Typography } from '@subql/components';
+import { Form, Modal, Radio } from 'antd';
+import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
@@ -19,28 +22,89 @@ type Deployment = NewDeployment & { createdAt?: Date };
 type Props = {
   deployments: Deployment[];
   projectId: string;
+  onRefresh: () => Promise<void>;
 };
 
-const ProjectDeployments: React.FC<Props> = ({ deployments, projectId }) => {
+const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh }) => {
   const { t } = useTranslation();
+  const updateDeployment = useCreateDeployment(projectId);
+  const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
+  const [form] = useForm();
+  const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
+  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
+
+  const handleSubmitUpdate = async () => {
+    try {
+      setAddDeploymentsLoading(true);
+      await form.validateFields();
+      await updateDeployment({
+        ...currentDeployment,
+        ...form.getFieldsValue(),
+      });
+      await onRefresh();
+      form.resetFields();
+      setDeploymentModal(false);
+    } finally {
+      setAddDeploymentsLoading(false);
+    }
+  };
 
   return (
     <>
+      <Modal
+        open={deploymentModal}
+        onCancel={() => setDeploymentModal(false)}
+        title="Edit Deployment"
+        width={572}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        okText="Update"
+        okButtonProps={{
+          shape: 'round',
+          size: 'large',
+          loading: addDeploymentsLoading,
+        }}
+        onOk={() => {
+          handleSubmitUpdate();
+        }}
+      >
+        <div style={{ padding: '12px 0' }}>
+          <Form form={form} layout="vertical">
+            <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
+              <Markdown
+                value={form.getFieldValue('description')}
+                onChange={(e) => {
+                  form.setFieldValue('description', e);
+                }}
+              ></Markdown>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>{t('deployments.header1')}</TableCell>
+            <TableCell>RECOMMENDED</TableCell>
             <TableCell>{t('deployments.header2')}</TableCell>
             <TableCell>{t('deployments.header3')}</TableCell>
             <TableCell>{t('deployments.header4')}</TableCell>
-            {/* <TableCell>{t('general.action')}</TableCell> */}
+            <TableCell>{t('general.action')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {deployments.map((deployment, index) => (
-            <TableRow>
+            <TableRow key={index}>
               <TableCell>
                 <p className={styles.value}>{deployment.version}</p>
+              </TableCell>
+              <TableCell>
+                <p className={styles.value}>
+                  <Radio checked>RECOMMENDED</Radio>
+                </p>
               </TableCell>
               <TableCell>
                 <div className={styles.deploymentId}>
@@ -57,6 +121,18 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId }) => {
                 <p className={styles.value}>
                   {deployment.createdAt ? dayjs(deployment.createdAt).utc(true).fromNow() : 'N/A'}
                 </p>
+              </TableCell>
+              <TableCell>
+                <Typography.Link
+                  active
+                  onClick={() => {
+                    form.setFieldValue('description', deployment.description || '');
+                    setCurrentDeployment(deployment);
+                    setDeploymentModal(true);
+                  }}
+                >
+                  Edit
+                </Typography.Link>
               </TableCell>
             </TableRow>
           ))}

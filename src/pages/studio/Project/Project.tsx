@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import { Markdown, Typography } from '@subql/components';
-import { Breadcrumb, Button, Form, Input, Modal } from 'antd';
+import { Breadcrumb, Button, Checkbox, Form, Input, Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
 
@@ -13,7 +13,7 @@ import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
 import { parseError, renderAsync } from '../../../utils';
-import DeploymentsTab from './Deployments';
+import DeploymentsTab, { DeploymendRef } from './Deployments';
 import styles from './Project.module.css';
 
 const Project: React.FC = () => {
@@ -24,12 +24,20 @@ const Project: React.FC = () => {
   const [form] = useForm();
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const createDeployment = useCreateDeployment(id ?? '');
+  const deploymentsRef = React.useRef<DeploymendRef>(null);
+  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
 
   const handleSubmitCreate = async () => {
-    await form.validateFields();
-    await createDeployment(form.getFieldsValue());
-    form.resetFields();
-    setDeploymentModal(false);
+    try {
+      setAddDeploymentsLoading(true);
+      await form.validateFields();
+      await createDeployment(form.getFieldsValue());
+      await deploymentsRef.current?.refresh();
+      form.resetFields();
+      setDeploymentModal(false);
+    } finally {
+      setAddDeploymentsLoading(false);
+    }
   };
 
   return renderAsync(asyncProject, {
@@ -63,6 +71,7 @@ const Project: React.FC = () => {
             okButtonProps={{
               shape: 'round',
               size: 'large',
+              loading: addDeploymentsLoading,
             }}
             onOk={() => {
               handleSubmitCreate();
@@ -76,11 +85,14 @@ const Project: React.FC = () => {
                 <Form.Item label="Version" name="version" rules={[{ required: true }]}>
                   <Input size="large" placeholder="Enter version"></Input>
                 </Form.Item>
-                <Form.Item label="Deployment Description" name="deploymentDesc" rules={[{ required: true }]}>
+                <Form.Item name="recommended">
+                  <Checkbox>Set as recommended version</Checkbox>
+                </Form.Item>
+                <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
                   <Markdown
-                    value={form.getFieldValue('deploymentDesc')}
+                    value={form.getFieldValue('description')}
                     onChange={(e) => {
-                      form.setFieldValue('deploymentDesc', e);
+                      form.setFieldValue('description', e);
                     }}
                   ></Markdown>
                 </Form.Item>
@@ -152,6 +164,7 @@ const Project: React.FC = () => {
               {project.metadata.categories?.map((category) => {
                 return (
                   <div
+                    key={category}
                     style={{
                       padding: '8px 16px',
                       background: 'rgba(67, 136, 221, 0.10)',
@@ -190,6 +203,7 @@ const Project: React.FC = () => {
               </Typography.Link>
             </div>
             <DeploymentsTab
+              ref={deploymentsRef}
               projectId={id ?? ''}
               currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
             />

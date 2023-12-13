@@ -6,11 +6,13 @@ import { ContractReceipt } from '@ethersproject/contracts';
 import { useProjectMetadata, useProjectRegistry } from '../containers';
 import { NewDeployment } from '../models';
 
-export function useCreateDeployment(projectId: string): (deploymentDetails: NewDeployment) => Promise<ContractReceipt> {
+export function useCreateDeployment(
+  projectId: string,
+): (deploymentDetails: NewDeployment & { recommended: boolean }) => Promise<ContractReceipt> {
   const projectRegistry = useProjectRegistry();
   const { uploadVersionMetadata } = useProjectMetadata();
 
-  const createDeployment = async (deploymentDetails: NewDeployment) => {
+  const createDeployment = async (deploymentDetails: NewDeployment & { recommended: boolean }) => {
     const versionCid = await uploadVersionMetadata({
       version: deploymentDetails.version,
       description: deploymentDetails.description,
@@ -18,7 +20,12 @@ export function useCreateDeployment(projectId: string): (deploymentDetails: NewD
 
     console.log('Uploaded version details', versionCid);
 
-    const tx = await projectRegistry.updateDeployment(projectId, deploymentDetails.deploymentId, versionCid);
+    const tx = await projectRegistry.updateDeployment(
+      projectId,
+      deploymentDetails.deploymentId,
+      versionCid,
+      deploymentDetails.recommended,
+    );
 
     return await tx.wait(1);
   };

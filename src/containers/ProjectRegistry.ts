@@ -80,6 +80,7 @@ function useProjectRegistryImpl(logger: Logger) {
     id: BigNumberish,
     deploymentId: string,
     version: string,
+    recommended?: boolean,
   ): Promise<ContractTransaction> => {
     if (!contracts) {
       throw new Error('ProjectRegistry contract not available');
@@ -90,7 +91,7 @@ function useProjectRegistryImpl(logger: Logger) {
       id,
       cidToBytes32(deploymentId),
       cidToBytes32(version),
-      true,
+      !!recommended,
     );
 
     tx.wait().then((receipt) => {
