@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { CloseOutlined } from '@ant-design/icons';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Markdown, Typography } from '@subql/components';
+import { Markdown, Spinner, Typography } from '@subql/components';
 import { Button, Modal, Result } from 'antd';
 import clsx from 'clsx';
 import { Field, Form, Formik } from 'formik';
 
 import { FTextInput, ImageInput } from '../../../components';
-import { useCreateProject, useRouteQuery } from '../../../hooks';
+import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { isEthError, parseError } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -24,19 +24,38 @@ const Create: React.FC = () => {
   const { t } = useTranslation();
 
   const query = useRouteQuery();
+  const asyncProject = useProject(query.get('id') ?? '');
+
+  const isEdit = React.useMemo(() => query.get('id'), [query]);
 
   const navigate = useNavigate();
   const createProject = useCreateProject();
+  const updateMetadata = useUpdateProjectMetadata(query.get('id') ?? '');
 
   const [submitError, setSubmitError] = React.useState<string>();
 
   const handleSubmit = React.useCallback(
     async (project: FormCreateProjectMetadata & { versionDescription: string }) => {
       try {
-        // Form can give us a File type that doesn't match the schema
-        const queryId = await createProject(project);
+        let resultId = query.get('id');
+        if (isEdit) {
+          const payload = {
+            name: project.name,
+            description: project.description,
+            websiteUrl: project.websiteUrl,
+            codeUrl: project.codeUrl,
+            image: project.image,
+            version: project.version,
+            versionDescription: project.versionDescription,
+          };
+          return;
+          await updateMetadata(payload);
+        } else {
+          // Form can give us a File type that doesn't match the schema
+          const queryId = await createProject(project);
 
-        const idHex = BigNumber.from(queryId).toHexString();
+          resultId = BigNumber.from(queryId).toHexString();
+        }
 
         const { destroy } = Modal.info({
           width: 572,
@@ -61,7 +80,7 @@ const Create: React.FC = () => {
                   shape="round"
                   size="large"
                   onClick={() => {
-                    navigate(`${STUDIO_PROJECT_NAV}/${idHex}`);
+                    navigate(`${STUDIO_PROJECT_NAV}/${resultId}`);
                   }}
                 >
                   View project in Explorer
@@ -81,8 +100,15 @@ const Create: React.FC = () => {
         setSubmitError(parseError(e));
       }
     },
-    [navigate, createProject, t],
+    [navigate, createProject, t, isEdit],
   );
+
+  if (isEdit && !asyncProject.data)
+    return (
+      <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Spinner></Spinner>
+      </div>
+    );
 
   return (
     <div>
@@ -96,8 +122,13 @@ const Create: React.FC = () => {
           version: '1.0.0',
           versionDescription: '',
           deploymentId: query.get('deploymentId') ?? '',
+          ...(isEdit ? asyncProject.data?.metadata : {}),
         }}
-        validationSchema={projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))}
+        validationSchema={
+          isEdit
+            ? projectMetadataSchema.shape({})
+            : projectMetadataSchema.shape({}).concat(newDeploymentSchema.shape({}))
+        }
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, values, isSubmitting, submitForm, errors }) => {
@@ -124,7 +155,7 @@ const Create: React.FC = () => {
                       shape="round"
                       size="large"
                     >
-                      Publish
+                      {isEdit ? 'Save Changes' : 'Publish'}
                     </Button>
                   </div>
                 </div>
@@ -157,29 +188,36 @@ const Create: React.FC = () => {
                   </Field>
                   <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
                   <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
-                  <p className={styles.deployment}>Deployment Details</p>
-                  <FTextInput label={t('deployment.create.version')} id="version" />
-                  <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
-                  <Typography>{t('studio.create.versionDesc')}</Typography>
-                  <Field name="versionDescription">
-                    {({
-                      field,
-                      form,
-                    }: {
-                      field: { name: string; value: string };
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      form: { setFieldValue: (field: string, val: any) => void };
-                    }) => {
-                      return (
-                        <Markdown
-                          value={field.value}
-                          onChange={(e) => {
-                            form.setFieldValue(field.name, e);
-                          }}
-                        />
-                      );
-                    }}
-                  </Field>
+                  {isEdit ? (
+                    ''
+                  ) : (
+                    <>
+                      <p className={styles.deployment}>Deployment Details</p>
+                      <FTextInput label={t('deployment.create.version')} id="version" />
+                      <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
+                      <Typography>{t('studio.create.versionDesc')}</Typography>
+                      <Field name="versionDescription">
+                        {({
+                          field,
+                          form,
+                        }: {
+                          field: { name: string; value: string };
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          form: { setFieldValue: (field: string, val: any) => void };
+                        }) => {
+                          return (
+                            <Markdown
+                              value={field.value}
+                              onChange={(e) => {
+                                form.setFieldValue(field.name, e);
+                              }}
+                            />
+                          );
+                        }}
+                      </Field>
+                    </>
+                  )}
+
                   {submitError && <Typography className={styles.error}>{submitError}</Typography>}
                 </div>
               </div>

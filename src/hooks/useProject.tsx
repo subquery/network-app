@@ -20,7 +20,7 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
   const [cacheBreak, setCacheBreak] = useState<number>(0);
 
   const sub = useCallback(async () => {
-    if (!contracts) {
+    if (!contracts || !id) {
       return () => undefined;
     }
 
@@ -58,7 +58,7 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     }
 
     const metadata = await getMetadataFromCid(query.metadata);
-    console.warn(query);
+
     return {
       id,
       owner: query.owner,

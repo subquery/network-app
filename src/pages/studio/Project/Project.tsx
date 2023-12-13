@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import { Markdown, Typography } from '@subql/components';
-import { Breadcrumb, Form, Input, Modal } from 'antd';
+import { Breadcrumb, Button, Form, Input, Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
 
@@ -41,10 +41,9 @@ const Project: React.FC = () => {
         return <span>Project doesn't exist</span>;
       }
 
-      // @ts-expect-error
-      // if (project.owner !== account) {
-      //   navigate('/studio');
-      // }
+      if (project.owner !== account) {
+        navigate('/studio');
+      }
 
       return (
         <div>
@@ -120,6 +119,17 @@ const Project: React.FC = () => {
                   <Typography variant="h4" weight={600}>
                     {project.metadata.name}
                   </Typography>
+
+                  <Button
+                    type="primary"
+                    shape="round"
+                    size="large"
+                    onClick={() => {
+                      navigate(`/studio/create?id=${project.id}`);
+                    }}
+                  >
+                    Edit
+                  </Button>
                 </div>
               </div>
             </div>
