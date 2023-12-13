@@ -67,6 +67,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
               codeUrl: '',
               type: 'SUBQUERY',
               versionDescription: '',
+              categories: [],
             };
 
         const deploymentId = indexerDeployment?.deployment?.id;
