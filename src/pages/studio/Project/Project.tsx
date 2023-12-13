@@ -74,11 +74,11 @@ const Project: React.FC = () => {
                 <Form.Item label="Version" name="version" rules={[{ required: true }]}>
                   <Input size="large" placeholder="Enter version"></Input>
                 </Form.Item>
-                <Form.Item label="Deployment Description" name="deploymentDesc" rules={[{ required: true }]}>
+                <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
                   <Markdown
-                    value={form.getFieldValue('deploymentDesc')}
+                    value={form.getFieldValue('description')}
                     onChange={(e) => {
-                      form.setFieldValue('deploymentDesc', e);
+                      form.setFieldValue('description', e);
                     }}
                   ></Markdown>
                 </Form.Item>
