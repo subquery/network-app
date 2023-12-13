@@ -1,11 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren, useMemo } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
-import { useStudioEnabled } from '@hooks';
-import { entryLinks, externalAppLinks, studioLink } from '@utils/links';
 
 import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';
@@ -40,15 +38,11 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
 };
 
 const RenderRouter: React.FC = () => {
-  const studioEnabled = useStudioEnabled();
-  const calEntryLinks = useMemo(() => (studioEnabled ? [...entryLinks, studioLink] : [...entryLinks]), [studioEnabled]);
-
   return (
     <BrowserRouter>
       <div className="Main">
         <div className="Header">
-          {/* TODO: replace with component from ui library */}
-          <Header appNavigation={calEntryLinks} dropdownLinks={{ label: 'Kepler', links: externalAppLinks }} />
+          <Header />
         </div>
 
         <div className="Content">

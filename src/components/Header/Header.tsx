@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { BsList, BsX } from 'react-icons/bs';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AccountActions } from '@components/AccountActions';
+import { useStudioEnabled } from '@hooks';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Button, Dropdown, MenuWithDesc, Typography } from '@subql/components';
-import { Divider } from 'antd';
+import { Button, Header as SubqlHeader } from '@subql/components';
+import { entryLinks, externalAppLinks } from '@utils/links';
 import clsx from 'clsx';
 import { useAccount } from 'wagmi';
 
@@ -35,177 +35,58 @@ export interface AppNavigation {
   dropdown?: AppLink[];
 }
 
-const isExternalLink = (to: string) => to.startsWith('https') || to.startsWith('http');
-
-const renderLink = (to: string, label: string) => {
-  if (!isExternalLink(to)) {
-    return (
-      <Typography>
-        <NavLink to={to} className={({ isActive }) => clsx(styles.navLink, isActive && styles.navLinkCurrent)}>
-          {label}
-        </NavLink>
-      </Typography>
-    );
-  }
-
-  return (
-    <Button
-      href={to}
-      target="_blank"
-      className={styles.navLink}
-      rel="noreferrer"
-      type="link"
-      label={label}
-      colorScheme="neutral"
-    />
-  );
-};
-
-export interface LeftHeaderProps {
-  leftElement?: React.ReactNode;
-  dropdownLinks?: DropdownLink;
-  showDivider?: boolean;
-}
-const LeftHeader = ({ leftElement, dropdownLinks, showDivider }: LeftHeaderProps) => {
-  const sortedDropdownLinks = !leftElement && dropdownLinks && (
-    <div className={clsx(styles.leftElement, styles.headerHeight)} id="leftHeader">
-      <Dropdown
-        label={dropdownLinks.label}
-        LeftLabelIcon={<img src={'/static/appIcon.svg'} alt="SubQuery Apps" />}
-        menuitem={dropdownLinks.links.map((label, key) => ({
-          key,
-          label: <MenuWithDesc title={label.label} description={label.description} className={styles.dropMenu} />,
-        }))}
-        active
-        menuClassName={styles.menuOverlay}
-        onMenuItemClick={({ key }) => {
-          window.open(dropdownLinks.links[parseInt(key)]?.link ?? '/', '_blank');
-        }}
-        getPopupContainer={() => document.getElementById('leftHeader') as HTMLElement}
-      />
-    </div>
-  );
-
-  return (
-    <div className={styles.leftHeader}>
-      <>{leftElement}</>
-      <>{sortedDropdownLinks}</>
-      {showDivider && <Divider type="vertical" />}
-    </div>
-  );
-};
-
-export interface MiddleHeaderProps {
-  middleElement?: React.ReactNode;
-  appNavigation?: AppNavigation[];
-}
-const MiddleHeader = ({ middleElement, appNavigation }: MiddleHeaderProps) => {
-  const navigate = useNavigate();
-
-  const sortedAppNavigation = !middleElement && appNavigation && (
-    <div className={clsx(styles.flexCenter, styles.headerHeight, styles.middleHeader)}>
-      {appNavigation.map((nav, idx) => {
-        if (nav.dropdown) {
-          const dropdownMenu = nav.dropdown.map((menu) => ({ key: menu.link, label: menu.label }));
-          return (
-            <div key={idx} className={clsx(styles.appDropdown, styles.headerHeight)}>
-              <Dropdown
-                menuitem={dropdownMenu}
-                label={nav.label}
-                onMenuItemClick={({ key }) => {
-                  if (isExternalLink(key)) {
-                    window.open(key, '_blank');
-                  } else {
-                    navigate(key);
-                  }
-                }}
-              />
-            </div>
-          );
-        }
-        return (
-          <div key={idx} className={styles.headerItem}>
-            {renderLink(nav.link ?? '/', nav.label)}
-          </div>
-        );
-      })}
-    </div>
-  );
-
-  return (
-    <>
-      <>{middleElement}</>
-      <>{sortedAppNavigation}</>
-    </>
-  );
-};
-
-export interface HeaderProps {
-  logoLink?: string;
-  dropdownLinks?: DropdownLink;
-  appNavigation?: AppNavigation[];
-  leftElement?: React.ReactElement;
-  middleElement?: React.ReactElement;
-  rightElement?: React.ReactElement;
-  className?: string;
-}
-
-export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
-  logoLink,
-  dropdownLinks,
-  appNavigation,
-  leftElement,
-  middleElement,
-  rightElement,
-  className,
-}) => {
+export const Header: React.FC = () => {
   const { address: account } = useAccount();
-  const [showExpand, setShowExpand] = React.useState(false);
+  const navigate = useNavigate();
+  const studioEnabled = useStudioEnabled();
+  const calEntryLinks = React.useMemo(() => {
+    if (!studioEnabled) {
+      return entryLinks.map((entry) => {
+        if (entry.key === 'explorer') {
+          return {
+            ...entry,
+            dropdown: undefined,
+          };
+        }
+        return entry;
+      });
+    }
+    return entryLinks;
+  }, [studioEnabled]);
 
   return (
-    <div className={clsx(styles.header, styles.flexCenter, rightElement && styles.justifyBetween, className)}>
-      <div className={clsx(styles.flexCenter, styles.headerInner)}>
-        <div className={styles.headerLogo}>
-          <a href={logoLink ?? '/'}>
-            <img src={'/static/logo.png'} alt="SubQuery Logo" width={140} />
-          </a>
-          <span style={{ flex: 1 }}></span>
-
-          <div
-            className={styles.expandIcon}
-            onClick={() => {
-              setShowExpand(!showExpand);
-            }}
-          >
-            {showExpand ? <BsX></BsX> : <BsList></BsList>}
-          </div>
-        </div>
-
-        <div className={clsx(styles.headerRight, showExpand ? styles.showExpand : styles.hideOnMobile)}>
-          <LeftHeader leftElement={leftElement} dropdownLinks={dropdownLinks} showDivider />
-          <MiddleHeader middleElement={middleElement} appNavigation={appNavigation} />
-          <span style={{ flex: 1 }}></span>
-          <div className={clsx(styles.right)}>
-            {account ? (
-              <AccountActions account={account} />
-            ) : (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => {
-                  return (
-                    <Button
-                      onClick={() => {
-                        openConnectModal();
-                      }}
-                      type="secondary"
-                      label="Connect"
-                    ></Button>
-                  );
-                }}
-              </ConnectButton.Custom>
-            )}
-          </div>
-        </div>
-      </div>
+    <div className={styles.header}>
+      <SubqlHeader
+        navigate={(link) => {
+          navigate(link);
+        }}
+        appNavigation={calEntryLinks}
+        dropdownLinks={{ label: 'Kepler', links: externalAppLinks }}
+        rightElement={
+          <>
+            <span style={{ flex: 1 }}></span>
+            <div className={clsx(styles.right)}>
+              {account ? (
+                <AccountActions account={account} />
+              ) : (
+                <ConnectButton.Custom>
+                  {({ openConnectModal }) => {
+                    return (
+                      <Button
+                        onClick={() => {
+                          openConnectModal();
+                        }}
+                        type="secondary"
+                        label="Connect"
+                      ></Button>
+                    );
+                  }}
+                </ConnectButton.Custom>
+              )}
+            </div>
+          </>
+        }
+      ></SubqlHeader>
     </div>
   );
 };
