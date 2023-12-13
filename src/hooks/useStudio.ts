@@ -12,8 +12,6 @@ export function useStudioEnabled() {
   const [studioEnabled, setStudioEnabled] = useState(false);
 
   const checkStudioEnabled = useCallback(async () => {
-    setStudioEnabled(true);
-    return true;
     if (!contracts || !account) return;
     const studioEnabled = await contracts.queryRegistry.creatorWhitelist(account);
     setStudioEnabled(studioEnabled);
