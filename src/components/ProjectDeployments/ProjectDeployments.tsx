@@ -38,7 +38,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId }) => {
         </TableHead>
         <TableBody>
           {deployments.map((deployment, index) => (
-            <TableRow>
+            <TableRow key={index}>
               <TableCell>
                 <p className={styles.value}>{deployment.version}</p>
               </TableCell>
