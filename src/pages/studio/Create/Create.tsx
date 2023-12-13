@@ -48,7 +48,6 @@ const Create: React.FC = () => {
             version: project.version,
             versionDescription: project.versionDescription,
           };
-          return;
           await updateMetadata(payload);
         } else {
           // Form can give us a File type that doesn't match the schema
