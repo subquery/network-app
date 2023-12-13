@@ -122,7 +122,11 @@ function useProjectRegistryImpl(logger: Logger) {
         projectRegistry.tokenURI(id),
       ]);
 
-      const deploymentInfo = await projectRegistry.deploymentInfos(cidToBytes32(project.latestDeploymentId));
+      const deploymentInfo = await projectRegistry.deploymentInfos(
+        project.latestDeploymentId.startsWith('Qm')
+          ? cidToBytes32(project.latestDeploymentId)
+          : project.latestDeploymentId,
+      );
 
       projectCache.current[BigNumber.from(id).toString()] = {
         owner,

@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
-import { renderAsync } from '../../../utils';
+import { parseError, renderAsync } from '../../../utils';
 import DeploymentsTab from './Deployments';
 import styles from './Project.module.css';
 
@@ -34,7 +34,9 @@ const Project: React.FC = () => {
 
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
-    error: (error: Error) => <span>{`Failed to load project: ${error.message}`}</span>,
+    error: (error: Error) => {
+      return <Typography>{`Failed to load project: ${parseError(error)}`}</Typography>;
+    },
     data: (project) => {
       if (!project) {
         // Should never happen
@@ -134,12 +136,33 @@ const Project: React.FC = () => {
               </div>
             </div>
 
-            <Typography variant="large" weight={600} style={{ marginBottom: 24 }}>
+            <Typography variant="large" weight={600} style={{ margin: '24px 0' }}>
               Project Detail
             </Typography>
 
             <div style={{ marginBottom: 16 }}>
               <Markdown.Preview>{project.metadata.description}</Markdown.Preview>
+            </div>
+
+            <Typography variant="large" style={{ margin: '24px 0 8px 0' }}>
+              Categories
+            </Typography>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              {project.metadata.categories?.map((category) => {
+                return (
+                  <div
+                    style={{
+                      padding: '8px 16px',
+                      background: 'rgba(67, 136, 221, 0.10)',
+                      color: 'var(--sq-blue600)',
+                      borderRadius: 100,
+                    }}
+                  >
+                    {category}
+                  </div>
+                );
+              })}
             </div>
 
             <ExternalLink icon="globe" link={project.metadata.websiteUrl} />

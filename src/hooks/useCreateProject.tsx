@@ -43,7 +43,7 @@ export function useCreateProject(): (params: P) => Promise<BigNumberish> {
         throw new Error('No successful events');
       }
 
-      return event.args?.['queryId'];
+      return event.args?.['tokenId'];
     },
     [ipfs, uploadMetadata, registerProject, uploadVersionMetadata],
   );

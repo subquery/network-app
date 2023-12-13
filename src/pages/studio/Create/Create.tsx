@@ -7,17 +7,40 @@ import { useNavigate } from 'react-router';
 import { CloseOutlined } from '@ant-design/icons';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Markdown, Spinner, Typography } from '@subql/components';
-import { Button, Modal, Result } from 'antd';
+import { Button, Checkbox, Modal, Radio, Result } from 'antd';
 import clsx from 'clsx';
-import { Field, Form, Formik } from 'formik';
+import { Field, FieldArray, Form, Formik } from 'formik';
 
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
 import { isEthError, parseError, ROUTES } from '../../../utils';
-import styles from './Create.module.css';
+import styles from './Create.module.less';
 
 const { STUDIO_PROJECT_NAV } = ROUTES;
+
+const categoriesOptions = [
+  {
+    label: 'Dictionary',
+    value: 'Dictionary',
+  },
+  {
+    label: 'DeFi',
+    value: 'DeFi',
+  },
+  {
+    label: 'Oracle',
+    value: 'Oracle',
+  },
+  {
+    label: 'Wallet',
+    value: 'Wallet',
+  },
+  {
+    label: 'NFT',
+    value: 'NFT',
+  },
+];
 
 const Create: React.FC = () => {
   const { t } = useTranslation();
@@ -47,6 +70,7 @@ const Create: React.FC = () => {
             version: project.version,
             versionDescription: project.versionDescription,
             type: project.type,
+            categories: project.categories,
           };
           await updateMetadata(payload);
         } else {
@@ -56,7 +80,8 @@ const Create: React.FC = () => {
           resultId = BigNumber.from(queryId).toHexString();
         }
 
-        const { destroy } = Modal.info({
+        const { destroy } = Modal.success({
+          className: styles.successModal,
           width: 572,
           icon: (
             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
@@ -80,6 +105,7 @@ const Create: React.FC = () => {
                   size="large"
                   onClick={() => {
                     navigate(`${STUDIO_PROJECT_NAV}/${resultId}`);
+                    destroy();
                   }}
                 >
                   View project in Explorer
@@ -122,6 +148,7 @@ const Create: React.FC = () => {
           version: '1.0.0',
           versionDescription: '',
           deploymentId: query.get('deploymentId') ?? '',
+          categories: [],
           ...(isEdit ? asyncProject.data?.metadata : {}),
         }}
         validationSchema={
@@ -183,6 +210,54 @@ const Create: React.FC = () => {
                             form.setFieldValue(field.name, e);
                           }}
                         />
+                      );
+                    }}
+                  </Field>
+                  <Typography>
+                    Categories
+                    <Typography type="secondary" variant="medium" style={{ marginLeft: 8 }}>
+                      Select up to 2
+                    </Typography>
+                  </Typography>
+
+                  <FieldArray
+                    name="categories"
+                    render={(arrayHelper) => {
+                      return (
+                        <div className={styles.checkbox}>
+                          <Checkbox.Group
+                            options={categoriesOptions}
+                            value={arrayHelper.form.values.categories}
+                            onChange={(e) => {
+                              arrayHelper.form.setFieldValue('categories', e);
+                            }}
+                          ></Checkbox.Group>
+                        </div>
+                      );
+                    }}
+                  ></FieldArray>
+
+                  <Typography>Project Type</Typography>
+                  <Field name="type">
+                    {({
+                      field,
+                      form,
+                    }: {
+                      field: { name: string; value: string };
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      form: { setFieldValue: (field: string, val: any) => void };
+                    }) => {
+                      return (
+                        <Radio.Group
+                          value={field.value}
+                          onChange={(val) => {
+                            form.setFieldValue(field.name, val.target.value);
+                          }}
+                          disabled={isEdit ? true : false}
+                        >
+                          <Radio value="SUBQUERY">SubQuery</Radio>
+                          <Radio value="RPC">RPC</Radio>
+                        </Radio.Group>
                       );
                     }}
                   </Field>

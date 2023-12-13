@@ -18,6 +18,7 @@ export const projectMetadataSchema = yup.object({
   websiteUrl: yup.string().optional().url(),
   codeUrl: yup.string().optional().url(),
   versionDescription: yup.string().default('').optional(),
+  categories: yup.array().max(2),
 });
 
 export type ProjectMetadata = yup.Asserts<typeof projectMetadataSchema>;

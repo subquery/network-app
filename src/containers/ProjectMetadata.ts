@@ -16,6 +16,7 @@ function useProjectMetadataImpl() {
 
   const getMetadataFromCid = async (cid: string): Promise<ProjectMetadata> => {
     const result = await catSingle(cid);
+
     const rawMeta = JSON.parse(Buffer.from(result).toString('utf8'));
     return projectMetadataSchema.validate({ type: 'SUBQUERY', ...rawMeta });
   };
