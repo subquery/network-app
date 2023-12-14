@@ -15,7 +15,12 @@ import { cloneDeep } from 'lodash-es';
 
 const cacheKey = makeCacheKey('localProjectWithMetadata');
 
-type ProjectWithMetadata = { description: string; versionDescription: string; name: string } & ProjectFieldsFragment;
+type ProjectWithMetadata = {
+  description: string;
+  versionDescription: string;
+  name: string;
+  categories?: string[];
+} & ProjectFieldsFragment;
 
 export const useLocalProjects = () => {
   // this hooks want to do these things:
@@ -69,7 +74,7 @@ export const useLocalProjects = () => {
             const metadata =
               rawMetadata.status === 'fulfilled'
                 ? rawMetadata.value
-                : { name: '', description: '', versionDescription: '' };
+                : { name: '', description: '', versionDescription: '', categories: [] };
             return {
               ...project,
               ...metadata,
@@ -104,7 +109,12 @@ export const useLocalProjects = () => {
     // See fetchAllProject. It's a low-priority(requestsIdleCallback) fetch
     // if there have cache, use cache first, and then fetch from initial to update.
     const cached = await localforage.getItem<
-      ({ description: string; versionDescription: string; name: string } & ProjectFieldsFragment)[]
+      ({
+        description: string;
+        versionDescription: string;
+        name: string;
+        categories?: string[];
+      } & ProjectFieldsFragment)[]
     >(cacheKey);
     if (cached) {
       projects.current = cached;
@@ -116,13 +126,21 @@ export const useLocalProjects = () => {
     fetchAllProjects();
   };
 
-  const getProjectBySearch = async (params: { offset: number; keywords: string }) => {
+  const getProjectBySearch = async (params: { offset: number; keywords: string; categories?: string[] }) => {
     await waitForSomething({
       func: () => !loading.current,
     });
-    const total = projects.current.filter((i) =>
+    let total = projects.current.filter((i) =>
       `${i.name}-${i.versionDescription}-${i.description}`.toLowerCase().includes(params.keywords.toLowerCase()),
     );
+
+    if (params.categories && params.categories.length) {
+      const setCategories = new Set(params.categories);
+      total = total.filter((i) => {
+        if (!i.categories) return false;
+        return i.categories?.filter((ii) => setCategories.has(ii)).length;
+      });
+    }
 
     return {
       data: {

@@ -4,8 +4,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import { useProjectList } from '@hooks/useProjectList';
-import { Typography } from '@subql/components';
-import { Button, Form, Input, Modal } from 'antd';
+import { Modal, Typography } from '@subql/components';
+import { Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 
 import { useWeb3 } from '../../../containers';

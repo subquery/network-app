@@ -4,9 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateDeployment } from '@hooks';
-import { Markdown, openNotification, Typography } from '@subql/components';
+import { Markdown, Modal, openNotification, Typography } from '@subql/components';
 import { parseError } from '@utils';
-import { Form, Modal, Radio } from 'antd';
+import { Form, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -33,11 +33,9 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
-  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
 
   const handleSubmitUpdate = async () => {
     try {
-      setAddDeploymentsLoading(true);
       await form.validateFields();
       await updateDeployment({
         ...currentDeployment,
@@ -51,8 +49,6 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
         type: 'error',
         description: parseError(e),
       });
-    } finally {
-      setAddDeploymentsLoading(false);
     }
   };
 
@@ -69,16 +65,9 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
           },
         }}
         okText="Update"
-        okButtonProps={{
-          shape: 'round',
-          size: 'large',
-          loading: addDeploymentsLoading,
-        }}
-        onOk={() => {
-          handleSubmitUpdate();
-        }}
+        onSubmit={handleSubmitUpdate}
       >
-        <div style={{ padding: '12px 0' }}>
+        <div>
           <Form form={form} layout="vertical">
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
               <Markdown

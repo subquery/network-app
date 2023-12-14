@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router';
 import { CloseOutlined } from '@ant-design/icons';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { Markdown, openNotification, Spinner, Typography } from '@subql/components';
-import { Button, Checkbox, Modal, Radio, Result } from 'antd';
+import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Typography } from '@subql/components';
+import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { t } from 'i18next';
@@ -202,14 +202,15 @@ const Create: React.FC = () => {
                     render={(arrayHelper) => {
                       return (
                         <div className={styles.checkbox}>
-                          <Checkbox.Group
+                          <SubqlCheckbox.Group
                             options={categoriesOptions}
                             value={arrayHelper.form.values.categories}
                             onChange={(e) => {
                               if (e.length > 2) return;
                               arrayHelper.form.setFieldValue('categories', e);
                             }}
-                          ></Checkbox.Group>
+                            optionType="button"
+                          ></SubqlCheckbox.Group>
                         </div>
                       );
                     }}

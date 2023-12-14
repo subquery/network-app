@@ -1,13 +1,14 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { ProjectCard } from '@components';
 import { useProjectMetadata } from '@containers';
+import { SubqlCheckbox } from '@subql/components';
 import { ProjectFieldsFragment, ProjectsOrderBy } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
-import { notEmpty } from '@utils';
+import { categoriesOptions, notEmpty } from '@utils';
 import { useInfiniteScroll, useMount } from 'ahooks';
 import { Input, Skeleton, Typography } from 'antd';
 
@@ -45,6 +46,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   const [getProject, { error: topError }] = useGetProjectLazyQuery();
 
   const [searchKeywords, setSearchKeywords] = React.useState('');
+  const [filterCategories, setFilterCategories] = useState<string[]>([]);
   const [topProject, setTopProject] = React.useState<ProjectFieldsFragment>();
   const [projects, setProjects] = React.useState<ProjectFieldsFragment[]>([]);
   // ref for fetch, state for render.
@@ -73,20 +75,31 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     }
   };
 
-  const loadMore = async (options?: { refresh?: boolean }) => {
+  const loadMore = async (options?: {
+    refresh?: boolean;
+    searchParams?: { categories?: string[]; keywords?: string };
+  }) => {
     try {
       setLoading(true);
-      if (searchKeywords.length) {
+
+      // TODO: If there have more params, need to optimise
+      const searchParams = {
+        keywords: searchKeywords,
+        categories: filterCategories,
+        ...options?.searchParams,
+      };
+      const isSearch = searchParams.categories.length || searchParams.keywords.length;
+
+      if (isSearch) {
         setInSearchMode(true);
       } else {
         setInSearchMode(false);
       }
-      const api = searchKeywords.length ? getProjectBySearch : getProjects;
-
-      const params = searchKeywords.length
+      const api = isSearch ? getProjectBySearch : getProjects;
+      const params = isSearch
         ? {
             offset: options?.refresh ? 0 : fetchedProejcts.current.length,
-            keywords: searchKeywords,
+            ...searchParams,
           }
         : {
             variables: {
@@ -147,10 +160,51 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     return '';
   }, [inSearchMode, topProject, showTopProject, onProjectClick]);
 
+  const projectListItems = useMemo(() => {
+    if (loading) {
+      return new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
+        return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
+      });
+    }
+    if (projects.length) {
+      return projects.map((project) => (
+        <ProjectItem
+          project={project}
+          key={project.id}
+          onClick={() => {
+            onProjectClick?.(project.id);
+          }}
+        />
+      ));
+    }
+
+    if (inSearchMode) return '';
+    // TODO: ui
+    return 'No Projects';
+  }, [inSearchMode, loading, projects]);
+
   const listsWithSearch = useMemo(() => {
     return (
       <>
         <div style={{ display: 'flex', marginBottom: 32 }}>
+          <div>
+            <SubqlCheckbox.Group
+              value={filterCategories}
+              options={categoriesOptions}
+              onChange={async (val) => {
+                setFilterCategories(val as string[]);
+                setProjects([]);
+                const res = await loadMore({
+                  refresh: true,
+                  searchParams: {
+                    categories: val as string[],
+                  },
+                });
+                mutate(res);
+              }}
+              optionType="button"
+            ></SubqlCheckbox.Group>
+          </div>
           <span style={{ flex: 1 }}></span>
           <Input
             style={{ width: 200, height: 48, padding: 12 }}
@@ -171,24 +225,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         </div>
         <div className={styles.list}>
           {topProjectItem}
-          {projects?.length
-            ? projects.map((project) => (
-                <ProjectItem
-                  project={project}
-                  key={project.id}
-                  onClick={() => {
-                    onProjectClick?.(project.id);
-                  }}
-                />
-              ))
-            : // TODO: update UI
-            loading
-            ? ''
-            : 'No projects'}
-          {loading &&
-            new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
-              return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
-            })}
+          {projectListItems}
         </div>
 
         {inSearchMode && !loading && !projects.length && (

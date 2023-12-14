@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Address, Typography } from '@subql/components';
+import { Button } from 'antd';
 import dayjs from 'dayjs';
 
 import Detail from '../Detail';
@@ -61,6 +62,17 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isU
             <VersionDropdown />
           </div>
           <Address address={project.owner} size="small" />
+
+          <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {project.metadata.categories &&
+              project.metadata.categories.map((val) => {
+                return (
+                  <Button key={val} type="primary" shape="round" className="staticButton">
+                    {val}
+                  </Button>
+                );
+              })}
+          </div>
         </div>
         <div className={styles.lower}>
           {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}

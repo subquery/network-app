@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Modal as AntDModal, Steps as AntDSteps, Typography } from 'antd';
+import { Modal as SubqlModal } from '@subql/components';
+import { Steps as AntDSteps, Typography } from 'antd';
 import clsx from 'clsx';
 
 import Spinner from '../Spinner';
@@ -54,7 +55,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <AntDModal
+    <SubqlModal
       title={<Title />}
       open={visible}
       onOk={onOk}
@@ -76,6 +77,6 @@ export const Modal: React.FC<ModalProps> = ({
           {content}
         </>
       )}
-    </AntDModal>
+    </SubqlModal>
   );
 };

@@ -4,9 +4,8 @@
 import { useEffect, useState } from 'react';
 import { WarningOutlined } from '@ant-design/icons';
 import { useIPFS } from '@containers';
-import { Typography } from '@subql/components';
+import { Modal, Typography } from '@subql/components';
 import { waitForSomething } from '@utils/waitForSomething';
-import { Modal } from 'antd';
 
 export const useGetIfUnsafeDeployment = (currentDeploymentId?: string) => {
   const { catSingle } = useIPFS();
