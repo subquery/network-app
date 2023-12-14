@@ -54,7 +54,7 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isU
       <div className={styles.inner}>
         <div className={styles.upper}>
           <div className={styles.titleVersion}>
-            <Typography variant="h4" className={styles.name} weight={600}>
+            <Typography variant="h4" className={styles.name} weight={600} style={{ marginRight: 8 }}>
               {project.metadata.name}
             </Typography>
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}

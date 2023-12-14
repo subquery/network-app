@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
+import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Spinner, Typography } from '@subql/components';
 import { Tooltip } from 'antd';
 
@@ -22,10 +23,11 @@ type Props = {
   deploymentVersion?: string;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploymentVersion }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId }) => {
   const { t } = useTranslation();
 
   const deploymentMeta = useDeploymentMetadata(deploymentId);
+  const { isUnsafe } = useGetIfUnsafeDeployment(deploymentId);
   const versionHeader = deploymentMeta.data?.version
     ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
     : t('projects.deploymentId');
@@ -42,7 +44,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, deploym
                 {project?.name}
               </Typography>
             )}
-            {!!deploymentMeta.data?.unsafe && <UnsafeWarn></UnsafeWarn>}
+            {isUnsafe && <UnsafeWarn></UnsafeWarn>}
           </div>
           <div className={project?.name ? '' : styles.deployment}>
             <Typography variant="small" className={styles.text}>

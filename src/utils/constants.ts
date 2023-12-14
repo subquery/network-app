@@ -26,3 +26,42 @@ export const tokenNames: { [key: string]: string } = {
   [STABLE_TOKEN_ADDRESS]: STABLE_TOKEN,
   [SQT_TOKEN_ADDRESS]: TOKEN,
 };
+
+export const categoriesOptions = [
+  {
+    label: 'Dictionary',
+    value: 'Dictionary',
+  },
+  {
+    label: 'DeFi',
+    value: 'DeFi',
+  },
+  {
+    label: 'Oracle',
+    value: 'Oracle',
+  },
+  {
+    label: 'Wallet',
+    value: 'Wallet',
+  },
+  {
+    label: 'NFT',
+    value: 'NFT',
+  },
+  {
+    label: 'Gaming',
+    value: 'Gaming',
+  },
+  {
+    label: 'Governance',
+    value: 'Governance',
+  },
+  {
+    label: 'Analytic',
+    value: 'Analytic',
+  },
+  {
+    label: 'Privacy',
+    value: 'Privacy',
+  },
+];

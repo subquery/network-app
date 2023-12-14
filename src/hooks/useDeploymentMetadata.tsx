@@ -12,7 +12,6 @@ type DeploymentMetadata = {
   versionId: string;
   version: string;
   description: string;
-  unsafe: boolean;
 };
 
 export async function getDeploymentMetadata(
@@ -23,13 +22,12 @@ export async function getDeploymentMetadata(
 
   const raw = await catSingle(versionId);
 
-  const { version, description, unsafe = false } = JSON.parse(Buffer.from(raw).toString('utf8'));
+  const { version, description } = JSON.parse(Buffer.from(raw).toString('utf8'));
 
   return {
     versionId,
     version,
     description,
-    unsafe,
   };
 }
 

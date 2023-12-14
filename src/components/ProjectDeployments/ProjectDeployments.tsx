@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateDeployment } from '@hooks';
-import { Markdown, Typography } from '@subql/components';
+import { Markdown, openNotification, Typography } from '@subql/components';
+import { parseError } from '@utils';
 import { Form, Modal, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
@@ -23,9 +24,10 @@ type Props = {
   deployments: Deployment[];
   projectId: string;
   onRefresh: () => Promise<void>;
+  currentDeploymentCid?: string;
 };
 
-const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh }) => {
+const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDeploymentCid, onRefresh }) => {
   const { t } = useTranslation();
   const updateDeployment = useCreateDeployment(projectId);
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
@@ -44,6 +46,11 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh
       await onRefresh();
       form.resetFields();
       setDeploymentModal(false);
+    } catch (e) {
+      openNotification({
+        type: 'error',
+        description: parseError(e),
+      });
     } finally {
       setAddDeploymentsLoading(false);
     }
@@ -103,7 +110,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh
               </TableCell>
               <TableCell>
                 <p className={styles.value}>
-                  <Radio checked>RECOMMENDED</Radio>
+                  <Radio checked={currentDeploymentCid === deployment.deploymentId}>RECOMMENDED</Radio>
                 </p>
               </TableCell>
               <TableCell>

@@ -70,7 +70,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
           version: result.version,
           description: result.description,
           // TODO: backend support
-          recommended: true,
+          recommended: currentDeployment?.deployment === deployment.id,
         };
       }),
     );
@@ -91,9 +91,12 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
         return <div>There has no deployments for this project</div>;
       }
 
+      const sortedDeployments = deployments.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+
       return (
         <ProjectDeployments
-          deployments={deployments}
+          currentDeploymentCid={currentDeployment?.deployment}
+          deployments={sortedDeployments}
           projectId={projectId}
           onRefresh={async () => {
             await asyncDeployments.refetch();

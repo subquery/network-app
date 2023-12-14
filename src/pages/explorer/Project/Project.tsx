@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
+import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
@@ -52,6 +53,7 @@ const ProjectInner: React.FC = () => {
   }, [asyncProject]);
 
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
+  const { isUnsafe } = useGetIfUnsafeDeployment(deploymentId);
 
   const handleChangeVersion = (value: string) => {
     navigate(`${location.pathname}?deploymentId=${value}`);
@@ -131,7 +133,7 @@ const ProjectInner: React.FC = () => {
                 versions={deploymentVersions}
                 currentVersion={deploymentId}
                 onChangeVersion={handleChangeVersion}
-                isUnsafeDeployment={!!asyncDeploymentMetadata.data?.unsafe}
+                isUnsafeDeployment={isUnsafe}
               />
             </div>
             <TabButtons tabs={sortedTabList} withUnderline />
