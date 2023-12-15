@@ -2,22 +2,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import keplerJSON from '@subql/contract-sdk/publish/kepler.json';
+import { SubqueryNetwork } from '@subql/contract-sdk';
+import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { useAccount } from 'wagmi';
 
 export const NETWORK_NAME: SQNetworks = import.meta.env.VITE_NETWORK;
-export const isMainnet = import.meta.env.VITE_NETWORK === 'kepler';
-export const SUPPORTED_NETWORK = (isMainnet ? 'kepler' : 'testnet') as SQNetworks;
+export const isMainnet = import.meta.env.VITE_NETWORK === 'mainnet';
+export const SUPPORTED_NETWORK = (isMainnet ? 'mainnet' : 'testnet') as SQNetworks;
 export const defaultChainId = parseInt(NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].chainId, 16);
 
 export const ECOSYSTEM_NETWORK = NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].chainName;
 
-export const NETWORK_DEPLOYMENT_DETAILS = isMainnet ? keplerJSON : testnetJSON;
+export const NETWORK_DEPLOYMENT_DETAILS = isMainnet ? mainnetJSON : testnetJSON;
 
-export const SQT_TOKEN_ADDRESS = NETWORK_DEPLOYMENT_DETAILS.SQToken.address;
+// TODO: FIXME, Mainnet dont have this yet
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const SQT_TOKEN_ADDRESS = NETWORK_DEPLOYMENT_DETAILS.child.SQToken.address;
 
 export const injectedConntector = new InjectedConnector({
   supportedChainIds: [defaultChainId],
