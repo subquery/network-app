@@ -86,7 +86,6 @@ function useProjectRegistryImpl(logger: Logger) {
       throw new Error('ProjectRegistry contract not available');
     }
 
-    // TODO: front-end page need to provide an option for user to choose if they want to set this deployment as latest
     const tx = await contracts.projectRegistry.addOrUpdateDeployment(
       id,
       cidToBytes32(deploymentId),

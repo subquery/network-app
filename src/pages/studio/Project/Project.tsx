@@ -4,10 +4,14 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
-import { Markdown, Typography } from '@subql/components';
-import { Breadcrumb, Button, Checkbox, Form, Input, Modal } from 'antd';
+import UnsafeWarn from '@components/UnsafeWarn';
+import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
+import { Markdown, Modal, SubqlCheckbox, Typography } from '@subql/components';
+import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
+
+import { ProjectDetails } from 'src/models';
 
 import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
@@ -16,29 +20,97 @@ import { parseError, renderAsync } from '../../../utils';
 import DeploymentsTab, { DeploymendRef } from './Deployments';
 import styles from './Project.module.css';
 
+export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails }> = ({ id, project }) => {
+  const [form] = useForm();
+  const createDeployment = useCreateDeployment(id ?? '');
+  const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
+
+  const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
+  const deploymentsRef = React.useRef<DeploymendRef>(null);
+
+  const currentDeployment = React.useMemo(
+    () => ({ deployment: project.deploymentId, version: project.version }),
+    [project],
+  );
+
+  const handleSubmitCreate = async () => {
+    await form.validateFields();
+    const processNext = await getIfUnsafeAndWarn(form.getFieldValue('deploymentId'));
+    if (processNext === 'cancel') return;
+    await createDeployment(form.getFieldsValue());
+    await deploymentsRef.current?.refresh();
+    form.resetFields();
+    setDeploymentModal(false);
+  };
+
+  return (
+    <div>
+      <Modal
+        open={deploymentModal}
+        onCancel={() => setDeploymentModal(false)}
+        title="Add New Deployment Version"
+        width={572}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        okText="Add"
+        onSubmit={async () => {
+          await handleSubmitCreate();
+        }}
+      >
+        <div>
+          <Form form={form} layout="vertical">
+            <Form.Item label="Deployment ID" name="deploymentId" rules={[{ required: true }]}>
+              <Input size="large" placeholder="Enter deployment Id"></Input>
+            </Form.Item>
+            <Form.Item label="Version" name="version" rules={[{ required: true }]}>
+              <Input size="large" placeholder="Enter version"></Input>
+            </Form.Item>
+            <Form.Item name="recommended">
+              <SubqlCheckbox>Set as recommended version</SubqlCheckbox>
+            </Form.Item>
+            <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
+              <Markdown
+                value={form.getFieldValue('description')}
+                onChange={(e) => {
+                  form.setFieldValue('description', e);
+                }}
+              ></Markdown>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
+
+      <div className={clsx(styles.content)}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="large" weight={600}>
+            Deployment Details
+          </Typography>
+
+          <Typography.Link
+            active
+            weight={500}
+            onClick={() => {
+              setDeploymentModal(true);
+            }}
+          >
+            Deploy New Version
+          </Typography.Link>
+        </div>
+        <DeploymentsTab ref={deploymentsRef} projectId={id ?? ''} currentDeployment={currentDeployment} />
+      </div>
+    </div>
+  );
+};
+
 const Project: React.FC = () => {
   const { id } = useParams();
   const { account } = useWeb3();
   const asyncProject = useProject(id ?? '');
+  const { isUnsafe } = useGetIfUnsafeDeployment(asyncProject.data?.deploymentId);
   const navigate = useNavigate();
-  const [form] = useForm();
-  const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
-  const createDeployment = useCreateDeployment(id ?? '');
-  const deploymentsRef = React.useRef<DeploymendRef>(null);
-  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
-
-  const handleSubmitCreate = async () => {
-    try {
-      setAddDeploymentsLoading(true);
-      await form.validateFields();
-      await createDeployment(form.getFieldsValue());
-      await deploymentsRef.current?.refresh();
-      form.resetFields();
-      setDeploymentModal(false);
-    } finally {
-      setAddDeploymentsLoading(false);
-    }
-  };
 
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
@@ -56,49 +128,7 @@ const Project: React.FC = () => {
       }
 
       return (
-        <div>
-          <Modal
-            open={deploymentModal}
-            onCancel={() => setDeploymentModal(false)}
-            title="Add New Deployment Version"
-            width={572}
-            cancelButtonProps={{
-              style: {
-                display: 'none',
-              },
-            }}
-            okText="Add"
-            okButtonProps={{
-              shape: 'round',
-              size: 'large',
-              loading: addDeploymentsLoading,
-            }}
-            onOk={() => {
-              handleSubmitCreate();
-            }}
-          >
-            <div style={{ padding: '12px 0' }}>
-              <Form form={form} layout="vertical">
-                <Form.Item label="Deployment ID" name="deploymentId" rules={[{ required: true }]}>
-                  <Input size="large" placeholder="Enter deployment Id"></Input>
-                </Form.Item>
-                <Form.Item label="Version" name="version" rules={[{ required: true }]}>
-                  <Input size="large" placeholder="Enter version"></Input>
-                </Form.Item>
-                <Form.Item name="recommended">
-                  <Checkbox>Set as recommended version</Checkbox>
-                </Form.Item>
-                <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
-                  <Markdown
-                    value={form.getFieldValue('description')}
-                    onChange={(e) => {
-                      form.setFieldValue('description', e);
-                    }}
-                  ></Markdown>
-                </Form.Item>
-              </Form>
-            </div>
-          </Modal>
+        <>
           <div
             className="content-width"
             style={{ padding: '24px 80px 0 80px', display: 'flex', flexDirection: 'column' }}
@@ -145,6 +175,8 @@ const Project: React.FC = () => {
                     Edit
                   </Button>
                 </div>
+
+                <div style={{ marginTop: 8, display: 'flex' }}>{isUnsafe && <UnsafeWarn></UnsafeWarn>}</div>
               </div>
             </div>
 
@@ -163,17 +195,9 @@ const Project: React.FC = () => {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
               {project.metadata.categories?.map((category) => {
                 return (
-                  <div
-                    key={category}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'rgba(67, 136, 221, 0.10)',
-                      color: 'var(--sq-blue600)',
-                      borderRadius: 100,
-                    }}
-                  >
+                  <Button key={category} type="primary" className="staticButton" shape="round">
                     {category}
-                  </div>
+                  </Button>
                 );
               })}
             </div>
@@ -186,29 +210,8 @@ const Project: React.FC = () => {
             ></div>
           </div>
 
-          <div className={clsx('content-width', styles.content)}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="large" weight={600}>
-                Deployment Details
-              </Typography>
-
-              <Typography.Link
-                active
-                weight={500}
-                onClick={() => {
-                  setDeploymentModal(true);
-                }}
-              >
-                Deploy New Version
-              </Typography.Link>
-            </div>
-            <DeploymentsTab
-              ref={deploymentsRef}
-              projectId={id ?? ''}
-              currentDeployment={project && { deployment: project.deploymentId, version: project.version }}
-            />
-          </div>
-        </div>
+          <ProjectDeploymentsDetail id={id} project={project}></ProjectDeploymentsDetail>
+        </>
       );
     },
   });

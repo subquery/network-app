@@ -2,49 +2,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { CloseOutlined } from '@ant-design/icons';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Markdown, Spinner, Typography } from '@subql/components';
-import { Button, Checkbox, Modal, Radio, Result } from 'antd';
+import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
+import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Typography } from '@subql/components';
+import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
 import { Field, FieldArray, Form, Formik } from 'formik';
+import { t } from 'i18next';
 
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
-import { isEthError, parseError, ROUTES } from '../../../utils';
+import { categoriesOptions, parseError, ROUTES } from '../../../utils';
+import { ProjectDeploymentsDetail } from '../Project/Project';
 import styles from './Create.module.less';
 
 const { STUDIO_PROJECT_NAV } = ROUTES;
 
-const categoriesOptions = [
-  {
-    label: 'Dictionary',
-    value: 'Dictionary',
-  },
-  {
-    label: 'DeFi',
-    value: 'DeFi',
-  },
-  {
-    label: 'Oracle',
-    value: 'Oracle',
-  },
-  {
-    label: 'Wallet',
-    value: 'Wallet',
-  },
-  {
-    label: 'NFT',
-    value: 'NFT',
-  },
-];
-
 const Create: React.FC = () => {
-  const { t } = useTranslation();
-
   const query = useRouteQuery();
   const asyncProject = useProject(query.get('id') ?? '');
 
@@ -53,8 +30,7 @@ const Create: React.FC = () => {
   const navigate = useNavigate();
   const createProject = useCreateProject();
   const updateMetadata = useUpdateProjectMetadata(query.get('id') ?? '');
-
-  const [submitError, setSubmitError] = React.useState<string>();
+  const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
 
   const handleSubmit = React.useCallback(
     async (project: FormCreateProjectMetadata & { versionDescription: string }) => {
@@ -74,6 +50,8 @@ const Create: React.FC = () => {
           };
           await updateMetadata(payload);
         } else {
+          const processNext = await getIfUnsafeAndWarn(project.deploymentId);
+          if (processNext === 'cancel') return;
           // Form can give us a File type that doesn't match the schema
           const queryId = await createProject(project);
 
@@ -118,14 +96,13 @@ const Create: React.FC = () => {
           },
         });
       } catch (e) {
-        if (isEthError(e) && e.code === 4001) {
-          setSubmitError(t('errors.transactionRejected'));
-          return;
-        }
-        setSubmitError(parseError(e));
+        openNotification({
+          type: 'error',
+          description: parseError(e),
+        });
       }
     },
-    [navigate, createProject, t, isEdit],
+    [getIfUnsafeAndWarn, navigate, createProject, isEdit],
   );
 
   if (isEdit && !asyncProject.data)
@@ -225,13 +202,15 @@ const Create: React.FC = () => {
                     render={(arrayHelper) => {
                       return (
                         <div className={styles.checkbox}>
-                          <Checkbox.Group
+                          <SubqlCheckbox.Group
                             options={categoriesOptions}
                             value={arrayHelper.form.values.categories}
                             onChange={(e) => {
+                              if (e.length > 2) return;
                               arrayHelper.form.setFieldValue('categories', e);
                             }}
-                          ></Checkbox.Group>
+                            optionType="button"
+                          ></SubqlCheckbox.Group>
                         </div>
                       );
                     }}
@@ -292,14 +271,32 @@ const Create: React.FC = () => {
                       </Field>
                     </>
                   )}
-
-                  {submitError && <Typography className={styles.error}>{submitError}</Typography>}
                 </div>
               </div>
             </Form>
           );
         }}
       </Formik>
+
+      {isEdit ? (
+        <>
+          <div style={{ padding: '0 80px' }}>
+            <div
+              style={{
+                height: 1,
+                width: '100%',
+                background: 'var(--sq-gray300)',
+                margin: '24px 0',
+              }}
+            ></div>
+          </div>
+          {asyncProject.data && (
+            <ProjectDeploymentsDetail id={query.get('id') ?? ''} project={asyncProject.data}></ProjectDeploymentsDetail>
+          )}
+        </>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

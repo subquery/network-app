@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Route, Routes, useNavigate } from 'react-router';
 import { WalletRoute } from '@components';
 import { useStudioEnabled } from '@hooks';
+import { Footer } from '@subql/components';
 
 import Create from './Create';
 import Home from './Home';
@@ -25,6 +26,8 @@ const Studio: React.FC = () => {
             <Route path="project/:id/*" element={<Project />} />
             <Route path="/" element={<Home />} />
           </Routes>
+
+          <Footer simple></Footer>
         </div>
       }
     ></WalletRoute>

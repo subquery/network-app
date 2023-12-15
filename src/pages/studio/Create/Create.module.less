@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0 80px 80px 80px;
+  padding: 0 80px 0 80px;
 }
 
 .deployment {
@@ -53,53 +53,6 @@
 
     .ant-modal-confirm-paragraph.ant-modal-confirm-paragraph {
       max-width: 100%;
-    }
-  }
-}
-
-.checkbox {
-  :global {
-    .ant-checkbox-group {
-      .ant-checkbox-wrapper {
-        background: var(--sq-gray200);
-        color: var(--sq-gray500);
-        padding: 5px 16px;
-        border-radius: 100px;
-        font-family: var(--sq-font-family);
-        .ant-checkbox {
-          &-inner {
-            width: 0px;
-            height: 0px;
-            border: none;
-            &::after {
-              width: 0px;
-              height: 0px;
-            }
-          }
-        }
-      }
-
-      .ant-checkbox-wrapper.ant-checkbox-wrapper-checked {
-        color: var(--sq-blue600);
-        background: rgba(67, 136, 221, 0.10);
-
-        .ant-checkbox {
-          display: inline-flex;
-
-          &-inner {
-            // override the antd style. a lazy way.
-            background: transparent!important;
-            border: none;
-            width: 16px;
-            height: 16px;
-            &::after {
-              border-color: var(--sq-blue600);
-              width: 6px;
-              height: 9px;
-            }
-          }
-        }
-      }
     }
   }
 }

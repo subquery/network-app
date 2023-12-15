@@ -4,8 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCreateDeployment } from '@hooks';
-import { Markdown, Typography } from '@subql/components';
-import { Form, Modal, Radio } from 'antd';
+import { Markdown, Modal, openNotification, Typography } from '@subql/components';
+import { parseError } from '@utils';
+import { Form, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -23,19 +24,18 @@ type Props = {
   deployments: Deployment[];
   projectId: string;
   onRefresh: () => Promise<void>;
+  currentDeploymentCid?: string;
 };
 
-const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh }) => {
+const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDeploymentCid, onRefresh }) => {
   const { t } = useTranslation();
   const updateDeployment = useCreateDeployment(projectId);
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
-  const [addDeploymentsLoading, setAddDeploymentsLoading] = React.useState(false);
 
   const handleSubmitUpdate = async () => {
     try {
-      setAddDeploymentsLoading(true);
       await form.validateFields();
       await updateDeployment({
         ...currentDeployment,
@@ -44,8 +44,11 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh
       await onRefresh();
       form.resetFields();
       setDeploymentModal(false);
-    } finally {
-      setAddDeploymentsLoading(false);
+    } catch (e) {
+      openNotification({
+        type: 'error',
+        description: parseError(e),
+      });
     }
   };
 
@@ -62,16 +65,9 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh
           },
         }}
         okText="Update"
-        okButtonProps={{
-          shape: 'round',
-          size: 'large',
-          loading: addDeploymentsLoading,
-        }}
-        onOk={() => {
-          handleSubmitUpdate();
-        }}
+        onSubmit={handleSubmitUpdate}
       >
-        <div style={{ padding: '12px 0' }}>
+        <div>
           <Form form={form} layout="vertical">
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
               <Markdown
@@ -103,7 +99,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, onRefresh
               </TableCell>
               <TableCell>
                 <p className={styles.value}>
-                  <Radio checked>RECOMMENDED</Radio>
+                  <Radio checked={currentDeploymentCid === deployment.deploymentId}>RECOMMENDED</Radio>
                 </p>
               </TableCell>
               <TableCell>

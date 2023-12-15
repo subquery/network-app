@@ -25,7 +25,6 @@ export * from './ModalInput';
 export * from './NumberInput';
 export * from './ModalApproveToken';
 export * from './ModalClaimIndexerRewards';
-export * from './ModalStatus';
 export * from './TransactionModal';
 export * from './AppSidebar';
 export * from './AppPageHeader';
