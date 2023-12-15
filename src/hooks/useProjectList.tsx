@@ -43,7 +43,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     variables: { offset: 0 },
   });
 
-  const [getProject, { error: topError }] = useGetProjectLazyQuery();
+  const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
 
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
@@ -121,6 +121,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         // filter once or twice is the same.
         const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty).filter(notEmpty);
         const mergered = options?.refresh ? [...nonEmptyProjects] : [...fetchedProejcts.current, ...nonEmptyProjects];
+        // TODO: filter by backend.
         setProjects(mergered.filter((proj) => (account ? account.toLowerCase() === proj.owner.toLowerCase() : true)));
         fetchedProejcts.current = mergered;
         updatedLength = mergered.length;
@@ -143,8 +144,8 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   });
 
   const topProjectItem = useMemo(() => {
-    if (!showTopProject) return '';
-    if (!inSearchMode && topProject)
+    if (!showTopProject || inSearchMode) return '';
+    if (topProject)
       return (
         <ProjectItem
           project={topProject}
@@ -155,33 +156,53 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         />
       );
 
-    if (!inSearchMode) return <Skeleton paragraph={{ rows: 7 }} style={{ width: 236, height: 400 }} active></Skeleton>;
+    if (topLoading) return <Skeleton paragraph={{ rows: 7 }} style={{ width: 236, height: 400 }} active></Skeleton>;
 
     return '';
-  }, [inSearchMode, topProject, showTopProject, onProjectClick]);
+  }, [inSearchMode, topProject, topLoading, showTopProject, onProjectClick]);
 
   const projectListItems = useMemo(() => {
-    if (loading) {
-      return new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
-        return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
-      });
-    }
+    const loadingItems = new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
+      return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
+    });
     if (projects.length) {
-      return projects.map((project) => (
-        <ProjectItem
-          project={project}
-          key={project.id}
-          onClick={() => {
-            onProjectClick?.(project.id);
-          }}
-        />
-      ));
+      return (
+        <>
+          {projects.map((project) => (
+            <ProjectItem
+              project={project}
+              key={project.id}
+              onClick={() => {
+                onProjectClick?.(project.id);
+              }}
+            />
+          ))}
+          {loading && loadingItems}
+        </>
+      );
+    } else {
+      if (loading) return loadingItems;
     }
 
-    if (inSearchMode) return '';
-    // TODO: ui
-    return 'No Projects';
-  }, [inSearchMode, loading, projects]);
+    return '';
+  }, [inSearchMode, loading, projects, onProjectClick]);
+
+  const emptyResult = useMemo(() => {
+    if (loading || topLoading) return '';
+    if (inSearchMode && !projects.length)
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography>No projects match your search</Typography>
+        </div>
+      );
+
+    if (!inSearchMode && !projects.length && !topProject)
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography>No projects</Typography>
+        </div>
+      );
+  }, [loading, inSearchMode, projects, topProject, showTopProject, topLoading]);
 
   const listsWithSearch = useMemo(() => {
     return (
@@ -228,11 +249,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
           {projectListItems}
         </div>
 
-        {inSearchMode && !loading && !projects.length && (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Typography>No projects match your search</Typography>
-          </div>
-        )}
+        {emptyResult}
 
         {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
       </>
