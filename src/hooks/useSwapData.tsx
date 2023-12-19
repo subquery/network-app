@@ -8,7 +8,6 @@ import { limitContract, makeCacheKey } from '@utils/limitation';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -100,12 +99,10 @@ export function useSellSQTQuota(account: string): AsyncMemoReturn<BigNumber> {
 export function useSwapOrderId(swapFrom: string): { orderId: string | undefined; loading: boolean } {
   const mountedRef = React.useRef(true);
   const [orderId, setOrderId] = React.useState<string>();
-  const [now] = React.useState<Date>(moment().toDate());
   // TODO: swapFrom now is reversed should be equal to contracts.
   const { data, loading } = useGetOrdersQuery({
     variables: {
       swapFrom,
-      now,
     },
   });
 

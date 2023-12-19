@@ -18,6 +18,7 @@ function useProjectMetadataImpl() {
     const result = await catSingle(cid);
 
     const rawMeta = JSON.parse(Buffer.from(result).toString('utf8'));
+    console.warn(rawMeta);
     return projectMetadataSchema.validate({ type: 'SUBQUERY', ...rawMeta });
   };
 
