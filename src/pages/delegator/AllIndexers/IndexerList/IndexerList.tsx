@@ -104,7 +104,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
           return limit(() => networkClient?.getIndexer(indexer.id));
         }),
       );
-
+      console.warn(sortedIndexers);
       setIndexerList(sortedIndexers);
       setLoadingList(false);
       return sortedIndexers;
