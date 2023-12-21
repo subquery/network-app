@@ -4629,10 +4629,10 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/components@1.0.3-21":
-  version "1.0.3-21"
-  resolved "https://registry.npmjs.org/@subql/components/-/components-1.0.3-21.tgz#af1c55bc6dc0f78626e361ea5d024f670249235d"
-  integrity sha512-B5f6h6CvzL1tQ1s/s034q9IV7IRL/1DJis+rMloHbQBrwCz4NgE5x1oV18iP9Yik9f2t2gXzWCmmlOng/DvYcQ==
+"@subql/components@1.0.3-24":
+  version "1.0.3-24"
+  resolved "https://registry.npmjs.org/@subql/components/-/components-1.0.3-24.tgz#1712a9ebef02bde45bf43d9267ff58c35d8d18a5"
+  integrity sha512-Ws5eOwUtNwlnaBdt6zzBAZmCrwlPuLWYLlg7wD9JUb8iJE2Hcmm8cy0tre3TKxhlzckYi66qHcaSQ4PlgD1KZg==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"
@@ -4643,6 +4643,7 @@
     graphql "^16.7.0"
     graphql-ws "^5.13.1"
     jdenticon "^3.2.0"
+    lodash-es "^4.17.21"
     ra-data-graphql "^4.11.3"
     react-icons "^4.8.0"
     react-jazzicon "^0.1.3"
@@ -4652,10 +4653,10 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.16.2.tgz#98ec9bb15b7863767fbe38c86d8a1d70d6e41d4f"
-  integrity sha512-OHSlV+bEyIlk+iZAUBqOMIhENdILrkTTM2+iovumvpM7mUXKGtLvey5tf9t4h4ShGDZQEH5t3crP8FGyvuP07A==
+"@subql/contract-sdk@0.17.1-0":
+  version "0.17.1-0"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.17.1-0.tgz#39fa74828aa151f1c51b66d751ad8d2b7df10eb6"
+  integrity sha512-YNOIOCsCc+y1e+dj+9fHeWu5cNXEQA7jhk7F5w59lxI7fMjmvszxWklj3hZpyZyAXvhC17jfh4bRTMw3FBO4+w==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
