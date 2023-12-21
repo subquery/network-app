@@ -13,6 +13,8 @@ export function useNetworkClient(): NetworkClient | undefined {
     async function getNetworkClient() {
       const client = await NetworkClient.create(SUPPORTED_NETWORK, undefined, undefined, {
         queryClientOptions: {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           link: networkLink,
         },
       });
