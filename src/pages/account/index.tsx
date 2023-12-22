@@ -23,7 +23,7 @@ import { AccountHeader } from './AccountHeaders/Header';
 import styles from './Account.module.less';
 
 //TODO: add fragments so can better type this
-function reduceTotal(rewards: any) {
+export function reduceTotal(rewards: any) {
   return formatEther(
     rewards?.reduce(
       (accumulator: any, currentValue: { amount: unknown }) =>
@@ -34,7 +34,7 @@ function reduceTotal(rewards: any) {
   );
 }
 
-const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName: string; link: string }> = ({
+export const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName: string; link: string }> = ({
   title,
   amount,
   linkName,
