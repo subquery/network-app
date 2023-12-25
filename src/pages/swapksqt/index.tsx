@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { BsArrowDownSquareFill, BsLifePreserver } from 'react-icons/bs';
 import { WalletRoute } from '@components';
 import RpcError from '@components/RpcError';
@@ -10,7 +10,7 @@ import { NETWORK_NAME } from '@containers/Web3';
 import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { FormatCardLine, reduceTotal } from '@pages/account';
-import { Typography } from '@subql/components';
+import { openNotification, Typography } from '@subql/components';
 import { TOKEN_SYMBOLS } from '@subql/network-config';
 import { WithdrawalStatus } from '@subql/network-query';
 import {
@@ -21,10 +21,12 @@ import {
   useGetRewardsQuery,
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
-import { formatNumber, isRPCError } from '@utils';
+import { formatNumber, isRPCError, parseError } from '@utils';
 import { Button, Skeleton } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useAccount } from 'wagmi';
+
+import { useWeb3Store } from 'src/stores';
 
 import styles from './index.module.less';
 
@@ -34,6 +36,7 @@ const SwapKsqt: FC = () => {
 
 const SwapKsqtInner: FC = () => {
   const { address: account } = useAccount();
+  const { contracts } = useWeb3Store();
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
   const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
@@ -41,6 +44,8 @@ const SwapKsqtInner: FC = () => {
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
   const { balance } = useSQToken();
+
+  const [loading, setLoading] = useState(false);
 
   const totalLocked = useMemo(() => {
     const totalDelegating = formatEther(delegating.data, 4);
@@ -54,6 +59,41 @@ const SwapKsqtInner: FC = () => {
 
     return total.toFixed(4);
   }, [delegating, rewards, withdrawals, sortedIndexer]);
+
+  const tradeToken = async () => {
+    if (!balance.data || !account) return;
+    try {
+      setLoading(true);
+      const allowance = await contracts?.sqToken.allowance(account, contracts.tokenExchange.address);
+      if (allowance?.lt(balance.data)) {
+        openNotification({
+          type: 'info',
+          description: 'Insufficient allowance, increase allowance first',
+        });
+        const allowanceTransaction = await contracts?.sqToken.increaseAllowance(
+          contracts.tokenExchange.address,
+          balance.data,
+        );
+        await allowanceTransaction?.wait();
+      }
+      const orderId = await contracts?.tokenExchange.nextOrderId();
+      const tradeTransaction = await contracts?.tokenExchange.trade(orderId?.sub(1).toNumber() || 0, balance.data);
+      await tradeTransaction?.wait();
+      await balance.refetch();
+
+      openNotification({
+        type: 'success',
+        description: 'Token swap success',
+      });
+    } catch (e) {
+      openNotification({
+        type: 'error',
+        description: parseError(e),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.swapksqt}>
@@ -182,7 +222,17 @@ const SwapKsqtInner: FC = () => {
             </div>
           </div>
 
-          <Button shape="round" type="primary" size="large" style={{ width: '100%', marginTop: 24, marginBottom: 8 }}>
+          <Button
+            shape="round"
+            type="primary"
+            size="large"
+            style={{ width: '100%', marginTop: 24, marginBottom: 8 }}
+            disabled={!balance.data || balance.data.toString() === '0'}
+            loading={loading}
+            onClick={() => {
+              tradeToken();
+            }}
+          >
             Swap
           </Button>
 
