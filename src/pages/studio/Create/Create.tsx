@@ -14,7 +14,7 @@ import { t } from 'i18next';
 
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
-import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema } from '../../../models';
+import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema, ProjectType } from '../../../models';
 import { categoriesOptions, parseError, ROUTES } from '../../../utils';
 import { ProjectDeploymentsDetail } from '../Project/Project';
 import styles from './Create.module.less';
@@ -33,7 +33,7 @@ const Create: React.FC = () => {
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
 
   const handleSubmit = React.useCallback(
-    async (project: FormCreateProjectMetadata & { versionDescription: string }) => {
+    async (project: FormCreateProjectMetadata & { versionDescription: string; type: ProjectType }) => {
       try {
         let resultId = query.get('id');
         if (isEdit) {
@@ -117,7 +117,7 @@ const Create: React.FC = () => {
       <Formik
         initialValues={{
           name: query.get('name') ?? '',
-          type: 'SUBQUERY',
+          type: ProjectType.SUBQUERY,
           description: '',
           websiteUrl: undefined,
           codeUrl: undefined,
@@ -126,7 +126,12 @@ const Create: React.FC = () => {
           versionDescription: '',
           deploymentId: query.get('deploymentId') ?? '',
           categories: [],
-          ...(isEdit ? asyncProject.data?.metadata : {}),
+          ...(isEdit
+            ? {
+                ...asyncProject.data?.metadata,
+                type: asyncProject.data?.type,
+              }
+            : {}),
         }}
         validationSchema={
           isEdit
@@ -234,8 +239,8 @@ const Create: React.FC = () => {
                           }}
                           disabled={isEdit ? true : false}
                         >
-                          <Radio value="SUBQUERY">SubQuery</Radio>
-                          <Radio value="RPC">RPC</Radio>
+                          <Radio value={ProjectType.SUBQUERY}>SubQuery</Radio>
+                          <Radio value={ProjectType.RPC}>RPC</Radio>
                         </Radio.Group>
                       );
                     }}

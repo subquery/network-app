@@ -3,12 +3,11 @@
 
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { ProjectType } from '@subql/network-query';
 
 import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
-import { FormCreateProjectMetadata, ProjectMetadata } from '../models';
+import { FormCreateProjectMetadata, ProjectMetadata, ProjectType } from '../models';
 
-type P = FormCreateProjectMetadata & { versionDescription: string };
+type P = FormCreateProjectMetadata & { versionDescription: string; type: ProjectType };
 
 export function useCreateProject(): (params: P) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();

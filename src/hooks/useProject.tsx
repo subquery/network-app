@@ -65,6 +65,7 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
       version: query.version,
       metadata,
       deploymentId: query.deployment,
+      type: query.type,
     };
   }, [id, catSingle, getMetadataFromCid, getQuery, cacheBreak]);
 }

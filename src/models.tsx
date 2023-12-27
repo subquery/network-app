@@ -12,7 +12,6 @@ export enum ProjectType {
 
 export const projectMetadataSchema = yup.object({
   name: yup.string().defined(),
-  type: yup.string().oneOf(['SUBQUERY', 'RPC'], 'Only RPC and SUBQUERY are allowed.').required(),
   image: yup.string().optional(),
   description: yup.string().default('').optional(),
   websiteUrl: yup.string().optional().url(),
@@ -39,6 +38,7 @@ export type ProjectDetails = {
   metadata: ProjectMetadata;
   version: string;
   deploymentId: string;
+  type: ProjectType;
 };
 
 export const newDeploymentSchema = yup.object({

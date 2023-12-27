@@ -12,23 +12,13 @@ import { useWeb3Store } from 'src/stores';
 import { bytes32ToCid } from '../utils';
 import { createContainer, Logger } from './Container';
 
-function projectTypeTransform(type: InputProjectType): ProjectType {
-  switch (type) {
-    case InputProjectType.SUBQUERY:
-      return ProjectType.SUBQUERY;
-    case InputProjectType.RPC:
-      return ProjectType.RPC;
-    default:
-      return ProjectType.SUBQUERY;
-  }
-}
-
 type QueryDetails = {
   queryId: BigNumber;
   owner: string;
   metadata: string; // IPFS Cid
   deployment: string; // IPFS Cid
   version: string; // IPFS Cid
+  type: ProjectType;
 };
 
 function useProjectRegistryImpl(logger: Logger) {
@@ -51,7 +41,7 @@ function useProjectRegistryImpl(logger: Logger) {
       metadataCid,
       cidToBytes32(deploymentMetadata),
       cidToBytes32(deploymentId),
-      projectTypeTransform(type),
+      type,
     );
   };
 
@@ -134,36 +124,16 @@ function useProjectRegistryImpl(logger: Logger) {
         metadata: uri.replace(/^ipfs:\/\//, ''),
         deployment: bytes32ToCid(project.latestDeploymentId),
         version: bytes32ToCid(deploymentInfo.metadata),
+        type: project.projectType,
       };
     }
 
     return projectCache.current[BigNumber.from(id).toString()];
   };
 
-  // const getUserQueries = React.useCallback(
-  //   async (address: string): Promise<BigNumber[]> => {
-  //     if (!pendingContracts) {
-  //       throw new Error('ProjectRegistry contract not available');
-  //       // return [];
-  //     }
-
-  //     const contracts = await pendingContracts;
-
-  //     const count = await contracts.projectRegistry.queryInfoCountByOwner(address);
-
-  //     return await Promise.all(
-  //       Array.from(new Array(count.toNumber()).keys()).map((_, index) =>
-  //         contracts.projectRegistry.queryInfoIdsByOwner(address, index),
-  //       ),
-  //     );
-  //   },
-  //   [pendingContracts],
-  // );
-
   return {
     registerProject,
     getQuery,
-    // getUserQueries,
     updateQueryMetadata,
     updateDeployment,
   };
