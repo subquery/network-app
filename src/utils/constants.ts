@@ -15,7 +15,7 @@ export enum LOCK_STATUS {
 
 export const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN ?? 'USDC';
 
-export const TOKEN = import.meta.env.VITE_TOKEN ?? 'kSQT';
+export const TOKEN = import.meta.env.VITE_TOKEN ?? 'SQT';
 
 export const tokenDecimals: { [key: string]: number } = {
   [STABLE_TOKEN_ADDRESS]: 6,

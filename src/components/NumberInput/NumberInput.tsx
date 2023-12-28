@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { Typography } from '@subql/components';
+import { TOKEN } from '@utils';
 import { Button, InputNumber, InputNumberProps } from 'antd';
 import BigNumber from 'bignumber.js';
 import { BigNumberish } from 'ethers';
@@ -21,13 +22,13 @@ interface NumberInputProps extends InputNumberProps {
   errorMsg?: string;
   onClickMax?: (amount: number | BigNumberish) => void;
   maxAmount?: number | BigNumberish;
-  maxAmountText?: string;
+  maxAmountText?: React.ReactNode;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   title,
   tooltip,
-  unit = 'kSQT',
+  unit = TOKEN,
   maxAmountText,
   maxAmount = 0,
   onClickMax,
