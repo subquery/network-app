@@ -3,9 +3,12 @@
 
 import React from 'react';
 import { NETWORK_NAME } from '@containers/Web3';
-import { ContractSDK } from '@subql/contract-sdk';
+import { ContractSDK, SQToken__factory } from '@subql/contract-sdk';
+import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
+import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { ContractClient } from '@subql/network-clients';
 import { parseError } from '@utils';
+import { goerli, mainnet } from 'viem/chains';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -13,9 +16,12 @@ import { useEthersProviderWithPublic, useEthersSigner } from './useEthersProvide
 
 export function useInitContracts(): { loading: boolean } {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const { setContracts, setContractClient } = useWeb3Store();
+  const { setContracts, setRootContracts, setContractClient } = useWeb3Store();
   const { signer } = useEthersSigner();
   const provider = useEthersProviderWithPublic();
+  const ethereumProvider = useEthersProviderWithPublic({
+    chainId: import.meta.env.MODE === 'testnet' ? goerli.id : mainnet.id,
+  });
 
   React.useEffect(() => {
     function initContract() {
@@ -31,6 +37,17 @@ export function useInitContracts(): { loading: boolean } {
         } catch (error) {
           parseError(error);
         }
+      }
+
+      if (ethereumProvider) {
+        const sqTokenContract = SQToken__factory.connect(
+          import.meta.env.MODE === 'testnet' ? testnetJSON.root.SQToken.address : mainnetJSON.root.SQToken.address,
+          ethereumProvider,
+        );
+        const rootContractInstance = {
+          sqToken: sqTokenContract,
+        };
+        setRootContracts(rootContractInstance);
       }
     }
     setIsLoading(true);

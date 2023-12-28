@@ -12,13 +12,20 @@ import { createContainer } from './Container';
 
 function useSQTokenImpl() {
   const { address: account } = useAccount();
-  const { contracts } = useWeb3Store();
+  const { contracts, rootContracts } = useWeb3Store();
   const balance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return limitContract(() => contracts.sqToken.balanceOf(account));
   }, [account, contracts]);
+
+  const ethSqtBalance = useAsyncMemo(async () => {
+    assert(rootContracts, 'Contracts not available');
+    assert(account, 'Account not available');
+
+    return limitContract(() => rootContracts.sqToken.balanceOf(account));
+  }, [account, rootContracts]);
 
   const consumerHostBalance = useAsyncMemo(async () => {
     assert(contracts, 'Contracts not available');
@@ -64,6 +71,7 @@ function useSQTokenImpl() {
 
   return {
     balance,
+    ethSqtBalance,
     consumerHostBalance,
     stakingAllowance,
     planAllowance,

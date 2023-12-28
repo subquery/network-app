@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { SubqueryNetwork } from '@subql/contract-sdk';
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';

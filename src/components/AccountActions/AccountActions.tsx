@@ -20,7 +20,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { t } = useTranslation();
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
-  const { balance } = useSQToken();
+  const { balance, ethSqtBalance, consumerHostBalance } = useSQToken();
   const { data: walletClient } = useWalletClient();
 
   const handleDisconnect = () => disconnect();
@@ -87,12 +87,15 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                     you'll need to connect to a bridge and deposit funds.
                   </Typography>
                 }
+                overlayInnerStyle={{
+                  padding: 16,
+                }}
               >
                 <InfoCircleOutlined style={{ marginLeft: 8 }} />
               </Tooltip>
             </Typography>
             <Typography weight={600}>
-              {formatEther(balance.data, 4)} {TOKEN}
+              {formatEther(ethSqtBalance.data, 4)} {TOKEN}
             </Typography>
           </div>
         </div>
@@ -130,7 +133,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography>Billing Balance:</Typography>
-            <Typography>200 {TOKEN}</Typography>
+            <Typography>
+              {formatEther(consumerHostBalance.data?.balance, 4)} {TOKEN}
+            </Typography>
           </div>
 
           <Typography.Link active>View Details</Typography.Link>
