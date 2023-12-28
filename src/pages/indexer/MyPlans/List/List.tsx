@@ -109,7 +109,7 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
           return 'inactive';
         };
         return (
-          <Tag state={text().includes('inactive') ? 'error' : 'success'} style={{ textTransform: 'uppercase' }}>
+          <Tag color={text().includes('inactive') ? 'error' : 'success'} style={{ textTransform: 'uppercase' }}>
             {text()}
           </Tag>
         );

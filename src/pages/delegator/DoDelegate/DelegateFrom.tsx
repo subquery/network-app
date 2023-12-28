@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import TokenTooltip from '@components/TokenTooltip/tokenTooltip';
+import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
