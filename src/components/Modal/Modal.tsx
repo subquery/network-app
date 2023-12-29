@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Modal as SubqlModal } from '@subql/components';
-import { Steps as AntDSteps, Typography } from 'antd';
+import { Modal as SubqlModal, Typography } from '@subql/components';
+import { Steps as AntDSteps } from 'antd';
 import clsx from 'clsx';
 
 import Spinner from '../Spinner';
@@ -43,15 +43,15 @@ export const Modal: React.FC<ModalProps> = ({
   width = '45%',
   className = '',
 }) => {
-  const Title = () => (
-    <Typography.Title level={3} className={styles.title}>
-      {title || 'Modal'}
-    </Typography.Title>
-  );
+  const Title = () => <Typography className={styles.title}>{title || 'Modal'}</Typography>;
 
   const Description = () => {
     if (!description) return <div />;
-    return <Typography.Text className={styles.description}>{description}</Typography.Text>;
+    return (
+      <Typography className={styles.description} type="secondary">
+        {description}
+      </Typography>
+    );
   };
 
   return (

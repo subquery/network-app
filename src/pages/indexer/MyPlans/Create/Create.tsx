@@ -216,6 +216,7 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
       value: ` ${template.rateLimit} queries/sec`,
     },
   ];
+
   return (
     <Formik
       initialValues={{
@@ -257,8 +258,9 @@ const PlanForm: React.FC<FormProps> = ({ templates, onSubmit, onCancel, curStep,
               <NumberInput
                 title={t('plans.create.priceTitle')}
                 unit={
-                  <span className="flex">
+                  <span className="flex" key="token">
                     <img
+                      key="token"
                       src={isUSDCToken ? '/static/usdc.png' : '/static/sqt.svg'}
                       alt=""
                       width="24"

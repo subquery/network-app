@@ -3,8 +3,9 @@
 
 import React, { FC } from 'react';
 import { ExclamationCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { useSQToken } from '@containers';
 import { Typography } from '@subql/components';
-import { TOKEN } from '@utils';
+import { formatEther, TOKEN } from '@utils';
 import { Button, Tooltip } from 'antd';
 
 import styles from './index.module.less';
@@ -14,6 +15,7 @@ interface IProps {
 }
 
 const TokenTooltip: FC<IProps> = (props) => {
+  const { ethSqtBalance } = useSQToken();
   return (
     <Tooltip
       overlayClassName={styles.tokenTooltip}
@@ -25,7 +27,7 @@ const TokenTooltip: FC<IProps> = (props) => {
             <Typography>You have {TOKEN} on Ethereum</Typography>
           </div>
           <Typography variant="small" type="secondary" style={{ paddingInlineStart: 22 }}>
-            Eth Wallet Balance: {TOKEN}
+            Eth Wallet Balance: {formatEther(ethSqtBalance.data, 4)} {TOKEN}
           </Typography>
           <Typography variant="small" type="secondary" style={{ paddingInlineStart: 22 }}>
             Your SQT needs to be on Polygon in order to be used on the SubQuery Network. To move SQT from the Ethereum

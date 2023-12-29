@@ -7,11 +7,11 @@ import { LazyQueryResult } from '@apollo/client';
 import { NETWORK_NAME } from '@containers/Web3';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractTransaction } from '@ethersproject/contracts';
-import { Button, Spinner, Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { useStableCoin } from '@subql/react-hooks';
-import { Table, TableProps } from 'antd';
+import { Button, Table, TableProps } from 'antd';
 import { last } from 'ramda';
 
 import { useWeb3Store } from 'src/stores';
@@ -141,21 +141,27 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
                 <Typography className={'errorText'}>{error}</Typography>
                 <div className={'flex-end'}>
                   <Button
-                    label={t('plans.purchase.cancel')}
                     onClick={onCancel}
                     disabled={isLoading}
-                    type="secondary"
-                    colorScheme="neutral"
+                    type="primary"
+                    size="large"
+                    shape="round"
                     className={styles.btn}
-                  />
+                    ghost
+                  >
+                    {t('plans.purchase.cancel')}
+                  </Button>
                   <Button
-                    label={t('plans.purchase.submit')}
                     onClick={() => {
                       onSubmit({});
                     }}
                     loading={isLoading}
-                    colorScheme="standard"
-                  />
+                    type="primary"
+                    size="large"
+                    shape="round"
+                  >
+                    {t('plans.purchase.submit')}
+                  </Button>
                 </div>
               </div>
             );

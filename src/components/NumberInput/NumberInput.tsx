@@ -38,8 +38,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
-  const Suffix = React.useCallback(
-    () => (
+  // this component would re-render every times
+  const Suffix = React.useCallback(() => {
+    return (
       <div className={styles.prefix}>
         {BigNumber(maxAmount.toString()).gt(0) && (
           <Button
@@ -55,14 +56,14 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           </Button>
         )}
         {unit && (
-          <AppTypography className={styles.unit} type="secondary">
+          <AppTypography className={styles.unit} type="secondary" key="token">
             {unit}
           </AppTypography>
         )}
       </div>
-    ),
-    [maxAmount, inputParams, unit],
-  );
+    );
+  }, [maxAmount, inputParams, unit]);
+
   const maxText = useMemo(
     () =>
       BigNumber(maxAmount.toString()).gt(0)
