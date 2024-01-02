@@ -21,7 +21,7 @@ html {
 
 :root {
   --gradient-from: #ff4581;
-  --gradient-to: #1677ff;
+  --gradient-to: var(--sq-blue600);
   --sq-gradient: linear-gradient(293.04deg, var(--gradient-from) 4.09%, var(--gradient-to) 70.16%);
   --sq-background-gradient: linear-gradient(293.04deg, rgba(255, 69, 129, 0.1) 4.09%, rgba(67, 136, 221, 0.1) 70.16%);
   --primary: #1677ff;
@@ -297,5 +297,10 @@ label,
 
 .staticButton.ant-btn-primary {
   background-color: rgba(67, 136, 221, 0.10);
+  color: var(--sq-blue600);
+}
+
+.ant-btn-primary.ant-btn-background-ghost {
+  border-color: var(--sq-blue600);
   color: var(--sq-blue600);
 }

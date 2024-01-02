@@ -5,14 +5,11 @@ import * as React from 'react';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment } from '@subql/network-query';
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { ProjectMetadata } from 'src/models';
 
 import IPFSImage from '../IPFSImage';
 import styles from './ProjectCard.module.css';
-
-dayjs.extend(relativeTime);
 
 type Props = {
   project: { metadata: ProjectMetadata | undefined } & Omit<ProjectFieldsFragment, 'metadata'>;

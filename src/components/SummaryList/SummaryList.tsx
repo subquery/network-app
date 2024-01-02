@@ -10,8 +10,8 @@ import { clsx } from 'clsx';
 import styles from './SummaryList.module.css';
 
 interface List {
-  label: string;
-  value: string | React.ReactNode | any;
+  label: React.ReactNode;
+  value: React.ReactNode;
   strong?: boolean;
   tooltip?: string;
 }
@@ -26,8 +26,8 @@ export const SummaryList: React.FC<SummaryListProps> = ({ title, list }) => {
     <div className={styles.container}>
       {title && <Typography>{title}</Typography>}
       <div className={styles.list}>
-        {list.map((listItem) => (
-          <div className={styles.listItem} key={listItem.label}>
+        {list.map((listItem, index) => (
+          <div className={styles.listItem} key={index}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Typography
                 variant={listItem.strong ? 'text' : 'medium'}

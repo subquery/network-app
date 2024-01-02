@@ -5,10 +5,6 @@
   padding: 1rem;
 }
 
-.steps {
-  margin: 1rem 0;
-}
-
 .tabs {
   display: flex;
   justify-content: space-between;

@@ -64,7 +64,7 @@ const translation = {
     doStake: 'You haven’t staked yet. Stake to become an indexer.',
     doStakeTitle: 'Start staking now to earn as an Indexer',
     doStakeDesc:
-      'In order to earn rewards from query revenue, Indexers must stake kSQT against a particular SubQuery Project that they are providing the service to.',
+      'In order to earn rewards from query revenue, Indexers must stake SQT against a particular SubQuery Project that they are providing the service to.',
     learnMore: 'Learn how to become an Indexer <1>here<1>',
     topRowData: 'Top row of the data represents the data in current era.',
     secondRowData: 'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
@@ -103,7 +103,7 @@ const translation = {
   myDelegators: {
     noDelegatorsTitle: 'You don’t have any Delegators yet',
     noDelegatorsDescription:
-      'Once Delegators have delegated their kSQT to you, they will appear here. First you need to register as an Indexer and begin indexing SubQuery projects, Delegators can then delegate their kSQT to you to earn rewards. Delegators are more likely to delegate their kSQT to high performing Indexers and Consumers will be attracted to Indexers with more kSQT delegated as it indicates they are reliable.',
+      'Once Delegators have delegated their SQT to you, they will appear here. First you need to register as an Indexer and begin indexing SubQuery projects, Delegators can then delegate their SQT to you to earn rewards. Delegators are more likely to delegate their SQT to high performing Indexers and Consumers will be attracted to Indexers with more SQT delegated as it indicates they are reliable.',
     noDelegatorsInfoLink: 'Learn more about Delegators ',
   },
   tokenApproval: {
@@ -121,7 +121,7 @@ const translation = {
     failureCollect: 'Sorry, collect rewards transaction has failed.',
   },
   topIndexers: {
-    desc: 'View the top 100 ranked Indexers and all other Indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
+    desc: 'View the top 100 ranked Indexers and all other Indexers in the SubQuery Network and delegate your SQT tokens to earn rewards.',
     nonData: 'There is no data to display',
     rank: 'indexer rank',
     uptime: 'uptime',
@@ -151,7 +151,7 @@ const translation = {
   },
   allIndexers: {
     nonData: 'There is no Indexer available.',
-    desc: 'View all Indexers in the SubQuery Network and delegate your kSQT tokens to earn rewards.',
+    desc: 'View all Indexers in the SubQuery Network and delegate your SQT tokens to earn rewards.',
   },
 } as const;
 

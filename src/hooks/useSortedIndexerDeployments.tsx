@@ -65,7 +65,6 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
               description: '',
               websiteUrl: '',
               codeUrl: '',
-              type: 'SUBQUERY',
               versionDescription: '',
               categories: [],
             };

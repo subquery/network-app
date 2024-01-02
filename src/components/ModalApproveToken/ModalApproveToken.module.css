@@ -6,7 +6,7 @@
 }
 
 .submitBtn {
-  background: var(--gradient-to) !important;
+  background: var(--sq-blue600) !important;
   color: white !important;
   min-width: 30%;
 }

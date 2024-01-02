@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProgressBar, Typography } from '@subql/components';
+import { SubqlProgress, Typography } from '@subql/components';
 import { indexingProgress } from '@subql/network-clients';
 import { strip } from '@utils';
 
@@ -33,7 +33,7 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 
   return (
     <div className={styles.progress}>
-      <ProgressBar progress={maxProgress} className={styles.progressBar} showInfo={false} />
+      <SubqlProgress percent={maxProgress * 100} className={styles.progressBar} showInfo={false} />
       {blocksBehind > 0 && (
         <div>
           <Typography variant="medium" className={styles.precentage}>

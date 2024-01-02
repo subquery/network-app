@@ -9,14 +9,11 @@ import { parseError } from '@utils';
 import { Form, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 
 import { NewDeployment } from '../../models';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
 import { Copy } from '..';
 import styles from './ProjectDeployments.module.less';
-
-dayjs.extend(utc);
 
 type Deployment = NewDeployment & { createdAt?: Date };
 

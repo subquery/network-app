@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
+import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
@@ -123,10 +124,15 @@ export const DelegateForm: React.FC<FormProps> = ({
 
   const maxAmountText = React.useMemo(() => {
     if (isYourself) {
-      return t('delegate.walletBalance', {
-        balance: formatEther(balance.data, 4),
-        token: TOKEN,
-      });
+      return (
+        <>
+          {t('delegate.walletBalance', {
+            balance: formatEther(balance.data, 4),
+            token: TOKEN,
+          })}{' '}
+          <TokenTooltip></TokenTooltip>
+        </>
+      );
     }
     return t('delegate.amountAvailable', {
       balance: sortedMaxAmount,

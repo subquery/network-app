@@ -144,7 +144,7 @@ export const Summary: React.FC = () => {
     },
     {
       label: t('myOffers.step_2.expireDate'),
-      value: offer?.expireDate ? dayjs(offer.expireDate).format() : dayjs(),
+      value: offer?.expireDate ? dayjs(offer.expireDate).format() : dayjs().format(),
     },
   ];
 

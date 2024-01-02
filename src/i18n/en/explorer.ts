@@ -46,10 +46,10 @@ const translation = {
       withdrawn: 'Withdrawn',
     },
     tooltip: {
-      delegating: 'The amount of kSQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
-      staking: 'The amount of kSQT that you have staked against projects you are indexing in the SubQuery Network',
+      delegating: 'The amount of SQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
+      staking: 'The amount of SQT that you have staked against projects you are indexing in the SubQuery Network',
       rewards: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
-      withdrawn: 'The amount of kSQT that you have undelegated or unstaked',
+      withdrawn: 'The amount of SQT that you have undelegated or unstaked',
     },
     linkText: {
       delegating: 'Delegate to an Indexer',

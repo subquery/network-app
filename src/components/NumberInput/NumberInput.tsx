@@ -3,7 +3,9 @@
 
 import * as React from 'react';
 import { useMemo } from 'react';
+import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { Typography } from '@subql/components';
+import { TOKEN } from '@utils';
 import { Button, InputNumber, InputNumberProps } from 'antd';
 import BigNumber from 'bignumber.js';
 import { BigNumberish } from 'ethers';
@@ -21,13 +23,13 @@ interface NumberInputProps extends InputNumberProps {
   errorMsg?: string;
   onClickMax?: (amount: number | BigNumberish) => void;
   maxAmount?: number | BigNumberish;
-  maxAmountText?: string;
+  maxAmountText?: React.ReactNode;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   title,
   tooltip,
-  unit = 'kSQT',
+  unit = TOKEN,
   maxAmountText,
   maxAmount = 0,
   onClickMax,
@@ -37,8 +39,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   inputParams, // TODO: 1) avoid to use this one in future. Refactor existing one.
   ...inputNumberProps
 }) => {
-  const Suffix = React.useCallback(
-    () => (
+  // this component would re-render every times
+  const Suffix = React.useCallback(() => {
+    return (
       <div className={styles.prefix}>
         {BigNumber(maxAmount.toString()).gt(0) && (
           <Button
@@ -54,21 +57,28 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           </Button>
         )}
         {unit && (
-          <AppTypography className={styles.unit} type="secondary">
+          <AppTypography className={styles.unit} type="secondary" key="token">
             {unit}
           </AppTypography>
         )}
       </div>
-    ),
-    [maxAmount, inputParams, unit],
-  );
-  const maxText = useMemo(
-    () =>
-      BigNumber(maxAmount.toString()).gt(0)
-        ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
-        : undefined,
-    [maxAmount, unit],
-  );
+    );
+  }, [maxAmount, inputParams, unit]);
+
+  const maxText = useMemo(() => {
+    if (BigNumber(maxAmount.toString()).gt(0)) {
+      const text = `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`;
+      if (unit !== '%') {
+        return (
+          <>
+            {text} <TokenTooltip></TokenTooltip>
+          </>
+        );
+      }
+      return text;
+    }
+    return '';
+  }, [maxAmount, unit]);
 
   const inputBottomText = useMemo(() => description ?? maxAmountText ?? maxText, [description, maxAmountText]);
   const DescriptionText = ({ text }: { text: string }) => (

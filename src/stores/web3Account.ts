@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ContractSDK } from '@subql/contract-sdk';
+import { ContractSDK, SQToken } from '@subql/contract-sdk';
 import { ContractClient } from '@subql/network-clients';
 import { ethers } from 'ethers';
 import { create } from 'zustand';
@@ -11,6 +11,10 @@ import { create } from 'zustand';
  * Web3Account
  *
  */
+
+interface rootContracts {
+  sqToken: SQToken;
+}
 
 interface Web3Store {
   error?: any;
@@ -26,6 +30,10 @@ interface Web3Store {
 
   contracts?: ContractSDK;
   setContracts: (contracts: ContractSDK) => void;
+
+  rootContracts?: rootContracts;
+  setRootContracts: (rootContracts: rootContracts) => void;
+
   contractClient?: ContractClient;
   setContractClient: (contracts: ContractClient) => void;
 }
@@ -34,6 +42,8 @@ export const useWeb3Store = create<Web3Store>()((set) => ({
   ethWindowObj: window?.ethereum,
   contracts: undefined,
   isInitialAccount: false,
+  rootContracts: undefined,
+  setRootContracts: (rootContracts: rootContracts | undefined) => set((state) => ({ ...state, rootContracts })),
   ethProvider: () => {
     const providers = [
       new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com'),

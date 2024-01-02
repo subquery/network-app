@@ -46,10 +46,6 @@ export const entryLinks = [
     label: t('delegator'),
   },
   {
-    link: ROUTES.SWAP,
-    label: t('header.swap'),
-  },
-  {
     link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',
     label: t('header.documentation'),
   },
