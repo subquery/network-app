@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyQueryResult } from '@apollo/client';
+import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { NETWORK_NAME } from '@containers/Web3';
 import { BigNumber } from '@ethersproject/bignumber';
 import { ContractTransaction } from '@ethersproject/contracts';
@@ -28,7 +29,7 @@ import { IndexerName } from './IndexerName';
 
 export type PlansTableProps = {
   loadPlans: () => void;
-  asyncPlans: LazyQueryResult<Plan[], any>;
+  asyncPlans: LazyQueryResult<Plan[], object>;
 } & Omit<DoPurchaseProps, 'plan'>;
 
 type DoPurchaseProps = {
@@ -88,18 +89,22 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
     },
     {
       label: t('plans.headers.dailyReqCap'),
-      value: plan.planTemplate?.dailyReqCap,
+      value: (plan.planTemplate?.dailyReqCap || 0).toString(),
     },
     {
       label: t('plans.headers.rateLimit'),
-      value: plan.planTemplate?.rateLimit,
+      value: (plan.planTemplate?.rateLimit || 0).toString(),
     },
     {
       label: t('plans.headers.deploymentId'),
       value: deploymentId,
     },
     {
-      label: t('plans.purchase.yourBalance'),
+      label: (
+        <div>
+          {t('plans.purchase.yourBalance')} <TokenTooltip></TokenTooltip>
+        </div>
+      ),
       value: renderAsync(balance, {
         loading: () => <Spinner />,
         error: () => <Typography>{t('plans.purchase.failToLoadBalance')}</Typography>,

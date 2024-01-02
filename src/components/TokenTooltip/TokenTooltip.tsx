@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC } from 'react';
+import { BsBoxArrowInUpRight } from 'react-icons/bs';
 import { ExclamationCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { useSQToken } from '@containers';
 import { Typography } from '@subql/components';
 import { formatEther, TOKEN } from '@utils';
 import { Button, Tooltip } from 'antd';
+
+import { BRIDGE_URL } from 'src/const/bridge';
 
 import styles from './index.module.less';
 
@@ -34,11 +37,21 @@ const TokenTooltip: FC<IProps> = (props) => {
             to Polygon, you’ll need to bridge them across.
           </Typography>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
-            <Button type="primary" shape="round">
-              Bridge Token
+          <a
+            href={BRIDGE_URL}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4, textDecoration: 'none' }}
+          >
+            <Button
+              type="primary"
+              shape="round"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            >
+              Bridge Tokens
+              <BsBoxArrowInUpRight />
             </Button>
-          </div>
+          </a>
         </div>
       }
     >

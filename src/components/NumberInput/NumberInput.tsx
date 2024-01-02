@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useMemo } from 'react';
+import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
 import { Button, InputNumber, InputNumberProps } from 'antd';
@@ -64,13 +65,20 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     );
   }, [maxAmount, inputParams, unit]);
 
-  const maxText = useMemo(
-    () =>
-      BigNumber(maxAmount.toString()).gt(0)
-        ? `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`
-        : undefined,
-    [maxAmount, unit],
-  );
+  const maxText = useMemo(() => {
+    if (BigNumber(maxAmount.toString()).gt(0)) {
+      const text = `Current ${unit === '%' ? 'rate' : 'balance'}: ${maxAmount ?? ''} ${unit ?? ''}`;
+      if (unit !== '%') {
+        return (
+          <>
+            {text} <TokenTooltip></TokenTooltip>
+          </>
+        );
+      }
+      return text;
+    }
+    return '';
+  }, [maxAmount, unit]);
 
   const inputBottomText = useMemo(() => description ?? maxAmountText ?? maxText, [description, maxAmountText]);
   const DescriptionText = ({ text }: { text: string }) => (

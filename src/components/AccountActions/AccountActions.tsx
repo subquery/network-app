@@ -12,6 +12,8 @@ import { Address, Typography } from '@subql/components';
 import { Button, Dropdown, Tooltip } from 'antd';
 import { useDisconnect, useWalletClient } from 'wagmi';
 
+import { BRIDGE_URL } from 'src/const/bridge';
+
 import { useSQToken } from '../../containers';
 import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
 import styles from './AccountActions.module.less';
@@ -105,16 +107,18 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
       key: 'bridge tokens',
       label: (
         <div style={{ padding: '0 16px 8px 16px' }}>
-          <Button
-            shape="round"
-            size="large"
-            type="primary"
-            ghost
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
-          >
-            Bridge Tokens
-            <BsBoxArrowInUpRight />
-          </Button>
+          <a href={BRIDGE_URL} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+            <Button
+              shape="round"
+              size="large"
+              type="primary"
+              ghost
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+            >
+              Bridge Tokens
+              <BsBoxArrowInUpRight />
+            </Button>
+          </a>
         </div>
       ),
     },
@@ -137,8 +141,6 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
               {formatEther(consumerHostBalance.data?.balance, 4)} {TOKEN}
             </Typography>
           </div>
-
-          <Typography.Link active>View Details</Typography.Link>
         </div>
       ),
     },
