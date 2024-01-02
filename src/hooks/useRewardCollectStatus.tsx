@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { cachedResult, limitContract, limitQueue, makeCacheKey } from '@utils/limitation';
+import { limitContract, makeCacheKey } from '@utils/limitation';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -15,22 +15,20 @@ export function useRewardCollectStatus(indexer: string): AsyncMemoReturn<{ hasCl
 
   return useAsyncMemo(async () => {
     if (!contracts) return;
-    const lastClaimedEra =
-      cachedResult.get(lastClaimedKey) ||
-      (await limitQueue.add(() => contracts.rewardsDistributor.getRewardInfo(indexer)));
-    const lastSettledEra =
-      cachedResult.get(lastSettledKey) ||
-      (await limitQueue.add(() => contracts.rewardsStaking.getLastSettledEra(indexer)));
-
-    cachedResult.set(lastClaimedKey, lastClaimedEra);
-    cachedResult.set(lastSettledKey, lastSettledEra);
+    const lastClaimedEra = await limitContract(
+      () => contracts.rewardsDistributor.getRewardInfo(indexer),
+      lastClaimedKey,
+    );
+    const lastSettledEra = await limitContract(
+      () => contracts.rewardsStaking.getLastSettledEra(indexer),
+      lastSettledKey,
+    );
 
     const currentEra = await limitContract(() => contracts.eraManager.eraNumber(), makeCacheKey('eraNumber'));
 
     if (lastClaimedEra && lastSettledEra && currentEra) {
       const rewardClaimStatus =
         currentEra.eq(lastClaimedEra.lastClaimEra.add(1)) && lastSettledEra.lte(lastClaimedEra.lastClaimEra);
-
       return { hasClaimedRewards: rewardClaimStatus };
     }
   }, [contracts]);
