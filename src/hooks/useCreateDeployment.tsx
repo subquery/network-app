@@ -19,7 +19,7 @@ export function useCreateDeployment(
     });
 
     console.log('Uploaded version details', versionCid);
-
+    debugger;
     const tx = await projectRegistry.updateDeployment(
       projectId,
       deploymentDetails.deploymentId,

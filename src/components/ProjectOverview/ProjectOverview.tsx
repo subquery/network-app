@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
+import Expand from '@components/Expand/Expand';
 import NewCard from '@components/NewCard';
 import { useRouteQuery } from '@hooks';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -62,7 +63,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     <div className={styles.container}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 720 }}>
-          <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
+          <Expand>
+            <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
+          </Expand>
         </div>
         <div className={styles.column} style={{ marginTop: 16 }}>
           <ExternalLink icon="globe" link={metadata.websiteUrl} />
@@ -74,7 +77,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
             {t('projectOverview.deploymentDescription')}
           </Typography>
           <div style={{ width: 670, marginTop: 8 }}>
-            <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
+            <Expand>
+              <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
+            </Expand>
           </div>
         </div>
       </div>

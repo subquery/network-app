@@ -3,11 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Expand from '@components/Expand/Expand';
 import { useCreateDeployment } from '@hooks';
 import { Markdown, Modal, openNotification, Typography } from '@subql/components';
 import { parseError } from '@utils';
 import { Form, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
+import Paragraph from 'antd/es/typography/Paragraph';
 import dayjs from 'dayjs';
 
 import { NewDeployment } from '../../models';
@@ -67,12 +69,14 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
         <div>
           <Form form={form} layout="vertical">
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
-              <Markdown
-                value={form.getFieldValue('description')}
-                onChange={(e) => {
-                  form.setFieldValue('description', e);
-                }}
-              ></Markdown>
+              <div className={styles.markdownWrapper}>
+                <Markdown
+                  value={form.getFieldValue('description')}
+                  onChange={(e) => {
+                    form.setFieldValue('description', e);
+                  }}
+                ></Markdown>
+              </div>
             </Form.Item>
           </Form>
         </div>
@@ -107,7 +111,9 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
               </TableCell>
               <TableCell>
                 <div className={styles.descriptionMarkdown}>
-                  <Markdown.Preview>{deployment.description}</Markdown.Preview>
+                  <Expand>
+                    <Markdown.Preview>{deployment.description}</Markdown.Preview>
+                  </Expand>
                 </div>
               </TableCell>
               <TableCell>
