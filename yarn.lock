@@ -4644,10 +4644,10 @@
     "@maticnetwork/maticjs" "^3.6.7"
     "@maticnetwork/maticjs-ethers" "^1.0.3"
 
-"@subql/network-clients@^0.112.1-0":
-  version "0.112.1-0"
-  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-0.112.1-0.tgz#5a88c4174a7e118deeb03136bcde869daac10a2a"
-  integrity sha512-JD/rQ3spEJbFnIKEXNdQFl3XDsSEgEM2+T2Ep4rlGsLLmVFtgEO9m0w/0nnyQoWhj55FZIoY3/r7Gej0od27Bg==
+"@subql/network-clients@^0.112.1-1":
+  version "0.112.1-1"
+  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-0.112.1-1.tgz#fd136be6e8b973a238f9334c07495f384ed153e3"
+  integrity sha512-eRLMdr5CBwt1ieV10Hppy1wOWEhcBlHO0jeyL4uQqzOCpJbqbDVujSX1aivCYCDxN66GQOhKz5/dGFLftPLDUg==
   dependencies:
     "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
@@ -4682,10 +4682,10 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/react-hooks@^0.112.1-0":
-  version "0.112.1-0"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.112.1-0.tgz#c554acfcf5b4e5f788746583648bf242b29bba07"
-  integrity sha512-QmPqVIjLnD0NOyDn//IqD24jNI5c2FY1Hs0ofMu9WgWkNwRjltURLQtZArKXiQv+33E20GJeTCQ9euA/eo/GeA==
+"@subql/react-hooks@^0.112.1-1":
+  version "0.112.1-1"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.112.1-1.tgz#147f05f79cb1a2a0f177fc3b8c1d5858ff065a59"
+  integrity sha512-nolP6HuN82PMGT0zcmO3dLno9rZjiUKUleDWxRPd1ttCkI5Qyr8nWOGhiYijlsXx4Y+1pa4Aan/sZCQCUASxZQ==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
