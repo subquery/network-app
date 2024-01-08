@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
+import Expand from '@components/Expand/Expand';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
@@ -18,7 +19,7 @@ import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
 import { parseError, renderAsync } from '../../../utils';
 import DeploymentsTab, { DeploymendRef } from './Deployments';
-import styles from './Project.module.css';
+import styles from './Project.module.less';
 
 export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails }> = ({ id, project }) => {
   const [form] = useForm();
@@ -69,15 +70,24 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
               <Input size="large" placeholder="Enter version"></Input>
             </Form.Item>
             <Form.Item name="recommended">
-              <SubqlCheckbox>Set as recommended version</SubqlCheckbox>
+              <SubqlCheckbox
+                value={form.getFieldValue('recommended')}
+                onChange={(e) => {
+                  form.setFieldValue('recommended', e.target.checked);
+                }}
+              >
+                Set as recommended version
+              </SubqlCheckbox>
             </Form.Item>
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
-              <Markdown
-                value={form.getFieldValue('description')}
-                onChange={(e) => {
-                  form.setFieldValue('description', e);
-                }}
-              ></Markdown>
+              <div className={styles.markdownWrapper}>
+                <Markdown
+                  value={form.getFieldValue('description')}
+                  onChange={(e) => {
+                    form.setFieldValue('description', e);
+                  }}
+                ></Markdown>
+              </div>
             </Form.Item>
           </Form>
         </div>
@@ -93,6 +103,7 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
             active
             weight={500}
             onClick={() => {
+              form.resetFields();
               setDeploymentModal(true);
             }}
           >
@@ -185,7 +196,9 @@ const Project: React.FC = () => {
             </Typography>
 
             <div style={{ marginBottom: 16 }}>
-              <Markdown.Preview>{project.metadata.description}</Markdown.Preview>
+              <Expand>
+                <Markdown.Preview>{project.metadata.description}</Markdown.Preview>
+              </Expand>
             </div>
 
             <Typography variant="large" style={{ margin: '24px 0 8px 0' }}>

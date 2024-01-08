@@ -3,15 +3,15 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Expand from '@components/Expand/Expand';
 import { useCreateDeployment } from '@hooks';
-import { Markdown, Modal, openNotification, Typography } from '@subql/components';
+import { Markdown, Modal, openNotification, TableTitle, Typography } from '@subql/components';
 import { parseError } from '@utils';
-import { Form, Radio } from 'antd';
+import { Form, Radio, Table } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 
 import { NewDeployment } from '../../models';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
 import { Copy } from '..';
 import styles from './ProjectDeployments.module.less';
 
@@ -67,70 +67,86 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
         <div>
           <Form form={form} layout="vertical">
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
-              <Markdown
-                value={form.getFieldValue('description')}
-                onChange={(e) => {
-                  form.setFieldValue('description', e);
-                }}
-              ></Markdown>
+              <div className={styles.markdownWrapper}>
+                <Markdown
+                  value={form.getFieldValue('description')}
+                  onChange={(e) => {
+                    form.setFieldValue('description', e);
+                  }}
+                ></Markdown>
+              </div>
             </Form.Item>
           </Form>
         </div>
       </Modal>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>{t('deployments.header1')}</TableCell>
-            <TableCell>RECOMMENDED</TableCell>
-            <TableCell>{t('deployments.header2')}</TableCell>
-            <TableCell>{t('deployments.header3')}</TableCell>
-            <TableCell>{t('deployments.header4')}</TableCell>
-            <TableCell>{t('general.action')}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {deployments.map((deployment, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <p className={styles.value}>{deployment.version}</p>
-              </TableCell>
-              <TableCell>
-                <p className={styles.value}>
-                  <Radio checked={currentDeploymentCid === deployment.deploymentId}>RECOMMENDED</Radio>
-                </p>
-              </TableCell>
-              <TableCell>
-                <div className={styles.deploymentId}>
-                  <p className={styles.value}>{deployment.deploymentId}</p>
-                  <Copy value={deployment.deploymentId} className={styles.copy} />
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className={styles.descriptionMarkdown}>
-                  <Markdown.Preview>{deployment.description}</Markdown.Preview>
-                </div>
-              </TableCell>
-              <TableCell>
-                <p className={styles.value}>
-                  {deployment.createdAt ? dayjs(deployment.createdAt).utc(true).fromNow() : 'N/A'}
-                </p>
-              </TableCell>
-              <TableCell>
-                <Typography.Link
-                  active
-                  onClick={() => {
-                    form.setFieldValue('description', deployment.description || '');
-                    setCurrentDeployment(deployment);
-                    setDeploymentModal(true);
-                  }}
-                >
-                  Edit
-                </Typography.Link>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Table
+        columns={[
+          {
+            dataIndex: 'version',
+            key: 'version',
+            title: <TableTitle>{t('deployments.header1')}</TableTitle>,
+            render: (val) => <Typography>{val}</Typography>,
+          },
+          {
+            dataIndex: 'deploymentId',
+            key: 'deploymentId',
+            title: <TableTitle>RECOMMENDED</TableTitle>,
+            render: (val) => (
+              <p className={styles.value}>
+                <Radio checked={currentDeploymentCid === val}>RECOMMENDED</Radio>
+              </p>
+            ),
+          },
+          {
+            dataIndex: 'deploymentId',
+            key: 'deploymentIdText',
+            title: <TableTitle>{t('deployments.header2')}</TableTitle>,
+            render: (val) => (
+              <div className={styles.deploymentId}>
+                <p className={styles.value}>{val}</p>
+                <Copy value={val} className={styles.copy} />
+              </div>
+            ),
+          },
+          {
+            dataIndex: 'description',
+            key: 'description',
+            title: <TableTitle>{t('deployments.header3')}</TableTitle>,
+            render: (val) => (
+              <div className={styles.descriptionMarkdown}>
+                <Expand>
+                  <Markdown.Preview>{val}</Markdown.Preview>
+                </Expand>
+              </div>
+            ),
+          },
+          {
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            title: <TableTitle>{t('deployments.header4')}</TableTitle>,
+            render: (val) => <p className={styles.value}>{val ? dayjs(val).utc(true).fromNow() : 'N/A'}</p>,
+          },
+          {
+            dataIndex: 'version',
+            key: 'version',
+            title: <TableTitle>{t('general.action')}</TableTitle>,
+            render: (_, record) => (
+              <Typography.Link
+                active
+                onClick={() => {
+                  form.setFieldValue('description', record.description || '');
+                  setCurrentDeployment(record);
+                  setDeploymentModal(true);
+                }}
+              >
+                Edit
+              </Typography.Link>
+            ),
+            fixed: 'right',
+          },
+        ]}
+        dataSource={deployments}
+      ></Table>
     </>
   );
 };

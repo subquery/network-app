@@ -186,12 +186,14 @@ const Create: React.FC = () => {
                       form: { setFieldValue: (field: string, val: any) => void };
                     }) => {
                       return (
-                        <Markdown
-                          value={field.value}
-                          onChange={(e) => {
-                            form.setFieldValue(field.name, e);
-                          }}
-                        />
+                        <div className={styles.markdownWrapper}>
+                          <Markdown
+                            value={field.value}
+                            onChange={(e) => {
+                              form.setFieldValue(field.name, e);
+                            }}
+                          />
+                        </div>
                       );
                     }}
                   </Field>
@@ -265,12 +267,14 @@ const Create: React.FC = () => {
                           form: { setFieldValue: (field: string, val: any) => void };
                         }) => {
                           return (
-                            <Markdown
-                              value={field.value}
-                              onChange={(e) => {
-                                form.setFieldValue(field.name, e);
-                              }}
-                            />
+                            <div className={styles.markdownWrapper}>
+                              <Markdown
+                                value={field.value}
+                                onChange={(e) => {
+                                  form.setFieldValue(field.name, e);
+                                }}
+                              />
+                            </div>
                           );
                         }}
                       </Field>
