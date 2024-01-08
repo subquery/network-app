@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
-import { WarningOutlined } from '@ant-design/icons';
+import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { useIPFS } from '@containers';
 import { Modal, Typography } from '@subql/components';
 import { waitForSomething } from '@utils/waitForSomething';

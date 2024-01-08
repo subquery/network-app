@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router';
-import { CloseOutlined } from '@ant-design/icons';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Typography } from '@subql/components';

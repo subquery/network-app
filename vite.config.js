@@ -32,7 +32,13 @@ export default defineConfig({
     rollupOptions: {
       cache: false,
       output: {
+        compact: true,
         sourcemap: false,
+        manualChunks: {
+          lodash: ['lodash', 'lodash-es'],
+          antd: ['antd'],
+          '@sentry': ['@sentry/react'],
+        },
       },
     },
   },

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AiOutlineDown } from 'react-icons/ai';
 import { BsBoxArrowInUpRight, BsBoxArrowLeft } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
 import { Address, Typography } from '@subql/components';
 import { Button, Dropdown, Tooltip } from 'antd';

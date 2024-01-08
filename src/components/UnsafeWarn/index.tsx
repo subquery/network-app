@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC } from 'react';
-import { WarningOutlined } from '@ant-design/icons';
+import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { Typography } from '@subql/components';
 import { Tag, Tooltip } from 'antd';
 

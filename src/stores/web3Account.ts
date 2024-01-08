@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ContractSDK, SQToken } from '@subql/contract-sdk';
+import { ContractSDK } from '@subql/contract-sdk/sdk';
+import { SQToken } from '@subql/contract-sdk/typechain/contracts/root/SQToken';
 import { ContractClient } from '@subql/network-clients';
 import { ethers } from 'ethers';
 import { create } from 'zustand';
