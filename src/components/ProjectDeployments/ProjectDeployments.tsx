@@ -12,7 +12,6 @@ import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 
 import { NewDeployment } from '../../models';
-// import { Table, TableBody, TableCell, TableHead, TableRow } from '../Table';
 import { Copy } from '..';
 import styles from './ProjectDeployments.module.less';
 
