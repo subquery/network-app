@@ -9,7 +9,6 @@ import { Markdown, Modal, openNotification, Typography } from '@subql/components
 import { parseError } from '@utils';
 import { Form, Radio } from 'antd';
 import { useForm } from 'antd/es/form/Form';
-import Paragraph from 'antd/es/typography/Paragraph';
 import dayjs from 'dayjs';
 
 import { NewDeployment } from '../../models';
