@@ -3,9 +3,10 @@
 
 import React from 'react';
 import { NETWORK_NAME } from '@containers/Web3';
-import { ContractSDK, SQToken__factory } from '@subql/contract-sdk';
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
+import { ContractSDK } from '@subql/contract-sdk/sdk';
+import { SQToken__factory } from '@subql/contract-sdk/typechain/factories/contracts/root/SQToken__factory';
 import { ContractClient } from '@subql/network-clients';
 import { parseError } from '@utils';
 import { goerli, mainnet } from 'viem/chains';

@@ -3,7 +3,8 @@
 
 import React, { FC } from 'react';
 import { BsBoxArrowInUpRight } from 'react-icons/bs';
-import { ExclamationCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
+import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { useSQToken } from '@containers';
 import { Typography } from '@subql/components';
 import { formatEther, TOKEN } from '@utils';
