@@ -20,7 +20,7 @@
     "@rainbow-me/rainbowkit": "^1.2.0",
     "@sentry/react": "^7.57.0",
     "@subql/apollo-links": "^1.2.5",
-    "@subql/components": "1.0.3-24",
+    "@subql/components": "1.0.3-27",
     "@subql/contract-sdk": "0.17.1-1",
     "@subql/network-clients": "^0.3.17",
     "@subql/network-config": "0.3.17-2",
