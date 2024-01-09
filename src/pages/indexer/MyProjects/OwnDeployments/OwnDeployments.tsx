@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ProgressBar, Spinner } from '@subql/components';
+import { Spinner, SubqlProgress } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { Table, TableProps, Typography } from 'antd';
@@ -51,7 +51,9 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               <Typography.Text type="secondary">{indexingProgressErr}</Typography.Text>
             </div>
           );
-        return <ProgressBar progress={truncateToDecimalPlace(indexingProgress, 2)} className={styles.progress} />;
+        return (
+          <SubqlProgress percent={truncateToDecimalPlace(indexingProgress, 2) * 100} className={styles.progress} />
+        );
       },
     },
     {

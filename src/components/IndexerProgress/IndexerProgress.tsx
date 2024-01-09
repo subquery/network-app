@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { ProgressBar } from '@subql/components';
+import { SubqlProgress } from '@subql/components';
 
 import styles from './IndexerProgress.module.css';
 
@@ -40,7 +40,7 @@ const IndexerProgress: React.FC<Props> = ({ indexerStatus, chainBlockHeight, sta
   return (
     <div className={[styles.container, containerClassName].join(' ')}>
       <span className={styles.status}>{status}</span>
-      <ProgressBar progress={maxProgress} />
+      <SubqlProgress percent={maxProgress * 100} />
     </div>
   );
 };
