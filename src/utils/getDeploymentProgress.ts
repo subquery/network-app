@@ -17,7 +17,7 @@ type Metadata = {
   genesisHash: string;
   indexerHealthy: boolean;
   indexerNodeVersion: string; // Semver
-  lastProcessedHeight: number;
+  lastHeight: number;
   lastProcessedTimestamp: string;
   queryNodeVersion: string; // Semver
   specName: string;
@@ -51,7 +51,7 @@ export async function getDeploymentMetadata({
     const response = await axios.get(endpoint, {
       timeout: 5000, // 5 seconds
     });
-    return response?.data?.data?._metadata;
+    return response?.data;
   } catch (err) {
     throw new Error(`Failed to fetch metadata from deployment's Query Service.`);
   }
@@ -69,7 +69,7 @@ export const getDeploymentProgress = async ({
   const metadata = await getDeploymentMetadata({ proxyEndpoint, deploymentId, indexer });
 
   return indexingProgress({
-    currentHeight: metadata?.lastProcessedHeight ?? 0,
+    currentHeight: metadata?.lastHeight ?? 0,
     targetHeight: metadata?.targetHeight ?? 0,
     startHeight: metadata?.startHeight ?? 0,
   });

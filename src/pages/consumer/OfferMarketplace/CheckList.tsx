@@ -129,13 +129,13 @@ export const CheckList: React.FC<ICheckList> = ({
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
 
   const deploymentMeta = useAsyncMemo(async () => {
-    if (!deploymentId || !proxyEndpoint || !indexer) return { lastProcessedHeight: 0 };
+    if (!deploymentId || !proxyEndpoint || !indexer) return { lastHeight: 0 };
     try {
       const metaData = await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
       return metaData;
     } catch (error: any) {
       setCheckListErr(parseError(error));
-      return { lastProcessedHeight: 0 };
+      return { lastHeight: 0 };
     }
   }, [deploymentId, indexer, proxyEndpoint]);
 
@@ -152,7 +152,7 @@ export const CheckList: React.FC<ICheckList> = ({
 
       if (isUndefined(metadata) || isUndefined(cap)) return <Spinner />;
 
-      const latestBlockHeight = metadata?.lastProcessedHeight;
+      const latestBlockHeight = metadata?.lastHeight;
       const dailyRewardCap = convertStringToNumber(formatEther(cap ?? 0));
 
       const sortedRequirementCheckList = [

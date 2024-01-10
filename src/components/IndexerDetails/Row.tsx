@@ -125,10 +125,12 @@ const ConnectedRow: React.FC<{
       setProjectMaxTargetHeightInfo(deploymentId, maxTargetHeight);
     }
 
+    console.warn(meta);
+
     return {
       startBlock: meta?.startHeight ?? 0,
       targetBlock: maxTargetHeight,
-      currentBlock: meta?.lastProcessedHeight ?? 0,
+      currentBlock: meta?.lastHeight ?? 0,
     };
   }, [indexerMetadata.url, indexer]);
 
