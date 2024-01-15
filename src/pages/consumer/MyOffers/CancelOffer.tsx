@@ -115,7 +115,7 @@ export const CancelOffer: React.FC<Props> = ({ offerId, active, onSuccess }) => 
       onClick={handleClick}
       onSuccess={() => {
         if (onSuccess) {
-          setTimeout(() => onSuccess(), 1000);
+          onSuccess();
         }
       }}
       renderContent={(onSubmit, _, isLoading, error) => {

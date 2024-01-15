@@ -84,10 +84,14 @@ export const Summary: React.FC = () => {
           title: 'Offer created!',
           description: t('status.changeValidIn15s'),
         });
-
-        setTimeout(() => {
+        let times = 0;
+        const interval = setInterval(() => {
           EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
-        }, 1000);
+          times += 1;
+          if (times === 5) {
+            clearInterval(interval);
+          }
+        }, 3000);
       });
     } catch (error) {
       openNotification({

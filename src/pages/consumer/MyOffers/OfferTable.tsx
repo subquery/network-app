@@ -395,7 +395,16 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
                       columns: getColumns(
                         pathname as typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
                         account,
-                        refreshAfterCancel,
+                        () => {
+                          let times = 0;
+                          const interval = setInterval(() => {
+                            refreshAfterCancel();
+                            times += 1;
+                            if (times === 5) {
+                              clearInterval(interval);
+                            }
+                          }, 3000);
+                        },
                       ),
                       dataSource: offerList,
                       scroll: { x: 2000 },
