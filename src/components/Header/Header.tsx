@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AccountActions } from '@components/AccountActions';
-import { useStudioEnabled } from '@hooks';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Header as SubqlHeader } from '@subql/components';
 import { entryLinks, externalAppLinks } from '@utils/links';
@@ -38,21 +37,17 @@ export interface AppNavigation {
 export const Header: React.FC = () => {
   const { address: account } = useAccount();
   const navigate = useNavigate();
-  const studioEnabled = useStudioEnabled();
   const calEntryLinks = React.useMemo(() => {
-    if (!studioEnabled) {
-      return entryLinks.map((entry) => {
-        if (entry.key === 'explorer') {
-          return {
-            ...entry,
-            dropdown: undefined,
-          };
-        }
-        return entry;
-      });
-    }
-    return entryLinks;
-  }, [studioEnabled]);
+    return entryLinks.map((entry) => {
+      if (entry.key === 'explorer') {
+        return {
+          ...entry,
+          dropdown: undefined,
+        };
+      }
+      return entry;
+    });
+  }, []);
 
   return (
     <div className={styles.header}>
