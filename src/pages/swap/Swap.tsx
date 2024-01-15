@@ -226,17 +226,9 @@ const USDCToSqt = () => {
 
                 <div className="col-flex" style={{ justifyContent: 'flex-start' }}>
                   <SubqlTypography type="secondary">
-                    Only participants that have been KYC’d and whitelisted can participate in the SubQuery Kepler Swap.
-                    You can see a list of all existing whitelisted participants{' '}
-                    <a
-                      href="https://docs.google.com/spreadsheets/d/1Y01iu2M6fq5bat38efj2glvmXVo7W3Z2gYHHTmbES3Q/edit?usp=sharing"
-                      target="_blank"
-                      style={{ textDecoration: 'underline', color: 'var(--sq-gray600)' }}
-                      rel="noreferrer"
-                    >
-                      here
-                    </a>
-                    .
+                    Only participants that have been KYC’d and registered can participate in the SubQuery Kepler Swap.
+                    You check if your account has been KYC'd and registered, please enter /kepler-ksqt-swap-kyc
+                    &lt;your_wallet_address&gt; in the #kepler-swap-support channel in our Discord.
                   </SubqlTypography>
                   <SubqlTypography type="secondary" style={{ marginTop: 20 }}>
                     If you’re new here, check out{' '}
