@@ -239,7 +239,7 @@ const Create: React.FC = () => {
                           onChange={(val) => {
                             form.setFieldValue(field.name, val.target.value);
                           }}
-                          disabled={isEdit ? true : false}
+                          disabled={true}
                         >
                           <Radio value={ProjectType.SUBQUERY}>SubQuery</Radio>
                           <Radio value={ProjectType.RPC}>RPC</Radio>
