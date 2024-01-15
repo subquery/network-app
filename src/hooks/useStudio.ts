@@ -13,8 +13,12 @@ export function useStudioEnabled() {
 
   const checkStudioEnabled = useCallback(async () => {
     if (!contracts || !account) return;
-    const studioEnabled = await contracts.queryRegistry.creatorWhitelist(account);
-    setStudioEnabled(studioEnabled);
+    try {
+      const studioEnabled = await contracts.queryRegistry.creatorWhitelist(account);
+      setStudioEnabled(studioEnabled);
+    } catch (e) {
+      // don't care this error
+    }
   }, [contracts, account]);
 
   useEffect(() => {
