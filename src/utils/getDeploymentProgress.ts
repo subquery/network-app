@@ -12,7 +12,7 @@ interface GetDeploymentProgress {
   indexer: string;
 }
 
-type Metadata = {
+export type Metadata = {
   chain: string;
   genesisHash: string;
   indexerHealthy: boolean;
@@ -23,6 +23,7 @@ type Metadata = {
   specName: string;
   targetHeight: number;
   startHeight?: number;
+  poiHash: string;
 };
 
 export async function getDeploymentMetadata({

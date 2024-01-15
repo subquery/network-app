@@ -61,16 +61,15 @@ export interface UseSortedIndexerReturn {
 }
 
 export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerReturn> & { refresh?: () => void } {
-  const { currentEra, refetch } = useEra();
+  const { currentEra } = useEra();
   const indexerQueryParams = { address: account ?? '' };
-  const indexerData = useGetIndexerQuery({ variables: indexerQueryParams, pollInterval: 10000 });
+  const indexerData = useGetIndexerQuery({ variables: indexerQueryParams, fetchPolicy: 'network-only' });
   const delegationQueryParams = { id: `${account ?? ''}:${account}` };
-  const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams });
+  const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams, fetchPolicy: 'network-only' });
 
   const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
 
   const refresh = async () => {
-    refetch();
     indexerData.refetch();
     indexerDelegation.refetch();
   };

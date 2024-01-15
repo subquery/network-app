@@ -8,6 +8,7 @@ import { useWeb3 } from '@containers';
 import { useIsIndexer, useSortedIndexer } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '@utils';
+import { retry } from '@utils/retry';
 
 import { DoStake } from './DoStake';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
@@ -35,7 +36,6 @@ export const MyStaking: React.FC = () => {
                 if (!data) return null;
                 const [sortedIndexerData, indexer] = data;
 
-                if (indexer === undefined && !sortedIndexerData) return <Spinner />;
                 if (!indexer && !sortedIndexerData) return <NotRegisteredIndexer />;
 
                 const sortedTotalStaking = truncFormatEtherStr(`${sortedIndexerData?.ownStake.current ?? 0}`);
@@ -47,14 +47,22 @@ export const MyStaking: React.FC = () => {
                       <div className={styles.stakingAmount}>
                         <Card title={t('indexer.stakingAmountTitle')} value={`${sortedTotalStaking} ${TOKEN}`} />
                       </div>
-                      {sortedIndexerData && (
+                      {
                         <div className={styles.stakingActions}>
-                          <DoStake />
+                          <DoStake
+                            onSuccess={() => {
+                              retry(sortedIndexer.refresh);
+                            }}
+                          />
                           <div style={{ marginLeft: '1rem' }}>
-                            <SetCommissionRate />
+                            <SetCommissionRate
+                              onSuccess={() => {
+                                retry(sortedIndexer.refresh);
+                              }}
+                            />
                           </div>
                         </div>
-                      )}
+                      }
                     </div>
 
                     <Indexing tableData={sortedIndexerData} />

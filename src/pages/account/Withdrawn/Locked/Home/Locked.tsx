@@ -5,23 +5,25 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { EmptyList } from '@components';
+import { claimIndexerRewardsModalText, EmptyList, ModalClaimIndexerRewards } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
+import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { WithdrawalFieldsFragment as Withdrawls, WithdrawalType } from '@subql/network-query';
 import { useGetWithdrawlsLazyQuery } from '@subql/react-hooks';
 import { WithdrawalStatus } from '@subql/react-hooks/dist/graphql';
 import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
+import { retry } from '@utils/retry';
 import { Button, Table, TableProps, Tag } from 'antd';
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
 import { capitalize } from 'lodash-es';
-import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -61,19 +63,30 @@ const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: 
   onSuccess,
 }) => {
   const { contracts } = useWeb3Store();
+  const { account } = useWeb3();
+  const rewardClaimStatus = useRewardCollectStatus(account || '');
+
   const cancelUnbonding = () => {
     assert(contracts, 'Contracts not available');
 
     return contracts.stakingManager.cancelUnbonding(id);
   };
 
+  const needClaimedStatus = React.useMemo(() => {
+    return !rewardClaimStatus.data?.hasClaimedRewards;
+  }, [rewardClaimStatus.data?.hasClaimedRewards]);
+
   return (
     <div>
       <TransactionModal
-        text={{
-          title: '',
-          steps: [],
-        }}
+        text={
+          needClaimedStatus
+            ? claimIndexerRewardsModalText
+            : {
+                title: '',
+                steps: [],
+              }
+        }
         actions={[{ label: capitalize(t('general.cancel')), key: 'claim' }]}
         variant={'textBtn'}
         onClick={cancelUnbonding}
@@ -81,6 +94,10 @@ const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: 
         className={styles.cancelModal}
         onSuccess={onSuccess}
         renderContent={(onSubmit, onCancel, isLoading, error) => {
+          if (needClaimedStatus) {
+            return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;
+          }
+
           return (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
@@ -141,7 +158,8 @@ export const Locked: React.FC = () => {
     {
       title: <TableTitle title={'#'} />,
       width: '10%',
-      render: (t, r, index) => <TableText content={index + 1} />,
+      dataIndex: 'index',
+      render: (t) => <TableText content={t} />,
     },
     {
       title: <TableTitle title={t('withdrawals.amount')} />,
@@ -153,7 +171,7 @@ export const Locked: React.FC = () => {
       title: <TableTitle title={t('withdrawals.lockedUntil')} />,
       dataIndex: 'endAt',
       width: '25%',
-      render: (value: string) => <TableText content={moment(value).format(dateFormat)} />,
+      render: (value: string) => <TableText content={dayjs(value).format(dateFormat)} />,
     },
     {
       title: <TableTitle title={t('withdrawals.type')} />,
@@ -175,7 +193,15 @@ export const Locked: React.FC = () => {
       title: <TableTitle title={t('general.action')}></TableTitle>,
       dataIndex: 'index',
       width: '25%',
-      render: (id, record) => <CancelUnbonding id={id} type={record.type} onSuccess={getWithdrawals}></CancelUnbonding>,
+      render: (id, record) => (
+        <CancelUnbonding
+          id={id}
+          type={record.type}
+          onSuccess={() => {
+            retry(getWithdrawals);
+          }}
+        ></CancelUnbonding>
+      ),
     },
   ];
 
@@ -189,9 +215,9 @@ export const Locked: React.FC = () => {
         mapAsync(
           ([withdrawlsResult, lockPeriod]) =>
             withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
-              const utcStartAt = moment.utc(withdrawal?.startTime);
-              const utcEndAt = moment.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
-              const lockStatus = moment.utc() > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
+              const utcStartAt = dayjs.utc(withdrawal?.startTime);
+              const utcEndAt = dayjs.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
+              const lockStatus = dayjs.utc() > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
               return { ...withdrawal, endAt: utcEndAt.local().format(), lockStatus, idx };
             }),
           mergeAsync(withdrawals, lockPeriod),
@@ -201,7 +227,7 @@ export const Locked: React.FC = () => {
           loading: () => <Spinner />,
           empty: () => <EmptyList title={t('withdrawals.noWithdrawals')} />,
           data: (data) => {
-            const sortedData = data.sort((a, b) => moment(b.endAt).unix() - moment(a.endAt).unix());
+            const sortedData = data.sort((a, b) => dayjs(b.endAt).unix() - dayjs(a.endAt).unix());
             const unlockedRewards = data.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
             const hasUnlockedRewards = unlockedRewards?.length > 0;
             const withdrawalsAmountBigNumber = unlockedRewards.reduce((sum, withdrawal) => {
@@ -219,7 +245,13 @@ export const Locked: React.FC = () => {
                     {t('withdrawals.info')}
                   </Typography>
                   <span style={{ flex: 1 }}></span>
-                  <DoWithdraw unlockedAmount={sortedWithdrawalsAmount} disabled={!hasUnlockedRewards} />
+                  <DoWithdraw
+                    onSuccess={() => {
+                      retry(getWithdrawals);
+                    }}
+                    unlockedAmount={sortedWithdrawalsAmount}
+                    disabled={!hasUnlockedRewards}
+                  />
                 </div>
                 <div className={styles.header}>
                   <Typography className={styles.title}>{headerTitle}</Typography>

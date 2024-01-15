@@ -66,7 +66,7 @@ const getContentText = (
   };
 };
 
-export const DoStake: React.FC = () => {
+export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
   const { contracts } = useWeb3Store();
 
@@ -145,7 +145,10 @@ export const DoStake: React.FC = () => {
             showMaxButton: true,
             curAmount: formatEther(curAmount),
           }}
-          onSuccess={() => (stakeAction === StakeAction.Stake ? balance.refetch(true) : maxUnstake.refetch(true))}
+          onSuccess={() => {
+            stakeAction === StakeAction.Stake ? balance.refetch(true) : maxUnstake.refetch(true);
+            onSuccess();
+          }}
           onClick={handleClick}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {

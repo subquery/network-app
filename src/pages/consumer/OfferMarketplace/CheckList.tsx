@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { ServiceStatus } from '@subql/network-query';
+import { AsyncMemoReturn } from '@subql/react-hooks';
 import { Button, Typography } from 'antd';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -19,9 +20,9 @@ import {
   COLORS,
   convertStringToNumber,
   formatEther,
-  getDeploymentMetadata,
   isUndefined,
   mergeAsync,
+  Metadata,
   parseError,
   renderAsyncArray,
   TOKEN,
@@ -45,12 +46,14 @@ interface IRequirementCheck {
   requiredValue: string | number | undefined;
   value: string | number | undefined;
   passCheck: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formatFn?: (value: any) => string | number | React.ReactNode;
   errorMsg?: string;
 }
 
 interface ISortedValue {
   value: string | number | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formatFn?: (value: any) => string | React.ReactNode;
 }
 
@@ -102,24 +105,30 @@ interface ICheckList {
   rewardPerIndexer: string;
   requiredBlockHeight: number; //TODO: or should use bigInt?
   onSubmit: (params: unknown) => void;
-  error?: any;
+  error?: unknown;
   isLoading?: boolean;
+  deploymentMeta: AsyncMemoReturn<
+    | Metadata
+    | {
+        lastHeight: number;
+      }
+    | undefined
+  >;
 }
 
 export const CheckList: React.FC<ICheckList> = ({
   status,
   requiredBlockHeight,
-  deploymentId,
   offerId,
   rewardPerIndexer,
   planDuration,
-  proxyEndpoint,
   onSubmit,
   error,
   isLoading,
+  deploymentMeta,
 }) => {
   const { t } = useTranslation();
-  const [checkListErr, setCheckListErr] = React.useState<string | undefined>(parseError(error));
+  const [checkListErr] = React.useState<string | undefined>(parseError(error));
   const { account: indexer } = useWeb3();
   const { contractClient } = useWeb3Store();
 
@@ -127,17 +136,6 @@ export const CheckList: React.FC<ICheckList> = ({
   const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
   const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
-
-  const deploymentMeta = useAsyncMemo(async () => {
-    if (!deploymentId || !proxyEndpoint || !indexer) return { lastHeight: 0 };
-    try {
-      const metaData = await getDeploymentMetadata({ deploymentId, indexer, proxyEndpoint });
-      return metaData;
-    } catch (error: any) {
-      setCheckListErr(parseError(error));
-      return { lastHeight: 0 };
-    }
-  }, [deploymentId, indexer, proxyEndpoint]);
 
   const dailyRewardCapacity = useAsyncMemo(async () => {
     if (!contractClient || !indexer) return null;
