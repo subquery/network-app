@@ -30,7 +30,7 @@ const getModalText = (requireClaimIndexerRewards = false, commissionRate: string
   };
 };
 
-export const SetCommissionRate: React.FC = () => {
+export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const { contracts } = useWeb3Store();
   const { t } = useTranslation();
   const { account } = useWeb3();
@@ -75,7 +75,10 @@ export const SetCommissionRate: React.FC = () => {
             unit: '%',
           }}
           onClick={handleClick}
-          onSuccess={() => commissionRate.refetch(true)}
+          onSuccess={() => {
+            commissionRate.refetch(true);
+            onSuccess();
+          }}
           renderContent={(onSubmit, _, loading) => {
             if (requireClaimIndexerRewards) {
               return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;

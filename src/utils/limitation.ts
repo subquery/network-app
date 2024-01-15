@@ -66,7 +66,7 @@ export const limitContract = async <T extends Promise<any>>(
         cachedResult.set(cacheName, result);
         setTimeout(() => {
           cachedResult.delete(cacheName);
-        }, 15000);
+        }, 3000);
       }
       return result;
     } catch (e) {

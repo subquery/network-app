@@ -16,6 +16,7 @@ import {
   useGetSpecificOpenOffersLazyQuery,
 } from '@subql/react-hooks';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
+import { retry } from '@utils/retry';
 import { TableProps, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -54,7 +55,10 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
     },
   });
 
-  const acceptedOffersResult = useGetAcceptedOffersQuery({ variables: { address: account ?? '', offerId: offer.id } });
+  const acceptedOffersResult = useGetAcceptedOffersQuery({
+    variables: { address: account ?? '', offerId: offer.id },
+    fetchPolicy: 'network-only',
+  });
 
   return (
     <>
@@ -82,7 +86,9 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
             <AcceptOffer
               deployment={deploymentIndexer}
               disabled={acceptedOffersCount > 0}
-              onAcceptOffer={acceptedOffersResult.refetch}
+              onAcceptOffer={() => {
+                retry(acceptedOffersResult.refetch);
+              }}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
             />
@@ -395,7 +401,9 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
                       columns: getColumns(
                         pathname as typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
                         account,
-                        refreshAfterCancel,
+                        () => {
+                          retry(refreshAfterCancel);
+                        },
                       ),
                       dataSource: offerList,
                       scroll: { x: 2000 },

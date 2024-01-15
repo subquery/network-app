@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { Route, Routes, useNavigate } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { WalletRoute } from '@components';
-import { useStudioEnabled } from '@hooks';
 import { Footer } from '@subql/components';
 
 import Create from './Create';
@@ -12,11 +11,6 @@ import Home from './Home';
 import Project from './Project';
 
 const Studio: React.FC = () => {
-  const studioEnabled = useStudioEnabled();
-  const navigate = useNavigate();
-  if (!studioEnabled) {
-    navigate('/');
-  }
   return (
     <WalletRoute
       element={

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { assert } from '@polkadot/util';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
+import { retry } from '@utils/retry';
 import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
@@ -84,10 +85,9 @@ export const Summary: React.FC = () => {
           title: 'Offer created!',
           description: t('status.changeValidIn15s'),
         });
-
-        setTimeout(() => {
+        retry(() => {
           EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
-        }, 1000);
+        });
       });
     } catch (error) {
       openNotification({

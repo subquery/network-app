@@ -17,9 +17,10 @@ import styles from './DoWithdraw.module.css';
 interface DoWithdrawProps {
   unlockedAmount: string;
   disabled: boolean;
+  onSuccess: () => void;
 }
 
-export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled }) => {
+export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled, onSuccess }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
 
@@ -44,6 +45,7 @@ export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled
         variant={disabled ? 'disabledButton' : 'button'}
         onClick={handleClick}
         buttonClassName={styles.withdrawButton}
+        onSuccess={onSuccess}
         renderContent={(onSubmit, _, isLoading, error) => {
           return (
             <>

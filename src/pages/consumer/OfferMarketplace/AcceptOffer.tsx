@@ -5,9 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StepButtons } from '@components/StepButton';
 import { useIndexerMetadata, useProject } from '@hooks';
-import { Spinner } from '@subql/components';
+import { openNotification, Spinner } from '@subql/components';
 import { IndexerDeploymentFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
-import { useGetIndexerQuery } from '@subql/react-hooks';
+import { useAsyncMemo, useGetIndexerQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
 import assert from 'assert';
 import moment from 'moment';
@@ -23,6 +23,7 @@ import {
   formatEther,
   formatSecondsDuration,
   getCapitalizedStr,
+  getDeploymentMetadata,
   renderAsync,
 } from '../../../utils';
 import styles from './AcceptOffer.module.css';
@@ -146,6 +147,21 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
     immediate: true,
   });
 
+  const deploymentMeta = useAsyncMemo(async () => {
+    if (!deployment.deploymentId || !indexerMetadata.url || !account) return { lastHeight: 0 };
+    try {
+      const metaData = await getDeploymentMetadata({
+        deploymentId: deployment.deploymentId,
+        indexer: account,
+        proxyEndpoint: indexerMetadata.url ?? '',
+      });
+
+      return metaData;
+    } catch (error: unknown) {
+      return { lastHeight: 0, poiHash: '' };
+    }
+  }, [deployment.deploymentId, account, indexerMetadata.url ?? '']);
+
   const disableAcceptInfo = React.useMemo(() => {
     const status = disabled || !offer.planTemplate?.active;
     let tooltip = undefined;
@@ -174,10 +190,13 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
 
   const handleClick = async () => {
     assert(contracts, 'Contracts not available');
-
-    // TODO: update the root when api ready
-    const tempMmrRoot = '0xab3921276c8067fe0c82def3e5ecfd8447f1961bc85768c2a56e6bd26d3c0c55';
-    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer?.id ?? '', tempMmrRoot);
+    if (!deploymentMeta.data) {
+      openNotification({
+        type: 'error',
+        description: 'Please confirm your metadata can be reach',
+      });
+    }
+    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer?.id ?? '', deploymentMeta.data?.poiHash || '');
   };
 
   return (
@@ -217,6 +236,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
               onSubmit={onSubmit}
               isLoading={isLoading}
               error={error}
+              deploymentMeta={deploymentMeta}
             />
           ),
         });

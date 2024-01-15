@@ -11,6 +11,7 @@ import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
 import { ExcludeNull, formatEther, notEmpty } from '@utils';
+import { retry } from '@utils/retry';
 import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
@@ -26,6 +27,8 @@ export const Rewards: React.FC = () => {
   const update = useUpdate();
   const filterParams = { address: account || '' };
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
+
+  const [loading, setLoading] = React.useState(false);
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
@@ -117,62 +120,80 @@ export const Rewards: React.FC = () => {
     fetchIndexerEraRewards();
   }, [account]);
 
-  useMount(() => {
-    fetchIndexerEraRewards();
+  useMount(async () => {
+    try {
+      setLoading(true);
+      fetchIndexerEraRewards();
+    } finally {
+      setLoading(false);
+    }
   });
 
   return (
     <div className={styles.rewardsContainer}>
       <div className={styles.rewardsList}>
-        {renderAsync(indexerEraRewards, {
-          error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
-          loading: () => <Spinner />,
-          data: (data) => {
-            const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
-            return (
-              <>
-                <div className="flex">
-                  <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
-                  <Typography type="secondary">{t('rewards.info')}</Typography>
-                  <span style={{ flex: 1 }}></span>
-                  {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
-                    <ClaimRewards
-                      indexers={unclaimedRewards?.indexers as string[]}
-                      account={account ?? ''}
-                      totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
-                    />
-                  )}
-                </div>
-                <div className={styles.claim}>
-                  <Typography className={styles.header}>
-                    {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
-                  </Typography>
-                </div>
-
-                <Table
-                  columns={columns}
-                  dataSource={filterEmptyData || []}
-                  scroll={{ x: 600 }}
-                  rowKey="id"
-                  pagination={{
-                    current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
-                    pageSize: queryParams.current.pageSize,
-                    total: queryParams.current.totalCount,
-                    onChange(page, pageSize) {
-                      const offset = pageSize !== queryParams.current.pageSize ? 0 : (page - 1) * pageSize;
-                      queryParams.current = {
-                        ...queryParams.current,
-                        pageSize: pageSize,
-                        offset,
-                      };
-                      fetchIndexerEraRewards();
-                    },
-                  }}
-                />
-              </>
-            );
+        {renderAsync(
+          {
+            ...indexerEraRewards,
+            loading,
           },
-        })}
+          {
+            error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
+            loading: () => <Spinner />,
+            data: (data) => {
+              const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
+              return (
+                <>
+                  <div className="flex">
+                    <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
+                    <Typography type="secondary">{t('rewards.info')}</Typography>
+                    <span style={{ flex: 1 }}></span>
+                    {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers && (
+                      <ClaimRewards
+                        indexers={unclaimedRewards?.indexers as string[]}
+                        account={account ?? ''}
+                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                        onClaimed={() => {
+                          retry(() => {
+                            fetchIndexerEraRewards();
+                            rewards.refetch();
+                          });
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.claim}>
+                    <Typography className={styles.header}>
+                      {t('rewards.totalUnclaimReward', { count: totalUnclaimedRewards })}
+                    </Typography>
+                  </div>
+
+                  <Table
+                    columns={columns}
+                    dataSource={filterEmptyData || []}
+                    scroll={{ x: 600 }}
+                    rowKey="id"
+                    loading={indexerEraRewards.loading}
+                    pagination={{
+                      current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
+                      pageSize: queryParams.current.pageSize,
+                      total: queryParams.current.totalCount,
+                      onChange(page, pageSize) {
+                        const offset = pageSize !== queryParams.current.pageSize ? 0 : (page - 1) * pageSize;
+                        queryParams.current = {
+                          ...queryParams.current,
+                          pageSize: pageSize,
+                          offset,
+                        };
+                        fetchIndexerEraRewards();
+                      },
+                    }}
+                  />
+                </>
+              );
+            },
+          },
+        )}
       </div>
     </div>
   );
