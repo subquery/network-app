@@ -65,3 +65,30 @@ export const categoriesOptions = [
     value: 'Privacy',
   },
 ];
+
+export const rpcCategoriesOptions = [
+  {
+    label: 'Light Node',
+    value: 'Light Node',
+  },
+  {
+    label: 'Full Node',
+    value: 'Full Node',
+  },
+  {
+    label: 'Archive Node',
+    value: 'Archive Node',
+  },
+  {
+    label: 'EVM',
+    value: 'EVM',
+  },
+  {
+    label: 'Polkdot',
+    value: 'Polkdot',
+  },
+  {
+    label: 'Cosmos',
+    value: 'Cosmos',
+  },
+];

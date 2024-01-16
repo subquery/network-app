@@ -58,7 +58,6 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     }
 
     const metadata = await getMetadataFromCid(query.metadata);
-
     return {
       id,
       owner: query.owner,

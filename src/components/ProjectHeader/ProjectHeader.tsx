@@ -4,8 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
+import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Address, Typography } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 import { Button } from 'antd';
 import dayjs from 'dayjs';
 
@@ -20,9 +22,17 @@ type Props = {
   currentVersion?: string;
   onChangeVersion?: (key: string) => void;
   isUnsafeDeployment?: boolean;
+  manifest?: Manifest;
 };
 
-const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isUnsafeDeployment, onChangeVersion }) => {
+const ProjectHeader: React.FC<Props> = ({
+  project,
+  versions,
+  currentVersion,
+  isUnsafeDeployment,
+  onChangeVersion,
+  manifest,
+}) => {
   const { t } = useTranslation();
 
   const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).fromNow(), [project]);
@@ -75,6 +85,12 @@ const ProjectHeader: React.FC<Props> = ({ project, versions, currentVersion, isU
           </div>
         </div>
         <div className={styles.lower}>
+          {project.type === ProjectType.RPC && manifest?.rpcFamily ? (
+            <Detail label="Network" value={manifest?.rpcFamily[0]}></Detail>
+          ) : (
+            ''
+          )}
+          <Detail label="Type" value={project.type === ProjectType.RPC ? 'RPC Endpoint' : 'Data Indexer'}></Detail>
           {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}
           <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
           <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />

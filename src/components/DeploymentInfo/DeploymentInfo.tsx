@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Spinner, Typography } from '@subql/components';
+import { ProjectType } from '@subql/contract-sdk/types';
 import { Tooltip } from 'antd';
 
 import { useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
 import { useDeploymentMetadata } from '../../hooks/useDeploymentMetadata';
 import { ProjectMetadata } from '../../models';
-import { parseError, renderAsync } from '../../utils';
+import { isUndefined, parseError, renderAsync } from '../../utils';
 import Copy from '../Copy';
 import IPFSImage from '../IPFSImage';
 import styles from './DeploymentInfo.module.css';
@@ -21,9 +22,10 @@ type Props = {
   project?: ProjectMetadata;
   deploymentId?: string;
   deploymentVersion?: string;
+  type?: ProjectType;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type }) => {
   const { t } = useTranslation();
 
   const deploymentMeta = useDeploymentMetadata(deploymentId);
@@ -46,6 +48,15 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId }) => {
             )}
             {isUnsafe && <UnsafeWarn></UnsafeWarn>}
           </div>
+          {isUndefined(type) ? (
+            ''
+          ) : (
+            <div>
+              <Typography variant="small" className={styles.text}>
+                Type: {type === ProjectType.RPC ? 'RPC Endpoint' : 'Data Indexer'}
+              </Typography>
+            </div>
+          )}
           <div className={project?.name ? '' : styles.deployment}>
             <Typography variant="small" className={styles.text}>
               {versionHeader}

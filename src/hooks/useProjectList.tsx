@@ -6,17 +6,19 @@ import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
 import { useProjectMetadata } from '@containers';
 import { SubqlCheckbox } from '@subql/components';
-import { ProjectFieldsFragment, ProjectsOrderBy } from '@subql/network-query';
+import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
-import { categoriesOptions, notEmpty } from '@utils';
+import { categoriesOptions, notEmpty, rpcCategoriesOptions } from '@utils';
 import { useInfiniteScroll, useMount } from 'ahooks';
-import { Input, Skeleton, Typography } from 'antd';
+import { Input, Radio, Skeleton, Typography } from 'antd';
 
+import { useGetDeploymentManifest } from './useGetDeploymentManifest';
 import { useLocalProjects } from './useLocalProjects';
 import styles from './useProjectList.module.less';
 
 const ProjectItem: React.FC<{ project: ProjectFieldsFragment; onClick?: () => void }> = ({ project, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
+  const { manifest } = useGetDeploymentManifest(project.type === ProjectType.RPC ? project.deploymentId : '');
 
   const { data: metadata } = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project]);
 
@@ -26,6 +28,7 @@ const ProjectItem: React.FC<{ project: ProjectFieldsFragment; onClick?: () => vo
       project={{
         ...project,
         metadata,
+        manifest,
       }}
     />
   );
@@ -40,13 +43,14 @@ export interface UseProjectListProps {
 export const useProjectList = (props: UseProjectListProps = {}) => {
   const { account, showTopProject, onProjectClick } = props;
   const [getProjects, { error }] = useGetProjectsLazyQuery({
-    variables: { offset: 0 },
+    variables: { offset: 0, type: [ProjectType.SUBQUERY] },
   });
 
   const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
 
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
+  const [filterProjectType, setFilterProjectType] = useState<ProjectType>(ProjectType.SUBQUERY);
   const [topProject, setTopProject] = React.useState<ProjectFieldsFragment>();
   const [projects, setProjects] = React.useState<ProjectFieldsFragment[]>([]);
   // ref for fetch, state for render.
@@ -62,22 +66,22 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
 
   const { getProjectBySearch } = useLocalProjects();
 
-  const loadTopProject = async () => {
-    // this is a hard code, for kepler-network project.
-    // we want to top it.
-    const res = await getProject({
-      variables: {
-        id: '0x06',
-      },
-    });
-    if (res.data?.project) {
-      setTopProject(res.data?.project);
-    }
-  };
+  // const loadTopProject = async () => {
+  //   // this is a hard code, for kepler-network project.
+  //   // we want to top it.
+  //   const res = await getProject({
+  //     variables: {
+  //       id: '0x06',
+  //     },
+  //   });
+  //   if (res.data?.project) {
+  //     setTopProject(res.data?.project);
+  //   }
+  // };
 
   const loadMore = async (options?: {
     refresh?: boolean;
-    searchParams?: { categories?: string[]; keywords?: string };
+    searchParams?: { categories?: string[]; keywords?: string; projectType?: ProjectType };
   }) => {
     try {
       setLoading(true);
@@ -86,6 +90,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       const searchParams = {
         keywords: searchKeywords,
         categories: filterCategories,
+        projectType: filterProjectType,
         ...options?.searchParams,
       };
       const isSearch = searchParams.categories.length || searchParams.keywords.length;
@@ -106,6 +111,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
               offset: options?.refresh ? 0 : fetchedProejcts.current.length,
               orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
               ids: showTopProject ? ['0x06'] : [],
+              type: searchParams.projectType,
             },
             defaultOptions: { fetchPolicy: 'network-only' },
           };
@@ -207,11 +213,35 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   const listsWithSearch = useMemo(() => {
     return (
       <>
+        <div className={styles.typeFilter}>
+          <Radio.Group
+            options={[
+              { label: 'Data Indexer', value: ProjectType.SUBQUERY },
+              { label: 'RPC Endpoint', value: ProjectType.RPC },
+            ]}
+            onChange={async (val) => {
+              setFilterProjectType(val.target.value);
+              setFilterCategories([]);
+              const res = await loadMore({
+                refresh: true,
+                searchParams: {
+                  projectType: val.target.value,
+                  categories: [],
+                },
+              });
+              mutate(res);
+            }}
+            value={filterProjectType}
+            optionType="button"
+            buttonStyle="solid"
+            size="large"
+          />
+        </div>
         <div style={{ display: 'flex', marginBottom: 32 }}>
           <div>
             <SubqlCheckbox.Group
               value={filterCategories}
-              options={categoriesOptions}
+              options={filterProjectType === ProjectType.RPC ? rpcCategoriesOptions : categoriesOptions}
               onChange={async (val) => {
                 setFilterCategories(val as string[]);
                 setProjects([]);
@@ -255,12 +285,6 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       </>
     );
   }, [error, inSearchMode, topError, loading, projects, onProjectClick]);
-
-  useMount(() => {
-    if (showTopProject) {
-      loadTopProject();
-    }
-  });
 
   return {
     listsWithSearch,

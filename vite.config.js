@@ -26,6 +26,9 @@ export default defineConfig({
       localIdentName: '[local]_[hash:base64:5]',
     },
   },
+  define: {
+    global: {},
+  },
   build: {
     minify: true,
     sourcemap: false,
