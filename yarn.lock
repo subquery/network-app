@@ -4671,6 +4671,13 @@
   dependencies:
     graphql "^16.5.0"
 
+"@subql/network-query@0.112.1-0":
+  version "0.112.1-0"
+  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-0.112.1-0.tgz#ea131b32022c5ef387d515049086b09472762044"
+  integrity sha512-lYKsDLSq4mYCHFVeaSzwWNauvFu5jsEHOi55GotjhyI8kspOmYKCg1TPJPhD0AZViI8HjPbjNdRlj11bZRlTMw==
+  dependencies:
+    graphql "^16.5.0"
+
 "@subql/network-support@0.1.0":
   version "0.1.0"
   resolved "https://registry.npmjs.org/@subql/network-support/-/network-support-0.1.0.tgz#80ce4a9f52878e9b84ba7faa4c0c77edd70eed24"
@@ -4682,15 +4689,15 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/react-hooks@^0.112.1-1":
-  version "0.112.1-1"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.112.1-1.tgz#147f05f79cb1a2a0f177fc3b8c1d5858ff065a59"
-  integrity sha512-nolP6HuN82PMGT0zcmO3dLno9rZjiUKUleDWxRPd1ttCkI5Qyr8nWOGhiYijlsXx4Y+1pa4Aan/sZCQCUASxZQ==
+"@subql/react-hooks@^0.112.1-2":
+  version "0.112.1-2"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-0.112.1-2.tgz#9a0d576f12b2a707c47d80825e675b2c3ec0475e"
+  integrity sha512-r5d1n7zz4MoGz877lbINON3S7HSxJgsIKoH4uZvglxRhnG5oLaanNQa8hzk6xnWDylyyQktb+hKQdh36nAVTmA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "0.112.0"
+    "@subql/network-query" "0.112.1-0"
     ahooks "^3.7.8"
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"
