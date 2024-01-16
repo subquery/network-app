@@ -7,9 +7,11 @@ import { BsGithub, BsGlobe } from 'react-icons/bs';
 import Expand from '@components/Expand/Expand';
 import NewCard from '@components/NewCard';
 import { useRouteQuery } from '@hooks';
+import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
 import { Markdown, Typography } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 import { formatSQT, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
 
 import { ProjectMetadata } from '../../models';
@@ -19,6 +21,7 @@ type Props = {
   project: ProjectDetailsQuery;
   metadata: ProjectMetadata;
   deploymentDescription?: string;
+  manifest?: Manifest;
 };
 
 export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }> = ({ link, icon }) => {
@@ -34,7 +37,7 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
   );
 };
 
-const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription }) => {
+const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription, manifest }) => {
   const { t } = useTranslation();
   const query = useRouteQuery();
 
@@ -82,6 +85,49 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
             </Expand>
           </div>
         </div>
+
+        {project.type === ProjectType.RPC && (
+          <>
+            <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
+            <div className={styles.column} style={{ gap: 8 }}>
+              <Typography variant="medium" weight={600}>
+                RPC Endpoint Details
+              </Typography>
+              {manifest?.chain?.chainId && (
+                <div className={styles.line}>
+                  <Typography variant="medium" type="secondary">
+                    Chain ID:{' '}
+                  </Typography>
+                  <Typography variant="medium">{manifest?.chain?.chainId}</Typography>
+                </div>
+              )}
+              {manifest?.rpcFamily && (
+                <div className={styles.line}>
+                  <Typography variant="medium" type="secondary">
+                    Family:{' '}
+                  </Typography>
+                  <Typography variant="medium">{manifest?.rpcFamily?.join(' ')}</Typography>
+                </div>
+              )}
+              {manifest?.client?.name && (
+                <div className={styles.line}>
+                  <Typography variant="medium" type="secondary">
+                    Client:{' '}
+                  </Typography>
+                  <Typography variant="medium">{manifest?.client?.name}</Typography>
+                </div>
+              )}
+              {manifest?.nodeType && (
+                <div className={styles.line}>
+                  <Typography variant="medium" type="secondary">
+                    Node type:{' '}
+                  </Typography>
+                  <Typography variant="medium">{manifest?.nodeType}</Typography>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       <div style={{ marginLeft: 48, width: '100%' }}>
@@ -95,7 +141,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <div className="col-flex">
             <div className="flex" style={{ justifyContent: 'space-between' }}>
               <Typography variant="small" type="secondary">
-                Total Indexers
+                Total {project.type === ProjectType.RPC ? 'RPC Providers' : 'Indexers'}
               </Typography>
               <Typography variant="small">
                 {project.deployments.nodes.find((i) => i?.id === deploymentId)?.indexers.totalCount || 0}

@@ -34,6 +34,7 @@ export const DeploymentProject: React.FC<{
           return (
             <div className={styles.deploymentInfo}>
               <DeploymentInfo
+                type={project.type}
                 deploymentId={project.deploymentId}
                 project={project.metadata}
                 deploymentVersion={deploymentVersion}

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
-import { ProjectFieldsFragment } from '@subql/network-query';
+import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
 import dayjs from 'dayjs';
 
 import { ProjectMetadata } from 'src/models';
@@ -12,7 +13,9 @@ import IPFSImage from '../IPFSImage';
 import styles from './ProjectCard.module.css';
 
 type Props = {
-  project: { metadata: ProjectMetadata | undefined } & Omit<ProjectFieldsFragment, 'metadata'>;
+  project: { metadata: ProjectMetadata | undefined } & Omit<ProjectFieldsFragment, 'metadata'> & {
+      manifest?: Manifest;
+    };
   onClick?: () => void;
 };
 
@@ -40,7 +43,15 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
         </Typography>
       </div>
 
-      <Address address={project.owner} size="small" />
+      {project.type === ProjectType.SUBQUERY ? (
+        <Address address={project.owner} size="small" />
+      ) : (
+        <Typography variant="small">
+          {project.manifest?.rpcFamily?.[0]}
+          {project.manifest?.rpcFamily?.[0] && project.manifest?.nodeType && ' - '}
+          {project.manifest?.nodeType}
+        </Typography>
+      )}
 
       <div className={styles.line}></div>
       <div className="flex" style={{ marginBottom: 12 }}>

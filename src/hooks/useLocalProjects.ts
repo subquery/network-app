@@ -3,7 +3,7 @@
 
 import { useRef, useState } from 'react';
 import { useProjectMetadata } from '@containers';
-import { ProjectFieldsFragment, ProjectsOrderBy } from '@subql/network-query';
+import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/network-query';
 import { useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { notEmpty } from '@utils';
 import { makeCacheKey } from '@utils/limitation';
@@ -13,6 +13,8 @@ import localforage from 'localforage';
 import { uniqWith } from 'lodash-es';
 import { cloneDeep } from 'lodash-es';
 
+import { Manifest, useGetDeploymentManifest } from './useGetDeploymentManifest';
+
 const cacheKey = makeCacheKey('localProjectWithMetadata');
 
 type ProjectWithMetadata = {
@@ -20,7 +22,9 @@ type ProjectWithMetadata = {
   versionDescription: string;
   name: string;
   categories?: string[];
-} & ProjectFieldsFragment;
+} & ProjectFieldsFragment & {
+    manifest?: Manifest;
+  };
 
 export const useLocalProjects = () => {
   // this hooks want to do these things:
@@ -41,6 +45,7 @@ export const useLocalProjects = () => {
     variables: { offset: 0 },
   });
   const { getMetadataFromCid } = useProjectMetadata();
+  const { getManifest } = useGetDeploymentManifest();
 
   const projects = useRef<ProjectWithMetadata[]>([]);
 
@@ -69,15 +74,27 @@ export const useLocalProjects = () => {
         if (res.data?.projects?.nodes) {
           const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty);
           const allMetadata = await Promise.allSettled(nonEmptyProjects.map((i) => getMetadataFromCid(i.metadata)));
+          const allManifest = await Promise.allSettled(
+            nonEmptyProjects.map((i) => {
+              if (i.type === ProjectType.RPC) {
+                return getManifest(i.deploymentId);
+              }
+
+              return Promise.resolve({});
+            }),
+          );
           const projectsWithMetadata = nonEmptyProjects.map((project, index) => {
             const rawMetadata = allMetadata[index];
+            const rawManifest = allManifest[index];
             const metadata =
               rawMetadata.status === 'fulfilled'
                 ? rawMetadata.value
                 : { name: '', description: '', versionDescription: '', categories: [] };
+            const manifest = rawManifest.status === 'fulfilled' ? rawManifest.value : {};
             return {
               ...project,
               ...metadata,
+              manifest,
             };
           });
           const mergered = uniqWith([...tempProjects, ...projectsWithMetadata], (x, y) => x.id === y.id);
@@ -126,7 +143,12 @@ export const useLocalProjects = () => {
     fetchAllProjects();
   };
 
-  const getProjectBySearch = async (params: { offset: number; keywords: string; categories?: string[] }) => {
+  const getProjectBySearch = async (params: {
+    offset: number;
+    keywords: string;
+    categories?: string[];
+    projectType: ProjectType;
+  }) => {
     await waitForSomething({
       func: () => !loading.current,
     });
@@ -142,6 +164,12 @@ export const useLocalProjects = () => {
       });
     }
 
+    if (params.projectType) {
+      total = total.filter((i) => {
+        return i.type === params.projectType;
+      });
+    }
+
     return {
       data: {
         projects: {
@@ -153,7 +181,7 @@ export const useLocalProjects = () => {
     };
   };
 
-  useMount(() => {
+  useMount(async () => {
     window.requestIdleCallback(() => init());
   });
 

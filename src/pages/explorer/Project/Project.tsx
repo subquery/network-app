@@ -4,10 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
+import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Breadcrumb } from 'antd';
@@ -41,12 +43,15 @@ const ProjectInner: React.FC = () => {
   const sortedTabList = React.useMemo(() => {
     const tabList = [
       { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
-      { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+      {
+        link: `${INDEXERS}${location.search}`,
+        label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Endpoints' : t('explorer.project.tab2'),
+      },
       { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     ];
     const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
     return import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
-  }, [location.search]);
+  }, [location.search, asyncProject.data?.type]);
 
   const deploymentId = React.useMemo(() => {
     return query.get('deploymentId') || asyncProject.data?.deploymentId;
@@ -54,6 +59,7 @@ const ProjectInner: React.FC = () => {
 
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
   const { isUnsafe } = useGetIfUnsafeDeployment(deploymentId);
+  const { manifest } = useGetDeploymentManifest(asyncProject.data?.type === ProjectType.RPC ? deploymentId : '');
 
   const handleChangeVersion = (value: string) => {
     navigate(`${location.pathname}?deploymentId=${value}`);
@@ -148,6 +154,7 @@ const ProjectInner: React.FC = () => {
                     project={project}
                     metadata={project.metadata}
                     deploymentDescription={asyncDeploymentMetadata?.data?.description}
+                    manifest={manifest}
                   />
                 }
               />
