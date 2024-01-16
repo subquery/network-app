@@ -70,6 +70,10 @@ const ProjectHeader: React.FC<Props> = ({
             </Typography>
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
+            <span style={{ flex: 1 }}></span>
+            <Button type="primary" shape="round" size="large">
+              Get RPC Endpoint
+            </Button>
           </div>
           <Address address={project.owner} size="small" />
 

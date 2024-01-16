@@ -43,12 +43,15 @@ const ProjectInner: React.FC = () => {
   const sortedTabList = React.useMemo(() => {
     const tabList = [
       { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
-      { link: `${INDEXERS}${location.search}`, label: t('explorer.project.tab2') },
+      {
+        link: `${INDEXERS}${location.search}`,
+        label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Endpoints' : t('explorer.project.tab2'),
+      },
       { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     ];
     const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
     return import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
-  }, [location.search]);
+  }, [location.search, asyncProject.data?.type]);
 
   const deploymentId = React.useMemo(() => {
     return query.get('deploymentId') || asyncProject.data?.deploymentId;
