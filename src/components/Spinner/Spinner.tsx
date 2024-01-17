@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
-import { Spin } from 'antd';
+import { Spinner as SubqlSpinner } from '@subql/components';
 
 import styles from './Spinner.module.css';
 
@@ -12,11 +11,9 @@ type Props = {
 };
 
 const Spinner: React.FC<Props> = ({ size }) => {
-  const antIcon = <LoadingOutlined style={{ fontSize: size }} spin />;
-
   return (
     <div className={styles.spinner}>
-      <Spin indicator={antIcon} />
+      <SubqlSpinner></SubqlSpinner>
     </div>
   );
 };

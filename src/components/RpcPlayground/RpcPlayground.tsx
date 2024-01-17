@@ -38,6 +38,7 @@ const RpcPlayground: FC<IProps> = ({ url, trailToken }) => {
       );
 
       setResponseData(JSON.stringify(res));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setResponseData(`${e.toString()}`);
     } finally {
@@ -51,27 +52,36 @@ const RpcPlayground: FC<IProps> = ({ url, trailToken }) => {
         <Typography style={{ color: '#fff', marginBottom: 8 }} weight={500}>
           Request
         </Typography>
-        <Input.TextArea
-          rows={30}
-          value={val}
-          onChange={(e) => {
-            setVal(e.target.value);
-          }}
-          placeholder="JSON RPC playground is a simple tool to help you test queries, click to enter you requests."
-        ></Input.TextArea>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div className={styles.rows}>
+            {new Array(enteredRows).fill(0).map((_, index) => (
+              <span key={index}>{index + 1}</span>
+            ))}
+          </div>
+          <Input.TextArea
+            rows={30}
+            value={val}
+            onChange={(e) => {
+              setVal(e.target.value);
+            }}
+            style={{ resize: 'none' }}
+            placeholder="JSON RPC playground is a simple tool to help you test queries, click to enter you requests."
+          ></Input.TextArea>
+        </div>
 
-        <Button
-          loading={loading}
-          shape="round"
-          size="large"
-          type="primary"
-          style={{ position: 'absolute', right: 16, bottom: 32 }}
-          onClick={() => {
-            fetchRpc();
-          }}
-        >
-          Send Request
-        </Button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'sticky', bottom: 32 }}>
+          <Button
+            loading={loading}
+            shape="round"
+            size="large"
+            type="primary"
+            onClick={() => {
+              fetchRpc();
+            }}
+          >
+            Send Request
+          </Button>
+        </div>
       </div>
 
       <div className={styles.rpcPlaygroundResponse}>
