@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { useProjectList } from '@hooks/useProjectList';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Modal, Typography } from '@subql/components';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 
 import { useWeb3 } from '../../../containers';
@@ -85,24 +85,11 @@ const Home: React.FC = () => {
     },
   });
 
-  const [showCreateModal, setShowCreateModal] = React.useState<boolean>(false);
-  const enableCreateModal = () => setShowCreateModal(true);
-
   return (
     <div className="content-width" style={{ padding: '80px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40 }}>
         <Typography variant="h4">My Projects</Typography>
-        <Button type="primary" onClick={enableCreateModal} shape="round" size="large">
-          Publish New Project
-        </Button>
       </div>
-
-      <PublishNewProjectModal
-        value={showCreateModal}
-        onChange={(val) => {
-          setShowCreateModal(val);
-        }}
-      />
 
       {listsWithSearch}
     </div>

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
+import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { WalletRoute } from '@components/WalletRoute';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
@@ -14,6 +15,7 @@ import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
 import {
   GetDeploymentIndexersQuery,
   PlansNodeFieldsFragment as Plan,
+  ProjectType,
   ServiceStatus as DeploymentStatus,
 } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
@@ -25,6 +27,7 @@ import clsx from 'clsx';
 import { t } from 'i18next';
 import { useAccount } from 'wagmi';
 
+import RpcPlaygroundIcon from 'src/images/rpcPlayground';
 import { useWeb3Store } from 'src/stores';
 import { useProjectStore } from 'src/stores/project';
 
@@ -77,7 +80,8 @@ export interface QueryLimit {
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]>;
   deploymentId?: string;
-}> = ({ indexer, deploymentId }) => {
+  type: ProjectType;
+}> = ({ indexer, deploymentId, type }) => {
   const { t } = useTranslation();
   const { address: account } = useAccount();
   const navigate = useNavigate();
@@ -175,7 +179,6 @@ const ConnectedRow: React.FC<{
         </>
       ),
     },
-
     {
       width: '13%',
       render: () => {
@@ -211,7 +214,16 @@ const ConnectedRow: React.FC<{
               setShowReqTokenConfirmModal(true);
             }}
           >
-            <PlaygroundIcon color="var(--sq-blue600)" width={14} height={14} style={{ marginRight: '5px' }} />
+            {type === ProjectType.SUBQUERY ? (
+              <PlaygroundIcon color="var(--sq-blue600)" width={14} height={14} style={{ marginRight: '5px' }} />
+            ) : (
+              <RpcPlaygroundIcon
+                color="var(--sq-blue600)"
+                width={14}
+                height={14}
+                style={{ marginRight: '5px', marginTop: 3 }}
+              ></RpcPlaygroundIcon>
+            )}
             Playground
           </Typography>
         );
@@ -332,7 +344,13 @@ const ConnectedRow: React.FC<{
       >
         <WalletRoute
           componentMode
-          element={<Typography>{t('explorer.flexPlans.requestToken')}</Typography>}
+          element={
+            <Typography>
+              {t('explorer.flexPlans.requestToken', {
+                type: type === ProjectType.RPC ? 'JSON' : 'Graphql',
+              })}
+            </Typography>
+          }
         ></WalletRoute>
       </Modal>
 
@@ -344,7 +362,11 @@ const ConnectedRow: React.FC<{
       >
         <div className={styles.playgroundModalHeader}>
           <Typography className={styles.playgroundModalTitle}>
-            <PlaygroundIcon style={{ marginRight: '8px' }} />
+            {type === ProjectType.SUBQUERY ? (
+              <PlaygroundIcon style={{ marginRight: '8px' }} />
+            ) : (
+              <RpcPlaygroundIcon style={{ marginRight: '8px' }}></RpcPlaygroundIcon>
+            )}
             {t('myFlexPlans.playground')}
           </Typography>
           <Typography className={styles.playgroundModalLimitInfo}>
@@ -361,7 +383,10 @@ const ConnectedRow: React.FC<{
             </span>
           </Typography>
         </div>
-        {queryUrl && trailToken && <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>}
+        {type === ProjectType.SUBQUERY && queryUrl && trailToken && (
+          <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>
+        )}
+        {type === ProjectType.RPC && <RpcPlayground url={queryUrl} trailToken={trailToken}></RpcPlayground>}
       </AntdModal>
     </>
   );

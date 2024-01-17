@@ -45,7 +45,7 @@ const ProjectInner: React.FC = () => {
       { link: `${OVERVIEW}${location.search}`, label: t('explorer.project.tab1') },
       {
         link: `${INDEXERS}${location.search}`,
-        label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Endpoints' : t('explorer.project.tab2'),
+        label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Providers' : t('explorer.project.tab2'),
       },
       { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     ];
@@ -158,7 +158,10 @@ const ProjectInner: React.FC = () => {
                   />
                 }
               />
-              <Route path={INDEXERS} element={<IndexerDetails deploymentId={deploymentId}></IndexerDetails>} />
+              <Route
+                path={INDEXERS}
+                element={<IndexerDetails deploymentId={deploymentId} project={project}></IndexerDetails>}
+              />
               <Route
                 path={SERVICE_AGREEMENTS}
                 element={
