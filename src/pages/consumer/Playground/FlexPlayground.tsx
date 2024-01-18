@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
+import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { Spinner, TableTitle } from '@subql/components';
 import { ProjectType, StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { renderAsync, useGetConsumerFlexPlanQuery } from '@subql/react-hooks';
@@ -44,6 +45,8 @@ export const FlexPlayground: React.FC = () => {
       id,
     },
   });
+
+  const { manifest } = useGetDeploymentManifest(consumerFlexPlan.data?.stateChannel?.deployment?.id);
 
   const [isCheckingAuth, setIsCheckingAuth] = React.useState<boolean>();
   const [queryable, setQueryable] = React.useState<boolean>();
@@ -196,6 +199,7 @@ export const FlexPlayground: React.FC = () => {
     data: (fetchedFlexPlan) => {
       const { stateChannel: flexPlan } = fetchedFlexPlan;
       if (!flexPlan) return <></>;
+
       return (
         <AuthPlayground
           headerLink={ONGOING_PLANS_NAV}
@@ -203,6 +207,7 @@ export const FlexPlayground: React.FC = () => {
           deploymentId={flexPlan?.deployment?.id ?? ''}
           projectMetadata={flexPlan?.deployment?.project?.metadata}
           type={flexPlan.deployment?.project?.type || ProjectType.SUBQUERY}
+          rpcFamily={manifest?.rpcFamily}
           columns={columns}
           dataSource={[flexPlan]}
           rowKey={'id'}

@@ -46,7 +46,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
       {project.type === ProjectType.SUBQUERY ? (
         <Address address={project.owner} size="small" />
       ) : (
-        <Typography variant="small">
+        <Typography variant="small" style={{ textTransform: 'capitalize' }}>
           {project.manifest?.rpcFamily?.[0]}
           {project.manifest?.rpcFamily?.[0] && project.manifest?.nodeType && ' - '}
           {project.manifest?.nodeType}

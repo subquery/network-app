@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { WalletRoute } from '@components/WalletRoute';
+import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
 import { Modal, Spinner } from '@subql/components';
@@ -81,7 +82,8 @@ const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]>;
   deploymentId?: string;
   type: ProjectType;
-}> = ({ indexer, deploymentId, type }) => {
+  rpcFamily?: Manifest['rpcFamily'];
+}> = ({ indexer, deploymentId, type, rpcFamily }) => {
   const { t } = useTranslation();
   const { address: account } = useAccount();
   const navigate = useNavigate();
@@ -386,7 +388,9 @@ const ConnectedRow: React.FC<{
         {type === ProjectType.SUBQUERY && queryUrl && trailToken && (
           <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>
         )}
-        {type === ProjectType.RPC && <RpcPlayground url={queryUrl} trailToken={trailToken}></RpcPlayground>}
+        {type === ProjectType.RPC && (
+          <RpcPlayground url={queryUrl} trailToken={trailToken} rpcFamily={rpcFamily}></RpcPlayground>
+        )}
       </AntdModal>
     </>
   );

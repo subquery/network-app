@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
 import { useIndexerMetadata } from '@hooks';
+import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectType, ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { TableProps } from 'antd';
 import i18next from 'i18next';
@@ -43,6 +44,9 @@ export const SAPlayground: React.FC = () => {
   const serviceAgreement = locationState?.serviceAgreement;
   const TOKEN_STORAGE_KEY = `${serviceAgreement?.id}/${account}`;
   const [sessionToken, setSessionToken] = React.useState<string>(getEncryptStorage(TOKEN_STORAGE_KEY));
+
+  const { manifest } = useGetDeploymentManifest(serviceAgreement.deploymentId);
+
   const { indexerMetadata } = useIndexerMetadata(serviceAgreement?.indexerAddress);
   React.useEffect(() => {
     if (!locationState?.serviceAgreement || serviceAgreement?.consumerAddress !== account) {
@@ -170,7 +174,7 @@ export const SAPlayground: React.FC = () => {
     navigate('/consumer/service-agreements');
     return <div></div>;
   }
-  console.warn(serviceAgreement);
+
   return (
     <AuthPlayground
       headerLink={CONSUMER_SA_NAV}
@@ -183,6 +187,7 @@ export const SAPlayground: React.FC = () => {
       rowKey={'id'}
       loading={isCheckingAuth}
       requireAuth={requireAuth}
+      rpcFamily={manifest?.rpcFamily}
       requestTokenProps={{
         deploymentId: serviceAgreement.deploymentId,
         indexer: serviceAgreement.indexerAddress,

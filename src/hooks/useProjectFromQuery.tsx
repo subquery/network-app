@@ -1,8 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useState } from 'react';
 import { ProjectFieldsFragment as Project } from '@subql/network-query';
 import { useGetProjectQuery } from '@subql/react-hooks';
+import dayjs from 'dayjs';
 
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
@@ -15,10 +17,11 @@ export type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
 
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
   const { getMetadataFromCid } = useProjectMetadata();
-
+  const [now] = useState(dayjs().utc().toDate());
   const { data, loading, error } = useGetProjectQuery({
     variables: {
       id,
+      now,
     },
   });
 
