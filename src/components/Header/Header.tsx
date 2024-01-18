@@ -37,17 +37,6 @@ export interface AppNavigation {
 export const Header: React.FC = () => {
   const { address: account } = useAccount();
   const navigate = useNavigate();
-  const calEntryLinks = React.useMemo(() => {
-    return entryLinks.map((entry) => {
-      if (entry.key === 'explorer') {
-        return {
-          ...entry,
-          dropdown: undefined,
-        };
-      }
-      return entry;
-    });
-  }, []);
 
   return (
     <div className={styles.header}>
@@ -55,7 +44,7 @@ export const Header: React.FC = () => {
         navigate={(link) => {
           navigate(link);
         }}
-        appNavigation={calEntryLinks}
+        appNavigation={entryLinks}
         dropdownLinks={{ label: 'Kepler', links: externalAppLinks }}
         rightElement={
           <>

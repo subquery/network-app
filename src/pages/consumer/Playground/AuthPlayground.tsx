@@ -4,7 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BreadcrumbNav } from '@components';
+import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { Spinner } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 
@@ -33,6 +35,7 @@ interface AuthPlaygroundProps {
   columns?: ColumnsType<any>;
   dataSource?: any[];
   rowKey?: string;
+  type: ProjectType;
 
   loading?: boolean;
   requireAuth: boolean;
@@ -53,6 +56,7 @@ export const AuthPlayground: React.FC<AuthPlaygroundProps> = ({
   columns,
   dataSource,
   rowKey,
+  type,
 
   loading,
   requireAuth,
@@ -82,7 +86,13 @@ export const AuthPlayground: React.FC<AuthPlaygroundProps> = ({
     <div className={styles.content}>
       {loading && <Spinner />}
       {requireAuth && <RequestToken {...requestTokenProps} />}
-      {playgroundVisible && <GraphQLQuery {...graphqlQueryProps} />}
+      {type === ProjectType.SUBQUERY && playgroundVisible && <GraphQLQuery {...graphqlQueryProps} />}
+      {type === ProjectType.RPC && playgroundVisible && (
+        <RpcPlayground
+          url={graphqlQueryProps.queryUrl}
+          trailToken={graphqlQueryProps.sessionToken || ''}
+        ></RpcPlayground>
+      )}
     </div>
   </div>
 );

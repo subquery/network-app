@@ -135,6 +135,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
             {t('serviceAgreements.playground.comingSoon')}
           </Typography>
         );
+
       return (
         <Button
           size="middle"

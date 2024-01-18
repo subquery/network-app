@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
 import { Spinner, TableTitle } from '@subql/components';
-import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
+import { ProjectType, StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { renderAsync, useGetConsumerFlexPlanQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { BigNumber } from 'ethers';
@@ -202,6 +202,7 @@ export const FlexPlayground: React.FC = () => {
           headerText={t('plans.category.myFlexPlans')}
           deploymentId={flexPlan?.deployment?.id ?? ''}
           projectMetadata={flexPlan?.deployment?.project?.metadata}
+          type={flexPlan.deployment?.project?.type || ProjectType.SUBQUERY}
           columns={columns}
           dataSource={[flexPlan]}
           rowKey={'id'}

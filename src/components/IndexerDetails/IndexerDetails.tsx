@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyList } from '@components/EmptyList';
+import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Spinner, TableTitle, Typography } from '@subql/components';
 import { ServiceStatus } from '@subql/network-query';
 import { renderAsync, useGetDeploymentIndexersLazyQuery, useGetIndexerDeploymentLazyQuery } from '@subql/react-hooks';
@@ -16,6 +17,7 @@ import Row from './Row';
 
 type Props = {
   deploymentId: string | undefined;
+  project: ProjectDetailsQuery;
 };
 
 const NoIndexers: React.FC = () => {
@@ -31,7 +33,7 @@ const NoIndexers: React.FC = () => {
   );
 };
 
-const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
+const IndexerDetails: React.FC<Props> = ({ deploymentId, project }) => {
   const { t } = useTranslation();
 
   const [loadIndexersLazy, asyncIndexers] = useGetDeploymentIndexersLazyQuery();
@@ -156,7 +158,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId }) => {
               .filter(notEmpty)
               .sort((indexer) => (indexer.status === ServiceStatus.READY ? -1 : 1))
               .map((indexer) => (
-                <Row indexer={indexer} key={indexer.indexerId} deploymentId={deploymentId} />
+                <Row type={project.type} indexer={indexer} key={indexer.indexerId} deploymentId={deploymentId} />
               ))}
           </>
           <div className={styles.indexersPagination}>

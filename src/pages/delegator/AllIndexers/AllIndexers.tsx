@@ -4,11 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyList, WalletRoute } from '@components';
+import RpcError from '@components/RpcError';
 import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { useGetIndexersQuery } from '@subql/react-hooks';
 
-import { getUseQueryFetchMore, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
+import { getUseQueryFetchMore, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 
 export const AllIndexers: React.FC = () => {
@@ -35,7 +36,13 @@ export const AllIndexers: React.FC = () => {
             ),
             {
               loading: () => <Spinner />,
-              error: (error) => <Typography>{`Error: Failed to get Indexers: ${error.message}`}</Typography>,
+              error: (error) => {
+                if (isRPCError(error)) {
+                  return <RpcError></RpcError>;
+                }
+
+                return <Typography>{`Error: Failed to get Indexers: ${error.message}`}</Typography>;
+              },
               data: (data) => {
                 if (!data || data?.totalCount === 0) {
                   <EmptyList title={t('allIndexers.nonData')} description={t('allIndexers.desc')}></EmptyList>;

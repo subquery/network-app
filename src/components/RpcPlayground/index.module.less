@@ -1,0 +1,46 @@
+.rpcPlayground {
+  display: flex;
+  padding: 16px;
+  border-radius: 0px 0px 16px 16px;
+  background: #2A3546;
+
+  &Editor {
+    flex: 1;
+    padding: 16px;
+    background: #1F2A3B;
+    border-radius: 10px;
+    position: relative;
+
+    .rows {
+      display: flex;
+      flex-direction: column;
+      color: var(--sq-gray600);
+      font-size: 14px;
+      line-height: 1.5714285714285714;
+      padding-top: 2px;
+    }
+
+    :global {
+      .ant-input {
+        background: #1F2A3B;
+        border: 1px solid #1F2A3B;
+        color: var(--sq-gray500);
+        padding: 0;
+        font-family: var(--sq-font-family);
+        &:focus {
+          box-shadow: none;
+        }
+
+        &::placeholder {
+          color: var(--sq-gary500);
+        }
+      }
+    }
+  }
+
+  &Response {
+    flex: 1;
+    padding: 16px;
+
+  }
+}

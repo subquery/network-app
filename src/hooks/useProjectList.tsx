@@ -5,12 +5,13 @@ import React, { useMemo, useState } from 'react';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
 import { useProjectMetadata } from '@containers';
+import { PublishNewProjectModal } from '@pages/studio/Home/Home';
 import { SubqlCheckbox } from '@subql/components';
 import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { categoriesOptions, notEmpty, rpcCategoriesOptions } from '@utils';
 import { useInfiniteScroll, useMount } from 'ahooks';
-import { Input, Radio, Skeleton, Typography } from 'antd';
+import { Button, Input, Radio, Skeleton, Typography } from 'antd';
 
 import { useGetDeploymentManifest } from './useGetDeploymentManifest';
 import { useLocalProjects } from './useLocalProjects';
@@ -63,6 +64,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   // assum there at lease have 11 projects
   const [total, setTotal] = React.useState(10);
   const [inSearchMode, setInSearchMode] = React.useState(false);
+  const [showPublishModal, setShowPublishModal] = React.useState(false);
 
   const { getProjectBySearch } = useLocalProjects();
 
@@ -236,6 +238,23 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             buttonStyle="solid"
             size="large"
           />
+          <span style={{ flex: 1 }}></span>
+          <Button
+            type="primary"
+            shape="round"
+            size="large"
+            onClick={() => {
+              setShowPublishModal(true);
+            }}
+          >
+            Publish New Project
+          </Button>
+          <PublishNewProjectModal
+            value={showPublishModal}
+            onChange={(val) => {
+              setShowPublishModal(val);
+            }}
+          ></PublishNewProjectModal>
         </div>
         <div style={{ display: 'flex', marginBottom: 32 }}>
           <div>

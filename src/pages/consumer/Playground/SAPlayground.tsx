@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
 import { useIndexerMetadata } from '@hooks';
-import { ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
+import { ProjectType, ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { TableProps } from 'antd';
 import i18next from 'i18next';
 import moment from 'moment';
@@ -166,12 +166,18 @@ export const SAPlayground: React.FC = () => {
   const requireAuth = queryable === false && !isCheckingAuth;
   const showPlayground = !!(queryable && queryUrl && !isCheckingAuth);
 
+  if (!serviceAgreement) {
+    navigate('/consumer/service-agreements');
+    return <div></div>;
+  }
+  console.warn(serviceAgreement);
   return (
     <AuthPlayground
       headerLink={CONSUMER_SA_NAV}
       headerText={t('serviceAgreements.playground.ongoingAgreements')}
       deploymentId={serviceAgreement.deploymentId}
       projectMetadata={serviceAgreement.deployment?.project?.metadata}
+      type={serviceAgreement.deployment?.project?.type || ProjectType.SUBQUERY}
       columns={columns}
       dataSource={[serviceAgreement]}
       rowKey={'id'}
