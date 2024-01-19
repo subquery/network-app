@@ -94,20 +94,23 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
 
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
-      setLoadingList(true);
-      setIndexerList([]);
+      try {
+        setLoadingList(true);
+        setIndexerList([]);
 
-      // TODO: use batch fetch replace.
-      // note networkClient.getIndexer have more sideEffects.
-      const sortedIndexers = await Promise.all(
-        rawIndexerList.map((indexer) => {
-          return limit(() => networkClient?.getIndexer(indexer.id));
-        }),
-      );
+        // TODO: use batch fetch replace.
+        // note networkClient.getIndexer have more sideEffects.
+        const sortedIndexers = await Promise.all(
+          rawIndexerList.map((indexer) => {
+            return limit(() => networkClient?.getIndexer(indexer.id));
+          }),
+        );
 
-      setIndexerList(sortedIndexers);
-      setLoadingList(false);
-      return sortedIndexers;
+        setIndexerList(sortedIndexers);
+        return sortedIndexers;
+      } finally {
+        setLoadingList(false);
+      }
     }
   };
 
@@ -306,6 +309,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
   const isLoading =
     !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0));
+
   return (
     <div className={styles.container}>
       <div className={styles.indexerListHeader}>

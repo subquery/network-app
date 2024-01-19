@@ -45,7 +45,7 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
       const approvalTxResult = await approvalTx.wait();
 
       if (approvalTxResult.status === 1) {
-        onSuccess && onSuccess();
+        onSuccess && (await onSuccess());
       } else {
         onFail && onFail();
       }
@@ -67,6 +67,7 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
         <Button
           shape="round"
           size="large"
+          type="primary"
           className={isLoading ? 'disabledButton' : 'button'}
           loading={isLoading}
           disabled={isLoading}
