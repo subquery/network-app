@@ -9,7 +9,15 @@ import { useWeb3Store } from 'src/stores';
 export function useRewardCollectStatus(
   indexer: string,
   lazy = false,
-): { hasClaimedRewards: boolean; refetch: () => Promise<boolean>; loading: boolean } {
+): {
+  hasClaimedRewards: boolean;
+  refetch: (_?: boolean) => Promise<boolean>;
+  loading: boolean;
+  // for compatibility
+  data: {
+    hasClaimedRewards: boolean;
+  };
+} {
   const { contracts } = useWeb3Store();
   const lastClaimedKey = makeCacheKey(indexer, { suffix: 'lastClaimed' });
   const lastSettledKey = makeCacheKey(indexer, { suffix: 'lastSettledEra' });
@@ -17,8 +25,9 @@ export function useRewardCollectStatus(
   const [hasClaimedRewards, setHasClaimedRewards] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchStatus = async () => {
+  const fetchStatus = async (_?: boolean) => {
     if (!contracts) return false;
+
     try {
       setLoading(true);
       const lastClaimedEra = await limitContract(
@@ -56,6 +65,9 @@ export function useRewardCollectStatus(
 
   return {
     hasClaimedRewards,
+    data: {
+      hasClaimedRewards,
+    },
     refetch: fetchStatus,
     loading,
   };

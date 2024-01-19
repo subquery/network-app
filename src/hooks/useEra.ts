@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { bnToDate } from '@utils';
+import { limitContract, makeCacheKey } from '@utils/limitation';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -43,9 +44,9 @@ export function useEra(): {
     const { eraManager } = contracts;
 
     const [period, index, startTime] = await Promise.all([
-      eraManager.eraPeriod(),
-      eraManager.eraNumber(),
-      eraManager.eraStartTime(),
+      limitContract(() => eraManager.eraPeriod(), makeCacheKey('eraPeriod')),
+      limitContract(() => eraManager.eraNumber(), makeCacheKey('eraNumber')),
+      limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime')),
     ]);
 
     const era: Era = {
