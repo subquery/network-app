@@ -4580,18 +4580,17 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/apollo-links@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.npmjs.org/@subql/apollo-links/-/apollo-links-1.2.5.tgz#49082601fde100c65f8a57b4e283638faceaf043"
-  integrity sha512-1huWP+5MXctw2fttLLDZJ2NcTFTDi8qShojbV4211QoezbJ5XZ1qdIDVG8jvpxCNVE3Y2OyIgqhlq/NiW7kYmA==
+"@subql/apollo-links@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.npmjs.org/@subql/apollo-links/-/apollo-links-1.3.0.tgz#1a313dd911d96e41517463189bc34f349293d9ed"
+  integrity sha512-5R68oqa61tkbyitjvGOUF9TI7VaqibzHfGIf76Yfwkv0GYca73vJ5y/SbbOpCKCBV1gEE4uWwhxPiyS+4IGfvQ==
   dependencies:
     "@apollo/client" "^3.8.8"
     "@metamask/eth-sig-util" "5.1.0"
-    "@subql/network-support" "0.1.0"
+    "@subql/network-support" "0.2.0"
     apollo-link-error "^1.1.13"
     buffer "^6.0.3"
     cross-fetch "^4.0.0"
-    ethers "^5.6.8"
     js-base64 "^3.7.5"
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
@@ -4663,10 +4662,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-support@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/@subql/network-support/-/network-support-0.1.0.tgz#80ce4a9f52878e9b84ba7faa4c0c77edd70eed24"
-  integrity sha512-51UTa/udOHUwKs/Jjl8h/yl0wEDvm1yeaD2ccUnqg+Ue4JFqiEwZ8HhnMwywxyAhTL72sGH+TKkPNYF/kVNxbA==
+"@subql/network-support@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/@subql/network-support/-/network-support-0.2.0.tgz#e131ff462dfe90953f86ed653e85ea4827a175da"
+  integrity sha512-YykNM0ujp/oL0voOT9FwuXRVD/ptTQblSIH9N8m64J86epkioLd2rkIQ0DXnx5hsPT7WJFvoxtbpTGTSa18jZg==
   dependencies:
     "@metamask/eth-sig-util" "^7.0.0"
     cross-fetch "^4.0.0"
