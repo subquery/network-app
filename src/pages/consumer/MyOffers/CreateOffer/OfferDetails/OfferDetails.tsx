@@ -105,10 +105,12 @@ export const OfferDetails: React.FC = () => {
                   disabled={true}
                   value={totalDeposit}
                   stringMode
-                  max={formatEther(balance.data)}
+                  max={formatEther(balance.result.data)}
                   status={errors[TOTAL_DEPOSIT] ? 'error' : undefined}
                   description={
-                    balance.data ? `${t('general.balance')}: ${formatEther(balance.data, 4)} ${TOKEN} ` : undefined
+                    balance.result.data
+                      ? `${t('general.balance')}: ${formatEther(balance.result.data, 4)} ${TOKEN} `
+                      : undefined
                   }
                   errorMsg={errors[TOTAL_DEPOSIT] && t('myOffers.step_2.totalDepositErrorMsg')}
                 />

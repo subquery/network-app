@@ -113,7 +113,7 @@ export const DelegateForm: React.FC<FormProps> = ({
     let maxAmount: BigNumberish | undefined;
 
     if (isYourself) {
-      maxAmount = balance.data;
+      maxAmount = balance.result.data;
     } else {
       const indexerDelegation = getIndexerDelegation();
       maxAmount = indexerDelegation?.after;
@@ -127,7 +127,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       return (
         <>
           {t('delegate.walletBalance', {
-            balance: formatEther(balance.data, 4),
+            balance: formatEther(balance.result.data, 4),
             token: TOKEN,
           })}{' '}
           <TokenTooltip></TokenTooltip>

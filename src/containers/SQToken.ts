@@ -1,67 +1,68 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { limitContract } from '@utils/limitation';
 import assert from 'assert';
 import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
-import { useAsyncMemo } from '../hooks';
 import { createContainer } from './Container';
 
 function useSQTokenImpl() {
   const { address: account } = useAccount();
   const { contracts, rootContracts } = useWeb3Store();
-  const balance = useAsyncMemo(async () => {
+  const balance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return limitContract(() => contracts.sqToken.balanceOf(account));
   }, [account, contracts]);
 
-  const ethSqtBalance = useAsyncMemo(async () => {
+  const ethSqtBalance = useAsyncMemoWithLazy(async () => {
     assert(rootContracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return limitContract(() => rootContracts.sqToken.balanceOf(account));
   }, [account, rootContracts]);
 
-  const consumerHostBalance = useAsyncMemo(async () => {
+  const consumerHostBalance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return contracts.consumerHost.consumers(account);
   }, [account, contracts]);
 
-  const consumerHostAllowance = useAsyncMemo(async () => {
+  const consumerHostAllowance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return contracts.sqToken.allowance(account, contracts.consumerHost.address);
   }, [account, contracts]);
 
-  const stakingAllowance = useAsyncMemo(async () => {
+  const stakingAllowance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
+
     return contracts.sqToken.allowance(account, contracts.staking.address);
   }, [account, contracts]);
 
-  const planAllowance = useAsyncMemo(async () => {
+  const planAllowance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return contracts.sqToken.allowance(account, contracts.planManager.address);
   }, [account, contracts]);
 
-  const offerAllowance = useAsyncMemo(async () => {
+  const offerAllowance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
 
     return contracts.sqToken.allowance(account, contracts.purchaseOfferMarket.address);
   }, [account, contracts]);
 
-  const permissionExchangeAllowance = useAsyncMemo(async () => {
+  const permissionExchangeAllowance = useAsyncMemoWithLazy(async () => {
     assert(contracts, 'Contracts not available');
     assert(account, 'Account not available');
     return limitContract(

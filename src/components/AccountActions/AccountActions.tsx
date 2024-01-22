@@ -75,7 +75,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
               Wallet balance on Polygon
             </Typography>
             <Typography weight={600}>
-              {formatEther(balance.data, 4)} {TOKEN}
+              {formatEther(balance.result.data, 4)} {TOKEN}
             </Typography>
           </div>
           <div className="col-flex" style={{ gap: 8 }}>
@@ -97,7 +97,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
               </Tooltip>
             </Typography>
             <Typography weight={600}>
-              {formatEther(ethSqtBalance.data, 4)} {TOKEN}
+              {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
             </Typography>
           </div>
         </div>
@@ -138,7 +138,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Typography>Billing Balance:</Typography>
             <Typography>
-              {formatEther(consumerHostBalance.data?.balance, 4)} {TOKEN}
+              {formatEther(consumerHostBalance.result.data?.balance, 4)} {TOKEN}
             </Typography>
           </div>
         </div>

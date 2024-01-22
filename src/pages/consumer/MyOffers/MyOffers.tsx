@@ -57,7 +57,7 @@ export const CheckOfferAllowance: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { offerAllowance } = useSQToken();
-  const requiresTokenApproval = offerAllowance.data?.isZero();
+  const requiresTokenApproval = offerAllowance.result.data?.isZero();
   if (requiresTokenApproval) {
     return (
       <TransactionModal
@@ -149,7 +149,7 @@ export const MyOffers: React.FC = () => {
   const { account } = useWeb3();
   const { offerAllowance } = useSQToken();
   const match = useMatch(`${CONSUMER_OFFERS_NAV}/${CREATE_OFFER}`);
-  const requiresTokenApproval = offerAllowance.data?.isZero();
+  const requiresTokenApproval = offerAllowance.result.data?.isZero();
   const offers = useGetOfferCountQuery({
     variables: { consumer: account ?? '' },
   });

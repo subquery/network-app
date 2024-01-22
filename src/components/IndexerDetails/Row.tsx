@@ -318,7 +318,7 @@ const ConnectedRow: React.FC<{
       <Table columns={columns} dataSource={rowData} showHeader={false} pagination={false} rowKey="id" />
       {showPlans && (
         <PlansTable
-          balance={balance}
+          balance={balance.result}
           planManagerAllowance={planAllowance}
           purchasePlan={purchasePlan}
           loadPlans={loadDeploymentPlans}

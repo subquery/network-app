@@ -21,6 +21,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
+import { useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { Button } from 'antd';
 import assert from 'assert';
@@ -59,8 +60,13 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
-  const requireTokenApproval = stakingAllowance?.data?.isZero();
+  const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
+  const [getIndexerLazy, indexerDataLazy] = useGetIndexerLazyQuery({
+    variables: {
+      address: indexerAddress,
+    },
+  });
   const [requireClaimIndexerRewards, setRequireClaimIndexerRewards] = React.useState(true);
   const [fetchRequireClaimIndexerRewardsLoading, setFetchRequireClaimIndexerRewardsLoading] = React.useState(false);
   const isLogin = useIsLogin();
@@ -81,15 +87,15 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
-
-    if (indexer?.capacity) {
-      const rawCapacity = parseRawEraValue(indexer?.capacity, currentEra.data?.index);
+    const fetchedCapacity = indexerDataLazy.data ? indexerDataLazy.data.indexer?.capacity : indexer?.capacity;
+    if (fetchedCapacity) {
+      const rawCapacity = parseRawEraValue(fetchedCapacity, currentEra.data?.index);
 
       indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
     }
 
     return indexerCapacity;
-  }, [indexer, currentEra]);
+  }, [indexer, indexerDataLazy, currentEra]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
@@ -128,7 +134,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
     data: (era) => {
       // const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       // if doesn't login will enter wallerRoute logical code process
-      const isActionDisabled = isLogin ? !stakingAllowance.data : false;
+      const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
 
       return (
         <TransactionModal
@@ -153,6 +159,9 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
             },
           ]}
           onClick={handleClick}
+          onSuccess={() => {
+            getIndexerLazy();
+          }}
           renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
               return <WalletRoute componentMode element={<></>}></WalletRoute>;

@@ -78,7 +78,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const { balance, stakingAllowance } = useSQToken();
-  const requireTokenApproval = stakingAllowance?.data?.isZero();
+  const requireTokenApproval = stakingAllowance?.result.data?.isZero();
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     assert(contracts, 'Contracts not available');
@@ -107,7 +107,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       const [indexerRewards, maxUnstakeData] = data;
 
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
-      const curAmount = stakeAction === StakeAction.Stake ? balance.data : maxUnstakeData;
+      const curAmount = stakeAction === StakeAction.Stake ? balance.result.data : maxUnstakeData;
       const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
       const isMaxUnstakeZero = maxUnstakeData?.isZero();
 
@@ -146,7 +146,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
             curAmount: formatEther(curAmount),
           }}
           onSuccess={() => {
-            stakeAction === StakeAction.Stake ? balance.refetch(true) : maxUnstake.refetch(true);
+            stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch(true);
             onSuccess();
           }}
           onClick={handleClick}
@@ -158,7 +158,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
             }
 
             if (requireTokenApproval && !requireClaimIndexerRewards) {
-              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch(true)} isLoading={loading} />;
+              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />;
             }
           }}
         />

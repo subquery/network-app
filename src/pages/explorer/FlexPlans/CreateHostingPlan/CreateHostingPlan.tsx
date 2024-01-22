@@ -102,7 +102,7 @@ const CreateHostingFlexPlan = forwardRef<
     };
   }, [createdHostingPlan, asyncProject]);
 
-  const [balance] = consumerHostBalance.data ?? [];
+  const [balance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
   const createHostingPlan = async () => {
     await form.validateFields();

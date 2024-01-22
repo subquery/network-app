@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { useEra } from '@hooks';
@@ -13,7 +14,7 @@ import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { Spinner, TableTitle } from '@subql/components';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
-import { formatEther, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
+import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
 import { Table, TableProps, Tag, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -141,7 +142,12 @@ export const MyDelegation: React.FC = () => {
     <>
       {renderAsync(delegationList, {
         loading: () => <Spinner></Spinner>,
-        error: (e) => <Typography>{`Failed to load delegations: ${e.message}`}</Typography>,
+        error: (e) => {
+          if (isRPCError(e)) {
+            return <RpcError></RpcError>;
+          }
+          return <Typography>{`Failed to load delegations: ${e.message}`}</Typography>;
+        },
         data: (data) => {
           if (!data || data.length === 0) {
             return (
