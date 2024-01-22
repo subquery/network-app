@@ -19,7 +19,6 @@ export const AllIndexers: React.FC = () => {
   const fetchMore = (offset: number) => {
     getUseQueryFetchMore(indexers, { offset, first: 10 });
   };
-
   return (
     <WalletRoute
       componentMode
@@ -47,6 +46,7 @@ export const AllIndexers: React.FC = () => {
                 if (!data || data?.totalCount === 0) {
                   <EmptyList title={t('allIndexers.nonData')} description={t('allIndexers.desc')}></EmptyList>;
                 }
+                console.warn(data.data);
 
                 return (
                   <IndexerList

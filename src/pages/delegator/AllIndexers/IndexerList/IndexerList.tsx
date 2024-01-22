@@ -16,6 +16,7 @@ import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetIndexerQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
+import { useWhyDidYouUpdate } from 'ahooks';
 import { TableProps } from 'antd';
 import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
@@ -312,6 +313,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0))
     );
   }, [orderedIndexerList, loadingList, sortedIndexer.loading, totalCount]);
+
   return (
     <div className={styles.container}>
       <div className={styles.indexerListHeader}>
@@ -325,8 +327,8 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         customPagination
         tableProps={{
           columns,
-          rowKey: (record) => {
-            return record?.address || `${Math.random()}${+new Date()}`;
+          rowKey: (record, index) => {
+            return `${record?.address}${record?.controller}${index}`;
           },
           dataSource: [...orderedIndexerList],
           scroll: { x: 1600 },

@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { gql, useLazyQuery } from '@apollo/client';
 import {
   claimIndexerRewardsModalText,
   ModalApproveToken,
@@ -21,7 +22,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
-import { useGetDelegationLazyQuery, useGetIndexerLazyQuery } from '@subql/react-hooks';
+import { useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
 import { Button } from 'antd';
@@ -63,12 +64,29 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
   const { stakingAllowance } = useSQToken();
   const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
-  const [getIndexerLazy, indexerDataLazy] = useGetIndexerLazyQuery({
-    variables: {
-      address: indexerAddress,
+
+  // note why we don't use useGetIndexerLazy.
+  // In apollo-client, if two different query use same fragment, and the query result in the two query is different,
+  //  the two query result will both update.
+  //  so, when we have used useGetIndexers in this component's parent component,
+  //  if we use useGetIndexerLazy in here, the parent component will also update.
+  //  it's not a clear flow to do update.
+  //  explicitly update would be better.
+  const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
+    gql`
+      query GetIndexer($address: String!) {
+        indexer(id: $address) {
+          capacity
+        }
+      }
+    `,
+    {
+      variables: {
+        address: indexerAddress,
+      },
+      fetchPolicy: 'network-only',
     },
-    fetchPolicy: 'network-only',
-  });
+  );
   const [getDelegationLazy, delegationDataLazy] = useGetDelegationLazyQuery({
     variables: {
       id: `${account}:${indexerAddress}`,
@@ -88,6 +106,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
     const fetchedDelegatedAmount = delegationDataLazy.data
       ? delegationDataLazy.data.delegation?.amount
       : delegation?.amount;
+
     if (fetchedDelegatedAmount) {
       const rawDelegate = parseRawEraValue(fetchedDelegatedAmount, currentEra.data?.index);
       const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));

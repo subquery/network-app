@@ -19,7 +19,7 @@ import Row from './Row';
 type Props = {
   deploymentId: string | undefined;
   project: ProjectDetailsQuery;
-  manifest: Manifest;
+  manifest?: Manifest;
 };
 
 const NoIndexers: React.FC = () => {
@@ -162,7 +162,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
               .map((indexer) => (
                 <Row
                   type={project.type}
-                  rpcFamily={manifest.rpcFamily}
+                  rpcFamily={manifest?.rpcFamily}
                   indexer={indexer}
                   key={indexer.indexerId}
                   deploymentId={deploymentId}
