@@ -307,9 +307,11 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     },
   ];
   const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
-  const isLoading =
-    !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0));
-
+  const isLoading = React.useMemo(() => {
+    return (
+      !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0))
+    );
+  }, [orderedIndexerList, loadingList, sortedIndexer.loading, totalCount]);
   return (
     <div className={styles.container}>
       <div className={styles.indexerListHeader}>

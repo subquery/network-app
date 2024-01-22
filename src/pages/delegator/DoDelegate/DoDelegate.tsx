@@ -21,8 +21,9 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
-import { useGetIndexerLazyQuery } from '@subql/react-hooks';
+import { useGetDelegationLazyQuery, useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
+import { retry } from '@utils/retry';
 import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -66,6 +67,13 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
     variables: {
       address: indexerAddress,
     },
+    fetchPolicy: 'network-only',
+  });
+  const [getDelegationLazy, delegationDataLazy] = useGetDelegationLazyQuery({
+    variables: {
+      id: `${account}:${indexerAddress}`,
+    },
+    fetchPolicy: 'network-only',
   });
   const [requireClaimIndexerRewards, setRequireClaimIndexerRewards] = React.useState(true);
   const [fetchRequireClaimIndexerRewardsLoading, setFetchRequireClaimIndexerRewardsLoading] = React.useState(false);
@@ -77,13 +85,16 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
 
   const afterDelegatedAmount = useMemo(() => {
     let afterDelegatedAmount = 0;
-    if (delegation?.amount) {
-      const rawDelegate = parseRawEraValue(delegation?.amount, currentEra.data?.index);
+    const fetchedDelegatedAmount = delegationDataLazy.data
+      ? delegationDataLazy.data.delegation?.amount
+      : delegation?.amount;
+    if (fetchedDelegatedAmount) {
+      const rawDelegate = parseRawEraValue(fetchedDelegatedAmount, currentEra.data?.index);
       const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
       afterDelegatedAmount = delegate.after ?? 0;
     }
     return afterDelegatedAmount;
-  }, [currentEra, delegation]);
+  }, [currentEra, delegation, delegationDataLazy.data?.delegation?.amount]);
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
@@ -158,10 +169,13 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
               },
             },
           ]}
-          onClick={handleClick}
           onSuccess={() => {
-            getIndexerLazy();
+            retry(() => {
+              getDelegationLazy();
+              getIndexerLazy();
+            });
           }}
+          onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
               return <WalletRoute componentMode element={<></>}></WalletRoute>;
