@@ -112,25 +112,6 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/client@^3.7.0", "@apollo/client@latest":
-  version "3.7.10"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.10.tgz#addc5fcebaf016981d9476268a06d529be83f568"
-  integrity sha512-/k1MfrqPKYiPNdHcOzdxg9cEx96vhAGxAcSorzfBvV29XtFQcYW2cPNQOTjK/fpSMtqVo8UNmu5vwQAWD1gfCg==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    "@wry/context" "^0.7.0"
-    "@wry/equality" "^0.5.0"
-    "@wry/trie" "^0.3.0"
-    graphql-tag "^2.12.6"
-    hoist-non-react-statics "^3.3.2"
-    optimism "^0.16.1"
-    prop-types "^15.7.2"
-    response-iterator "^0.2.6"
-    symbol-observable "^4.0.0"
-    ts-invariant "^0.10.3"
-    tslib "^2.3.0"
-    zen-observable-ts "^1.2.5"
-
 "@apollo/client@^3.8.10", "@apollo/client@^3.8.8":
   version "3.8.10"
   resolved "https://registry.npmjs.org/@apollo/client/-/client-3.8.10.tgz#db6ee4378212d93c1f22b90a2aa474f6e9664b68"
@@ -142,6 +123,25 @@
     graphql-tag "^2.12.6"
     hoist-non-react-statics "^3.3.2"
     optimism "^0.18.0"
+    prop-types "^15.7.2"
+    response-iterator "^0.2.6"
+    symbol-observable "^4.0.0"
+    ts-invariant "^0.10.3"
+    tslib "^2.3.0"
+    zen-observable-ts "^1.2.5"
+
+"@apollo/client@latest":
+  version "3.7.10"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.7.10.tgz#addc5fcebaf016981d9476268a06d529be83f568"
+  integrity sha512-/k1MfrqPKYiPNdHcOzdxg9cEx96vhAGxAcSorzfBvV29XtFQcYW2cPNQOTjK/fpSMtqVo8UNmu5vwQAWD1gfCg==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "@wry/context" "^0.7.0"
+    "@wry/equality" "^0.5.0"
+    "@wry/trie" "^0.3.0"
+    graphql-tag "^2.12.6"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.16.1"
     prop-types "^15.7.2"
     response-iterator "^0.2.6"
     symbol-observable "^4.0.0"
@@ -4662,15 +4662,14 @@
     "@maticnetwork/maticjs" "^3.6.7"
     "@maticnetwork/maticjs-ethers" "^1.0.3"
 
-"@subql/network-clients@^0.112.1-1":
-  version "0.112.1-1"
-  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-0.112.1-1.tgz#fd136be6e8b973a238f9334c07495f384ed153e3"
-  integrity sha512-eRLMdr5CBwt1ieV10Hppy1wOWEhcBlHO0jeyL4uQqzOCpJbqbDVujSX1aivCYCDxN66GQOhKz5/dGFLftPLDUg==
+"@subql/network-clients@^0.112.1-2":
+  version "0.112.1-2"
+  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-0.112.1-2.tgz#f51dd964ba3adc75c9977ae10b97f5f66c009cfb"
+  integrity sha512-wr+r5GMzrN34gCrF4H2LAsQ8zT4/jYkhmm/C1kE3Xw9Of5z4lByTsum8HOuFSM/5x2Zpx209iPTsWRPlhCMh7A==
   dependencies:
-    "@apollo/client" "^3.7.0"
     "@ethersproject/bignumber" "^5.7.0"
     "@subql/network-config" "0.112.0"
-    "@subql/network-query" "0.112.0"
+    "@subql/network-query" "0.112.1-2"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
@@ -4681,13 +4680,6 @@
   version "0.112.0"
   resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-0.112.0.tgz#e31435acdc1e2df77bd56868ecc213b8eb2b5680"
   integrity sha512-Xv/6R5Ni/7KVQWtj7ajLJqzT8EM49DZuJkls40y2ZbsYc2JGh0q95rrno1J/5mYH0ILanJZEvkRnPDQ7uBMy1g==
-
-"@subql/network-query@0.112.0":
-  version "0.112.0"
-  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-0.112.0.tgz#44a2446db79cbeb8252ab160adcc747359a9f4a6"
-  integrity sha512-6+IdTccu7pwO6KKmVCSptuAdlTTYeMZkqN2vVbTpB+wx37M9hPTenenTfnPGF8vC4zafo2GOtk6W0+TsILuL0A==
-  dependencies:
-    graphql "^16.5.0"
 
 "@subql/network-query@0.112.1-2":
   version "0.112.1-2"

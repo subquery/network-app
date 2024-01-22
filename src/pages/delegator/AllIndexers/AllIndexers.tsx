@@ -46,7 +46,6 @@ export const AllIndexers: React.FC = () => {
                 if (!data || data?.totalCount === 0) {
                   <EmptyList title={t('allIndexers.nonData')} description={t('allIndexers.desc')}></EmptyList>;
                 }
-                console.warn(data.data);
 
                 return (
                   <IndexerList
