@@ -45,8 +45,8 @@ import { SwapForm } from './SwapForm';
 const { SWAP, SELL, BUY } = ROUTES;
 
 const buttonLinks = [
-  { label: i18next.t('swap.buykSQT'), link: `${SWAP}/${BUY}` },
   { label: i18next.t('swap.sellkSQT'), link: `${SWAP}/${SELL}` },
+  { label: i18next.t('swap.buykSQT'), link: `${SWAP}/${BUY}` },
 ];
 
 const getStats = ({
@@ -182,7 +182,15 @@ const USDCToSqt = () => {
 
   if (fetchingOrderId) return <Spinner />;
 
-  if (!orderId) return <EmptyList title={t('swap.nonOrder')} description={t('swap.nonOrderDesc')} />;
+  if (!orderId)
+    return (
+      <EmptyList
+        title={'USDC.e -> kSQT swaps suspended'}
+        description={
+          "Now that the SubQuery Public Sale terms have been announced, we have stopped allowing swaps of USDC.e -> kSQT. You can still swap kSQT -> USDC.e, but we suggest waiting for SubQuery's TGE, and then swapping your kSQT for SQT at a premium when the network launches."
+        }
+      />
+    );
 
   return renderAsyncArray(
     mergeAsync(swapRate, swapPool, swapTokens, aUSDBalance, aUSDTotalSupply, usdcToSqtLimitation),
@@ -381,7 +389,7 @@ const Swap: React.FC = () => {
               <Routes>
                 <Route index path={BUY} element={<USDCToSqt />} />
                 <Route path={SELL} element={<SqtToUSDC />} />
-                <Route path={'/'} element={<Navigate replace to={BUY} />} />
+                <Route path={'/'} element={<Navigate replace to={SELL} />} />
               </Routes>
             </div>
           </div>
