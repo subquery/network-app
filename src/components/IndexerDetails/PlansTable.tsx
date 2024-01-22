@@ -37,7 +37,7 @@ type DoPurchaseProps = {
   indexerDetails?: IndexerDetails;
   purchasePlan: (indexer: string, planId?: string) => Promise<ContractTransaction>;
   balance: AsyncData<BigNumber>;
-  planManagerAllowance: AsyncData<BigNumber> & { refetch: () => void };
+  planManagerAllowance: { result: AsyncData<BigNumber>; refetch: () => void };
   deploymentId?: string;
 };
 
@@ -53,7 +53,7 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
   const { contracts } = useWeb3Store();
   const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
 
-  const requiresTokenApproval = planManagerAllowance.data?.isZero();
+  const requiresTokenApproval = planManagerAllowance.result.data?.isZero();
 
   const modalText = requiresTokenApproval
     ? tokenApprovalModalText
@@ -127,7 +127,7 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
       renderContent={(onSubmit, onCancel, isLoading, error) => {
-        return renderAsync(planManagerAllowance, {
+        return renderAsync(planManagerAllowance.result, {
           loading: () => <Spinner />,
           error: (e) => <Typography>{`Failed to check if token needs approval: ${e.message}`}</Typography>,
           data: () => {
@@ -188,7 +188,7 @@ export const PlansTable: React.FC<PlansTableProps> = ({ loadPlans, asyncPlans, p
   }, [loadPlans, asyncPlans]);
 
   React.useEffect(() => {
-    if (planManagerAllowance.error) {
+    if (planManagerAllowance.result.error) {
       planManagerAllowance.refetch();
     }
   }, []);

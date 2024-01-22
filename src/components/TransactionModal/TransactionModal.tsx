@@ -47,6 +47,9 @@ export type TransactionModalProps<P, T extends string> = {
     successText?: string;
   };
   currentStep?: number;
+  /**
+   * @param {object} onClick renderContent({ submit // this param })
+   */
   onClick?: Action<P, T>;
   onClose?: () => void;
   /**
@@ -202,7 +205,7 @@ const TransactionModal = <P, T extends string>({
         />
       )}
 
-      {actions.map(({ label, key, onClick, disabled, tooltip, defaultOpenTooltips, ...rest }) => {
+      {actions.map(({ label, key, onClick, disabled, tooltip, defaultOpenTooltips, rightItem, ...rest }) => {
         const isTextButton = variant.match(/text|Text/);
         const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
 
@@ -211,8 +214,8 @@ const TransactionModal = <P, T extends string>({
             <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips}>
               <Button
                 label={label}
-                onClick={() => {
-                  onClick?.();
+                onClick={async () => {
+                  await onClick?.();
                   handleBtnClick(key);
                 }}
                 className={clsx(sortedStyle, buttonClassName)}
@@ -220,7 +223,9 @@ const TransactionModal = <P, T extends string>({
                 colorScheme="standard"
                 disabled={disabled || isLoading}
                 rightItem={
-                  isLoading ? (
+                  rightItem ? (
+                    rightItem
+                  ) : isLoading ? (
                     <LoadingOutlined className={sortedStyle} />
                   ) : (
                     tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />

@@ -18,8 +18,7 @@ import Breakdown from './Breakdown';
 import styles from './index.module.less';
 
 const Staking: FC = () => {
-  // const { address: account } = useAccount();
-  const account = '0x21A787fddeF5b69A8a1065a05E364f7382c8cdAc';
+  const { address: account } = useAccount();
 
   const navigate = useNavigate();
   const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });
@@ -29,7 +28,7 @@ const Staking: FC = () => {
       account: account || '',
     },
   });
-  console.warn(delegateToOthersByEra);
+
   const totalStaked = useMemo(() => {
     return sortedIndexer.data?.totalStake;
   }, [sortedIndexer]);

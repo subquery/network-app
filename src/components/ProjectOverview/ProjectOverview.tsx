@@ -106,7 +106,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                   <Typography variant="medium" type="secondary">
                     Family:{' '}
                   </Typography>
-                  <Typography variant="medium">{manifest?.rpcFamily?.join(' ')}</Typography>
+                  <Typography variant="medium" style={{ textTransform: 'capitalize' }}>
+                    {manifest?.rpcFamily?.join(' ')}
+                  </Typography>
                 </div>
               )}
               {manifest?.client?.name && (
@@ -122,7 +124,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                   <Typography variant="medium" type="secondary">
                     Node type:{' '}
                   </Typography>
-                  <Typography variant="medium">{manifest?.nodeType}</Typography>
+                  <Typography variant="medium" style={{ textTransform: 'capitalize' }}>
+                    {manifest?.nodeType}
+                  </Typography>
                 </div>
               )}
             </div>
@@ -148,9 +152,18 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex" style={{ justifyContent: 'space-between', margin: '12px 0' }}>
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
               <Typography variant="small" type="secondary">
-                Total Agreements
+                Total Active Agreements
+              </Typography>
+              <Typography variant="small">
+                {project.deployments.nodes.find((i) => i?.id === deploymentId)?.serviceAgreementsActive.totalCount || 0}
+              </Typography>
+            </div>
+
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
+              <Typography variant="small" type="secondary">
+                Total Agreements over all time
               </Typography>
               <Typography variant="small">
                 {project.deployments.nodes.find((i) => i?.id === deploymentId)?.serviceAgreements.totalCount || 0}

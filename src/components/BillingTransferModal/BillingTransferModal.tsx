@@ -20,9 +20,9 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
   const { consumerHostAllowance, balance, consumerHostBalance } = useSQToken();
-  const sortedBalance = balance.data;
-  const sortedConsumerHostBalance = consumerHostBalance.data?.balance;
-  const requireTokenApproval = consumerHostAllowance?.data?.isZero();
+  const sortedBalance = balance.result.data;
+  const sortedConsumerHostBalance = consumerHostBalance.result.data?.balance;
+  const requireTokenApproval = consumerHostAllowance?.result.data?.isZero();
   const [loadingIncreateAllowance, setLoadingIncreateAllowance] = useState(false);
   const getModalText = (action: TransferAction) => {
     if (action === 'Transfer') {
@@ -70,7 +70,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
     const sortedAmount = parseEther(amount.toString());
 
     if (action === 'Transfer') {
-      if (consumerHostAllowance?.data?.lt(sortedAmount)) {
+      if (consumerHostAllowance?.result.data?.lt(sortedAmount)) {
         setLoadingIncreateAllowance(true);
         try {
           openNotification({
@@ -104,8 +104,8 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
         curAmount: getMaxAmount(action),
       }}
       onSuccess={() => {
-        consumerHostBalance.refetch(true);
-        balance.refetch(true);
+        consumerHostBalance.refetch();
+        balance.refetch();
       }}
       variant={'textBtn'}
       renderContent={(onSubmit, onCancel, isLoading, error) => {

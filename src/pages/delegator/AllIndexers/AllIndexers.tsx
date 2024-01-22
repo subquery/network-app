@@ -19,7 +19,6 @@ export const AllIndexers: React.FC = () => {
   const fetchMore = (offset: number) => {
     getUseQueryFetchMore(indexers, { offset, first: 10 });
   };
-
   return (
     <WalletRoute
       componentMode

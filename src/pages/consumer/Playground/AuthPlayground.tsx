@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BreadcrumbNav } from '@components';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
+import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Spinner } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { Table } from 'antd';
@@ -36,6 +37,8 @@ interface AuthPlaygroundProps {
   dataSource?: any[];
   rowKey?: string;
   type: ProjectType;
+  // rpc project only
+  rpcFamily?: Manifest['rpcFamily'];
 
   loading?: boolean;
   requireAuth: boolean;
@@ -57,6 +60,7 @@ export const AuthPlayground: React.FC<AuthPlaygroundProps> = ({
   dataSource,
   rowKey,
   type,
+  rpcFamily,
 
   loading,
   requireAuth,
@@ -91,6 +95,7 @@ export const AuthPlayground: React.FC<AuthPlaygroundProps> = ({
         <RpcPlayground
           url={graphqlQueryProps.queryUrl}
           trailToken={graphqlQueryProps.sessionToken || ''}
+          rpcFamily={rpcFamily}
         ></RpcPlayground>
       )}
     </div>

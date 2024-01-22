@@ -5,10 +5,15 @@ import { useEffect, useState } from 'react';
 import { useIPFS } from '@containers';
 import yaml from 'js-yaml';
 
+export enum RPCFAMILY {
+  EVM = 'evm',
+  SUBSTRATE = 'substrate',
+}
+
 export type Manifest = {
   nodeType?: string;
   network?: string;
-  rpcFamily?: string[];
+  rpcFamily?: (string | RPCFAMILY)[];
   client?: {
     name: string;
   };

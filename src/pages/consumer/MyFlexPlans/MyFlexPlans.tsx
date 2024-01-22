@@ -31,8 +31,8 @@ const buttonLinks = [
 const BalanceCards = () => {
   const { t } = useTranslation();
   const { balance, consumerHostBalance } = useSQToken();
-  const { loading: loadingBalance, data: balanceData } = balance;
-  const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance;
+  const { loading: loadingBalance, data: balanceData } = balance.result;
+  const { loading: loadingBillingBalance, data: billingBalanceData } = consumerHostBalance.result;
   const [billBalance] = billingBalanceData ?? [];
 
   return (

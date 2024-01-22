@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { gql, useLazyQuery } from '@apollo/client';
 import {
   claimIndexerRewardsModalText,
   ModalApproveToken,
@@ -20,7 +22,9 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
-import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
+import { useGetDelegationLazyQuery } from '@subql/react-hooks';
+import { convertStringToNumber, renderAsync } from '@utils';
+import { retry } from '@utils/retry';
 import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -58,9 +62,70 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
-  const requireTokenApproval = stakingAllowance?.data?.isZero();
+  const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
+
+  // note why we don't use useGetIndexerLazy.
+  // In apollo-client, if two different query use same fragment, and the query result in the two query is different,
+  //  the two query result will both update.
+  //  so, when we have used useGetIndexers in this component's parent component,
+  //  if we use useGetIndexerLazy in here, the parent component will also update.
+  //  it's not a clear flow to do update.
+  //  explicitly update would be better.
+  const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
+    gql`
+      query GetIndexer($address: String!) {
+        indexer(id: $address) {
+          capacity
+        }
+      }
+    `,
+    {
+      variables: {
+        address: indexerAddress,
+      },
+      fetchPolicy: 'network-only',
+    },
+  );
+  const [getDelegationLazy, delegationDataLazy] = useGetDelegationLazyQuery({
+    variables: {
+      id: `${account}:${indexerAddress}`,
+    },
+    fetchPolicy: 'network-only',
+  });
+  const [requireClaimIndexerRewards, setRequireClaimIndexerRewards] = React.useState(true);
+  const [fetchRequireClaimIndexerRewardsLoading, setFetchRequireClaimIndexerRewardsLoading] = React.useState(false);
   const isLogin = useIsLogin();
+
+  const modalText = useMemo(() => {
+    return isLogin ? getModalText(requireClaimIndexerRewards, requireTokenApproval, t) : idleText;
+  }, [isLogin, requireClaimIndexerRewards, requireTokenApproval]);
+
+  const afterDelegatedAmount = useMemo(() => {
+    let afterDelegatedAmount = 0;
+    const fetchedDelegatedAmount = delegationDataLazy.data
+      ? delegationDataLazy.data.delegation?.amount
+      : delegation?.amount;
+
+    if (fetchedDelegatedAmount) {
+      const rawDelegate = parseRawEraValue(fetchedDelegatedAmount, currentEra.data?.index);
+      const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
+      afterDelegatedAmount = delegate.after ?? 0;
+    }
+    return afterDelegatedAmount;
+  }, [currentEra, delegation, delegationDataLazy.data?.delegation?.amount]);
+
+  const indexerCapacity = useMemo(() => {
+    let indexerCapacity = BigNumber.from(0);
+    const fetchedCapacity = indexerDataLazy.data ? indexerDataLazy.data.indexer?.capacity : indexer?.capacity;
+    if (fetchedCapacity) {
+      const rawCapacity = parseRawEraValue(fetchedCapacity, currentEra.data?.index);
+
+      indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
+    }
+
+    return indexerCapacity;
+  }, [indexer, indexerDataLazy, currentEra]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
@@ -81,13 +146,12 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
     );
   }
 
-  return renderAsync(mergeAsync(rewardClaimStatus, currentEra), {
+  return renderAsync(currentEra, {
     error: (error) => (
       <Typography>
         {`Error: Click to `}
         <span
           onClick={() => {
-            rewardClaimStatus.refetch();
             refetch();
           }}
           style={{ color: 'var(--sq-blue600)', cursor: 'pointer' }}
@@ -97,27 +161,10 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
       </Typography>
     ),
     loading: () => <Spinner />,
-    data: (data) => {
-      const [r, era] = data;
-      const requireClaimIndexerRewards = !r?.hasClaimedRewards;
+    data: (era) => {
+      // const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       // if doesn't login will enter wallerRoute logical code process
-      const isActionDisabled = isLogin ? !stakingAllowance.data || rewardClaimStatus.loading : false;
-
-      let afterDelegatedAmount = 0;
-      let indexerCapacity = BigNumber.from(0);
-      if (delegation?.amount) {
-        const rawDelegate = parseRawEraValue(delegation?.amount, era?.index);
-        const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
-        afterDelegatedAmount = delegate.after ?? 0;
-      }
-
-      if (indexer?.capacity) {
-        const rawCapacity = parseRawEraValue(indexer?.capacity, era?.index);
-
-        indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
-      }
-
-      const modalText = isLogin ? getModalText(requireClaimIndexerRewards, requireTokenApproval, t) : idleText;
+      const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
 
       return (
         <TransactionModal
@@ -126,18 +173,39 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
             {
               label: t('delegate.title'),
               key: 'delegate',
-              disabled: isActionDisabled,
+              disabled: fetchRequireClaimIndexerRewardsLoading || isActionDisabled,
+              rightItem: fetchRequireClaimIndexerRewardsLoading ? (
+                <Spinner size={10} color="var(--sq-gray500)" />
+              ) : undefined,
+              onClick: async () => {
+                try {
+                  setFetchRequireClaimIndexerRewardsLoading(true);
+                  const res = await rewardClaimStatus.refetch();
+                  setRequireClaimIndexerRewards(!res);
+                } finally {
+                  setFetchRequireClaimIndexerRewardsLoading(false);
+                }
+              },
             },
           ]}
+          onSuccess={() => {
+            retry(() => {
+              getDelegationLazy();
+              getIndexerLazy();
+            });
+          }}
           onClick={handleClick}
-          renderContent={(onSubmit, onCancel, isLoading, error) => {
+          renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
               return <WalletRoute componentMode element={<></>}></WalletRoute>;
             }
             if (requireClaimIndexerRewards) {
               return (
                 <ModalClaimIndexerRewards
-                  onSuccess={() => rewardClaimStatus.refetch()}
+                  onSuccess={async () => {
+                    const res = await rewardClaimStatus.refetch();
+                    setRequireClaimIndexerRewards(!res);
+                  }}
                   indexer={indexerAddress ?? ''}
                 />
               );
@@ -161,7 +229,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
             );
           }}
           variant={isActionDisabled ? 'disabledTextBtn' : variant}
-          initialCheck={rewardClaimStatus}
           width="540px"
         />
       );

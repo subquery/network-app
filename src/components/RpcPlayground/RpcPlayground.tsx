@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useMemo, useState } from 'react';
+import { Manifest, RPCFAMILY } from '@hooks/useGetDeploymentManifest';
 import { Typography } from '@subql/components';
 import { getAuthReqHeader } from '@utils';
 import { Button, Input } from 'antd';
@@ -12,9 +13,41 @@ import styles from './index.module.less';
 interface IProps {
   url?: string;
   trailToken: string;
+  rpcFamily?: Manifest['rpcFamily'];
 }
 
-const RpcPlayground: FC<IProps> = ({ url, trailToken }) => {
+export const playgroundValidator = {
+  [RPCFAMILY.EVM]: async (val: string) => {
+    try {
+      const valCopy = JSON.parse(val) as { [key: string]: unknown };
+      const requestFields = ['jsonrpc', 'id', 'method', 'params'];
+
+      for (const field of requestFields) {
+        if (!Object.hasOwn(valCopy, field)) {
+          return Promise.reject(new Error(`Must have field "${field}"`));
+        }
+      }
+    } catch (e) {
+      return Promise.reject(new Error('Please enter a valid json'));
+    }
+  },
+  [RPCFAMILY.SUBSTRATE]: async (val: string) => {
+    try {
+      JSON.parse(val) as { [key: string]: unknown };
+    } catch (e) {
+      return Promise.reject(new Error('Please enter a valid json'));
+    }
+  },
+};
+
+export const playgroundPlaceholder: {
+  [key: string]: string;
+} = {
+  [RPCFAMILY.EVM]: `Example: {"jsonrpc":"2.0","id": 1, "method":"eth_blockNumber","params":[]}`,
+  default: 'JSON RPC playground is a simple tool to help you test queries, click to enter you requests.',
+};
+
+const RpcPlayground: FC<IProps> = ({ url, trailToken, rpcFamily }) => {
   const [val, setVal] = useState('');
   const [loading, setLoading] = useState(false);
   const enteredRows = useMemo(() => {
@@ -27,6 +60,10 @@ const RpcPlayground: FC<IProps> = ({ url, trailToken }) => {
     if (!url) return;
     try {
       setLoading(true);
+      if (rpcFamily) {
+        const [firstFamily] = rpcFamily;
+        await playgroundValidator[firstFamily.toLowerCase() as RPCFAMILY]?.(val);
+      }
       const res = await fetchJson(
         {
           url,
@@ -65,7 +102,7 @@ const RpcPlayground: FC<IProps> = ({ url, trailToken }) => {
               setVal(e.target.value);
             }}
             style={{ resize: 'none' }}
-            placeholder="JSON RPC playground is a simple tool to help you test queries, click to enter you requests."
+            placeholder={playgroundPlaceholder[rpcFamily?.[0] || 'default']}
           ></Input.TextArea>
         </div>
 

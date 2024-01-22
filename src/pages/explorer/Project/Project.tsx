@@ -160,7 +160,9 @@ const ProjectInner: React.FC = () => {
               />
               <Route
                 path={INDEXERS}
-                element={<IndexerDetails deploymentId={deploymentId} project={project}></IndexerDetails>}
+                element={
+                  <IndexerDetails deploymentId={deploymentId} project={project} manifest={manifest}></IndexerDetails>
+                }
               />
               <Route
                 path={SERVICE_AGREEMENTS}

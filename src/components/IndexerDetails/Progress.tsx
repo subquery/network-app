@@ -33,18 +33,15 @@ const Progress: React.FC<{ startBlock?: number; currentBlock: number; targetBloc
 
   return (
     <div className={styles.progress}>
-      <SubqlProgress percent={maxProgress * 100} className={styles.progressBar} showInfo={false} />
-      {blocksBehind > 0 && (
-        <div>
-          <Typography variant="medium" className={styles.precentage}>
-            {`${strip(maxProgress * 100)} % `}
-          </Typography>
-          <Typography variant="medium" className={styles.indexingBlock}>
-            {t('indexerProgress.blocks')}
-          </Typography>
-          <Typography variant="medium" className={styles.indexingBlockCount}>{`#${currentBlock}`}</Typography>
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <SubqlProgress percent={maxProgress * 100} className={styles.progressBar} showInfo={false} />
+        <Typography variant="medium" className={styles.precentage}>
+          {`${strip(maxProgress * 100, 1)}% `}
+        </Typography>
+      </div>
+      <Typography variant="small" type="secondary">
+        {blocksBehind > 0 ? `${blocksBehind} Block${blocksBehind > 1 ? 's' : ''} behind` : 'Fully synced'}
+      </Typography>
     </div>
   );
 };
