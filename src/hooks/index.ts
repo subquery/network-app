@@ -18,7 +18,6 @@ export * from './useLockPeriod';
 export * from './useIsIndexer';
 export * from './useSortedIndexerDeployments';
 export * from './useNetworkClient';
-export * from './useSwapData';
 export * from './useInitContracts';
 export * from './useEra';
 export * from './useStudio';

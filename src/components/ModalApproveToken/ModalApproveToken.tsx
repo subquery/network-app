@@ -25,7 +25,6 @@ export enum ApproveContract {
   Staking = 'staking',
   PlanManager = 'planManager',
   PurchaseOfferMarket = 'purchaseOfferMarket',
-  PermissionedExchange = 'permissionedExchange',
   ConsumerHost = 'consumerHost',
 }
 

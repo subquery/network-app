@@ -10,7 +10,7 @@ import { IndexerDeploymentFieldsFragment, OfferFieldsFragment } from '@subql/net
 import { useAsyncMemo, useGetIndexerQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
 import assert from 'assert';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -69,7 +69,7 @@ const OfferSummary: React.FC<OfferSummaryProps> = ({ offer, onNext, curStep }) =
     },
     {
       label: t('myOffers.step_2.expireDate'),
-      value: moment(offer?.expireDate).format(),
+      value: dayjs(offer?.expireDate).format(),
     },
   ];
 

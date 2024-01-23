@@ -19,9 +19,9 @@ import { EVENT_TYPE, EventBus } from '@utils/eventBus';
 import { retry } from '@utils/retry';
 import { TableProps, Typography } from 'antd';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
-import moment from 'moment';
 
 import { AntDTable, DeploymentMeta, EmptyList, SearchInput, TableText } from '../../../components';
 import { TokenAmount } from '../../../components/TokenAmount';
@@ -206,7 +206,7 @@ const getColumns = (
       dataIndex: 'expireDate',
       title: <TableTitle title={i18next.t('myOffers.table.expired')} />,
       render: (expireDate: Date) => (
-        <TableText content={moment(expireDate).utc(true).fromNow()} tooltip={formatDate(expireDate)} />
+        <TableText content={dayjs(expireDate).utc(true).fromNow()} tooltip={formatDate(expireDate)} />
       ),
     },
   ];
@@ -281,7 +281,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
    * SearchInput logic
    */
   const [searchDeploymentId, setSearchDeploymentId] = React.useState<string | undefined>();
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [now, setNow] = React.useState<Date>(dayjs().toDate());
   const [curPage, setCurPage] = React.useState(1);
   const [pageSize] = React.useState(10);
   const sortedParams = (offset: number) => ({
@@ -341,7 +341,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
     fetchMoreOffers(0);
 
     const interval = setInterval(() => {
-      setNow(moment().toDate());
+      setNow(dayjs().toDate());
     }, 60000);
 
     return () => clearInterval(interval);

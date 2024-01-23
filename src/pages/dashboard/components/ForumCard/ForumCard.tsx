@@ -10,7 +10,7 @@ import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export const ForumCard = () => {
   const forumApis = useForumApis();
@@ -59,7 +59,7 @@ export const ForumCard = () => {
                       {topic.title}
                     </Typography>
                     <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-                      {moment(topic.last_posted_at).utc(true).fromNow()}
+                      {dayjs(topic.last_posted_at).utc(true).fromNow()}
                     </Typography>
                   </Link>
                 );

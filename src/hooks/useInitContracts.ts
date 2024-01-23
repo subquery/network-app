@@ -9,7 +9,7 @@ import { ContractSDK } from '@subql/contract-sdk/sdk';
 import { SQToken__factory } from '@subql/contract-sdk/typechain/factories/contracts/root/SQToken__factory';
 import { ContractClient } from '@subql/network-clients';
 import { parseError } from '@utils';
-import { goerli, mainnet } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -21,7 +21,7 @@ export function useInitContracts(): { loading: boolean } {
   const { signer } = useEthersSigner();
   const provider = useEthersProviderWithPublic();
   const ethereumProvider = useEthersProviderWithPublic({
-    chainId: import.meta.env.MODE === 'testnet' ? goerli.id : mainnet.id,
+    chainId: import.meta.env.MODE === 'testnet' ? sepolia.id : mainnet.id,
   });
 
   React.useEffect(() => {
@@ -29,6 +29,7 @@ export function useInitContracts(): { loading: boolean } {
       if (signer || provider) {
         try {
           const contractInstance = ContractSDK.create(signer || provider, { network: NETWORK_NAME });
+
           setContracts(contractInstance);
 
           const sortedContractClient = ContractClient.create(contractInstance);

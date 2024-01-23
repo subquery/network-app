@@ -1,4 +1,4 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export const BRIDGE_URL = 'https://portal.polygon.technology/';
+export const BRIDGE_URL = 'https://bridge.base.org/deposit';

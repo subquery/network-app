@@ -19,8 +19,8 @@ import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { TFunction } from 'i18next';
-import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -57,7 +57,10 @@ const getContentText = (
     title: t('indexer.unstake'),
     steps: [t('indexer.enterUnstakeAmount'), t('indexer.confirmOnMetamask')],
     description: t('indexer.unstakeValidNextEra', {
-      duration: `${moment.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
+      duration: `${dayjs
+        .duration(+(lockPeriod || 0), 'seconds')
+        .as('hours')
+        .toPrecision(3)} hours`,
     }),
     inputTitle: t('indexer.unstakeInputTitle'),
     submitText: t('indexer.confirmUnstake'),

@@ -7,16 +7,17 @@ import { AppTypography } from '@components/Typography';
 import { Button } from 'antd';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 
+import { tipsChainIds } from 'src/config/rainbowConf';
+
 import { ECOSYSTEM_NETWORK } from '../../containers/Web3';
 import styles from './ChainStatus.module.css';
-
-const tipsChainIds = import.meta.env.MODE === 'testnet' ? [80001] : [137];
 
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { chains, switchNetwork } = useSwitchNetwork();
   const { t } = useTranslation();
+
   if (isConnected && !tipsChainIds.includes(chain?.id || 0)) {
     return (
       <div className={styles.container}>
