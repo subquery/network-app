@@ -62,14 +62,6 @@ function useSQTokenImpl() {
     return contracts.sqToken.allowance(account, contracts.purchaseOfferMarket.address);
   }, [account, contracts]);
 
-  const permissionExchangeAllowance = useAsyncMemoWithLazy(async () => {
-    assert(contracts, 'Contracts not available');
-    assert(account, 'Account not available');
-    return limitContract(
-      async () => await contracts.sqToken.allowance(account, contracts.permissionedExchange.address),
-    );
-  }, [account, contracts]);
-
   return {
     balance,
     ethSqtBalance,
@@ -77,7 +69,6 @@ function useSQTokenImpl() {
     stakingAllowance,
     planAllowance,
     offerAllowance,
-    permissionExchangeAllowance,
     consumerHostAllowance,
   };
 }

@@ -26,7 +26,10 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
     title: t('delegate.undelegate'),
     steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
     description: t('delegate.undelegateValidNextEra', {
-      duration: `${dayjs.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
+      duration: `${dayjs
+        .duration(+(lockPeriod || 0), 'seconds')
+        .as('hours')
+        .toPrecision(3)} hours`,
     }),
     inputTitle: t('delegate.undelegateAmount'),
     submitText: t('delegate.confirmUndelegate'),
