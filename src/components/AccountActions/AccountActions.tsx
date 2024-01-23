@@ -72,7 +72,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
         <div className="flex" style={{ gap: 16, padding: '16px' }}>
           <div className="col-flex" style={{ gap: 8 }}>
             <Typography variant="small" type="secondary">
-              Wallet balance on Polygon
+              Wallet balance on Base
             </Typography>
             <Typography weight={600}>
               {formatEther(balance.result.data, 4)} {TOKEN}
@@ -85,8 +85,8 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                 color="#fff"
                 title={
                   <Typography variant="small">
-                    SubQuery launched on Polygon network, To move assets from the Ethereum network to Polygon network,
-                    you'll need to connect to a bridge and deposit funds.
+                    SubQuery launched on Base network, To move assets from the Ethereum network to Base network, you'll
+                    need to connect to a bridge and deposit funds.
                   </Typography>
                 }
                 overlayInnerStyle={{

@@ -1,10 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import * as moment from 'moment';
-import momentDurationFormatSetup from 'moment-duration-format';
-momentDurationFormatSetup(moment);
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getOrderedAccounts = <T extends any[], K extends keyof T[number]>(
   accounts: T,
   key: K,

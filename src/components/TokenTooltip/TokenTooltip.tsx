@@ -34,8 +34,8 @@ const TokenTooltip: FC<IProps> = (props) => {
             Eth Wallet Balance: {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
           </Typography>
           <Typography variant="small" type="secondary" style={{ paddingInlineStart: 22 }}>
-            Your SQT needs to be on Polygon in order to be used on the SubQuery Network. To move SQT from the Ethereum
-            to Polygon, you’ll need to bridge them across.
+            Your SQT needs to be on Base in order to be used on the SubQuery Network. To move SQT from the Ethereum to
+            Base, you’ll need to bridge them across.
           </Typography>
 
           <a

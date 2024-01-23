@@ -10,7 +10,7 @@ import { ServiceAgreementFieldsFragment } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { formatSQT } from '@subql/react-hooks';
 import { Button, Table, TableProps } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DeploymentMeta, EmptyList } from '../../../components';
@@ -89,7 +89,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       title: <TableTitle title={t('serviceAgreements.headers.startDate')} />,
       key: 'StartDate',
       width: 200,
-      render: (startTime: number) => <div>{moment(startTime).utc(true).format('YYYY-MM-DD hh:mm')}</div>,
+      render: (startTime: number) => <div>{dayjs(startTime).utc(true).format('YYYY-MM-DD hh:mm')}</div>,
     },
     {
       // TODO: check the type definition.
@@ -108,7 +108,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
       ),
       width: 160,
       render: (_, sa: ServiceAgreementFieldsFragment) => {
-        return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
+        return <TableText content={dayjs(sa.endTime).utc(true).fromNow()} />;
       },
     },
     {
@@ -173,7 +173,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
     render: (consumer: ServiceAgreementFieldsFragment['consumerAddress']) => <ConnectedIndexer id={consumer} />,
   };
 
-  const [now, setNow] = React.useState<Date>(moment().toDate());
+  const [now, setNow] = React.useState<Date>(dayjs().toDate());
   const sortedParams = { deploymentId: queryParams?.deploymentId || '', address: queryParams?.address || '', now };
   // TODO pagination ? not very sure.
   const serviceAgreements = queryFn({ variables: sortedParams });
@@ -199,7 +199,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
   // NOTE: Every 5min to query wit a new timestamp
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setNow(moment().toDate());
+      setNow(dayjs().toDate());
     }, 300000);
     return () => clearInterval(interval);
   }, []);

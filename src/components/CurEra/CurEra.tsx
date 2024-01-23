@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { Progress } from 'antd';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
-import moment from 'moment';
 
 import { getProgress, getTimeLeft, renderAsync } from '../../utils';
 import { AppTypography } from '../Typography';
 import styles from './CurEra.module.css';
 
-export const getEraTimeLeft = (mNow: moment.Moment, mTo: moment.Moment): string => {
+export const getEraTimeLeft = (mNow: dayjs.Dayjs, mTo: dayjs.Dayjs): string => {
   if (mNow.isAfter(mTo)) return i18next.t(`era.ended`);
   return i18next.t('era.timeLeft', { duration: getTimeLeft(mNow, mTo) });
 };
@@ -40,9 +40,9 @@ export const CurEra: React.FC = () => {
         data: (era) => {
           if (!era) return null;
           const eraHours = `${era.period / 3600}`;
-          const mNow = moment(now);
+          const mNow = dayjs(now);
 
-          const mTo = moment(era.estEndTime);
+          const mTo = dayjs(era.estEndTime);
           const progress = getEraProgress(now, era.estEndTime, era.startTime);
 
           return (

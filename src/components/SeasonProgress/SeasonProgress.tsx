@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Progress } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { getProgress, getTimeLeft } from '../../utils';
 import styles from './SeasonProgress.module.css';
 
-function getStatus(mTo: moment.Moment, mNow: moment.Moment): string {
+function getStatus(mTo: dayjs.Dayjs, mNow: dayjs.Dayjs): string {
   if (mNow.isAfter(mTo)) {
     return 'This Season has ended';
   } else {
@@ -23,8 +23,8 @@ export const SeasonProgress: React.FC<{
 }> = (timePeriod) => {
   const now = new Date();
   const { from, to } = timePeriod.timePeriod;
-  const mTo = moment(to);
-  const mNow = moment(now);
+  const mTo = dayjs(to);
+  const mNow = dayjs(now);
 
   const status = getStatus(mTo, mNow);
   const timeLeft = getTimeLeft(mTo, mNow);

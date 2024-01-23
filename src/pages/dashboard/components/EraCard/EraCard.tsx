@@ -10,8 +10,8 @@ import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { useInterval } from 'ahooks';
 import { Progress, Skeleton } from 'antd';
+import dayjs from 'dayjs';
 import { t } from 'i18next';
-import moment from 'moment';
 
 export const EraCard = () => {
   const { currentEra } = useEra();
@@ -39,7 +39,7 @@ export const EraCard = () => {
                 </Typography>
 
                 <Typography variant="small" type="secondary" style={{ marginBottom: 12 }}>
-                  {getEraTimeLeft(moment(now), moment(eraData.estEndTime))}
+                  {getEraTimeLeft(dayjs(now), dayjs(eraData.estEndTime))}
                 </Typography>
                 <Progress
                   strokeColor={{

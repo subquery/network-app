@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import LeftOutlined from '@ant-design/icons/LeftOutlined';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';
 import { Steps } from 'antd';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
-import moment from 'moment';
 
 import { Button } from '../../../../components/Button';
 import { getCapitalizedStr } from '../../../../utils';
@@ -38,7 +38,7 @@ const initialOffer = {
   totalDeposit: '0',
   indexerCap: 1,
   minimumIndexedHeight: 1,
-  expireDate: moment().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT).toDate(),
+  expireDate: dayjs().add(EXPIRE_DATE_GAP, EXPIRE_DATE_GAP_UNIT).toDate(),
   projectId: '',
 };
 

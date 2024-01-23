@@ -6,7 +6,7 @@ import PasswordField from '@components/PasswordField';
 import { GetUserApiKeys, isConsumerHostError, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Modal, openNotification, Spinner, TextInput, Typography } from '@subql/components';
 import { Table } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Button } from '../../../components/Button/Button';
 import styles from './apiKeys.module.less';
@@ -99,8 +99,8 @@ const ApiKeysFC: FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <Typography variant="small">{val}</Typography>
                       <Typography type={'secondary'} variant="small">
-                        Created {moment(record.created_at).format('YYYY-MM-DD')} Last Used{' '}
-                        {moment(record.updated_at).format('YYYY-MM-DD')}
+                        Created {dayjs(record.created_at).format('YYYY-MM-DD')} Last Used{' '}
+                        {dayjs(record.updated_at).format('YYYY-MM-DD')}
                       </Typography>
                     </div>
                   );

@@ -8,7 +8,7 @@ import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
 import { Typography } from '@subql/components';
 import { renderAsync, useGetAllOpenOffersLazyQuery, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { OfferTable } from '../../consumer/MyOffers/OfferTable';
 import styles from './Marketplace.module.css';
@@ -36,7 +36,7 @@ const NoOffers: React.FC = () => {
 
 export const Marketplace: React.FC = () => {
   const { t } = useTranslation();
-  const [now] = React.useState<Date>(moment().toDate());
+  const [now] = React.useState<Date>(dayjs().toDate());
   const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
 
   return renderAsync(offers, {

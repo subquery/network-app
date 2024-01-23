@@ -13,9 +13,9 @@ import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther } from '@utils';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
-import moment from 'moment';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -26,7 +26,7 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
     title: t('delegate.undelegate'),
     steps: [t('delegate.enterAmount'), t('indexer.confirmOnMetamask')],
     description: t('delegate.undelegateValidNextEra', {
-      duration: `${moment.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
+      duration: `${dayjs.duration(lockPeriod, 'seconds').as('hours').toPrecision(3)} hours`,
     }),
     inputTitle: t('delegate.undelegateAmount'),
     submitText: t('delegate.confirmUndelegate'),

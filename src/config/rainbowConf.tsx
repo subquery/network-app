@@ -4,15 +4,16 @@
 import React from 'react';
 import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { metaMaskWallet, rainbowWallet, talismanWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig, mainnet, WagmiConfig } from 'wagmi';
-import { goerli, polygon, polygonMumbai } from 'wagmi/chains';
+import { configureChains, createConfig, mainnet, sepolia, WagmiConfig } from 'wagmi';
+import { base, baseSepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
 // goerli and mainnet just for get data actually not supported
-const supportedChains = import.meta.env.VITE_NETWORK === 'testnet' ? [polygonMumbai, goerli] : [polygon, mainnet];
+const supportedChains = import.meta.env.VITE_NETWORK === 'testnet' ? [baseSepolia, sepolia] : [base, mainnet];
 
+export const tipsChainIds: number[] = import.meta.env.VITE_NETWORK === 'testnet' ? [baseSepolia.id] : [base.id];
 // This should ok. It seems is a bug of Ts.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

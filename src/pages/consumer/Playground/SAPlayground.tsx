@@ -10,8 +10,8 @@ import { useIndexerMetadata } from '@hooks';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectType, ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { TableProps } from 'antd';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
-import moment from 'moment';
 
 import { TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
@@ -97,7 +97,7 @@ export const SAPlayground: React.FC = () => {
       title: i18next.t('serviceAgreements.headers.expiry').toUpperCase(),
       key: 'expiry',
       render: (_, sa: ServiceAgreement) => {
-        return <TableText content={moment(sa.endTime).utc(true).fromNow()} />;
+        return <TableText content={dayjs(sa.endTime).utc(true).fromNow()} />;
       },
     },
     {

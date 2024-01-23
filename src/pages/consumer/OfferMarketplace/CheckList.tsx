@@ -5,28 +5,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { ServiceStatus } from '@subql/network-query';
-import { AsyncMemoReturn } from '@subql/react-hooks';
+import { AsyncMemoReturn, renderAsync } from '@subql/react-hooks';
 import { Button, Typography } from 'antd';
 import clsx from 'clsx';
-import moment from 'moment';
-
-import { useWeb3Store } from 'src/stores';
+import dayjs from 'dayjs';
 
 import { Spinner, Status as AppStatus } from '../../../components';
 import { deploymentStatus } from '../../../components/Status/Status';
-import { useWeb3 } from '../../../containers';
-import { useAsyncMemo } from '../../../hooks';
-import {
-  COLORS,
-  convertStringToNumber,
-  formatEther,
-  isUndefined,
-  mergeAsync,
-  Metadata,
-  parseError,
-  renderAsyncArray,
-  TOKEN,
-} from '../../../utils';
+import { COLORS, convertStringToNumber, formatEther, isUndefined, Metadata, parseError } from '../../../utils';
 import styles from './AcceptOffer.module.css';
 
 const RequirementCheckListTitle = () => {
@@ -129,29 +115,19 @@ export const CheckList: React.FC<ICheckList> = ({
 }) => {
   const { t } = useTranslation();
   const [checkListErr] = React.useState<string | undefined>(parseError(error));
-  const { account: indexer } = useWeb3();
-  const { contractClient } = useWeb3Store();
 
   const REQUIRED_STATUS = ServiceStatus.READY;
   const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
-  const daysOfPlan = moment.duration(planDuration, 'seconds').asDays();
+  const daysOfPlan = dayjs.duration(+(planDuration || 0), 'seconds').asDays();
   const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
 
-  const dailyRewardCapacity = useAsyncMemo(async () => {
-    if (!contractClient || !indexer) return null;
-    return await contractClient.dailyRewardCapcity(indexer);
-  }, [contractClient, indexer, offerId]);
-
-  return renderAsyncArray(mergeAsync(deploymentMeta, dailyRewardCapacity), {
+  return renderAsync(deploymentMeta, {
+    loading: () => <Spinner />,
     error: (error) => <Typography.Text className="errorText">{`Error: ${parseError(error)}`}</Typography.Text>,
-    empty: () => <Typography.Text>{t('offerMarket.acceptModal.nonCriteriaData')}</Typography.Text>,
-    data: (data) => {
-      const [metadata, cap] = data;
-
-      if (isUndefined(metadata) || isUndefined(cap)) return <Spinner />;
+    data: (metadata) => {
+      if (isUndefined(metadata)) return <Spinner />;
 
       const latestBlockHeight = metadata?.lastHeight;
-      const dailyRewardCap = convertStringToNumber(formatEther(cap ?? 0));
 
       const sortedRequirementCheckList = [
         {
@@ -168,13 +144,6 @@ export const CheckList: React.FC<ICheckList> = ({
           value: latestBlockHeight,
           passCheck: REQUIRED_BLOCKHEIGHT <= (latestBlockHeight ?? 0),
           errorMsg: t('offerMarket.acceptModal.blockHeightError'),
-        },
-        {
-          title: t('offerMarket.acceptModal.dailyRewards'),
-          requiredValue: `${REQUIRED_DAILY_REWARD_CAP} ${TOKEN}`,
-          value: `${dailyRewardCap} ${TOKEN}`,
-          passCheck: REQUIRED_DAILY_REWARD_CAP <= dailyRewardCap,
-          errorMsg: t('offerMarket.acceptModal.dailyRewardsError'),
         },
       ];
 
