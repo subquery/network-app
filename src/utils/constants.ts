@@ -1,7 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { SQT_TOKEN_ADDRESS, SUPPORTED_NETWORK } from '@containers/Web3';
+import { SQT_DECIMAL, STABLE_COIN_DECIMAL, STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';
 
 import { STABLE_TOKEN_ADDRESS } from './USDC';
 
@@ -13,13 +14,13 @@ export enum LOCK_STATUS {
   UNLOCK = 'UNLOCK',
 }
 
-export const STABLE_TOKEN = import.meta.env.VITE_STABLE_TOKEN ?? 'USDC';
+export const STABLE_TOKEN = STABLE_COIN_SYMBOLS[SUPPORTED_NETWORK] ?? 'USDC';
 
-export const TOKEN = import.meta.env.VITE_TOKEN ?? 'SQT';
+export const TOKEN = TOKEN_SYMBOLS[SUPPORTED_NETWORK] ?? 'SQT';
 
 export const tokenDecimals: { [key: string]: number } = {
-  [STABLE_TOKEN_ADDRESS]: 6,
-  [SQT_TOKEN_ADDRESS]: 18,
+  [STABLE_TOKEN_ADDRESS]: STABLE_COIN_DECIMAL,
+  [SQT_TOKEN_ADDRESS]: SQT_DECIMAL,
 };
 
 export const tokenNames: { [key: string]: string } = {

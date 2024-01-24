@@ -12,6 +12,7 @@ import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
 import { Button, Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
+import { STABLE_COIN_DECIMAL } from '@subql/network-config';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';
 import { useGetPlanTemplatesQuery, useStableCoin } from '@subql/react-hooks';
 import {
@@ -22,7 +23,6 @@ import {
   mapAsync,
   notEmpty,
   renderAsync,
-  STABLE_TOKEN_DECIMAL,
   TOKEN,
 } from '@utils';
 import { formatSecondsDuration } from '@utils/dateFormatters';
@@ -362,7 +362,7 @@ export const Create: React.FC = () => {
     const sortedAmount =
       selectedTemplateInfo?.priceToken === contracts.sqToken.address
         ? parseEther(amount)
-        : parseUnits(amount, STABLE_TOKEN_DECIMAL);
+        : parseUnits(amount, STABLE_COIN_DECIMAL);
 
     return contracts.planManager.createPlan(
       sortedAmount,
