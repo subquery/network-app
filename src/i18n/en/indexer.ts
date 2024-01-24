@@ -1,7 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const TOKEN = import.meta.env.VITE_TOKEN;
+import { SUPPORTED_NETWORK } from '@containers/Web3';
+import { TOKEN_SYMBOLS } from '@subql/network-config';
+
+const TOKEN = TOKEN_SYMBOLS[SUPPORTED_NETWORK] ?? 'SQT';
 
 const translation = {
   era: {
@@ -43,8 +46,8 @@ const translation = {
     stakeInputTitle: `Enter the amount of ${TOKEN} you want to stake`,
     confirmStake: 'Confirm Stake',
     enterUnstakeAmount: 'Enter Unstake Amount',
-    maxStakeBalance: `Available stake amount: {{tokenAmount}} ${import.meta.env.VITE_TOKEN}`,
-    unstakeBalanceNextEra: `Available unstake amount: {{tokenAmount}} ${import.meta.env.VITE_TOKEN}`,
+    maxStakeBalance: `Available stake amount: {{tokenAmount}} ${TOKEN}`,
+    unstakeBalanceNextEra: `Available unstake amount: {{tokenAmount}} ${TOKEN}`,
     unstakeValidNextEra:
       'Tokens will be unstaked from next era. They will then be locked for {{duration}} before you can withdraw. During this period, tokens do not earn any rewards.',
     unstakeInputTitle: `Enter the amount of ${TOKEN} you want to unstake`,

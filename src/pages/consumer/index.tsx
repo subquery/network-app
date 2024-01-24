@@ -16,7 +16,7 @@ import { ServiceAgreements } from './ServiceAgreements';
 
 const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE } = ROUTES;
 
-const isFlexPlanActive = import.meta.env.VITE_FLEXPLAN_ENABLED === 'true';
+const isFlexPlanActive = true;
 
 const Consumer: React.FC = () => {
   const { t } = useTranslation();
