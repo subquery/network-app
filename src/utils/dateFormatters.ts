@@ -19,7 +19,7 @@ export const formatDate = (date: Date): string => {
 
 export const getTimeLeft = (mNow: dayjs.Dayjs, mTo: dayjs.Dayjs): string => {
   if (mNow.isAfter(mTo)) return 'This period is over';
-  return dayjs.duration(mTo.diff(mNow)).format('DD [d] hh [h] mm [m]');
+  return dayjs.duration(mTo.diff(mNow)).format('DD [d] HH [h] mm [m]');
 };
 
 export const getProgress = (now: Date, from: Date, to: Date): number => {
