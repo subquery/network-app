@@ -26,6 +26,8 @@ import {
   useGetOwnOpenOffersLazyQuery,
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
+import { EVENT_TYPE, EventBus } from '@utils/eventBus';
+import { retry } from '@utils/retry';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
@@ -152,9 +154,23 @@ export const MyOffers: React.FC = () => {
   const requiresTokenApproval = offerAllowance.result.data?.isZero();
   const offers = useGetOfferCountQuery({
     variables: { consumer: account ?? '' },
+    fetchPolicy: 'network-only',
   });
 
   const title = match?.pathname ? t('myOffers.createOffer') : t('myOffers.title');
+
+  React.useEffect(() => {
+    const refresh = () => {
+      retry(() => {
+        offers.refetch();
+      });
+    };
+    EventBus.on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+
+    return () => {
+      EventBus.off(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
+    };
+  }, []);
 
   return renderAsync(offers, {
     loading: () => <Spinner />,
