@@ -196,7 +196,12 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
         description: 'Please confirm your metadata can be reach',
       });
     }
-    return contracts.purchaseOfferMarket.acceptPurchaseOffer(offer?.id ?? '', deploymentMeta.data?.poiHash || '');
+
+    const tempMmrRoot = '0xab3921276c8067fe0c82def3e5ecfd8447f1961bc85768c2a56e6bd26d3c0c55';
+    return contracts.purchaseOfferMarket.acceptPurchaseOffer(
+      offer?.id ?? '',
+      deploymentMeta.data?.poiHash || tempMmrRoot,
+    );
   };
 
   return (
@@ -229,9 +234,6 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
               status={deployment.status}
               deploymentId={deployment.deploymentId}
               proxyEndpoint={indexerMetadata.url ?? ''}
-              offerId={offer?.id}
-              rewardPerIndexer={offer?.deposit.toString()}
-              planDuration={offer?.planTemplate?.period.toString()}
               requiredBlockHeight={requiredBlockHeight}
               onSubmit={onSubmit}
               isLoading={isLoading}

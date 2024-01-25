@@ -8,11 +8,10 @@ import { ServiceStatus } from '@subql/network-query';
 import { AsyncMemoReturn, renderAsync } from '@subql/react-hooks';
 import { Button, Typography } from 'antd';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 
 import { Spinner, Status as AppStatus } from '../../../components';
 import { deploymentStatus } from '../../../components/Status/Status';
-import { COLORS, convertStringToNumber, formatEther, isUndefined, Metadata, parseError } from '../../../utils';
+import { COLORS, isUndefined, Metadata, parseError } from '../../../utils';
 import styles from './AcceptOffer.module.css';
 
 const RequirementCheckListTitle = () => {
@@ -86,9 +85,6 @@ interface ICheckList {
   status: string | undefined;
   deploymentId: string;
   proxyEndpoint: string | undefined;
-  offerId: string;
-  planDuration: string | undefined;
-  rewardPerIndexer: string;
   requiredBlockHeight: number; //TODO: or should use bigInt?
   onSubmit: (params: unknown) => void;
   error?: unknown;
@@ -105,9 +101,6 @@ interface ICheckList {
 export const CheckList: React.FC<ICheckList> = ({
   status,
   requiredBlockHeight,
-  offerId,
-  rewardPerIndexer,
-  planDuration,
   onSubmit,
   error,
   isLoading,
@@ -118,8 +111,6 @@ export const CheckList: React.FC<ICheckList> = ({
 
   const REQUIRED_STATUS = ServiceStatus.READY;
   const REQUIRED_BLOCKHEIGHT = requiredBlockHeight;
-  const daysOfPlan = dayjs.duration(+(planDuration || 0), 'seconds').asDays();
-  const REQUIRED_DAILY_REWARD_CAP = convertStringToNumber(formatEther(rewardPerIndexer)) / Math.ceil(daysOfPlan);
 
   return renderAsync(deploymentMeta, {
     loading: () => <Spinner />,

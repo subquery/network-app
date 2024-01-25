@@ -4556,10 +4556,10 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@0.114.0":
-  version "0.114.0"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.114.0.tgz#b3c4f43f35ed680321f082371c7d4268187e9990"
-  integrity sha512-jnlN4w7pNl7beCzG112Dk/7vxX9n1mdPvaGVNUUeQmpl4aEdSv9Z1B4YD6Wq0dezFejTsrGCkNo5IPZPBlLu0Q==
+"@subql/contract-sdk@0.115.0":
+  version "0.115.0"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.115.0.tgz#16e787a6630e97e676521b2174d41e19115b5f75"
+  integrity sha512-F58qy0cBqAM3KNgcDfa1IWPIe/SUEGTmAU44SGR/8ru2YxT8Ws7oFMMNDhsXelNq27/P4MK99P5WxSCTyhctMw==
 
 "@subql/network-clients@^0.114.0":
   version "0.114.0"
