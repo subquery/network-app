@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 
@@ -16,15 +16,21 @@ const Expand: FC<IProps> = (props) => {
 
   const [expanded, setExpanded] = useState(false);
   const childrenRef = useRef<HTMLDivElement | null>(null);
+  const [showExpandIcon, setShowExpandIcon] = useState(false);
 
   const setCallback = useCallback((ref: HTMLDivElement) => {
     childrenRef.current = ref;
     update();
   }, []);
 
-  const showExpandIcon = useMemo(() => {
-    const rect = childrenRef.current?.getBoundingClientRect();
-    return !!(rect?.height && rect.height > 400);
+  useEffect(() => {
+    // note this render,
+    // when children changed, the render in the micro tasks queue last,
+    //  we need use a macro task to get the rendered height.
+    setTimeout(() => {
+      const rect = childrenRef.current?.getBoundingClientRect();
+      setShowExpandIcon(!!(rect?.height && rect.height > 400));
+    });
   }, [childrenRef.current, props.children]);
 
   return (

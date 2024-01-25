@@ -30,7 +30,6 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
-
   const handleSubmitUpdate = async () => {
     try {
       await form.validateFields();
@@ -65,7 +64,13 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
         onSubmit={handleSubmitUpdate}
       >
         <div>
-          <Form form={form} layout="vertical">
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={{
+              description: currentDeployment?.description || '',
+            }}
+          >
             <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
               <div className={styles.markdownWrapper}>
                 <Markdown
@@ -134,7 +139,6 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
               <Typography.Link
                 active
                 onClick={() => {
-                  form.setFieldValue('description', record.description || '');
                   setCurrentDeployment(record);
                   setDeploymentModal(true);
                 }}
