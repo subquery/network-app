@@ -15,7 +15,7 @@ import { t } from 'i18next';
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema, ProjectType } from '../../../models';
-import { categoriesOptions, parseError, ROUTES } from '../../../utils';
+import { categoriesOptions, parseError, ROUTES, rpcCategoriesOptions } from '../../../utils';
 import { ProjectDeploymentsDetail } from '../Project/Project';
 import styles from './Create.module.less';
 
@@ -45,7 +45,6 @@ const Create: React.FC = () => {
             image: project.image,
             version: project.version,
             versionDescription: project.versionDescription,
-            type: project.type,
             categories: project.categories,
           };
           await updateMetadata(payload);
@@ -210,7 +209,7 @@ const Create: React.FC = () => {
                       return (
                         <div className={styles.checkbox}>
                           <SubqlCheckbox.Group
-                            options={categoriesOptions}
+                            options={[...categoriesOptions]}
                             value={arrayHelper.form.values.categories}
                             onChange={(e) => {
                               if (e.length > 2) return;
@@ -222,31 +221,33 @@ const Create: React.FC = () => {
                       );
                     }}
                   ></FieldArray>
-
-                  <Typography>Project Type</Typography>
-                  <Field name="type">
-                    {({
-                      field,
-                      form,
-                    }: {
-                      field: { name: string; value: string };
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      form: { setFieldValue: (field: string, val: any) => void };
-                    }) => {
-                      return (
-                        <Radio.Group
-                          value={field.value}
-                          onChange={(val) => {
-                            form.setFieldValue(field.name, val.target.value);
-                          }}
-                          disabled={true}
-                        >
-                          <Radio value={ProjectType.SUBQUERY}>SubQuery</Radio>
-                          <Radio value={ProjectType.RPC}>RPC</Radio>
-                        </Radio.Group>
-                      );
-                    }}
-                  </Field>
+                  {/* TODO: now user forbidden publish RPC */}
+                  <div style={{ display: 'none' }}>
+                    <Typography>Project Type</Typography>
+                    <Field name="type">
+                      {({
+                        field,
+                        form,
+                      }: {
+                        field: { name: string; value: string };
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        form: { setFieldValue: (field: string, val: any) => void };
+                      }) => {
+                        return (
+                          <Radio.Group
+                            value={field.value}
+                            onChange={(val) => {
+                              form.setFieldValue(field.name, val.target.value);
+                            }}
+                            disabled={true}
+                          >
+                            <Radio value={ProjectType.SUBQUERY}>SubQuery</Radio>
+                            <Radio value={ProjectType.RPC}>RPC</Radio>
+                          </Radio.Group>
+                        );
+                      }}
+                    </Field>
+                  </div>
                   <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
                   <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
                   {isEdit ? (

@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
 import { useProjectMetadata } from '@containers';
-import { PublishNewProjectModal } from '@pages/studio/Home/Home';
+import { PublishNewProjectModal } from '@pages/projects/Home/Home';
 import { SubqlCheckbox } from '@subql/components';
 import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';

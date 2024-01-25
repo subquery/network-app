@@ -3,11 +3,12 @@
 
 import * as React from 'react';
 import { BigNumberish } from '@ethersproject/bignumber';
+import { cloneDeep } from 'lodash-es';
 
 import { useIPFS, useProjectMetadata, useProjectRegistry } from '../containers';
 import { FormCreateProjectMetadata, ProjectMetadata, ProjectType } from '../models';
 
-type P = FormCreateProjectMetadata & { versionDescription: string; type: ProjectType };
+type P = FormCreateProjectMetadata & { versionDescription: string; type?: ProjectType };
 
 export function useCreateProject(): (params: P) => Promise<BigNumberish> {
   const { uploadMetadata, uploadVersionMetadata } = useProjectMetadata();
@@ -29,7 +30,12 @@ export function useCreateProject(): (params: P) => Promise<BigNumberish> {
         description: project.versionDescription,
       });
 
-      const metadata = await uploadMetadata(project as ProjectMetadata);
+      // type expect fetch from network project.
+      // make sure metadata don't upload type field
+      const copyPayload = cloneDeep(project);
+      delete copyPayload.type;
+      const metadata = await uploadMetadata(copyPayload as ProjectMetadata);
+
       const tx = await registerProject(project.type as ProjectType, metadata, project.deploymentId, versionCid);
       const receipt = await tx.wait(1);
       const event = receipt.events?.[0];

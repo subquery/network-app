@@ -60,7 +60,7 @@ const PATHS = {
   // ROOT PATHS
   DASHBOARD: '/dashboard',
   EXPLORER: '/explorer',
-  STUDIO: '/studio',
+  STUDIO: '/projects',
   SWAP: '/swap',
   STAKING: '/staking', //todo: improve
   PLANS: '/plans',
@@ -94,8 +94,8 @@ const NAV_LINKS = {
   SA_ONGOING_NAV: '/plans/service-agreements/ongoing',
   DELEGATE_NAV: '/staking/indexers/delegate',
   PROJECT_NAV: '/explorer/project',
-  STUDIO_PROJECT_NAV: '/studio/project',
-  STUDIO_CREATE_NAV: '/studio/create',
+  STUDIO_PROJECT_NAV: '/projects/project',
+  STUDIO_CREATE_NAV: '/projects/create',
 
   TOP_INDEXER_NAV: `/${DELEGATOR.DELEGATOR}/${DELEGATOR.INDEXERS}`,
 
@@ -225,5 +225,5 @@ export const routers: BasicRouteType[] = [
   },
 
   { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
-  { path: '/projects/*', component: React.lazy(() => import('../pages/studio/index')) },
+  { path: '/projects/*', component: React.lazy(() => import('../pages/projects/index')) },
 ];
