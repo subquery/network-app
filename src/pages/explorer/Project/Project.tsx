@@ -50,7 +50,7 @@ const ProjectInner: React.FC = () => {
       { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     ];
     const flexPlanTab = [{ link: `${FLEX_PLANS}${location.search}`, label: t('explorer.project.tab4') }];
-    return import.meta.env.VITE_FLEXPLAN_ENABLED === 'true' ? [...tabList, ...flexPlanTab] : tabList;
+    return [...tabList, ...flexPlanTab];
   }, [location.search, asyncProject.data?.type]);
 
   const deploymentId = React.useMemo(() => {
