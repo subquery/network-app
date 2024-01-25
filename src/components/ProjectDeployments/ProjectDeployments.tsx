@@ -146,6 +146,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
           },
         ]}
         dataSource={deployments}
+        rowKey={(record) => record.deploymentId}
       ></Table>
     </>
   );

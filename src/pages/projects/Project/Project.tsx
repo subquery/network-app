@@ -135,7 +135,7 @@ const Project: React.FC = () => {
       }
 
       if (project.owner !== account) {
-        navigate('/studio');
+        navigate('/projects');
       }
 
       return (
@@ -154,7 +154,7 @@ const Project: React.FC = () => {
                     </Typography>
                   ),
                   onClick: () => {
-                    navigate('/studio');
+                    navigate('/projects');
                   },
                 },
                 {
@@ -180,7 +180,7 @@ const Project: React.FC = () => {
                     shape="round"
                     size="large"
                     onClick={() => {
-                      navigate(`/studio/create?id=${project.id}`);
+                      navigate(`/projects/create?id=${project.id}`);
                     }}
                   >
                     Edit

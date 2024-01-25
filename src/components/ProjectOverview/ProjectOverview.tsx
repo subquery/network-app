@@ -76,7 +76,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         </div>
         <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
         <div className={styles.column}>
-          <Typography variant="medium" weight={600}>
+          <Typography variant="h6" weight={600}>
             {t('projectOverview.deploymentDescription')}
           </Typography>
           <div style={{ width: 670, marginTop: 8 }}>
@@ -90,7 +90,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <>
             <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
             <div className={styles.column} style={{ gap: 8 }}>
-              <Typography variant="medium" weight={600}>
+              <Typography variant="h6" weight={600}>
                 RPC Endpoint Details
               </Typography>
               {manifest?.chain?.chainId && (
