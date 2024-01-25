@@ -79,7 +79,12 @@ export const QueryApolloProvider: React.FC<PropsWithChildren> = ({ children }) =
     }),
     defaultOptions: {
       query: {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+      },
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
       },
     },
   });
