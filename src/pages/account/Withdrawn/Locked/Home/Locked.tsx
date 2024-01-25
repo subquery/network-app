@@ -5,13 +5,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { claimIndexerRewardsModalText, EmptyList, ModalClaimIndexerRewards } from '@components';
+import { EmptyList } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
-import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
-import { Spinner, Typography } from '@subql/components';
+import { openNotification, Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { WithdrawalFieldsFragment as Withdrawls, WithdrawalType } from '@subql/network-query';
 import { useGetWithdrawlsLazyQuery } from '@subql/react-hooks';
@@ -57,14 +56,13 @@ const cancelWithdrwalsTextAndTips = {
   },
 };
 
-const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: () => void }> = ({
-  id,
-  type,
-  onSuccess,
-}) => {
+const CancelUnbonding: React.FC<{
+  id: string;
+  type: WithdrawalType;
+  indexerAddress: string;
+  onSuccess?: () => void;
+}> = ({ id, type, indexerAddress, onSuccess }) => {
   const { contracts } = useWeb3Store();
-  const { account } = useWeb3();
-  const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const cancelUnbonding = () => {
     assert(contracts, 'Contracts not available');
@@ -72,32 +70,36 @@ const CancelUnbonding: React.FC<{ id: string; type: WithdrawalType; onSuccess?: 
     return contracts.stakingManager.cancelUnbonding(id);
   };
 
-  const needClaimedStatus = React.useMemo(() => {
-    return !rewardClaimStatus.data?.hasClaimedRewards;
-  }, [rewardClaimStatus.data?.hasClaimedRewards]);
-
   return (
     <div>
       <TransactionModal
-        text={
-          needClaimedStatus
-            ? claimIndexerRewardsModalText
-            : {
-                title: '',
-                steps: [],
+        text={{
+          title: '',
+          steps: [],
+        }}
+        actions={[
+          {
+            label: capitalize(t('general.cancel')),
+            key: 'claim',
+            onClick: async () => {
+              const res = await contracts?.indexerRegistry.isIndexer(indexerAddress);
+              if (!res) {
+                openNotification({
+                  type: 'error',
+                  description: "This indexer has been unregistered. The stake can't be cancel.",
+                  duration: 3,
+                });
+                throw new Error('Not an indexer');
               }
-        }
-        actions={[{ label: capitalize(t('general.cancel')), key: 'claim' }]}
+            },
+          },
+        ]}
         variant={'textBtn'}
         onClick={cancelUnbonding}
         width="416px"
         className={styles.cancelModal}
         onSuccess={onSuccess}
         renderContent={(onSubmit, onCancel, isLoading, error) => {
-          if (needClaimedStatus) {
-            return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;
-          }
-
           return (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
@@ -147,11 +149,11 @@ export const Locked: React.FC = () => {
     status: WithdrawalStatus.ONGOING,
     offset: 0,
   };
-  // TODO: refresh when do the withdrawl action.
   const [getWithdrawals, withdrawals] = useGetWithdrawlsLazyQuery({
     variables: filterParams,
     fetchPolicy: 'network-only',
   });
+
   const lockPeriod = useLockPeriod();
 
   const columns: TableProps<SortedWithdrawals>['columns'] = [
@@ -196,6 +198,7 @@ export const Locked: React.FC = () => {
       render: (id, record) => (
         <CancelUnbonding
           id={id}
+          indexerAddress={record.indexer}
           type={record.type}
           onSuccess={() => {
             retry(getWithdrawals);
