@@ -224,6 +224,8 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             onChange={async (val) => {
               setFilterProjectType(val.target.value);
               setFilterCategories([]);
+              setProjects([]);
+              setTotal(10);
               const res = await loadMore({
                 refresh: true,
                 searchParams: {
@@ -264,6 +266,8 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
               onChange={async (val) => {
                 setFilterCategories(val as string[]);
                 setProjects([]);
+                setTotal(10);
+
                 const res = await loadMore({
                   refresh: true,
                   searchParams: {
