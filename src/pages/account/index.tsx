@@ -34,12 +34,13 @@ export function reduceTotal(rewards: any) {
   );
 }
 
-export const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName: string; link: string }> = ({
-  title,
-  amount,
-  linkName,
-  link,
-}) => {
+export const FormatCardLine: React.FC<{
+  title: string;
+  amount: number | string;
+  linkName: string;
+  link: string;
+  extra?: React.ReactNode;
+}> = ({ title, amount, linkName, link, extra }) => {
   const navigate = useNavigate();
 
   return (
@@ -49,7 +50,7 @@ export const FormatCardLine: React.FC<{ title: string; amount: number | string; 
           {title}
         </Typography>
         <Typography variant="small">
-          {amount} {TOKEN}
+          {amount} {TOKEN} {extra}
         </Typography>
       </div>
       <Link

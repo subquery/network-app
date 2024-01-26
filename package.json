@@ -16,6 +16,8 @@
     "@ant-design/icons": "^5.2.5",
     "@apollo/client": "^3.8.8",
     "@apollo/react-testing": "^4.0.0",
+    "@maticnetwork/maticjs": "^3.7.7",
+    "@maticnetwork/maticjs-web3": "^1.0.4",
     "@polkadot/util": "^7.8.2",
     "@rainbow-me/rainbowkit": "^1.2.0",
     "@sentry/react": "^7.57.0",

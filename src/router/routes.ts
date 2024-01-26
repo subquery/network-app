@@ -226,6 +226,7 @@ export const routers: BasicRouteType[] = [
 
   { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
   { path: '/swap/*', component: React.lazy(() => import('../pages/swap/Swap')) },
-  { path: '/swapksqt/*', redirect: '/' },
+  { path: '/swapksqt/*', component: React.lazy(() => import('../pages/swapksqt')) },
+  { path: '/swapksqt/success', component: React.lazy(() => import('../pages/swapksqt/success')) },
   { path: '/studio/*', component: React.lazy(() => import('../pages/studio/index')) },
 ];
