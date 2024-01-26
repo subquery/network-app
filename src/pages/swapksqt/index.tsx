@@ -1,17 +1,17 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { BsArrowDownSquareFill, BsLifePreserver } from 'react-icons/bs';
+import { useNavigate } from 'react-router';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { WalletRoute } from '@components';
 import RpcError from '@components/RpcError';
 import { useSQToken } from '@containers';
-import { NETWORK_NAME } from '@containers/Web3';
 import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { FormatCardLine, reduceTotal } from '@pages/account';
 import { openNotification, Typography } from '@subql/components';
-import { TOKEN_SYMBOLS } from '@subql/network-config';
 import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatEther,
@@ -40,6 +40,7 @@ const SwapKsqtInner: FC = () => {
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
   const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
+  const navigate = useNavigate();
   const withdrawals = useGetWithdrawlsQuery({
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
@@ -85,6 +86,7 @@ const SwapKsqtInner: FC = () => {
         type: 'success',
         description: 'Token swap success',
       });
+      navigate('/swapksqt/success');
     } catch (e) {
       openNotification({
         type: 'error',
@@ -94,6 +96,22 @@ const SwapKsqtInner: FC = () => {
       setLoading(false);
     }
   };
+
+  const disableSwap = useMemo(() => {
+    if (!balance.data) return true;
+    const zeroBalance = balance.data.toString() === '0';
+    if (zeroBalance) return true;
+    if (totalLocked !== '0.0000') return true;
+    return false;
+  }, [balance, totalLocked]);
+
+  useEffect(() => {
+    if (!balance.loading && !balance.error) {
+      if (balance.data?.toString() === '0' && totalLocked === '0.0000') {
+        navigate('/swapksqt/success');
+      }
+    }
+  }, [balance, totalLocked]);
 
   return (
     <div className={styles.swapksqt}>
@@ -159,24 +177,52 @@ const SwapKsqtInner: FC = () => {
                   <FormatCardLine
                     title="Unclaimed Rewards"
                     amount={formatNumber(reduceTotal(r?.unclaimedRewards?.nodes))}
+                    extra={
+                      BigNumber(formatNumber(reduceTotal(r?.unclaimedRewards?.nodes))).eq(0) ? (
+                        <CheckCircleOutlined style={{ color: 'var(--sq-success)' }} />
+                      ) : (
+                        <CloseCircleOutlined style={{ color: 'var(--sq-error)' }} />
+                      )
+                    }
                     linkName="Claim kSQT Rewards"
                     link="/profile/rewards"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Total Delegation"
                     amount={formatNumber(totalDelegating)}
+                    extra={
+                      BigNumber(formatNumber(totalDelegating)).eq(0) ? (
+                        <CheckCircleOutlined style={{ color: 'var(--sq-success)' }} />
+                      ) : (
+                        <CloseCircleOutlined style={{ color: 'var(--sq-error)' }} />
+                      )
+                    }
                     linkName="Undelegate kSQT"
                     link="/delegator/delegating"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Total Staking"
                     amount={formatNumber(totalStaking)}
+                    extra={
+                      BigNumber(formatNumber(totalStaking)).eq(0) ? (
+                        <CheckCircleOutlined style={{ color: 'var(--sq-success)' }} />
+                      ) : (
+                        <CloseCircleOutlined style={{ color: 'var(--sq-error)' }} />
+                      )
+                    }
                     linkName="Unstake kSQT"
                     link="/indexer/my-staking"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Pending withdrawals"
                     amount={formatNumber(totalWithdrawn)}
+                    extra={
+                      BigNumber(formatNumber(totalWithdrawn)).eq(0) ? (
+                        <CheckCircleOutlined style={{ color: 'var(--sq-success)' }} />
+                      ) : (
+                        <CloseCircleOutlined style={{ color: 'var(--sq-error)' }} />
+                      )
+                    }
                     linkName="Complete kSQT Withdrawals"
                     link="/profile/withdrawn"
                   ></FormatCardLine>
@@ -213,7 +259,7 @@ const SwapKsqtInner: FC = () => {
           <BsArrowDownSquareFill style={{ margin: '16px 0', color: 'var(--sq-gray600)', fontSize: 24 }} />
 
           <div className={styles.smallCard}>
-            <div className={styles.top}>{TOKEN_SYMBOLS[NETWORK_NAME]}</div>
+            <div className={styles.top}>SQT</div>
 
             <div className={styles.bottom}>
               <Typography variant="large" weight={600} type="secondary">
@@ -227,7 +273,7 @@ const SwapKsqtInner: FC = () => {
             type="primary"
             size="large"
             style={{ width: '100%', marginTop: 24, marginBottom: 8 }}
-            disabled={!balance.data || balance.data.toString() === '0'}
+            disabled={disableSwap}
             loading={loading}
             onClick={() => {
               tradeToken();
