@@ -5,7 +5,7 @@
 .content {
   background: white;
   padding: 2rem;
-  overflow: scroll;
+  overflow: auto;
   min-height: 80%;
 }
 
