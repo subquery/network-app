@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
@@ -202,6 +202,15 @@ const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake
 const Dashboard: FC = () => {
   const dashboardData = useGetDashboardQuery();
   const { currentEra } = useEra();
+
+  const showNextOrCur = useMemo(() => {
+    if (dashboardData.data?.indexerStakeSummary?.eraIdx === currentEra.data?.index) {
+      return 'cur';
+    }
+
+    return 'next';
+  }, [currentEra.data, dashboardData]);
+
   return (
     <div className={styles.dashboard}>
       <Typography variant="h4" weight={600}>
@@ -216,12 +225,15 @@ const Dashboard: FC = () => {
             +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -
             (fetchedData.indexers?.totalCount || 0);
 
-          const currentEraIdx = currentEra.data?.index;
-
           const totalStake =
-            currentEraIdx === fetchedData.indexerStakeSummary?.eraIdx
+            showNextOrCur === 'cur'
               ? fetchedData.indexerStakeSummary?.totalStake
               : fetchedData.indexerStakeSummary?.nextTotalStake;
+
+          const totalDelegation =
+            showNextOrCur === 'cur'
+              ? fetchedData.indexerStakeSummary?.delegatorStake
+              : fetchedData.indexerStakeSummary?.nextDelegatorStake;
 
           return (
             <div className={styles.dashboardMain}>
@@ -239,7 +251,7 @@ const Dashboard: FC = () => {
                 ></StakeCard>
 
                 <DelegationsCard
-                  delegatorStake={fetchedData?.indexerStakeSummary?.delegatorStake || '0'}
+                  delegatorStake={totalDelegation || '0'}
                   nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
                   totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
                 ></DelegationsCard>
