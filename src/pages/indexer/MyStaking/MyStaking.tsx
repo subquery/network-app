@@ -54,7 +54,7 @@ export const MyStaking: React.FC = () => {
                               retry(sortedIndexer.refresh);
                             }}
                           />
-                          <div style={{ marginLeft: '1rem' }}>
+                          <div>
                             <SetCommissionRate
                               onSuccess={() => {
                                 retry(sortedIndexer.refresh);
