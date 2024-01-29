@@ -64,8 +64,8 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
 
   return (
     <div className={styles.container}>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ width: 720 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 7 }}>
+        <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
           </Expand>
@@ -75,20 +75,8 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <ExternalLink icon="github" link={metadata.codeUrl} />
         </div>
         <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
-        <div className={styles.column}>
-          <Typography variant="h6" weight={600}>
-            {t('projectOverview.deploymentDescription')}
-          </Typography>
-          <div style={{ width: 670, marginTop: 8 }}>
-            <Expand>
-              <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
-            </Expand>
-          </div>
-        </div>
-
         {project.type === ProjectType.RPC && (
           <>
-            <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
             <div className={styles.column} style={{ gap: 8 }}>
               <Typography variant="h6" weight={600}>
                 RPC Endpoint Details
@@ -130,11 +118,22 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 </div>
               )}
             </div>
+            <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', margin: '16px 0' }}></div>
           </>
         )}
+        <div className={styles.column}>
+          <Typography variant="large" weight={600}>
+            {t('projectOverview.deploymentDescription')}
+          </Typography>
+          <div style={{ width: 670, marginTop: 8 }}>
+            <Expand>
+              <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
+            </Expand>
+          </div>
+        </div>
       </div>
 
-      <div style={{ marginLeft: 48, width: '100%' }}>
+      <div style={{ marginLeft: 48, flex: 5 }}>
         <NewCard
           style={{ width: '100%' }}
           title="Total Rewards"
