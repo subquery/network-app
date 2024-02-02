@@ -4628,10 +4628,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/apollo-links@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.npmjs.org/@subql/apollo-links/-/apollo-links-1.3.0.tgz#1a313dd911d96e41517463189bc34f349293d9ed"
-  integrity sha512-5R68oqa61tkbyitjvGOUF9TI7VaqibzHfGIf76Yfwkv0GYca73vJ5y/SbbOpCKCBV1gEE4uWwhxPiyS+4IGfvQ==
+"@subql/apollo-links@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@subql/apollo-links/-/apollo-links-1.3.2.tgz#56d3ca471d2a047d8f781592db8dfecbc37d0e09"
+  integrity sha512-J1v4PeATXaEQ0oxOArsxsZgf7FqovMtU0LdIxGEGHfK2tXPNRquDai+Xdc0swZhq5zERnB8YJG/uftj82sH3tg==
   dependencies:
     "@apollo/client" "^3.8.8"
     "@metamask/eth-sig-util" "5.1.0"
