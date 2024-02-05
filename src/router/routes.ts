@@ -179,6 +179,10 @@ export const routers: BasicRouteType[] = [
         component: React.lazy(() => import('../pages/indexer/MyStaking/MyStaking')),
       },
       {
+        path: 'my-allocations/*',
+        component: React.lazy(() => import('../pages/indexer/MyAllocation/MyAllocation')),
+      },
+      {
         path: 'my-delegators/*',
         component: React.lazy(() => import('../pages/indexer/MyDelegators/MyDelegators')),
       },
