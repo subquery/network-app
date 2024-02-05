@@ -5,13 +5,15 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
 import { useDeploymentMetadata, useProjectFromQuery, useSortedIndexer } from '@hooks';
-import { Modal, Steps, Tag, Typography } from '@subql/components';
+import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
-import { TOKEN } from '@utils';
+import { parseError, TOKEN } from '@utils';
+import { retry } from '@utils/retry';
 import { Button, Form } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
+import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
@@ -47,8 +49,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
 
   const avaibleStakeAmount = useMemo(() => {
     const totalStake = BigNumber(sortedIndexer.data?.totalStake.current || '0');
-    const haveAllocated = BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0');
-
+    const haveAllocated = formatSQT(
+      BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0').toString(),
+    );
+    console.warn(totalStake.toString(), haveAllocated.toString());
     return totalStake.minus(haveAllocated).toString();
   }, [allocatedStake, sortedIndexer]);
 
@@ -62,12 +66,46 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
     if (!deploymentId) return;
 
     const res = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId));
-    console.warn(res);
+
     setCurrentRewardsPerToken(BigNumber(res?.[0].toString() || '0'));
   };
 
   const updateAllocate = async () => {
-    // const res = await contracts
+    if (!deploymentId || !account) return;
+    await form.validateFields();
+
+    const addOrRemoveFunc = BigNumber(form.getFieldValue('allocateVal')).gt(
+      BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'),
+    )
+      ? contracts?.stakingAllocation.addAllocation
+      : contracts?.stakingAllocation.removeAllocation;
+
+    try {
+      const res = await addOrRemoveFunc?.(
+        cidToBytes32(deploymentId),
+        account,
+        parseEther(
+          BigNumber(form.getFieldValue('allocateVal'))
+            .minus(BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
+            .abs()
+            .toString(),
+        ),
+      );
+
+      await res?.wait();
+      retry(allocatedStake.refetch);
+      getCurrentRewardsPerToken();
+      openNotification({
+        type: 'success',
+        description: 'Update allocation successfully',
+      });
+      setOpen(false);
+    } catch (e) {
+      openNotification({
+        type: 'error',
+        description: parseError(e),
+      });
+    }
   };
 
   useEffect(() => {
@@ -76,6 +114,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
         variables: {
           id: `${deploymentId}:${account}`,
         },
+        fetchPolicy: 'network-only',
       });
       getCurrentRewardsPerToken();
     }
@@ -98,9 +137,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
         onCancel={() => {
           setOpen(false);
         }}
-        title={'Update Allocate'}
+        title={`Update Allocate to ${project.data?.metadata.name}`}
         cancelButtonProps={{ style: { display: 'none' } }}
         onSubmit={updateAllocate}
+        okText="Update"
       >
         <Steps
           steps={[
@@ -157,7 +197,18 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
         <div>
           <Form layout="vertical" form={form}>
             <Typography style={{ marginTop: 24 }}>New allocation amount</Typography>
-            <Form.Item name="allocateVal">
+            <Form.Item
+              name="allocateVal"
+              rules={[
+                {
+                  validator(rule, value) {
+                    if (!value) {
+                      return Promise.reject(new Error('Please input the amount'));
+                    }
+                  },
+                },
+              ]}
+            >
               <NumberInput
                 maxAmount={avaibleStakeAmount}
                 inputParams={{
