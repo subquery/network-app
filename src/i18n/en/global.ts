@@ -21,7 +21,7 @@ const translation = {
     comingSoon: 'Coming soon.',
     choose: 'choose',
     confirm: 'Confirm',
-    confirmOnMetamask: 'Confirm On MetaMask',
+    confirmOnMetamask: 'Confirm On your wallet',
     confirmCancellation: 'Confirm Cancellation',
     day: 'day',
     days: 'days',

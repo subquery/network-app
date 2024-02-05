@@ -269,7 +269,7 @@ const translation = {
       indexerCapErrorMsg: 'Please put a valid Indexer cap.',
       totalDeposit: 'Required deposit',
       totalDepositTooltip: `This amount is calculated as the rewards per Indexer multiplied by the Indexer cap that you have stated above. \n
-      You will need to deposit this amount when you confirm the creation of this offer on MetaMask. Any unspent balance can be withdrawn when the offer expires or if you cancel the offer prior to expiration`,
+      You will need to deposit this amount when you confirm the creation of this offer on your wallet. Any unspent balance can be withdrawn when the offer expires or if you cancel the offer prior to expiration`,
       totalDepositErrorMsg: 'Not enough balance. Lower the numbers set up above or deposit more to the wallet.',
       minimumIndexedHeight: 'Minimum indexed height',
       minimumIndexedHeightTooltip:
@@ -339,7 +339,7 @@ const translation = {
       dailyRewardsError: `Please stake more ${TOKEN} or get more delegation to increase daily reward capacity.`,
       failureText: 'Failed to accept offer',
       afterAcceptOffer:
-        'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on MetaMask.',
+        'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on your wallet.',
     },
   },
   swap: {

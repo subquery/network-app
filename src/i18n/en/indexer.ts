@@ -38,7 +38,7 @@ const translation = {
     disabledStakeBeforeRewardCollect: `You can't stake until you collect all early era's rewards. Please check the Indexer admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
     disabledUnstakeBeforeRewardCollect: `You can't unstake until you collect all early era's rewards. Please check the Indexer admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
     enterStakeAmount: 'Enter Staking Amount',
-    confirmOnMetamask: 'Confirm On MetaMask',
+    confirmOnMetamask: 'Confirm On your wallet',
     stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
     stakeInputTitle: `Enter the amount of ${TOKEN} you want to stake`,
     confirmStake: 'Confirm Stake',
@@ -109,7 +109,7 @@ const translation = {
   tokenApproval: {
     approve: 'Allow the SubQuery Network to use your {{token}}',
     approveToProceed: 'You must give the SubQuery Network smart contracts permission to use your {{token}}.',
-    confirm: 'Approve on MetaMask',
+    confirm: 'Approve on your wallet',
   },
 
   claimIndexerRewards: {
