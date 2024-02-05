@@ -3,11 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import DoAllocate from '@components/DoAllocate/DoAllocate';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Address, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
+import { formatNumber, formatSQT } from '@utils';
 import { Button } from 'antd';
 import dayjs from 'dayjs';
 
@@ -41,7 +43,14 @@ const ProjectHeader: React.FC<Props> = ({
   const VersionDropdown = () => {
     if (!versions) return <></>;
 
-    const menu = Object.entries(versions).map(([key, value]) => ({ key, label: value }));
+    const menu = Object.entries(versions).map(([key, value]) => {
+      const deployment = project.deployments.nodes.find((i) => i?.id === key);
+      const booster =
+        deployment?.deploymentBoosterSummariesByDeploymentId?.groupedAggregates?.[0]?.keys?.[0] === key
+          ? deployment?.deploymentBoosterSummariesByDeploymentId?.groupedAggregates?.[0]?.sum?.totalAmount || '0'
+          : '0';
+      return { key, label: `${value} - Booster: ${formatNumber(formatSQT(booster))}` };
+    });
 
     const handleOnClick = (key: string) => {
       onChangeVersion?.(key);
@@ -75,6 +84,7 @@ const ProjectHeader: React.FC<Props> = ({
             {/* <Button type="primary" shape="round" size="large">
               Get RPC Endpoint
             </Button> */}
+            <DoAllocate projectId={project.id} deploymentId={currentVersion}></DoAllocate>
           </div>
           <Address address={project.owner} size="small" />
 

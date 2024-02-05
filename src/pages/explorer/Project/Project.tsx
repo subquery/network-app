@@ -110,7 +110,6 @@ const ProjectInner: React.FC = () => {
         // Should never happen
         return <span>Project doesn't exist</span>;
       }
-
       return (
         <div className={styles.container}>
           <div className={styles.upper}>

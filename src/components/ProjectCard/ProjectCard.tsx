@@ -5,6 +5,8 @@ import * as React from 'react';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
+import { formatSQT } from '@subql/react-hooks';
+import { formatNumber, TOKEN } from '@utils';
 import dayjs from 'dayjs';
 
 import { ProjectMetadata } from 'src/models';
@@ -66,10 +68,16 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
         <span style={{ flex: 1 }}></span>
         <div className="flex">
           <Typography variant="small">
-            {project?.deployments?.nodes.reduce((cur, add) => cur + (add?.serviceAgreements.totalCount || 0), 0)}
+            {formatNumber(
+              formatSQT(
+                project?.deployments?.nodes?.[0]?.deploymentBoosterSummaries?.groupedAggregates?.[0]?.sum
+                  ?.totalAmount || '0',
+              ),
+            )}{' '}
+            {TOKEN}
           </Typography>
           <Typography variant="small" type="secondary" style={{ marginLeft: 5 }}>
-            Agreements
+            Boost
           </Typography>
         </div>
       </div>
