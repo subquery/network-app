@@ -45,9 +45,6 @@ const MyAllocation: FC = (props) => {
 
   const allocatedRewards = useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery({
     variables: {
-      deploymentIds:
-        allocatedProjects.data?.indexerAllocationSummaries?.nodes.filter(notEmpty).map((node) => node.deploymentId) ||
-        [],
       indexerId: account || '',
     },
   });

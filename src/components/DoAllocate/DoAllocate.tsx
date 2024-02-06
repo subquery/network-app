@@ -13,7 +13,6 @@ import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
-import { retry } from '@utils/retry';
 import { Button, Form } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
@@ -81,9 +80,18 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
       blockTag: blockNumber - 1,
     });
 
-    console.warn(current?.toString(), previous?.toString());
-
-    setCurrentRewardsPerToken(BigNumber(current?.[0].toString() || '0').minus(previous?.[0].toString() || '0'));
+    setCurrentRewardsPerToken(
+      BigNumber(
+        // getAccRewardsPerAllocatedToken is scaled by 1e18
+        // so we need to divide by 1e18
+        // and then the result is 1 SQT would get how many rewards(wei)
+        formatSQT(
+          BigNumber(current?.[0].toString() || '0')
+            .minus(previous?.[0].toString() || '0')
+            .toString(),
+        ),
+      ),
+    );
   };
 
   const updateAllocate = async () => {
@@ -105,7 +113,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
           BigNumber(form.getFieldValue('allocateVal'))
             .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
             .abs()
-            .toString(),
+            .toFixed(),
         ),
       );
 

@@ -23,6 +23,7 @@ import {
   useGetOfferCountByDeploymentIdLazyQuery,
 } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
+import BignumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
@@ -50,6 +51,8 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
     </div>
   );
 };
+
+const PER_MILL = BignumberJs(1e6);
 
 const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription, manifest }) => {
   const { t } = useTranslation();
@@ -101,27 +104,28 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
 
   const blockNumber = useAsyncMemo(async () => {
     const blockNumber = await provider?.getBlockNumber();
+
     return blockNumber;
   }, []);
 
-  const getAccQueryRewards = async () => {
-    if (!blockNumber.data) return;
+  const queryRewardsRate = useAsyncMemo(async () => {
+    const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(project.type === ProjectType.RPC ? 1 : 0);
+    return BignumberJs(rewards?.toString() || '0')
+      .div(PER_MILL)
+      .toFixed();
+  }, []);
 
-    const currentRewards = await contracts?.rewardsBooster.getAccQueryRewardsPerBooster(cidToBytes32(deploymentId), {
-      blockTag: blockNumber.data,
-    });
-    const prevRewards = await contracts?.rewardsBooster.getAccQueryRewardsPerBooster(cidToBytes32(deploymentId), {
-      blockTag: blockNumber.data - 1,
-    });
+  // const getAccQueryRewards = async () => {
+  //   if (!blockNumber.data) return;
 
-    setAccQueryRewards({
-      current: currentRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
-      previous: prevRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
-    });
-  };
+  //   setAccQueryRewards({
+  //     current: currentRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
+  //     previous: prevRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
+  //   });
+  // };
 
   const getAccRewards = async () => {
-    if (!blockNumber.data) return;
+    if (!blockNumber.data || !queryRewardsRate.data) return;
 
     const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
       blockTag: blockNumber.data,
@@ -133,6 +137,19 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     setAccTotalRewards({
       current: currentRewards || BigNumber.from('0'),
       previous: prevRewards || BigNumber.from('0'),
+    });
+
+    setAccQueryRewards({
+      current: BigNumber.from(
+        BignumberJs(currentRewards?.toString() || '0')
+          .multipliedBy(queryRewardsRate.data)
+          .toFixed() || '0',
+      ),
+      previous: BigNumber.from(
+        BignumberJs(prevRewards?.toString() || '0')
+          .multipliedBy(queryRewardsRate.data)
+          .toFixed() || '0',
+      ),
     });
   };
 
@@ -154,11 +171,10 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   }, [deploymentId]);
 
   React.useEffect(() => {
-    if (deploymentId && blockNumber) {
+    if (deploymentId && blockNumber.data && queryRewardsRate.data) {
       getAccRewards();
-      getAccQueryRewards();
     }
-  }, [deploymentId, currentBooster, blockNumber]);
+  }, [deploymentId, currentBooster, blockNumber.data, queryRewardsRate.data]);
 
   return (
     <div className={styles.container}>
@@ -273,9 +289,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Booster Allocation Rewards
               </Typography>
               <Typography variant="small">
-                {formatNumber(
-                  formatSQT(allocationRewards.data?.indexerAllocationRewards?.aggregates?.sum?.reward || '0'),
-                )}{' '}
+                {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
                 {TOKEN}
                 (all time)
                 <Tag color="success" style={{ marginLeft: 8 }}>
