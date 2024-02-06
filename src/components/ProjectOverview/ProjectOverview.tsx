@@ -16,9 +16,13 @@ import { Markdown, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
-import { formatSQT, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
+import {
+  formatSQT,
+  useAsyncMemo,
+  useGetAllocationRewardsByDeploymentIdQuery,
+  useGetOfferCountByDeploymentIdLazyQuery,
+} from '@subql/react-hooks';
 import { TOKEN } from '@utils';
-import { useInterval } from 'ahooks';
 import { BigNumber } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
@@ -52,6 +56,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   const query = useRouteQuery();
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic();
+
+  const allocationRewards = useGetAllocationRewardsByDeploymentIdQuery({
+    variables: {
+      deploymentId: project.deploymentId,
+    },
+  });
 
   const [accQueryRewards, setAccQueryRewards] = React.useState({
     current: BigNumber.from('0'),
@@ -89,13 +99,19 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     };
   }, [accQueryRewards, accTotalRewards, deploymentId]);
 
-  const getAccQueryRewards = async () => {
+  const blockNumber = useAsyncMemo(async () => {
     const blockNumber = await provider?.getBlockNumber();
+    return blockNumber;
+  }, []);
+
+  const getAccQueryRewards = async () => {
+    if (!blockNumber.data) return;
+
     const currentRewards = await contracts?.rewardsBooster.getAccQueryRewardsPerBooster(cidToBytes32(deploymentId), {
-      blockTag: blockNumber,
+      blockTag: blockNumber.data,
     });
     const prevRewards = await contracts?.rewardsBooster.getAccQueryRewardsPerBooster(cidToBytes32(deploymentId), {
-      blockTag: blockNumber - 1,
+      blockTag: blockNumber.data - 1,
     });
 
     setAccQueryRewards({
@@ -105,12 +121,13 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   };
 
   const getAccRewards = async () => {
-    const blockNumber = await provider?.getBlockNumber();
+    if (!blockNumber.data) return;
+
     const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
-      blockTag: blockNumber,
+      blockTag: blockNumber.data,
     });
     const prevRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
-      blockTag: blockNumber - 1,
+      blockTag: blockNumber.data - 1,
     });
 
     setAccTotalRewards({
@@ -137,14 +154,11 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   }, [deploymentId]);
 
   React.useEffect(() => {
-    getAccRewards();
-    getAccQueryRewards();
-  }, [deploymentId, currentBooster]);
-
-  useInterval(() => {
-    getAccRewards();
-    getAccQueryRewards();
-  }, 3000);
+    if (deploymentId && blockNumber) {
+      getAccRewards();
+      getAccQueryRewards();
+    }
+  }, [deploymentId, currentBooster, blockNumber]);
 
   return (
     <div className={styles.container}>
@@ -259,7 +273,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Booster Allocation Rewards
               </Typography>
               <Typography variant="small">
-                {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
+                {formatNumber(
+                  formatSQT(allocationRewards.data?.indexerAllocationRewards?.aggregates?.sum?.reward || '0'),
+                )}{' '}
                 {TOKEN}
                 (all time)
                 <Tag color="success" style={{ marginLeft: 8 }}>

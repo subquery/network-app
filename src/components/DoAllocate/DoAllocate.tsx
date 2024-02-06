@@ -5,6 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
 import { NETWORK_NAME } from '@containers/Web3';
+import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery, useSortedIndexer } from '@hooks';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
@@ -16,7 +17,6 @@ import { retry } from '@utils/retry';
 import { Button, Form } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
-import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
@@ -28,9 +28,11 @@ import styles from './index.module.less';
 interface IProps {
   projectId?: string;
   deploymentId?: string;
+  actionBtn?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
+const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess }) => {
   const { address: account } = useAccount();
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
@@ -79,15 +81,18 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
       blockTag: blockNumber - 1,
     });
 
+    console.warn(current?.toString(), previous?.toString());
+
     setCurrentRewardsPerToken(BigNumber(current?.[0].toString() || '0').minus(previous?.[0].toString() || '0'));
   };
 
   const updateAllocate = async () => {
     if (!deploymentId || !account) return;
+
     await form.validateFields();
 
     const addOrRemoveFunc = BigNumber(form.getFieldValue('allocateVal')).gt(
-      BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'),
+      formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'),
     )
       ? contracts?.stakingAllocation.addAllocation
       : contracts?.stakingAllocation.removeAllocation;
@@ -98,15 +103,14 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
         account,
         parseEther(
           BigNumber(form.getFieldValue('allocateVal'))
-            .minus(BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
+            .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
             .abs()
             .toString(),
         ),
       );
 
       await res?.wait();
-      retry(allocatedStake.refetch);
-      getCurrentRewardsPerToken();
+      onSuccess?.();
       openNotification({
         type: 'success',
         description: 'Update allocation successfully',
@@ -134,16 +138,26 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
 
   return (
     <div className={styles.doAllocate}>
-      <Button
-        type="primary"
-        shape="round"
-        size="large"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        Allocation
-      </Button>
+      {actionBtn ? (
+        <div
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          {actionBtn}
+        </div>
+      ) : (
+        <Button
+          type="primary"
+          shape="round"
+          size="large"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          Allocation
+        </Button>
+      )}
       <Modal
         open={open}
         onCancel={() => {
@@ -217,6 +231,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
                     if (!value) {
                       return Promise.reject(new Error('Please input the amount'));
                     }
+                    return Promise.resolve();
                   },
                 },
               ]}
