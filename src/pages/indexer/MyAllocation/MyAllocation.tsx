@@ -7,7 +7,6 @@ import { Typography } from '@subql/components';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import BigNumber from 'bignumber.js';
-import { t } from 'i18next';
 import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';

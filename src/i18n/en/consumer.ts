@@ -342,32 +342,6 @@ const translation = {
         'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on MetaMask.',
     },
   },
-  swap: {
-    buySQT: `${STABLE_TOKEN} → ${TOKEN}`,
-    sellSQT: `${TOKEN} → ${STABLE_TOKEN}`,
-    poolSize: `${TOKEN} pool size`,
-    nonOrder: `There is no available order in pool currently. `,
-    nonOrderDesc: `Currently, there are no active swap orders available. However, don't worry - when orders become available, you can convert between USDC and SQT using our basic swap mechanism. Get ready to swap with Kepler!`,
-    poolSizeTooltip: `This is the amount of ${TOKEN} currently available to be purchased in the liquidity pool`,
-    curRate: 'current rate',
-    curRateTooltip: 'The token rate will remain fixed in Kepler network before mainnet is launched',
-    dataUpdateEvery5Min: 'Data is updated every 5 minutes',
-    from: 'From',
-    to: 'To',
-    swappableBalance: 'Your Swappable Rewards',
-    swappableBalanceTooltip: `This is calculated by taking the total rewards that you’ve claimed minus the amount you’ve swapped for ${STABLE_TOKEN}.`,
-    approveUSD: `Approve ${STABLE_TOKEN}`,
-    swapButton: 'Swap',
-    walletBalance: 'Wallet Balance',
-    noOrderInPool: 'There is no available order in pool currently.',
-    confirmSwap: 'Confirm Swap',
-    reviewSwap: 'Review Swap',
-    swapReviewTitle: 'You are going to swap:',
-    swapSuccess: 'The swap transaction has succeeded.',
-    swapFailure: 'The transaction has failed.',
-    usdcLimitation:
-      'The maximum amount of USDC that you can swap to SQT in a single transaction is {{limitation}}. Please decrease your order size',
-  },
 } as const;
 
 export default translation;

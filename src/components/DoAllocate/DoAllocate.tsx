@@ -4,14 +4,17 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
+import { NETWORK_NAME } from '@containers/Web3';
 import { useDeploymentMetadata, useProjectFromQuery, useSortedIndexer } from '@hooks';
+import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
+import { SQNetworks } from '@subql/network-config';
 import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { retry } from '@utils/retry';
 import { Button, Form } from 'antd';
-import { useForm } from 'antd/es/form/Form';
+import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
 import { parseEther } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
@@ -33,8 +36,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
   const sortedIndexer = useSortedIndexer(account || '');
   const [getAllocatedStake, allocatedStake] = useGetIndexerAllocationSummaryLazyQuery();
+  const provider = useEthersProviderWithPublic();
 
   const [form] = useForm();
+  const formAllocateVal = useWatch('allocateVal', form);
   const { contracts } = useWeb3Store();
   const [open, setOpen] = useState(false);
   const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
@@ -52,22 +57,29 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
     const haveAllocated = formatSQT(
       BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0').toString(),
     );
-    console.warn(totalStake.toString(), haveAllocated.toString());
+
     return totalStake.minus(haveAllocated).toString();
   }, [allocatedStake, sortedIndexer]);
 
   const estimatedRewardsPerTokenOneEra = useMemo(() => {
     // 2s one block
     // 7 days one era
-    return currentRewardsPerToken.multipliedBy(1800 * 24 * 7);
-  }, []);
+    return currentRewardsPerToken.multipliedBy(NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7);
+  }, [currentRewardsPerToken]);
 
   const getCurrentRewardsPerToken = async () => {
     if (!deploymentId) return;
+    const blockNumber = await provider?.getBlockNumber();
 
-    const res = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId));
+    const current = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId), {
+      blockTag: blockNumber,
+    });
 
-    setCurrentRewardsPerToken(BigNumber(res?.[0].toString() || '0'));
+    const previous = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId), {
+      blockTag: blockNumber - 1,
+    });
+
+    setCurrentRewardsPerToken(BigNumber(current?.[0].toString() || '0').minus(previous?.[0].toString() || '0'));
   };
 
   const updateAllocate = async () => {
@@ -210,6 +222,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
               ]}
             >
               <NumberInput
+                description=""
                 maxAmount={avaibleStakeAmount}
                 inputParams={{
                   max: avaibleStakeAmount,
@@ -229,8 +242,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId }) => {
             Estimated allocation rewards after update:{' '}
             {estimatedRewardsPerTokenOneEra.eq(0)
               ? 'Unknown'
-              : estimatedRewardsPerTokenOneEra.multipliedBy(form.getFieldValue('allocateVal') || 1).toString()}{' '}
-            {TOKEN} per Era
+              : formatNumber(
+                  formatSQT(estimatedRewardsPerTokenOneEra.multipliedBy(formAllocateVal || 0).toString()),
+                )}{' '}
+            {TOKEN} Per era
           </Typography>
         </div>
       </Modal>

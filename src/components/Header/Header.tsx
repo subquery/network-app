@@ -45,7 +45,7 @@ export const Header: React.FC = () => {
           navigate(link);
         }}
         appNavigation={entryLinks}
-        dropdownLinks={{ label: 'Kepler', links: externalAppLinks }}
+        dropdownLinks={{ label: 'SubQuery Network', links: externalAppLinks }}
         rightElement={
           <>
             <span style={{ flex: 1 }}></span>
