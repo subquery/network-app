@@ -228,7 +228,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
               rules={[
                 {
                   validator(rule, value) {
-                    if (!value) {
+                    if (!value && value !== 0) {
                       return Promise.reject(new Error('Please input the amount'));
                     }
                     return Promise.resolve();
