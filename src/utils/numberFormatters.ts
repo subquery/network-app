@@ -75,5 +75,9 @@ export function formatNumber(num: number | string, precision = 2) {
     return formatted;
   }
 
+  if (+num < 1) {
+    return (+num).toFixed(precision);
+  }
+
   return num;
 }

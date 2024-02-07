@@ -6,15 +6,26 @@ import { useTranslation } from 'react-i18next';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
 import Expand from '@components/Expand/Expand';
 import NewCard from '@components/NewCard';
+import { NETWORK_NAME } from '@containers/Web3';
 import { useRouteQuery } from '@hooks';
+import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
-import { Markdown, Typography } from '@subql/components';
+import { Markdown, Tag, Typography } from '@subql/components';
+import { cidToBytes32 } from '@subql/network-clients';
+import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
-import { formatSQT, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
+import { formatSQT, useAsyncMemo, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
+import { TOKEN } from '@utils';
+import BignumberJs from 'bignumber.js';
+import { BigNumber } from 'ethers';
+
+import { PER_MILL } from 'src/const/const';
+import { useWeb3Store } from 'src/stores';
 
 import { ProjectMetadata } from '../../models';
+import { formatNumber } from '../../utils/numberFormatters';
 import styles from './ProjectOverview.module.less';
 
 type Props = {
@@ -40,10 +51,86 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
 const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription, manifest }) => {
   const { t } = useTranslation();
   const query = useRouteQuery();
+  const { contracts } = useWeb3Store();
+  const provider = useEthersProviderWithPublic();
+
+  const [accQueryRewards, setAccQueryRewards] = React.useState({
+    current: BigNumber.from('0'),
+    previous: BigNumber.from('0'),
+  });
+
+  const [accTotalRewards, setAccTotalRewards] = React.useState({
+    current: BigNumber.from('0'),
+    previous: BigNumber.from('0'),
+  });
 
   const deploymentId = React.useMemo(() => {
     return query.get('deploymentId') || project.deploymentId;
   }, [project, query]);
+
+  const currentBooster = React.useMemo(() => {
+    return (
+      project.deployments.nodes.find((i) => i?.id === deploymentId)?.deploymentBoosterSummariesByDeploymentId
+        ?.groupedAggregates?.[0]?.sum?.totalAmount || '0'
+    );
+  }, [project, deploymentId]);
+
+  const estimatedPerEraRewards = React.useMemo(() => {
+    // 2s 1 block, 1800/per hour * 24 hours * 7 days
+    const blocks = NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7;
+
+    const estimatedQueryRewardsPerEra = accQueryRewards.current.sub(accQueryRewards.previous).mul(blocks);
+
+    const estimatedTotalRewardsPerEra = accTotalRewards.current.sub(accTotalRewards.previous).mul(blocks);
+
+    return {
+      estimatedQueryRewardsPerEra,
+      estimatedTotalRewardsPerEra,
+      estimatedAllocatedPerEraRewards: estimatedTotalRewardsPerEra.sub(estimatedQueryRewardsPerEra),
+    };
+  }, [accQueryRewards, accTotalRewards, deploymentId]);
+
+  const blockNumber = useAsyncMemo(async () => {
+    const blockNumber = await provider?.getBlockNumber();
+
+    return blockNumber;
+  }, []);
+
+  const queryRewardsRate = useAsyncMemo(async () => {
+    const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(project.type === ProjectType.RPC ? 1 : 0);
+    return BignumberJs(rewards?.toString() || '0')
+      .div(PER_MILL)
+      .toFixed();
+  }, []);
+
+  const getAccRewards = async () => {
+    if (!blockNumber.data || !queryRewardsRate.data) return;
+
+    const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+      blockTag: blockNumber.data,
+    });
+    const prevRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+      blockTag: blockNumber.data - 1,
+    });
+
+    setAccTotalRewards({
+      current: currentRewards || BigNumber.from('0'),
+      previous: prevRewards || BigNumber.from('0'),
+    });
+
+    setAccQueryRewards({
+      current: BigNumber.from(
+        BignumberJs(currentRewards?.toString() || '0')
+          .multipliedBy(queryRewardsRate.data)
+          .toFixed() || '0',
+      ),
+      previous: BigNumber.from(
+        BignumberJs(prevRewards?.toString() || '0')
+          .multipliedBy(queryRewardsRate.data)
+          .toFixed() || '0',
+      ),
+    });
+  };
 
   const [getOfferCounts, offerCounts] = useGetOfferCountByDeploymentIdLazyQuery({
     variables: {
@@ -62,9 +149,15 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     });
   }, [deploymentId]);
 
+  React.useEffect(() => {
+    if (deploymentId && blockNumber.data && queryRewardsRate.data) {
+      getAccRewards();
+    }
+  }, [deploymentId, currentBooster, blockNumber.data, queryRewardsRate.data]);
+
   return (
     <div className={styles.container}>
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 7 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 5 }}>
         <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
@@ -133,7 +226,73 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         </div>
       </div>
 
-      <div style={{ marginLeft: 48, flex: 5 }}>
+      <div style={{ marginLeft: 48, flex: 7, display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <NewCard
+          style={{ width: '100%' }}
+          titleExtra={
+            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Typography>
+                  <img src="/static/booster.svg" alt="" style={{ marginRight: 10, marginTop: 4 }}></img>
+                  Boost
+                </Typography>
+                <div style={{ flex: 1, paddingLeft: 32 }}>
+                  {BalanceLayout({
+                    mainBalance: formatSQT(currentBooster),
+                  })}
+                </div>
+              </div>
+              <span style={{ flex: 1 }}></span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Typography>Total Boost Rewards over All Time</Typography>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex' }}>
+                    {BalanceLayout({
+                      mainBalance: formatSQT(accTotalRewards.current.toString()),
+                    })}
+                    <div style={{ paddingTop: 8, paddingLeft: 20 }}>
+                      <Tag color="success">
+                        + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedTotalRewardsPerEra.toString()))} Per
+                        era
+                      </Tag>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <div className="col-flex" style={{ gap: 16 }}>
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
+              <Typography variant="small" type="secondary">
+                Booster Allocation Rewards
+              </Typography>
+              <Typography variant="small">
+                {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
+                {TOKEN}
+                (all time)
+                <Tag color="success" style={{ marginLeft: 8 }}>
+                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} Per era{' '}
+                  {TOKEN}
+                </Tag>
+              </Typography>
+            </div>
+
+            <div className="flex" style={{ justifyContent: 'space-between' }}>
+              <Typography variant="small" type="secondary">
+                Booster Query Rewards
+              </Typography>
+              <Typography variant="small">
+                {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN}
+                (all time)
+                <Tag color="success" style={{ marginLeft: 8 }}>
+                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} Per era{' '}
+                  {TOKEN}
+                </Tag>
+              </Typography>
+            </div>
+          </div>
+        </NewCard>
         <NewCard
           style={{ width: '100%' }}
           title="Total Rewards"
