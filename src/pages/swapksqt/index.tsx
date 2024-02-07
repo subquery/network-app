@@ -11,13 +11,14 @@ import { useSQToken } from '@containers';
 import { useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { FormatCardLine, reduceTotal } from '@pages/account';
-import { openNotification, Typography } from '@subql/components';
+import { openNotification, Spinner, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatEther,
   mergeAsync,
   renderAsync,
   truncFormatEtherStr,
+  useAsyncMemo,
   useGetRewardsQuery,
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
@@ -97,6 +98,21 @@ const SwapKsqtInner: FC = () => {
     }
   };
 
+  const tradeRadio = useAsyncMemo(async () => {
+    const orderId = await contracts?.tokenExchange.nextOrderId();
+    const res = await contracts?.tokenExchange.orders(orderId?.sub(1).toNumber() || 0);
+
+    if (res) {
+      const [_, __, amountGive, amountGet] = res;
+
+      const ratio = BigNumber(amountGet.toString()).div(amountGive.toString());
+
+      return ratio.toFixed();
+    }
+
+    return 1;
+  }, []);
+
   const disableSwap = useMemo(() => {
     if (!balance.data) return true;
     const zeroBalance = balance.data.toString() === '0';
@@ -113,6 +129,23 @@ const SwapKsqtInner: FC = () => {
     }
   }, [balance, totalLocked]);
 
+  if (isRPCError(tradeRadio.error) || isRPCError(balance.error)) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 40,
+        }}
+      >
+        <RpcError></RpcError>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.swapksqt}>
       <Typography variant="h4">Swap</Typography>
@@ -122,7 +155,7 @@ const SwapKsqtInner: FC = () => {
         variant="medium"
       >
         SubQuery mainnet has launched, you can now swap your kSQT for real SQT so you can continue on the SubQuery
-        Network. The swap is at a fixed rate of 1:1
+        Network. The swap is at a fixed rate of 1:{tradeRadio.loading ? <Spinner size={10}></Spinner> : tradeRadio.data}
       </Typography>
 
       <Typography variant="medium" type="secondary">
