@@ -16,16 +16,12 @@ import { Markdown, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
-import {
-  formatSQT,
-  useAsyncMemo,
-  useGetAllocationRewardsByDeploymentIdQuery,
-  useGetOfferCountByDeploymentIdLazyQuery,
-} from '@subql/react-hooks';
+import { formatSQT, useAsyncMemo, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import BignumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
 
+import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
 
 import { ProjectMetadata } from '../../models';
@@ -52,19 +48,11 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
   );
 };
 
-const PER_MILL = BignumberJs(1e6);
-
 const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription, manifest }) => {
   const { t } = useTranslation();
   const query = useRouteQuery();
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic();
-
-  const allocationRewards = useGetAllocationRewardsByDeploymentIdQuery({
-    variables: {
-      deploymentId: project.deploymentId,
-    },
-  });
 
   const [accQueryRewards, setAccQueryRewards] = React.useState({
     current: BigNumber.from('0'),
@@ -114,15 +102,6 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
       .div(PER_MILL)
       .toFixed();
   }, []);
-
-  // const getAccQueryRewards = async () => {
-  //   if (!blockNumber.data) return;
-
-  //   setAccQueryRewards({
-  //     current: currentRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
-  //     previous: prevRewards?.[0].mul(formatSQT(currentBooster)) || BigNumber.from('0'),
-  //   });
-  // };
 
   const getAccRewards = async () => {
     if (!blockNumber.data || !queryRewardsRate.data) return;

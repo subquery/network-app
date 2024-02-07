@@ -6,18 +6,20 @@ import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
 import { NETWORK_NAME } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
-import { useDeploymentMetadata, useProjectFromQuery, useSortedIndexer } from '@hooks';
+import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
-import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
+import { ProjectType } from '@subql/network-query';
+import { useAsyncMemo, useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { Button, Form } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
 import { useAccount } from 'wagmi';
 
+import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
 
 import { formatSQT } from '../../utils/numberFormatters';
@@ -35,7 +37,6 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   const { address: account } = useAccount();
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
-  const sortedIndexer = useSortedIndexer(account || '');
   const [getAllocatedStake, allocatedStake] = useGetIndexerAllocationSummaryLazyQuery();
   const provider = useEthersProviderWithPublic();
 
@@ -44,6 +45,52 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   const { contracts } = useWeb3Store();
   const [open, setOpen] = useState(false);
   const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
+
+  const runnerAllocation = useAsyncMemo(async () => {
+    if (!account)
+      return {
+        total: '0',
+        used: '0',
+        left: '0',
+      };
+    const res = await contracts?.stakingAllocation.runnerAllocation(account);
+
+    return {
+      total: formatSQT(res?.total.toString() || '0'),
+      used: formatSQT(res?.used.toString() || '0'),
+      left: formatSQT(res?.total.sub(res.used).toString() || '0'),
+    };
+  }, [account]);
+
+  const allocationRewardsRate = useAsyncMemo(async () => {
+    const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(
+      project.data?.type === ProjectType.RPC ? 1 : 0,
+    );
+    return BigNumber(1)
+      .minus(BigNumber(rewards?.toString() || '0').div(PER_MILL))
+      .toFixed();
+  }, []);
+
+  const getAllocateRewardsPerBlock = async () => {
+    if (!allocationRewardsRate.data || !deploymentId) return;
+    const blockNumber = await provider?.getBlockNumber();
+
+    const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+      blockTag: blockNumber,
+    });
+    const prevRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+      blockTag: blockNumber - 1,
+    });
+
+    const blocks = NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7;
+
+    const currentWithRate = BigNumber(currentRewards?.toString() || '0')?.multipliedBy(
+      allocationRewardsRate.data || '0',
+    );
+    const prevWithRate = BigNumber(prevRewards?.toString() || '0')?.multipliedBy(allocationRewardsRate.data);
+
+    setCurrentRewardsPerToken(currentWithRate?.minus(prevWithRate || '0').div(blocks));
+  };
 
   const currentBooster = React.useMemo(() => {
     if (!project.data) return '0';
@@ -54,45 +101,19 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   }, [project, deploymentId]);
 
   const avaibleStakeAmount = useMemo(() => {
-    const totalStake = BigNumber(sortedIndexer.data?.totalStake.current || '0');
+    const leftAllocation = runnerAllocation.data?.left ? BigNumber(runnerAllocation.data?.left) : BigNumber(0);
     const haveAllocated = formatSQT(
       BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0').toString(),
     );
 
-    return totalStake.minus(haveAllocated).toString();
-  }, [allocatedStake, sortedIndexer]);
+    return leftAllocation.plus(haveAllocated).toString();
+  }, [allocatedStake, runnerAllocation.data?.left]);
 
   const estimatedRewardsPerTokenOneEra = useMemo(() => {
     // 2s one block
     // 7 days one era
     return currentRewardsPerToken.multipliedBy(NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7);
   }, [currentRewardsPerToken]);
-
-  const getCurrentRewardsPerToken = async () => {
-    if (!deploymentId) return;
-    const blockNumber = await provider?.getBlockNumber();
-
-    const current = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId), {
-      blockTag: blockNumber,
-    });
-
-    const previous = await contracts?.rewardsBooster.getAccRewardsPerAllocatedToken(cidToBytes32(deploymentId), {
-      blockTag: blockNumber - 1,
-    });
-
-    setCurrentRewardsPerToken(
-      BigNumber(
-        // getAccRewardsPerAllocatedToken is scaled by 1e18
-        // so we need to divide by 1e18
-        // and then the result is 1 SQT would get how many rewards(wei)
-        formatSQT(
-          BigNumber(current?.[0].toString() || '0')
-            .minus(previous?.[0].toString() || '0')
-            .toString(),
-        ),
-      ),
-    );
-  };
 
   const updateAllocate = async () => {
     if (!deploymentId || !account) return;
@@ -118,6 +139,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
       );
 
       await res?.wait();
+      await runnerAllocation.refetch();
       onSuccess?.();
       openNotification({
         type: 'success',
@@ -140,7 +162,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
         },
         fetchPolicy: 'network-only',
       });
-      getCurrentRewardsPerToken();
+      getAllocateRewardsPerBlock();
+      runnerAllocation.refetch();
     }
   }, [open, account, deploymentId]);
 

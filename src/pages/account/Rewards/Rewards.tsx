@@ -172,7 +172,7 @@ export const Rewards: React.FC = () => {
                     columns={columns}
                     dataSource={filterEmptyData || []}
                     scroll={{ x: 600 }}
-                    rowKey={(record) => `${record.eraId}${record.indexerId}${record.delegatorId}`}
+                    rowKey={(record, index) => `${record.eraId}${record.indexerId}${record.delegatorId}${index}`}
                     loading={indexerEraRewards.loading}
                     pagination={{
                       current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
