@@ -87,7 +87,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
             Last updated
           </Typography>
           <Typography variant="small" style={{ marginLeft: 8 }}>
-            {dayjs(project.updatedTimestamp).fromNow()}
+            {dayjs(project.updatedTimestamp).utc().fromNow()}
           </Typography>
         </div>
       )}
