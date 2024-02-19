@@ -210,7 +210,9 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
                           <DoStake
                             onSuccess={() => {
-                              sortedIndexer?.refresh?.();
+                              retry(() => {
+                                sortedIndexer?.refresh?.();
+                              });
                             }}
                           ></DoStake>
                         </div>

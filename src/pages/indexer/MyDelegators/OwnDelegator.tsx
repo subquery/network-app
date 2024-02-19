@@ -4,17 +4,20 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import { useEra } from '@hooks';
+import { useEra, useSortedIndexer } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
-import { TableTitle } from '@subql/components';
+import { SubqlCard, TableTitle } from '@subql/components';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { convertStringToNumber, mapAsync, mergeAsync, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
-import { Table } from 'antd';
+import { retry } from '@utils/retry';
+import { Table, Tooltip } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 
+import { SetCommissionRate } from '../MyStaking/SetCommissionRate';
 import styles from './OwnDelegator.module.css';
 
 interface Props {
@@ -27,6 +30,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showHeader = false }) =
   const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
   const { currentEra } = useEra();
   const navigate = useNavigate();
+  const sortedIndexer = useSortedIndexer(indexer || '');
 
   const columns = [
     {
@@ -61,6 +65,57 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showHeader = false }) =
 
   return (
     <div className={styles.container}>
+      <div>
+        <SubqlCard
+          title={
+            <div style={{ width: '100%' }}>
+              <div className="flex">
+                <Typography>Current Commission Rate</Typography>
+                <span style={{ flex: 1 }}></span>
+                <SetCommissionRate
+                  onSuccess={() => {
+                    retry(() => {
+                      sortedIndexer.refresh?.();
+                    });
+                  }}
+                ></SetCommissionRate>
+              </div>
+            </div>
+          }
+          titleExtra={
+            <div className="col-flex" style={{ gap: 2 }}>
+              <Typography style={{ color: 'var(--sq-blue600)' }} variant="h5">
+                {sortedIndexer.data?.commission.current} %
+              </Typography>
+
+              <Typography variant="small" type="secondary">
+                {sortedIndexer.data?.commission.after} %
+              </Typography>
+            </div>
+          }
+          style={{ boxShadow: 'none', marginBottom: 24, width: 360 }}
+        >
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="medium" type="secondary">
+                Capcity
+              </Typography>
+              <Typography variant="medium">
+                {formatNumber(sortedIndexer.data?.capacity.current || '0')} {TOKEN}
+              </Typography>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="medium" type="secondary">
+                {' '}
+              </Typography>
+              <Typography variant="small" type="secondary">
+                {formatNumber(sortedIndexer.data?.capacity.after || '0')} {TOKEN}
+              </Typography>
+            </div>
+          </div>
+        </SubqlCard>
+      </div>
       {renderAsyncArray(
         mapAsync(
           ([sortedIndexer, era]) =>

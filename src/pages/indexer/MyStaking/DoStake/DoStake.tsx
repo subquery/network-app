@@ -153,7 +153,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
               items: [
                 {
                   label: (
-                    <Button type="text" style={{ padding: 0, background: 'transparent' }}>
+                    <Button type="text" style={{ padding: 0, background: 'transparent' }} size="small">
                       Stake more
                     </Button>
                   ),
@@ -169,6 +169,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
                   label: (
                     <Tooltip title={isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined}>
                       <Button
+                        size="small"
                         type="text"
                         disabled={isMaxUnstakeZero}
                         style={{ padding: 0, background: 'transparent' }}
