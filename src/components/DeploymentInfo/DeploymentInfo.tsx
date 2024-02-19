@@ -8,6 +8,7 @@ import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
 import { Tooltip } from 'antd';
+import { clsx } from 'clsx';
 
 import { useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
@@ -42,7 +43,11 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
         <div className={styles.projectTextInfo}>
           <div style={{ display: 'flex', height: 22 }}>
             {project?.name && (
-              <Typography variant="large" style={{ marginRight: 10 }}>
+              <Typography
+                className="overflowEllipsis"
+                variant="large"
+                style={{ marginRight: 10, width: '100%', maxWidth: '200px' }}
+              >
                 {project?.name}
               </Typography>
             )}
@@ -58,13 +63,15 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
             </div>
           )}
           <div className={project?.name ? '' : styles.deployment}>
-            <Typography variant="small" className={styles.text}>
+            <Typography variant="small" className={clsx(styles.text, 'overflowEllipsis')} style={{ maxWidth: 200 }}>
               {versionHeader}
             </Typography>
 
-            <Copy value={deploymentId}>
+            <Copy value={deploymentId} position="flex-start">
               <Typography variant="small" className={styles.text}>
-                {deploymentId ?? '-'}
+                {deploymentId
+                  ? `${deploymentId.slice(0, 5)}...${deploymentId.slice(deploymentId.length - 5, deploymentId.length)}`
+                  : '-'}
               </Typography>
             </Copy>
           </div>

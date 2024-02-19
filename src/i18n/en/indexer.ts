@@ -82,7 +82,8 @@ const translation = {
     nonProjects: `You haven’t indexed any projects yet`,
     nonProjectDesc: `Follow our documentation to help get you set up as an Indexer then head over to the Explorer to find the first project you would like to index.`,
     learnMore: 'Learn how to index a project <1>here</1>',
-    description: 'All SubQuery projects you are currently indexing',
+    description:
+      'All SubQuery projects you are currently indexing, you can also update staking amounts and allocate your stake to different projects here',
   },
   indexerPlans: {
     title: 'You haven’t created any plans yet',

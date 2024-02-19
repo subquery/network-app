@@ -1,45 +1,25 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { indexingProgress } from '@subql/network-clients';
 import { IndexerDeploymentNodeFieldsFragment as DeploymentIndexer, ServiceStatus } from '@subql/network-query';
 import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
 
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
-import { AsyncData, getDeploymentProgress } from '../utils';
+import { AsyncData, getDeploymentMetadata } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
-const fetchDeploymentProgress = async (
-  indexer: string,
-  proxyEndpoint: string | undefined,
-  deploymentId: string | undefined,
-) => {
-  const indexingProgressErr = 'Failed to fetch deployment progress. Please check the proxyEndpoint.';
-  if (proxyEndpoint && deploymentId) {
-    try {
-      const indexingProgress = await getDeploymentProgress({
-        proxyEndpoint,
-        deploymentId,
-        indexer,
-      });
-      return { indexingProgress };
-    } catch (error) {
-      return { indexingProgressErr };
-    }
-  }
-
-  return { indexingProgressErr };
-};
-
 export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentIndexer> {
-  indexingProgress?: number | undefined;
-  indexingProgressErr?: string;
+  indexingErr?: string;
   deploymentId?: string;
   projectId?: string;
   projectName?: string;
   projectMeta: ProjectMetadata;
   isOffline?: boolean | undefined;
+  lastHeight: number;
+  indexingProgress: number;
 }
 
 // TODO: apply with query hook
@@ -72,16 +52,30 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
         const deploymentId = indexerDeployment?.deployment?.id;
         // TODO: get `offline` status from external api call
         const isOffline = false;
-        const { indexingProgress, indexingProgressErr } = await fetchDeploymentProgress(
-          indexer,
-          proxyEndpoint,
-          deploymentId,
-        );
+        let indexingErr = '';
+        let sortedIndexingProcess = 0;
+        let lastHeight = 0;
+        try {
+          const res = await getDeploymentMetadata({
+            indexer,
+            proxyEndpoint,
+            deploymentId,
+          });
+          lastHeight = res?.lastHeight || 0;
+          sortedIndexingProcess = indexingProgress({
+            currentHeight: res?.lastHeight || 0,
+            startHeight: res?.startHeight || 0,
+            targetHeight: res?.targetHeight || 0,
+          });
+        } catch (e) {
+          indexingErr = "Failed to fetch metadata from deployment's Query Service.";
+        }
 
         return {
           ...indexerDeployment,
-          indexingProgress,
-          indexingProgressErr,
+          indexingErr,
+          indexingProgress: sortedIndexingProcess,
+          lastHeight,
           isOffline,
           deploymentId,
           projectId: indexerDeployment?.deployment?.project?.id,
