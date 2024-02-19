@@ -77,6 +77,10 @@ export type TransactionModalProps<P, T extends string> = {
   currentConfirmButtonLoading?: boolean;
 };
 
+export interface TransactionModalRef {
+  showModal: (key: string) => void;
+}
+
 // TODO: arrange this compoent
 //   No questions aspect: Feature good.
 //   Need some arrange: 1. onClick, actions, renderContent are coupling, those attributes are all having part logic to do same thing.
@@ -85,160 +89,169 @@ export type TransactionModalProps<P, T extends string> = {
 //                      2. actions and variant have the same problems.
 //                      3. text is not a searchable name.
 //   I am not sure the optimize target. just put those problems now.
-const TransactionModal = <P, T extends string>({
-  renderContent, // renderModalContent
-  text,
-  currentStep,
-  actions,
-  onClick,
-  onClose,
-  onSuccess,
-  inputParams,
-  variant = 'button',
-  initialCheck,
-  loading,
-  rethrowWhenSubmit = false,
-  width = '45%',
-  className = '',
-  buttonClassName = '',
-  currentConfirmButtonLoading = false,
-}: TransactionModalProps<P, T>): React.ReactElement | null => {
-  const { t } = useTranslation();
-  const [showModal, setShowModal] = React.useState<T | undefined>();
-  const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
-  const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
-  const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
+const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalProps<any, any>>(
+  (
+    {
+      renderContent, // renderModalContent
+      text,
+      currentStep,
+      actions,
+      onClick,
+      onClose,
+      onSuccess,
+      inputParams,
+      variant = 'button',
+      initialCheck,
+      loading,
+      rethrowWhenSubmit = false,
+      width = '45%',
+      className = '',
+      buttonClassName = '',
+      currentConfirmButtonLoading = false,
+    },
+    ref,
+  ) => {
+    const { t } = useTranslation();
+    const [showModal, setShowModal] = React.useState<any>();
+    const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
+    const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
+    const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
 
-  React.useEffect(() => {
-    if (initialCheck) {
-      const { error } = initialCheck;
-      error && setFailureModalText(parseError(error));
-    }
-  }, [failureModalText, initialCheck, initialCheck?.loading, showModal]);
+    React.useEffect(() => {
+      if (initialCheck) {
+        const { error } = initialCheck;
+        error && setFailureModalText(parseError(error));
+      }
+    }, [failureModalText, initialCheck, initialCheck?.loading, showModal]);
 
-  React.useEffect(() => {
-    if (successModalText) {
-      const timeoutId = setTimeout(() => {
-        setSuccessModalText(undefined);
-      }, 2500);
+    React.useEffect(() => {
+      if (successModalText) {
+        const timeoutId = setTimeout(() => {
+          setSuccessModalText(undefined);
+        }, 2500);
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [successModalText]);
+        return () => clearTimeout(timeoutId);
+      }
+    }, [successModalText]);
 
-  const resetModal = () => {
-    setShowModal(undefined);
-    setFailureModalText(undefined);
-    onClose && onClose();
-  };
+    const resetModal = () => {
+      setShowModal(undefined);
+      setFailureModalText(undefined);
+      onClose && onClose();
+    };
 
-  const handleBtnClick = (key: T) => {
-    setShowModal(key);
-  };
+    const handleBtnClick = (key: string) => {
+      setShowModal(key);
+    };
 
-  const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: P) => {
-    try {
-      if (!showModal || !action) return;
+    React.useImperativeHandle(ref, () => ({
+      showModal: handleBtnClick,
+    }));
 
-      const tx = await action(params, showModal);
-      setIsLoading(true);
-      resetModal();
-      openNotification({ title: t('transaction.submmited') });
-      const result = await tx.wait();
+    const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: string) => {
+      try {
+        if (!showModal || !action) return;
 
-      if (result.status) {
-        onSuccess && onSuccess();
-        setSuccessModalText(text.successText || 'Success');
+        const tx = await action(params, showModal);
+        setIsLoading(true);
+        resetModal();
+        openNotification({ title: t('transaction.submmited') });
+        const result = await tx.wait();
+
+        if (result.status) {
+          onSuccess && onSuccess();
+          setSuccessModalText(text.successText || 'Success');
+          openNotification({
+            type: NotificationType.SUCCESS,
+            title: 'Success',
+            description: text.successText ?? t('status.changeValidIn15s'),
+          });
+        } else {
+          throw new Error(text.failureText);
+        }
+      } catch (error) {
         openNotification({
-          type: NotificationType.SUCCESS,
-          title: 'Success',
-          description: text.successText ?? t('status.changeValidIn15s'),
+          type: NotificationType.ERROR,
+          title: 'Failure',
+          description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,
         });
-      } else {
-        throw new Error(text.failureText);
+        setFailureModalText(parseError(error));
+        if (rethrow) {
+          throw error;
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      openNotification({
-        type: NotificationType.ERROR,
-        title: 'Failure',
-        description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,
-      });
-      setFailureModalText(parseError(error));
-      if (rethrow) {
-        throw error;
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  const modalVisible = !!showModal;
+    const modalVisible = !!showModal;
 
-  return (
-    <div className={styles.container}>
-      {modalVisible && (
-        <Modal
-          title={text.title}
-          description={text.description}
-          visible={modalVisible}
-          onCancel={() => {
-            resetModal();
-          }}
-          loading={loading}
-          currentStep={currentStep}
-          steps={text.steps}
-          content={
-            renderContent?.(wrapTxAction(onClick, rethrowWhenSubmit), resetModal, isLoading, failureModalText) || (
-              <ModalInput
-                {...inputParams}
-                inputTitle={text.inputTitle}
-                submitText={text.submitText}
-                inputBottomText={text.inputBottomText}
-                failureModalText={failureModalText}
-                onSubmit={wrapTxAction(onClick, true)}
-                isLoading={isLoading || currentConfirmButtonLoading}
-              /> //NOTE: slowly deprecate it and use NumberInput only
-            )
-          }
-          width={width}
-          className={className}
-        />
-      )}
+    return (
+      <div className={styles.container}>
+        {modalVisible && (
+          <Modal
+            title={text.title}
+            description={text.description}
+            visible={modalVisible}
+            onCancel={() => {
+              resetModal();
+            }}
+            loading={loading}
+            currentStep={currentStep}
+            steps={text.steps}
+            content={
+              renderContent?.(wrapTxAction(onClick, rethrowWhenSubmit), resetModal, isLoading, failureModalText) || (
+                <ModalInput
+                  {...inputParams}
+                  inputTitle={text.inputTitle}
+                  submitText={text.submitText}
+                  inputBottomText={text.inputBottomText}
+                  failureModalText={failureModalText}
+                  onSubmit={wrapTxAction(onClick, true)}
+                  isLoading={isLoading || currentConfirmButtonLoading}
+                /> //NOTE: slowly deprecate it and use NumberInput only
+              )
+            }
+            width={width}
+            className={className}
+          />
+        )}
 
-      {actions.map(({ label, key, onClick, disabled, tooltip, defaultOpenTooltips, rightItem, ...rest }) => {
-        const isTextButton = variant.match(/text|Text/);
-        const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
+        {actions.map(({ label, key, onClick, disabled, tooltip, defaultOpenTooltips, rightItem, ...rest }) => {
+          const isTextButton = variant.match(/text|Text/);
+          const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
 
-        return (
-          <div className="flex-center" key={key}>
-            <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips}>
-              <Button
-                label={label}
-                onClick={async () => {
-                  await onClick?.();
-                  handleBtnClick(key);
-                }}
-                className={clsx(sortedStyle, buttonClassName)}
-                size="medium"
-                colorScheme="standard"
-                disabled={disabled || isLoading}
-                rightItem={
-                  rightItem ? (
-                    rightItem
-                  ) : isLoading ? (
-                    <LoadingOutlined className={sortedStyle} />
-                  ) : (
-                    tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
-                  )
-                }
-                {...rest}
-              />
-            </Tooltip>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+          return (
+            <div className="flex-center" key={key}>
+              <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips}>
+                <Button
+                  label={label}
+                  onClick={async () => {
+                    await onClick?.();
+                    handleBtnClick(key);
+                  }}
+                  className={clsx(sortedStyle, buttonClassName)}
+                  size="medium"
+                  colorScheme="standard"
+                  disabled={disabled || isLoading}
+                  rightItem={
+                    rightItem ? (
+                      rightItem
+                    ) : isLoading ? (
+                      <LoadingOutlined className={sortedStyle} />
+                    ) : (
+                      tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
+                    )
+                  }
+                  {...rest}
+                />
+              </Tooltip>
+            </div>
+          );
+        })}
+      </div>
+    );
+  },
+);
 
 export default TransactionModal;

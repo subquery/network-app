@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { BalanceLayout } from '@pages/dashboard';
-import { Spinner, SubqlCard, SubqlProgress, Typography } from '@subql/components';
+import { DoStake } from '@pages/indexer/MyStaking/DoStake';
+import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { ServiceStatus } from '@subql/network-query';
 import {
@@ -157,11 +158,18 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                   <SubqlCard
                     title={
                       <div style={{ width: '100%' }}>
-                        <div>
+                        <div className="flex">
                           <Typography>Current Total Stake</Typography>
                           <Tooltip title="This is the total staked amount right now. This includes SQT that has been delegated to you">
                             <InfoCircleOutlined style={{ marginLeft: 4, color: 'var(--sq-gray500)' }} />
                           </Tooltip>
+                          <span style={{ flex: 1 }}></span>
+
+                          <DoStake
+                            onSuccess={() => {
+                              sortedIndexer?.refresh?.();
+                            }}
+                          ></DoStake>
                         </div>
 
                         <div>
