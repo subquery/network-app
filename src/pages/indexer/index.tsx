@@ -31,10 +31,6 @@ const Indexer: React.FC = () => {
       link: MY_PLANS,
     },
     {
-      label: 'My Allocations',
-      link: 'my-allocations',
-    },
-    {
       label: t('plans.category.offerMarketplace'),
       link: OFFER_MARKETPLACE,
     },

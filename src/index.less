@@ -310,3 +310,13 @@ label,
   border-color: var(--sq-blue600);
   color: var(--sq-blue600);
 }
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  border-color: var(--sq-blue600);
+  background: transparent;
+
+  &::after {
+    background: var(--sq-blue600);
+    transform: scale(0.5);
+  }
+}

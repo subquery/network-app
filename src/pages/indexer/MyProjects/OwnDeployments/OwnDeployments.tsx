@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
+import DoAllocate from '@components/DoAllocate/DoAllocate';
 import { BalanceLayout } from '@pages/dashboard';
 import { DoStake } from '@pages/indexer/MyStaking/DoStake';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
@@ -18,6 +19,7 @@ import {
   useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
 } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import { retry } from '@utils/retry';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
@@ -87,9 +89,17 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       render: (deploymentId: string, deployment) => (
         <DeploymentInfo deploymentId={deploymentId} project={deployment.projectMeta} />
       ),
+      onCell: (record) => {
+        return {
+          onClick: (_) => {
+            if (record.projectId) {
+              navigate(`${PROJECT_NAV}/${record.projectId}/overview`);
+            }
+          },
+        };
+      },
     },
     {
-      width: '100%',
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'indexingProgress',
       render: (indexingProgress: number, deployment) => {
@@ -119,12 +129,45 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      title: <TableTitle title={t('general.status')} />,
+      title: <TableTitle title="Allocated amount" />,
+      dataIndex: 'allocatedAmount',
+      render: (allocatedAmount: string) => {
+        return (
+          <Typography>
+            {formatNumber(formatSQT(allocatedAmount || '0'))} {TOKEN}
+          </Typography>
+        );
+      },
+    },
+    {
+      title: <TableTitle title="Total rewards" />,
+      dataIndex: 'allocatedTotalRewards',
+      render: (allocatedTotalRewards, deployment) => {
+        return (
+          <Typography>
+            {formatNumber(formatSQT(allocatedTotalRewards || '0'))} {TOKEN}
+          </Typography>
+        );
+      },
+    },
+    {
+      title: <TableTitle title={t('general.action')} />,
       dataIndex: 'status',
       render: (status, deployment) => {
-        // TODO: will use metric service replace it. hardcode for now.
-        const sortedStatus = getDeploymentStatus(status, false);
-        return <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />;
+        return (
+          <div style={{ display: 'flex', gap: 26 }}>
+            <DoAllocate
+              deploymentId={deployment.deploymentId}
+              projectId={deployment.projectId}
+              actionBtn={<Typography.Link active>Update Allocation</Typography.Link>}
+              onSuccess={() => {
+                retry(() => {
+                  indexerDeployments.refetch?.();
+                });
+              }}
+            ></DoAllocate>
+          </div>
+        );
       },
     },
   ];
@@ -281,20 +324,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     </div>
                   </SubqlCard>
                 </div>
-                <Table
-                  columns={columns}
-                  dataSource={sortedData}
-                  rowKey={'deploymentId'}
-                  onRow={(record) => {
-                    return {
-                      onClick: (_) => {
-                        if (record.projectId) {
-                          navigate(`${PROJECT_NAV}/${record.projectId}/overview`);
-                        }
-                      },
-                    };
-                  }}
-                />
+                <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} />
               </>
             );
           },

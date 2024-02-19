@@ -3,7 +3,11 @@
 
 import { indexingProgress } from '@subql/network-clients';
 import { IndexerDeploymentNodeFieldsFragment as DeploymentIndexer, ServiceStatus } from '@subql/network-query';
-import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
+import {
+  useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
+  useGetDeploymentIndexersByIndexerQuery,
+  useGetIndexerAllocationProjectsQuery,
+} from '@subql/react-hooks';
 
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
@@ -20,12 +24,30 @@ export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentInd
   isOffline?: boolean | undefined;
   lastHeight: number;
   indexingProgress: number;
+  allocatedAmount?: string;
+  allocatedTotalRewards?: string;
 }
 
 // TODO: apply with query hook
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({ variables: { indexerAddress: indexer } });
+  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({
+    variables: { indexerAddress: indexer },
+    fetchPolicy: 'network-only',
+  });
+  const allocatedProjects = useGetIndexerAllocationProjectsQuery({
+    variables: {
+      id: indexer || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+  const allocatedRewards = useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery({
+    variables: {
+      indexerId: indexer || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const { indexerMetadata } = useIndexerMetadata(indexer);
   const proxyEndpoint = indexerMetadata?.url;
 
@@ -71,6 +93,15 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           indexingErr = "Failed to fetch metadata from deployment's Query Service.";
         }
 
+        const allocatedAmount = allocatedProjects.data?.indexerAllocationSummaries?.nodes
+          .find((i) => i?.deploymentId === deploymentId)
+          ?.totalAmount.toString();
+        const allocatedTotalRewards = allocatedRewards.data?.indexerAllocationRewards?.groupedAggregates
+          ?.find((i) => {
+            return i?.keys?.[0] === deploymentId;
+          })
+          ?.sum?.reward.toString();
+
         return {
           ...indexerDeployment,
           indexingErr,
@@ -83,10 +114,19 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           projectMeta: {
             ...metadata,
           },
+          allocatedAmount,
+          allocatedTotalRewards,
         };
       }),
     );
-  }, [indexerDeployments.loading, proxyEndpoint]);
+  }, [indexerDeployments.loading, proxyEndpoint, allocatedProjects.data, allocatedRewards.data]);
 
-  return sortedIndexerDeployments;
+  return {
+    ...sortedIndexerDeployments,
+    refetch: async () => {
+      await indexerDeployments.refetch();
+      await allocatedProjects.refetch();
+      await allocatedRewards.refetch();
+    },
+  };
 }
