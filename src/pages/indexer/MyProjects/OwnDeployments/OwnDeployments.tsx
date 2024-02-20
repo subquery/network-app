@@ -104,7 +104,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       dataIndex: 'indexingProgress',
       render: (indexingProgress: number, deployment) => {
         // TODO: will use metric service replace it. hardcode for now.
-        const sortedStatus = getDeploymentStatus(deployment.status as ServiceStatus, false);
+        const sortedStatus = deployment.status ? getDeploymentStatus(deployment.status, false) : 'NOTINDEXING';
 
         const { indexingErr } = deployment;
         if (indexingErr)
@@ -121,9 +121,13 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               </Typography>
               <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />
             </div>
-            <Typography type="secondary" variant="small">
-              Current blocks: #{deployment.lastHeight}
-            </Typography>
+            {deployment.lastHeight ? (
+              <Typography type="secondary" variant="small">
+                Current blocks: #{deployment.lastHeight}
+              </Typography>
+            ) : (
+              ''
+            )}
           </div>
         );
       },
@@ -159,12 +163,32 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             <DoAllocate
               deploymentId={deployment.deploymentId}
               projectId={deployment.projectId}
-              actionBtn={<Typography.Link active>Update Allocation</Typography.Link>}
+              actionBtn={<Typography.Link active>Add Allocation</Typography.Link>}
               onSuccess={() => {
                 retry(() => {
                   indexerDeployments.refetch?.();
                 });
               }}
+              initialStatus="Add"
+            ></DoAllocate>
+
+            <DoAllocate
+              deploymentId={deployment.deploymentId}
+              projectId={deployment.projectId}
+              disabled={deployment.allocatedAmount === '0' || !deployment.allocatedAmount}
+              actionBtn={
+                <Typography
+                  type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'secondary' : 'danger'}
+                >
+                  Remove Allocation
+                </Typography>
+              }
+              onSuccess={() => {
+                retry(() => {
+                  indexerDeployments.refetch?.();
+                });
+              }}
+              initialStatus="Remove"
             ></DoAllocate>
           </div>
         );

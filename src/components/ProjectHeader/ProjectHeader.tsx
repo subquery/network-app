@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DoAllocate from '@components/DoAllocate/DoAllocate';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -84,7 +83,6 @@ const ProjectHeader: React.FC<Props> = ({
             {/* <Button type="primary" shape="round" size="large">
               Get RPC Endpoint
             </Button> */}
-            <DoAllocate projectId={project.id} deploymentId={currentVersion}></DoAllocate>
           </div>
           <Address address={project.owner} size="small" />
 

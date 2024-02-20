@@ -31,9 +31,11 @@ interface IProps {
   deploymentId?: string;
   actionBtn?: React.ReactNode;
   onSuccess?: () => void;
+  initialStatus?: 'Add' | 'Remove';
+  disabled?: boolean;
 }
 
-const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess }) => {
+const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess, initialStatus, disabled }) => {
   const { address: account } = useAccount();
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
@@ -45,7 +47,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   const { contracts } = useWeb3Store();
   const [open, setOpen] = useState(false);
   const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
-  const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>('Add');
+  const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
 
   const runnerAllocation = useAsyncMemo(async () => {
     if (!account)
@@ -62,6 +64,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
       left: formatSQT(res?.total.sub(res.used).toString() || '0'),
     };
   }, [account]);
+
+  console.warn(runnerAllocation.data?.total.toString(), runnerAllocation.data?.used.toString());
 
   const allocationRewardsRate = useAsyncMemo(async () => {
     const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(
@@ -103,6 +107,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
 
   const avaibleStakeAmount = useMemo(() => {
     const leftAllocation = runnerAllocation.data?.left ? BigNumber(runnerAllocation.data?.left) : BigNumber(0);
+
     return leftAllocation.toString();
   }, [allocatedStake, runnerAllocation.data?.left]);
 
@@ -170,7 +175,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   };
 
   useEffect(() => {
-    if (open && account && deploymentId) {
+    if (open && account && deploymentId && !disabled) {
+      setAddOrRemove(initialStatus || 'Add');
       getAllocatedStake({
         variables: {
           id: `${deploymentId}:${account}`,
@@ -180,14 +186,16 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
       getAllocateRewardsPerBlock();
       runnerAllocation.refetch();
     }
-  }, [open, account, deploymentId]);
+  }, [open, account, deploymentId, disabled]);
 
   return (
     <div className={styles.doAllocate}>
       {actionBtn ? (
         <div
           onClick={() => {
-            setOpen(true);
+            if (!disabled) {
+              setOpen(true);
+            }
           }}
         >
           {actionBtn}

@@ -57,8 +57,17 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     const filteredDeployments = indexerDeployments?.data?.indexerDeployments?.nodes?.filter(
       (deployment) => deployment?.status !== ServiceStatus.TERMINATED,
     );
+
+    // merge have allocation but not indexing project
+    const mergedDeployments = [
+      ...filteredDeployments,
+      ...(allocatedProjects.data?.indexerAllocationSummaries?.nodes.filter(
+        (i) => !filteredDeployments.find((j) => j?.deploymentId === i?.deploymentId),
+      ) || []),
+    ];
+
     return await Promise.all(
-      filteredDeployments.map(async (indexerDeployment) => {
+      mergedDeployments.map(async (indexerDeployment) => {
         const metadata: ProjectMetadata = indexerDeployment?.deployment?.project
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
           : {
@@ -71,24 +80,29 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
               categories: [],
             };
 
-        const deploymentId = indexerDeployment?.deployment?.id;
+        const deploymentId =
+          indexerDeployment?.__typename === 'IndexerAllocationSummary'
+            ? indexerDeployment.deploymentId
+            : indexerDeployment?.deployment?.id;
         // TODO: get `offline` status from external api call
         const isOffline = false;
         let indexingErr = '';
         let sortedIndexingProcess = 0;
         let lastHeight = 0;
         try {
-          const res = await getDeploymentMetadata({
-            indexer,
-            proxyEndpoint,
-            deploymentId,
-          });
-          lastHeight = res?.lastHeight || 0;
-          sortedIndexingProcess = indexingProgress({
-            currentHeight: res?.lastHeight || 0,
-            startHeight: res?.startHeight || 0,
-            targetHeight: res?.targetHeight || 0,
-          });
+          if (indexerDeployment?.__typename === 'IndexerDeployment') {
+            const res = await getDeploymentMetadata({
+              indexer,
+              proxyEndpoint,
+              deploymentId,
+            });
+            lastHeight = res?.lastHeight || 0;
+            sortedIndexingProcess = indexingProgress({
+              currentHeight: res?.lastHeight || 0,
+              startHeight: res?.startHeight || 0,
+              targetHeight: res?.targetHeight || 0,
+            });
+          }
         } catch (e) {
           indexingErr = "Failed to fetch metadata from deployment's Query Service.";
         }
@@ -102,15 +116,19 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           })
           ?.sum?.reward.toString();
 
+        const projectId =
+          indexerDeployment?.__typename === 'IndexerDeployment'
+            ? indexerDeployment.deployment?.project?.id
+            : indexerDeployment?.proejctId;
+
         return {
-          ...indexerDeployment,
           indexingErr,
           indexingProgress: sortedIndexingProcess,
           lastHeight,
           isOffline,
           deploymentId,
-          projectId: indexerDeployment?.deployment?.project?.id,
-          projectName: metadata.name ?? indexerDeployment?.deployment?.project?.id,
+          projectId,
+          projectName: metadata.name ?? projectId,
           projectMeta: {
             ...metadata,
           },
