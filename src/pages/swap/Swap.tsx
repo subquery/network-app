@@ -185,9 +185,9 @@ const USDCToSqt = () => {
   if (!orderId)
     return (
       <EmptyList
-        title={'USDC.e -> kSQT swaps suspended'}
+        title={'Swap Tool Suspended ahead of Mainnet Launch'}
         description={
-          "Now that the SubQuery Public Sale terms have been announced, we have stopped allowing swaps of USDC.e -> kSQT. You can still swap kSQT -> USDC.e, but we suggest waiting for SubQuery's TGE, and then swapping your kSQT for SQT at a premium when the network launches."
+          "Now that the SubQuery Mainet have been announced, we have disabled swaps of USDC.e -> kSQT and kSQT -> USDC.e. After SubQuery's TGE on the 23rd of January we will allow direct swaps of kSQT for SQT at a premium rate (1:1.83) when the network launches."
         }
       />
     );
