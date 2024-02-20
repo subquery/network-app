@@ -3,7 +3,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AiOutlineEllipsis } from 'react-icons/ai';
+import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { Spinner, Typography } from '@subql/components';
+import { Button, Dropdown } from 'antd';
 import assert from 'assert';
 import { TFunction } from 'i18next';
 
@@ -15,6 +18,8 @@ import { useWeb3 } from '../../../../containers';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
+// TODO: make this kind of style into components library
+import styles from '../DoStake/DoStake.module.less';
 
 const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -34,6 +39,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
   const { contracts } = useWeb3Store();
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const modalRef = React.useRef<TransactionModalRef>(null);
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const commissionRate = useCommissionRate(account);
@@ -60,31 +66,61 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
       const modalText = getModalText(requireClaimIndexerRewards, sortedCommissionRate?.toString(), t);
 
       return (
-        <TransactionModal
-          text={modalText}
-          actions={[
-            {
-              label: t('indexer.updateCommissionRate'),
-              key: 'commission',
-            },
-          ]}
-          inputParams={{
-            min: 0,
-            max: 100,
-            showMaxButton: false,
-            unit: '%',
-          }}
-          onClick={handleClick}
-          onSuccess={() => {
-            commissionRate.refetch(true);
-            onSuccess();
-          }}
-          renderContent={(onSubmit, _, loading) => {
-            if (requireClaimIndexerRewards) {
-              return <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />;
-            }
-          }}
-        />
+        <>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  label: (
+                    <Button type="text" style={{ padding: 0, background: 'transparent' }} size="small">
+                      Update Commission Rate
+                    </Button>
+                  ),
+                  key: 1,
+                  onClick: () => {
+                    console.warn(123123);
+                    if (modalRef.current) {
+                      modalRef.current.showModal('commission');
+                    }
+                  },
+                },
+              ],
+            }}
+          >
+            <div className={styles.stakeAction}>
+              <AiOutlineEllipsis></AiOutlineEllipsis>
+            </div>
+          </Dropdown>
+          <TransactionModal
+            ref={modalRef}
+            text={modalText}
+            actions={[
+              {
+                label: t('indexer.updateCommissionRate'),
+                key: 'commission',
+                style: { display: 'none' },
+              },
+            ]}
+            inputParams={{
+              min: 0,
+              max: 100,
+              showMaxButton: false,
+              unit: '%',
+            }}
+            onClick={handleClick}
+            onSuccess={() => {
+              commissionRate.refetch(true);
+              onSuccess();
+            }}
+            renderContent={(onSubmit, _, loading) => {
+              if (requireClaimIndexerRewards) {
+                return (
+                  <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch()} indexer={account ?? ''} />
+                );
+              }
+            }}
+          />
+        </>
       );
     },
   });

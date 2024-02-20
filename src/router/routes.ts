@@ -172,15 +172,11 @@ export const routers: BasicRouteType[] = [
   {
     path: '/indexer',
     component: React.lazy(() => import('../pages/indexer/index')),
-    redirect: '/indexer/my-staking',
+    redirect: '/indexer/my-projects',
     children: [
       {
         path: 'my-staking/*',
         component: React.lazy(() => import('../pages/indexer/MyStaking/MyStaking')),
-      },
-      {
-        path: 'my-allocations/*',
-        component: React.lazy(() => import('../pages/indexer/MyAllocation/MyAllocation')),
       },
       {
         path: 'my-delegators/*',

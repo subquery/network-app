@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AiOutlineEllipsis } from 'react-icons/ai';
 import {
   claimIndexerRewardsModalText,
   ModalApproveToken,
@@ -10,7 +11,7 @@ import {
   tokenApprovalModalText,
 } from '@components';
 import TransactionModal from '@components/TransactionModal';
-import { TransactionModalAction } from '@components/TransactionModal/TransactionModal';
+import { TransactionModalAction, TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { parseEther } from '@ethersproject/units';
 import { useLockPeriod } from '@hooks';
@@ -18,11 +19,14 @@ import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
+import { Button, Dropdown, Tooltip } from 'antd';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
+
+import styles from './DoStake.module.less';
 
 enum StakeAction {
   Stake = 'stake',
@@ -71,6 +75,7 @@ const getContentText = (
 
 export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
+  const modalRef = React.useRef<TransactionModalRef>(null);
   const { contracts } = useWeb3Store();
 
   const { t } = useTranslation();
@@ -127,6 +132,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         label: t('indexer.stake'),
         key: StakeAction.Stake,
         onClick: () => setStakeAction(StakeAction.Stake),
+        style: { display: 'none' },
       };
 
       const unstakeButton: TransactionModalAction<StakeAction.UnStake> = {
@@ -135,36 +141,85 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         onClick: () => setStakeAction(StakeAction.UnStake),
         disabled: isMaxUnstakeZero,
         tooltip: isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined,
+        style: { display: 'none' },
       };
 
       const actions = [stakeButton, unstakeButton];
 
       return (
-        <TransactionModal
-          text={modalText}
-          loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeData)}
-          actions={actions}
-          inputParams={{
-            showMaxButton: true,
-            curAmount: formatEther(curAmount),
-          }}
-          onSuccess={() => {
-            stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch(true);
-            onSuccess();
-          }}
-          onClick={handleClick}
-          renderContent={(onSubmit, _, loading) => {
-            if (requireClaimIndexerRewards) {
-              return (
-                <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch(true)} indexer={account ?? ''} />
-              );
-            }
+        <>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  label: (
+                    <Button type="text" style={{ padding: 0, background: 'transparent' }} size="small">
+                      Stake more
+                    </Button>
+                  ),
+                  key: 1,
+                  onClick: () => {
+                    if (modalRef.current) {
+                      modalRef.current.showModal(stakeButton.key);
+                    }
+                    stakeButton.onClick?.();
+                  },
+                },
+                {
+                  label: (
+                    <Tooltip title={isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined}>
+                      <Button
+                        size="small"
+                        type="text"
+                        disabled={isMaxUnstakeZero}
+                        style={{ padding: 0, background: 'transparent' }}
+                        onClick={() => {
+                          if (modalRef.current) {
+                            modalRef.current.showModal(unstakeButton.key);
+                          }
+                          unstakeButton.onClick?.();
+                        }}
+                      >
+                        Unstake
+                      </Button>
+                    </Tooltip>
+                  ),
+                  key: 2,
+                },
+              ],
+            }}
+          >
+            <div className={styles.stakeAction}>
+              <AiOutlineEllipsis></AiOutlineEllipsis>
+            </div>
+          </Dropdown>
+          <TransactionModal
+            ref={modalRef}
+            text={modalText}
+            loading={isUndefined(indexerRewards) || isUndefined(maxUnstakeData)}
+            actions={actions}
+            inputParams={{
+              showMaxButton: true,
+              curAmount: formatEther(curAmount),
+            }}
+            onSuccess={() => {
+              stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch(true);
+              onSuccess();
+            }}
+            onClick={handleClick}
+            renderContent={(onSubmit, _, loading) => {
+              if (requireClaimIndexerRewards) {
+                return (
+                  <ModalClaimIndexerRewards onSuccess={() => rewardClaimStatus.refetch(true)} indexer={account ?? ''} />
+                );
+              }
 
-            if (requireTokenApproval && !requireClaimIndexerRewards) {
-              return <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />;
-            }
-          }}
-        />
+              if (requireTokenApproval && !requireClaimIndexerRewards) {
+                return <ModalApproveToken onSubmit={() => stakingAllowance.refetch()} isLoading={loading} />;
+              }
+            }}
+          />
+        </>
       );
     },
   });

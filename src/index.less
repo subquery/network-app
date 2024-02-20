@@ -267,6 +267,12 @@ label,
   margin: 1rem 0;
 }
 
+.overflowEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* For antD UI - for future lib usage*/
 /* For antD table header */
 // TODO: Those should be define at components.
@@ -303,4 +309,14 @@ label,
 .ant-btn-primary.ant-btn-background-ghost {
   border-color: var(--sq-blue600);
   color: var(--sq-blue600);
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  border-color: var(--sq-blue600);
+  background: transparent;
+
+  &::after {
+    background: var(--sq-blue600);
+    transform: scale(0.5);
+  }
 }

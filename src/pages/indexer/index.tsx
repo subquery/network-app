@@ -8,16 +8,12 @@ import { Outlet } from 'react-router';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 
-const { MY_PROJECTS, MY_PLANS, MY_STAKING, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
+const { MY_PROJECTS, MY_PLANS, SERVICE_AGREEMENTS, OFFER_MARKETPLACE, MY_DELEGATORS } = ROUTES;
 
 const Indexer: React.FC = () => {
   const { t } = useTranslation();
 
   const sidebarList = [
-    {
-      label: t('indexer.myStaking'),
-      link: MY_STAKING,
-    },
     {
       label: t('myProjects.title'),
       link: MY_PROJECTS,
@@ -33,10 +29,6 @@ const Indexer: React.FC = () => {
     {
       label: t('indexer.myPlans'),
       link: MY_PLANS,
-    },
-    {
-      label: 'My Allocations',
-      link: 'my-allocations',
     },
     {
       label: t('plans.category.offerMarketplace'),

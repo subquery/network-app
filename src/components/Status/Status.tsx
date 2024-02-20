@@ -16,7 +16,7 @@ export const deploymentStatus: { [key: string]: StatusColor } = {
   INDEXING: StatusColor.blue,
   STARTED: StatusColor.blue,
   READY: StatusColor.green,
-  NOTINDEXING: StatusColor.red,
+  NOTINDEXING: StatusColor.gray,
   TERMINATED: StatusColor.red,
 };
 

@@ -1,51 +1,53 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { indexingProgress } from '@subql/network-clients';
 import { IndexerDeploymentNodeFieldsFragment as DeploymentIndexer, ServiceStatus } from '@subql/network-query';
-import { useGetDeploymentIndexersByIndexerQuery } from '@subql/react-hooks';
+import {
+  useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
+  useGetDeploymentIndexersByIndexerQuery,
+  useGetIndexerAllocationProjectsQuery,
+} from '@subql/react-hooks';
 
 import { useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
-import { AsyncData, getDeploymentProgress } from '../utils';
+import { AsyncData, getDeploymentMetadata } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
-const fetchDeploymentProgress = async (
-  indexer: string,
-  proxyEndpoint: string | undefined,
-  deploymentId: string | undefined,
-) => {
-  const indexingProgressErr = 'Failed to fetch deployment progress. Please check the proxyEndpoint.';
-  if (proxyEndpoint && deploymentId) {
-    try {
-      const indexingProgress = await getDeploymentProgress({
-        proxyEndpoint,
-        deploymentId,
-        indexer,
-      });
-      return { indexingProgress };
-    } catch (error) {
-      return { indexingProgressErr };
-    }
-  }
-
-  return { indexingProgressErr };
-};
-
 export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentIndexer> {
-  indexingProgress?: number | undefined;
-  indexingProgressErr?: string;
+  indexingErr?: string;
   deploymentId?: string;
   projectId?: string;
   projectName?: string;
   projectMeta: ProjectMetadata;
   isOffline?: boolean | undefined;
+  lastHeight: number;
+  indexingProgress: number;
+  allocatedAmount?: string;
+  allocatedTotalRewards?: string;
 }
 
 // TODO: apply with query hook
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
-  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({ variables: { indexerAddress: indexer } });
+  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({
+    variables: { indexerAddress: indexer },
+    fetchPolicy: 'network-only',
+  });
+  const allocatedProjects = useGetIndexerAllocationProjectsQuery({
+    variables: {
+      id: indexer || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+  const allocatedRewards = useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery({
+    variables: {
+      indexerId: indexer || '',
+    },
+    fetchPolicy: 'network-only',
+  });
+
   const { indexerMetadata } = useIndexerMetadata(indexer);
   const proxyEndpoint = indexerMetadata?.url;
 
@@ -55,8 +57,17 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     const filteredDeployments = indexerDeployments?.data?.indexerDeployments?.nodes?.filter(
       (deployment) => deployment?.status !== ServiceStatus.TERMINATED,
     );
+
+    // merge have allocation but not indexing project
+    const mergedDeployments = [
+      ...filteredDeployments,
+      ...(allocatedProjects.data?.indexerAllocationSummaries?.nodes.filter(
+        (i) => !filteredDeployments.find((j) => j?.deploymentId === i?.deploymentId),
+      ) || []),
+    ];
+
     return await Promise.all(
-      filteredDeployments.map(async (indexerDeployment) => {
+      mergedDeployments.map(async (indexerDeployment) => {
         const metadata: ProjectMetadata = indexerDeployment?.deployment?.project
           ? await getMetadataFromCid(indexerDeployment.deployment.project.metadata)
           : {
@@ -69,30 +80,71 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
               categories: [],
             };
 
-        const deploymentId = indexerDeployment?.deployment?.id;
+        const deploymentId =
+          indexerDeployment?.__typename === 'IndexerAllocationSummary'
+            ? indexerDeployment.deploymentId
+            : indexerDeployment?.deployment?.id;
         // TODO: get `offline` status from external api call
         const isOffline = false;
-        const { indexingProgress, indexingProgressErr } = await fetchDeploymentProgress(
-          indexer,
-          proxyEndpoint,
-          deploymentId,
-        );
+        let indexingErr = '';
+        let sortedIndexingProcess = 0;
+        let lastHeight = 0;
+        try {
+          if (indexerDeployment?.__typename === 'IndexerDeployment') {
+            const res = await getDeploymentMetadata({
+              indexer,
+              proxyEndpoint,
+              deploymentId,
+            });
+            lastHeight = res?.lastHeight || 0;
+            sortedIndexingProcess = indexingProgress({
+              currentHeight: res?.lastHeight || 0,
+              startHeight: res?.startHeight || 0,
+              targetHeight: res?.targetHeight || 0,
+            });
+          }
+        } catch (e) {
+          indexingErr = "Failed to fetch metadata from deployment's Query Service.";
+        }
+
+        const allocatedAmount = allocatedProjects.data?.indexerAllocationSummaries?.nodes
+          .find((i) => i?.deploymentId === deploymentId)
+          ?.totalAmount.toString();
+        const allocatedTotalRewards = allocatedRewards.data?.indexerAllocationRewards?.groupedAggregates
+          ?.find((i) => {
+            return i?.keys?.[0] === deploymentId;
+          })
+          ?.sum?.reward.toString();
+
+        const projectId =
+          indexerDeployment?.__typename === 'IndexerDeployment'
+            ? indexerDeployment.deployment?.project?.id
+            : indexerDeployment?.proejctId;
 
         return {
-          ...indexerDeployment,
-          indexingProgress,
-          indexingProgressErr,
+          indexingErr,
+          indexingProgress: sortedIndexingProcess,
+          lastHeight,
           isOffline,
           deploymentId,
-          projectId: indexerDeployment?.deployment?.project?.id,
-          projectName: metadata.name ?? indexerDeployment?.deployment?.project?.id,
+          projectId,
+          projectName: metadata.name ?? projectId,
           projectMeta: {
             ...metadata,
           },
+          allocatedAmount,
+          allocatedTotalRewards,
         };
       }),
     );
-  }, [indexerDeployments.loading, proxyEndpoint]);
+  }, [indexerDeployments.loading, proxyEndpoint, allocatedProjects.data, allocatedRewards.data]);
 
-  return sortedIndexerDeployments;
+  return {
+    ...sortedIndexerDeployments,
+    refetch: async () => {
+      await indexerDeployments.refetch();
+      await allocatedProjects.refetch();
+      await allocatedRewards.refetch();
+    },
+  };
 }

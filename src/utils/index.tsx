@@ -92,7 +92,7 @@ export const filterSuccessPromoiseSettledResult = <T,>(
   result: PromiseSettledResult<T>,
 ): result is PromiseFulfilledResult<T> => result.status === 'fulfilled';
 
-export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error }>;
+export type AsyncData<T> = Readonly<{ data?: T; loading: boolean; error?: Error; refetch?: () => void }>;
 type Data<T> = T | undefined;
 type MergedData<T1, T2, T3, T4, T5, T6> = [Data<T1>, Data<T2>, Data<T3>, Data<T4>, Data<T5>, Data<T6>];
 // NOTE: update mergeAsync returnType when migrate to sdk
