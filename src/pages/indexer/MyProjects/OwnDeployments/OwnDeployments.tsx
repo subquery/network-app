@@ -194,6 +194,24 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
             const sortedData = indexerDepolymentsData?.sort((deployment) => (deployment.isOffline ? 1 : -1));
 
+            const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
+              .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))
+              .plus(BigNumberJs(runnerAllocationData?.left || 0));
+            const renderLineData = {
+              ownStake: BigNumberJs(sortedIndexerData?.ownStake.current || 0)
+                .div(total)
+                .multipliedBy(100)
+                .toFixed(2),
+              delegation: BigNumberJs(sortedIndexerData?.totalDelegations.current || 0)
+                .div(total)
+                .multipliedBy(100)
+                .toFixed(2),
+              unAllocation: BigNumberJs(runnerAllocationData?.left || 0)
+                .div(total)
+                .multipliedBy(100)
+                .toFixed(2),
+            };
+
             return (
               <>
                 {sortedDesc && <div className={styles.desc}>{sortedDesc}</div>}
@@ -229,10 +247,34 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                             width: '100%',
                             height: 12,
                             borderRadius: 4,
-                            background: 'var(--sq-warning)',
                             margin: '12px 0 20px 0',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
                           }}
-                        ></div>
+                        >
+                          <div
+                            style={{
+                              width: `${renderLineData.ownStake}%`,
+                              height: '100%',
+                              background: 'var(--sq-blue600)',
+                            }}
+                          ></div>
+                          <div
+                            style={{
+                              width: `${renderLineData.delegation}%`,
+                              height: '100%',
+                              background: 'var(--sq-success)',
+                            }}
+                          ></div>
+                          <div
+                            style={{
+                              width: `${renderLineData.unAllocation}%`,
+                              height: '100%',
+                              background: 'var(--sq-warning)',
+                            }}
+                          ></div>
+                        </div>
 
                         <div style={{ display: 'flex', gap: 53 }}>
                           {[

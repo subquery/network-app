@@ -103,11 +103,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
 
   const avaibleStakeAmount = useMemo(() => {
     const leftAllocation = runnerAllocation.data?.left ? BigNumber(runnerAllocation.data?.left) : BigNumber(0);
-    const haveAllocated = formatSQT(
-      BigNumber(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0').toString(),
-    );
-
-    return leftAllocation.plus(haveAllocated).toString();
+    return leftAllocation.toString();
   }, [allocatedStake, runnerAllocation.data?.left]);
 
   const currentAllocatedTokensOfThisDeployment = useMemo(() => {
@@ -123,7 +119,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess 
   const estimatedRewardsAfterInput = useMemo(() => {
     // lack div all tokens
     // to know all tokens that already allocated is not very easy.
-    if (estimatedRewardsPerTokenOneEra.eq(0)) {
+    if (estimatedRewardsPerTokenOneEra.eq(0) || !formAllocateVal) {
       return 'Unkonwn';
     }
 
