@@ -3,7 +3,13 @@
 
 import React from 'react';
 import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { metaMaskWallet, rainbowWallet, talismanWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  talismanWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, mainnet, sepolia, WagmiConfig } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -19,17 +25,14 @@ export const tipsChainIds: number[] = import.meta.env.VITE_NETWORK === 'testnet'
 // @ts-ignore
 const { chains, publicClient } = configureChains(supportedChains, [publicProvider()]);
 
-const talismanWalletConnector = talismanWallet({
-  chains,
-});
-
 const connectors = connectorsForWallets([
   {
     groupName: 'Recommended',
     wallets: [
       metaMaskWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
+      coinbaseWallet({ appName: 'SQN Explorer', chains }),
       walletConnectWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
-      talismanWalletConnector,
+      talismanWallet({ chains }),
       rainbowWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
     ],
   },
