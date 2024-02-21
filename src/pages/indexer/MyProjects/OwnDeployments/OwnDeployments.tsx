@@ -11,7 +11,6 @@ import { BalanceLayout } from '@pages/dashboard';
 import { DoStake } from '@pages/indexer/MyStaking/DoStake';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { ServiceStatus } from '@subql/network-query';
 import {
   formatSQT,
   mergeAsync,
