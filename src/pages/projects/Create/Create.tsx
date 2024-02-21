@@ -15,7 +15,7 @@ import { t } from 'i18next';
 import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema, ProjectType } from '../../../models';
-import { categoriesOptions, parseError, ROUTES, rpcCategoriesOptions } from '../../../utils';
+import { categoriesOptions, parseError, ROUTES } from '../../../utils';
 import { ProjectDeploymentsDetail } from '../Project/Project';
 import styles from './Create.module.less';
 

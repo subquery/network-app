@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Expand from '@components/Expand/Expand';
+import NormalError from '@components/NormalError';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
@@ -126,7 +127,11 @@ const Project: React.FC = () => {
   return renderAsync(asyncProject, {
     loading: () => <Spinner />,
     error: (error: Error) => {
-      return <Typography>{`Failed to load project: ${parseError(error)}`}</Typography>;
+      return (
+        <NormalError withWrapper>
+          This project looks like have wrong metadata, Please contact the project creator to fix it.
+        </NormalError>
+      );
     },
     data: (project) => {
       if (!project) {
@@ -159,7 +164,11 @@ const Project: React.FC = () => {
                 },
                 {
                   key: 'current',
-                  title: project.metadata.name,
+                  title: (
+                    <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                      {project.metadata.name}
+                    </Typography>
+                  ),
                 },
               ]}
             ></Breadcrumb>
@@ -171,7 +180,7 @@ const Project: React.FC = () => {
               />{' '}
               <div className="col-flex" style={{ flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <Typography variant="h4" weight={600}>
+                  <Typography variant="h4" weight={600} className="overflowEllipsis" style={{ maxWidth: 500 }}>
                     {project.metadata.name}
                   </Typography>
 

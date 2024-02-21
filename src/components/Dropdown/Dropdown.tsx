@@ -11,7 +11,7 @@ import styles from './Dropdown.module.css';
 
 interface keyPair {
   key: string;
-  label: string;
+  label: React.ReactNode;
   icon?: React.ReactNode;
   onClick?: (key: string) => void;
 }
@@ -48,7 +48,9 @@ export const Dropdown: React.FC<DropdownProps> = ({ menu, menuItem, dropdownCont
     <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center', styleProps)}>
       {typeof dropdownContent === 'string' || !dropdownContent ? (
         <div>
-          {dropdownContent || menu[0]?.label} <BsChevronDown className={styles.downIcon} />
+          <span style={{ maxWidth: 400 }} className="overflowEllipsis">
+            {dropdownContent || menu[0]?.label} <BsChevronDown className={styles.downIcon} />
+          </span>
         </div>
       ) : (
         dropdownContent

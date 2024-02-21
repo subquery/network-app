@@ -17,7 +17,7 @@ export type ProjectDetailsQuery = Omit<Project, 'metadata' | '__typename'> & {
 
 export function useProjectFromQuery(id: string): AsyncData<ProjectDetailsQuery> {
   const { getMetadataFromCid } = useProjectMetadata();
-  const [now] = useState(dayjs().utc().toDate());
+  const [now] = useState(dayjs().utc(true).toDate());
   const { data, loading, error } = useGetProjectQuery({
     variables: {
       id,

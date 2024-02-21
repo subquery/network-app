@@ -65,8 +65,6 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     };
   }, [account]);
 
-  console.warn(runnerAllocation.data?.total.toString(), runnerAllocation.data?.used.toString());
-
   const allocationRewardsRate = useAsyncMemo(async () => {
     const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(
       project.data?.type === ProjectType.RPC ? 1 : 0,
