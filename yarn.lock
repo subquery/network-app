@@ -4580,6 +4580,11 @@
   resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.0.tgz#e85c890aa0f36842563381afe1ea235091c0e9df"
   integrity sha512-kg6/xcQaaNVkHudmqqPCVl3jRNwPrSOX0i+PctLX8nyRyDfRG2lXv0XXMVsjZeGP4rs7O8h1iUV5iSS9QXaCvQ==
 
+"@subql/network-config@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.npmmirror.com/@subql/network-config/-/network-config-1.1.1.tgz#9ca44ea87b6d49804f8e09817115337e229021e0"
+  integrity sha512-T9M/b2WV4ztigrvpzVbSe62JbRzrQ6sT+xn7mowdypL3/XoBvyN1BhtnRwL7n45yj1nw6eL4KewbMu8jOwTYGw==
+
 "@subql/network-query@1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.0.tgz#dda29d0726349105516ea5f0a2a7fa54f6d24db7"

@@ -12,7 +12,7 @@ import { URLS } from '@utils';
 import styles from './MyDelegators.module.css';
 import { OwnDelegator } from './OwnDelegator';
 
-const NoDelegator: React.FC = () => {
+export const NoDelegator: React.FC = () => {
   const { t } = useTranslation();
   return (
     <EmptyList
@@ -49,8 +49,7 @@ export const MyDelegators: React.FC = () => {
             componentMode
             element={
               <>
-                {totalCount <= 0 && <NoDelegator />}
-                {totalCount > 0 && <OwnDelegator indexer={account ?? ''} />}
+                <OwnDelegator showEmpty={totalCount <= 0} indexer={account ?? ''} />
               </>
             }
           ></WalletRoute>

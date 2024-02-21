@@ -209,10 +209,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           data: (data) => {
             const [indexerDepolymentsData, isIndexerData, sortedIndexerData, runnerAllocationData] = data;
 
-            if (
-              !isIndexerData ||
-              (!sortedIndexerData && (!indexerDepolymentsData || indexerDepolymentsData.length === 0))
-            ) {
+            if (!isIndexerData || !sortedIndexerData) {
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
@@ -392,7 +389,11 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     </div>
                   </SubqlCard>
                 </div>
-                <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} />
+                {!indexerDepolymentsData || indexerDepolymentsData.length === 0 ? (
+                  <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
+                ) : (
+                  <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} />
+                )}
               </>
             );
           },
