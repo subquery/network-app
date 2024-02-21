@@ -220,7 +220,7 @@ export const Locked: React.FC = () => {
             withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
               const utcStartAt = dayjs.utc(withdrawal?.startTime);
               const utcEndAt = dayjs.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
-              const lockStatus = dayjs.utc(true) > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
+              const lockStatus = dayjs.utc() > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
               return { ...withdrawal, endAt: utcEndAt.local().format(), lockStatus, idx };
             }),
           mergeAsync(withdrawals, lockPeriod),
