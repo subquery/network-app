@@ -40,7 +40,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
         renderPlaceholder={() => <div style={{ width: '100%', height: '205px', background: '#fff' }}></div>}
       />
       <div style={{ flex: 1 }}>
-        <Typography style={{ marginTop: 16, marginBottom: 6, height: 48 }} weight={600}>
+        <Typography className="overflowEllipsis2" style={{ marginTop: 16, marginBottom: 6, height: 48 }} weight={600}>
           {project.metadata?.name || project.id}
         </Typography>
       </div>
@@ -87,7 +87,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
             Last updated
           </Typography>
           <Typography variant="small" style={{ marginLeft: 8 }}>
-            {dayjs(project.updatedTimestamp).utc().fromNow()}
+            {dayjs(project.updatedTimestamp).utc(true).fromNow()}
           </Typography>
         </div>
       )}

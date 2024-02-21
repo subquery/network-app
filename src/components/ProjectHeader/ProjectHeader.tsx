@@ -10,6 +10,7 @@ import { Address, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { formatNumber, formatSQT } from '@utils';
 import { Button } from 'antd';
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import Detail from '../Detail';
@@ -48,7 +49,14 @@ const ProjectHeader: React.FC<Props> = ({
         deployment?.deploymentBoosterSummariesByDeploymentId?.groupedAggregates?.[0]?.keys?.[0] === key
           ? deployment?.deploymentBoosterSummariesByDeploymentId?.groupedAggregates?.[0]?.sum?.totalAmount || '0'
           : '0';
-      return { key, label: `${value} - Booster: ${formatNumber(formatSQT(booster))}` };
+      return {
+        key,
+        label: (
+          <Typography style={{ maxWidth: 400 }} className="overflowEllipsis">{`${value} - Booster: ${formatNumber(
+            formatSQT(booster),
+          )}`}</Typography>
+        ),
+      };
     });
 
     const handleOnClick = (key: string) => {
@@ -60,7 +68,7 @@ const ProjectHeader: React.FC<Props> = ({
         menu={menu}
         handleOnClick={handleOnClick}
         dropdownContent={currentVersion ? versions[currentVersion] : versions[0]}
-        styleProps={styles.dropdown}
+        styleProps={clsx(styles.dropdown)}
       />
     );
   };
@@ -73,7 +81,12 @@ const ProjectHeader: React.FC<Props> = ({
       <div className={styles.inner}>
         <div className={styles.upper}>
           <div className={styles.titleVersion}>
-            <Typography variant="h4" className={styles.name} weight={600} style={{ marginRight: 8 }}>
+            <Typography
+              variant="h4"
+              className={clsx(styles.name, 'overflowEllipsis')}
+              weight={600}
+              style={{ marginRight: 8, maxWidth: 500 }}
+            >
               {project.metadata.name}
             </Typography>
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
@@ -87,11 +100,14 @@ const ProjectHeader: React.FC<Props> = ({
           <Address address={project.owner} size="small" />
 
           <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {/* in case of someone skip the legal process add more than 2 categories */}
             {project.metadata.categories &&
-              project.metadata.categories.map((val) => {
+              project.metadata.categories.slice(2).map((val) => {
                 return (
-                  <Button key={val} type="primary" shape="round" className="staticButton">
-                    {val}
+                  <Button key={val} type="primary" shape="round" className={clsx('staticButton', 'overflowEllipsis')}>
+                    <span className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                      {val}
+                    </span>
                   </Button>
                 );
               })}

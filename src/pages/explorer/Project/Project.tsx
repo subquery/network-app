@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
+import NormalError from '@components/NormalError';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
@@ -104,7 +105,11 @@ const ProjectInner: React.FC = () => {
 
   const page = renderAsync(asyncProject, {
     loading: () => <Spinner />,
-    error: (e) => <span>{`Failed to load project: ${e.message}`}</span>,
+    error: (e) => (
+      <NormalError withWrapper>
+        This project looks like have wrong metadata, Please contact the project creator to fix it.
+      </NormalError>
+    ),
     data: (project) => {
       if (!project) {
         // Should never happen
@@ -128,7 +133,11 @@ const ProjectInner: React.FC = () => {
                 },
                 {
                   key: 'current',
-                  title: project.metadata.name,
+                  title: (
+                    <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                      {project.metadata.name}
+                    </Typography>
+                  ),
                 },
               ]}
             ></Breadcrumb>

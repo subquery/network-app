@@ -90,7 +90,11 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             dataIndex: 'version',
             key: 'version',
             title: <TableTitle>{t('deployments.header1')}</TableTitle>,
-            render: (val) => <Typography>{val}</Typography>,
+            render: (val) => (
+              <Typography className="overflowEllipsis" style={{ maxWidth: 150 }}>
+                {val}
+              </Typography>
+            ),
           },
           {
             dataIndex: 'deploymentId',
