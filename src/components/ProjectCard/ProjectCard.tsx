@@ -31,7 +31,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
 
     return project.metadata.image;
   }, [project.metadata]);
-  console.warn(project.updatedTimestamp);
+
   return (
     <div className={styles.card} onClick={onClick}>
       <IPFSImage
