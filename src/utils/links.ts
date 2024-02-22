@@ -46,6 +46,10 @@ export const entryLinks = [
     label: t('delegator'),
   },
   {
+    link: '/bridge',
+    label: 'Swap',
+  },
+  {
     link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',
     label: t('header.documentation'),
   },

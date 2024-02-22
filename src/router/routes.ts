@@ -226,4 +226,6 @@ export const routers: BasicRouteType[] = [
 
   { path: '/consumer/*', component: React.lazy(() => import('../pages/consumer/index')) },
   { path: '/projects/*', component: React.lazy(() => import('../pages/projects/index')) },
+  { path: '/bridge/success/*', component: React.lazy(() => import('../pages/bridge/success/index')) },
+  { path: '/bridge/*', component: React.lazy(() => import('../pages/bridge/index')) },
 ];
