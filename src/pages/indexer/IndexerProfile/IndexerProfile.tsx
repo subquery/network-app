@@ -377,7 +377,7 @@ const IndexerProfile: FC = () => {
           </div>
 
           <div className={styles.indexerDelegator}>
-            <OwnDelegator indexer={account || ''} showHeader></OwnDelegator>
+            <OwnDelegator hideCard indexer={account || ''} showHeader></OwnDelegator>
           </div>
         </div>
       )}

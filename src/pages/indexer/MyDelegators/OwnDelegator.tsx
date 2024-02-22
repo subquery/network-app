@@ -23,10 +23,11 @@ import styles from './OwnDelegator.module.css';
 interface Props {
   indexer: string;
   showHeader?: boolean;
-  showEmpty: boolean;
+  showEmpty?: boolean;
+  hideCard?: boolean;
 }
 
-export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, showHeader = false }) => {
+export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, showHeader = false }) => {
   const { t } = useTranslation();
   const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
   const { currentEra } = useEra();
@@ -66,57 +67,59 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, showHeader =
 
   return (
     <div className={styles.container}>
-      <div>
-        <SubqlCard
-          title={
-            <div style={{ width: '100%' }}>
-              <div className="flex">
-                <Typography>Current Commission Rate</Typography>
-                <span style={{ flex: 1 }}></span>
-                <SetCommissionRate
-                  onSuccess={() => {
-                    retry(() => {
-                      sortedIndexer.refresh?.();
-                    });
-                  }}
-                ></SetCommissionRate>
+      {!hideCard && (
+        <div>
+          <SubqlCard
+            title={
+              <div style={{ width: '100%' }}>
+                <div className="flex">
+                  <Typography>Current Commission Rate</Typography>
+                  <span style={{ flex: 1 }}></span>
+                  <SetCommissionRate
+                    onSuccess={() => {
+                      retry(() => {
+                        sortedIndexer.refresh?.();
+                      });
+                    }}
+                  ></SetCommissionRate>
+                </div>
+              </div>
+            }
+            titleExtra={
+              <div className="col-flex" style={{ gap: 2 }}>
+                <Typography style={{ color: 'var(--sq-blue600)' }} variant="h5">
+                  {sortedIndexer.data?.commission.current || 0} %
+                </Typography>
+
+                <Typography variant="small" type="secondary">
+                  {sortedIndexer.data?.commission.after || 0} %
+                </Typography>
+              </div>
+            }
+            style={{ boxShadow: 'none', marginBottom: 24, width: 360 }}
+          >
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="medium" type="secondary">
+                  Capcity
+                </Typography>
+                <Typography variant="medium">
+                  {formatNumber(sortedIndexer.data?.capacity.current || '0')} {TOKEN}
+                </Typography>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="medium" type="secondary">
+                  {' '}
+                </Typography>
+                <Typography variant="small" type="secondary">
+                  {formatNumber(sortedIndexer.data?.capacity.after || '0')} {TOKEN}
+                </Typography>
               </div>
             </div>
-          }
-          titleExtra={
-            <div className="col-flex" style={{ gap: 2 }}>
-              <Typography style={{ color: 'var(--sq-blue600)' }} variant="h5">
-                {sortedIndexer.data?.commission.current || 0} %
-              </Typography>
-
-              <Typography variant="small" type="secondary">
-                {sortedIndexer.data?.commission.after || 0} %
-              </Typography>
-            </div>
-          }
-          style={{ boxShadow: 'none', marginBottom: 24, width: 360 }}
-        >
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="medium" type="secondary">
-                Capcity
-              </Typography>
-              <Typography variant="medium">
-                {formatNumber(sortedIndexer.data?.capacity.current || '0')} {TOKEN}
-              </Typography>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="medium" type="secondary">
-                {' '}
-              </Typography>
-              <Typography variant="small" type="secondary">
-                {formatNumber(sortedIndexer.data?.capacity.after || '0')} {TOKEN}
-              </Typography>
-            </div>
-          </div>
-        </SubqlCard>
-      </div>
+          </SubqlCard>
+        </div>
+      )}
       {showEmpty ? (
         <NoDelegator />
       ) : (
