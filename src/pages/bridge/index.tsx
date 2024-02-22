@@ -8,7 +8,7 @@ import { WalletRoute } from '@components';
 import { useSQToken } from '@containers';
 import { CrossChainMessenger } from '@eth-optimism/sdk/src/cross-chain-messenger';
 import { publicClientToProvider, useEthersSigner } from '@hooks/useEthersProvider';
-import { Footer, openNotification, Typography } from '@subql/components';
+import { Footer, openNotification, Spinner, Typography } from '@subql/components';
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { formatEther } from '@subql/react-hooks';
@@ -127,10 +127,20 @@ const Bridge: FC = () => {
                 <Typography variant="small" type="secondary">
                   FREE SQT
                 </Typography>
-                <Typography weight={500}>{formatEther(ethSqtBalance.result.data || 0, 4)} SQT</Typography>
+                <Typography weight={500}>
+                  {ethSqtBalance.result.loading ? (
+                    <Spinner size={10}></Spinner>
+                  ) : (
+                    formatEther(ethSqtBalance.result.data || 0, 4)
+                  )}{' '}
+                  SQT
+                </Typography>
               </div>
               <div className={styles.smallCard}>
-                <div className={styles.top}>SQT</div>
+                <div className={styles.top}>
+                  <img src="/static/eth.png" alt=""></img>
+                  SQT
+                </div>
 
                 <div className={styles.bottom}>
                   <Input
@@ -146,7 +156,10 @@ const Bridge: FC = () => {
               </div>
               <BsArrowDownSquareFill style={{ margin: '16px 0', color: 'var(--sq-gray600)', fontSize: 24 }} />
               <div className={styles.smallCard}>
-                <div className={styles.top}>SQT</div>
+                <div className={styles.top}>
+                  <img src="/static/base.png" alt=""></img>
+                  SQT
+                </div>
 
                 <div className={styles.bottom}>
                   <Typography variant="large" weight={600} type="secondary">
