@@ -61,7 +61,7 @@ const PATHS = {
   DASHBOARD: '/dashboard',
   EXPLORER: '/explorer',
   STUDIO: '/studio',
-  SWAP: '/swap',
+  SWAP: '/swapksqt',
   STAKING: '/staking', //todo: improve
   PLANS: '/plans',
 
