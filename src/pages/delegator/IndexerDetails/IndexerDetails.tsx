@@ -92,7 +92,7 @@ export const IndexerDetails = () => {
             if (totalCount <= 0) {
               return <NoDelegator />;
             } else {
-              return <OwnDelegator indexer={account ?? ''} />;
+              return <OwnDelegator hideCard indexer={account ?? ''} />;
             }
           },
         })}
