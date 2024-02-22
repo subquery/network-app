@@ -6,9 +6,9 @@
     "dev": "vite --mode testnet",
     "staging": "vite --mode staging",
     "prod": "vite",
-    "build:dev": "tsc --skipLibCheck && vite build --mode testnet",
-    "build:staging": "tsc --skipLibCheck && vite build --mode staging",
-    "build": "tsc --skipLibCheck && vite build",
+    "build:dev": "vite build --mode testnet",
+    "build:staging": "vite build --mode staging",
+    "build": "vite build",
     "prepare": "husky install",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
   },
