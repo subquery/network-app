@@ -47,7 +47,7 @@ export const entryLinks = [
   },
   {
     link: '/bridge',
-    label: 'Swap',
+    label: 'Bridge',
   },
   {
     link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',
