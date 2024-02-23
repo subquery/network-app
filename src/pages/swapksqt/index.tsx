@@ -52,7 +52,7 @@ const SwapKsqtInner: FC = () => {
   const totalLocked = useMemo(() => {
     const totalDelegating = formatEther(delegating.data, 4);
     const totalWithdrawn = reduceTotal(withdrawals.data?.withdrawls?.nodes);
-    const totalStaking = truncFormatEtherStr(`${sortedIndexer.data?.totalStake?.current ?? 0}`, 4);
+    const totalStaking = truncFormatEtherStr(`${sortedIndexer.data?.ownStake?.current ?? 0}`, 4);
     const totalRewards = formatNumber(reduceTotal(rewards.data?.unclaimedRewards?.nodes));
 
     const total = [totalDelegating, totalWithdrawn, totalStaking, totalRewards]
@@ -203,9 +203,10 @@ const SwapKsqtInner: FC = () => {
             },
             data: (data) => {
               const [d, i, r, w] = data;
+
               const totalDelegating = formatEther(d, 4);
               const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
-              const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
+              const totalStaking = truncFormatEtherStr(`${i?.ownStake?.current ?? 0}`, 4);
 
               return (
                 <div className="col-flex" style={{ marginTop: 24, width: '100%', textAlign: 'left' }}>
