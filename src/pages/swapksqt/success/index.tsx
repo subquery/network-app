@@ -27,7 +27,12 @@ const SwapSuccess: FC = () => {
           connect to a bridge to transfer your funds.
         </Typography>
 
-        <a href="https://portal.polygon.technology/" style={{ textDecoration: 'none' }}>
+        <a
+          href="https://portal.polygon.technology/"
+          target="_blank"
+          style={{ textDecoration: 'none' }}
+          rel="noreferrer"
+        >
           <Button
             loading={loading}
             type="primary"
