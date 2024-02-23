@@ -4664,10 +4664,10 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@0.17.1-1":
-  version "0.17.1-1"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.17.1-1.tgz#06f756ca8af50cffc4c6a5c35d6781a4ac12cc4a"
-  integrity sha512-95KYLEayGikTDe33Qmg+cszLKKFS+SQH9ihVwAD07bwxkDIUJy1MDpnJaKtEtgqF4xeeqbH2VKPvcA2ZJ6m0iw==
+"@subql/contract-sdk@0.17.1":
+  version "0.17.1"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-0.17.1.tgz#2f9d3ebddf961fd14efe8f3843ca24f4c2dafc77"
+  integrity sha512-LxnbIZ+n1Rk79YdMpd018fYr8bZawKOTyB3dQZC5mecwo3NxpwPHm8LCNC9bFvzKC8L6DuwHL6AdiaDzRvX8bw==
   dependencies:
     "@openzeppelin/contracts-upgradeable" "^4.5.2"
 
