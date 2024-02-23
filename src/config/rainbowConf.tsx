@@ -3,7 +3,13 @@
 
 import React from 'react';
 import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { metaMaskWallet, rainbowWallet, talismanWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  talismanWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygon, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -28,6 +34,7 @@ const connectors = connectorsForWallets([
       walletConnectWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
       talismanWalletConnector,
       rainbowWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
+      coinbaseWallet({ appName: 'SQN Explorer', chains }),
     ],
   },
 ]);
