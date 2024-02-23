@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { listsWithSearch } = useProjectList({
-    showTopProject: true,
+    showTopProject: false,
     onProjectClick: (projectId) => {
       navigate(`${PROJECT_NAV}/${projectId}`);
     },
