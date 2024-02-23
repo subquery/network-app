@@ -3,43 +3,13 @@
 
 import React, { FC, useState } from 'react';
 import { BsBoxArrowInUpRight, BsCheckCircleFill, BsLifePreserver } from 'react-icons/bs';
-import { usePosClient } from '@hooks/usePosClient';
-import { openNotification, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { Button } from 'antd';
-import { useAccount } from 'wagmi';
 
 import styles from './index.module.less';
 
 const SwapSuccess: FC = () => {
-  const posClient = usePosClient();
-  const { address } = useAccount();
   const [loading, setLoading] = useState(false);
-
-  const withdrawStart = async () => {
-    try {
-      setLoading(true);
-      if (!address) return;
-      const sqtErc20 = await posClient.posClient?.erc20(import.meta.env.VITE_SQT_TOKEN_ADDRESS);
-      const amount = await sqtErc20?.getBalance(address);
-      if (!amount) {
-        openNotification({
-          type: 'error',
-          description: "Can't get balance, please make sure you have SQT tokens.",
-        });
-        return;
-      }
-      const res = await sqtErc20?.withdrawStart(amount);
-
-      if (res) {
-        openNotification({
-          type: 'success',
-          description: 'Withdraw started. You can check the status on https://wallet.polygon.technology/',
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className={styles.swapSuccess}>
@@ -57,25 +27,26 @@ const SwapSuccess: FC = () => {
           connect to a bridge to transfer your funds.
         </Typography>
 
-        <Button
-          loading={loading}
-          onClick={withdrawStart}
-          type="primary"
-          shape="round"
-          size="large"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            width: '100%',
-            justifyContent: 'center',
-            padding: '16px 32px',
-            height: '48px',
-          }}
-        >
-          Bridge Tokens
-          <BsBoxArrowInUpRight></BsBoxArrowInUpRight>
-        </Button>
+        <a href="https://portal.polygon.technology/" style={{ textDecoration: 'none' }}>
+          <Button
+            loading={loading}
+            type="primary"
+            shape="round"
+            size="large"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              width: '100%',
+              justifyContent: 'center',
+              padding: '16px 32px',
+              height: '48px',
+            }}
+          >
+            Bridge Tokens
+            <BsBoxArrowInUpRight></BsBoxArrowInUpRight>
+          </Button>
+        </a>
         <Typography type="secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <BsLifePreserver />
           Need help? please

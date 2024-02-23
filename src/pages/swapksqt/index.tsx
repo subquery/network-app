@@ -106,11 +106,13 @@ const SwapKsqtInner: FC = () => {
       const [_, __, amountGive, amountGet] = res;
 
       const ratio = BigNumber(amountGet.toString()).div(amountGive.toString());
-
-      return ratio.toFixed();
+      if (ratio.toFixed() !== 'NaN') {
+        return ratio.toFixed();
+      }
+      return 1.83;
     }
 
-    return 1;
+    return 1.83;
   }, []);
 
   const disableSwap = useMemo(() => {
