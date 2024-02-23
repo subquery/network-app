@@ -105,7 +105,7 @@ const SwapKsqtInner: FC = () => {
     if (res) {
       const [_, __, amountGive, amountGet] = res;
 
-      const ratio = BigNumber(amountGet.toString()).div(amountGive.toString());
+      const ratio = BigNumber(amountGive.toString()).div(amountGet.toString());
       if (ratio.toFixed() !== 'NaN') {
         return ratio.toFixed();
       }
@@ -298,7 +298,9 @@ const SwapKsqtInner: FC = () => {
 
             <div className={styles.bottom}>
               <Typography variant="large" weight={600} type="secondary">
-                {formatEther(balance.data, 4)}
+                {BigNumber(formatEther(balance.data, 4).toString() || '0')
+                  .multipliedBy(tradeRadio.data?.toString() || '1.83')
+                  .toFixed(4)}
               </Typography>
             </div>
           </div>
