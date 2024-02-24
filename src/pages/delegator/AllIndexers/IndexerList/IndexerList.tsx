@@ -13,11 +13,11 @@ import { CurrentEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetIndexerQuery } from '@subql/react-hooks';
+import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
 import { ROUTES } from '@utils';
-import { useWhyDidYouUpdate } from 'ahooks';
-import { TableProps } from 'antd';
+import { useMount, useWhyDidYouUpdate } from 'ahooks';
+import { Table, TableProps } from 'antd';
 import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
 
@@ -40,7 +40,6 @@ interface SortedIndexerListProps {
 interface props {
   indexers?: Indexer[];
   totalCount?: number;
-  onLoadMore?: (offset: number) => void;
   era?: number;
 }
 
@@ -48,7 +47,7 @@ const limit = pLimit(5);
 
 // TODO: `useGetIndexerQuery` has been used by DoDelegate
 // TODO: update indexer detail Page once ready
-export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount, era }) => {
+export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
@@ -56,7 +55,8 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
   const viewIndexerDetail = (id: string) => {
     navigate(`/${INDEXER}/${id}`);
   };
-  const [pageStartIndex, setPageStartIndex] = React.useState(0);
+  const [requestIndexers, fetchedIndexers] = useGetIndexersLazyQuery();
+  const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<any>();
 
@@ -82,7 +82,15 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       />
     </div>
   );
-
+  const onLoadMore = (offset: number) => {
+    requestIndexers({
+      variables: {
+        offset,
+        first: 10,
+      },
+      fetchPolicy: 'network-only',
+    });
+  };
   /**
    * SearchInput logic end
    */
@@ -91,7 +99,10 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
    * Sort Indexers
    */
 
-  const rawIndexerList = React.useMemo(() => searchedIndexer ?? indexers ?? [], [indexers, searchedIndexer]);
+  const rawIndexerList = React.useMemo(
+    () => searchedIndexer ?? fetchedIndexers.data?.indexers?.nodes ?? [],
+    [fetchedIndexers, searchedIndexer],
+  );
 
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
@@ -103,7 +114,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
         // note networkClient.getIndexer have more sideEffects.
         const sortedIndexers = await Promise.all(
           rawIndexerList.map((indexer) => {
-            return limit(() => networkClient?.getIndexer(indexer.id));
+            return limit(() => networkClient?.getIndexer(indexer?.id || ''));
           }),
         );
 
@@ -137,7 +148,7 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 20,
-      render: (_: string, __: unknown, index: number) => <TableText>{pageStartIndex + index + 1}</TableText>,
+      render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
       onCell: (record: SortedIndexerListProps) => ({
         onClick: () => viewIndexerDetail(record.address),
       }),
@@ -297,8 +308,9 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;
-        const curIndexer = indexers?.find((i) => i.id === id);
+        const curIndexer = fetchedIndexers.data?.indexers?.nodes?.find((i) => i?.id === id);
         const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
+
         return (
           <div className={'flex-start'}>
             <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer} delegation={delegation} />
@@ -314,35 +326,37 @@ export const IndexerList: React.FC<props> = ({ indexers, onLoadMore, totalCount,
     );
   }, [orderedIndexerList, loadingList, sortedIndexer.loading, totalCount]);
 
+  useMount(() => {
+    onLoadMore(0);
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
-          {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
+          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexers?.totalCount || 0 })}
         </Typography>
         <SearchAddress />
       </div>
 
-      <AntDTable
-        customPagination
-        tableProps={{
-          columns,
-          rowKey: (record, index) => {
-            return `${record?.address}${record?.controller}${index}`;
-          },
-          dataSource: [...orderedIndexerList],
-          scroll: { x: 1600 },
-          loading: !!isLoading,
+      <Table
+        columns={columns}
+        rowKey={(record, index) => {
+          return `${record?.address}${record?.controller}${index}`;
         }}
-        paginationProps={{
-          total: searchedIndexer ? searchedIndexer.length : totalCount,
+        dataSource={orderedIndexerList}
+        scroll={{ x: 1600 }}
+        loading={!!isLoading}
+        pagination={{
+          total: 15,
           onChange: (page, pageSize) => {
             const i = (page - 1) * pageSize;
-            setPageStartIndex(i);
+            setPageStartIndex(page);
             onLoadMore?.(i);
           },
+          current: pageStartIndex,
         }}
-      />
+      ></Table>
     </div>
   );
 };
