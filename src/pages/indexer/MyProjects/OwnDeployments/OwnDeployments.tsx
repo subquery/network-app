@@ -257,8 +257,10 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
                         <div>
                           {BalanceLayout({
-                            mainBalance: BigNumber.from(sortedIndexerData?.totalStake.current).toString(),
-                            secondaryBalance: BigNumber.from(sortedIndexerData?.totalStake.after).toString(),
+                            mainBalance: BigNumberJs(sortedIndexerData?.totalStake.current.toString()).toString(),
+                            secondaryBalance: BigNumberJs(
+                              sortedIndexerData?.totalStake.after?.toString() || '0',
+                            ).toString(),
                           })}
                         </div>
 
@@ -302,18 +304,20 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                               name: 'Own Stake',
                               color: 'var(--sq-blue600)',
                               currentBalance: formatNumber(
-                                BigNumber.from(sortedIndexerData?.ownStake.current).toString(),
+                                BigNumberJs(sortedIndexerData?.ownStake.current.toString()).toString(),
                               ),
-                              afterBalance: formatNumber(BigNumber.from(sortedIndexerData?.ownStake.after).toString()),
+                              afterBalance: formatNumber(
+                                BigNumberJs(sortedIndexerData?.ownStake.after?.toString() || '0').toString(),
+                              ),
                             },
                             {
                               name: 'Total Delegation',
                               color: 'var(--sq-success)',
                               currentBalance: formatNumber(
-                                BigNumber.from(sortedIndexerData?.totalDelegations.current).toString(),
+                                BigNumberJs(sortedIndexerData?.totalDelegations.current.toString()).toString(),
                               ),
                               afterBalance: formatNumber(
-                                BigNumber.from(sortedIndexerData?.totalDelegations.after).toString(),
+                                BigNumberJs(sortedIndexerData?.totalDelegations.after?.toString() || '0').toString(),
                               ),
                             },
                             {
