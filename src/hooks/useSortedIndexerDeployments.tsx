@@ -122,6 +122,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
             : indexerDeployment?.proejctId;
 
         return {
+          status: indexerDeployment?.__typename === 'IndexerAllocationSummary' ? undefined : indexerDeployment?.status,
           indexingErr,
           indexingProgress: sortedIndexingProcess,
           lastHeight,
