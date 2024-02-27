@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode testnet",
     "build:staging": "vite build --mode staging",
     "build": "vite build",
+    "tsc": "tsc --skipLibCheck",
     "prepare": "husky install",
     "lint": "eslint src/**/*.{ts,tsx} --fix"
   },
@@ -25,8 +26,8 @@
     "@subql/contract-sdk": "1.0.0",
     "@subql/network-clients": "1.1.0",
     "@subql/network-config": "1.1.1",
-    "@subql/network-query": "1.1.0",
-    "@subql/react-hooks": "1.1.0",
+    "@subql/network-query": "1.1.1",
+    "@subql/react-hooks": "1.1.1",
     "@web3-name-sdk/core": "^0.1.5",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
