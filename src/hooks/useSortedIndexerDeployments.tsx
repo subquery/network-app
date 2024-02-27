@@ -119,7 +119,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
         const projectId =
           indexerDeployment?.__typename === 'IndexerDeployment'
             ? indexerDeployment.deployment?.project?.id
-            : indexerDeployment?.proejctId;
+            : indexerDeployment?.projectId;
 
         return {
           status: indexerDeployment?.__typename === 'IndexerAllocationSummary' ? undefined : indexerDeployment?.status,
