@@ -11,8 +11,9 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding: 40px;
-  max-width: 568px;
+  padding: 40px 0;
+  max-width: 582px;
+  width: 582px;
   gap: 10px;
 
   &Tabs {
@@ -34,13 +35,13 @@
       }
 
       .ant-tabs-ink-bar {
-        background: linear-gradient(96.26deg, #4388DD 13.8%, #FF4581 82.83%);
+        background: linear-gradient(96.26deg, #4388dd 13.8%, #ff4581 82.83%);
       }
     }
   }
 
   &Content {
-    border: 1px solid #DFE3E899;
+    border: 1px solid #dfe3e899;
     border-radius: 8px;
     padding: 24px;
     width: 100%;
@@ -52,8 +53,8 @@
     .smallCard {
       border-radius: 8px;
       border: 1px solid var(--sq-gray300);
-      width: 100%;
-      
+      width: 360px;
+
       .top {
         background: var(--sq-gray200);
         padding: 16px;
@@ -78,6 +79,9 @@
     .input {
       text-align: center;
       border: none;
+      width: 100%;
+      box-shadow: none;
+
       &:focus {
         border: none;
         outline: none;
@@ -87,6 +91,32 @@
       &:focus-visible {
         outline: none;
       }
+
+      :global {
+        .ant-input-number-input {
+          text-align: center;
+          border: none;
+          &-wrap {
+            &:focus {
+              border: none;
+              outline: none;
+              box-shadow: none;
+            }
+  
+            &:focus-visible {
+              outline: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.confirmModal {
+  :global {
+    .ant-modal-confirm-title {
+      font-family: var(--sq-font-family);
     }
   }
 }
