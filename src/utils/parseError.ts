@@ -122,7 +122,11 @@ export function parseError(
 
   const generalErrorMsg = () => {
     try {
-      captureException(error);
+      captureException('Unknown error, need review', {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
     } finally {
       return 'Unfortunately, something went wrong.';
     }
