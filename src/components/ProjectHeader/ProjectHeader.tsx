@@ -37,8 +37,8 @@ const ProjectHeader: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).fromNow(), [project]);
-  const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).fromNow(), [project]);
+  const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).utc(true).fromNow(), [project]);
+  const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).utc(true).fromNow(), [project]);
 
   const VersionDropdown = () => {
     if (!versions) return <></>;

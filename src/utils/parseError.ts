@@ -98,7 +98,15 @@ export function parseError(
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),
     ) as keyof typeof contractErrorCodes;
-    return revertCode ? contractErrorCodes[revertCode] : undefined;
+    try {
+      captureException('Call contract error revert, need review', {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
+    } finally {
+      return revertCode ? contractErrorCodes[revertCode] : undefined;
+    }
   };
 
   // https://github.com/ethers-io/ethers.js/discussions/1856
@@ -122,7 +130,11 @@ export function parseError(
 
   const generalErrorMsg = () => {
     try {
-      captureException(error);
+      captureException('Unknown error, need review', {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
     } finally {
       return 'Unfortunately, something went wrong.';
     }

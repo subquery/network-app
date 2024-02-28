@@ -1,11 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
-import { useAccount } from 'wagmi';
+import { base, baseSepolia } from 'viem/chains';
+import { mainnet, sepolia, useAccount } from 'wagmi';
 
 export const NETWORK_NAME: SQNetworks = import.meta.env.VITE_NETWORK;
 export const isMainnet = import.meta.env.VITE_NETWORK === 'mainnet';
@@ -15,6 +15,9 @@ export const defaultChainId = parseInt(NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].c
 export const ECOSYSTEM_NETWORK = NETWORKS_CONFIG_INFO[SUPPORTED_NETWORK].chainName;
 
 export const NETWORK_DEPLOYMENT_DETAILS = isMainnet ? mainnetJSON : testnetJSON;
+
+export const l1Chain = import.meta.env.VITE_NETWORK === 'testnet' ? sepolia : mainnet;
+export const l2Chain = import.meta.env.VITE_NETWORK === 'testnet' ? baseSepolia : base;
 
 // TODO: FIXME, Mainnet dont have this yet
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

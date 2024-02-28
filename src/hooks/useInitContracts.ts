@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { NETWORK_NAME } from '@containers/Web3';
-import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
-import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
+import { l1Chain, l2Chain, NETWORK_NAME } from '@containers/Web3';
+import { RootContractSDK } from '@subql/contract-sdk/rootSdk';
 import { ContractSDK } from '@subql/contract-sdk/sdk';
-import { SQToken__factory } from '@subql/contract-sdk/typechain/factories/contracts/root/SQToken__factory';
 import { ContractClient } from '@subql/network-clients';
 import { parseError } from '@utils';
-import { mainnet, sepolia } from 'viem/chains';
+import { base, baseSepolia, mainnet, sepolia } from 'viem/chains';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -23,12 +21,18 @@ export function useInitContracts(): { loading: boolean } {
   const ethereumProvider = useEthersProviderWithPublic({
     chainId: import.meta.env.MODE === 'testnet' ? sepolia.id : mainnet.id,
   });
+  const baseProvider = useEthersProviderWithPublic({
+    chainId: import.meta.env.MODE === 'testnet' ? baseSepolia.id : base.id,
+  });
 
   React.useEffect(() => {
     function initContract() {
       if (signer || provider) {
         try {
-          const contractInstance = ContractSDK.create(signer || provider, { network: NETWORK_NAME });
+          const contractInstance = ContractSDK.create(
+            signer?.provider.network.chainId === l2Chain.id ? signer : baseProvider,
+            { network: NETWORK_NAME },
+          );
 
           setContracts(contractInstance);
 
@@ -42,13 +46,10 @@ export function useInitContracts(): { loading: boolean } {
       }
 
       if (ethereumProvider) {
-        const sqTokenContract = SQToken__factory.connect(
-          import.meta.env.MODE === 'testnet' ? testnetJSON.root.SQToken.address : mainnetJSON.root.SQToken.address,
-          ethereumProvider,
+        const rootContractInstance = RootContractSDK.create(
+          signer?.provider.network.chainId === l1Chain.id ? signer : ethereumProvider,
+          { network: NETWORK_NAME },
         );
-        const rootContractInstance = {
-          sqToken: sqTokenContract,
-        };
         setRootContracts(rootContractInstance);
       }
     }

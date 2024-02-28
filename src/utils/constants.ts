@@ -85,8 +85,8 @@ export const rpcCategoriesOptions = [
     value: 'EVM',
   },
   {
-    label: 'Polkdot',
-    value: 'Polkdot',
+    label: 'Polkadot',
+    value: 'Polkadot',
   },
   {
     label: 'Cosmos',
