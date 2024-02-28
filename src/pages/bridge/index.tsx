@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { BsArrowDownSquareFill, BsLifePreserver } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
@@ -15,6 +15,7 @@ import { Footer, Modal, openNotification, Spinner, Steps, Typography } from '@su
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { formatEther, formatSQT } from '@subql/react-hooks';
+import { parseError } from '@utils';
 import { makeCacheKey } from '@utils/limitation';
 import { useInterval } from 'ahooks';
 import { Button, InputNumber, Tabs } from 'antd';
@@ -113,13 +114,15 @@ const BridgeInner: FC = () => {
     [key: string]: { status: MessageStatus; startTime?: number };
   }>({});
   const [currentTab, setCurrentTab] = useState<'ethToBase' | 'baseToEth'>('ethToBase');
+  // This state is used to prevent the fetchPendingActionStatus function from being called when finalizeMessage is called.
+  const shouldFetch = useRef(true);
 
   const cacheKey = useMemo(() => makeCacheKey(account || '', { prefix: 'pendingActionStatus' }), [account]);
 
   const sortedWithdrawRecords = useMemo(() => {
     return (
       withdrawsRecord.data?.withdraws.nodes.filter(({ txHash }) => {
-        const status = pendingActionStatus[txHash].status;
+        const status = pendingActionStatus[txHash]?.status;
         if (status === MessageStatus.RELAYED) {
           if (pendingActionStatus[txHash].startTime) {
             const durationTime = +dayjs() - (pendingActionStatus[txHash].startTime as number);
@@ -185,10 +188,9 @@ const BridgeInner: FC = () => {
       await ethSqtBalance.refetch();
       navigate('/bridge/success');
     } catch (e: any) {
-      console.error(e);
       openNotification({
         type: 'error',
-        description: e.message,
+        description: parseError(e.message),
       });
     } finally {
       setLoading(false);
@@ -215,10 +217,9 @@ const BridgeInner: FC = () => {
           duration: 5,
         });
       } catch (e: any) {
-        console.error(e);
         openNotification({
           type: 'error',
-          description: e.message,
+          description: parseError(e.message),
         });
       } finally {
         setStartL2BridgeLoading(false);
@@ -284,7 +285,7 @@ const BridgeInner: FC = () => {
   const fetchPendingActionStatus = async () => {
     if (!crossChainMessengerIns || !account) return;
 
-    const cachedStorage = await localforage.getItem<{ [key: string]: { status: MessageStatus; startTime: Date } }>(
+    const cachedStorage = await localforage.getItem<{ [key: string]: { status: MessageStatus; startTime?: number } }>(
       cacheKey,
     );
     const filterStatus = (tx: string) => {
@@ -298,10 +299,13 @@ const BridgeInner: FC = () => {
     };
     const sortedWithdrawsRecord = withdrawsRecord.data?.withdraws.nodes.filter((i) => filterStatus(i.txHash));
 
-    const innerPendingActionStatus: { [key: string]: { status: MessageStatus } } = {};
+    const innerPendingActionStatus: { [key: string]: { status: MessageStatus; startTime?: number } } = {};
     for (const item of sortedWithdrawsRecord || []) {
       const status = await crossChainMessengerIns.getMessageStatus(item.txHash);
       innerPendingActionStatus[item.txHash] = { status };
+      if (pendingActionStatus[item.txHash]?.startTime) {
+        innerPendingActionStatus[item.txHash]['startTime'] = pendingActionStatus[item.txHash].startTime;
+      }
     }
 
     const mergeFetchStatus = () => {
@@ -313,11 +317,17 @@ const BridgeInner: FC = () => {
           ...innerPendingActionStatus,
         };
       } catch (e) {
+        console.warn(e);
         return innerPendingActionStatus;
       }
     };
-    setPendingActionStatus(mergeFetchStatus());
-    await localforage.setItem(cacheKey, mergeFetchStatus());
+    if (shouldFetch.current) {
+      setPendingActionStatus(mergeFetchStatus());
+      await localforage.setItem(cacheKey, mergeFetchStatus());
+      // for next interval
+    } else {
+      shouldFetch.current = true;
+    }
   };
 
   const withdrawApproveOrFinalize = async (txHash: string) => {
@@ -334,10 +344,9 @@ const BridgeInner: FC = () => {
             duration: 3,
           });
         } catch (e: any) {
-          console.error(e);
           openNotification({
             type: 'error',
-            description: e.message,
+            description: parseError(e.message),
           });
         }
       }
@@ -358,11 +367,18 @@ const BridgeInner: FC = () => {
               startTime: +dayjs(),
             },
           });
+          setPendingActionStatus({
+            ...pendingActionStatus,
+            [txHash]: {
+              status: MessageStatus.RELAYED,
+              startTime: +dayjs(),
+            },
+          });
+          shouldFetch.current = false;
         } catch (e: any) {
-          console.error(e);
           openNotification({
             type: 'error',
-            description: e.message,
+            description: parseError(e.message),
           });
         }
       }
@@ -622,7 +638,8 @@ const BridgeInner: FC = () => {
                     }
 
                     return (
-                      btnMsgs[status] || `${Object.keys(pendingActionStatus).length === 0 ? 'Fetching status...' : ''}`
+                      btnMsgs[status] ||
+                      `${Object.keys(pendingActionStatus).length === 0 ? 'Fetching status...' : 'Unknown'}`
                     );
                   };
 

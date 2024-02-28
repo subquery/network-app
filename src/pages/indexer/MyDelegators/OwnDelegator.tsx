@@ -101,7 +101,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="medium" type="secondary">
-                  Capcity
+                  Capacity
                 </Typography>
                 <Typography variant="medium">
                   {formatNumber(sortedIndexer.data?.capacity.current || '0')} {TOKEN}
