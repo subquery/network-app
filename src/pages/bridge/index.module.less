@@ -113,8 +113,45 @@
   }
 }
 
+.pendingAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid #DFE3E899;
+  border-radius: 8px;
+  padding: 24px;
+  width: 100%;
+}
+
 .confirmModal {
   :global {
+    .ant-modal-content {
+      padding: 16px 32px;
+    }
+
+    .ant-modal-confirm-paragraph {
+      row-gap: 16px;
+    }
+
+    .ant-modal-confirm-content {
+      padding: 24px 0 0 0;
+      position: relative;
+      &::before {
+        content: ' ';
+        height: 1px;
+        width: 572px;
+        background: #F4F6F8;
+        position: absolute;
+        top: 0;
+        left: -32px;
+      }
+    }
+
+    .ant-modal-confirm-btns {
+      margin: 36px 0 16px 0;
+    }
+
     .ant-modal-confirm-title {
       font-family: var(--sq-font-family);
     }
