@@ -32,14 +32,16 @@ const SwapSuccess: FC = () => {
           </Typography.Link>
           . SubQuery can't be responsible for the use of any third party bridges
         </Typography>
-        <Typography variant="medium" type="secondary">
-          SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from Polygon to
-          Ethereum. This means that these bridge actions will cost you nothing.{' '}
-          <Typography.Link active href="https://blog.subquery.network/subquery-network-bridge-gas-rebate-program">
-            Read more and apply
-          </Typography.Link>
-          .
-        </Typography>
+        {Date.now() < 1710291600000 ? (
+          <Typography variant="medium" type="secondary">
+            SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from Polygon
+            to Ethereum. This means that these bridge actions will cost you nothing.{' '}
+            <Typography.Link active href="https://blog.subquery.network/subquery-network-bridge-gas-rebate-program">
+              Read the terms and apply
+            </Typography.Link>
+            .
+          </Typography>
+        ) : null}
         <a
           href="https://portal.polygon.technology/"
           target="_blank"
