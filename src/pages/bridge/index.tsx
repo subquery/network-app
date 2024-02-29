@@ -488,10 +488,23 @@ const BridgeInner: FC = () => {
               </div>
             </div>
 
-            <div className="col-flex" style={{ alignItems: 'center' }}>
+            <div className="col-flex" style={{ alignItems: 'center', rowGap: 16 }}>
               <Typography type="secondary" variant="small">
                 Transfer time: A few minutes
               </Typography>
+              {Date.now() < 1710291600000 ? (
+                <Typography type="secondary" variant="small" style={{ textAlign: 'center' }}>
+                  SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from
+                  Ethereum to Base. This means that these bridge actions will cost you nothing.{' '}
+                  <Typography.Link
+                    active
+                    href="https://blog.subquery.network/subquery-network-bridge-gas-rebate-program"
+                  >
+                    Read the terms and apply
+                  </Typography.Link>
+                  .
+                </Typography>
+              ) : null}
             </div>
 
             <Button
