@@ -99,11 +99,13 @@ export function parseError(
       rawErrorMsg.toString().match(`reverted: ${key}`),
     ) as keyof typeof contractErrorCodes;
     try {
-      captureException('Call contract error revert, need review', {
-        extra: {
-          error: rawErrorMsg,
-        },
-      });
+      if (rawErrorMsg.includes('code=') || rawErrorMsg.includes('"from"') || rawErrorMsg.includes('"to"')) {
+        captureException('Call contract error revert, need review', {
+          extra: {
+            error: rawErrorMsg,
+          },
+        });
+      }
     } finally {
       return revertCode ? contractErrorCodes[revertCode] : undefined;
     }

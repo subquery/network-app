@@ -51,6 +51,7 @@ const links = ApolloLink.from([
           graphqlError: graphQLErrors?.reduce((a, b) => ({ message: a.message + ' ' + b.message }), { message: '' })
             .message,
           operation: operation.query.loc?.source.body,
+          variable: operation.variables,
           url: url,
         },
       });
