@@ -19,6 +19,7 @@ import { parseError } from '@utils';
 import { makeCacheKey } from '@utils/limitation';
 import { useInterval } from 'ahooks';
 import { Button, InputNumber, Tabs } from 'antd';
+import BigNumber from 'bignumber.js';
 import { clsx } from 'clsx';
 import dayjs from 'dayjs';
 import { ethers } from 'ethers';
@@ -167,17 +168,22 @@ const BridgeInner: FC = () => {
         description: 'Starting bridge process, please wait...',
         duration: 5,
       });
-      const depositApproveTx = await crossChainMessengerIns.approveERC20(
-        l1ContractTokenAddress,
-        l2ContractTokenAddress,
-        amount,
-      );
-      openNotification({
-        type: 'info',
-        description: 'Approve success, please wait...',
-        duration: 3,
-      });
-      await depositApproveTx.wait();
+
+      const approvedAmount = await crossChainMessengerIns.approval(l1ContractTokenAddress, l2ContractTokenAddress);
+
+      if (BigNumber(formatSQT(approvedAmount.toString())).lt(BigNumber(val))) {
+        const depositApproveTx = await crossChainMessengerIns.approveERC20(
+          l1ContractTokenAddress,
+          l2ContractTokenAddress,
+          amount,
+        );
+        openNotification({
+          type: 'info',
+          description: 'Approve success, please wait...',
+          duration: 3,
+        });
+        await depositApproveTx.wait();
+      }
 
       const depositTx = await crossChainMessengerIns.depositERC20(
         l1ContractTokenAddress,
