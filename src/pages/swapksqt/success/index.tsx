@@ -23,10 +23,23 @@ const SwapSuccess: FC = () => {
           <Typography.Link active href="https://polygonscan.com/">
             Polygonscan.
           </Typography.Link>{' '}
-          SubQuery launched on Base network, To move assets from the Polygon network to Base network, you’ll need to
-          connect to a bridge to transfer your funds.
         </Typography>
-
+        <Typography variant="medium" type="secondary">
+          SubQuery Mainnet has launched on Base network, To move assets from the Polygon network to Base network, you’ll
+          need to connect to a bridge to transfer your funds. We recommend using official bridges like{' '}
+          <Typography.Link active href="https://portal.polygon.technology/bridge">
+            Polygon Portal
+          </Typography.Link>
+          . SubQuery can't be responsible for the use of any third party bridges
+        </Typography>
+        <Typography variant="medium" type="secondary">
+          SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from Polygon to
+          Ethereum. This means that these bridge actions will cost you nothing.{' '}
+          <Typography.Link active href="https://blog.subquery.network/subquery-network-bridge-gas-rebate-program">
+            Read more and apply
+          </Typography.Link>
+          .
+        </Typography>
         <a
           href="https://portal.polygon.technology/"
           target="_blank"
@@ -48,7 +61,7 @@ const SwapSuccess: FC = () => {
               height: '48px',
             }}
           >
-            Bridge Tokens
+            Bridge Tokens Now
             <BsBoxArrowInUpRight></BsBoxArrowInUpRight>
           </Button>
         </a>

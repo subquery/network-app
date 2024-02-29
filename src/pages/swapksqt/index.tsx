@@ -161,7 +161,11 @@ const SwapKsqtInner: FC = () => {
       </Typography>
 
       <Typography variant="medium" type="secondary">
-        You must swap remaining kSQT before the 31st Jan 2025.
+        You must swap remaining kSQT before the 31st Jan 2025. Read the user guide{' '}
+        <Typography.Link active href="https://academy.subquery.network/subquery_network/token/swap.html">
+          here
+        </Typography.Link>
+        .
       </Typography>
 
       <div style={{ display: 'flex', marginTop: 40, gap: 24 }}>
