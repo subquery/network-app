@@ -33,6 +33,8 @@ interface Props extends InputNumberProps {
   min?: number;
   onSubmit: (value: any) => void;
   onError?: () => void;
+  description?: string;
+  extra?: React.ReactNode;
 }
 
 export const ModalInput: React.FC<Props> = ({

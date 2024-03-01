@@ -37,14 +37,13 @@ export const networkLink = getDecentraliseLink(
 );
 
 const links = ApolloLink.from([
-  onError(({ graphQLErrors, operation }) => {
+  onError(({ graphQLErrors, operation, networkError }) => {
     // Filter consumer by community.
     // If community link goes error, apollo-links will try until all failed.
     // So Just catch the error caused by fallback service.
     try {
       const res = operation.getContext();
       const url = res?.response?.url || res.url;
-
       if (url && url.match(/.+\/(query)|(payg)\/[0-9a-zA-Z]{46}/)) return;
       captureException(`Query fetch`, {
         extra: {
@@ -53,6 +52,8 @@ const links = ApolloLink.from([
           operation: operation.query.loc?.source.body,
           variable: operation.variables,
           url: url,
+          networkMsg: networkError?.message,
+          networkName: networkError?.name,
         },
       });
     } catch {

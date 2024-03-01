@@ -21,6 +21,7 @@ export function useLockPeriod(): AsyncData<number> {
     assert(contracts, 'Contracts not available');
 
     const lockPeriod = await contracts.staking.lockPeriod();
+
     return convertBigNumberToNumber(lockPeriod);
   }, [contracts]);
 }

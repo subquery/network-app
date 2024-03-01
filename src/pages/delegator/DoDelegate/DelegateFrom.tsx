@@ -11,6 +11,7 @@ import { Typography } from '@subql/components';
 import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
+import BignumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Form, Formik } from 'formik';
@@ -19,7 +20,7 @@ import * as yup from 'yup';
 import { IndexerDetails } from 'src/models';
 
 import { SummaryList } from '../../../components';
-import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
+import { Avatar, ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
@@ -34,6 +35,7 @@ export const AddressName: React.FC<{
 }> = ({ curAccount, address, metadata }) => {
   return (
     <div className={clsx('flex-start', styles.option)}>
+      <Avatar address={address || ''}></Avatar>
       <div className="col-flex">
         <Typography style={{ marginBottom: 4 }}>
           {address === curAccount ? 'Your Wallet ' : metadata?.name ?? 'Indexer'}
@@ -62,6 +64,7 @@ type FormProps = {
   error?: string;
   curEra?: number;
   indexerMetadataCid?: string;
+  styleMode?: 'normal' | 'simple';
 };
 
 export const DelegateForm: React.FC<FormProps> = ({
@@ -73,6 +76,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   onCancel,
   error,
   indexerMetadataCid,
+  styleMode = 'normal',
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -143,6 +147,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const summaryList = [
     {
       label: t('delegate.to'),
+      key: 'indexerInfo',
       value: (
         <ConnectedIndexer
           id={indexerAddress}
@@ -163,7 +168,11 @@ export const DelegateForm: React.FC<FormProps> = ({
       value: ` ${delegatedAmount} ${TOKEN}`,
       tooltip: t('delegate.existingDelegationTooltip'),
     },
-  ];
+  ].filter((i) => {
+    if (styleMode === 'normal') return true;
+    if (styleMode === 'simple' && i.key === 'indexerInfo') return false;
+    return true;
+  });
 
   const initDelegations = async () => {
     if (!account) return;
@@ -229,16 +238,25 @@ export const DelegateForm: React.FC<FormProps> = ({
         return (
           <Form>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <SummaryList list={summaryList} />
-              <Divider className={styles.divider} />
-
-              <div className={styles.select}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                  <Typography>{t('delegate.from')} </Typography>
-                  <Tooltip title={t('delegate.selectTooltip')}>
-                    <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
-                  </Tooltip>
-                </div>
+              {styleMode === 'normal' && (
+                <>
+                  <SummaryList list={summaryList} />
+                  <Divider style={{ marginTop: 0 }} />
+                </>
+              )}
+              <div
+                style={{
+                  marginBottom: styleMode === 'simple' ? 0 : '24px',
+                }}
+              >
+                {styleMode === 'normal' && (
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                    <Typography>{t('delegate.from')} </Typography>
+                    <Tooltip title={t('delegate.selectTooltip')}>
+                      <BsExclamationCircle style={{ marginLeft: 6, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
+                    </Tooltip>
+                  </div>
+                )}
                 <Select
                   id="delegator"
                   value={delegateFrom}
@@ -263,7 +281,10 @@ export const DelegateForm: React.FC<FormProps> = ({
                     } ${option?.value.toLowerCase()}`;
                     return searchLabel.includes(input.toLowerCase());
                   }}
+                  style={{ height: 'auto' }}
                 ></Select>
+
+                {styleMode === 'simple' && <SummaryList list={summaryList}></SummaryList>}
               </div>
 
               <div className={'fullWidth'}>
@@ -311,12 +332,25 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
+              <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
+                <Typography type="secondary" variant="medium">
+                  Total Delegation to {indexerMetadata.name} after change
+                </Typography>
+
+                <Typography>
+                  {BignumberJs(delegatedAmount || 0)
+                    .plus(values.input || 0)
+                    .toFixed(2)}{' '}
+                  {TOKEN}
+                </Typography>
+              </div>
+
               <div className={clsx('flex', 'flex-end')}>
                 <Button
                   onClick={submitForm}
                   loading={isSubmitting}
                   disabled={!isValid || isSubmitting}
-                  className={!isValid || isSubmitting ? 'disabledButton' : 'button'}
+                  className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}
                   type="primary"
                   shape="round"
                   size="large"

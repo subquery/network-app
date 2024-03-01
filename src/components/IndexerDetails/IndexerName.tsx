@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Typography } from '@subql/components';
 import { limitQueue } from '@utils/limitation';
 import { toSvg } from 'jdenticon';
@@ -74,14 +74,7 @@ export const IndexerName: React.FC<Props> = ({
         onClick?.(address);
       }}
     >
-      <IPFSImage
-        src={image}
-        renderPlaceholder={() => (
-          <div>
-            <img src={`data:image/svg+xml;utf8,${encodeURIComponent(toSvg(address, sizeDict[size]))}`} alt="" />
-          </div>
-        )}
-      />
+      <IPFSImage src={image} renderPlaceholder={() => <Avatar size={size} address={address}></Avatar>} />
 
       <div className={styles.indexerText}>
         {sortedName && (
@@ -129,5 +122,13 @@ export const ConnectedIndexer: React.FC<{
       onAddressClick={onAddressClick}
       onClick={onClick}
     />
+  );
+};
+
+export const Avatar: FC<{ address?: string; size?: 'large' | 'normal' }> = ({ address, size = 'normal' }) => {
+  return (
+    <div>
+      <img src={`data:image/svg+xml;utf8,${encodeURIComponent(toSvg(address, sizeDict[size]))}`} alt="" />
+    </div>
   );
 };

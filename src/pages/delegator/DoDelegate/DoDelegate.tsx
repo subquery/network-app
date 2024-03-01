@@ -54,9 +54,10 @@ interface DoDelegateProps {
   variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
   delegation?: DelegationFieldsFragment | null;
   indexer?: IndexerFieldsFragment | null;
+  btnText?: string;
 }
 
-export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant, delegation, indexer }) => {
+export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant, delegation, indexer, btnText }) => {
   const { t } = useTranslation();
   const { currentEra, refetch } = useEra();
   const { account } = useWeb3();
@@ -162,7 +163,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
     ),
     loading: () => <Spinner />,
     data: (era) => {
-      // const requireClaimIndexerRewards = !r?.hasClaimedRewards;
       // if doesn't login will enter wallerRoute logical code process
       const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
 
@@ -171,7 +171,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
           text={modalText}
           actions={[
             {
-              label: t('delegate.title'),
+              label: btnText || t('delegate.title'),
               key: 'delegate',
               disabled: fetchRequireClaimIndexerRewardsLoading || isActionDisabled,
               rightItem: fetchRequireClaimIndexerRewardsLoading ? (
@@ -180,6 +180,15 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
               onClick: async () => {
                 try {
                   setFetchRequireClaimIndexerRewardsLoading(true);
+
+                  if (!indexer) {
+                    await getIndexerLazy();
+                  }
+
+                  if (!delegation) {
+                    await getDelegationLazy();
+                  }
+
                   const res = await rewardClaimStatus.refetch();
                   setRequireClaimIndexerRewards(!res);
                 } finally {
