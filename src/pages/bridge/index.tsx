@@ -493,7 +493,7 @@ const BridgeInner: FC = () => {
                 Transfer time: A few minutes
               </Typography>
               {Date.now() < 1710291600000 ? (
-                <Typography type="secondary" variant="small" style={{ textAlign: 'center' }}>
+                <Typography type="secondary" variant="medium" style={{ textAlign: 'center' }}>
                   SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from
                   Ethereum to Base. This means that these bridge actions will cost you nothing.{' '}
                   <Typography.Link
@@ -538,23 +538,14 @@ const BridgeInner: FC = () => {
         {currentTab === 'baseToEth' && (
           <>
             <div className={styles.bridgeContent}>
-              <div className="col-flex" style={{ alignItems: 'center', gap: 8 }}>
-                <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
-                  OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do
-                  not want to wait for the required 7 days, please consider a{' '}
-                  <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
-                    third party bridge
-                  </a>
-                  .
-                </Typography>
-
+              <div className="col-flex" style={{ alignItems: 'center', gap: 8, minWidth: 500 }}>
                 <Steps
                   steps={[
                     {
                       title: 'Start on Base',
                     },
                     {
-                      title: 'Confirm on Ethereum',
+                      title: 'Ethereum Confirm',
                     },
                     {
                       title: 'Withdraw',
@@ -602,6 +593,22 @@ const BridgeInner: FC = () => {
                     {val || '0'}
                   </Typography>
                 </div>
+              </div>
+
+              <div className="col-flex" style={{ alignItems: 'center', rowGap: 16 }}>
+                <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
+                  OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do
+                  not want to wait for the required 7 days, please consider a{' '}
+                  <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
+                    third party bridge
+                  </a>
+                  .
+                </Typography>
+                {Date.now() < 1710291600000 ? (
+                  <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
+                    Once you initiate this bridge action and confirm the withdraw, it cannot be cancelled.
+                  </Typography>
+                ) : null}
               </div>
 
               <Button
