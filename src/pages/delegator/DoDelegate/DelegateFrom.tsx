@@ -8,7 +8,13 @@ import { useNavigate } from 'react-router';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { Typography } from '@subql/components';
-import { useGetDelegationQuery, useGetDelegationsLazyQuery } from '@subql/react-hooks';
+import { IndexerFieldsFragment } from '@subql/network-query';
+import {
+  formatSQT,
+  useGetDelegationQuery,
+  useGetDelegationsLazyQuery,
+  useGetIndexersLazyQuery,
+} from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import BignumberJs from 'bignumber.js';
@@ -25,7 +31,7 @@ import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
-import { convertStringToNumber, formatEther, TOKEN } from '../../../utils';
+import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
 import styles from './DoDelegate.module.less';
 
 export const AddressName: React.FC<{
@@ -64,7 +70,7 @@ type FormProps = {
   error?: string;
   curEra?: number;
   indexerMetadataCid?: string;
-  styleMode?: 'normal' | 'simple';
+  styleMode?: 'normal' | 'reDelegate';
 };
 
 export const DelegateForm: React.FC<FormProps> = ({
@@ -79,6 +85,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   styleMode = 'normal',
 }) => {
   const { t } = useTranslation();
+  const { balance } = useSQToken();
   const navigate = useNavigate();
   const { account } = useWeb3();
   const fetchMetadata = useFetchMetadata();
@@ -90,13 +97,17 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
-  const { balance } = useSQToken();
+
+  const [getAllIndexersLazy, rawAllIndexersInfo] = useGetIndexersLazyQuery();
 
   const [delegationOptions, setDelegationOptions] = React.useState<
     { label: React.ReactNode; value: string; name?: string }[]
   >([]);
-  const [delegateFrom, setDelegateFrom] = React.useState(account);
+  const [delegateFrom, setDelegateFrom] = React.useState<string>(account || '');
   const [selectedOption, setSelectedOption] = React.useState<(typeof delegationOptions)[number]>();
+  const [allIndexers, setAllIndexers] = React.useState<IndexerFieldsFragment[]>([]);
+  const [formInitialValues, setFormInitialValues] = React.useState<DelegateFormData>({ input: 0, delegator: account });
+  const allIndexerPagination = React.useRef({ offset: 0, first: 10, searchKeyword: '' });
 
   const indexerDelegation = useGetDelegationQuery({
     variables: {
@@ -123,11 +134,15 @@ export const DelegateForm: React.FC<FormProps> = ({
       maxAmount = indexerDelegation?.after;
     }
 
+    if (styleMode === 'reDelegate') {
+      return delegatedAmount ?? '0';
+    }
+
     return formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
-  }, [isYourself, balance, getIndexerDelegation]);
+  }, [isYourself, balance, getIndexerDelegation, delegatedAmount, styleMode]);
 
   const maxAmountText = React.useMemo(() => {
-    if (isYourself) {
+    if (isYourself && styleMode !== 'reDelegate') {
       return (
         <>
           {t('delegate.walletBalance', {
@@ -142,37 +157,47 @@ export const DelegateForm: React.FC<FormProps> = ({
       balance: sortedMaxAmount,
       token: TOKEN,
     });
-  }, [isYourself, sortedMaxAmount, TOKEN, balance]);
+  }, [isYourself, sortedMaxAmount, TOKEN, balance, styleMode]);
 
-  const summaryList = [
-    {
-      label: t('delegate.to'),
-      key: 'indexerInfo',
-      value: (
-        <ConnectedIndexer
-          id={indexerAddress}
-          onClick={() => {
-            navigate(`/indexer/${indexerAddress}`);
-          }}
-        />
-      ),
-      strong: true,
-    },
-    {
-      label: t('delegate.remainingCapacity'),
-      value: ` ${formatEther(indexerCapacity, 4)} ${TOKEN}`,
-      tooltip: t('delegate.remainingTooltip'),
-    },
-    {
-      label: t('delegate.existingDelegation'),
-      value: ` ${delegatedAmount} ${TOKEN}`,
-      tooltip: t('delegate.existingDelegationTooltip'),
-    },
-  ].filter((i) => {
-    if (styleMode === 'normal') return true;
-    if (styleMode === 'simple' && i.key === 'indexerInfo') return false;
-    return true;
-  });
+  const summaryList = React.useMemo(() => {
+    const capacity =
+      styleMode === 'normal'
+        ? indexerCapacity
+        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0';
+
+    const delegated =
+      styleMode === 'normal' ? delegatedAmount : formatSQT(getIndexerDelegation()?.after?.toString() || '0');
+
+    return [
+      {
+        label: t('delegate.to'),
+        key: 'indexerInfo',
+        value: (
+          <ConnectedIndexer
+            id={indexerAddress}
+            onClick={() => {
+              navigate(`/indexer/${indexerAddress}`);
+            }}
+          />
+        ),
+        strong: true,
+      },
+      {
+        label: t('delegate.remainingCapacity'),
+        value: ` ${formatEther(capacity, 4)} ${TOKEN}`,
+        tooltip: t('delegate.remainingTooltip'),
+      },
+      {
+        label: t('delegate.existingDelegation'),
+        value: ` ${delegated} ${TOKEN}`,
+        tooltip: t('delegate.existingDelegationTooltip'),
+      },
+    ].filter((i) => {
+      if (styleMode === 'normal') return true;
+      if (styleMode === 'reDelegate' && i.key === 'indexerInfo') return false;
+      return true;
+    });
+  }, [indexerCapacity, delegatedAmount, styleMode, indexerAddress, selectedOption, getIndexerDelegation]);
 
   const initDelegations = async () => {
     if (!account) return;
@@ -221,19 +246,65 @@ export const DelegateForm: React.FC<FormProps> = ({
     }
   };
 
+  const fetchAllIndexers = async (mode?: 'merge' | 'reset') => {
+    if (rawAllIndexersInfo.loading) return;
+    if (styleMode === 'reDelegate') {
+      const res = await getAllIndexersLazy({
+        variables: {
+          ...allIndexerPagination.current,
+          filter: {
+            active: { equalTo: true },
+            id: {
+              notInInsensitive: [account || '', indexerAddress],
+              includesInsensitive: allIndexerPagination.current.searchKeyword,
+            },
+          },
+        },
+      });
+      const sortedRes =
+        mode === 'merge'
+          ? [...allIndexers, ...(res.data?.indexers?.nodes.filter(notEmpty) || [])]
+          : res.data?.indexers?.nodes.filter(notEmpty) || [];
+      setAllIndexers(sortedRes);
+      const options = sortedRes.map((item) => {
+        return {
+          label: (
+            <AddressName
+              curAccount={account || ''}
+              address={item.id}
+              metadata={{ name: item.id, url: '', image: '' }}
+            />
+          ),
+          value: item.id,
+          name: item.id,
+        };
+      });
+      setDelegationOptions(options);
+      if (options[0] && !selectedOption) {
+        setSelectedOption(options[0]);
+        setDelegateFrom(options[0].value || account || '');
+        setFormInitialValues({
+          input: 0,
+          delegator: options[0].value || '',
+        });
+      }
+    }
+  };
+
   React.useEffect(() => {
-    initDelegations();
-  }, [account]);
+    if (styleMode !== 'reDelegate') {
+      initDelegations();
+    }
+  }, [account, styleMode]);
+
+  React.useEffect(() => {
+    if (styleMode === 'reDelegate') {
+      fetchAllIndexers('reset');
+    }
+  }, [styleMode]);
 
   return (
-    <Formik
-      initialValues={{
-        input: 0,
-        delegator: '',
-      }}
-      validationSchema={delegateSchema}
-      onSubmit={onSubmit}
-    >
+    <Formik initialValues={formInitialValues} validationSchema={delegateSchema} onSubmit={onSubmit} enableReinitialize>
       {({ submitForm, isValid, isSubmitting, setFieldValue, setErrors, values, resetForm }) => {
         return (
           <Form>
@@ -246,7 +317,7 @@ export const DelegateForm: React.FC<FormProps> = ({
               )}
               <div
                 style={{
-                  marginBottom: styleMode === 'simple' ? 0 : '24px',
+                  marginBottom: styleMode === 'reDelegate' ? 0 : '24px',
                 }}
               >
                 {styleMode === 'normal' && (
@@ -270,21 +341,44 @@ export const DelegateForm: React.FC<FormProps> = ({
                     }
                   }}
                   className={clsx('fullWidth', styles.delegatorSelect)}
-                  loading={indexerDeployments.loading}
+                  loading={styleMode === 'reDelegate' ? rawAllIndexersInfo.loading : indexerDeployments.loading}
                   size="large"
                   disabled={isSubmitting}
                   options={delegationOptions}
                   showSearch
-                  filterOption={(input, option) => {
-                    const searchLabel = `${
-                      option?.name?.toString().toLowerCase() || 'your wallet'
-                    } ${option?.value.toLowerCase()}`;
-                    return searchLabel.includes(input.toLowerCase());
+                  filterOption={
+                    styleMode === 'normal'
+                      ? (input, option) => {
+                          const searchLabel = `${
+                            option?.name?.toString().toLowerCase() || 'your wallet'
+                          } ${option?.value.toLowerCase()}`;
+                          return searchLabel.includes(input.toLowerCase());
+                        }
+                      : false
+                  }
+                  onSearch={(val) => {
+                    if (styleMode === 'reDelegate') {
+                      allIndexerPagination.current.searchKeyword = val;
+                      fetchAllIndexers('reset');
+                    }
+                  }}
+                  onPopupScroll={(e) => {
+                    const target = e.target as HTMLDivElement;
+                    const reachedBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+
+                    if (
+                      reachedBottom &&
+                      !rawAllIndexersInfo.loading &&
+                      rawAllIndexersInfo.data?.indexers?.pageInfo.hasNextPage
+                    ) {
+                      allIndexerPagination.current.offset += allIndexerPagination.current.first;
+                      fetchAllIndexers('merge');
+                    }
                   }}
                   style={{ height: 'auto' }}
                 ></Select>
 
-                {styleMode === 'simple' && <SummaryList list={summaryList}></SummaryList>}
+                {styleMode === 'reDelegate' && <SummaryList list={summaryList}></SummaryList>}
               </div>
 
               <div className={'fullWidth'}>
@@ -332,18 +426,20 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
-              <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
-                <Typography type="secondary" variant="medium">
-                  Total Delegation to {indexerMetadata.name} after change
-                </Typography>
+              {styleMode === 'normal' && (
+                <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
+                  <Typography type="secondary" variant="medium">
+                    Total Delegation to {indexerMetadata.name} after change
+                  </Typography>
 
-                <Typography>
-                  {BignumberJs(delegatedAmount || 0)
-                    .plus(values.input || 0)
-                    .toFixed(2)}{' '}
-                  {TOKEN}
-                </Typography>
-              </div>
+                  <Typography>
+                    {BignumberJs(delegatedAmount || 0)
+                      .plus(values.input || 0)
+                      .toFixed(2)}{' '}
+                    {TOKEN}
+                  </Typography>
+                </div>
+              )}
 
               <div className={clsx('flex', 'flex-end')}>
                 <Button
@@ -355,7 +451,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                   shape="round"
                   size="large"
                 >
-                  {t('delegate.title')}
+                  {styleMode === 'normal' ? t('delegate.title') : 'Redelegate'}
                 </Button>
               </div>
             </div>

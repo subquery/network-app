@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { gql, useLazyQuery } from '@apollo/client';
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput, NumberInput } from '@components';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput } from '@components';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
+import { isString } from 'lodash-es';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -32,21 +33,13 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
   return {
     title: t('delegate.undelegate'),
     steps: [t('delegate.undelegate'), t('indexer.confirmOnMetamask')],
-    // description: t('delegate.undelegateValidNextEra', {
-    //   duration: `${dayjs
-    //     .duration(+(lockPeriod || 0), 'seconds')
-    //     .as('hours')
-    //     .toPrecision(3)} hours`,
-    // }),
-    // inputTitle: t('delegate.undelegateAmount'),
-    // submitText: t('delegate.confirmUndelegate'),
-    // failureText: 'Sorry, fail to undelegate.',
   };
 };
 
 interface DoUndelegateProps {
   indexerAddress: string;
   variant?: 'button' | 'textBtn';
+  onSuccess?: () => void;
 }
 
 /**
@@ -54,7 +47,7 @@ interface DoUndelegateProps {
  * NOTE: USED Under Stake Tab and Delegator Tab(V2)
  * TODO: review once container upgrade from renovation
  */
-export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, variant = 'textBtn' }) => {
+export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSuccess, variant = 'textBtn' }) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -78,7 +71,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
       fetchPolicy: 'network-only',
     },
   );
-  const { currentEra, refetch } = useEra();
+  const { currentEra } = useEra();
 
   const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>('myWallet');
 
@@ -106,12 +99,17 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
     return indexerCapacity;
   }, [indexerDataLazy.data, currentEra]);
 
-  const handleClick = async (amount: string) => {
+  const handleClick = async (amount: string | { input: string; delegator: string }) => {
     assert(contracts, 'Contracts not available');
+    const amountVal = isString(amount) ? parseEther(amount) : parseEther(amount.input);
+    if (undelegateWay === 'myWallet') {
+      const pendingTx = contracts.stakingManager.undelegate(indexerAddress, amountVal);
+      return pendingTx;
+    }
+    // if reache this code, the type of amount should be { input: string; delegator: string }
+    const toAddress = isString(amount) ? '' : amount.delegator;
 
-    const delegateAmount = parseEther(amount.toString());
-    const pendingTx = contracts.stakingManager.undelegate(indexerAddress, delegateAmount);
-
+    const pendingTx = contracts.stakingManager.redelegate(indexerAddress, toAddress, amountVal);
     return pendingTx;
   };
 
@@ -147,6 +145,9 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
                 ]
           }
           onClick={handleClick}
+          onSuccess={() => {
+            onSuccess?.();
+          }}
           renderContent={(onSubmit, onCancel, loading, error) => {
             if (requireClaimIndexerRewards) {
               return (
@@ -192,13 +193,14 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
                         availableBalance ?? '0',
                       )} ${TOKEN}`}
                       submitText="Undelegate"
+                      isLoading={loading}
                     ></ModalInput>
                   </div>
                 )}
 
                 {undelegateWay === 'anotherIndexer' && (
                   <div>
-                    <Typography style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Typography style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                       Redelegate to
                       <Tooltip title="Choose a indexer to redelegate. You can either scroll through the list or use the search bar to find a specific indexer.">
                         <BsExclamationCircle style={{ fontSize: 14, color: 'var(--sq-gray500)' }}></BsExclamationCircle>
@@ -214,7 +216,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, vari
                       indexerMetadataCid={indexerDataLazy.data?.metadata}
                       error={error}
                       curEra={currentEra.data?.index}
-                      styleMode="simple"
+                      styleMode="reDelegate"
                     />
                   </div>
                 )}

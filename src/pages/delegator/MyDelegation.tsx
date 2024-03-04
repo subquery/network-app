@@ -16,6 +16,7 @@ import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@ho
 import { Spinner, TableTitle } from '@subql/components';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
+import { retry } from '@utils/retry';
 import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
@@ -25,7 +26,7 @@ import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
 
-const useGetColumn = () => {
+const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
   const getColumns = (
     t: TFunction,
@@ -98,11 +99,13 @@ const useGetColumn = () => {
             menu={{
               items: [
                 {
-                  label: <DoDelegate indexerAddress={id} variant="textBtn" btnText="Delegate more" />,
+                  label: (
+                    <DoDelegate onSuccess={onSuccess} indexerAddress={id} variant="textBtn" btnText="Delegate more" />
+                  ),
                   key: 'delegate',
                 },
                 {
-                  label: <DoUndelegate indexerAddress={id} />,
+                  label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
                   key: 'Undelegate',
                 },
               ],
@@ -126,18 +129,33 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const delegating = useDelegating(account ?? '');
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
-  const { getColumns } = useGetColumn();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
 
   // TODO: refresh when do some actions.
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
+    fetchPolicy: 'network-only',
+  });
+
+  const { getColumns } = useGetColumn({
+    onSuccess: () => {
+      retry(
+        () => {
+          delegations.refetch();
+        },
+        {
+          retryTime: 3,
+        },
+      );
+    },
   });
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
         .filter(notEmpty)
+        // TODO: sort by GraphQL
+        .sort((a, b) => (`${a.id}` > `${b.id}` ? -1 : 1))
         .map((delegation) => ({
           value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
             formatEther(v ?? 0),

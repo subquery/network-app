@@ -55,9 +55,17 @@ interface DoDelegateProps {
   delegation?: DelegationFieldsFragment | null;
   indexer?: IndexerFieldsFragment | null;
   btnText?: string;
+  onSuccess?: () => void;
 }
 
-export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant, delegation, indexer, btnText }) => {
+export const DoDelegate: React.FC<DoDelegateProps> = ({
+  indexerAddress,
+  variant,
+  delegation,
+  indexer,
+  btnText,
+  onSuccess,
+}) => {
   const { t } = useTranslation();
   const { currentEra, refetch } = useEra();
   const { account } = useWeb3();
@@ -202,6 +210,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({ indexerAddress, variant,
               getDelegationLazy();
               getIndexerLazy();
             });
+            onSuccess?.();
           }}
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {
