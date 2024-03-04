@@ -130,6 +130,12 @@ export function parseError(
     return;
   };
 
+  const insufficientFunds = () => {
+    if (rawErrorMsg.toString().match('insufficient funds for transfer')) {
+      return 'Insufficient funds for this transaction. Please check your balance.';
+    }
+  };
+
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
@@ -154,6 +160,7 @@ export function parseError(
     userDeniedSignature() ??
     callRevert() ??
     RpcUnavailableMsg() ??
+    insufficientFunds() ??
     options.defaultGeneralMsg ??
     generalErrorMsg()
   );

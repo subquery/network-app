@@ -373,7 +373,6 @@ const BridgeInner: FC = () => {
       if (pendingActionStatus[txHash]?.status === MessageStatus.READY_TO_PROVE) {
         try {
           const { maxFeePerGas, maxPriorityFeePerGas } = await getMaxLimitation();
-
           const approveTx = await crossChainMessengerIns.proveMessage(txHash, {
             overrides: {
               maxFeePerGas: maxFeePerGas.toString(),
