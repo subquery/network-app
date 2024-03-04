@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
+import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
@@ -15,16 +16,17 @@ import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@ho
 import { Spinner, TableTitle } from '@subql/components';
 import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
-import { Table, TableProps, Tag, Typography } from 'antd';
-import clsx from 'clsx';
+import { retry } from '@utils/retry';
+import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
 
+import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
 
-const useGetColumn = () => {
+const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
   const getColumns = (
     t: TFunction,
@@ -61,6 +63,7 @@ const useGetColumn = () => {
           key: 'currentValue',
           width: 100,
           render: (text: string) => <TokenAmount value={text} />,
+          sorter: (a, b) => +(a.value.current || 0) - (+b.value.current || 0),
         },
         {
           title: <TableTitle title={t('delegate.nextEra')} />,
@@ -68,6 +71,7 @@ const useGetColumn = () => {
           key: 'afterValue',
           width: 100,
           render: (text: string) => <TokenAmount value={text} />,
+          sorter: (a, b) => +(a.value.after || 0) - +(b.value.after || 0),
         },
       ],
     },
@@ -90,13 +94,26 @@ const useGetColumn = () => {
       fixed: 'right',
       width: 100,
       render: (id: string, record) => {
-        if ((record?.value?.after ?? 0) === 0) {
-          return (
-            <Typography className={clsx('grayText', styles.nonDelegateBtn)}>0 delegation for next era.</Typography>
-          );
-        } else {
-          return <DoUndelegate indexerAddress={id} />;
-        }
+        return (
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  label: (
+                    <DoDelegate onSuccess={onSuccess} indexerAddress={id} variant="textBtn" btnText="Delegate more" />
+                  ),
+                  key: 'delegate',
+                },
+                {
+                  label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
+                  key: 'Undelegate',
+                },
+              ],
+            }}
+          >
+            <OutlineDot></OutlineDot>
+          </Dropdown>
+        );
       },
     },
   ];
@@ -112,18 +129,33 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const delegating = useDelegating(account ?? '');
   const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
-  const { getColumns } = useGetColumn();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
 
   // TODO: refresh when do some actions.
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
+    fetchPolicy: 'network-only',
+  });
+
+  const { getColumns } = useGetColumn({
+    onSuccess: () => {
+      retry(
+        () => {
+          delegations.refetch();
+        },
+        {
+          retryTime: 3,
+        },
+      );
+    },
   });
 
   const delegationList = mapAsync(
     ([delegations, era]) =>
       delegations?.delegations?.nodes
         .filter(notEmpty)
+        // TODO: sort by GraphQL
+        .sort((a, b) => (`${a.id}` > `${b.id}` ? -1 : 1))
         .map((delegation) => ({
           value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
             formatEther(v ?? 0),

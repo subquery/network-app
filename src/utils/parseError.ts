@@ -99,7 +99,7 @@ export function parseError(
       rawErrorMsg.toString().match(`reverted: ${key}`),
     ) as keyof typeof contractErrorCodes;
     try {
-      if (rawErrorMsg.includes('code=') || rawErrorMsg.includes('"from"') || rawErrorMsg.includes('"to"')) {
+      if (rawErrorMsg.includes('code=') || rawErrorMsg.includes('"from"')) {
         captureException('Call contract error revert, need review', {
           extra: {
             error: rawErrorMsg,
@@ -132,11 +132,13 @@ export function parseError(
 
   const generalErrorMsg = () => {
     try {
-      captureException('Unknown error, need review', {
-        extra: {
-          error: rawErrorMsg,
-        },
-      });
+      if (!rawErrorMsg.includes('Failed to fetch')) {
+        captureException('Unknown error, need review', {
+          extra: {
+            error: rawErrorMsg,
+          },
+        });
+      }
     } finally {
       return 'Unfortunately, something went wrong.';
     }
@@ -149,10 +151,10 @@ export function parseError(
   return (
     mappingError() ??
     mapContractError() ??
-    callRevert() ??
     userDeniedSignature() ??
-    options.defaultGeneralMsg ??
+    callRevert() ??
     RpcUnavailableMsg() ??
+    options.defaultGeneralMsg ??
     generalErrorMsg()
   );
 }

@@ -3,13 +3,13 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineEllipsis } from 'react-icons/ai';
 import {
   claimIndexerRewardsModalText,
   ModalApproveToken,
   ModalClaimIndexerRewards,
   tokenApprovalModalText,
 } from '@components';
+import { OutlineDot } from '@components/Icons/Icons';
 import TransactionModal from '@components/TransactionModal';
 import { TransactionModalAction, TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
@@ -25,8 +25,6 @@ import dayjs from 'dayjs';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
-
-import styles from './DoStake.module.less';
 
 enum StakeAction {
   Stake = 'stake',
@@ -189,9 +187,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
               ],
             }}
           >
-            <div className={styles.stakeAction}>
-              <AiOutlineEllipsis></AiOutlineEllipsis>
-            </div>
+            <OutlineDot></OutlineDot>
           </Dropdown>
           <TransactionModal
             ref={modalRef}

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineEllipsis } from 'react-icons/ai';
+import { OutlineDot } from '@components/Icons/Icons';
 import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { Spinner, Typography } from '@subql/components';
 import { Button, Dropdown } from 'antd';
@@ -18,8 +18,6 @@ import { useWeb3 } from '../../../../containers';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
-// TODO: make this kind of style into components library
-import styles from '../DoStake/DoStake.module.less';
 
 const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
   if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
@@ -78,7 +76,6 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
                   ),
                   key: 1,
                   onClick: () => {
-                    console.warn(123123);
                     if (modalRef.current) {
                       modalRef.current.showModal('commission');
                     }
@@ -87,9 +84,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
               ],
             }}
           >
-            <div className={styles.stakeAction}>
-              <AiOutlineEllipsis></AiOutlineEllipsis>
-            </div>
+            <OutlineDot></OutlineDot>
           </Dropdown>
           <TransactionModal
             ref={modalRef}

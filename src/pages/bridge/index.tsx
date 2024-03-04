@@ -170,12 +170,26 @@ const BridgeInner: FC = () => {
       });
 
       const approvedAmount = await crossChainMessengerIns.approval(l1ContractTokenAddress, l2ContractTokenAddress);
+      const { gasPrice, lastBaseFeePerGas } = (await signer?.getFeeData()) || {};
+      const _gasPrice = BigNumber(gasPrice?.toString() || '0');
+      const _lastBaseFeePerGas = BigNumber(lastBaseFeePerGas?.toString() || '0');
+      const _maxPriorityFeePerGas = _gasPrice.gt(lastBaseFeePerGas?.toString() || '0')
+        ? _gasPrice.minus(_lastBaseFeePerGas?.toNumber() || '0')
+        : 0;
+
+      const _maxFeePerGas = _lastBaseFeePerGas.plus(_maxPriorityFeePerGas);
 
       if (BigNumber(formatSQT(approvedAmount.toString())).lt(BigNumber(val))) {
         const depositApproveTx = await crossChainMessengerIns.approveERC20(
           l1ContractTokenAddress,
           l2ContractTokenAddress,
           amount,
+          {
+            overrides: {
+              maxFeePerGas: _maxFeePerGas.toString(),
+              maxPriorityFeePerGas: _maxPriorityFeePerGas.toString(),
+            },
+          },
         );
         openNotification({
           type: 'info',
@@ -189,6 +203,12 @@ const BridgeInner: FC = () => {
         l1ContractTokenAddress,
         l2ContractTokenAddress,
         amount,
+        {
+          overrides: {
+            maxFeePerGas: _maxFeePerGas.toString(),
+            maxPriorityFeePerGas: _maxPriorityFeePerGas.toString(),
+          },
+        },
       );
       await depositTx.wait();
       await ethSqtBalance.refetch();
@@ -465,7 +485,7 @@ const BridgeInner: FC = () => {
               <div className={styles.bottom}>
                 <InputNumber
                   className={styles.input}
-                  max={formatEther(ethSqtBalance.result.data || 0, 4)}
+                  max={'999' || formatEther(ethSqtBalance.result.data || 0, 4)}
                   controls={false}
                   value={val}
                   onChange={(newVal) => {
