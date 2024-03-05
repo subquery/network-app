@@ -123,7 +123,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     // lack div all tokens
     // to know all tokens that already allocated is not very easy.
     if (estimatedRewardsPerTokenOneEra.eq(0) || !formAllocateVal) {
-      return 'Unkonwn';
+      return 'Unknown';
     }
 
     return formatNumber(
