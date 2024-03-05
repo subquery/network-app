@@ -1,8 +1,9 @@
-name: Kepler-Staging
+name: Mainnet-Staging
 on:
   workflow_dispatch:
     branches:
       - main
+      - kepler
 
 jobs:
   build:

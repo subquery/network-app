@@ -2,7 +2,7 @@ name: Kepler-Prod
 on:
   workflow_dispatch:
     branches:
-      - main
+      - kepler
 
 jobs:
   build:
