@@ -26,6 +26,8 @@ type ProjectWithMetadata = {
     manifest?: Manifest;
   };
 
+const requestIdle = window.requestIdleCallback || setTimeout;
+
 export const useLocalProjects = () => {
   // this hooks want to do these things:
   // 1. Get all projects order by order
@@ -137,7 +139,7 @@ export const useLocalProjects = () => {
       projects.current = cached;
       await fetchAllProjects(cached);
       // update for next search
-      window.requestIdleCallback(() => fetchAllProjects([], false));
+      requestIdle(() => fetchAllProjects([], false));
       return;
     }
     fetchAllProjects();
@@ -182,7 +184,7 @@ export const useLocalProjects = () => {
   };
 
   useMount(async () => {
-    window.requestIdleCallback(() => init());
+    requestIdle(() => init());
   });
 
   return {

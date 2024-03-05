@@ -116,7 +116,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           <div>
             <div>
               <Typography variant="medium" style={{ marginRight: 8 }}>
-                {truncateToDecimalPlace(indexingProgress, 2) * 100} %
+                {truncateToDecimalPlace(indexingProgress * 100, 2)} %
               </Typography>
               <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />
             </div>
