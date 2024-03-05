@@ -170,7 +170,7 @@ const BridgeInner: FC = () => {
       });
 
       const approvedAmount = await crossChainMessengerIns.approval(l1ContractTokenAddress, l2ContractTokenAddress);
-
+      console.warn(approvedAmount);
       if (BigNumber(formatSQT(approvedAmount.toString())).lt(BigNumber(val))) {
         const depositApproveTx = await crossChainMessengerIns.approveERC20(
           l1ContractTokenAddress,
@@ -465,7 +465,7 @@ const BridgeInner: FC = () => {
               <div className={styles.bottom}>
                 <InputNumber
                   className={styles.input}
-                  max={'999' || formatEther(ethSqtBalance.result.data || 0, 4)}
+                  max={formatEther(ethSqtBalance.result.data || 0, 4)}
                   controls={false}
                   value={val}
                   onChange={(newVal) => {

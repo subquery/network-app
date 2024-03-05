@@ -18,7 +18,7 @@ const Delegator: React.FC = () => {
       link: DELEGATING,
     },
     {
-      label: t('indexer.indexers'),
+      label: 'Node Runners',
       link: INDEXERS,
     },
   ];
