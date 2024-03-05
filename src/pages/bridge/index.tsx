@@ -170,7 +170,6 @@ const BridgeInner: FC = () => {
       });
 
       const approvedAmount = await crossChainMessengerIns.approval(l1ContractTokenAddress, l2ContractTokenAddress);
-      console.warn(approvedAmount);
       if (BigNumber(formatSQT(approvedAmount.toString())).lt(BigNumber(val))) {
         const depositApproveTx = await crossChainMessengerIns.approveERC20(
           l1ContractTokenAddress,
