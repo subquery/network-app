@@ -1,9 +1,9 @@
-name: Kepler-Dev
+name: Mainnet-Dev
 on:
   workflow_dispatch:
   push:
     branches:
-      - testnet
+      - main
 
 jobs:
   build:
