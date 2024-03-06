@@ -31,7 +31,7 @@ const getColumns = (
     render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
   },
   {
-    title: <TableTitle title={i18next.t('indexer.title')} />,
+    title: <TableTitle title={'Node runners'} />,
     dataIndex: 'id',
     width: 250,
     render: (val) => <ConnectedIndexer id={val} account={account} />,
@@ -80,16 +80,6 @@ const getColumns = (
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
 
     sorter: (a, b) => a.ownStaked - b.ownStaked,
-    showSorterTooltip: false,
-  },
-  {
-    title: (
-      <TableTitle tooltip={i18next.t('topIndexers.tooltip.delegated')} title={i18next.t('topIndexers.delegated')} />
-    ),
-    dataIndex: 'delegated',
-    render: (delegated) => <TableText>{mulToPercentage(delegated)}</TableText>,
-
-    sorter: (a, b) => a.delegated - b.delegated,
     showSorterTooltip: false,
   },
   {

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
@@ -11,6 +11,7 @@ import { parseError, renderAsync, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
+import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
 
 import { ActiveCard } from './components/ActiveCard/ActiveCard';
@@ -175,12 +176,12 @@ const DelegationsCard = (props: {
   );
 };
 
-const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake: string | bigint }) => {
+const CirculatingCard = (props: { circulatingSupply: string; totalStake: string | bigint }) => {
   return (
     <NewCard
       title="Circulating Supply"
       titleExtra={BalanceLayout({
-        mainBalance: formatSQT(props.circulatingSupply),
+        mainBalance: props.circulatingSupply,
       })}
       tooltip={`This is the total circulating supply of ${TOKEN} across the entire network right now`}
       width={302}
@@ -191,7 +192,7 @@ const CirculatingCard = (props: { circulatingSupply: string | bigint; totalStake
             Percentage Staked
           </Typography>
           <Typography variant="small">
-            {toPercentage(formatSQT(props.totalStake), formatSQT(props.circulatingSupply))}
+            {toPercentage(formatSQT(props.totalStake), BigNumber(props.circulatingSupply).toNumber())}
           </Typography>
         </div>
       </div>
@@ -210,6 +211,19 @@ const Dashboard: FC = () => {
 
     return 'next';
   }, [currentEra.data, dashboardData]);
+
+  const [circleAmount, setCircleAmount] = useState('0');
+
+  const fetchCircleAmount = async () => {
+    const res = await fetch('https://sqt.subquery.foundation/circulating');
+    const data: string = await res.text();
+
+    setCircleAmount(BigNumber(data).toString());
+  };
+
+  useEffect(() => {
+    fetchCircleAmount();
+  }, []);
 
   return (
     <div className={styles.dashboard}>
@@ -239,7 +253,7 @@ const Dashboard: FC = () => {
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
                 <TotalRewardsCard
-                  totalRewards={fetchedData?.eraRewards?.aggregates?.sum?.amount || '0'}
+                  totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
                   indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
                   delegationRewards={fetchedData.rewardsToDelegation?.aggregates?.sum?.amount || '0'}
                 ></TotalRewardsCard>
@@ -257,7 +271,7 @@ const Dashboard: FC = () => {
                 ></DelegationsCard>
 
                 <CirculatingCard
-                  circulatingSupply={fetchedData?.sqtokens?.aggregates?.sum?.circulatingSupply || '0'}
+                  circulatingSupply={circleAmount || '0'}
                   totalStake={totalStake || '0'}
                 ></CirculatingCard>
               </div>
