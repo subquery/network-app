@@ -12,6 +12,7 @@ import { DelegationFieldsFragment, GetTopIndexersQuery, IndexerFieldsFragment } 
 import { useGetAllDelegationsQuery, useGetIndexersQuery } from '@subql/react-hooks';
 import { getOrderedAccounts, mulToPercentage, ROUTES, truncateToDecimalPlace } from '@utils';
 import { TableProps, Tag } from 'antd';
+import BigNumber from 'bignumber.js';
 import i18next from 'i18next';
 import { FixedType } from 'rc-table/lib/interface';
 
@@ -211,12 +212,24 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
 
   // better sort in graphql but now cannot.
   const orderedIndexerList = React.useMemo(() => {
-    return getOrderedAccounts(
+    const ordered = getOrderedAccounts(
       indexers.slice().sort((a, b) => b.totalPoints - a.totalPoints),
       'id',
       account,
     ).filter((i) => i.id.includes(filterParams.address));
-  }, [indexers, account, filterParams]);
+
+    return ordered.map((topIndex) => {
+      const find = allIndexers.data?.indexers?.nodes.find((i) => i?.id === topIndex.id);
+      if (!find) return topIndex;
+      const ownStakedAmount = BigNumber(find.indexerStakes.nodes?.[0]?.indexerStake.toString() || '0');
+      const totalStakedAmount = BigNumber(find.totalStake.valueAfter.value);
+      const ownStaked = ownStakedAmount.div(totalStakedAmount).toNumber();
+      return {
+        ...topIndex,
+        ownStaked,
+      };
+    });
+  }, [indexers, account, filterParams, allIndexers]);
 
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>
