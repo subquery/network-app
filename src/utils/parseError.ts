@@ -100,7 +100,7 @@ export function parseError(
     ) as keyof typeof contractErrorCodes;
     try {
       if (rawErrorMsg.includes('code=') || rawErrorMsg.includes('"from"')) {
-        captureException('Call contract error revert, need review', {
+        captureException(`Call contract error revert, need review: ${rawErrorMsg}`, {
           extra: {
             error: rawErrorMsg,
           },
@@ -139,7 +139,7 @@ export function parseError(
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
-        captureException('Unknown error, need review', {
+        captureException(`Unknow error, need review: ${rawErrorMsg}`, {
           extra: {
             error: rawErrorMsg,
           },

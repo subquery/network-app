@@ -31,6 +31,7 @@ export function truncFormatEtherStr(value: string, decimalPlaces = 4): string {
 
 export function formatEther(value: BigNumberish | bigint | undefined, toFixed?: number): string {
   const formattedEther = utils.formatEther(BigNumber.from(value ?? 0).toString());
+
   return toFixed ? truncFormatEtherStr(formattedEther, toFixed) : formattedEther;
 }
 

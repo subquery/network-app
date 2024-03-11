@@ -169,7 +169,6 @@ export const MyDelegation: React.FC = () => {
         ),
     mergeAsync(delegations, currentEra),
   );
-
   const DelegationList = () => (
     <>
       {renderAsync(delegationList, {

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import { useEra, useSortedIndexer } from '@hooks';
+import { useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { SubqlCard, TableTitle } from '@subql/components';
 import { Spinner, Typography } from '@subql/components';
@@ -33,7 +33,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
   const { currentEra } = useEra();
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(indexer || '');
-
+  const isIndexer = useIsIndexer(indexer);
   const columns = [
     {
       title: <TableTitle title={t('delegate.delegator')} />,
@@ -67,7 +67,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
 
   return (
     <div className={styles.container}>
-      {!hideCard && (
+      {!hideCard && isIndexer.data && (
         <div>
           <SubqlCard
             title={
@@ -139,7 +139,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
           {
             error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
             loading: () => <Spinner />,
-            empty: () => <Typography>{t('delegate.none')}</Typography>,
+            empty: () => <NoDelegator />,
             data: (data) => {
               return (
                 <>

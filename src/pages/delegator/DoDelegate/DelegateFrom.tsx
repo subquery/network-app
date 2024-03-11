@@ -64,7 +64,7 @@ type DelegateFormData = yup.Asserts<typeof delegateSchema>;
 type FormProps = {
   indexerAddress: string;
   indexerCapacity?: BigNumberish;
-  delegatedAmount: number;
+  delegatedAmount: string;
   onSubmit: (data: DelegateFormData) => void | Promise<void>;
   onCancel?: () => void;
   error?: string;

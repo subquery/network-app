@@ -49,7 +49,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
             size="small"
             type={'primary'}
             onClick={() => {
-              onClickMax && onClickMax(maxAmount);
+              onClickMax && onClickMax(BigNumber(maxAmount.toString()).toFixed());
             }}
             disabled={inputParams?.disabled}
           >

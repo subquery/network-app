@@ -76,13 +76,14 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
   const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>('myWallet');
 
   const afterDelegatedAmount = React.useMemo(() => {
-    let afterDelegatedAmount = 0;
+    let afterDelegatedAmount = '0';
     const fetchedDelegatedAmount = delegation.data?.delegation?.amount;
 
     if (fetchedDelegatedAmount) {
       const rawDelegate = parseRawEraValue(fetchedDelegatedAmount, currentEra.data?.index);
-      const delegate = mapEraValue(rawDelegate, (v) => convertStringToNumber(formatEther(v ?? 0)));
-      afterDelegatedAmount = delegate.after ?? 0;
+      const delegate = mapEraValue(rawDelegate, (v) => formatEther(v ?? 0, 0));
+
+      afterDelegatedAmount = delegate.after ?? '0';
     }
     return afterDelegatedAmount;
   }, [currentEra, delegation.data?.delegation?.amount]);
