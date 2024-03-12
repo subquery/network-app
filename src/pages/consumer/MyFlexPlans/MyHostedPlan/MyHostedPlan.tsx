@@ -14,6 +14,7 @@ import { formatSQT } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import { Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import { useAccount } from 'wagmi';
 
 import styles from './MyHostedPlan.module.less';
 
@@ -22,13 +23,13 @@ const MyHostedPlan: FC = (props) => {
   const {
     updateHostingPlanApi,
     getHostingPlanApi,
-    hasLogin,
     loading: consumerHostLoading,
-    requestTokenLayout,
   } = useConsumerHostServices({
     alert: true,
     autoLogin: false,
   });
+
+  const { address: account } = useAccount();
 
   const [loading, setLoading] = useState(false);
   const [createdHostingPlan, setCreatedHostingPlan] = useState<(IGetHostingPlans & { projectName: string | number })[]>(
@@ -40,11 +41,10 @@ const MyHostedPlan: FC = (props) => {
   const init = async () => {
     try {
       setLoading(true);
-      if (!hasLogin) {
-        return;
-      }
 
-      const res = await getHostingPlanApi();
+      const res = await getHostingPlanApi({
+        account,
+      });
       const allMetadata = await Promise.allSettled(
         res.data.map((i) => {
           const cid = i.project.metadata.startsWith('Qm')
@@ -63,16 +63,18 @@ const MyHostedPlan: FC = (props) => {
           };
         }),
       );
+    } catch (e) {
+      setCreatedHostingPlan([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    init();
-  }, [hasLogin]);
-
-  if (!hasLogin && !consumerHostLoading) return requestTokenLayout('Hosting Plan');
+    if (account) {
+      init();
+    }
+  }, [account]);
 
   return (
     <div className={styles.myHostedPlan}>

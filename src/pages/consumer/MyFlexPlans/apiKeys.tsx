@@ -33,9 +33,9 @@ const ApiKeysFC: FC = () => {
     getUserApiKeysApi,
     createNewApiKey,
     deleteNewApiKey,
-    requestTokenLayout,
     hasLogin,
     loading: consumerHostLoading,
+    requestTokenLayout,
   } = useConsumerHostServices({
     alert: true,
     autoLogin: false,

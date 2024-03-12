@@ -3,7 +3,9 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
+import { useProjectList } from '@hooks/useProjectList';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Header as SubqlHeader } from '@subql/components';
 import { entryLinks, externalAppLinks } from '@utils/links';
@@ -38,13 +40,37 @@ export const Header: React.FC = () => {
   const { address: account } = useAccount();
   const navigate = useNavigate();
 
+  const projects = useQuery(gql`
+    query {
+      projects(
+        filter: { owner: { equalTo: "${account}" } }
+      ) {
+        totalCount
+        
+      }
+    }
+  `);
+
+  const renderEntryLinks = React.useMemo(() => {
+    if (!account || (projects.data?.projects?.totalCount || 0) === 0) {
+      return entryLinks.map((i) => {
+        return {
+          ...i,
+          dropdown: i.key === 'explorer' ? undefined : i.dropdown,
+        };
+      });
+    }
+
+    return entryLinks;
+  }, [account, projects.data]);
+
   return (
     <div className={styles.header}>
       <SubqlHeader
         navigate={(link) => {
           navigate(link);
         }}
-        appNavigation={entryLinks}
+        appNavigation={renderEntryLinks}
         dropdownLinks={{ label: 'SubQuery Network', links: externalAppLinks }}
         rightElement={
           <>

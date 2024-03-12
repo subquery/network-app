@@ -24,7 +24,7 @@ export const FlexPlans: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const query = useRouteQuery();
-  const { getProjects, requestTokenLayout, hasLogin, loading } = useConsumerHostServices({ autoLogin: false });
+  const { getProjects, loading } = useConsumerHostServices({ autoLogin: false });
   const { getFlexPlanPrice } = useGetFlexPlanPrice();
   // TODO: confirm score threadThread with consumer host service
   const getColumns = (): TableProps<IIndexerFlexPlan>['columns'] => [
@@ -61,7 +61,6 @@ export const FlexPlans: React.FC = () => {
 
   const flexPlans = useAsyncMemo(async () => {
     try {
-      if (!hasLogin) return [];
       const res = await getProjects({
         projectId: BigNumber.from(id).toString(),
         deployment: query.get('deploymentId') || undefined,
@@ -70,10 +69,11 @@ export const FlexPlans: React.FC = () => {
       if (res.data?.indexers?.length) {
         return res.data.indexers;
       }
+      return [];
     } catch (e) {
       return [];
     }
-  }, [id, query, hasLogin]);
+  }, [id, query]);
 
   React.useEffect(() => {
     if (!id) {
@@ -94,15 +94,12 @@ export const FlexPlans: React.FC = () => {
           loading: () => <Spinner />,
           error: (e) => <AppTypography type="danger">{'Failed to load flex plan.'}</AppTypography>,
           data: (flexPlans) => {
-            if (!flexPlans.length && hasLogin) return <EmptyList description={t('explorer.flexPlans.non')} />;
+            if (!flexPlans.length) return <EmptyList description={t('explorer.flexPlans.non')} />;
+            console.warn(flexPlans);
             return (
               <>
                 <CreateHostingFlexPlan></CreateHostingFlexPlan>
-                {!hasLogin ? (
-                  requestTokenLayout('flex plan')
-                ) : (
-                  <Table columns={getColumns()} dataSource={flexPlans} rowKey={'id'} />
-                )}
+                {<Table columns={getColumns()} dataSource={flexPlans} rowKey={'id'} />}
               </>
             );
           },
