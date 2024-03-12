@@ -7,6 +7,7 @@ import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
 import { formatSQT } from '@subql/react-hooks';
 import { formatNumber, TOKEN } from '@utils';
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
 import { ProjectMetadata } from 'src/models';
@@ -32,6 +33,16 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
     return project.metadata.image;
   }, [project.metadata]);
 
+  const booster = React.useMemo(() => {
+    return project?.deployments?.nodes.reduce(
+      (cur, add) =>
+        cur.plus(
+          BigNumber(add?.deploymentBoosterSummaries?.groupedAggregates?.[0]?.sum?.totalAmount.toString() || '0'),
+        ),
+      BigNumber(0),
+    );
+  }, [project?.deployments?.nodes]);
+
   return (
     <div className={styles.card} onClick={onClick}>
       <IPFSImage
@@ -40,7 +51,11 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
         renderPlaceholder={() => <div style={{ width: '100%', height: '205px', background: '#fff' }}></div>}
       />
       <div style={{ flex: 1 }}>
-        <Typography className="overflowEllipsis2" style={{ marginTop: 16, marginBottom: 6, height: 48 }} weight={600}>
+        <Typography
+          className="overflowEllipsis2"
+          style={{ marginTop: 16, marginBottom: 6, height: 48, wordBreak: 'break-word' }}
+          weight={600}
+        >
           {project.metadata?.name || project.id}
         </Typography>
       </div>
@@ -48,10 +63,10 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
       {project.type === ProjectType.SUBQUERY ? (
         <Address address={project.owner} size="small" />
       ) : (
-        <Typography variant="small" style={{ textTransform: 'capitalize' }}>
+        <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}
           {project.manifest?.rpcFamily?.[0] && project.manifest?.nodeType && ' - '}
-          {project.manifest?.nodeType}
+          <span style={{ textTransform: 'capitalize' }}>{project.manifest?.nodeType}</span>
         </Typography>
       )}
 
@@ -62,19 +77,13 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
             {project?.deployments?.nodes.reduce((cur, add) => cur + (add?.indexers.totalCount || 0), 0)}
           </Typography>
           <Typography variant="small" type="secondary" style={{ marginLeft: 5 }}>
-            Indexers
+            Operator
           </Typography>
         </div>
         <span style={{ flex: 1 }}></span>
         <div className="flex">
           <Typography variant="small">
-            {formatNumber(
-              formatSQT(
-                project?.deployments?.nodes?.[0]?.deploymentBoosterSummaries?.groupedAggregates?.[0]?.sum
-                  ?.totalAmount || '0',
-              ),
-            )}{' '}
-            {TOKEN}
+            {formatNumber(formatSQT(booster.toString()))} {TOKEN}
           </Typography>
           <Typography variant="small" type="secondary" style={{ marginLeft: 5 }}>
             Boost
