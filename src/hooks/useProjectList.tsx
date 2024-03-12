@@ -222,6 +222,8 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
               { label: 'RPC Endpoint', value: ProjectType.RPC },
             ]}
             onChange={async (val) => {
+              if (loading) return;
+
               setFilterProjectType(val.target.value);
               setFilterCategories([]);
               setProjects([]);
@@ -239,6 +241,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             optionType="button"
             buttonStyle="solid"
             size="large"
+            disabled={loading}
           />
           <span style={{ flex: 1 }}></span>
           <Button
@@ -261,9 +264,11 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         <div style={{ display: 'flex', marginBottom: 32 }}>
           <div>
             <SubqlCheckbox.Group
+              disabled={loading}
               value={filterCategories}
               options={filterProjectType === ProjectType.RPC ? rpcCategoriesOptions : categoriesOptions}
               onChange={async (val) => {
+                if (loading) return;
                 setFilterCategories(val as string[]);
                 setProjects([]);
                 setTotal(10);
@@ -312,5 +317,6 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   return {
     listsWithSearch,
     loading,
+    projects,
   };
 };

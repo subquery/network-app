@@ -244,8 +244,8 @@ export const useConsumerHostServices = (
     return res;
   };
 
-  const getHostingPlanApi = async (): Promise<AxiosResponse<IGetHostingPlans[]>> => {
-    const res = await instance.get<IGetHostingPlans[]>(`/users/hosting-plans`, {
+  const getHostingPlanApi = async (params: { account?: string }): Promise<AxiosResponse<IGetHostingPlans[]>> => {
+    const res = await instance.get<IGetHostingPlans[]>(`/hosting-plans/${params.account}`, {
       headers: authHeaders.current,
     });
 
@@ -316,9 +316,9 @@ export const useConsumerHostServices = (
     deleteNewApiKey: alertResDecorator(loginResDecorator(deleteNewApiKey)),
     createHostingPlanApi: alertResDecorator(loginResDecorator(createHostingPlanApi)),
     updateHostingPlanApi: alertResDecorator(loginResDecorator(updateHostingPlanApi)),
-    getHostingPlanApi: alertResDecorator(loginResDecorator(getHostingPlanApi)),
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
+    getHostingPlanApi,
     requestConsumerHostToken,
     checkIfHasLogin,
     loginConsumerHost,

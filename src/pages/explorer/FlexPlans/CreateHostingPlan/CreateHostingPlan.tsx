@@ -46,11 +46,10 @@ const CreateHostingFlexPlan = forwardRef<
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const query = useRouteQuery();
-  const { getProjects, createHostingPlanApi, updateHostingPlanApi, getHostingPlanApi, hasLogin } =
-    useConsumerHostServices({
-      alert: true,
-      autoLogin: false,
-    });
+  const { getProjects, createHostingPlanApi, updateHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({
+    alert: true,
+    autoLogin: false,
+  });
 
   const id = useMemo(() => {
     return props.id || params.id;
@@ -70,7 +69,6 @@ const CreateHostingFlexPlan = forwardRef<
 
   const flexPlans = useAsyncMemo(async () => {
     try {
-      if (!hasLogin) return [];
       const res = await getProjects({
         projectId: BigNumber.from(id).toString(),
         deployment: deploymentId,
@@ -82,7 +80,7 @@ const CreateHostingFlexPlan = forwardRef<
     } catch (e) {
       return [];
     }
-  }, [id, query, hasLogin]);
+  }, [id, query]);
 
   const matchedCount = React.useMemo(() => {
     if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
@@ -131,7 +129,7 @@ const CreateHostingFlexPlan = forwardRef<
       deploymentId: props.deploymentId || asyncProject?.data?.deploymentId || '',
 
       // if is create, id is would not use.
-      id: `${props.editInformation?.id}` || '0',
+      id: props.editInformation?.id ? `${props.editInformation?.id}` : '0',
     });
 
     if (res.data.id) {
@@ -146,8 +144,9 @@ const CreateHostingFlexPlan = forwardRef<
   };
 
   const getHostingPlans = async () => {
-    if (!hasLogin) return;
-    const res = await getHostingPlanApi();
+    const res = await getHostingPlanApi({
+      account,
+    });
     if (!isConsumerHostError(res.data)) {
       setCreatedHostingPlan(res.data);
       return res.data;
@@ -161,8 +160,10 @@ const CreateHostingFlexPlan = forwardRef<
   }));
 
   React.useEffect(() => {
-    getHostingPlans();
-  }, [account, hasLogin]);
+    if (account) {
+      getHostingPlans();
+    }
+  }, [account]);
 
   useEffect(() => {
     if (props.editInformation) {
@@ -235,18 +236,20 @@ const CreateHostingFlexPlan = forwardRef<
                 View My Flex Plan
               </Typography>
             ) : (
-              <Button
-                type="primary"
-                shape="round"
-                size="large"
-                className={styles.billingButton}
-                onClick={() => {
-                  setShowCreateFlexPlan(true);
-                }}
-                disabled={formatEther(balance, 4) === '0.0' || !hasLogin}
-              >
-                {t('flexPlans.createFlexPlan')}
-              </Button>
+              <Tooltip title={formatEther(balance, 4) === '0.0' ? 'To create flex plan must deposit first.' : ''}>
+                <Button
+                  type="primary"
+                  shape="round"
+                  size="large"
+                  className={styles.billingButton}
+                  onClick={() => {
+                    setShowCreateFlexPlan(true);
+                  }}
+                  disabled={formatEther(balance, 4) === '0.0'}
+                >
+                  {t('flexPlans.createFlexPlan')}
+                </Button>
+              </Tooltip>
             )}
           </div>
         </div>
