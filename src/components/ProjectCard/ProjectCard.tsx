@@ -51,7 +51,11 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
         renderPlaceholder={() => <div style={{ width: '100%', height: '205px', background: '#fff' }}></div>}
       />
       <div style={{ flex: 1 }}>
-        <Typography className="overflowEllipsis2" style={{ marginTop: 16, marginBottom: 6, height: 48 }} weight={600}>
+        <Typography
+          className="overflowEllipsis2"
+          style={{ marginTop: 16, marginBottom: 6, height: 48, wordBreak: 'break-word' }}
+          weight={600}
+        >
           {project.metadata?.name || project.id}
         </Typography>
       </div>
@@ -59,10 +63,10 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
       {project.type === ProjectType.SUBQUERY ? (
         <Address address={project.owner} size="small" />
       ) : (
-        <Typography variant="small" style={{ textTransform: 'capitalize' }}>
+        <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}
           {project.manifest?.rpcFamily?.[0] && project.manifest?.nodeType && ' - '}
-          {project.manifest?.nodeType}
+          <span style={{ textTransform: 'capitalize' }}>{project.manifest?.nodeType}</span>
         </Typography>
       )}
 
