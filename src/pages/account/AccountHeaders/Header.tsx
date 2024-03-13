@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useMemo } from 'react';
 import { CurEra } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { Typography } from '@subql/components';
@@ -8,14 +9,16 @@ import { useAccount } from 'wagmi';
 
 import styles from './Headers.module.css';
 
-export const AccountHeader: React.FC = () => {
-  const { address: account } = useAccount();
+export const AccountHeader: React.FC<{ profileAccount?: string }> = ({ profileAccount }) => {
+  const { address } = useAccount();
+
+  const account = useMemo(() => profileAccount || address, [profileAccount, address]);
 
   return (
     <div className={styles.header}>
       <div>
         <Typography type="secondary" variant="medium" style={{ marginBottom: 16 }}>
-          My Profile
+          {profileAccount ? 'Profile' : 'My Profile'}
         </Typography>
         {account && <ConnectedIndexer id={account} size="large"></ConnectedIndexer>}
       </div>

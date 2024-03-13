@@ -42,6 +42,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
   const canDelegate = useMemo(() => connectedAccount !== account, [connectedAccount, account]);
   const delegations = useGetAllDelegationsQuery();
+
   const allIndexers = useGetIndexersQuery({
     variables: {
       filter: { id: { in: [account] } },
@@ -197,6 +198,7 @@ const IndexerProfile: FC = () => {
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
   const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: checksumAddress, offset: 0 } });
+
   const result = useQuery(
     gql`
       query MyQuery($indexerId: String!) {

@@ -42,7 +42,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
         <ConnectedIndexer
           id={delegator}
           onClick={() => {
-            navigate(`/indexer/${delegator}`);
+            navigate(`/profile/${delegator}`);
           }}
         ></ConnectedIndexer>
       ),
