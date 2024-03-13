@@ -7,7 +7,7 @@ import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
-import { useGetEraQueryQuery, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { useGetEraQueryQuery } from '@subql/react-hooks';
 import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
@@ -24,7 +24,6 @@ const Staking: FC = () => {
   const account = useMemo(() => profileAccount || address, [address, profileAccount]);
 
   const navigate = useNavigate();
-  const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });
   const sortedIndexer = useSortedIndexer(account || '');
   const delegateToOthersByEra = useGetEraQueryQuery({
     variables: {
@@ -52,7 +51,7 @@ const Staking: FC = () => {
     return 0;
   }, [delegateToOthersByEra]);
 
-  return renderAsyncArray(mergeAsync(indexerDelegators, delegateToOthersByEra), {
+  return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
     loading: () => <Spinner></Spinner>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     empty: () => <></>,

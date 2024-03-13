@@ -15,7 +15,9 @@ import { AsyncData, getDeploymentMetadata } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
-export interface UseSortedIndexerDeploymentsReturn extends Partial<DeploymentIndexer> {
+export interface UseSortedIndexerDeploymentsReturn extends Pick<DeploymentIndexer, 'deployment'> {
+  id?: string;
+  status: ServiceStatus | undefined;
   indexingErr?: string;
   deploymentId?: string;
   projectId?: string;
@@ -135,6 +137,11 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           },
           allocatedAmount,
           allocatedTotalRewards,
+          id:
+            indexerDeployment?.__typename === 'IndexerAllocationSummary'
+              ? indexerDeployment.deploymentId
+              : indexerDeployment?.id,
+          deployment: indexerDeployment?.__typename === 'IndexerDeployment' ? indexerDeployment.deployment : null,
         };
       }),
     );
