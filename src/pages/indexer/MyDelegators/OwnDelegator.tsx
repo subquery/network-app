@@ -29,7 +29,13 @@ interface Props {
 
 export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, showHeader = false }) => {
   const { t } = useTranslation();
-  const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', offset: 0 } });
+  const [pagination, setPagination] = React.useState({
+    current: 1,
+    offset: 0,
+    first: 10,
+  });
+  const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', ...pagination } });
+
   const { currentEra } = useEra();
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(indexer || '');
@@ -42,7 +48,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
         <ConnectedIndexer
           id={delegator}
           onClick={() => {
-            navigate(`/indexer/${delegator}`);
+            navigate(`/profile/${delegator}`);
           }}
         ></ConnectedIndexer>
       ),
@@ -126,16 +132,15 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
         renderAsyncArray(
           mapAsync(
             ([sortedIndexer, era]) =>
-              sortedIndexer?.indexer?.delegations.nodes
-                .map((delegation) => ({
-                  value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
-                    convertStringToNumber(formatEther(v ?? 0)),
-                  ),
-                  delegator: delegation?.delegatorId ?? '',
-                }))
-                .filter((delegation) => delegation.value.current !== 0 || delegation.value.after !== 0),
+              sortedIndexer?.indexer?.delegations.nodes.map((delegation) => ({
+                value: mapEraValue(parseRawEraValue(delegation?.amount, era?.index), (v) =>
+                  convertStringToNumber(formatEther(v ?? 0)),
+                ),
+                delegator: delegation?.delegatorId ?? '',
+              })),
             mergeAsync(indexerDelegations, currentEra),
           ),
+          // TODO: improve load experience
           {
             error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
             loading: () => <Spinner />,
@@ -150,11 +155,36 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
                       </Typography>
 
                       <Typography variant="large" weight={600} type="secondary">
-                        ({data.length})
+                        ({indexerDelegations.data?.indexer?.delegations.totalCount || 0})
                       </Typography>
                     </div>
                   )}
-                  <Table columns={columns} dataSource={data} rowKey={'delegator'} />
+                  <Table
+                    columns={columns}
+                    dataSource={data}
+                    rowKey={'delegator'}
+                    pagination={{
+                      current: pagination.current,
+                      total: indexerDelegations.data?.indexer?.delegations.totalCount,
+                      pageSize: pagination.first,
+                      onChange: (page, pageSize) => {
+                        if (pageSize !== pagination.first) {
+                          setPagination({
+                            current: 1,
+                            offset: 0,
+                            first: pageSize,
+                          });
+                          return;
+                        }
+
+                        setPagination({
+                          current: page,
+                          offset: (page - 1) * pageSize,
+                          first: pageSize,
+                        });
+                      },
+                    }}
+                  />
                 </>
               );
             },

@@ -115,7 +115,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
   };
 
   return renderAsync(mergeAsync(rewardClaimStatus, lockPeriod, delegation), {
-    error: (error) => <Typography>{`Error: ${error}`}</Typography>,
+    error: (error) => '',
     loading: () => <Spinner />,
     data: (data) => {
       const [indexerRewards, lock, targetDelegation] = data;

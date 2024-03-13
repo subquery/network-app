@@ -21,7 +21,7 @@ import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
-import { DelegationFieldsFragment, IndexerFieldsFragment } from '@subql/network-query';
+import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
@@ -52,7 +52,7 @@ const getModalText = (requireClaimIndexerRewards = false, requireTokenApproval =
 interface DoDelegateProps {
   indexerAddress: string;
   variant?: 'button' | 'textBtn' | 'errTextBtn' | 'errButton';
-  delegation?: DelegationFieldsFragment | null;
+  delegation?: { amount: string } | null;
   indexer?: IndexerFieldsFragment | null;
   btnText?: string;
   onSuccess?: () => void;
@@ -238,7 +238,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
                 onSubmit={onSubmit}
                 onCancel={onCancel}
                 indexerAddress={indexerAddress}
-                delegatedAmount={afterDelegatedAmount}
+                delegatedAmount={`${afterDelegatedAmount}`}
                 indexerCapacity={indexerCapacity}
                 indexerMetadataCid={indexer?.metadata}
                 error={error}

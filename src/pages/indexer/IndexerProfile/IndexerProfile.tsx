@@ -17,13 +17,7 @@ import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAn
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
 import { Typography } from '@subql/components';
-import {
-  renderAsync,
-  useGetAllDelegationsQuery,
-  useGetIndexerDelegatorsQuery,
-  useGetIndexersQuery,
-  useGetTopIndexersQuery,
-} from '@subql/react-hooks';
+import { renderAsync, useGetDelegationQuery, useGetIndexersQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
 import { TOKEN } from '@utils/constants';
@@ -41,7 +35,12 @@ import styles from './index.module.less';
 const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   const { account: connectedAccount } = useWeb3();
   const canDelegate = useMemo(() => connectedAccount !== account, [connectedAccount, account]);
-  const delegations = useGetAllDelegationsQuery();
+  const delegations = useGetDelegationQuery({
+    variables: {
+      id: `${connectedAccount}:${account}`,
+    },
+  });
+
   const allIndexers = useGetIndexersQuery({
     variables: {
       filter: { id: { in: [account] } },
@@ -57,7 +56,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
         <div className="flex" style={{ marginLeft: 16 }}>
           <DoDelegate
             indexerAddress={account}
-            delegation={delegations.data?.delegations?.nodes.find((i) => i?.id === `${connectedAccount}:${account}`)}
+            delegation={delegations.data?.delegation}
             indexer={allIndexers.data?.indexers?.nodes[0]}
           />
           <DoUndelegate indexerAddress={account} variant={'button'} />
@@ -145,7 +144,6 @@ const ActiveCard = (props: { account: string }) => {
   const navigate = useNavigate();
 
   const indexerDeployments = useSortedIndexerDeployments(props.account);
-
   return renderAsync(indexerDeployments, {
     loading: () => <Skeleton style={{ width: 302 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
@@ -174,7 +172,7 @@ const ActiveCard = (props: { account: string }) => {
               .slice(0, 9)
               .map((project) => (
                 <IPFSImage
-                  key={project.id}
+                  key={project.projectId}
                   src={project.projectMeta.image || '/static/default.project.png'}
                   className={styles.image}
                   onClick={() => {
@@ -196,7 +194,20 @@ const IndexerProfile: FC = () => {
   }, [account]);
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
-  const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: checksumAddress, offset: 0 } });
+  const delegatorCounts = useQuery(
+    gql`
+      query GetIndexerDelegatorsCount($id: String!, $offset: Int) {
+        indexer(id: $id) {
+          delegations(offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
+            totalCount
+          }
+        }
+      }
+    `,
+    {
+      variables: { id: checksumAddress, offset: 0 },
+    },
+  );
   const result = useQuery(
     gql`
       query MyQuery($indexerId: String!) {
@@ -255,7 +266,7 @@ const IndexerProfile: FC = () => {
                 <NewCard
                   title="Total Rewards"
                   titleExtra={BalanceLayout({
-                    mainBalance: formatSQT(fetchedResult.eraRewards.aggregates.sum.amount),
+                    mainBalance: formatSQT(fetchedResult?.eraRewards?.aggregates?.sum?.amount || '0'),
                   })}
                   tooltip="This is the total rewards that have been claimed or are able to be claimed by this indexer right now"
                   width={302}
@@ -266,7 +277,7 @@ const IndexerProfile: FC = () => {
                         Current Commission Rate
                       </Typography>
                       <Typography variant="small">
-                        {getCommission(fetchedResult.indexer.commission, currentEra.data?.index).current} %
+                        {getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).current} %
                       </Typography>
                     </div>
 
@@ -275,7 +286,8 @@ const IndexerProfile: FC = () => {
                         Total Rewards to Delegators
                       </Typography>
                       <Typography variant="small">
-                        {formatNumber(formatSQT(fetchedResult.delegatorEraRewards.aggregates.sum.amount))} {TOKEN}
+                        {formatNumber(formatSQT(fetchedResult?.delegatorEraRewards?.aggregates?.sum?.amount || '0'))}{' '}
+                        {TOKEN}
                       </Typography>
                     </div>
                   </div>
@@ -352,7 +364,7 @@ const IndexerProfile: FC = () => {
                       <Typography variant="small" type="secondary">
                         Number of Delegators
                       </Typography>
-                      <Typography variant="small">{indexerDelegators.data?.indexer?.delegations.totalCount}</Typography>
+                      <Typography variant="small">{delegatorCounts.data?.indexer?.delegations.totalCount}</Typography>
                     </div>
                   </div>
                 </NewCard>

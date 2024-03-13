@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FC, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
-import { useGetEraQueryQuery, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
+import { useGetEraQueryQuery } from '@subql/react-hooks';
 import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
@@ -18,10 +18,12 @@ import Breakdown from './Breakdown';
 import styles from './index.module.less';
 
 const Staking: FC = () => {
-  const { address: account } = useAccount();
+  const { address } = useAccount();
+
+  const { id: profileAccount } = useParams();
+  const account = useMemo(() => profileAccount || address, [address, profileAccount]);
 
   const navigate = useNavigate();
-  const indexerDelegators = useGetIndexerDelegatorsQuery({ variables: { id: account ?? '', offset: 0 } });
   const sortedIndexer = useSortedIndexer(account || '');
   const delegateToOthersByEra = useGetEraQueryQuery({
     variables: {
@@ -49,7 +51,7 @@ const Staking: FC = () => {
     return 0;
   }, [delegateToOthersByEra]);
 
-  return renderAsyncArray(mergeAsync(indexerDelegators, delegateToOthersByEra), {
+  return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
     loading: () => <Spinner></Spinner>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     empty: () => <></>,

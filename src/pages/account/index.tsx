@@ -1,8 +1,8 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
-import { matchPath, Outlet, useNavigate } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { useSortedIndexer } from '@hooks';
@@ -73,7 +73,10 @@ const activeKeyLinks: {
 };
 
 export const MyAccount: React.FC = () => {
-  const { address: account } = useAccount();
+  const { address } = useAccount();
+  const { id: profileAccount } = useParams();
+  const account = useMemo(() => profileAccount || address, [address, profileAccount]);
+
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
@@ -119,7 +122,7 @@ export const MyAccount: React.FC = () => {
       className="col-flex"
       style={{ maxWidth: 1280, margin: '0 auto', padding: 24, width: '100%', height: 'calc(100vh - 90px)' }}
     >
-      <AccountHeader />
+      <AccountHeader profileAccount={account} />
 
       <div className="flex">
         {renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
@@ -154,7 +157,7 @@ export const MyAccount: React.FC = () => {
                 style={{ marginRight: 24, minHeight: 426, minWidth: 304 }}
                 title={
                   <Typography variant="large" weight={600}>
-                    Your Total Rewards
+                    {profileAccount ? 'Total Rewards' : 'Your Total Rewards'}
                   </Typography>
                 }
                 tooltip={t('account.tooltip.rewards')}
@@ -202,19 +205,23 @@ export const MyAccount: React.FC = () => {
           </div>
         )}
       </div>
-      <Tabs
-        className={styles.tab}
-        items={[
-          { key: 'SD', label: 'Staking and Delegation' },
-          { key: 'Rewards', label: 'Rewards' },
-          { key: 'Withdrawals', label: 'Withdrawals' },
-        ]}
-        activeKey={activeKey}
-        onTabClick={(key) => {
-          setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawals');
-          navigate(Array.isArray(activeKeyLinks[key]) ? activeKeyLinks[key][0] : (activeKeyLinks[key] as string));
-        }}
-      ></Tabs>
+      {!profileAccount ? (
+        <Tabs
+          className={styles.tab}
+          items={[
+            { key: 'SD', label: 'Staking and Delegation' },
+            { key: 'Rewards', label: 'Rewards' },
+            { key: 'Withdrawals', label: 'Withdrawals' },
+          ]}
+          activeKey={activeKey}
+          onTabClick={(key) => {
+            setActiveKey(key as 'SD' | 'Rewards' | 'Withdrawals');
+            navigate(Array.isArray(activeKeyLinks[key]) ? activeKeyLinks[key][0] : (activeKeyLinks[key] as string));
+          }}
+        ></Tabs>
+      ) : (
+        ''
+      )}
       <Outlet></Outlet>
       <span style={{ flex: 1 }}></span>
       <Footer simple></Footer>

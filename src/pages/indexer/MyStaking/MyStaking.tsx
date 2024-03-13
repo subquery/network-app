@@ -51,13 +51,17 @@ export const MyStaking: React.FC = () => {
                         <div className={styles.stakingActions}>
                           <DoStake
                             onSuccess={() => {
-                              retry(sortedIndexer.refresh);
+                              retry(() => {
+                                sortedIndexer?.refetch?.();
+                              });
                             }}
                           />
                           <div>
                             <SetCommissionRate
                               onSuccess={() => {
-                                retry(sortedIndexer.refresh);
+                                retry(() => {
+                                  sortedIndexer?.refetch?.();
+                                });
                               }}
                             />
                           </div>
