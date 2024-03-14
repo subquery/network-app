@@ -22,7 +22,7 @@ import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
 import { TOKEN } from '@utils/constants';
 import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
-import { Skeleton, Tag } from 'antd';
+import { Skeleton, Tag, Tooltip } from 'antd';
 import clsx from 'clsx';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { constants } from 'ethers';
@@ -279,6 +279,20 @@ const IndexerProfile: FC = () => {
                       <Typography variant="small">
                         {getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).current} %
                       </Typography>
+                    </div>
+                    <div className={clsx(styles.cardContentLine, 'flex-between')}>
+                      <Typography variant="small" style={{ visibility: 'hidden' }}>
+                        bigo
+                      </Typography>
+                      <Tooltip title="Estimated for next Era">
+                        <Typography
+                          variant="small"
+                          type="secondary"
+                          style={{ transform: 'scale(0.83333) translateX(7px)', marginLeft: 3 }}
+                        >
+                          {getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).after} %
+                        </Typography>
+                      </Tooltip>
                     </div>
 
                     <div className={clsx(styles.cardContentLine, 'flex-between')}>

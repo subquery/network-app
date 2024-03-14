@@ -41,10 +41,13 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
     try {
       setIsLoading(true);
       assert(contracts, 'Contracts not available');
+      const batchCollectAndDistribute = await contracts.rewardsHelper.batchCollectAndDistributeRewards(indexer, 20);
+      const batchCollectAndDistributeResult = await batchCollectAndDistribute.wait();
+
       const approvalTx = await contracts.rewardsHelper.indexerCatchup(indexer);
       const approvalTxResult = await approvalTx.wait();
 
-      if (approvalTxResult.status === 1) {
+      if (approvalTxResult.status === 1 && batchCollectAndDistributeResult.status === 1) {
         onSuccess && (await onSuccess());
       } else {
         onFail && onFail();
