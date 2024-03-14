@@ -198,7 +198,7 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
           dataDimensionsName={dataDimensionsName}
           chartData={renderRewards}
           onTriggerTooltip={(index, curDate) => {
-            return `<div class="col-flex" style="width: 280px">
+            return `<div class="col-flex" style="width: 280px; font-size: 12px;">
               <span>${curDate.format('MMM D, YYYY')}</span>
               <div class="flex-between" style="margin-top: 8px;">
                 <span>Total</span>
