@@ -225,7 +225,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <Typography variant="large" weight={600}>
             {t('projectOverview.deploymentDescription')}
           </Typography>
-          <div style={{ width: 670, marginTop: 8 }}>
+          <div style={{ width: '100%', marginTop: 8 }}>
             <Expand>
               <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
             </Expand>
