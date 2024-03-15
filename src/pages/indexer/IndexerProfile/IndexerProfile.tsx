@@ -5,6 +5,7 @@ import React, { FC, ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { CurEra, IPFSImage } from '@components';
+import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
@@ -22,7 +23,7 @@ import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
 import { TOKEN } from '@utils/constants';
 import { formatNumber, formatSQT, truncateToDecimalPlace } from '@utils/numberFormatters';
-import { Skeleton, Tag, Tooltip } from 'antd';
+import { Skeleton, Tag } from 'antd';
 import clsx from 'clsx';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { constants } from 'ethers';
@@ -284,15 +285,12 @@ const IndexerProfile: FC = () => {
                       <Typography variant="small" style={{ visibility: 'hidden' }}>
                         bigo
                       </Typography>
-                      <Tooltip title="Estimated for next Era">
-                        <Typography
-                          variant="small"
-                          type="secondary"
-                          style={{ transform: 'scale(0.83333) translateX(7px)', marginLeft: 3 }}
-                        >
-                          {getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).after} %
-                        </Typography>
-                      </Tooltip>
+                      <EstimatedNextEraLayout
+                        size="small"
+                        value={`${
+                          getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).after
+                        } %`}
+                      ></EstimatedNextEraLayout>
                     </div>
 
                     <div className={clsx(styles.cardContentLine, 'flex-between')}>
@@ -337,13 +335,10 @@ const IndexerProfile: FC = () => {
                         <Typography variant="small" style={{ visibility: 'hidden' }}>
                           bigo
                         </Typography>
-                        <Typography
-                          variant="small"
-                          type="secondary"
-                          style={{ transform: 'scale(0.83333) translateX(7px)', marginLeft: 3 }}
-                        >
-                          {formatNumber(fetchedSortedIndexer.ownStake.after)} {TOKEN}
-                        </Typography>
+                        <EstimatedNextEraLayout
+                          size="small"
+                          value={`${formatNumber(fetchedSortedIndexer.ownStake.after)} ${TOKEN}`}
+                        ></EstimatedNextEraLayout>
                       </div>
                     )}
                   </div>

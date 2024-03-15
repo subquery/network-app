@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
+import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import RpcError from '@components/RpcError';
@@ -14,7 +15,7 @@ import { useEra } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { Spinner, TableTitle } from '@subql/components';
-import { useGetFilteredDelegationsQuery } from '@subql/react-hooks';
+import { truncFormatEtherStr, useGetFilteredDelegationsQuery } from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
 import { retry } from '@utils/retry';
 import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
@@ -41,7 +42,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       render: (_: string, __: unknown, index: number) => <TableText content={index + 1} />,
     },
     {
-      title: <TableTitle title={t('indexer.title')} />,
+      title: <TableTitle title={t('indexer.nickname')} />,
       dataIndex: 'indexer',
       width: 250,
       render: (indexer: string) => (
@@ -56,24 +57,20 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
     {
       title: <TableTitle title={t('delegate.yourDelegateAmount')} />,
       width: 200,
-      children: [
-        {
-          title: <TableTitle title={t('delegate.currentEra')} />,
-          dataIndex: ['value', 'current'],
-          key: 'currentValue',
-          width: 100,
-          render: (text: string) => <TokenAmount value={text} />,
-          sorter: (a, b) => +(a.value.current || 0) - (+b.value.current || 0),
-        },
-        {
-          title: <TableTitle title={t('delegate.nextEra')} />,
-          dataIndex: ['value', 'after'],
-          key: 'afterValue',
-          width: 100,
-          render: (text: string) => <TokenAmount value={text} />,
-          sorter: (a, b) => +(a.value.after || 0) - +(b.value.after || 0),
-        },
-      ],
+      dataIndex: 'value',
+      render: (val) => {
+        return (
+          <div>
+            <Typography>{<TokenAmount value={val?.current || '0'} />}</Typography>
+            <EstimatedNextEraLayout
+              value={`${truncFormatEtherStr(val?.after || '0')} ${TOKEN}`}
+            ></EstimatedNextEraLayout>
+          </div>
+        );
+      },
+      sorter: (a, b) => {
+        return +(a?.value?.after || 0) - +(b?.value?.after || 0);
+      },
     },
     {
       title: <TableTitle title={t('general.status')} />,
