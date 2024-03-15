@@ -126,6 +126,7 @@ const DoPurchase: React.FC<DoPurchaseProps> = ({
       ]}
       text={modalText}
       onClick={() => purchasePlan(plan.creator, last(plan.id.split(':')))}
+      allowanceContractAddress={ApproveContract.PlanManager}
       renderContent={(onSubmit, onCancel, isLoading, error) => {
         return renderAsync(planManagerAllowance.result, {
           loading: () => <Spinner />,

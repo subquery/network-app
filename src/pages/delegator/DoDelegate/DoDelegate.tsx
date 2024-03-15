@@ -72,7 +72,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
   const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
-  const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
+  const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
 
   // note why we don't use useGetIndexerLazy.
   // In apollo-client, if two different query use same fragment, and the query result in the two query is different,

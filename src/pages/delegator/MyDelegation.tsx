@@ -157,7 +157,7 @@ export const MyDelegation: React.FC = () => {
         // TODO: sort by GraphQL
         .sort((a, b) => (`${a.id}` > `${b.id}` ? -1 : 1))
         .map((delegation) => ({
-          value: mapEraValue(parseRawEraValue(delegation?.amount as RawEraValue, era?.index), (v) =>
+          value: mapEraValue(parseRawEraValue((delegation?.amount as RawEraValue) || '0', era?.index), (v) =>
             formatEther(v ?? 0),
           ),
           indexer: delegation.indexerId,
@@ -165,7 +165,7 @@ export const MyDelegation: React.FC = () => {
         }))
         .filter(
           (delegation) =>
-            parseEther(delegation.value.current).gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
+            parseEther(delegation.value.current || '0').gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
         ),
     mergeAsync(delegations, currentEra),
   );

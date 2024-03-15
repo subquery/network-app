@@ -5,14 +5,18 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdErrorOutline } from 'react-icons/md';
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
+import { ApproveContract } from '@components/ModalApproveToken';
 import { NotificationType, openNotification } from '@components/Notification';
+import { useSQToken } from '@containers';
 import { ContractTransaction } from '@ethersproject/contracts';
+import { useAddAllowance } from '@hooks/useAddAllowance';
 import { Button } from '@subql/components';
 import { ButtonProps } from '@subql/components/dist/common/button/Button';
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
+import { constants } from 'ethers';
 
-import { AsyncData, parseError } from '../../utils';
+import { AsyncData, isInsufficientAllowance, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
 import styles from './TransactionModal.module.css';
@@ -75,6 +79,7 @@ export type TransactionModalProps<P, T extends string> = {
   className?: string;
   buttonClassName?: string;
   currentConfirmButtonLoading?: boolean;
+  allowanceContractAddress?: ApproveContract;
 };
 
 export interface TransactionModalRef {
@@ -108,6 +113,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
       className = '',
       buttonClassName = '',
       currentConfirmButtonLoading = false,
+      allowanceContractAddress = ApproveContract.Staking,
     },
     ref,
   ) => {
@@ -116,6 +122,9 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
     const [isLoading, setIsLoading] = React.useState<boolean>(initialCheck?.loading || false);
     const [successModalText, setSuccessModalText] = React.useState<string | undefined>();
     const [failureModalText, setFailureModalText] = React.useState<string | undefined>();
+
+    const { addAllowance } = useAddAllowance();
+    const { balance } = useSQToken();
 
     React.useEffect(() => {
       if (initialCheck) {
@@ -151,9 +160,19 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
     const wrapTxAction = (action: typeof onClick, rethrow?: boolean) => async (params: string) => {
       try {
         if (!showModal || !action) return;
+        let tx: ContractTransaction;
 
-        const tx = await action(params, showModal);
         setIsLoading(true);
+        try {
+          tx = await action(params, showModal);
+        } catch (e: any) {
+          if (isInsufficientAllowance(e)) {
+            await addAllowance(allowanceContractAddress, (balance.result.data || constants.MaxUint256)?.toString());
+            tx = await action(params, showModal);
+          } else {
+            throw e;
+          }
+        }
         resetModal();
         openNotification({ title: t('transaction.submmited') });
         const result = await tx.wait();

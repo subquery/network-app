@@ -49,12 +49,22 @@ export function useEra(): {
       limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime')),
     ]);
 
-    const era: Era = {
-      startTime: bnToDate(startTime),
-      estEndTime: bnToDate(startTime.add(period)),
-      period: period.toNumber(),
-      index: index.toNumber(),
-    };
+    let era: Era;
+    if (startTime && period && index) {
+      era = {
+        startTime: bnToDate(startTime),
+        estEndTime: bnToDate(startTime.add(period)),
+        period: period.toNumber(),
+        index: index.toNumber(),
+      };
+    } else {
+      era = {
+        startTime: new Date(),
+        estEndTime: new Date(),
+        period: 0,
+        index: 0,
+      };
+    }
 
     return era;
   }, [contracts]);

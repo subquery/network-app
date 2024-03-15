@@ -27,7 +27,6 @@ export function useRewardCollectStatus(
 
   const fetchStatus = async (_?: boolean) => {
     if (!contracts) return false;
-
     try {
       setLoading(true);
       const lastClaimedEra = await limitContract(

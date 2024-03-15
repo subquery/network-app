@@ -82,6 +82,23 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
   return false;
 };
 
+export const isInsufficientAllowance = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+
+  if (msg instanceof Error) {
+    if (msg.message.includes('insufficient allowance')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg.includes('insufficient allowance')) {
+    return true;
+  }
+
+  return false;
+};
+
 export function parseError(
   error: any,
   options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
@@ -136,6 +153,12 @@ export function parseError(
     }
   };
 
+  const insufficientAllowance = () => {
+    if (isInsufficientAllowance(rawErrorMsg)) {
+      return 'Insufficient allowance. Please set a reasonable value when set spending cap';
+    }
+  };
+
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
@@ -158,9 +181,10 @@ export function parseError(
     mappingError() ??
     mapContractError() ??
     userDeniedSignature() ??
-    callRevert() ??
+    insufficientAllowance() ??
     RpcUnavailableMsg() ??
     insufficientFunds() ??
+    callRevert() ??
     options.defaultGeneralMsg ??
     generalErrorMsg()
   );

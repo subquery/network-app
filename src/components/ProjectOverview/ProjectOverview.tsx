@@ -159,7 +159,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
 
   return (
     <div className={styles.container}>
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 5 }}>
+      {/* note the width on this element, if inner elements need width:100% to overflow or ..., 
+          need add a width on the parent elements, flex-grow can make it dynamic, 
+          width: 1px equal 500px, 
+          but suggest add a reasonable value in case this rule change in the future
+        */}
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 5, width: 500 }}>
         <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
@@ -220,7 +225,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <Typography variant="large" weight={600}>
             {t('projectOverview.deploymentDescription')}
           </Typography>
-          <div style={{ width: 670, marginTop: 8 }}>
+          <div style={{ width: '100%', marginTop: 8 }}>
             <Expand>
               <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
             </Expand>
