@@ -3,14 +3,14 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { gql, useQuery } from '@apollo/client';
 import { IPFSImage } from '@components';
 import NewCard from '@components/NewCard';
 import { useProjectMetadata } from '@containers';
 import { Typography } from '@subql/components';
-import { renderAsync, useGetProjectsQuery } from '@subql/react-hooks';
+import { renderAsync } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, notEmpty, parseError } from '@utils';
-import { Skeleton } from 'antd';
-import Link from 'antd/es/typography/Link';
+import { Button, Skeleton } from 'antd';
 
 import { ProjectMetadata } from 'src/models';
 
@@ -20,18 +20,27 @@ export const ActiveCard = () => {
   const navigate = useNavigate();
   const { getMetadataFromCid } = useProjectMetadata();
 
-  const projectsQuery = useGetProjectsQuery({
-    variables: {
-      offset: 0,
-    },
-  });
+  const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
+    query GetProjects($offset: Int, $type: [ProjectType!] = [SUBQUERY, RPC], $orderBy: [ProjectsOrderBy!] = ID_ASC) {
+      projects(first: 50, offset: $offset, orderBy: $orderBy, filter: { type: { in: $type } }) {
+        totalCount
+        nodes {
+          id
+          metadata
+        }
+      }
+    }
+  `);
 
   const [projectsMetadata, setProjectsMetadata] = useState<ProjectMetadata[]>([]);
 
   const getAllProjectMetadata = async () => {
-    if (!projectsQuery.loading && projectsQuery.data?.projects?.nodes) {
+    if (!projectsQuery.loading && projectsQuery.data?.projects?.nodes.slice(0, 50)) {
       const res = await Promise.allSettled(
-        projectsQuery.data?.projects?.nodes.filter(notEmpty).map((i) => getMetadataFromCid(i.metadata)),
+        projectsQuery.data?.projects?.nodes
+          .slice(0, 50)
+          .filter(notEmpty)
+          .map((i) => getMetadataFromCid(i.metadata)),
       );
 
       setProjectsMetadata(res.filter(filterSuccessPromoiseSettledResult).map((i) => i.value));
@@ -45,31 +54,29 @@ export const ActiveCard = () => {
   return (
     <>
       {renderAsync(projectsQuery, {
-        loading: () => <Skeleton active style={{ marginTop: 30 }}></Skeleton>,
+        loading: () => (
+          <Skeleton
+            avatar
+            active
+            style={{ display: 'flex', maxHeight: 176, marginTop: 24, marginBottom: 40 }}
+            paragraph={{ rows: 4 }}
+          ></Skeleton>
+        ),
         error: (e) => <>{parseError(e)}</>,
         data: (projects) => {
           return (
             <NewCard
-              title="Active Projects"
-              titleExtra={
-                <div style={{ fontSize: 16, display: 'flex', alignItems: 'baseline' }}>
-                  <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
-                    {projects.projects?.totalCount}
+              title={
+                <div className="col-flex" style={{ position: 'relative', width: '100%' }}>
+                  <Typography variant="h5" weight={500}>
+                    Decentralised RPCs and Indexed Datasets
                   </Typography>
-                  Project
-                </div>
-              }
-              tooltip="The number of actively indexed projects across the entire network"
-              width={302}
-              style={{ marginTop: 24 }}
-            >
-              <>
-                <div className={styles.images}>
-                  {projects.projects?.nodes
-                    .filter(notEmpty)
-                    // for layout
-                    .slice(0, 9)
-                    .map((project, index) => (
+                  <Typography type="secondary" style={{ margin: '12px 0 8px 0' }}>
+                    Access decentralised data from across web3 in only a few minutes from any of our{' '}
+                    {projects.projects?.totalCount} projects
+                  </Typography>
+                  <div className={styles.images}>
+                    {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
                       <IPFSImage
                         key={project.id}
                         src={projectsMetadata[index]?.image || '/static/default.project.png'}
@@ -79,18 +86,23 @@ export const ActiveCard = () => {
                         }}
                       />
                     ))}
-                </div>
-                <div>
-                  <Link
+                  </div>
+
+                  <Button
+                    style={{ position: 'absolute', right: 0, top: 0 }}
+                    shape="round"
+                    size="large"
+                    type="primary"
                     onClick={() => {
-                      navigate('/explorer/home');
+                      navigate(`/explorer`);
                     }}
                   >
-                    View All Projects
-                  </Link>
+                    View Projects
+                  </Button>
                 </div>
-              </>
-            </NewCard>
+              }
+              style={{ marginTop: 24, marginBottom: 40, width: '100%' }}
+            ></NewCard>
           );
         },
       })}

@@ -164,7 +164,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           width: 1px equal 500px, 
           but suggest add a reasonable value in case this rule change in the future
         */}
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 5, width: 500 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 7, width: 500 }}>
         <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
@@ -233,7 +233,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         </div>
       </div>
 
-      <div style={{ marginLeft: 48, flex: 7, display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ marginLeft: 48, flex: 5, display: 'flex', flexDirection: 'column', gap: 24 }}>
         <NewCard
           style={{ width: '100%' }}
           titleExtra={

@@ -231,6 +231,8 @@ const Dashboard: FC = () => {
         👋 Welcome to SubQuery Network
       </Typography>
 
+      <ActiveCard></ActiveCard>
+
       {renderAsync(dashboardData, {
         loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
         error: (e) => <Typography>{parseError(e)}</Typography>,
@@ -285,7 +287,6 @@ const Dashboard: FC = () => {
                 </div>
                 <div className={styles.dashboardMainBottomRight}>
                   <EraCard></EraCard>
-                  <ActiveCard></ActiveCard>
                   <ForumCard></ForumCard>
                 </div>
               </div>
