@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { AntDTable, SearchInput, TableText } from '@components';
+import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
@@ -14,7 +15,7 @@ import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
-import { formatEther, getOrderedAccounts, mulToPercentage } from '@utils';
+import { formatEther, getOrderedAccounts, mulToPercentage, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { useMount, useWhyDidYouUpdate } from 'ahooks';
 import { Table, TableProps } from 'antd';
@@ -154,8 +155,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       }),
     },
     {
-      //'t('indexer.title')'
-      title: <TableTitle title={t('indexer.title')} />,
+      title: <TableTitle title={t('indexer.nickname')} />,
       dataIndex: 'address',
       key: 'address',
       width: 100,
@@ -168,143 +168,88 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     {
       title: <TableTitle title={t('indexer.totalStake')} />,
       key: 'totalStakeKey',
-      children: [
-        {
-          title: <TableTitle title={t('general.current')} />,
-          dataIndex: ['totalStake', 'current'],
-          key: 'totalStake',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-          sorter: (a, b) => a.totalStake.current - b.totalStake.current,
-        },
-        {
-          title: <TableTitle title={t('general.next')} />,
-          dataIndex: ['totalStake', 'after'],
-          key: 'totalStakeAfter',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-          sorter: (a, b) => (a.totalStake.after ?? 0) - (b.totalStake.after ?? 0),
-        },
-      ],
+      dataIndex: 'totalStake',
+      width: 100,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              <TokenAmount value={formatEther(value.current, 4)} />
+            </Typography>
+            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
     },
     {
       title: <TableTitle title={t('indexer.ownStake')} />,
       key: 'ownStakeKey',
-      children: [
-        {
-          title: <TableTitle title={t('general.current')} />,
-          dataIndex: ['ownStake', 'current'],
-          key: 'ownStake',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-        {
-          title: <TableTitle title={t('general.next')} />,
-          dataIndex: ['ownStake', 'after'],
-          key: 'ownStakeAfter',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-      ],
+      dataIndex: 'ownStake',
+      width: 100,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              <TokenAmount value={formatEther(value.current, 4)} />
+            </Typography>
+            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
     },
     {
       title: <TableTitle title={t('indexer.delegated')} />,
       key: 'delegatedKey',
-      children: [
-        {
-          title: <TableTitle title={t('general.current')} />,
-          dataIndex: ['delegated', 'current'],
-          key: 'delegated',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-        {
-          title: <TableTitle title={t('general.next')} />,
-          dataIndex: ['delegated', 'after'],
-          key: 'delegatedAfter',
-          width: 40,
-          render: (value) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-      ],
+      dataIndex: 'delegated',
+      width: 100,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              <TokenAmount value={formatEther(value.current, 4)} />
+            </Typography>
+            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
     },
     {
       title: <TableTitle title={t('indexer.commission')} />,
       key: 'commissionKey',
-      children: [
-        {
-          title: <TableTitle title={t('general.current')} />,
-          dataIndex: ['commission', 'current'],
-          key: 'commission',
-          width: 40,
-          render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-          sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
-        },
-        {
-          title: <TableTitle title={t('general.next')} />,
-          dataIndex: ['commission', 'after'],
-          key: 'commissionAfter',
-          width: 40,
-          render: (value: number) => <TableText content={mulToPercentage(value) || '-'} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-          sorter: (a, b) => (a.commission.after ?? 0) - (b?.commission?.after ?? 0),
-        },
-      ],
+      dataIndex: 'commission',
+      width: 100,
+      render: (value: { current: number; after: number }) => {
+        return (
+          <div className="col-flex">
+            <Typography>{mulToPercentage(value.current)}</Typography>
+            <EstimatedNextEraLayout value={mulToPercentage(value.after)}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
+      sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
     },
     {
       title: <TableTitle title={t('indexer.capacity')} />,
       key: 'capacityKey',
-      children: [
-        {
-          title: <TableTitle title={t('general.current')} />,
-          dataIndex: ['capacity', 'current'],
-          key: 'capacity',
-          width: 40,
-          render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-        {
-          title: <TableTitle title={t('general.next')} />,
-          dataIndex: ['capacity', 'after'],
-          key: 'capacityAfter',
-          width: 40,
-          render: (value: string) => <TokenAmount value={formatEther(value, 4)} />,
-          onCell: (record) => ({
-            onClick: () => viewIndexerDetail(record.address),
-          }),
-        },
-      ],
+      dataIndex: 'capacity',
+      width: 100,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              <TokenAmount value={formatEther(value.current, 4)} />
+            </Typography>
+            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
     },
     {
       title: <TableTitle title={t('indexer.action')} />,
       key: 'addressKey',
       dataIndex: 'address',
       fixed: 'right' as FixedType,
-      width: 40,
+      width: 50,
       align: 'center',
       render: (id: string) => {
         if (id === account) return <Typography> - </Typography>;

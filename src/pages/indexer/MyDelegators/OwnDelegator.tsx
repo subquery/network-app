@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
@@ -62,9 +63,9 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
             <Typography>
               {formatNumber(value.current)} {TOKEN}
             </Typography>
-            <Typography type="secondary" variant="small">
-              {formatNumber(value.after)} {TOKEN}
-            </Typography>
+            <div>
+              <EstimatedNextEraLayout value={`${formatNumber(value.after)} ${TOKEN}`}></EstimatedNextEraLayout>
+            </div>
           </div>
         );
       },
