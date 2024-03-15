@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
 
-import { DeploymentInfo, SummaryList } from '../../../components';
+import { ApproveContract, DeploymentInfo, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { useWeb3 } from '../../../containers';
 import {
@@ -220,6 +220,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
       onSuccess={() => onAcceptOffer()}
       onClick={handleClick}
       onClose={() => setCurStep(0)}
+      allowanceContractAddress={ApproveContract.PurchaseOfferMarket}
       renderContent={(onSubmit, _, isLoading, error) => {
         if (curStep === 0) {
           return <OfferSummary curStep={curStep} onNext={() => setCurStep(curStep + 1)} offer={offer} />;
