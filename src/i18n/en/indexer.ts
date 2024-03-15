@@ -16,6 +16,7 @@ const translation = {
   },
   indexer: {
     title: 'Indexer',
+    nickname: 'Node Runner',
     indexers: 'Indexers',
     profile: 'My Profile', // Explorer V1
     myDelegators: 'My Delegators',

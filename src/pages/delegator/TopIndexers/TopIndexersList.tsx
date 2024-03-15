@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AntDTable, SearchInput, TableText } from '@components';
+import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
@@ -47,15 +48,13 @@ const getColumns = (
     dataIndex: 'currICR',
     sorter: (a, b) => a.nextICR - b.nextICR,
     render: (currICR, raw) => (
-      <div>
-        {raw.nextICR === currICR ? (
+      <div className="col-flex">
+        <Typography>
           <span>{currICR}%</span>
-        ) : (
-          <span>
-            <del>{currICR}%</del>
-            {raw.nextICR}%
-          </span>
-        )}
+        </Typography>
+        <div>
+          <EstimatedNextEraLayout value={`${raw.nextICR}%`}></EstimatedNextEraLayout>
+        </div>
       </div>
     ),
   },
@@ -170,6 +169,7 @@ const getColumns = (
     dataIndex: 'id',
     align: 'center',
     fixed: 'right' as FixedType,
+    width: 120,
     render: (id: string) => {
       if (id === account) return <Typography> - </Typography>;
       const delegation = delegations.find((i) => i?.id === `${account}:${id}`);
