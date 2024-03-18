@@ -106,10 +106,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
   }, [priceValue, flexPlans]);
 
   const enoughReq = useMemo(() => {
-    const priceVal = priceValue;
+    const priceVal = priceValue || (form.getFieldsValue(true)['price'] as string);
     if (!priceVal || depositBalance?.eq(0) || !depositBalance) return 0;
-    return depositBalance.div(priceVal).toNumber();
-  }, [depositBalance, priceValue, currentStep]);
+
+    return BigNumberJs(formatSQT(depositBalance.toString()))
+      .div(BigNumberJs(priceVal.toString()))
+      .multipliedBy(1000)
+      .toNumber()
+      .toLocaleString();
+  }, [depositBalance, priceValue, form, currentStep]);
 
   const nextBtnText = useMemo(() => {
     if (currentStep === 0) {
