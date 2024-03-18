@@ -18,7 +18,7 @@ import { useAccount } from 'wagmi';
 
 import styles from './MyHostedPlan.module.less';
 
-const MyHostedPlan: FC = (props) => {
+const MyHostedPlan: FC = () => {
   const navigate = useNavigate();
   const {
     updateHostingPlanApi,
@@ -100,7 +100,7 @@ const MyHostedPlan: FC = (props) => {
             },
           },
           {
-            title: 'Maximum Allocated indexers',
+            title: 'Maximum Allocated Node operators',
             dataIndex: 'maximum',
             render: (val: number) => {
               return <Typography>{val}</Typography>;

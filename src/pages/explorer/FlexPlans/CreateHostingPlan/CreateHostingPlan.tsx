@@ -303,7 +303,7 @@ const CreateHostingFlexPlan = forwardRef<
             <Form.Item
               label={
                 <Typography style={{ marginTop: 24 }}>
-                  Maximum Allocated Indexers
+                  Maximum Allocated Node Operators
                   <AiOutlineInfoCircle
                     style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
                   ></AiOutlineInfoCircle>
@@ -312,7 +312,7 @@ const CreateHostingFlexPlan = forwardRef<
               name="maximum"
               rules={[{ required: true }]}
             >
-              <InputNumber placeholder="Enter maximum allocated indexers" min="2"></InputNumber>
+              <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
             </Form.Item>
             <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
               {matchedCount}

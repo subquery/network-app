@@ -8,7 +8,7 @@ const translation = {
     self: {
       title: 'SubQuery Network',
       description:
-        "Decentralise your project with SubQuery's Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as an Indexer.",
+        "Decentralise your project with SubQuery's Network, which provides indexed data to the global community in an incentivised and verifiable way. You can join and participate as a Consumer, Delegator, or even as a Node Operator.",
     },
     externalExplorer: {
       title: 'SubQuery Explorer',
@@ -46,13 +46,13 @@ const translation = {
       withdrawn: 'Withdrawn',
     },
     tooltip: {
-      delegating: 'The amount of SQT that you are delegating to Indexers in the SubQuery Network to earn rewards',
+      delegating: 'The amount of SQT that you are delegating to Node Operators in the SubQuery Network to earn rewards',
       staking: 'The amount of SQT that you have staked against projects you are indexing in the SubQuery Network',
       rewards: 'The amount of rewards earned by participating in the SubQuery Network through delegating or staking',
       withdrawn: 'The amount of SQT that you have undelegated or unstaked',
     },
     linkText: {
-      delegating: 'Delegate to an Indexer',
+      delegating: 'Delegate to a Node Operator',
       staking: 'Start Staking',
       rewards: 'View Rewards',
       withdrawn: 'View Withdrawn',
@@ -91,7 +91,7 @@ const translation = {
   explorer: {
     project: {
       tab1: 'Overview',
-      tab2: 'Indexers',
+      tab2: 'Node Operators',
       tab3: 'Service Agreement',
       tab4: 'Flex Plan',
       // tab3: 'Playground',
@@ -99,7 +99,7 @@ const translation = {
     home: {
       header: 'SubQuery Explorer',
       headerDesc:
-        'Explore some of the SubQuery Projects hosted and run in a decentralised, trustless, and verifiable way by indexers around the world',
+        'Explore some of the SubQuery Projects hosted and run in a decentralised, trustless, and verifiable way by Node Operators around the world',
     },
     flexPlans: {
       indexer: 'indexer',
@@ -121,13 +121,13 @@ const translation = {
     },
   },
   noIndexers: {
-    description: 'no indexers available',
+    description: 'no Node Operators available',
     title: 'Start indexing this project',
     subtitle: 'Learn how to index a SubQuery project ',
   },
   indexers: {
     head: {
-      indexers: 'Indexers',
+      indexers: 'Node Operator',
       progress: 'Progress',
       status: 'Status',
       url: 'Query URL',
@@ -135,10 +135,11 @@ const translation = {
       playground: 'Playground',
     },
     tooltip: {
-      status: 'The offline status means that the node service or query service of the indexer is in an unhealthy state',
+      status:
+        'The offline status means that the node service or query service of the Node Operator is in an unhealthy state',
       connection:
-        "We can't connect to this Indexer's metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to",
-      error: 'Indexer Connection Error',
+        "We can't connect to this Node Operator's metadata endpoint, it appears that they are offline. You can verify this by making a HTTP GET request to",
+      error: 'Node Operator Connection Error',
     },
   },
   create: {

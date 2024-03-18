@@ -58,7 +58,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
           ) : (
             <div>
               <Typography variant="small" className={styles.text}>
-                Type: {type === ProjectType.RPC ? 'RPC Endpoint' : 'Data Indexer'}
+                Type: {type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}
               </Typography>
             </div>
           )}

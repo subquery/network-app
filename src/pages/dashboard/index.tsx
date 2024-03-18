@@ -235,7 +235,7 @@ const Dashboard: FC = () => {
 
       {renderAsync(dashboardData, {
         loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
-        error: (e) => <Typography>{parseError(e)}</Typography>,
+        error: (e) => <Skeleton active avatar paragraph={{ rows: 20 }} />,
         data: (fetchedData) => {
           const delegatorsTotalCount =
             +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -

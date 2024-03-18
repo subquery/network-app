@@ -87,7 +87,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="content-width" style={{ padding: '80px', height: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
         <Typography variant="h4">My Projects</Typography>
       </div>
 

@@ -9,7 +9,7 @@ import NewCard from '@components/NewCard';
 import { useProjectMetadata } from '@containers';
 import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
-import { filterSuccessPromoiseSettledResult, notEmpty, parseError } from '@utils';
+import { filterSuccessPromoiseSettledResult, notEmpty } from '@utils';
 import { Button, Skeleton } from 'antd';
 
 import { ProjectMetadata } from 'src/models';
@@ -21,8 +21,12 @@ export const ActiveCard = () => {
   const { getMetadataFromCid } = useProjectMetadata();
 
   const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
-    query GetProjects($offset: Int, $type: [ProjectType!] = [SUBQUERY, RPC], $orderBy: [ProjectsOrderBy!] = ID_ASC) {
-      projects(first: 50, offset: $offset, orderBy: $orderBy, filter: { type: { in: $type } }) {
+    query GetProjects(
+      $offset: Int
+      $type: [ProjectType!] = [SUBQUERY, RPC]
+      $orderBy: [ProjectsOrderBy!] = [TOTAL_REWARD_DESC, UPDATED_TIMESTAMP_DESC]
+    ) {
+      projects(first: 30, offset: $offset, orderBy: $orderBy, filter: { type: { in: $type } }) {
         totalCount
         nodes {
           id
@@ -62,7 +66,14 @@ export const ActiveCard = () => {
             paragraph={{ rows: 4 }}
           ></Skeleton>
         ),
-        error: (e) => <>{parseError(e)}</>,
+        error: (e) => (
+          <Skeleton
+            avatar
+            active
+            style={{ display: 'flex', maxHeight: 176, marginTop: 24, marginBottom: 40 }}
+            paragraph={{ rows: 4 }}
+          ></Skeleton>
+        ),
         data: (projects) => {
           return (
             <NewCard

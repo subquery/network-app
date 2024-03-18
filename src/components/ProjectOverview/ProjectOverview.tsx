@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
 import Expand from '@components/Expand/Expand';
 import NewCard from '@components/NewCard';
@@ -51,7 +50,6 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
 };
 
 const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescription, manifest }) => {
-  const { t } = useTranslation();
   const query = useRouteQuery();
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic();
@@ -170,10 +168,6 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
             <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
           </Expand>
         </div>
-        <div className={styles.column} style={{ marginTop: 16 }}>
-          <ExternalLink icon="globe" link={metadata.websiteUrl} />
-          <ExternalLink icon="github" link={metadata.codeUrl} />
-        </div>
         <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
         {project.type === ProjectType.RPC && (
           <>
@@ -222,14 +216,14 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           </>
         )}
         <div className={styles.column}>
-          <Typography variant="large" weight={600}>
-            {t('projectOverview.deploymentDescription')}
-          </Typography>
-          <div style={{ width: '100%', marginTop: 8 }}>
+          <div style={{ width: '100%' }}>
             <Expand>
               <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
             </Expand>
           </div>
+
+          <ExternalLink icon="globe" link={metadata.websiteUrl} />
+          <ExternalLink icon="github" link={metadata.codeUrl} />
         </div>
       </div>
 
@@ -310,7 +304,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <div className="col-flex">
             <div className="flex" style={{ justifyContent: 'space-between' }}>
               <Typography variant="small" type="secondary">
-                Total {project.type === ProjectType.RPC ? 'RPC Providers' : 'Indexers'}
+                Total {project.type === ProjectType.RPC ? 'RPC Providers' : 'Node Operators'}
               </Typography>
               <Typography variant="small">
                 {project.deployments.nodes.find((i) => i?.id === deploymentId)?.indexers.totalCount || 0}

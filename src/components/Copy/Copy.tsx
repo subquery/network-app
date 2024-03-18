@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { AiFillCheckCircle } from 'react-icons/ai';
 import { BsCheckLg, BsClipboard } from 'react-icons/bs';
 import { message } from 'antd';
 import clsx from 'clsx';
@@ -20,11 +21,20 @@ type Props = {
   className?: string;
   iconClassName?: string;
   iconSize?: number;
+  customIcon?: React.ReactNode;
   children?: React.ReactNode;
   position?: 'flex-start' | 'flex-center';
 };
 
-const Copy: React.FC<Props> = ({ value, className, iconClassName, children, iconSize, position = 'flex-center' }) => {
+const Copy: React.FC<Props> = ({
+  value,
+  className,
+  iconClassName,
+  customIcon,
+  children,
+  iconSize,
+  position = 'flex-center',
+}) => {
   const [icon, setIcon] = React.useState<boolean>(false);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -40,11 +50,19 @@ const Copy: React.FC<Props> = ({ value, className, iconClassName, children, icon
   return (
     <div className={position} onClick={(e) => handleClick(e)} style={{ alignItems: 'center' }}>
       {children}
-      <div className={clsx(styles.container, className)}>
-        <div className={clsx(styles.copy, iconClassName)}>
-          {icon ? <BsCheckLg size={iconSize ?? 10} /> : <BsClipboard size={iconSize ?? 10} />}
+      {customIcon ? (
+        icon ? (
+          <AiFillCheckCircle style={{ color: 'var(--sq-blue400)' }} />
+        ) : (
+          customIcon
+        )
+      ) : (
+        <div className={clsx(styles.container, className)}>
+          <div className={clsx(styles.copy, iconClassName)}>
+            {icon ? <BsCheckLg size={iconSize ?? 10} /> : <BsClipboard size={iconSize ?? 10} />}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
