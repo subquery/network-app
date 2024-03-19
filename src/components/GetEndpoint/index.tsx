@@ -275,7 +275,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           setOpen(true);
         }}
       >
-        Get RPC Endpoint
+        Get Endpoint
       </Button>
 
       <Modal
