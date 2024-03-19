@@ -67,7 +67,7 @@ const ApiKeysFC: FC = () => {
     }
   }, [hasLogin]);
 
-  if (consumerHostLoading || loading)
+  if (consumerHostLoading)
     return (
       <div className={styles.apiKeys}>
         <Spinner></Spinner>
@@ -89,6 +89,7 @@ const ApiKeysFC: FC = () => {
             </Button>
           </div>
           <Table
+            loading={loading}
             columns={[
               {
                 title: 'NAME',

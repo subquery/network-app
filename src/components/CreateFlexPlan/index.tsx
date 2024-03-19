@@ -13,6 +13,7 @@ import {
   GetUserApiKeys,
   IGetHostingPlans,
   IPostHostingPlansParams,
+  isConsumerHostError,
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -146,8 +147,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const needAddAllowance = useMemo(() => {
     if (consumerHostAllowance.result.data?.eq(0)) return true;
-    return consumerHostAllowance.result.data?.lt(depositAmount || 0);
-  }, [depositAmount, consumerHostBalance.result.data]);
+    return BigNumberJs(formatSQT(consumerHostAllowance.result.data?.toString() || '0'))?.lt(depositAmount || 0);
+  }, [depositAmount, consumerHostAllowance.result.data]);
 
   const needDepositMore = useMemo(() => {
     if (!depositAmount) return false;
@@ -190,9 +191,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         }
 
         if (needCreateApiKey) {
-          await createNewApiKey({
+          const apiKeyRes = await createNewApiKey({
             name: specialApiKeyName,
           });
+          if (isConsumerHostError(apiKeyRes.data)) {
+            throw new Error(apiKeyRes.data.error);
+            return;
+          }
         }
 
         const price = form.getFieldsValue(true)['price'];
@@ -200,16 +205,24 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
         const createOrUpdate = prevHostingPlan ? updateHostingPlanApi : createHostingPlanApi;
         // create new one
-        await createOrUpdate({
+        const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
           maximum,
           expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
           id: prevHostingPlan?.id || '0',
         });
+
+        if (isConsumerHostError(res.data)) {
+          throw new Error(res.data.error);
+          return;
+        }
+
         await onSuccess?.();
       } catch (e) {
-        parseError(e);
+        parseError(e, {
+          alert: true,
+        });
       } finally {
         setNextBtnLoading(false);
       }
@@ -409,7 +422,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         </div>
 
         <Form layout="vertical" className={styles.createFlexPlanModal} form={depositForm}>
-          <Form.Item label={<Typography>Deposit amount</Typography>} name="amount" rules={[{ required: true }]}>
+          <Form.Item
+            label={<Typography>Deposit amount</Typography>}
+            name="amount"
+            rules={[{ type: 'number', required: true, min: 500 }]}
+          >
             <InputNumber
               placeholder="Enter amount"
               addonAfter={

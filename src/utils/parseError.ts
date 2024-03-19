@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { captureException } from '@sentry/react';
+import { openNotification } from '@subql/components';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
 import { isObject } from 'lodash-es';
 
@@ -110,7 +111,8 @@ export function parseError(
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
-  const mappingError = () => (options.errorMappings || errorsMapping).find((e) => rawErrorMsg.match(e.error))?.message;
+  const mappingError = () =>
+    [...(options.errorMappings || []), ...errorsMapping].find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),
@@ -177,7 +179,7 @@ export function parseError(
     if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable';
   };
 
-  return (
+  const msg =
     mappingError() ??
     mapContractError() ??
     userDeniedSignature() ??
@@ -186,6 +188,15 @@ export function parseError(
     insufficientFunds() ??
     callRevert() ??
     options.defaultGeneralMsg ??
-    generalErrorMsg()
-  );
+    generalErrorMsg();
+
+  if (options.alert) {
+    openNotification({
+      type: 'error',
+      description: msg,
+      duration: 5,
+    });
+  }
+
+  return msg;
 }

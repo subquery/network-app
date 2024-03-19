@@ -51,7 +51,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const [userHostingPlan, setUserHostingPlan] = useState<IGetHostingPlans[]>([]);
   const [userApiKeys, setUserApiKeys] = useState<GetUserApiKeys[]>([]);
 
-  const { getHostingPlanApi, getUserApiKeysApi } = useConsumerHostServices({
+  const { getHostingPlanApi, checkIfHasLogin, getUserApiKeysApi } = useConsumerHostServices({
     alert: false,
     autoLogin: false,
   });
@@ -110,7 +110,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
         setCurrentStep('checkFree');
       } else {
         const fetched = await fetchHostingPlanAndApiKeys();
-        console.warn(fetched);
+
         if (fetched) {
           if (!isConsumerHostError(fetched.hostingPlan.data) && !isConsumerHostError(fetched.apiKeys.data)) {
             if (
@@ -245,6 +245,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           deploymentId={deploymentId}
           project={project}
           onSuccess={async () => {
+            await checkIfHasLogin();
             await fetchHostingPlanAndApiKeys();
             setCurrentStep('checkEndpointWithApiKey');
           }}
