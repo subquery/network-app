@@ -31,7 +31,7 @@ import { useWeb3Store } from 'src/stores';
 import styles from './index.module.less';
 
 interface IProps {
-  project: ProjectDetailsQuery;
+  project: Pick<ProjectDetailsQuery, 'id'>;
   deploymentId: string;
   prevApiKey?: GetUserApiKeys;
   prevHostingPlan?: IGetHostingPlans;

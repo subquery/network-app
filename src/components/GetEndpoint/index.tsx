@@ -22,10 +22,10 @@ import styles from './index.module.less';
 
 interface IProps {
   deploymentId: string;
-  project: ProjectDetailsQuery;
+  project: Pick<ProjectDetailsQuery, 'id'>;
 }
 
-const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
+export const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
 
 const sponsoredProjects: {
   [key: string]: string;
@@ -188,9 +188,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
             disabled
             suffix={
               <Copy
-                value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${
-                  sponsoredProjects[project.id]
-                }'
+                value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${endpoint}'
             `}
                 customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
               ></Copy>

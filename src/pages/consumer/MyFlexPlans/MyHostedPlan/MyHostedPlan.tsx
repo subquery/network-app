@@ -1,22 +1,76 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { AiOutlineCopy } from 'react-icons/ai';
+import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
+import { Copy } from '@components';
+import { proxyGateway, specialApiKeyName } from '@components/GetEndpoint';
 import { useProjectMetadata } from '@containers';
-import { IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { GetUserApiKeys, IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { isConsumerHostError } from '@hooks/useConsumerHostServices';
 import CreateHostingFlexPlan, {
   CreateHostingFlexPlanRef,
 } from '@pages/explorer/FlexPlans/CreateHostingPlan/CreateHostingPlan';
-import { Typography } from '@subql/components';
+import { Modal, Typography } from '@subql/components';
 import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
-import { TOKEN } from '@utils';
-import { Table } from 'antd';
+import { parseError, TOKEN } from '@utils';
+import { Button, Input, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { useAccount } from 'wagmi';
 
 import styles from './MyHostedPlan.module.less';
+
+const useGetConnectUrl = () => {
+  const { getUserApiKeysApi, createNewApiKey } = useConsumerHostServices({
+    alert: true,
+    autoLogin: false,
+  });
+
+  const [userApiKeys, setUserApiKeys] = useState<GetUserApiKeys[]>([]);
+
+  const createdApiKey = useMemo(() => {
+    return userApiKeys.find((key) => key.name === specialApiKeyName);
+  }, [userApiKeys]);
+
+  const getConnectUrl = async (deploymentId: string) => {
+    try {
+      if (createdApiKey) {
+        return `${proxyGateway}/query/${deploymentId}?apiKey=${createdApiKey?.value}`;
+      }
+
+      const res = await getUserApiKeysApi();
+      if (!isConsumerHostError(res.data)) {
+        setUserApiKeys(res.data);
+        if (res.data.find((key) => key.name === specialApiKeyName)) {
+          return `${proxyGateway}/query/${deploymentId}?apiKey=${
+            res.data.find((key) => key.name === specialApiKeyName)?.value
+          }`;
+        } else {
+          const newKey = await createNewApiKey({
+            name: specialApiKeyName,
+          });
+
+          if (!isConsumerHostError(newKey.data)) {
+            return `${proxyGateway}/query/${deploymentId}?apiKey=${newKey.data.value}`;
+          }
+        }
+      }
+      throw new Error('Failed to get api keys');
+    } catch (e) {
+      parseError(e, {
+        alert: true,
+      });
+      return '';
+    }
+  };
+
+  return {
+    getConnectUrl,
+  };
+};
 
 const MyHostedPlan: FC = () => {
   const navigate = useNavigate();
@@ -30,8 +84,11 @@ const MyHostedPlan: FC = () => {
   });
 
   const { address: account } = useAccount();
-
+  const { getConnectUrl } = useGetConnectUrl();
+  const [currentConnectUrl, setCurrentConnectUrl] = useState('');
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetchConnectLoading, setFetchConnectLoading] = useState(false);
   const [createdHostingPlan, setCreatedHostingPlan] = useState<(IGetHostingPlans & { projectName: string | number })[]>(
     [],
   );
@@ -89,12 +146,12 @@ const MyHostedPlan: FC = () => {
             dataIndex: 'projectName',
           },
           {
-            title: 'Maximum Price',
+            title: 'Plan',
             dataIndex: 'price',
             render: (val: string) => {
               return (
                 <Typography>
-                  {formatSQT(BigNumberJs(val).multipliedBy(1000).toString())} {TOKEN}
+                  {formatSQT(BigNumberJs(val).multipliedBy(1000).toString())} {TOKEN}/Per 1000 Requests
                 </Typography>
               );
             },
@@ -123,7 +180,34 @@ const MyHostedPlan: FC = () => {
             dataIndex: 'spent',
             render: (_, record) => {
               return (
-                <div>
+                <div className="flex">
+                  <Button
+                    loading={fetchConnectLoading}
+                    type="text"
+                    style={{
+                      padding: '6px 10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      color: 'var(--sq-blue600)',
+                      fontSize: 16,
+                      background: 'none',
+                    }}
+                    onClick={async () => {
+                      try {
+                        setFetchConnectLoading(true);
+                        const url = await getConnectUrl(record.deployment.deployment);
+                        if (!url) return;
+                        setCurrentConnectUrl(url);
+                        setOpen(true);
+                      } finally {
+                        setFetchConnectLoading(false);
+                      }
+                    }}
+                  >
+                    <LuArrowRightFromLine />
+                    Connect
+                  </Button>
                   <Typography
                     style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
                     onClick={() => {
@@ -135,20 +219,19 @@ const MyHostedPlan: FC = () => {
                     View Details
                   </Typography>
                   <Typography
-                    style={{ color: 'var(--sq-blue600)', padding: '6px 10px', marginLeft: 16 }}
+                    style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
                     onClick={() => {
                       setCurrentEditInfo(record);
                       ref.current?.showModal();
                     }}
                   >
-                    {record.price === '0' ? 'Restart' : 'Edit'}
+                    {record.price === '0' ? 'Restart' : 'Update'}
                   </Typography>
 
                   <Typography
                     style={{
                       color: record.price === '0' ? 'var(--sq-gray400)' : 'var(--sq-error)',
                       padding: '6px 10px',
-                      marginLeft: 16,
                     }}
                     onClick={async () => {
                       if (record.price === '0') return;
@@ -185,6 +268,64 @@ const MyHostedPlan: FC = () => {
         editInformation={currentEditInfo}
         onSubmit={() => init()}
       ></CreateHostingFlexPlan>
+
+      <Modal
+        title="Get Endpoint"
+        open={open}
+        onCancel={() => {
+          setOpen(false);
+        }}
+        footer={
+          <div className="flex">
+            <span style={{ flex: 1 }}></span>
+
+            <Button shape="round" size="large" type="primary">
+              Copy Endpoint and Close
+            </Button>
+          </div>
+        }
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        width={680}
+      >
+        <div className="col-flex" style={{ gap: 24 }}>
+          <Typography>You can now connect to the Arbitrum Archive Node using the following Endpoint below</Typography>
+          <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
+
+          <Input
+            value={currentConnectUrl}
+            size="large"
+            disabled
+            suffix={
+              <Copy
+                value={currentConnectUrl}
+                customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
+              ></Copy>
+            }
+          ></Input>
+
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography variant="medium">Example CURL request</Typography>
+
+            <Input
+              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'
+      `}
+              size="large"
+              disabled
+              suffix={
+                <Copy
+                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'
+            `}
+                  customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
+                ></Copy>
+              }
+            ></Input>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
