@@ -22,7 +22,7 @@ import styles from './index.module.less';
 
 interface IProps {
   deploymentId: string;
-  project: Pick<ProjectDetailsQuery, 'id'>;
+  project: Pick<ProjectDetailsQuery, 'id' | 'metadata'>;
 }
 
 export const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
@@ -146,7 +146,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const stepRender = useMemo(() => {
     const makeEndpointResult = (endpoint: string, isFree?: boolean) => (
       <div className="col-flex" style={{ gap: 24 }}>
-        <Typography>You can now connect to the Arbitrum Archive Node using the following Endpoint below</Typography>
+        <Typography>You can now connect to the {project.metadata.name} using the following Endpoint below</Typography>
         {isFree ? (
           <>
             <Typography>

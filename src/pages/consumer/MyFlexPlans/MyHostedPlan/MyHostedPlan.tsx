@@ -13,11 +13,11 @@ import { isConsumerHostError } from '@hooks/useConsumerHostServices';
 import CreateHostingFlexPlan, {
   CreateHostingFlexPlanRef,
 } from '@pages/explorer/FlexPlans/CreateHostingPlan/CreateHostingPlan';
-import { Modal, Typography } from '@subql/components';
+import { Modal, Tag, Typography } from '@subql/components';
 import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
-import { Button, Input, Table } from 'antd';
+import { Button, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { useAccount } from 'wagmi';
 
@@ -92,7 +92,7 @@ const MyHostedPlan: FC = () => {
   const [createdHostingPlan, setCreatedHostingPlan] = useState<(IGetHostingPlans & { projectName: string | number })[]>(
     [],
   );
-  const [currentEditInfo, setCurrentEditInfo] = useState<IGetHostingPlans>();
+  const [currentEditInfo, setCurrentEditInfo] = useState<IGetHostingPlans & { projectName: string | number }>();
   const { getMetadataFromCid } = useProjectMetadata();
   const ref = useRef<CreateHostingFlexPlanRef>(null);
   const init = async () => {
@@ -146,6 +146,7 @@ const MyHostedPlan: FC = () => {
             dataIndex: 'projectName',
           },
           {
+            width: 150,
             title: 'Plan',
             dataIndex: 'price',
             render: (val: string) => {
@@ -175,9 +176,17 @@ const MyHostedPlan: FC = () => {
             },
           },
           {
+            title: 'Channel status',
+            dataIndex: ['project', 'is_active'],
+            render: (val: boolean) => {
+              return <Tag color={val ? 'success' : 'error'}>{val ? 'Active' : 'Inactive'}</Tag>;
+            },
+          },
+          {
             title: 'Action',
             fixed: 'right',
             dataIndex: 'spent',
+            width: 400,
             render: (_, record) => {
               return (
                 <div className="flex">
@@ -198,6 +207,8 @@ const MyHostedPlan: FC = () => {
                         setFetchConnectLoading(true);
                         const url = await getConnectUrl(record.deployment.deployment);
                         if (!url) return;
+                        setCurrentEditInfo(record);
+
                         setCurrentConnectUrl(url);
                         setOpen(true);
                       } finally {
@@ -279,7 +290,16 @@ const MyHostedPlan: FC = () => {
           <div className="flex">
             <span style={{ flex: 1 }}></span>
 
-            <Button shape="round" size="large" type="primary">
+            <Button
+              shape="round"
+              size="large"
+              type="primary"
+              onClick={() => {
+                navigator.clipboard.writeText(currentConnectUrl);
+                message.success('Copied!');
+                setOpen(false);
+              }}
+            >
               Copy Endpoint and Close
             </Button>
           </div>
@@ -292,7 +312,9 @@ const MyHostedPlan: FC = () => {
         width={680}
       >
         <div className="col-flex" style={{ gap: 24 }}>
-          <Typography>You can now connect to the Arbitrum Archive Node using the following Endpoint below</Typography>
+          <Typography>
+            You can now connect to the{currentEditInfo?.projectName} using the following Endpoint below
+          </Typography>
           <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
 
           <Input
