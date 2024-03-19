@@ -151,6 +151,7 @@ export const useConsumerHostServices = (
     // this api do not need arguements. so use it to check if need login.
     try {
       setLoading(true);
+      authHeaders.current = getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || '');
       const res = await getUserApiKeysApi();
       if (isConsumerHostError(res.data) && `${res.data.code}` === '403') {
         setHasLogin(false);
@@ -204,9 +205,9 @@ export const useConsumerHostServices = (
     return res;
   };
 
-  const createNewApiKey = async (
-    params = {},
-  ): Promise<AxiosResponse<GetUserApiKeys | ConsumerHostError, { name: string }>> => {
+  const createNewApiKey = async (params: {
+    name: string;
+  }): Promise<AxiosResponse<GetUserApiKeys | ConsumerHostError, { name: string }>> => {
     const res = await instance.post<GetUserApiKeys>('/users/apikeys/new', params, {
       headers: authHeaders.current,
     });

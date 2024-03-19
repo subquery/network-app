@@ -2,6 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  :global {
+    .ant-checkbox-inner {
+      border-radius: 50%;
+    }
+  }
 }
 
 .radioCard {
@@ -15,6 +21,11 @@
 
   &&Selected {
     border-color: var(--sq-blue400);
+  }
+
+  &&SelectedWithBackgroud {
+    border-color: var(--sq-blue400);
+    background: #4388DD14;
   }
 }
 

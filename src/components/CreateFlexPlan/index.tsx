@@ -3,26 +3,38 @@
 
 import React, { FC, useMemo, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { specialApiKeyName } from '@components/GetEndpoint';
+import { ApproveContract } from '@components/ModalApproveToken';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useSQToken } from '@containers';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
-import { IPostHostingPlansParams, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { useAddAllowance } from '@hooks/useAddAllowance';
+import {
+  GetUserApiKeys,
+  IGetHostingPlans,
+  IPostHostingPlansParams,
+  useConsumerHostServices,
+} from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Steps, Typography } from '@subql/components';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
-import { TOKEN, tokenDecimals } from '@utils';
-import { Button, Divider, Form, InputNumber, Radio } from 'antd';
+import { parseError, TOKEN, tokenDecimals } from '@utils';
+import { Button, Checkbox, Divider, Form, InputNumber, Radio } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseEther } from 'ethers/lib/utils';
+
+import { useWeb3Store } from 'src/stores';
 
 import styles from './index.module.less';
 
 interface IProps {
   project: ProjectDetailsQuery;
   deploymentId: string;
-  onNext?: () => void;
+  prevApiKey?: GetUserApiKeys;
+  prevHostingPlan?: IGetHostingPlans;
+  onSuccess?: () => void;
   onBack?: () => void;
 }
 
@@ -30,17 +42,22 @@ const converFlexPlanPrice = (price: string) => {
   return BigNumberJs(formatUnits(price, tokenDecimals[SQT_TOKEN_ADDRESS])).multipliedBy(1000);
 };
 
-const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
-  const [currentStep, setCurrentStep] = React.useState(0);
-  const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
+const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, prevApiKey, onSuccess, onBack }) => {
+  const { contracts } = useWeb3Store();
   const [form] = Form.useForm<IPostHostingPlansParams>();
   const [depositForm] = Form.useForm<{ amount: string }>();
+  const depositAmount = Form.useWatch<number>('amount', depositForm);
   const priceValue = Form.useWatch<number>('price', form);
-  const { consumerHostBalance, balance } = useSQToken();
+  const { consumerHostAllowance, consumerHostBalance, balance } = useSQToken();
+  const { addAllowance } = useAddAllowance();
+
+  const [currentStep, setCurrentStep] = React.useState(0);
+  const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
+  const [nextBtnLoading, setNextBtnLoading] = useState(false);
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
-  const { getProjects } = useConsumerHostServices({
+  const { getProjects, createNewApiKey, createHostingPlanApi, updateHostingPlanApi } = useConsumerHostServices({
     alert: true,
     autoLogin: false,
   });
@@ -112,8 +129,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
     return BigNumberJs(formatSQT(depositBalance.toString()))
       .div(BigNumberJs(priceVal.toString()))
       .multipliedBy(1000)
-      .toNumber()
-      .toLocaleString();
+      .decimalPlaces(0)
+      ?.toString()
+      ?.toLocaleString();
   }, [depositBalance, priceValue, form, currentStep]);
 
   const nextBtnText = useMemo(() => {
@@ -121,8 +139,22 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
       return 'Next';
     }
     if (currentStep === 1) return 'Deposit SQT';
+
+    if (currentStep === 2) return 'Approve Transactions and Create Flex Plan';
     return 'Next';
   }, [currentStep]);
+
+  const needAddAllowance = useMemo(() => {
+    if (consumerHostAllowance.result.data?.eq(0)) return true;
+    return consumerHostAllowance.result.data?.lt(depositAmount || 0);
+  }, [depositAmount, consumerHostBalance.result.data]);
+
+  const needDepositMore = useMemo(() => {
+    if (!depositAmount) return false;
+    return true;
+  }, [depositAmount]);
+
+  const needCreateApiKey = useMemo(() => !prevApiKey, [prevApiKey]);
 
   const handleNextStep = async () => {
     if (currentStep === 0) {
@@ -141,6 +173,46 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
     if (currentStep === 1) {
       await depositForm.validateFields();
       setCurrentStep(2);
+    }
+
+    if (currentStep === 2) {
+      setNextBtnLoading(true);
+      try {
+        if (needAddAllowance) {
+          await addAllowance(ApproveContract.ConsumerHost, parseEther(depositAmount.toString()).toString());
+          await consumerHostAllowance.refetch();
+        }
+
+        if (needDepositMore) {
+          const tx = await contracts?.consumerHost.deposit(parseEther(depositAmount.toString()), true);
+          await tx?.wait();
+          await consumerHostBalance.refetch();
+        }
+
+        if (needCreateApiKey) {
+          await createNewApiKey({
+            name: specialApiKeyName,
+          });
+        }
+
+        const price = form.getFieldsValue(true)['price'];
+        const maximum = form.getFieldsValue(true)['maximum'];
+
+        const createOrUpdate = prevHostingPlan ? updateHostingPlanApi : createHostingPlanApi;
+        // create new one
+        await createOrUpdate({
+          deploymentId: deploymentId,
+          price: parseEther(`${price}`).div(1000).toString(),
+          maximum,
+          expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
+          id: prevHostingPlan?.id || '0',
+        });
+        await onSuccess?.();
+      } catch (e) {
+        parseError(e);
+      } finally {
+        setNextBtnLoading(false);
+      }
     }
   };
 
@@ -278,89 +350,141 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
         </>
       )}
 
-      {currentStep === 1 && (
+      {/* need the Form element render, so can trace the state */}
+      <div className="col-flex" style={{ gap: 24, display: currentStep === 1 ? 'flex' : 'none' }}>
+        <Typography>
+          Every wallet has a Billing Account where you must deposit SQT that you authorise SubQuery to deduct for Flex
+          Plan payments. If this Billing Account runs out of SQT, your Flex plan will automatically be cancelled and
+          your endpoint may stop working.
+        </Typography>
+        <Typography>
+          You can easily withdraw unused SQT from this Billing Account at any time without any unlocking period.
+        </Typography>
+        <Typography>
+          We recommend ensuring that there is sufficient SQT in your billing account so that you don’t run out
+          unexpectedly.
+        </Typography>
+
+        <div
+          className={clsx(styles.radioCard, styles.radioCardSelected)}
+          style={{ flexDirection: 'row', justifyContent: 'space-between', background: '#4388DD14' }}
+        >
+          <div className="col-flex">
+            <Typography>Your selected plan:</Typography>
+
+            <Typography style={{ textTransform: 'capitalize' }} weight={500}>
+              {selectedPlan}
+            </Typography>
+          </div>
+          <div className="col-flex" style={{ alignItems: 'flex-end' }}>
+            <Typography weight={600} variant="large" style={{ color: 'var(--sq-blue400)' }}>
+              {form.getFieldValue('price')} {TOKEN}
+            </Typography>
+            <Typography variant="medium">Per 1000 reqs</Typography>
+          </div>
+        </div>
+        <Divider style={{ margin: 0 }}></Divider>
+        <div className="col-flex" style={{ gap: 8 }}>
+          {depositBalance?.eq(0) || !depositBalance ? (
+            <>
+              <Typography>You must deposit SQT to open this billing account</Typography>
+              <Typography variant="medium" type="secondary">
+                You must deposit SQT to create this flex plan
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography>
+                Your existing billing account balance:{' '}
+                {BigNumberJs(formatSQT(depositBalance.toString() || '0'))
+                  .toNumber()
+                  .toLocaleString()}{' '}
+                {TOKEN}
+              </Typography>
+              <Typography variant="medium" type="secondary">
+                This is enough to pay for {enoughReq} requests
+              </Typography>
+            </>
+          )}
+        </div>
+
+        <Form layout="vertical" className={styles.createFlexPlanModal} form={depositForm}>
+          <Form.Item label={<Typography>Deposit amount</Typography>} name="amount" rules={[{ required: true }]}>
+            <InputNumber
+              placeholder="Enter amount"
+              addonAfter={
+                <div className="flex" style={{ gap: 8 }}>
+                  <img src="/static/sqtoken.png" alt=""></img>
+                  {TOKEN}
+                </div>
+              }
+            ></InputNumber>
+          </Form.Item>
+        </Form>
+
+        <div className="col-flex" style={{ alignItems: 'flex-end' }}>
+          <Typography variant="medium">Minimum deposit amount: 500 {TOKEN}</Typography>
+
+          <Typography variant="medium">
+            Wallet Balance:{' '}
+            {BigNumberJs(formatSQT(balance.result.data?.toString() || '0'))
+              .toNumber()
+              .toLocaleString()}{' '}
+            SQT <TokenTooltip></TokenTooltip>
+          </Typography>
+        </div>
+      </div>
+
+      {currentStep === 2 && (
         <>
           <Typography>
-            Every wallet has a Billing Account where you must deposit SQT that you authorise SubQuery to deduct for Flex
-            Plan payments. If this Billing Account runs out of SQT, your Flex plan will automatically be cancelled and
-            your endpoint may stop working.
-          </Typography>
-          <Typography>
-            You can easily withdraw unused SQT from this Billing Account at any time without any unlocking period.
-          </Typography>
-          <Typography>
-            We recommend ensuring that there is sufficient SQT in your billing account so that you don’t run out
-            unexpectedly.
+            You must now approve a few transactions using your connected wallet to initiate this Flex Plan. You must
+            approve all transactions if in order to create a Flex Plan
           </Typography>
 
           <div
-            className={clsx(styles.radioCard, styles.radioCardSelected)}
-            style={{ flexDirection: 'row', justifyContent: 'space-between', background: '#4388DD14' }}
+            className={clsx(styles.radioCard, !needAddAllowance ? styles.radioCardSelectedWithBackgroud : '')}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
           >
-            <div className="col-flex">
-              <Typography>Your selected plan:</Typography>
-
-              <Typography style={{ textTransform: 'capitalize' }} weight={500}>
-                {selectedPlan}
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Checkbox checked={!needAddAllowance}>
+                <Typography>Authorise Billing Permissions</Typography>
+              </Checkbox>
+              <Typography variant="medium" type="secondary">
+                This grants permission for SubQuery to manage your Billing Account automatically to pay node operators
+                for charges incurred in this new Flex Plan
               </Typography>
             </div>
-            <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-              <Typography weight={600} variant="large" style={{ color: 'var(--sq-blue400)' }}>
-                {form.getFieldValue('price')} {TOKEN}
+          </div>
+
+          <div
+            className={clsx(styles.radioCard, !needDepositMore ? styles.radioCardSelectedWithBackgroud : '')}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+          >
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Checkbox checked={!needDepositMore}>
+                <Typography>Deposit Funds to Billing Account</Typography>
+              </Checkbox>
+              <Typography variant="medium" type="secondary">
+                This is a transaction to deposit {depositForm.getFieldsValue(true)['amount'] || '0'} SQT into your
+                personal Billing Account from your wallet balance.
               </Typography>
-              <Typography variant="medium">Per 1000 reqs</Typography>
             </div>
           </div>
-          <Divider style={{ margin: 0 }}></Divider>
-          <div className="col-flex" style={{ gap: 8 }}>
-            {depositBalance?.eq(0) || !depositBalance ? (
-              <>
-                <Typography>You must deposit SQT to open this billing account</Typography>
-                <Typography variant="medium" type="secondary">
-                  You must deposit SQT to create this flex plan
-                </Typography>
-              </>
-            ) : (
-              <>
-                <Typography>
-                  Your existing billing account balance:{' '}
-                  {BigNumberJs(formatSQT(depositBalance.toString() || '0'))
-                    .toNumber()
-                    .toLocaleString()}{' '}
-                  {TOKEN}
-                </Typography>
-                <Typography variant="medium" type="secondary">
-                  This is enough to pay for {enoughReq} requests
-                </Typography>
-              </>
-            )}
-          </div>
 
-          <Form layout="vertical" className={styles.createFlexPlanModal} form={depositForm}>
-            <Form.Item label={<Typography>Deposit amount</Typography>} name="amount" rules={[{ required: true }]}>
-              <InputNumber
-                placeholder="Enter amount"
-                min="500"
-                addonAfter={
-                  <div className="flex" style={{ gap: 8 }}>
-                    <img src="/static/sqtoken.png" alt=""></img>
-                    {TOKEN}
-                  </div>
-                }
-              ></InputNumber>
-            </Form.Item>
-          </Form>
-
-          <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-            <Typography variant="medium">Minimum deposit amount: 500 {TOKEN}</Typography>
-
-            <Typography variant="medium">
-              Wallet Balance:{' '}
-              {BigNumberJs(formatSQT(balance.result.data?.toString() || '0'))
-                .toNumber()
-                .toLocaleString()}{' '}
-              SQT <TokenTooltip></TokenTooltip>
-            </Typography>
+          <div
+            className={clsx(styles.radioCard, !needCreateApiKey ? styles.radioCardSelectedWithBackgroud : '')}
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+          >
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Checkbox checked={!needCreateApiKey}>
+                <Typography>Create Personal API Key</Typography>
+              </Checkbox>
+              <Typography variant="medium" type="secondary">
+                This is a transaction to open a state channel and generate a personal API key for your account to secure
+                your new Flex Plan endpoint
+              </Typography>
+            </div>
           </div>
         </>
       )}
@@ -385,14 +509,21 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, onBack }) => {
             shape="round"
             size="large"
             onClick={() => {
-              setCurrentStep(1);
+              depositForm.resetFields();
+              setCurrentStep(2);
             }}
             style={{ marginRight: 12 }}
           >
             Skip without depositing more {TOKEN}
           </Button>
         )}
-        <Button shape="round" size="large" type="primary" onClick={handleNextStep} loading={flexPlans.loading}>
+        <Button
+          shape="round"
+          size="large"
+          type="primary"
+          onClick={handleNextStep}
+          loading={flexPlans.loading || nextBtnLoading}
+        >
           {nextBtnText}
         </Button>
       </div>
