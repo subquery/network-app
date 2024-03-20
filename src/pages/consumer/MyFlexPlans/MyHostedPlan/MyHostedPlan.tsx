@@ -177,7 +177,7 @@ const MyHostedPlan: FC = () => {
           },
           {
             title: 'Channel status',
-            dataIndex: ['project', 'is_active'],
+            dataIndex: 'is_actived',
             render: (val: boolean) => {
               return <Tag color={val ? 'success' : 'error'}>{val ? 'Active' : 'Inactive'}</Tag>;
             },
@@ -186,7 +186,7 @@ const MyHostedPlan: FC = () => {
             title: 'Action',
             fixed: 'right',
             dataIndex: 'spent',
-            width: 400,
+            width: 450,
             render: (_, record) => {
               return (
                 <div className="flex">

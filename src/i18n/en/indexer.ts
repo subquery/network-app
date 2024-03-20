@@ -73,8 +73,8 @@ const translation = {
     topRowData: 'Top row of the data represents the data in current era.',
     secondRowData: 'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
     here: 'here',
-    amount: ' There are {{count}} indexer.',
-    amount_other: ' There are {{count}} indexers.',
+    amount: ' There are {{count}} Node Operators.',
+    amount_other: ' There are {{count}} Node Operators.',
     unStakeTooltip:
       'You are at the minimum staking amount so you are unable to unstake more. You can unregister your indexer in the Indexer Admin app',
   },

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { specialApiKeyName } from '@components/GetEndpoint';
 import { ApproveContract } from '@components/ModalApproveToken';
@@ -25,6 +25,7 @@ import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
+import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -44,6 +45,7 @@ const converFlexPlanPrice = (price: string) => {
 };
 
 const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, prevApiKey, onSuccess, onBack }) => {
+  const { address: account } = useAccount();
   const { contracts } = useWeb3Store();
   const [form] = Form.useForm<IPostHostingPlansParams>();
   const [depositForm] = Form.useForm<{ amount: string }>();
@@ -51,6 +53,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const priceValue = Form.useWatch<number>('price', form);
   const { consumerHostAllowance, consumerHostBalance, balance } = useSQToken();
   const { addAllowance } = useAddAllowance();
+  const mounted = useRef(false);
 
   const [currentStep, setCurrentStep] = React.useState(0);
   const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
@@ -136,9 +139,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [depositBalance, priceValue, form, currentStep]);
 
   const nextBtnText = useMemo(() => {
-    if (currentStep === 0) {
-      return 'Next';
-    }
+    if (currentStep === 0) return 'Next';
+
     if (currentStep === 1) return 'Deposit SQT';
 
     if (currentStep === 2) return 'Approve Transactions and Create Flex Plan';
@@ -146,7 +148,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [currentStep]);
 
   const needAddAllowance = useMemo(() => {
-    if (consumerHostAllowance.result.data?.eq(0)) return true;
+    if (consumerHostAllowance.result.data?.eq(0) && depositAmount && depositAmount !== 0) return true;
     return BigNumberJs(formatSQT(consumerHostAllowance.result.data?.toString() || '0'))?.lt(depositAmount || 0);
   }, [depositAmount, consumerHostAllowance.result.data]);
 
@@ -180,14 +182,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       setNextBtnLoading(true);
       try {
         if (needAddAllowance) {
-          await addAllowance(ApproveContract.ConsumerHost, parseEther(depositAmount.toString()).toString());
+          await addAllowance(ApproveContract.ConsumerHost, parseEther(depositAmount?.toString() || '0').toString());
           await consumerHostAllowance.refetch();
         }
 
         if (needDepositMore) {
-          const tx = await contracts?.consumerHost.deposit(parseEther(depositAmount.toString()), true);
+          const tx = await contracts?.consumerHost.deposit(parseEther(depositAmount?.toString() || '0'), true);
           await tx?.wait();
           await consumerHostBalance.refetch();
+          depositForm.setFieldValue('amount', 0);
         }
 
         if (needCreateApiKey) {
@@ -208,7 +211,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
-          maximum,
+          maximum: Math.ceil(maximum),
           expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
           id: prevHostingPlan?.id || '0',
         });
@@ -228,6 +231,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       }
     }
   };
+
+  // Just refetch when user change the account
+  useEffect(() => {
+    if (account && mounted.current) {
+      consumerHostAllowance.refetch();
+      consumerHostBalance.refetch();
+      balance.refetch();
+    } else {
+      mounted.current = true;
+    }
+  }, [account]);
 
   return (
     <div className={styles.createFlexPlan}>

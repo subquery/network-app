@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { AiOutlineCopy } from 'react-icons/ai';
 import Copy from '@components/Copy';
 import CreateFlexPlan from '@components/CreateFlexPlan';
@@ -229,8 +229,8 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
               <Typography weight={500}>Flex Plan</Typography>
             </Radio>
             <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
-              Flex plans are pay as you go prices for different levels of requests, they provides a more flexible
-              pricing model that requires no up front commitment - unused SQT can be refunded.
+              Flex plans are pay as you go prices for different levels of requests, they provide a more flexible pricing
+              model that requires no up front commitment - unused SQT can be refunded.
             </Typography>
           </div>
         </div>
@@ -262,8 +262,18 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const resetAllField = () => {
     setCurrentStep('select');
     setFreeOrFlexPlan('flexPlan');
+    setUserHostingPlan([]);
+    setUserApiKeys([]);
     beforeStep.current = 'select';
   };
+
+  // Just refetch when user change the account
+  useEffect(() => {
+    if (account && open) {
+      resetAllField();
+      fetchHostingPlanAndApiKeys();
+    }
+  }, [account]);
 
   return (
     <div className={styles.getEndpoint}>
@@ -271,7 +281,12 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
         type="primary"
         shape="round"
         size="large"
-        onClick={() => {
+        loading={nextBtnLoading}
+        onClick={async () => {
+          if (!sponsoredProjects[project.id]) {
+            setFreeOrFlexPlan('flexPlan');
+            await handleNextStep();
+          }
           setOpen(true);
         }}
       >
