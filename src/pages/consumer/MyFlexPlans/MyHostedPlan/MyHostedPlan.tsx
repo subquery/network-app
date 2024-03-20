@@ -38,14 +38,14 @@ const useGetConnectUrl = () => {
   const getConnectUrl = async (deploymentId: string) => {
     try {
       if (createdApiKey) {
-        return `${proxyGateway}/query/${deploymentId}?apiKey=${createdApiKey?.value}`;
+        return `${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`;
       }
 
       const res = await getUserApiKeysApi();
       if (!isConsumerHostError(res.data)) {
         setUserApiKeys(res.data);
         if (res.data.find((key) => key.name === specialApiKeyName)) {
-          return `${proxyGateway}/query/${deploymentId}?apiKey=${
+          return `${proxyGateway}/query/${deploymentId}?apikey=${
             res.data.find((key) => key.name === specialApiKeyName)?.value
           }`;
         } else {
@@ -54,7 +54,7 @@ const useGetConnectUrl = () => {
           });
 
           if (!isConsumerHostError(newKey.data)) {
-            return `${proxyGateway}/query/${deploymentId}?apiKey=${newKey.data.value}`;
+            return `${proxyGateway}/query/${deploymentId}?apikey=${newKey.data.value}`;
           }
         }
       }

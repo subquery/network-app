@@ -136,7 +136,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
     }
 
     if (currentStep === 'checkEndpointWithApiKey') {
-      navigator.clipboard.writeText(`${proxyGateway}/query/${deploymentId}?apiKey=${createdApiKey?.value}`);
+      navigator.clipboard.writeText(`${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`);
       message.success('Copied!');
       setOpen(false);
       resetAllField();
@@ -254,7 +254,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
         ></CreateFlexPlan>
       ),
       checkEndpointWithApiKey: makeEndpointResult(
-        `${proxyGateway}/query/${deploymentId}?apiKey=${createdApiKey?.value}`,
+        `${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`,
       ),
     }[currentStep];
   }, [freeOrFlexPlan, project, currentStep, deploymentId]);
