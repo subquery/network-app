@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { matchPath } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
 import { ConnectButton } from '@rainbow-me/rainbowkit';

@@ -17,6 +17,7 @@ import {
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
+import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
@@ -53,6 +54,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const priceValue = Form.useWatch<number>('price', form);
   const { consumerHostAllowance, consumerHostBalance, balance } = useSQToken();
   const { addAllowance } = useAddAllowance();
+  const sqtPrice = useSqtPrice();
+
   const mounted = useRef(false);
 
   const [currentStep, setCurrentStep] = React.useState(0);
@@ -61,10 +64,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
-  const { getProjects, createNewApiKey, createHostingPlanApi, updateHostingPlanApi } = useConsumerHostServices({
-    alert: true,
-    autoLogin: false,
-  });
+  const { getProjects, createNewApiKey, createHostingPlanApi, updateHostingPlanApi, getUserApiKeysApi } =
+    useConsumerHostServices({
+      alert: true,
+      autoLogin: false,
+    });
 
   const flexPlans = useAsyncMemo(async () => {
     try {
@@ -134,7 +138,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       .div(BigNumberJs(priceVal.toString()))
       .multipliedBy(1000)
       .decimalPlaces(0)
-      ?.toString()
+      ?.toNumber()
       ?.toLocaleString();
   }, [depositBalance, priceValue, form, currentStep]);
 
@@ -194,12 +198,19 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         }
 
         if (needCreateApiKey) {
-          const apiKeyRes = await createNewApiKey({
-            name: specialApiKeyName,
-          });
-          if (isConsumerHostError(apiKeyRes.data)) {
-            throw new Error(apiKeyRes.data.error);
-            return;
+          // in case user create an api key at another tab, and back to this page to continue.
+          const checkApiKeys = await getUserApiKeysApi();
+          if (
+            !isConsumerHostError(checkApiKeys.data) &&
+            !checkApiKeys.data?.find((i) => i.name === specialApiKeyName)
+          ) {
+            const apiKeyRes = await createNewApiKey({
+              name: specialApiKeyName,
+            });
+            if (isConsumerHostError(apiKeyRes.data)) {
+              throw new Error(apiKeyRes.data.error);
+              return;
+            }
           }
         }
 
@@ -207,7 +218,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         const maximum = form.getFieldsValue(true)['maximum'];
 
         const createOrUpdate = prevHostingPlan ? updateHostingPlanApi : createHostingPlanApi;
-        // create new one
+        // if already created the plan, just update it.
         const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
@@ -230,6 +241,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         setNextBtnLoading(false);
       }
     }
+  };
+
+  const estimatedUs = (sqtAmount: string) => {
+    return BigNumberJs(sqtPrice).multipliedBy(BigNumberJs(sqtAmount)).toNumber().toFixed(4);
   };
 
   // Just refetch when user change the account
@@ -290,6 +305,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 {estimatedPriceInfo.economy?.toFixed(2)} {TOKEN}
               </Typography>
               <Typography variant="medium">Per 1000 reqs</Typography>
+              {sqtPrice !== '0' && (
+                <Typography>(~US${estimatedUs(estimatedPriceInfo.economy?.toString() || '0')})</Typography>
+              )}
             </div>
           </div>
 
@@ -315,6 +333,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 {estimatedPriceInfo.performance?.toFixed(2)} {TOKEN}
               </Typography>
               <Typography variant="medium">Per 1000 reqs</Typography>
+              {sqtPrice !== '0' && (
+                <Typography>(~US${estimatedUs(estimatedPriceInfo.performance?.toString() || '0')})</Typography>
+              )}
             </div>
           </div>
 
@@ -408,6 +429,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               {form.getFieldValue('price')} {TOKEN}
             </Typography>
             <Typography variant="medium">Per 1000 reqs</Typography>
+            {sqtPrice !== '0' && <Typography>(~US${estimatedUs(form.getFieldValue('price'))})</Typography>}
           </div>
         </div>
         <Divider style={{ margin: 0 }}></Divider>
@@ -429,7 +451,12 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 {TOKEN}
               </Typography>
               <Typography variant="medium" type="secondary">
-                This is enough to pay for {enoughReq} requests
+                This is enough to pay for {enoughReq} requests, we suggest{' '}
+                {BigNumberJs(form.getFieldValue('price') || '0')
+                  .multipliedBy(3)
+                  .toNumber()
+                  .toLocaleString()}{' '}
+                {TOKEN}
               </Typography>
             </>
           )}
