@@ -13,7 +13,7 @@ import { useWeb3Store } from 'src/stores';
 
 import { AppTypography, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
-import { TOKEN } from '../../../utils';
+import { parseError, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import { formatEther } from '../../../utils/numberFormatters';
 import styles from './MyFlexPlans.module.css';
@@ -30,7 +30,7 @@ const useTerminatePlan = () => {
   const { contracts } = useWeb3Store();
   const terminatePlan = async (flexPlanId: string) => {
     const res = await getUserChannelState(flexPlanId);
-
+    console.warn(res.data.channelId);
     if (res.data.channelId) {
       const hash = await contracts?.stateChannel.terminate(res.data);
       const result = await hash?.wait();
@@ -69,7 +69,7 @@ export const OngoingFlexPlanActions: React.FC<IOngoingFlexPlanActions> = ({ flex
         onCancel();
       }
     } catch (e) {
-      setError(`Failed to terminated. ${e}`);
+      setError(`Failed to terminated. ${parseError(e)}`);
     } finally {
       setIsLoading(false);
     }
