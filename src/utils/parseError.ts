@@ -100,6 +100,22 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
   return false;
 };
 
+export const amountExceedsBalance = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+  if (msg instanceof Error) {
+    if (msg.message.includes('transfer amount exceeds balance')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg.includes('transfer amount exceeds balance')) {
+    return true;
+  }
+
+  return false;
+};
+
 export function parseError(
   error: any,
   options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
@@ -155,6 +171,12 @@ export function parseError(
     }
   };
 
+  const exceedsBalance = () => {
+    if (amountExceedsBalance(rawErrorMsg)) {
+      return `Transfer amount exceeds balance`;
+    }
+  };
+
   const insufficientAllowance = () => {
     if (isInsufficientAllowance(rawErrorMsg)) {
       return 'Insufficient allowance. Please set a reasonable value when set spending cap';
@@ -183,6 +205,7 @@ export function parseError(
     mappingError() ??
     mapContractError() ??
     userDeniedSignature() ??
+    exceedsBalance() ??
     insufficientAllowance() ??
     RpcUnavailableMsg() ??
     insufficientFunds() ??

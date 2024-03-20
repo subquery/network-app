@@ -453,7 +453,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               <Typography variant="medium" type="secondary">
                 This is enough to pay for {enoughReq} requests, we suggest{' '}
                 {BigNumberJs(form.getFieldValue('price') || '0')
-                  .multipliedBy(3)
+                  .multipliedBy(20)
+                  .multipliedBy(form.getFieldValue('maximum') || 2)
                   .toNumber()
                   .toLocaleString()}{' '}
                 {TOKEN}
