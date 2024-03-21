@@ -61,7 +61,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
       const [indexerRewards, sortedCommissionRate] = data;
 
       const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
-      const modalText = getModalText(requireClaimIndexerRewards, sortedCommissionRate?.toString(), t);
+      const modalText = getModalText(requireClaimIndexerRewards, sortedCommissionRate?.after?.toString(), t);
 
       return (
         <>
