@@ -4694,36 +4694,24 @@
   resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.0.0.tgz#7021c57fc544a663c6068f874341f640d09b43bc"
   integrity sha512-U6kzojF5BuXTGrrr5a+QvweNKiHABX4ncyPd2oEFRFNrdakGTw8Yx9lzMDj1msx/vZ01542iu9lAQVriiwt8tw==
 
-"@subql/network-clients@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-1.1.0.tgz#b8f531f4e69451ffe160be993f9db7ceefa32e76"
-  integrity sha512-dUqjdeIehGs2g/HJUUAZuabZFDTdxIhaq3iaIxxoOSs7wye+2zHE2fh+sK5V62C2aWMh+BDVF3EbzXMKJo5ISw==
+"@subql/network-clients@1.1.1-0":
+  version "1.1.1-0"
+  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-1.1.1-0.tgz#dd8cc882130ea87997252301e9a9ad3dce6b99a7"
+  integrity sha512-JodkIO+/oNTpZdXPFDyWes50j9n82T3kMkQy+I774UfNOdBhhx+i97PtyHuqQTxfkOlTJ1DNHrK1CEZVVJ34Wg==
   dependencies:
     "@ethersproject/bignumber" "^5.7.0"
-    "@subql/network-config" "1.1.0"
-    "@subql/network-query" "1.1.0"
+    "@subql/network-config" "1.1.1"
+    "@subql/network-query" "1.1.2-3"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.0.tgz#e85c890aa0f36842563381afe1ea235091c0e9df"
-  integrity sha512-kg6/xcQaaNVkHudmqqPCVl3jRNwPrSOX0i+PctLX8nyRyDfRG2lXv0XXMVsjZeGP4rs7O8h1iUV5iSS9QXaCvQ==
-
 "@subql/network-config@1.1.1":
   version "1.1.1"
   resolved "https://registry.npmmirror.com/@subql/network-config/-/network-config-1.1.1.tgz#9ca44ea87b6d49804f8e09817115337e229021e0"
   integrity sha512-T9M/b2WV4ztigrvpzVbSe62JbRzrQ6sT+xn7mowdypL3/XoBvyN1BhtnRwL7n45yj1nw6eL4KewbMu8jOwTYGw==
-
-"@subql/network-query@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.0.tgz#dda29d0726349105516ea5f0a2a7fa54f6d24db7"
-  integrity sha512-39M9beXTTL+Qlx444sN6TBnTrxa54Y7zzlJLzWrwFpGDaBUeVF3VuvTgn/GzcMKYfp9A4wVXaWRMd2g4DcpgLg==
-  dependencies:
-    graphql "^16.5.0"
 
 "@subql/network-query@1.1.2-3":
   version "1.1.2-3"

@@ -93,8 +93,9 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
       // User is not an indexer
       return { loading: false };
     }
-
-    const commission = getCommission(indexer.indexer.commission, currentEraValue?.index);
+    // note commission change will take effect at next 2 era.
+    // but subql record immediate.
+    const commission = getCommission(indexer.indexer.commission, currentEraValue?.index - 1);
     const totalStake = getTotalStake(indexer.indexer.totalStake, currentEraValue?.index);
     const capacity = getCapacity(indexer.indexer.capacity, currentEraValue?.index);
     const ownStake = getOwnStake(delegation.delegation?.amount, currentEraValue?.index);
