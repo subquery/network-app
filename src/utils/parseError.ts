@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { captureException } from '@sentry/react';
+import { openNotification } from '@subql/components';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
 import { isObject } from 'lodash-es';
 
@@ -99,6 +100,22 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
   return false;
 };
 
+export const amountExceedsBalance = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+  if (msg instanceof Error) {
+    if (msg.message.includes('transfer amount exceeds balance')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg.includes('transfer amount exceeds balance')) {
+    return true;
+  }
+
+  return false;
+};
+
 export function parseError(
   error: any,
   options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
@@ -110,7 +127,8 @@ export function parseError(
   if (!error) return;
   logError(error);
   const rawErrorMsg = error?.data?.message ?? error?.message ?? error?.error ?? error ?? '';
-  const mappingError = () => (options.errorMappings || errorsMapping).find((e) => rawErrorMsg.match(e.error))?.message;
+  const mappingError = () =>
+    [...(options.errorMappings || []), ...errorsMapping].find((e) => rawErrorMsg.match(e.error))?.message;
   const mapContractError = () => {
     const revertCode = Object.keys(contractErrorCodes).find((key) =>
       rawErrorMsg.toString().match(`reverted: ${key}`),
@@ -153,6 +171,12 @@ export function parseError(
     }
   };
 
+  const exceedsBalance = () => {
+    if (amountExceedsBalance(rawErrorMsg)) {
+      return `Transfer amount exceeds balance`;
+    }
+  };
+
   const insufficientAllowance = () => {
     if (isInsufficientAllowance(rawErrorMsg)) {
       return 'Insufficient allowance. Please set a reasonable value when set spending cap';
@@ -177,15 +201,25 @@ export function parseError(
     if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable';
   };
 
-  return (
+  const msg =
     mappingError() ??
     mapContractError() ??
     userDeniedSignature() ??
+    exceedsBalance() ??
     insufficientAllowance() ??
     RpcUnavailableMsg() ??
     insufficientFunds() ??
     callRevert() ??
     options.defaultGeneralMsg ??
-    generalErrorMsg()
-  );
+    generalErrorMsg();
+
+  if (options.alert) {
+    openNotification({
+      type: 'error',
+      description: msg,
+      duration: 5,
+    });
+  }
+
+  return msg;
 }

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { STABLE_TOKEN, TOKEN } from '@utils/constants';
+import { TOKEN } from '@utils/constants';
 
 const translation = {
   consumer: 'Consumer',
@@ -69,15 +69,15 @@ const translation = {
       yourBalance: 'Your balance ',
       failToLoadBalance: 'Failed to load balance.',
       noPlansForPurchase: 'There is no plan available to purchase.',
-      failureFetchPlans: 'Failed to get plans for indexer',
-      notReadyToBePurchased: `This plan cannot be purchased until the Indexer status is 'Ready'`,
+      failureFetchPlans: 'Failed to get plans for Node Operator',
+      notReadyToBePurchased: `This plan cannot be purchased until the Node Operator status is 'Ready'`,
     },
     inactiveTemplate: 'This template has mark as inactive.',
     inactiveTemplateTip: 'This template has mark as inactive, please delete it.',
   },
   flexPlans: {
     project: 'project',
-    indexer: 'indexer',
+    indexer: 'Node Operator',
     validityPeriod: 'Validity Period',
     spent: 'spent',
     channelStatus: 'Channel Status',
@@ -102,19 +102,19 @@ const translation = {
     purchase: 'Purchase',
     purchased: 'Purchased',
     confirmPurchase: 'Confirm Purchase',
-    disabledPurchaseAsOffline: 'Indexer is offline.',
+    disabledPurchaseAsOffline: 'Node Operator is offline.',
     successPurchaseTitle: 'Success',
     successPurchaseDesc: 'You have successfully purchased the plan!',
     own: 'Created by you',
     flexPlan: 'Flex Plan',
     flexPlanDesc:
-      'For provide a better experience, Subquery will pick the optimal indexer for your Flex Plan based on a combination of price and historical performance.',
+      'For provide a better experience, Subquery will pick the optimal Node Operator for your Flex Plan based on a combination of price and historical performance.',
     deposit: 'Deposit',
     createFlexPlan: 'Create Flex Plan',
   },
   myFlexPlans: {
     description:
-      'Flex Plans are advertised by Indexers on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
+      'Flex Plans are advertised by Node Operators on each SubQuery Project in the Explorer. View and terminate your purchased Flex Plans here.',
     ongoing: 'Ongoing',
     closed: 'Closed',
     apiKey: 'API Key',
@@ -157,7 +157,7 @@ const translation = {
       project: 'Project',
       deployment: 'Version - Deployment ID',
       consumer: 'Consumer',
-      indexer: 'Indexer',
+      indexer: 'Node Operator',
       expiry: 'Expires In',
       expired: 'Expiry Date',
       price: 'Price',
@@ -171,7 +171,7 @@ const translation = {
       sessionToken: 'Session Token',
       tokenExpireIn: 'Token expires in',
       comingSoon: 'Playground coming soon.',
-      error: 'There is an issue with playground, please check with indexer.',
+      error: 'There is an issue with playground, please check with Node Operator.',
       queryTitle: 'Playground Query',
       expiredToken: 'The auth token for playground query has expired.',
     },
@@ -179,15 +179,15 @@ const translation = {
     non: 'There are no service agreements for this project yet.',
     noOngoingAgreementsTitle: 'There are no ongoing service agreements.',
     nonOngoingAgreements:
-      'Ongoing service agreements will be displayed here along with the details of the plan or offer purchased by the Indexer. When an agreement has expired, it will automatically move to the Expired list. If there are currently no ongoing service agreements, this page will reflect that. ',
+      'Ongoing service agreements will be displayed here along with the details of the plan or offer purchased by the Node Operator. When an agreement has expired, it will automatically move to the Expired list. If there are currently no ongoing service agreements, this page will reflect that. ',
     learnLink: 'Learn more ',
     nonOngoing: 'You don’t have any ongoing service agreement yet. <br> Learn more from <1>here</1>.',
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
-    agreementsDescription: `Agreements represent an agreement between only one Indexer and one Consumer. It’s a direct relationship where all payment flows between the two parties for the work that is done.`,
+    agreementsDescription: `Agreements represent an agreement between only one Node Operator and one Consumer. It’s a direct relationship where all payment flows between the two parties for the work that is done.`,
     nonConsumerAgreementsDescription_0:
-      'If you (as a Consumer) create an offer that is accepted by an Indexer OR you (as a Consumer) purchase a plan advertised by an Indexer in the Explorer, a service agreement will be generated which can be tracked here.',
+      'If you (as a Consumer) create an offer that is accepted by an Node Operator OR you (as a Consumer) purchase a plan advertised by an Indexer in the Explorer, a service agreement will be generated which can be tracked here.',
     nonConsumerAgreementsDescription_1:
-      'If you haven’t created any offers to attract an Indexer yet, you can create your first one under My Offers',
+      'If you haven’t created any offers to attract an Node Operator yet, you can create your first one under My Offers',
     nonConsumerAgreementsInfoLink: 'Learn more <1>here</1>',
     nonIndexerAgreementsDescription_0:
       'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here.',
@@ -200,41 +200,43 @@ const translation = {
     inactiveOffer: 'This template has mark as inactive, please cancel it.',
     title: 'My Offers',
     open: 'Open',
-    openTooltip: 'Offers that are still open to Indexers to accept',
+    openTooltip: 'Offers that are still open to Node Operators to accept',
     closed: 'Closed',
-    closedTooltip: 'Offers that have reached the Indexer cap and can no longer be accepted',
-    closedDescription: 'Here you can find the offers that have reached Indexer cap',
+    closedTooltip: 'Offers that have reached the Node Operator cap and can no longer be accepted',
+    closedDescription: 'Here you can find the offers that have reached Node Operator cap',
     expired: 'Expired',
     expiredDescription:
-      'Here you can find the expired offers which did not reach the required number of indexers. \n  You can withdraw your unspent balance from these offers.',
+      'Here you can find the expired offers which did not reach the required number of Node Operators. \n  You can withdraw your unspent balance from these offers.',
     expiredUnspent: 'You can withdraw your unspent balance from these offers.',
     expiredTooltip:
-      'You can find offers that have expired or cancelled without reaching the Indexer cap. You can withdraw any unspent balance here',
+      'You can find offers that have expired or cancelled without reaching the Node Operator cap. You can withdraw any unspent balance here',
     createOffer: 'Create an Offer',
     noOffersTitle: "You haven't created any offers yet",
     noOffersDesc_1:
-      'As a consumer, you can create your own offer that will be published to the Offer Marketplace for Indexers to accept.',
+      'As a consumer, you can create your own offer that will be published to the Offer Marketplace for Node Operators to accept.',
     noOffersDesc_2:
-      'Once accepted, a service agreement will be generated and the Indexer will begin indexing the requested data for you',
+      'Once accepted, a service agreement will be generated and the Node Operator will begin indexing the requested data for you',
     noOffersInfoLink: 'Learn how to create an offer <1>here</1>',
     non: 'There is no offers available.',
     table: {
       versionDeployment: 'Version - Deployment ID',
-      indexerAmount: 'No. of indexers',
+      indexerAmount: 'No. of Node Operators',
       accepted: 'Accepted',
-      acceptedTooltip: 'This is the number of Indexers that have already accepted this offer',
+      acceptedTooltip: 'This is the number of Node Operators that have already accepted this offer',
       cap: 'Cap',
-      capTooltip: 'This is the maximum number of Indexers that can accept this offer',
-      dailyRewardsPerIndexer: 'Daily Rewards Per indexer',
-      dailyRewardsPerIndexerTooltip: 'This is the daily amount a Indexer will receive from accepting the offer',
-      totalRewardsPerIndexer: 'Total Rewards per indexer',
+      capTooltip: 'This is the maximum number of Node Operators that can accept this offer',
+      dailyRewardsPerIndexer: 'Daily Rewards Per Node Operator',
+      dailyRewardsPerIndexerTooltip: 'This is the daily amount a Node Operator will receive from accepting the offer',
+      totalRewardsPerIndexer: 'Total Rewards per Node Operator',
       totalRewardsPerIndexerTooltip:
-        'This is the total amount an Indexer will receive from accepting the offer. This amount is calculated as the daily rewards per Indexer multiplied by the period.',
+        'This is the total amount an Node Operator will receive from accepting the offer. This amount is calculated as the daily rewards per Indexer multiplied by the period.',
       depositAmount: 'Total deposit',
       period: 'Period',
-      periodTooltip: 'This is the duration the Indexer who has accepted this offer will be receiving their rewards for',
+      periodTooltip:
+        'This is the duration the Node Operator who has accepted this offer will be receiving their rewards for',
       minIndexedHeight: 'min indexed height',
-      minIndexedHeightTooltip: 'Only Indexers that have indexed to this block height or above can accept this offer',
+      minIndexedHeightTooltip:
+        'Only Node Operators that have indexed to this block height or above can accept this offer',
       expired: 'Expire',
       unspendBalance: 'Unspent balance',
       amount: 'Amount',
@@ -259,25 +261,25 @@ const translation = {
     },
     step_2: {
       title: 'Step 3: Set the details for your offer',
-      rewardPerIndexer: 'Total rewards per indexer',
-      rewardPerIndexerTooltip: 'This is the total amount a Indexer will receive from accepting the offer.',
-      rewardPerIndexerErrorMsg: 'Please put a valid reward for an indexer.',
-      indexerCap: 'Indexer cap',
-      indexerCapWithCount_one: '{{count}} Indexer',
-      indexerCapWithCount_other: '{{count}} Indexers',
-      indexerCapTooltip: 'This is the maximum number of Indexers that can accept this offers',
-      indexerCapErrorMsg: 'Please put a valid Indexer cap.',
+      rewardPerIndexer: 'Total rewards per Node Operator',
+      rewardPerIndexerTooltip: 'This is the total amount a Node Operator will receive from accepting the offer.',
+      rewardPerIndexerErrorMsg: 'Please put a valid reward for an Node Operator.',
+      indexerCap: 'Node Operator cap',
+      indexerCapWithCount_one: '{{count}} Node Operators',
+      indexerCapWithCount_other: '{{count}} Node Operators',
+      indexerCapTooltip: 'This is the maximum number of Node Operators that can accept this offers',
+      indexerCapErrorMsg: 'Please put a valid Node Operator cap.',
       totalDeposit: 'Required deposit',
-      totalDepositTooltip: `This amount is calculated as the rewards per Indexer multiplied by the Indexer cap that you have stated above. \n
+      totalDepositTooltip: `This amount is calculated as the rewards per Node Operator multiplied by the Node Operator cap that you have stated above. \n
       You will need to deposit this amount when you confirm the creation of this offer on MetaMask. Any unspent balance can be withdrawn when the offer expires or if you cancel the offer prior to expiration`,
       totalDepositErrorMsg: 'Not enough balance. Lower the numbers set up above or deposit more to the wallet.',
       minimumIndexedHeight: 'Minimum indexed height',
       minimumIndexedHeightTooltip:
-        'Only Indexers that have indexed to this block height or above can accept this offer.',
+        'Only Node Operators that have indexed to this block height or above can accept this offer.',
       minimumIndexedHeightErrorMsg: 'Please put a valid block height.',
       expireDate: 'Expiration time',
       expireDateTooltip:
-        'Indexer cannot accept this offer after the expiration time. However, the Indexer that have already accepted the offer will not be affected.',
+        'Node Operator cannot accept this offer after the expiration time. However, the Node Operator that have already accepted the offer will not be affected.',
       cancelWarning:
         'Cancelling an offer before it expires will result in 10% of the unspent balance being charged as a cancellation fee.',
     },
@@ -306,13 +308,13 @@ const translation = {
   },
   offerMarket: {
     header: 'Offer Marketplace',
-    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Indexers',
+    listDescription: 'A list of all offers published by Consumers that are available to be accepted by Node Operators',
     noOffersTitle: 'There are no offers here yet',
     indexerNoOffers:
       'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Indexer <1>here</1>',
     consumerNoOffers:
-      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Indexers will accept your offer to create a service agreement and begin indexing the data for you.',
-    viewAsIndexer: 'If you are an indexer, here is where you can explore and accept offers. ',
+      'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Node Operators will accept your offer to create a service agreement and begin indexing the data for you.',
+    viewAsIndexer: 'If you are a Node Operator, here is where you can explore and accept offers. ',
     totalOffer: 'Total {{count}} offer',
     totalOffer_other: 'Total {{count}} offers',
     accept: 'Accept',

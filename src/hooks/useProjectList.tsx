@@ -218,8 +218,8 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         <div className={styles.typeFilter}>
           <Radio.Group
             options={[
-              { label: 'Data Indexer', value: ProjectType.SUBQUERY },
-              { label: 'RPC Endpoint', value: ProjectType.RPC },
+              { label: 'Indexed Datasets', value: ProjectType.SUBQUERY },
+              { label: 'RPC Endpoints', value: ProjectType.RPC },
             ]}
             onChange={async (val) => {
               if (loading) return;
@@ -243,8 +243,9 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             size="large"
             disabled={loading}
           />
-          <span style={{ flex: 1 }}></span>
+
           <Button
+            style={{ alignSelf: 'flex-end' }}
             type="primary"
             shape="round"
             size="large"

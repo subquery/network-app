@@ -15,7 +15,7 @@ const translation = {
     ended: 'This Era has ended',
   },
   indexer: {
-    title: 'Indexer',
+    title: 'Operator',
     nickname: 'Node Runner',
     indexers: 'Indexers',
     profile: 'My Profile', // Explorer V1
@@ -27,7 +27,7 @@ const translation = {
     myProfile: 'My Profile',
     myPlansDescription:
       'Create and view plans for your indexing service that will be advertised to Consumers to purchase',
-    myStakingDesc: `Manage the ${TOKEN} that you are staking as an Indexer to different SubQuery projects.`,
+    myStakingDesc: `Manage the ${TOKEN} that you are staking as a Node Operator to different SubQuery projects.`,
     stakingAmountTitle: 'You are staking',
     rewards: 'Rewards',
     withdrawn: 'Withdrawn',
@@ -73,8 +73,8 @@ const translation = {
     topRowData: 'Top row of the data represents the data in current era.',
     secondRowData: 'Data displayed after <returnRightIcon /> means the data that will take into effect from next era.',
     here: 'here',
-    amount: ' There are {{count}} indexer.',
-    amount_other: ' There are {{count}} indexers.',
+    amount: ' There are {{count}} Node Operators.',
+    amount_other: ' There are {{count}} Node Operators.',
     unStakeTooltip:
       'You are at the minimum staking amount so you are unable to unstake more. You can unregister your indexer in the Indexer Admin app',
   },
@@ -126,7 +126,7 @@ const translation = {
     failureCollect: 'Sorry, collect rewards transaction has failed.',
   },
   topIndexers: {
-    desc: 'View the top 100 ranked Indexers and all other Indexers in the SubQuery Network and delegate your SQT tokens to earn rewards.',
+    desc: 'View the top 100 ranked Indexers and all other Node Operators in the SubQuery Network and delegate your SQT tokens to earn rewards.',
     nonData: 'There is no data to display',
     rank: 'indexer rank',
     uptime: 'uptime',
@@ -137,7 +137,7 @@ const translation = {
     ssl: 'ssl',
     socialCredibility: 'social credibility',
     tooltip: {
-      rank: 'The ranking of the Indexer compared to all other Indexers based of a variety of factors. A ranking of 1 means that they have historically operated as the best Indexer, however this does not indicate future performance.',
+      rank: 'The ranking of the Indexer compared to all other Node Operators based of a variety of factors. A ranking of 1 means that they have historically operated as the best Indexer, however this does not indicate future performance.',
       uptime: 'Based on the avaliability of an Indexer’s proxy service endpoint overtime',
       ownStake: `The percentage of all staked ${TOKEN} that is the Indexer’s own SQT. Higher score is better.`,
       delegated:

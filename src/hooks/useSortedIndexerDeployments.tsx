@@ -37,6 +37,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     variables: { indexerAddress: indexer },
     fetchPolicy: 'network-only',
   });
+
   const allocatedProjects = useGetIndexerAllocationProjectsQuery({
     variables: {
       id: indexer || '',

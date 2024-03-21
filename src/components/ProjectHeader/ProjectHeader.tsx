@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import GetEndpoint from '@components/GetEndpoint';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -92,10 +93,7 @@ const ProjectHeader: React.FC<Props> = ({
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
-            {/* TODO: finish this */}
-            {/* <Button type="primary" shape="round" size="large">
-              Get RPC Endpoint
-            </Button> */}
+            <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
           </div>
           <Address address={project.owner} size="small" />
 
@@ -119,7 +117,7 @@ const ProjectHeader: React.FC<Props> = ({
           ) : (
             ''
           )}
-          <Detail label="Type" value={project.type === ProjectType.RPC ? 'RPC Endpoint' : 'Data Indexer'}></Detail>
+          <Detail label="Type" value={project.type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}></Detail>
           {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}
           <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
           <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />

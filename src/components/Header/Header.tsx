@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
-import { useProjectList } from '@hooks/useProjectList';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Header as SubqlHeader } from '@subql/components';
 import { entryLinks, externalAppLinks } from '@utils/links';
@@ -71,6 +70,10 @@ export const Header: React.FC = () => {
           navigate(link);
         }}
         appNavigation={renderEntryLinks}
+        active={(to) => {
+          if (window.location.pathname.startsWith(to) || window.location.pathname.startsWith(`/${to}`)) return true;
+          return false;
+        }}
         dropdownLinks={{ label: 'SubQuery Network', links: externalAppLinks }}
         rightElement={
           <>

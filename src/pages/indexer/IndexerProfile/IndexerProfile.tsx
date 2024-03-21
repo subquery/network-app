@@ -145,6 +145,7 @@ const ActiveCard = (props: { account: string }) => {
   const navigate = useNavigate();
 
   const indexerDeployments = useSortedIndexerDeployments(props.account);
+
   return renderAsync(indexerDeployments, {
     loading: () => <Skeleton style={{ width: 302 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
@@ -255,9 +256,9 @@ const IndexerProfile: FC = () => {
         <RpcError></RpcError>
       ) : (
         <div className="col-flex">
-          <AccountHeader account={account ?? ''} />
+          <AccountHeader account={checksumAddress ?? ''} />
 
-          <AccountBaseInfo account={account ?? ''}></AccountBaseInfo>
+          <AccountBaseInfo account={checksumAddress ?? ''}></AccountBaseInfo>
 
           <div className="flex-between" style={{ margin: '24px 0' }}>
             {renderAsync(result, {
@@ -380,25 +381,25 @@ const IndexerProfile: FC = () => {
               ),
             })}
 
-            <ActiveCard account={account || ''}></ActiveCard>
+            <ActiveCard account={checksumAddress || ''}></ActiveCard>
           </div>
 
           <StakeAndDelegationLineChart
-            account={account}
+            account={checksumAddress}
             title="Stake"
             dataDimensionsName={['Own Stake', 'Delegation']}
           />
 
           <div style={{ marginTop: 24 }}>
             <RewardsLineChart
-              account={account}
+              account={checksumAddress}
               title="Rewards"
               dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
             ></RewardsLineChart>
           </div>
 
           <div className={styles.indexerDelegator}>
-            <OwnDelegator hideCard indexer={account || ''} showHeader></OwnDelegator>
+            <OwnDelegator hideCard indexer={checksumAddress || ''} showHeader></OwnDelegator>
           </div>
         </div>
       )}
