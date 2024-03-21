@@ -251,6 +251,7 @@ export const Rewards: React.FC = () => {
                     dataSource={filterEmptyData || []}
                     scroll={{ x: 600 }}
                     rowKey={(record, index) => `${record.eraId}${record.delegatorId}${record.indexerId}${index}`}
+                    loading={indexerEraRewards.loading}
                     pagination={{
                       current: Math.floor(queryParams.current.offset / queryParams.current.pageSize) + 1,
                       pageSize: queryParams.current.pageSize,
