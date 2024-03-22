@@ -65,7 +65,7 @@ export function useAsyncMemoWithLazy<T>(
   const proxyResult = useMemo(() => {
     return new Proxy(result, {
       get(target, p, receiver) {
-        if (!installed.current) {
+        if (!installed.current && p !== 'loading') {
           installed.current = true;
           // setState when components rendering is not abled. So callback it in next cycle.
           const requestIdle = window.requestIdleCallback || setTimeout;
