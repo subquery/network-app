@@ -270,6 +270,14 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const refreshUserInfo = async () => {
+    const res = await instance.get('/users/refresh', {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  };
+
   const requestTokenLayout = (pageTitle: string) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -319,6 +327,7 @@ export const useConsumerHostServices = (
     updateHostingPlanApi: alertResDecorator(loginResDecorator(updateHostingPlanApi)),
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
+    refreshUserInfo: loginResDecorator(refreshUserInfo),
     getHostingPlanApi,
     requestConsumerHostToken,
     checkIfHasLogin,
