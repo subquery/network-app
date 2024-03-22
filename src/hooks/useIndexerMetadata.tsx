@@ -3,7 +3,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { bytes32ToCid } from '@utils';
-import { limitQueue } from '@utils/limitation';
+import { limitQueue, makeCacheKey } from '@utils/limitation';
+import { limitContract } from '@utils/limitation';
 import assert from 'assert';
 import localforage from 'localforage';
 
@@ -41,7 +42,11 @@ export function useIndexerMetadata(
   const [loading, setLoading] = useState(false);
   const fetchCid = async () => {
     assert(contracts, 'Contracts not available');
-    const res = await contracts.indexerRegistry.metadata(address);
+    const res = await limitContract(
+      () => contracts.indexerRegistry.metadata(address),
+      makeCacheKey(`${address}-metadata`),
+      0,
+    );
     const decodeCid = bytes32ToCid(res);
     localforage.setItem(`${address}-metadata`, decodeCid);
     return decodeCid;

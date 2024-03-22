@@ -13,7 +13,7 @@ import { Modal, openNotification, Steps, Tag, Typography } from '@subql/componen
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
-import { useAsyncMemo, useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
+import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { Button, Form, Radio } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';

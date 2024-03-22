@@ -44,9 +44,9 @@ export function useEra(): {
     const { eraManager } = contracts;
 
     const [period, index, startTime] = await Promise.all([
-      limitContract(() => eraManager.eraPeriod(), makeCacheKey('eraPeriod')),
-      limitContract(() => eraManager.eraNumber(), makeCacheKey('eraNumber')),
-      limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime')),
+      limitContract(() => eraManager.eraPeriod(), makeCacheKey('eraPeriod'), 0),
+      limitContract(() => eraManager.eraNumber(), makeCacheKey('eraNumber'), 0),
+      limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime'), 0),
     ]);
 
     let era: Era;
