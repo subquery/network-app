@@ -4689,15 +4689,15 @@
     string-width "4.2.3"
     use-screen "^1.1.3"
 
-"@subql/contract-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.0.0.tgz#7021c57fc544a663c6068f874341f640d09b43bc"
-  integrity sha512-U6kzojF5BuXTGrrr5a+QvweNKiHABX4ncyPd2oEFRFNrdakGTw8Yx9lzMDj1msx/vZ01542iu9lAQVriiwt8tw==
+"@subql/contract-sdk@1.0.2-0":
+  version "1.0.2-0"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.0.2-0.tgz#f7c81508e1fac82b990ad6aa25735ed381d79601"
+  integrity sha512-nBc8mDiRUJSB0lkqDT70Jlx3eMpajlhMiCdjOfM3bEK5py27j/PSfzvHwu6/J3Iiofj1devmrb5ED6+SBXs23Q==
 
-"@subql/network-clients@1.1.1-0":
-  version "1.1.1-0"
-  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-1.1.1-0.tgz#dd8cc882130ea87997252301e9a9ad3dce6b99a7"
-  integrity sha512-JodkIO+/oNTpZdXPFDyWes50j9n82T3kMkQy+I774UfNOdBhhx+i97PtyHuqQTxfkOlTJ1DNHrK1CEZVVJ34Wg==
+"@subql/network-clients@1.1.1-1":
+  version "1.1.1-1"
+  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-1.1.1-1.tgz#15e6564aa546333770b4e90ac297800487f6b951"
+  integrity sha512-tZAQ3hmyY7oGiqTgFs7X3moSICk3m4/WBd6WjnRWE23K78+kk/6Yup13zbOfxAsLVbLmOlQkThQ14eh9bR4yVg==
   dependencies:
     "@ethersproject/bignumber" "^5.7.0"
     "@subql/network-config" "1.1.1"
