@@ -21,7 +21,6 @@ import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { retry } from '@utils/retry';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { BigNumber } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 

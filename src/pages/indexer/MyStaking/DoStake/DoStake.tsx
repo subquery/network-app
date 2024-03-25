@@ -84,7 +84,6 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const { balance, stakingAllowance } = useSQToken();
-  const requireTokenApproval = stakingAllowance?.result.data?.isZero();
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     assert(contracts, 'Contracts not available');
@@ -116,7 +115,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       const curAmount = stakeAction === StakeAction.Stake ? balance.result.data : maxUnstakeData;
       const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
       const isMaxUnstakeZero = maxUnstakeData?.isZero();
-
+      const requireTokenApproval = stakingAllowance?.result.data?.isZero();
       const modalText = getContentText(
         requireClaimIndexerRewards,
         requireTokenApproval,
