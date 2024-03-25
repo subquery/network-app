@@ -34,6 +34,12 @@ const sponsoredProjects: {
   '0x04': `${proxyGateway}/rpc/eth`,
   '0x05': `${proxyGateway}/rpc/base`,
   '0x06': `${proxyGateway}/rpc/base`,
+  '0x22': `${proxyGateway}/rpc/arbitrum`,
+  '0x23': `${proxyGateway}/rpc/arbitrum`,
+  '0x24': `${proxyGateway}/rpc/polygon`,
+  '0x25': `${proxyGateway}/rpc/polygon`,
+  '0x26': `${proxyGateway}/rpc/ethereum-sepolia`,
+  '0x27': `${proxyGateway}/rpc/ethereum-sepolia`,
 };
 
 export const specialApiKeyName = 'Get Endpoint Api Key';
@@ -82,8 +88,18 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
       });
       if (!isConsumerHostError(hostingPlan.data)) {
         setUserHostingPlan(hostingPlan.data);
-      }
 
+        // no hosting plan then skip fetch api key,
+        if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
+          return {
+            hostingPlan: {
+              data: [],
+            },
+            apiKeys: {
+              data: [],
+            },
+          };
+      }
       const apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
         setUserApiKeys(apiKeys.data);

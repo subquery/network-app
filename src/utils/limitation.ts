@@ -39,6 +39,7 @@ export enum limitContractCacheEnum {
 export const limitContract = async <T extends Promise<any>>(
   asyncFunc: () => T,
   cacheName?: string,
+  cacheTime = 3000,
 ): Promise<T extends Promise<infer F> ? F : unknown> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any = null;
@@ -64,9 +65,11 @@ export const limitContract = async <T extends Promise<any>>(
       const result = await limit(asyncFunc);
       if (cacheName) {
         cachedResult.set(cacheName, result);
-        setTimeout(() => {
-          cachedResult.delete(cacheName);
-        }, 3000);
+        if (cacheTime) {
+          setTimeout(() => {
+            cachedResult.delete(cacheName);
+          }, cacheTime);
+        }
       }
       return result;
     } catch (e) {
@@ -76,7 +79,7 @@ export const limitContract = async <T extends Promise<any>>(
     await sleep(10000);
   }
 
-  if (cacheName) {
+  if (cacheName && cacheTime) {
     cachedResult.delete(cacheName);
   }
   throw new Error(error);

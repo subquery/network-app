@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { providers } from 'ethers';
 import { type HttpTransport } from 'viem';
+import { base, mainnet } from 'viem/chains';
 import { type PublicClient, usePublicClient } from 'wagmi';
 import { useWalletClient, type WalletClient } from 'wagmi';
 
@@ -31,6 +32,8 @@ export function useEthersProviderWithPublic({ chainId }: { chainId?: number } = 
   return React.useMemo(() => publicClientToProvider(publicClient), [publicClient]);
 }
 
+let requestId = 0;
+
 export function walletClientToSignerAndProvider(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient;
   const network = {
@@ -38,8 +41,46 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-  const provider = new providers.Web3Provider(transport, network);
+
+  const provider = new providers.Web3Provider(
+    {
+      ...transport,
+      async request(request, ...rest) {
+        try {
+          const fetchUrl = {
+            [base.id]: 'https://gateway.subquery.network/rpc/base',
+            [mainnet.id]: 'https://gateway.subquery.network/rpc/eth',
+          }[chain.id];
+          if (fetchUrl) {
+            requestId += 1;
+            const res = await fetch(fetchUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                jsonrpc: '2.0',
+                // seems the id in JSONRPC is used for sort
+                id: requestId,
+                ...request,
+              }),
+            });
+            const { result, error } = await res.json();
+            if (!result) {
+              throw new Error(error);
+            }
+            return result;
+          }
+        } catch (e) {
+          return transport.request(request, ...rest);
+        }
+        return transport.request(request, ...rest);
+      },
+    },
+    network,
+  );
   const signer = provider.getSigner(account.address);
+
   return {
     provider,
     signer,

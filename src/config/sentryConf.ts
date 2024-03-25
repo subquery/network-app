@@ -11,7 +11,6 @@ Sentry.init({
     const rawError = hint?.originalException as Error;
     if (!rawError) return event;
     const msg = isString(rawError) ? rawError : rawError.message;
-
     // do not send event if already sent in last 1 minute
     if (msg && msg in eventLimiter) {
       return null;
@@ -22,6 +21,11 @@ Sentry.init({
     setTimeout(() => {
       delete eventLimiter[msg];
     }, 60 * 1000);
+
+    event.extra = {
+      ...event.extra,
+      debugInfo: window.debugInfo,
+    };
 
     return event;
   },

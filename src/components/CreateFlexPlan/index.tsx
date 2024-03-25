@@ -21,7 +21,7 @@ import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
-import { Button, Checkbox, Divider, Form, InputNumber, Radio } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, Radio, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -64,11 +64,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
-  const { getProjects, createNewApiKey, createHostingPlanApi, updateHostingPlanApi, getUserApiKeysApi } =
-    useConsumerHostServices({
-      alert: true,
-      autoLogin: false,
-    });
+  const {
+    getProjects,
+    createNewApiKey,
+    createHostingPlanApi,
+    updateHostingPlanApi,
+    getUserApiKeysApi,
+    refreshUserInfo,
+  } = useConsumerHostServices({
+    alert: true,
+    autoLogin: false,
+  });
 
   const flexPlans = useAsyncMemo(async () => {
     try {
@@ -212,6 +218,12 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               return;
             }
           }
+        }
+
+        try {
+          await refreshUserInfo();
+        } catch (e) {
+          // don't care of this
         }
 
         const price = form.getFieldsValue(true)['price'];
@@ -362,9 +374,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                     label={
                       <Typography style={{ marginTop: 24 }}>
                         Maximum Price
-                        <AiOutlineInfoCircle
-                          style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                        ></AiOutlineInfoCircle>
+                        <Tooltip title="The maximum price of per 1000 requests that you are looking for ">
+                          <AiOutlineInfoCircle
+                            style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                          ></AiOutlineInfoCircle>
+                        </Tooltip>
                       </Typography>
                     }
                     name="price"
@@ -379,9 +393,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                     label={
                       <Typography style={{ marginTop: 24 }}>
                         Maximum Allocated Node Operators
-                        <AiOutlineInfoCircle
-                          style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                        ></AiOutlineInfoCircle>
+                        <Tooltip title="The maximum number of Indexers that will be allocated to this Flex Plan. More Indexers mean more stability. Even if there are no available matching indexers, you can still create your flex plan. We will allocate the qualified indexers for you at a later time to ensure seamless experience. ">
+                          <AiOutlineInfoCircle
+                            style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                          ></AiOutlineInfoCircle>
+                        </Tooltip>
                       </Typography>
                     }
                     name="maximum"

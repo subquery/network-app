@@ -233,7 +233,7 @@ const BridgeInner: FC = () => {
 
     Modal.confirm({
       width: 572,
-      className: styles.confirmModal,
+      className: 'confirmModal',
       title: 'Confirm Bridge',
       closable: true,
       icon: null,

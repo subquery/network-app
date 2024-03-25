@@ -7,12 +7,13 @@ import { NumberInput } from '@components/NumberInput';
 import { NETWORK_NAME } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
+import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
-import { useAsyncMemo, useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
+import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { Button, Form, Radio } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
@@ -49,8 +50,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
 
-  const runnerAllocation = useAsyncMemo(async () => {
-    if (!account)
+  const runnerAllocation = useAsyncMemoWithLazy(async () => {
+    if (!account || !open)
       return {
         total: '0',
         used: '0',
@@ -63,19 +64,21 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       used: formatSQT(res?.used.toString() || '0'),
       left: formatSQT(res?.total.sub(res.used).toString() || '0'),
     };
-  }, [account]);
+  }, [account, open]);
 
-  const allocationRewardsRate = useAsyncMemo(async () => {
+  const allocationRewardsRate = useAsyncMemoWithLazy(async () => {
+    if (!open) return '0';
     const rewards = await contracts?.rewardsBooster.boosterQueryRewardRate(
       project.data?.type === ProjectType.RPC ? 1 : 0,
     );
     return BigNumber(1)
       .minus(BigNumber(rewards?.toString() || '0').div(PER_MILL))
       .toFixed();
-  }, []);
+  }, [open]);
 
   const getAllocateRewardsPerBlock = async () => {
-    if (!allocationRewardsRate.data || !deploymentId) return;
+    if (!allocationRewardsRate.result.data || allocationRewardsRate.result.data === '0' || !deploymentId) return;
+
     const blockNumber = await provider?.getBlockNumber();
 
     const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
@@ -88,9 +91,9 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     const blocks = NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7;
 
     const currentWithRate = BigNumber(currentRewards?.toString() || '0')?.multipliedBy(
-      allocationRewardsRate.data || '0',
+      allocationRewardsRate.result.data || '0',
     );
-    const prevWithRate = BigNumber(prevRewards?.toString() || '0')?.multipliedBy(allocationRewardsRate.data);
+    const prevWithRate = BigNumber(prevRewards?.toString() || '0')?.multipliedBy(allocationRewardsRate.result.data);
 
     setCurrentRewardsPerToken(currentWithRate?.minus(prevWithRate || '0').div(blocks));
   };
@@ -104,10 +107,12 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   }, [project, deploymentId]);
 
   const avaibleStakeAmount = useMemo(() => {
-    const leftAllocation = runnerAllocation.data?.left ? BigNumber(runnerAllocation.data?.left) : BigNumber(0);
+    const leftAllocation = runnerAllocation.result.data?.left
+      ? BigNumber(runnerAllocation.result.data?.left)
+      : BigNumber(0);
 
     return leftAllocation.toString();
-  }, [allocatedStake, runnerAllocation.data?.left]);
+  }, [allocatedStake, runnerAllocation.result.data?.left]);
 
   const currentAllocatedTokensOfThisDeployment = useMemo(() => {
     return formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount || '0');
@@ -172,7 +177,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     }
   };
 
-  useEffect(() => {
+  const init = async () => {
     if (open && account && deploymentId && !disabled) {
       setAddOrRemove(initialStatus || 'Add');
       getAllocatedStake({
@@ -181,17 +186,27 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
         },
         fetchPolicy: 'network-only',
       });
-      getAllocateRewardsPerBlock();
       runnerAllocation.refetch();
     }
+  };
+
+  useEffect(() => {
+    init();
   }, [open, account, deploymentId, disabled]);
+
+  useEffect(() => {
+    if (open) {
+      getAllocateRewardsPerBlock();
+    }
+  }, [open, allocationRewardsRate.result.data]);
 
   return (
     <div className={styles.doAllocate}>
       {actionBtn ? (
         <div
-          onClick={() => {
+          onClick={async () => {
             if (!disabled) {
+              await allocationRewardsRate.refetch();
               setOpen(true);
             }
           }}
@@ -203,7 +218,9 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
           type="primary"
           shape="round"
           size="large"
-          onClick={() => {
+          onClick={async () => {
+            await allocationRewardsRate.refetch();
+
             setOpen(true);
           }}
         >

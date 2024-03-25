@@ -134,8 +134,8 @@ export const Rewards: React.FC = () => {
     variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
   });
   const indexerIds = React.useMemo(() => {
-    return delegations.data?.delegations?.nodes.map((i) => i?.indexerId);
-  }, [delegations.data?.delegations, unclaimedRewards]);
+    return [...(delegations.data?.delegations?.nodes.map((i) => i?.indexerId) || []), account];
+  }, [delegations.data?.delegations, unclaimedRewards, account]);
 
   const getUnclaimedRewards = async () => {
     if (!account || !contracts || !indexerIds?.length) return;

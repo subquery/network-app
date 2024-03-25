@@ -14,7 +14,7 @@ import TransactionModal from '@components/TransactionModal';
 import { TransactionModalAction, TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { parseEther } from '@ethersproject/units';
-import { useLockPeriod } from '@hooks';
+import { useEra, useLockPeriod } from '@hooks';
 import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
@@ -75,16 +75,15 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [stakeAction, setStakeAction] = React.useState<StakeAction>(StakeAction.Stake);
   const modalRef = React.useRef<TransactionModalRef>(null);
   const { contracts } = useWeb3Store();
-
+  const { currentEra } = useEra();
   const { t } = useTranslation();
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
 
-  const maxUnstake = useMaxUnstakeAmount(account || '');
+  const maxUnstake = useMaxUnstakeAmount(account || '', +(currentEra.data?.index.toString() || 0));
   const rewardClaimStatus = useRewardCollectStatus(account || '');
 
   const { balance, stakingAllowance } = useSQToken();
-  const requireTokenApproval = stakingAllowance?.result.data?.isZero();
 
   const handleClick = async (amount: string, stakeAction: StakeAction) => {
     assert(contracts, 'Contracts not available');
@@ -116,7 +115,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       const curAmount = stakeAction === StakeAction.Stake ? balance.result.data : maxUnstakeData;
       const curAmountTruncated = curAmount ? formatEther(curAmount, 4) : '-';
       const isMaxUnstakeZero = maxUnstakeData?.isZero();
-
+      const requireTokenApproval = stakingAllowance?.result.data?.isZero();
       const modalText = getContentText(
         requireClaimIndexerRewards,
         requireTokenApproval,

@@ -17,7 +17,39 @@ import { publicProvider } from 'wagmi/providers/public';
 import '@rainbow-me/rainbowkit/styles.css';
 
 // goerli and mainnet just for get data actually not supported
-const supportedChains = import.meta.env.VITE_NETWORK === 'testnet' ? [baseSepolia, sepolia] : [base, mainnet];
+const supportedChains =
+  import.meta.env.VITE_NETWORK === 'testnet'
+    ? [baseSepolia, sepolia]
+    : [
+        {
+          ...base,
+          rpcUrls: {
+            default: {
+              http: ['https://gateway.subquery.network/rpc/base'],
+            },
+            public: {
+              http: ['https://gateway.subquery.network/rpc/base'],
+            },
+            fallback: {
+              http: base.rpcUrls.default.http,
+            },
+          },
+        },
+        {
+          ...mainnet,
+          rpcUrls: {
+            default: {
+              http: ['https://gateway.subquery.network/rpc/eth'],
+            },
+            public: {
+              http: ['https://gateway.subquery.network/rpc/eth'],
+            },
+            fallback: {
+              http: mainnet.rpcUrls.default.http,
+            },
+          },
+        },
+      ];
 
 export const tipsChainIds: number[] = import.meta.env.VITE_NETWORK === 'testnet' ? [baseSepolia.id] : [base.id];
 export const tipsL1ChainIds: number[] =

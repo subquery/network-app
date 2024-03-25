@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef, useState } from 'react';
-import { openNotification, Typography } from '@subql/components';
+import { Modal, openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
 import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
+import { waitForSomething } from '@utils/waitForSomething';
 import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
+import { isObject } from 'lodash-es';
 import { useAccount, useSignTypedData } from 'wagmi';
 
 const instance = axios.create({
@@ -15,6 +17,7 @@ const instance = axios.create({
 });
 
 export const isConsumerHostError = (res: object): res is ConsumerHostError => {
+  if (!isObject(res)) return false;
   return Object.hasOwn(res, 'error');
 };
 
@@ -104,6 +107,50 @@ export const useConsumerHostServices = (
             msg: 'use cache',
           };
         }
+      }
+
+      let acceptOrCancel: 'pending' | 'cancel' | 'pass' = 'pending';
+      Modal.confirm({
+        title: 'Login to SubQuery Network',
+        width: 572,
+        content: (
+          <Typography>
+            <p>You must sign a request using your wallet to login to SubQuery</p>
+            <p>
+              This is only required once for each browser and does not cost any transaction fees - it is used to prove
+              you have access to your wallet address.
+            </p>
+          </Typography>
+        ),
+        cancelText: 'Cancel',
+        className: 'confirmModal',
+        okText: 'Sign Request using Wallet',
+        cancelButtonProps: {
+          shape: 'round',
+          size: 'large',
+        },
+        okButtonProps: {
+          shape: 'round',
+          size: 'large',
+          type: 'primary',
+        },
+        icon: null,
+        onOk: () => {
+          acceptOrCancel = 'pass';
+        },
+        onCancel: () => {
+          acceptOrCancel = 'cancel';
+        },
+      });
+
+      await waitForSomething({ func: () => acceptOrCancel !== 'pending' });
+      // https://github.com/microsoft/TypeScript/issues/9998
+      const isCancel = (res: typeof acceptOrCancel): res is 'cancel' => res === 'cancel';
+      if (isCancel(acceptOrCancel)) {
+        return {
+          status: false,
+          msg: 'user reject sign',
+        };
       }
 
       const res = await requestConsumerHostToken(account);
@@ -270,6 +317,14 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const refreshUserInfo = async () => {
+    const res = await instance.get('/users/refresh', {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  };
+
   const requestTokenLayout = (pageTitle: string) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -319,6 +374,7 @@ export const useConsumerHostServices = (
     updateHostingPlanApi: alertResDecorator(loginResDecorator(updateHostingPlanApi)),
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
+    refreshUserInfo: loginResDecorator(refreshUserInfo),
     getHostingPlanApi,
     requestConsumerHostToken,
     checkIfHasLogin,

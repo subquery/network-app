@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useState } from 'react';
-import { bytes32ToCid } from '@utils';
+import { useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
-import assert from 'assert';
 import localforage from 'localforage';
-
-import { useWeb3Store } from 'src/stores/web3Account';
 
 import { IndexerDetails, indexerMetadataSchema } from '../models';
 import { useFetchMetadata } from './useFetchMetadata';
@@ -35,14 +32,20 @@ export function useIndexerMetadata(
   refresh: () => void;
   loading: boolean;
 } {
-  const { contracts } = useWeb3Store();
   const fetchMetadata = useFetchMetadata();
   const [metadata, setMetadata] = useState<IndexerDetails>();
   const [loading, setLoading] = useState(false);
+  const [getIndexerQuery] = useGetIndexerLazyQuery();
   const fetchCid = async () => {
-    assert(contracts, 'Contracts not available');
-    const res = await contracts.indexerRegistry.metadata(address);
-    const decodeCid = bytes32ToCid(res);
+    const res = await getIndexerQuery({
+      variables: {
+        address,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    const decodeCid = res.data?.indexer?.metadata || '';
+
     localforage.setItem(`${address}-metadata`, decodeCid);
     return decodeCid;
   };
