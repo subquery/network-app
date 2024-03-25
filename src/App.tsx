@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
+import { useAccount } from 'wagmi';
 
 import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';
@@ -37,7 +38,19 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
+const makeDebugInfo = (debugInfo: object) => {
+  window.debugInfo = debugInfo;
+};
+
 const RenderRouter: React.FC = () => {
+  const { address } = useAccount();
+
+  useEffect(() => {
+    makeDebugInfo({
+      address,
+    });
+  }, [address]);
+
   return (
     <BrowserRouter>
       <div className="Main">
