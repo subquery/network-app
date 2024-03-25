@@ -128,12 +128,12 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [flexPlans]);
 
   const matchedCount = React.useMemo(() => {
-    if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
+    if (!priceValue || !flexPlans.data?.length) return `Matched Node Operators: 0`;
     const count = flexPlans.data.filter((i) => {
       const prices1000 = converFlexPlanPrice(i.price);
       return prices1000.lte(priceValue);
     }).length;
-    return `Matched indexers: ${count}`;
+    return `Matched Node Operators: ${count}`;
   }, [priceValue, flexPlans]);
 
   const enoughReq = useMemo(() => {
@@ -290,8 +290,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       {currentStep === 0 && (
         <>
           <Typography>
-            SubQuery will automatically allocate qualified indexers to your endpoint based on price and performance.
-            Please select the type of plan you would like (you can change this later).
+            SubQuery will automatically allocate qualified Node Operators to your endpoint based on price and
+            performance. Please select the type of plan you would like (you can change this later).
           </Typography>
 
           <div
@@ -393,7 +393,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                     label={
                       <Typography style={{ marginTop: 24 }}>
                         Maximum Allocated Node Operators
-                        <Tooltip title="The maximum number of Indexers that will be allocated to this Flex Plan. More Indexers mean more stability. Even if there are no available matching indexers, you can still create your flex plan. We will allocate the qualified indexers for you at a later time to ensure seamless experience. ">
+                        <Tooltip title="The maximum number of Node Operators that will be allocated to this Flex Plan. More Node Operators mean more stability. Even if there are no available matching Node Operators, you can still create your flex plan. We will allocate the qualified Node Operators for you at a later time to ensure seamless experience. ">
                           <AiOutlineInfoCircle
                             style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
                           ></AiOutlineInfoCircle>

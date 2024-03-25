@@ -20,13 +20,14 @@ const UnsafeWarn: FC = () => {
           </Typography>
 
           <Typography variant="medium" style={{ color: '#fff', margin: '20px 0' }}>
-            This means that two indexers are not guaranteed to index exactly the same data when indexing this project.
+            This means that two Node Operators are not guaranteed to index exactly the same data when indexing this
+            project.
           </Typography>
           <Typography variant="medium" style={{ color: '#fff' }}>
             In most cases this means the project is making an external API call, you can check the source code or ask
             the developer about what this project is doing. Making agreements or plans with unsafe projects is fine, but
-            you can’t hold Indexers accountable for inconsistencies in the data that they index (unless the differences
-            are clearly caused in malicious indexers)
+            you can't hold Node Operators accountable for inconsistencies in the data that they index (unless the
+            differences are clearly caused in malicious Node Operators)
           </Typography>
         </div>
       }

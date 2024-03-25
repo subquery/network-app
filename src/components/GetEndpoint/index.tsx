@@ -76,7 +76,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
       if (freeOrFlexPlan === 'flexPlan') return 'Create Flex Plan';
     }
 
-    if (currentStep === 'checkFree' || currentStep === 'checkEndpointWithApiKey') return 'Copy Endpoint and Close';
+    if (currentStep === 'checkFree' || currentStep === 'checkEndpointWithApiKey') return 'Copy endpoint and Close';
     return 'Create Flex Plan';
   }, [freeOrFlexPlan, currentStep]);
 
@@ -162,7 +162,9 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const stepRender = useMemo(() => {
     const makeEndpointResult = (endpoint: string, isFree?: boolean) => (
       <div className="col-flex" style={{ gap: 24 }}>
-        <Typography>You can now connect to the {project.metadata.name} using the following Endpoint below</Typography>
+        <Typography>
+          You can now connect to the {project.metadata.name} using the following endpoint and API key details below
+        </Typography>
         {isFree ? (
           <>
             <Typography>

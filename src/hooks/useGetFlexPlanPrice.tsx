@@ -25,7 +25,7 @@ export function useGetFlexPlanPrice() {
     if (toChecksumAddress(STABLE_COIN_ADDRESSES[NETWORK_NAME]) !== toChecksumAddress(fromAdd)) {
       return (
         <Typography variant="medium">
-          {sqtPrice} {TOKEN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts
+          {sqtPrice} {TOKEN_SYMBOLS[NETWORK_NAME]}/1000 requests
         </Typography>
       );
     }
@@ -33,7 +33,7 @@ export function useGetFlexPlanPrice() {
     return (
       <div>
         <Typography variant="medium">
-          {usdcPrice} {STABLE_COIN_SYMBOLS[NETWORK_NAME]}/1000 reqeusts
+          {usdcPrice} {STABLE_COIN_SYMBOLS[NETWORK_NAME]}/1000 requests
         </Typography>
         <br></br>
         <Typography variant="medium" type="secondary">

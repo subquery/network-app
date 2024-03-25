@@ -102,7 +102,7 @@ const translation = {
         'Explore some of the SubQuery Projects hosted and run in a decentralised, trustless, and verifiable way by Node Operators around the world',
     },
     flexPlans: {
-      indexer: 'indexer',
+      indexer: 'Node Operator',
       validityPeriod: 'Validity Period',
       non: 'There are no flex plans for this project yet.',
       requestToken: 'To start testing your queries in the {{type}} playground, simply request a trial token.',

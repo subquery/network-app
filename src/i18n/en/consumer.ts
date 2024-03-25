@@ -124,7 +124,7 @@ const translation = {
       transfer: `Transfer ${TOKEN ?? 'SQT'} to billing account`,
       addToken: `Add ${TOKEN ?? 'SQT'}`,
       confirmTransfer: 'Confirm Transfer',
-      transferDescription: `When transferring ${TOKEN} you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the Indexer requests it to be closed. This automation will prevent delays and give you the best user experience.`,
+      transferDescription: `When transferring ${TOKEN} you are also authorising SubQuery to perform some automated tasks on your behalf. For example:  topping up your Flex Plans that are running low on funds or terminating a channel if the Node Operator requests it to be closed. This automation will prevent delays and give you the best user experience.`,
       transferToken: `Transfer ${TOKEN ?? 'SQT'}`,
       failureTransfer: `Sorry, failed to transfer ${TOKEN ?? 'SQT'}`,
       successTransfer: `You have successfully transferred ${TOKEN ?? 'SQT'}`,
@@ -185,7 +185,7 @@ const translation = {
     nonExpired: 'You don’t have any expired service agreement yet. <br> Learn more from <1>here</1>.',
     agreementsDescription: `Agreements represent an agreement between only one Node Operator and one Consumer. It’s a direct relationship where all payment flows between the two parties for the work that is done.`,
     nonConsumerAgreementsDescription_0:
-      'If you (as a Consumer) create an offer that is accepted by an Node Operator OR you (as a Consumer) purchase a plan advertised by an Indexer in the Explorer, a service agreement will be generated which can be tracked here.',
+      'If you (as a Consumer) create an offer that is accepted by an Node Operator OR you (as a Consumer) purchase a plan advertised by an Node Operator in the Explorer, a service agreement will be generated which can be tracked here.',
     nonConsumerAgreementsDescription_1:
       'If you haven’t created any offers to attract an Node Operator yet, you can create your first one under My Offers',
     nonConsumerAgreementsInfoLink: 'Learn more <1>here</1>',
@@ -229,7 +229,7 @@ const translation = {
       dailyRewardsPerIndexerTooltip: 'This is the daily amount a Node Operator will receive from accepting the offer',
       totalRewardsPerIndexer: 'Total Rewards per Node Operator',
       totalRewardsPerIndexerTooltip:
-        'This is the total amount an Node Operator will receive from accepting the offer. This amount is calculated as the daily rewards per Indexer multiplied by the period.',
+        'This is the total amount an Node Operator will receive from accepting the offer. This amount is calculated as the daily rewards per Node Operator multiplied by the period.',
       depositAmount: 'Total deposit',
       period: 'Period',
       periodTooltip:
@@ -311,7 +311,7 @@ const translation = {
     listDescription: 'A list of all offers published by Consumers that are available to be accepted by Node Operators',
     noOffersTitle: 'There are no offers here yet',
     indexerNoOffers:
-      'As a Indexer, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Indexer <1>here</1>',
+      'As a Node Operator, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Node Operator <1>here</1>',
     consumerNoOffers:
       'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Node Operators will accept your offer to create a service agreement and begin indexing the data for you.',
     viewAsIndexer: 'If you are a Node Operator, here is where you can explore and accept offers. ',
@@ -334,7 +334,7 @@ const translation = {
       indexingStatus: 'Indexing progress',
       indexingStatusError: 'Your project needs to be 100% indexed.',
       projectStatus: 'Project status',
-      projectStatusError: 'You can announce ‘Ready’ for the project from the Indexer admin app.',
+      projectStatusError: 'You can announce ‘Ready’ for the project from the Node Operator admin app.',
       blockHeight: 'Block height',
       blockHeightError: 'Your project is currently behind the minimum blockheight.',
       dailyRewards: 'Daily Rewards',

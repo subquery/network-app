@@ -300,7 +300,7 @@ const MyHostedPlan: FC = () => {
                 setOpen(false);
               }}
             >
-              Copy Endpoint and Close
+              Copy endpoint and Close
             </Button>
           </div>
         }
@@ -313,7 +313,8 @@ const MyHostedPlan: FC = () => {
       >
         <div className="col-flex" style={{ gap: 24 }}>
           <Typography>
-            You can now connect to the{currentEditInfo?.projectName} using the following Endpoint below
+            You can now connect to the {currentEditInfo?.projectName} using the following endpoint and API key details
+            below
           </Typography>
           <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
 
