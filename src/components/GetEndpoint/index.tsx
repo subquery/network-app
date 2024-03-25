@@ -88,8 +88,18 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
       });
       if (!isConsumerHostError(hostingPlan.data)) {
         setUserHostingPlan(hostingPlan.data);
-      }
 
+        // no hosting plan then skip fetch api key,
+        if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
+          return {
+            hostingPlan: {
+              data: [],
+            },
+            apiKeys: {
+              data: [],
+            },
+          };
+      }
       const apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
         setUserApiKeys(apiKeys.data);

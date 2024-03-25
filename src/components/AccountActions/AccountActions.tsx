@@ -8,7 +8,7 @@ import { BsBoxArrowInUpRight, BsBoxArrowLeft } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
-import { Address, Typography } from '@subql/components';
+import { Address, Spinner, Typography } from '@subql/components';
 import { Button, Dropdown, Tooltip } from 'antd';
 import { useDisconnect, useWalletClient } from 'wagmi';
 
@@ -78,9 +78,13 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                     <Typography variant="small" type="secondary">
                       Wallet balance on Base
                     </Typography>
-                    <Typography weight={600}>
-                      {formatEther(balance.result.data, 4)} {TOKEN}
-                    </Typography>
+                    {balance.result.loading ? (
+                      <Spinner size={10}></Spinner>
+                    ) : (
+                      <Typography weight={600}>
+                        {formatEther(balance.result.data, 4)} {TOKEN}
+                      </Typography>
+                    )}
                   </div>
                   <div className="col-flex" style={{ gap: 8 }}>
                     <Typography variant="small" type="secondary">
@@ -100,9 +104,13 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                         <InfoCircleOutlined style={{ marginLeft: 8 }} />
                       </Tooltip>
                     </Typography>
-                    <Typography weight={600}>
-                      {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
-                    </Typography>
+                    {ethSqtBalance.result.loading ? (
+                      <Spinner size={10}></Spinner>
+                    ) : (
+                      <Typography weight={600}>
+                        {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
+                      </Typography>
+                    )}
                   </div>
                 </div>
               ),
@@ -147,9 +155,13 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                 >
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography>Billing Balance:</Typography>
-                    <Typography>
-                      {formatEther(consumerHostBalance.result.data?.balance, 4)} {TOKEN}
-                    </Typography>
+                    {consumerHostBalance.result.loading ? (
+                      <Spinner></Spinner>
+                    ) : (
+                      <Typography>
+                        {formatEther(consumerHostBalance.result.data?.balance, 4)} {TOKEN}
+                      </Typography>
+                    )}
                   </div>
                 </div>
               ),
