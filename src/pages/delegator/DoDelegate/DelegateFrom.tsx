@@ -191,10 +191,11 @@ export const DelegateForm: React.FC<FormProps> = ({
     return BigNumberJs(capacityMemo.toString()).isZero();
   }, [capacityMemo]);
 
-  const summaryList = React.useMemo(() => {
-    const delegated =
-      styleMode === 'normal' ? delegatedAmount : formatSQT(getIndexerDelegation()?.after?.toString() || '0');
+  const delegatedAmountMemo = React.useMemo(() => {
+    return styleMode === 'normal' ? delegatedAmount : formatSQT(getIndexerDelegation()?.after?.toString() || '0');
+  }, [delegatedAmount, getIndexerDelegation]);
 
+  const summaryList = React.useMemo(() => {
     return [
       {
         label: t('delegate.to'),
@@ -216,7 +217,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       },
       {
         label: t('delegate.existingDelegation'),
-        value: ` ${delegated} ${TOKEN}`,
+        value: ` ${delegatedAmountMemo} ${TOKEN}`,
         tooltip: t('delegate.existingDelegationTooltip'),
       },
     ].filter((i) => {
@@ -224,7 +225,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       if (styleMode === 'reDelegate' && i.key === 'indexerInfo') return false;
       return true;
     });
-  }, [capacityMemo, delegatedAmount, styleMode, indexerAddress, getIndexerDelegation]);
+  }, [capacityMemo, delegatedAmountMemo, indexerAddress]);
 
   const initDelegations = async () => {
     if (!account) return;
@@ -444,7 +445,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
-              {styleMode === 'normal' && (
+              {styleMode === 'normal' && !BigNumberJs(delegatedAmountMemo).isZero() && (
                 <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
                   <Typography type="secondary" variant="medium">
                     Total Delegation to {indexerMetadata.name} after change
