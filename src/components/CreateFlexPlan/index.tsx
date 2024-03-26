@@ -454,7 +454,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             <>
               <Typography>You must deposit SQT to open this billing account</Typography>
               <Typography variant="medium" type="secondary">
-                You must deposit SQT to create this flex plan
+                You must deposit SQT to create this flex plan, we suggest{' '}
+                {BigNumberJs(form.getFieldValue('price') || '0')
+                  .multipliedBy(20)
+                  .multipliedBy(form.getFieldValue('maximum') || 2)
+                  .toNumber()
+                  .toLocaleString()}{' '}
+                {TOKEN}
               </Typography>
             </>
           ) : (
@@ -483,7 +489,16 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           <Form.Item
             label={<Typography>Deposit amount</Typography>}
             name="amount"
-            rules={[{ type: 'number', required: true, min: 500 }]}
+            rules={[
+              { type: 'number', required: true, min: 500, message: 'The minimum deposit can not be less than 500 SQT' },
+              {
+                validator: (_, value) => {
+                  return BigNumberJs(value).gt(formatSQT(balance.result.data?.toString() || '0'))
+                    ? Promise.reject('Insufficient amount')
+                    : Promise.resolve();
+                },
+              },
+            ]}
           >
             <InputNumber
               placeholder="Enter amount"
