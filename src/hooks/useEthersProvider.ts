@@ -48,8 +48,8 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
       async request(request, ...rest) {
         try {
           const fetchUrl = {
-            [base.id]: 'https://gateway.subquery.network/rpc/base',
-            [mainnet.id]: 'https://gateway.subquery.network/rpc/eth',
+            [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC,
+            [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
           }[chain.id];
           if (fetchUrl) {
             requestId += 1;
