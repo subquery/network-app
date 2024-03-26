@@ -18,6 +18,7 @@ import {
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import BignumberJs from 'bignumber.js';
+import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
 import { Form, Formik } from 'formik';
@@ -124,6 +125,14 @@ export const DelegateForm: React.FC<FormProps> = ({
 
   const isYourself = React.useMemo(() => delegateFrom === account, [account, delegateFrom]);
 
+  const capacityMemo = React.useMemo(
+    () =>
+      styleMode === 'normal'
+        ? indexerCapacity
+        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0',
+    [indexerCapacity, allIndexers, selectedOption],
+  );
+
   const sortedMaxAmount = React.useMemo(() => {
     let maxAmount: BigNumberish | undefined;
 
@@ -135,11 +144,13 @@ export const DelegateForm: React.FC<FormProps> = ({
     }
 
     if (styleMode === 'reDelegate') {
-      return delegatedAmount ?? '0';
+      return BigNumberJs(formatSQT(capacityMemo)).gt(delegatedAmount || '0')
+        ? delegatedAmount
+        : formatSQT(capacityMemo) ?? '0';
     }
 
-    return formatEther(maxAmount?.gt(indexerCapacity) ? indexerCapacity : maxAmount) ?? '0';
-  }, [isYourself, balance, getIndexerDelegation, delegatedAmount, styleMode]);
+    return formatEther(maxAmount?.gt(capacityMemo) ? capacityMemo : maxAmount) ?? '0';
+  }, [isYourself, balance, getIndexerDelegation, delegatedAmount, styleMode, capacityMemo]);
 
   const maxAmountText = React.useMemo(() => {
     if (isYourself && styleMode !== 'reDelegate') {
@@ -159,12 +170,28 @@ export const DelegateForm: React.FC<FormProps> = ({
     });
   }, [isYourself, sortedMaxAmount, TOKEN, balance, styleMode]);
 
-  const summaryList = React.useMemo(() => {
-    const capacity =
-      styleMode === 'normal'
-        ? indexerCapacity
-        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0';
+  const alertInfoText = React.useMemo(() => {
+    if (isYourself)
+      return t('delegate.delegateFromYourselfInfo', {
+        indexerName: indexerMetadata.name,
+      });
+    if (styleMode === 'normal') {
+      return t('delegate.redelegateInfo', {
+        reIndexerName: selectedOption?.name,
+        indexerName: indexerMetadata.name,
+      });
+    }
+    return t('delegate.redelegateInfo', {
+      reIndexerName: indexerMetadata.name,
+      indexerName: selectedOption?.name,
+    });
+  }, [isYourself, styleMode, indexerMetadata.name, selectedOption?.name]);
 
+  const zeroCapacity = React.useMemo(() => {
+    return BigNumberJs(capacityMemo.toString()).isZero();
+  }, [capacityMemo]);
+
+  const summaryList = React.useMemo(() => {
     const delegated =
       styleMode === 'normal' ? delegatedAmount : formatSQT(getIndexerDelegation()?.after?.toString() || '0');
 
@@ -184,7 +211,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       },
       {
         label: t('delegate.remainingCapacity'),
-        value: ` ${formatEther(capacity, 4)} ${TOKEN}`,
+        value: ` ${formatEther(capacityMemo, 4)} ${TOKEN}`,
         tooltip: t('delegate.remainingTooltip'),
       },
       {
@@ -197,7 +224,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       if (styleMode === 'reDelegate' && i.key === 'indexerInfo') return false;
       return true;
     });
-  }, [indexerCapacity, delegatedAmount, styleMode, indexerAddress, selectedOption, getIndexerDelegation]);
+  }, [capacityMemo, delegatedAmount, styleMode, indexerAddress, getIndexerDelegation]);
 
   const initDelegations = async () => {
     if (!account) return;
@@ -410,16 +437,7 @@ export const DelegateForm: React.FC<FormProps> = ({
               <Alert
                 className={styles.alertInfo}
                 type="info"
-                message={
-                  isYourself
-                    ? t('delegate.delegateFromYourselfInfo', {
-                        indexerName: indexerMetadata.name,
-                      })
-                    : t('delegate.redelegateInfo', {
-                        reIndexerName: selectedOption?.name,
-                        indexerName: indexerMetadata.name,
-                      })
-                }
+                message={alertInfoText}
                 showIcon
                 style={{
                   marginBottom: 32,
@@ -445,7 +463,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                 <Button
                   onClick={submitForm}
                   loading={isSubmitting}
-                  disabled={!isValid || isSubmitting}
+                  disabled={zeroCapacity || !isValid || isSubmitting}
                   className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}
                   type="primary"
                   shape="round"
