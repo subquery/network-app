@@ -20,6 +20,9 @@ interface IProps {
 
 const TokenTooltip: FC<IProps> = (props) => {
   const { ethSqtBalance } = useSQToken();
+  if (ethSqtBalance.result.loading) return null;
+  if (ethSqtBalance.result.error) return null;
+  if (ethSqtBalance.result.data?.isZero()) return null;
   return (
     <Tooltip
       overlayClassName={styles.tokenTooltip}

@@ -99,7 +99,17 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
               data: [],
             },
           };
+      } else {
+        return {
+          hostingPlan: {
+            data: [],
+          },
+          apiKeys: {
+            data: [],
+          },
+        };
       }
+
       const apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
         setUserApiKeys(apiKeys.data);
