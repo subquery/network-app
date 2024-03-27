@@ -28,9 +28,12 @@ import styles from './index.module.less';
 interface IProps {
   projectId?: string;
   deploymentId?: string;
+  actionBtn?: React.ReactNode;
+  onSuccess?: () => void;
+  initAddOrRemove?: 'add' | 'remove';
 }
 
-const DoBooster: FC<IProps> = ({ projectId, deploymentId }) => {
+const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRemove = 'add', onSuccess }) => {
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
@@ -41,7 +44,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId }) => {
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>('add');
+  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
   const { checkAllowanceEnough, addAllowance } = useAddAllowance();
   // better to lazy all of these fetch
   const project = useProjectFromQuery(projectId ?? '');
@@ -123,6 +126,8 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId }) => {
         )} SQT`,
         duration: 5,
       });
+      onSuccess?.();
+      setOpen(false);
     } catch (e) {
       parseError(e, {
         alert: true,
@@ -134,17 +139,27 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId }) => {
 
   return (
     <div className={styles.doBooster}>
-      <Button
-        type="primary"
-        shape="round"
-        size="large"
-        loading={loading}
-        onClick={async () => {
-          setOpen(true);
-        }}
-      >
-        Boost
-      </Button>
+      {actionBtn ? (
+        <div
+          onClick={async () => {
+            setOpen(true);
+          }}
+        >
+          {actionBtn}
+        </div>
+      ) : (
+        <Button
+          type="primary"
+          shape="round"
+          size="large"
+          loading={loading}
+          onClick={async () => {
+            setOpen(true);
+          }}
+        >
+          Boost
+        </Button>
+      )}
 
       <Modal
         open={open}
@@ -250,7 +265,12 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId }) => {
           </Form>
           <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
             <div className="flex">
-              <Typography variant="medium" type="secondary" style={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="medium"
+                type="secondary"
+                className="overflowEllipsis2"
+                style={{ display: 'flex', alignItems: 'center', width: 300 }}
+              >
                 Current boosted amount to {project.data?.metadata.name}
                 <Tooltip title="The total amount that you have already boosted this project.">
                   <AiOutlineInfoCircle

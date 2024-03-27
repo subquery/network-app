@@ -9,6 +9,10 @@
 
 .ipfsImage {
   object-fit: cover;
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .projectTextInfo {
