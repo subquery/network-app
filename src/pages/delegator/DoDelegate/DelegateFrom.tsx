@@ -125,13 +125,15 @@ export const DelegateForm: React.FC<FormProps> = ({
 
   const isYourself = React.useMemo(() => delegateFrom === account, [account, delegateFrom]);
 
-  const capacityMemo = React.useMemo(
-    () =>
+  const capacityMemo = React.useMemo(() => {
+    const val =
       styleMode === 'normal'
         ? indexerCapacity
-        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0',
-    [indexerCapacity, allIndexers, selectedOption],
-  );
+        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0';
+
+    if (BigNumberJs(val).lt(0)) return '0';
+    return val;
+  }, [indexerCapacity, allIndexers, selectedOption]);
 
   const sortedMaxAmount = React.useMemo(() => {
     let maxAmount: BigNumberish | undefined;

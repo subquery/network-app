@@ -3,7 +3,6 @@
 
 import React, { FC, useMemo, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { gql, useQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
 import { ApproveContract } from '@components/ModalApproveToken';
 import { NumberInput } from '@components/NumberInput';
@@ -12,7 +11,7 @@ import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
-import { formatSQT } from '@subql/react-hooks';
+import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { retry } from '@utils/retry';
@@ -51,46 +50,23 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
 
-  const deploymentBooster = useQuery(
-    gql`
-      query GetDeploymentBoosterTotalAmountByDeploymentId($deploymentId: String!, $consumer: String!) {
-        deploymentBoosterSummaries(filter: { deploymentId: { equalTo: $deploymentId } }) {
-          aggregates {
-            sum {
-              totalAmount
-            }
-          }
-        }
-
-        deploymentBoosterSummariesByConsumer: deploymentBoosterSummaries(
-          filter: { deploymentId: { equalTo: $deploymentId }, consumer: { equalTo: $consumer } }
-        ) {
-          aggregates {
-            sum {
-              totalAmount
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        deploymentId,
-        consumer: account || '',
-      },
-      fetchPolicy: 'network-only',
+  const deploymentBooster = useGetDeploymentBoosterTotalAmountByDeploymentIdQuery({
+    variables: {
+      deploymentId: deploymentId || '',
+      consumer: account || '',
     },
-  );
+    fetchPolicy: 'network-only',
+  });
 
   const existingBoost = useMemo(() => {
     return BigNumberJs(
-      deploymentBooster.data?.deploymentBoosterSummaries?.aggregates?.sum?.totalAmount || '0',
+      deploymentBooster.data?.deploymentBoosterSummaries?.aggregates?.sum?.totalAmount.toString() || '0',
     ).toString();
   }, [deploymentBooster.data]);
 
   const existingBoostByConsumer = useMemo(() => {
     return BigNumberJs(
-      deploymentBooster.data?.deploymentBoosterSummariesByConsumer?.aggregates?.sum?.totalAmount || '0',
+      deploymentBooster.data?.deploymentBoosterSummariesByConsumer?.aggregates?.sum?.totalAmount.toString() || '0',
     ).toString();
   }, [deploymentBooster.data]);
 

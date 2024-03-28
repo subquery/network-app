@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
 import { AppPageHeader, DeploymentMeta } from '@components';
 import DoBooster from '@components/DoBooster';
 import { BalanceLayout } from '@pages/dashboard';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
-import { formatSQT } from '@subql/react-hooks';
-import { formatNumber, TOKEN } from '@utils';
+import { formatSQT, useGetDeploymentBoosterProjectsAndTotalByConsumerQuery } from '@subql/react-hooks';
+import { cidToBytes32, formatNumber, notEmpty, TOKEN } from '@utils';
 import { Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { useAccount } from 'wagmi';
+
+import { useWeb3Store } from 'src/stores';
 
 import { EmptyList } from '../../../components/EmptyList/EmptyList';
 import { retry } from '../../../utils/retry';
@@ -19,64 +20,43 @@ import styles from './index.module.less';
 
 const MyBoostedProjects: FC = () => {
   const { address: account } = useAccount();
+  const { contracts } = useWeb3Store();
   const [pages, setPages] = React.useState({
-    first: 1,
+    first: 10,
     offset: 0,
     current: 1,
   });
 
   const [mounted, setMounted] = useState(false);
-
-  const boostedProjects = useQuery(
-    gql`
-      query GetDeploymentBoosterTotalAmountByDeploymentId($offset: Int = 0, $first: Int = 10, $consumer: String!) {
-        deploymentBoosterSummaries(
-          filter: { consumer: { equalTo: $consumer } }
-          offset: $offset
-          first: $first
-          orderBy: ID_DESC
-        ) {
-          nodes {
-            consumer
-            deploymentId
-            totalAmount
-            projectId
-            project {
-              metadata
-            }
-          }
-          totalCount
-        }
-
-        totalBoostedAmount: deploymentBoosterSummaries(filter: { consumer: { equalTo: $consumer } }) {
-          aggregates {
-            sum {
-              totalAmount
-            }
-          }
-        }
-      }
-    `,
+  const [rewards, setRewards] = useState<
     {
-      variables: {
-        consumer: account,
-        ...pages,
-      },
-      fetchPolicy: 'network-only',
-      onCompleted: () => {
-        setMounted(true);
-      },
+      deploymentId: string;
+      rewards: string;
+    }[]
+  >([]);
+  const [totalRewards, setTotalRewards] = useState('0');
+
+  const boostedProjects = useGetDeploymentBoosterProjectsAndTotalByConsumerQuery({
+    variables: {
+      consumer: account || '',
+      ...pages,
     },
-  );
+    fetchPolicy: 'network-only',
+    onCompleted: () => {
+      setMounted(true);
+    },
+  });
 
   const existingBoost = useMemo(() => {
     if (boostedProjects.data) {
-      return BigNumberJs(boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount || '0').toString();
+      return BigNumberJs(
+        boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount.toString() || '0',
+      ).toString();
     }
 
     if (boostedProjects.previousData) {
       return BigNumberJs(
-        boostedProjects.previousData?.totalBoostedAmount?.aggregates?.sum?.totalAmount || '0',
+        boostedProjects.previousData?.totalBoostedAmount?.aggregates?.sum?.totalAmount.toString() || '0',
       ).toString();
     }
 
@@ -86,7 +66,7 @@ const MyBoostedProjects: FC = () => {
   const empty = useMemo(() => {
     if (boostedProjects.loading) return false;
     if (boostedProjects.data) {
-      if (boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount !== '0') {
+      if (boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount.toString() !== '0') {
         return false;
       }
     }
@@ -95,6 +75,37 @@ const MyBoostedProjects: FC = () => {
   }, [boostedProjects.data, mounted]);
 
   const showLoading = useMemo(() => !mounted && boostedProjects.loading, [boostedProjects.loading, mounted]);
+
+  const fetchRewards = async () => {
+    if (!contracts) return '0';
+    const rewards = await Promise.allSettled(
+      boostedProjects.data?.deploymentBoosterSummaries?.nodes?.map((i) => {
+        return contracts.rewardsBooster.getAccQueryRewards(cidToBytes32(i?.deploymentId || ''), account || '');
+      }) || [],
+    );
+
+    const total = rewards.reduce((acc, cur) => {
+      if (cur.status === 'fulfilled') {
+        return acc.plus(cur.value.toString());
+      }
+      return acc;
+    }, BigNumberJs(0));
+
+    setTotalRewards(total.toString());
+
+    setRewards(
+      rewards.map((i, index) => {
+        return {
+          deploymentId: boostedProjects.data?.deploymentBoosterSummaries?.nodes?.[index]?.deploymentId || '',
+          rewards: i.status === 'fulfilled' ? i.value.toString() : '0',
+        };
+      }),
+    );
+  };
+
+  useEffect(() => {
+    fetchRewards();
+  }, [boostedProjects.data]);
 
   useEffect(() => {
     setMounted(false);
@@ -128,10 +139,19 @@ const MyBoostedProjects: FC = () => {
             mainBalance: formatSQT(existingBoost),
           })}
           width={360}
-        ></SubqlCard>
+        >
+          <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <Typography variant="small" type="secondary">
+              Total Query Rewards
+            </Typography>
+            <Typography>
+              {formatNumber(formatSQT(totalRewards))} {TOKEN}
+            </Typography>
+          </div>
+        </SubqlCard>
 
         <Table
-          dataSource={boostedProjects.data?.deploymentBoosterSummaries?.nodes || []}
+          dataSource={boostedProjects.data?.deploymentBoosterSummaries?.nodes.filter(notEmpty) || []}
           columns={[
             {
               title: 'Project',
@@ -146,6 +166,16 @@ const MyBoostedProjects: FC = () => {
               render: (totalAmount: string) => (
                 <Typography>
                   {formatNumber(formatSQT(totalAmount || '0'))} {TOKEN}
+                </Typography>
+              ),
+            },
+            {
+              title: 'Boosted rewards',
+              dataIndex: 'deploymentId',
+              render: (deploymentId: string) => (
+                <Typography>
+                  {formatNumber(formatSQT(rewards.find((i) => i.deploymentId === deploymentId)?.rewards || '0'))}{' '}
+                  {TOKEN}
                 </Typography>
               ),
             },
