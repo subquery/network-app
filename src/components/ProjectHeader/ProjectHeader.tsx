@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import DoBooster from '@components/DoBooster';
 import GetEndpoint from '@components/GetEndpoint';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
@@ -93,7 +94,10 @@ const ProjectHeader: React.FC<Props> = ({
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
-            <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
+            <div className="flex" style={{ gap: 10 }}>
+              <DoBooster projectId={project.id} deploymentId={currentVersion}></DoBooster>
+              <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
+            </div>
           </div>
           <Address address={project.owner} size="small" />
 

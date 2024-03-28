@@ -88,18 +88,6 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
     return afterDelegatedAmount;
   }, [currentEra, delegation.data?.delegation?.amount]);
 
-  const indexerCapacity = React.useMemo(() => {
-    let indexerCapacity = BigNumber.from(0);
-    const fetchedCapacity = indexerDataLazy.data?.indexer?.capacity;
-    if (fetchedCapacity) {
-      const rawCapacity = parseRawEraValue(fetchedCapacity, currentEra.data?.index);
-
-      indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
-    }
-
-    return indexerCapacity;
-  }, [indexerDataLazy.data, currentEra]);
-
   const handleClick = async (amount: string | { input: string; delegator: string }) => {
     assert(contracts, 'Contracts not available');
     const amountVal = isString(amount) ? parseEther(amount) : parseEther(amount.input);
@@ -215,7 +203,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
                       onCancel={onCancel}
                       indexerAddress={indexerAddress}
                       delegatedAmount={afterDelegatedAmount}
-                      indexerCapacity={indexerCapacity}
+                      indexerCapacity={BigNumber.from(0)} // unused when style === reDelegate
                       indexerMetadataCid={indexerDataLazy.data?.metadata}
                       error={error}
                       curEra={currentEra.data?.index}

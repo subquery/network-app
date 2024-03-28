@@ -133,6 +133,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
     }
 
+    if (indexerCapacity.lt(0)) return BigNumber.from(0);
+
     return indexerCapacity;
   }, [indexer, indexerDataLazy, currentEra]);
 

@@ -366,7 +366,10 @@ const IndexerProfile: FC = () => {
                         Remaining Capacity
                       </Typography>
                       <Typography variant="small">
-                        {formatNumber(fetchedSortedIndexer.capacity.current)} {TOKEN}
+                        {(fetchedSortedIndexer.capacity.after || 0) < 0
+                          ? 0
+                          : formatNumber(fetchedSortedIndexer.capacity.after || '0')}{' '}
+                        {TOKEN}
                       </Typography>
                     </div>
 

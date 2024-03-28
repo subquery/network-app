@@ -7,6 +7,7 @@ import { Navigate, Route, Routes } from 'react-router';
 
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
+import MyBoostedProjects from './MyBoostedProjects/MyBoostedProjects';
 import { FlexPlayground } from './Playground/FlexPlayground';
 import { MyFlexPlans } from './MyFlexPlans';
 import { MyOffers } from './MyOffers';
@@ -29,6 +30,10 @@ const Consumer: React.FC = () => {
   ];
 
   const sidebarList = [
+    {
+      label: 'My Boosted Projects',
+      link: 'boosted-projects',
+    },
     {
       label: t('plans.category.myOffers'),
       link: MY_OFFERS,
@@ -54,6 +59,7 @@ const Consumer: React.FC = () => {
           path={`${FLEX_PLANS}/${PLAYGROUND}/:id`}
           element={isFlexPlanActive ? <FlexPlayground /> : <Navigate replace to={'/'} />}
         />
+        <Route path={`boosted-projects/*`} element={<MyBoostedProjects></MyBoostedProjects>} />
         <Route path={`${FLEX_PLANS}/*`} element={isFlexPlanActive ? <MyFlexPlans /> : <Navigate replace to={'/'} />} />
         <Route path={`${MY_OFFERS}/*`} element={<MyOffers />} />
         <Route path={`${OFFER_MARKETPLACE}/*`} element={<Marketplace />} />

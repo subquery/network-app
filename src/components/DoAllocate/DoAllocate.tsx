@@ -255,9 +255,13 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
           ></IPFSImage>
 
           <div className="col-flex" style={{ marginLeft: 8 }}>
-            <div className="flex" style={{ gap: 4, marginBottom: 8 }}>
-              <Typography>{project.data?.metadata.name}</Typography>
-              <Tag>{deploymentMetadata?.version}</Tag>
+            <div className="flex" style={{ gap: 4, marginBottom: 8, height: 24 }}>
+              <Typography className="overflowEllipsis" style={{ maxWidth: 320 }}>
+                {project.data?.metadata.name}
+              </Typography>
+              <Tag className="overflowEllipsis" style={{ maxWidth: 100 }}>
+                {deploymentMetadata?.version}
+              </Tag>
             </div>
             <Typography>
               Existing Boost: {formatNumber(formatSQT(currentBooster))} {TOKEN}
@@ -320,8 +324,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
           </Form>
           <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
             <div className="flex">
-              <Typography variant="medium" type="secondary">
-                Current allocated stake to {project.data?.metadata.name}
+              <Typography variant="medium" type="secondary" style={{ display: 'flex', gap: 5, width: '100%' }}>
+                Current allocated stake to
+                <div className="overflowEllipsis" style={{ maxWidth: 200 }}>
+                  {project.data?.metadata.name}
+                </div>
               </Typography>
               <span style={{ flex: 1 }}></span>
               <Typography variant="medium">
