@@ -71,6 +71,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     updateHostingPlanApi,
     getUserApiKeysApi,
     refreshUserInfo,
+    getChannelLimit,
   } = useConsumerHostServices({
     alert: true,
     autoLogin: false,
@@ -90,6 +91,36 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       return [];
     }
   }, [project.id, deploymentId]);
+
+  const estimatedChannelLimit = useAsyncMemo(async () => {
+    try {
+      const res = await getChannelLimit();
+
+      if (!isConsumerHostError(res.data)) {
+        return {
+          channelMaxNum: res.data.channel_max_num,
+          channelMinAmount: res.data.channel_min_amount,
+        };
+      }
+
+      return {
+        channelMaxNum: 15,
+        channelMinAmount: 33.33333,
+      };
+    } catch (e) {
+      return {
+        channelMaxNum: 15,
+        channelMinAmount: 33.33333,
+      };
+    }
+  }, []);
+
+  const minDeposit = useMemo(() => {
+    if (!estimatedChannelLimit.data) return 500;
+    return Math.ceil(
+      estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount,
+    ).toLocaleString();
+  }, [estimatedChannelLimit]);
 
   const estimatedPriceInfo = useMemo(() => {
     if (!flexPlans.data || flexPlans.data.length === 0) {
@@ -206,10 +237,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         if (needCreateApiKey) {
           // in case user create an api key at another tab, and back to this page to continue.
           const checkApiKeys = await getUserApiKeysApi();
-          if (
-            !isConsumerHostError(checkApiKeys.data) &&
-            !checkApiKeys.data?.find((i) => i.name === specialApiKeyName)
-          ) {
+
+          if (isConsumerHostError(checkApiKeys.data)) {
+            throw new Error(checkApiKeys.data.error);
+            return;
+          }
+
+          if (!checkApiKeys.data?.find((i) => i.name === specialApiKeyName)) {
             const apiKeyRes = await createNewApiKey({
               name: specialApiKeyName,
             });
@@ -382,7 +416,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                       </Typography>
                     }
                     name="price"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: 'Please enter the price' }]}
                   >
                     <InputNumber placeholder="Enter price" min="1" addonAfter={TOKEN}></InputNumber>
                   </Form.Item>
@@ -401,6 +435,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                       </Typography>
                     }
                     name="maximum"
+                    rules={[
+                      {
+                        min: 2,
+                        type: 'number',
+                        required: true,
+                        message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
+                      },
+                    ]}
                   >
                     <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
                   </Form.Item>
@@ -490,7 +532,12 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             label={<Typography>Deposit amount</Typography>}
             name="amount"
             rules={[
-              { type: 'number', required: true, min: 500, message: 'The minimum deposit can not be less than 500 SQT' },
+              {
+                type: 'number',
+                required: true,
+                min: minDeposit,
+                message: `The minimum deposit can not be less than ${minDeposit} SQT`,
+              },
               {
                 validator: (_, value) => {
                   return BigNumberJs(value).gt(formatSQT(balance.result.data?.toString() || '0'))
@@ -513,7 +560,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         </Form>
 
         <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-          <Typography variant="medium">Minimum deposit amount: 500 {TOKEN}</Typography>
+          <Typography variant="medium">
+            Minimum deposit amount: {minDeposit} {TOKEN}
+          </Typography>
 
           <Typography variant="medium">
             Wallet Balance:{' '}

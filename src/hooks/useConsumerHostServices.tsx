@@ -317,6 +317,14 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const getChannelLimit = async () => {
+    const res = await instance.get<IGetChannelLimit>('/channel-limit', {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  };
+
   const refreshUserInfo = async () => {
     const res = await instance.get('/users/refresh', {
       headers: authHeaders.current,
@@ -376,6 +384,7 @@ export const useConsumerHostServices = (
     getProjects: alertResDecorator(getProjects),
     refreshUserInfo: loginResDecorator(refreshUserInfo),
     getHostingPlanApi,
+    getChannelLimit,
     requestConsumerHostToken,
     checkIfHasLogin,
     loginConsumerHost,
@@ -384,6 +393,12 @@ export const useConsumerHostServices = (
     loading,
   };
 };
+
+export interface IGetChannelLimit {
+  channel_max_num: number;
+  channel_min_amount: number;
+  channel_min_days: number;
+}
 
 export interface IGetUserChannelState {
   channelId: string;
