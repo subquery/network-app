@@ -1,12 +1,12 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useRef } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { AppPageHeader, DeploymentMeta } from '@components';
 import DoBooster from '@components/DoBooster';
 import { BalanceLayout } from '@pages/dashboard';
-import { SubqlCard, Typography } from '@subql/components';
+import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { formatSQT } from '@subql/react-hooks';
 import { formatNumber, TOKEN } from '@utils';
 import { Button, Table } from 'antd';
@@ -24,6 +24,9 @@ const MyBoostedProjects: FC = () => {
     offset: 0,
     current: 1,
   });
+
+  const [mounted, setMounted] = useState(false);
+
   const boostedProjects = useQuery(
     gql`
       query GetDeploymentBoosterTotalAmountByDeploymentId($offset: Int = 0, $first: Int = 10, $consumer: String!) {
@@ -60,6 +63,9 @@ const MyBoostedProjects: FC = () => {
         ...pages,
       },
       fetchPolicy: 'network-only',
+      onCompleted: () => {
+        setMounted(true);
+      },
     },
   );
 
@@ -78,25 +84,26 @@ const MyBoostedProjects: FC = () => {
   }, [boostedProjects.data]);
 
   const empty = useMemo(() => {
+    if (boostedProjects.loading) return false;
     if (boostedProjects.data) {
       if (boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount !== '0') {
         return false;
       }
     }
 
-    if (boostedProjects.previousData) return false;
-
     return true;
-  }, [boostedProjects.data]);
+  }, [boostedProjects.data, mounted]);
 
-  return (
-    <div className={styles.myBoostedProjects}>
-      <AppPageHeader
-        title="My Boosted Projects"
-        desc={empty ? undefined : 'Manage the boosts that you are boosting to different projects'}
-      />
+  const showLoading = useMemo(() => !mounted && boostedProjects.loading, [boostedProjects.loading, mounted]);
 
-      {empty ? (
+  useEffect(() => {
+    setMounted(false);
+  }, [account]);
+
+  const mainRender = () => {
+    if (showLoading) return <Spinner></Spinner>;
+    if (empty)
+      return (
         <EmptyList
           title={'You haven’t boosted any projects yet'}
           description="Follow our documentation to help you get boost to a project then head over to the Explorer to find the first project you would like to boost. Learn how to boost a project here"
@@ -110,83 +117,95 @@ const MyBoostedProjects: FC = () => {
             </Button>
           </a>
         </EmptyList>
-      ) : (
-        <>
-          <SubqlCard
-            title="Current Total Boosts"
-            tooltip="The total amount that is currently boosted to projects. "
-            titleExtra={BalanceLayout({
-              mainBalance: formatSQT(existingBoost),
-            })}
-            width={360}
-          ></SubqlCard>
+      );
 
-          <Table
-            dataSource={boostedProjects.data?.deploymentBoosterSummaries?.nodes || []}
-            columns={[
-              {
-                title: 'Project',
-                dataIndex: 'deploymentId',
-                render: (deploymentId: string, deployment) => (
-                  <DeploymentMeta deploymentId={deploymentId} projectMetadata={deployment?.project?.metadata || ''} />
-                ),
-              },
-              {
-                title: 'Boosted amount',
-                dataIndex: 'totalAmount',
-                render: (totalAmount: string) => (
-                  <Typography>
-                    {formatNumber(formatSQT(totalAmount || '0'))} {TOKEN}
-                  </Typography>
-                ),
-              },
-              {
-                title: 'Action',
-                dataIndex: 'deploymentId',
-                render: (deploymentId: string, record) => (
-                  <div className="flex" style={{ gap: 16 }}>
-                    <DoBooster
-                      deploymentId={deploymentId}
-                      projectId={record.projectId}
-                      actionBtn={<Typography.Link active>Add Boost</Typography.Link>}
-                      onSuccess={() =>
-                        retry(() => {
-                          boostedProjects.refetch();
-                        })
-                      }
-                    ></DoBooster>
-                    <DoBooster
-                      deploymentId={deploymentId}
-                      projectId={record.projectId}
-                      actionBtn={<Typography type="danger">Remove Boost</Typography>}
-                      onSuccess={() =>
-                        retry(() => {
-                          boostedProjects.refetch();
-                        })
-                      }
-                      initAddOrRemove="remove"
-                    ></DoBooster>
-                  </div>
-                ),
-              },
-            ]}
-            loading={boostedProjects.loading}
-            rowKey={(record) => record.deploymentId}
-            pagination={{
-              current: pages.current,
-              total: boostedProjects.data?.deploymentBoosterSummaries?.totalCount || 0,
-              pageSize: pages.first,
-              onChange(page, pageSize) {
-                setPages({
-                  current: page,
-                  first: pageSize,
-                  offset: pageSize * (page - 1),
-                });
-              },
-            }}
-          ></Table>
-        </>
-      )}
+    return (
+      <>
+        <SubqlCard
+          title="Current Total Boosts"
+          tooltip="The total amount that is currently boosted to projects. "
+          titleExtra={BalanceLayout({
+            mainBalance: formatSQT(existingBoost),
+          })}
+          width={360}
+        ></SubqlCard>
+
+        <Table
+          dataSource={boostedProjects.data?.deploymentBoosterSummaries?.nodes || []}
+          columns={[
+            {
+              title: 'Project',
+              dataIndex: 'deploymentId',
+              render: (deploymentId: string, deployment) => (
+                <DeploymentMeta deploymentId={deploymentId} projectMetadata={deployment?.project?.metadata || ''} />
+              ),
+            },
+            {
+              title: 'Boosted amount',
+              dataIndex: 'totalAmount',
+              render: (totalAmount: string) => (
+                <Typography>
+                  {formatNumber(formatSQT(totalAmount || '0'))} {TOKEN}
+                </Typography>
+              ),
+            },
+            {
+              title: 'Action',
+              dataIndex: 'deploymentId',
+              render: (deploymentId: string, record) => (
+                <div className="flex" style={{ gap: 16 }}>
+                  <DoBooster
+                    deploymentId={deploymentId}
+                    projectId={record.projectId}
+                    actionBtn={<Typography.Link active>Add Boost</Typography.Link>}
+                    onSuccess={() =>
+                      retry(() => {
+                        boostedProjects.refetch();
+                      })
+                    }
+                  ></DoBooster>
+                  <DoBooster
+                    deploymentId={deploymentId}
+                    projectId={record.projectId}
+                    actionBtn={<Typography type="danger">Remove Boost</Typography>}
+                    onSuccess={() =>
+                      retry(() => {
+                        boostedProjects.refetch();
+                      })
+                    }
+                    initAddOrRemove="remove"
+                  ></DoBooster>
+                </div>
+              ),
+            },
+          ]}
+          loading={boostedProjects.loading}
+          rowKey={(record) => record.deploymentId}
+          pagination={{
+            current: pages.current,
+            total: boostedProjects.data?.deploymentBoosterSummaries?.totalCount || 0,
+            pageSize: pages.first,
+            onChange(page, pageSize) {
+              setPages({
+                current: page,
+                first: pageSize,
+                offset: pageSize * (page - 1),
+              });
+            },
+          }}
+        ></Table>
+      </>
+    );
+  };
+
+  return (
+    <div className={styles.myBoostedProjects}>
+      <AppPageHeader
+        title="My Boosted Projects"
+        desc={empty ? undefined : 'Manage the boosts that you are boosting to different projects'}
+      />
+
+      {mainRender()}
     </div>
   );
 };

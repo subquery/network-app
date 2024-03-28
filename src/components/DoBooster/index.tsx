@@ -19,6 +19,7 @@ import { retry } from '@utils/retry';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
+import clsx from 'clsx';
 import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
@@ -198,9 +199,13 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           ></IPFSImage>
 
           <div className="col-flex" style={{ marginLeft: 8 }}>
-            <div className="flex" style={{ gap: 4, marginBottom: 8 }}>
-              <Typography>{project.data?.metadata.name}</Typography>
-              <Tag>{deploymentMetadata?.version}</Tag>
+            <div className={clsx('flex')} style={{ gap: 4, marginBottom: 8, height: 24 }}>
+              <Typography className="overflowEllipsis" style={{ maxWidth: 320 }}>
+                {project.data?.metadata.name}
+              </Typography>
+              <Tag className="overflowEllipsis" style={{ maxWidth: 100 }}>
+                {deploymentMetadata?.version}
+              </Tag>
             </div>
             <Typography>
               Existing Boost: {formatNumber(formatSQT(existingBoost))} {TOKEN}
@@ -265,20 +270,24 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           </Form>
           <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
             <div className="flex">
-              <Typography
-                variant="medium"
-                type="secondary"
-                className="overflowEllipsis2"
-                style={{ display: 'flex', alignItems: 'center', width: 300 }}
-              >
-                Current boosted amount to {project.data?.metadata.name}
+              <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                <Typography
+                  variant="medium"
+                  type="secondary"
+                  className="overflowEllipsis2"
+                  style={{ display: 'flex', gap: 5, width: '100%' }}
+                >
+                  Current boosted amount to
+                  <div className="overflowEllipsis" style={{ maxWidth: 200 }}>
+                    {project.data?.metadata.name}
+                  </div>
+                </Typography>
                 <Tooltip title="The total amount that you have already boosted this project.">
                   <AiOutlineInfoCircle
                     style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
                   ></AiOutlineInfoCircle>
                 </Tooltip>
-              </Typography>
-              <span style={{ flex: 1 }}></span>
+              </div>
               <Typography variant="medium">
                 {formatNumber(formatSQT(existingBoostByConsumer || '0'))} {TOKEN}
               </Typography>

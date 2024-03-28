@@ -48,7 +48,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ menu, menuItem, dropdownCont
     <AntdDropdown overlay={menuList} className={clsx(styles.hosted, 'flex-center', styleProps)}>
       {typeof dropdownContent === 'string' || !dropdownContent ? (
         <div>
-          <span style={{ maxWidth: 400 }} className="overflowEllipsis">
+          <span style={{ maxWidth: 250 }} className="overflowEllipsis">
             {dropdownContent || menu[0]?.label} <BsChevronDown className={styles.downIcon} />
           </span>
         </div>
