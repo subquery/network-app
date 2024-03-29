@@ -16,7 +16,7 @@ const translation = {
   },
   indexer: {
     title: 'Operator',
-    nickname: 'Node Runner',
+    nickname: 'Node Operator',
     indexers: 'Indexers',
     profile: 'My Profile', // Explorer V1
     myDelegators: 'My Delegators',

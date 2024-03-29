@@ -81,7 +81,7 @@ const Staking: FC = () => {
                     <div
                       style={{ width: 10, height: 10, background: '#7BACE7', borderRadius: '50%', marginRight: 8 }}
                     ></div>
-                    <Typography>Currently Staked to your Indexer</Typography>
+                    <Typography>Currently Staked to your Node Operator</Typography>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16, margin: '8px 0' }}>
@@ -111,7 +111,7 @@ const Staking: FC = () => {
                     <div
                       style={{ width: 10, height: 10, background: '#C7DBF5', borderRadius: '50%', marginRight: 8 }}
                     ></div>
-                    <Typography>Currently Delegated to other Indexers</Typography>
+                    <Typography>Currently Delegated to other Node Operators</Typography>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16, margin: '8px 0' }}>
@@ -142,7 +142,7 @@ const Staking: FC = () => {
             <StakeAndDelegationLineChart
               account={account}
               title="Total Staked Tokens"
-              dataDimensionsName={['Staked to your Indexer', 'Delegated to other indexers']}
+              dataDimensionsName={['Staked to your Node Operator', 'Delegated to other Node Operators']}
               showDelegatedToOthers
             ></StakeAndDelegationLineChart>
           )}

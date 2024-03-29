@@ -152,7 +152,7 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
                   {showHeader && (
                     <div className="flex" style={{ marginBottom: 16 }}>
                       <Typography variant="large" weight={600}>
-                        Indexer's Delegators
+                        Node Operator's Delegators
                       </Typography>
 
                       <Typography variant="large" weight={600} type="secondary">

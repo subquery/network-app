@@ -242,7 +242,7 @@ export const StakeAndDelegationLineChart = (props: {
             dataDimensionsName={dataDimensionsName}
             chartData={renderStakeAndDelegation}
             onTriggerTooltip={(index, curDate) => {
-              return `<div class="col-flex" style="width: 280px">
+              return `<div class="col-flex" style="width: 320px">
           <span style="font-size:12px;">${curDate.format('MMM D, YYYY')}</span>
           <div class="flex-between" style="margin-top: 8px;">
             <span style="font-size:12px;">Total</span>

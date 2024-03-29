@@ -33,7 +33,7 @@ const getColumns = (
     render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
   },
   {
-    title: <TableTitle title={'Node runners'} />,
+    title: <TableTitle title={'Node operators'} />,
     dataIndex: 'id',
     width: 250,
     render: (val) => <ConnectedIndexer id={val} account={account} />,

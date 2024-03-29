@@ -15,6 +15,7 @@ import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/r
 import { formatEther, formatNumber, isRPCError, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
+import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
 import { useAccount } from 'wagmi';
@@ -75,7 +76,7 @@ const activeKeyLinks: {
 export const MyAccount: React.FC = () => {
   const { address } = useAccount();
   const { id: profileAccount } = useParams();
-  const account = useMemo(() => profileAccount || address, [address, profileAccount]);
+  const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
 
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
@@ -175,13 +176,13 @@ export const MyAccount: React.FC = () => {
                   <FormatCardLine
                     title="Total Delegation"
                     amount={formatNumber(totalDelegating)}
-                    linkName="Delegate to an Indexer"
+                    linkName="Delegate to a Node Operator"
                     link="/delegator/indexers/top"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Total Staking"
                     amount={formatNumber(totalStaking)}
-                    linkName="Start Staking as an Indexer"
+                    linkName="Start Staking as a Node Operator"
                     link="/indexer/my-staking"
                   ></FormatCardLine>
                   <FormatCardLine
@@ -200,7 +201,8 @@ export const MyAccount: React.FC = () => {
             <RewardsLineChart
               account={account}
               title="Rewards"
-              dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+              dataDimensionsName={['Node Operator Rewards', 'Delegator Rewards']}
+              beDelegator
             ></RewardsLineChart>
           </div>
         )}

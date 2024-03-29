@@ -7,7 +7,7 @@ import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
 import { useGetDashboardQuery } from '@subql/react-hooks';
-import { parseError, renderAsync, TOKEN } from '@utils';
+import { renderAsync, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
@@ -82,7 +82,7 @@ const TotalRewardsCard = (props: {
       <div className="col-flex">
         <div className={clsx(styles.cardContentLine, 'flex-between')}>
           <Typography variant="small" type="secondary">
-            Total Reward to Indexers
+            Total Reward to Operator
           </Typography>
           <Typography variant="small">
             {formatNumber(formatSQT(props.indexerRewards))} {TOKEN}
@@ -118,7 +118,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
       <div className="col-flex">
         <div className={clsx(styles.cardContentLine, 'flex-between')}>
           <Typography variant="small" type="secondary">
-            Number of Indexers
+            Number of Node Operator
           </Typography>
           <Typography variant="small">{props.totalCount}</Typography>
         </div>
@@ -129,7 +129,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
               navigate('/delegator/indexers/all');
             }}
           >
-            View Indexers
+            View Node Operators
           </Link>
         </div>
       </div>
@@ -151,7 +151,7 @@ const DelegationsCard = (props: {
         mainBalance: formatSQT(props.delegatorStake),
         secondaryBalance: formatSQT(props.nextDelegatorStake),
       })}
-      tooltip={`This is the total ${TOKEN} delegated by participants to any Indexer across the entire network right now`}
+      tooltip={`This is the total ${TOKEN} delegated by participants to any Node Operator across the entire network right now`}
       width={302}
     >
       <div className="col-flex">

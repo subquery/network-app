@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useState } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
@@ -111,8 +112,17 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   return { getIncludesEras, fillData };
 };
 
-export const RewardsLineChart = (props: { account?: string; title?: string; dataDimensionsName?: string[] }) => {
-  const { title = 'Network Rewards', dataDimensionsName = ['Indexer Rewards', 'Delegation Rewards'] } = props;
+export const RewardsLineChart = (props: {
+  account?: string;
+  title?: string;
+  dataDimensionsName?: string[];
+  beDelegator?: boolean;
+}) => {
+  const {
+    title = 'Network Rewards',
+    dataDimensionsName = ['Node Operator Rewards', 'Delegation Rewards'],
+    beDelegator = false,
+  } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
   const [renderRewards, setRenderRewards] = useState<number[][]>([[]]);
@@ -141,7 +151,58 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
 
   const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
-  const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
+  const [fetchRewardsByIndexer, indexerRewardsData] = useLazyQuery(gql`
+    query GetAggregatesEraRewardsByIndexer($indexerId: String!, $eraIds: [String!]) {
+      eraRewards(filter: { eraId: { in: $eraIds }, indexerId: { equalTo: $indexerId } }) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      indexerEraReward: eraRewards(
+        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: true }, indexerId: { equalTo: $indexerId } }
+      ) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      delegationEraReward: eraRewards(
+        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: false }, indexerId: { equalTo: $indexerId } }
+      ) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      delegatorTotalRewards: eraRewards(filter: { eraId: { in: $eraIds }, delegatorId: { equalTo: $indexerId } }) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+
+      delegatorEraReward: eraRewards(filter: { eraId: { in: $eraIds }, delegatorId: { equalTo: $indexerId } }) {
+        groupedAggregates(groupBy: ERA_ID) {
+          sum {
+            amount
+          }
+          keys
+        }
+      }
+    }
+  `);
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
@@ -168,11 +229,21 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, removedLastEras, maxPaddingLength);
     const indexerRewards = curry(res?.data?.indexerEraReward?.groupedAggregates || []);
-    const delegationRewards = curry(res?.data?.delegationEraReward?.groupedAggregates || []);
+
+    const delegationRewards = beDelegator
+      ? curry(res?.data?.delegatorEraReward?.groupedAggregates || [])
+      : curry(res?.data?.delegationEraReward?.groupedAggregates || []);
+
     setRawRewardsData({
       indexer: indexerRewards,
       delegation: delegationRewards,
-      total: fillData(res?.data?.eraRewards?.groupedAggregates || [], removedLastEras, maxPaddingLength),
+      total: fillData(
+        (beDelegator
+          ? res?.data?.delegatorTotalRewards?.groupedAggregates
+          : res?.data?.eraRewards?.groupedAggregates) || [],
+        removedLastEras,
+        maxPaddingLength,
+      ),
     });
 
     setRenderRewards([indexerRewards, delegationRewards]);
