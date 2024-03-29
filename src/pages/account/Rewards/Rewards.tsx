@@ -34,9 +34,9 @@ export const Rewards: React.FC = () => {
   const { contracts } = useWeb3Store();
   const update = useUpdate();
   const filterParams = { address: account || '' };
+  // if more than 100 delegations, need claim twice.
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const [loading, setLoading] = React.useState(false);
-
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
@@ -47,7 +47,11 @@ export const Rewards: React.FC = () => {
   const { t } = useTranslation();
 
   const totalUnclaimedRewards = React.useMemo(() => {
-    return rewards.data?.unclaimedRewards?.totalCount || 0;
+    return indexerEraRewards.data?.unclaimedEraRewards?.totalCount || 0;
+  }, [indexerEraRewards]);
+
+  const unclaimedRewardsCountByIndexer = React.useMemo(() => {
+    return rewards?.data?.unclaimedRewards?.totalCount || 0;
   }, [rewards]);
 
   const unclaimedRewards = React.useMemo(() => {
@@ -176,7 +180,8 @@ export const Rewards: React.FC = () => {
   };
 
   React.useEffect(() => {
-    getUnclaimedRewards();
+    // recover the hotfix for unclaimed rewards
+    // getUnclaimedRewards();
   }, [indexerIds, account, unclaimedRewards]);
   // the above codes is a hotfix
 
@@ -209,6 +214,7 @@ export const Rewards: React.FC = () => {
             loading: () => <Spinner />,
             data: (data) => {
               const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
+
               return (
                 <>
                   <div className="flex">
@@ -235,6 +241,7 @@ export const Rewards: React.FC = () => {
                             rewards.refetch();
                           });
                         }}
+                        unCliamedCountByIndexer={unclaimedRewardsCountByIndexer}
                       />
                     ) : (
                       ''
