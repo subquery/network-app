@@ -133,6 +133,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           onClick={async () => {
             setOpen(true);
           }}
+          disabled={!account}
         >
           Boost
         </Button>

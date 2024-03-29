@@ -317,6 +317,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           }
           setOpen(true);
         }}
+        disabled={!account}
       >
         Get Endpoint
       </Button>

@@ -117,9 +117,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const minDeposit = useMemo(() => {
     if (!estimatedChannelLimit.data) return 500;
-    return Math.ceil(
-      estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount,
-    ).toLocaleString();
+    return Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
   }, [estimatedChannelLimit]);
 
   const estimatedPriceInfo = useMemo(() => {
@@ -536,7 +534,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 type: 'number',
                 required: true,
                 min: minDeposit,
-                message: `The minimum deposit can not be less than ${minDeposit} SQT`,
+                message: `The minimum deposit can not be less than ${minDeposit.toLocaleString()} SQT`,
               },
               {
                 validator: (_, value) => {
