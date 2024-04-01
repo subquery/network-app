@@ -8,7 +8,7 @@ import { useEra } from '@hooks';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
 import {
-  useGetEraQueryLazyQuery,
+  useGetEraDelegatorIndexersGraphLazyQuery,
   useGetIndexerStakesByErasLazyQuery,
   useGetIndexerStakesByIndexerLazyQuery,
 } from '@subql/react-hooks';
@@ -21,8 +21,10 @@ import {
   toPercentage,
 } from '@utils';
 import { mergeAsync } from '@utils';
+import { numToHex } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash-es';
 
@@ -47,7 +49,7 @@ export const StakeAndDelegationLineChart = (props: {
 
   const [fetchStakeAndDelegationByIndexer, stakeAndDelegationByIndexer] = useGetIndexerStakesByIndexerLazyQuery();
 
-  const [fetchDelegateToOthersQuery, delegateToOthers] = useGetEraQueryLazyQuery();
+  const [fetchDelegateToOthersQuery, delegateToOthers] = useGetEraDelegatorIndexersGraphLazyQuery();
 
   const [renderStakeAndDelegation, setRenderStakeAndDelegation] = useState<number[][]>([[]]);
   const [rawFetchedData, setRawFetchedData] = useState<{ one: number[]; two: number[]; total: number[] }>({
@@ -81,7 +83,18 @@ export const StakeAndDelegationLineChart = (props: {
       fetchPolicy: 'no-cache',
     });
 
-    return res?.data?.eraStakes?.groupedAggregates || [];
+    if (res.data?.eraDelegatorIndexers?.nodes) {
+      return res.data?.eraDelegatorIndexers?.nodes.map((i) => ({
+        keys: [numToHex(i?.era || 0)],
+        sum: {
+          stake: BigNumberJs(i?.totalStake?.toString() || '0')
+            .minus(i?.selfStake?.toString() || '0')
+            .toString(),
+        },
+      }));
+    }
+
+    return [];
   };
 
   const fetchStakeAndDelegationByEra = async (filterVal: FilterType = filter) => {
@@ -182,7 +195,7 @@ export const StakeAndDelegationLineChart = (props: {
         },
       );
 
-    const delegateToMe = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
+    const delegateToMe = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } })));
     const IDelegateToOthers = curry(
       paddedDelegatorToOthersData.map((i) => ({
         ...i,

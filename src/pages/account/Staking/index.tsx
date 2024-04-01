@@ -11,6 +11,7 @@ import { formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
+import BigNumberJs from 'bignumber.js';
 import { useAccount } from 'wagmi';
 
 import Breakdown from './Breakdown';
@@ -37,7 +38,11 @@ const Staking: FC = () => {
   const totalDelegateToOthers = useMemo(() => {
     if (!delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake) return 0;
 
-    return formatSQT(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake);
+    return formatSQT(
+      BigNumberJs(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake?.toString() || '0')
+        .minus(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.selfStake?.toString() || '0')
+        .toString(),
+    );
   }, [delegateToOthersByEra]);
 
   return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
