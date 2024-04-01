@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useState } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
@@ -116,6 +115,7 @@ export const RewardsLineChart = (props: {
   account?: string;
   title?: string;
   dataDimensionsName?: string[];
+  /* must have account if this set be true */
   beDelegator?: boolean;
 }) => {
   const {
@@ -151,58 +151,7 @@ export const RewardsLineChart = (props: {
 
   const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
-  const [fetchRewardsByIndexer, indexerRewardsData] = useLazyQuery(gql`
-    query GetAggregatesEraRewardsByIndexer($indexerId: String!, $eraIds: [String!]) {
-      eraRewards(filter: { eraId: { in: $eraIds }, indexerId: { equalTo: $indexerId } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      indexerEraReward: eraRewards(
-        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: true }, indexerId: { equalTo: $indexerId } }
-      ) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      delegationEraReward: eraRewards(
-        filter: { eraId: { in: $eraIds }, isIndexer: { equalTo: false }, indexerId: { equalTo: $indexerId } }
-      ) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      delegatorTotalRewards: eraRewards(filter: { eraId: { in: $eraIds }, delegatorId: { equalTo: $indexerId } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-
-      delegatorEraReward: eraRewards(filter: { eraId: { in: $eraIds }, delegatorId: { equalTo: $indexerId } }) {
-        groupedAggregates(groupBy: ERA_ID) {
-          sum {
-            amount
-          }
-          keys
-        }
-      }
-    }
-  `);
+  const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
@@ -231,7 +180,10 @@ export const RewardsLineChart = (props: {
     const indexerRewards = curry(res?.data?.indexerEraReward?.groupedAggregates || []);
 
     const delegationRewards = beDelegator
-      ? curry(res?.data?.delegatorEraReward?.groupedAggregates || [])
+      ? // if beDelegator, will have
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        curry(res?.data?.delegatorEraReward?.groupedAggregates || [])
       : curry(res?.data?.delegationEraReward?.groupedAggregates || []);
 
     setRawRewardsData({
@@ -239,7 +191,10 @@ export const RewardsLineChart = (props: {
       delegation: delegationRewards,
       total: fillData(
         (beDelegator
-          ? res?.data?.delegatorTotalRewards?.groupedAggregates
+          ? // if beDelegator, will have
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            res?.data?.delegatorTotalRewards?.groupedAggregates
           : res?.data?.eraRewards?.groupedAggregates) || [],
         removedLastEras,
         maxPaddingLength,

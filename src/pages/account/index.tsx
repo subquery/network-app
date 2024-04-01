@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
+import { gql, useQuery } from '@apollo/client';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { useSortedIndexer } from '@hooks';
@@ -11,7 +12,7 @@ import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
 import { Footer, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
-import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/react-hooks';
+import { formatSQT, renderAsync, useGetWithdrawlsQuery } from '@subql/react-hooks';
 import { formatEther, formatNumber, isRPCError, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
@@ -81,7 +82,31 @@ export const MyAccount: React.FC = () => {
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
-  const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
+  const rewards = useQuery(
+    gql`
+      query GetTotalRewardsAndUnclaimRewards($account: String!) {
+        totalRewards: eraRewards(filter: { delegatorId: { equalTo: $account } }) {
+          aggregates {
+            sum {
+              amount
+            }
+          }
+        }
+        unclaimTotalRewards: eraRewards(filter: { delegatorId: { equalTo: $account }, claimed: { equalTo: false } }) {
+          aggregates {
+            sum {
+              amount
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        account: account || '',
+      },
+    },
+  );
   const withdrawals = useGetWithdrawlsQuery({
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
@@ -149,7 +174,7 @@ export const MyAccount: React.FC = () => {
           data: (data) => {
             const [d, i, r, w] = data;
             const totalDelegating = formatEther(d, 4);
-            const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
+            const totalRewards = formatSQT(r.totalRewards?.aggregates?.sum?.amount ?? '0');
             const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
             const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
@@ -169,7 +194,7 @@ export const MyAccount: React.FC = () => {
                 <div className="col-flex">
                   <FormatCardLine
                     title="Unclaimed Rewards"
-                    amount={formatNumber(reduceTotal(r?.unclaimedRewards?.nodes))}
+                    amount={formatNumber(formatSQT(r.unclaimTotalRewards?.aggregates?.sum?.amount ?? '0'))}
                     linkName="Claim Rewards"
                     link="/profile/rewards"
                   ></FormatCardLine>

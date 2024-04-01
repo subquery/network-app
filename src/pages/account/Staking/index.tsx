@@ -5,10 +5,9 @@ import { FC, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
-import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
-import { useGetEraQueryQuery } from '@subql/react-hooks';
-import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
+import { useGetEraDelegatorIndexersQuery } from '@subql/react-hooks';
+import { formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
@@ -25,7 +24,7 @@ const Staking: FC = () => {
 
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
-  const delegateToOthersByEra = useGetEraQueryQuery({
+  const delegateToOthersByEra = useGetEraDelegatorIndexersQuery({
     variables: {
       account: account || '',
     },
@@ -36,19 +35,9 @@ const Staking: FC = () => {
   }, [sortedIndexer]);
 
   const totalDelegateToOthers = useMemo(() => {
-    if (!delegateToOthersByEra.data?.eraStakes?.groupedAggregates) return 0;
+    if (!delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake) return 0;
 
-    const maxEraStake = DeepCloneAndChangeReadonlyToMutable(delegateToOthersByEra.data.eraStakes.groupedAggregates);
-    if (maxEraStake.some((i) => !i.keys)) {
-      captureMessage('Fetch era stake error, please check the graphql server');
-      return 0;
-    }
-    maxEraStake.sort((a, b) => parseInt(b?.keys?.[0] || '', 16) - parseInt(a?.keys?.[0] || '', 16));
-    if (maxEraStake.length) {
-      return formatSQT(maxEraStake[0]?.sum?.stake || '');
-    }
-
-    return 0;
+    return formatSQT(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake);
   }, [delegateToOthersByEra]);
 
   return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
