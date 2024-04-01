@@ -45,7 +45,7 @@ export const ClaimRewards: React.FC<Props> = ({
 
   const handleClick = async () => {
     assert(contracts, 'Contracts not available');
-    if (unCliamedCountByIndexer > 0) {
+    if (unCliamedCountByIndexer > 100) {
       openNotification({
         type: 'info',
         description: 'unclaimed rewards are more than 100, need to claim more than once.',
