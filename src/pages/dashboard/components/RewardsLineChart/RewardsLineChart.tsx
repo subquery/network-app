@@ -111,8 +111,18 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   return { getIncludesEras, fillData };
 };
 
-export const RewardsLineChart = (props: { account?: string; title?: string; dataDimensionsName?: string[] }) => {
-  const { title = 'Network Rewards', dataDimensionsName = ['Indexer Rewards', 'Delegation Rewards'] } = props;
+export const RewardsLineChart = (props: {
+  account?: string;
+  title?: string;
+  dataDimensionsName?: string[];
+  /* must have account if this set be true */
+  beDelegator?: boolean;
+}) => {
+  const {
+    title = 'Network Rewards',
+    dataDimensionsName = ['Node Operator Rewards', 'Delegation Rewards'],
+    beDelegator = false,
+  } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
   const [renderRewards, setRenderRewards] = useState<number[][]>([[]]);
@@ -168,11 +178,27 @@ export const RewardsLineChart = (props: { account?: string; title?: string; data
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, removedLastEras, maxPaddingLength);
     const indexerRewards = curry(res?.data?.indexerEraReward?.groupedAggregates || []);
-    const delegationRewards = curry(res?.data?.delegationEraReward?.groupedAggregates || []);
+
+    const delegationRewards = beDelegator
+      ? // if beDelegator, will have
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        curry(res?.data?.delegatorEraReward?.groupedAggregates || [])
+      : curry(res?.data?.delegationEraReward?.groupedAggregates || []);
+
     setRawRewardsData({
       indexer: indexerRewards,
       delegation: delegationRewards,
-      total: fillData(res?.data?.eraRewards?.groupedAggregates || [], removedLastEras, maxPaddingLength),
+      total: fillData(
+        (beDelegator
+          ? // if beDelegator, will have
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            res?.data?.delegatorTotalRewards?.groupedAggregates
+          : res?.data?.eraRewards?.groupedAggregates) || [],
+        removedLastEras,
+        maxPaddingLength,
+      ),
     });
 
     setRenderRewards([indexerRewards, delegationRewards]);

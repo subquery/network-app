@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@subql/components';
+import { openNotification, Typography } from '@subql/components';
 import { Button } from 'antd';
 import assert from 'assert';
 
@@ -17,10 +17,17 @@ type Props = {
   account: string;
   indexers: Array<string>;
   totalUnclaimed: string;
+  unCliamedCountByIndexer: number;
   onClaimed?: () => void;
 };
 
-export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaimed, onClaimed }) => {
+export const ClaimRewards: React.FC<Props> = ({
+  account,
+  indexers,
+  totalUnclaimed,
+  unCliamedCountByIndexer,
+  onClaimed,
+}) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
 
@@ -38,6 +45,13 @@ export const ClaimRewards: React.FC<Props> = ({ account, indexers, totalUnclaime
 
   const handleClick = async () => {
     assert(contracts, 'Contracts not available');
+    if (unCliamedCountByIndexer > 100) {
+      openNotification({
+        type: 'info',
+        description: 'unclaimed rewards are more than 100, need to claim more than once.',
+        duration: 5,
+      });
+    }
 
     const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
     pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());

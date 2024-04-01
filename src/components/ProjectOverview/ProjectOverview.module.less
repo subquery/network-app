@@ -45,6 +45,24 @@
   padding-bottom: 16px;
   display: flex;
   align-items: center;
+  width: 100%;
+
+  :global {
+    .subql-typography-link {
+      width: 100%;
+      display: flex;
+      .ant-space {
+        width: 100%;
+        &-item {
+          width: 100%;
+
+          .subql-typography {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
 
 .link {

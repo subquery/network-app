@@ -5,13 +5,13 @@ import { FC, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
-import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
-import { useGetEraQueryQuery } from '@subql/react-hooks';
-import { DeepCloneAndChangeReadonlyToMutable, formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
+import { useGetEraDelegatorIndexersQuery } from '@subql/react-hooks';
+import { formatNumber, parseError, renderAsyncArray, TOKEN } from '@utils';
 import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
+import BigNumberJs from 'bignumber.js';
 import { useAccount } from 'wagmi';
 
 import Breakdown from './Breakdown';
@@ -25,7 +25,7 @@ const Staking: FC = () => {
 
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
-  const delegateToOthersByEra = useGetEraQueryQuery({
+  const delegateToOthersByEra = useGetEraDelegatorIndexersQuery({
     variables: {
       account: account || '',
     },
@@ -36,19 +36,13 @@ const Staking: FC = () => {
   }, [sortedIndexer]);
 
   const totalDelegateToOthers = useMemo(() => {
-    if (!delegateToOthersByEra.data?.eraStakes?.groupedAggregates) return 0;
+    if (!delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake) return 0;
 
-    const maxEraStake = DeepCloneAndChangeReadonlyToMutable(delegateToOthersByEra.data.eraStakes.groupedAggregates);
-    if (maxEraStake.some((i) => !i.keys)) {
-      captureMessage('Fetch era stake error, please check the graphql server');
-      return 0;
-    }
-    maxEraStake.sort((a, b) => parseInt(b?.keys?.[0] || '', 16) - parseInt(a?.keys?.[0] || '', 16));
-    if (maxEraStake.length) {
-      return formatSQT(maxEraStake[0]?.sum?.stake || '');
-    }
-
-    return 0;
+    return formatSQT(
+      BigNumberJs(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake?.toString() || '0')
+        .minus(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.selfStake?.toString() || '0')
+        .toString(),
+    );
   }, [delegateToOthersByEra]);
 
   return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
@@ -81,7 +75,7 @@ const Staking: FC = () => {
                     <div
                       style={{ width: 10, height: 10, background: '#7BACE7', borderRadius: '50%', marginRight: 8 }}
                     ></div>
-                    <Typography>Currently Staked to your Indexer</Typography>
+                    <Typography>Currently Staked to your Node Operator</Typography>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16, margin: '8px 0' }}>
@@ -111,7 +105,7 @@ const Staking: FC = () => {
                     <div
                       style={{ width: 10, height: 10, background: '#C7DBF5', borderRadius: '50%', marginRight: 8 }}
                     ></div>
-                    <Typography>Currently Delegated to other Indexers</Typography>
+                    <Typography>Currently Delegated to other Node Operators</Typography>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16, margin: '8px 0' }}>
@@ -142,7 +136,7 @@ const Staking: FC = () => {
             <StakeAndDelegationLineChart
               account={account}
               title="Total Staked Tokens"
-              dataDimensionsName={['Staked to your Indexer', 'Delegated to other indexers']}
+              dataDimensionsName={['Staked to your Node Operator', 'Delegated to other Node Operators']}
               showDelegatedToOthers
             ></StakeAndDelegationLineChart>
           )}

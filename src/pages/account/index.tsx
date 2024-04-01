@@ -11,10 +11,16 @@ import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
 import { Footer, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
-import { renderAsync, useGetRewardsQuery, useGetWithdrawlsQuery } from '@subql/react-hooks';
-import { formatEther, formatNumber, isRPCError, mergeAsync, TOKEN, truncFormatEtherStr } from '@utils';
+import {
+  formatSQT,
+  renderAsync,
+  useGetTotalRewardsAndUnclaimRewardsQuery,
+  useGetWithdrawlsQuery,
+} from '@subql/react-hooks';
+import { formatEther, formatNumber, isRPCError, mergeAsync, notEmpty, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
+import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
 import { useAccount } from 'wagmi';
@@ -22,11 +28,10 @@ import { useAccount } from 'wagmi';
 import { AccountHeader } from './AccountHeaders/Header';
 import styles from './Account.module.less';
 
-//TODO: add fragments so can better type this
-function reduceTotal(rewards: any) {
+function reduceTotal(rewards: { amount: bigint }[]) {
   return formatEther(
     rewards?.reduce(
-      (accumulator: any, currentValue: { amount: unknown }) =>
+      (accumulator: BigNumber, currentValue: { amount: bigint }) =>
         accumulator.add(BigNumber.from(currentValue?.amount ?? 0)),
       BigNumber.from(0),
     ),
@@ -75,12 +80,16 @@ const activeKeyLinks: {
 export const MyAccount: React.FC = () => {
   const { address } = useAccount();
   const { id: profileAccount } = useParams();
-  const account = useMemo(() => profileAccount || address, [address, profileAccount]);
+  const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
 
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
-  const rewards = useGetRewardsQuery({ variables: { address: account ?? '' } });
+  const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
+    variables: {
+      account: account || '',
+    },
+  });
   const withdrawals = useGetWithdrawlsQuery({
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
@@ -148,8 +157,8 @@ export const MyAccount: React.FC = () => {
           data: (data) => {
             const [d, i, r, w] = data;
             const totalDelegating = formatEther(d, 4);
-            const totalRewards = reduceTotal([r?.rewards?.nodes, r?.unclaimedRewards?.nodes].flat());
-            const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes);
+            const totalRewards = formatSQT(r?.totalRewards?.aggregates?.sum?.amount ?? '0');
+            const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes.filter(notEmpty) || []);
             const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
             return (
@@ -168,20 +177,20 @@ export const MyAccount: React.FC = () => {
                 <div className="col-flex">
                   <FormatCardLine
                     title="Unclaimed Rewards"
-                    amount={formatNumber(reduceTotal(r?.unclaimedRewards?.nodes))}
+                    amount={formatNumber(formatSQT(r?.unclaimTotalRewards?.aggregates?.sum?.amount ?? '0'))}
                     linkName="Claim Rewards"
                     link="/profile/rewards"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Total Delegation"
                     amount={formatNumber(totalDelegating)}
-                    linkName="Delegate to an Indexer"
+                    linkName="Delegate to a Node Operator"
                     link="/delegator/indexers/top"
                   ></FormatCardLine>
                   <FormatCardLine
                     title="Total Staking"
                     amount={formatNumber(totalStaking)}
-                    linkName="Start Staking as an Indexer"
+                    linkName="Start Staking as a Node Operator"
                     link="/indexer/my-staking"
                   ></FormatCardLine>
                   <FormatCardLine
@@ -200,7 +209,8 @@ export const MyAccount: React.FC = () => {
             <RewardsLineChart
               account={account}
               title="Rewards"
-              dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+              dataDimensionsName={['Node Operator Rewards', 'Delegator Rewards']}
+              beDelegator
             ></RewardsLineChart>
           </div>
         )}

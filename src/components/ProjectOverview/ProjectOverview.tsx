@@ -42,7 +42,7 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
       ) : (
         <BsGlobe style={{ color: 'var(--sq-blue600)', marginRight: 8 }}></BsGlobe>
       )}
-      <Typography.Link href={link as string} className="overflowEllipsis" style={{ maxWidth: 700 }}>
+      <Typography.Link href={link as string} className="overflowEllipsis">
         {link || 'N/A'}
       </Typography.Link>
     </div>

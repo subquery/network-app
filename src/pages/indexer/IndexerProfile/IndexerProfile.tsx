@@ -357,7 +357,7 @@ const IndexerProfile: FC = () => {
                     mainBalance: fetchedSortedIndexer.totalDelegations.current,
                     secondaryBalance: fetchedSortedIndexer.totalDelegations.after,
                   })}
-                  tooltip={`This is the total ${TOKEN} delegated by participants to this Indexer right now.`}
+                  tooltip={`This is the total ${TOKEN} delegated by participants to this Node Operator right now.`}
                   width={302}
                 >
                   <div className="col-flex">
@@ -397,7 +397,7 @@ const IndexerProfile: FC = () => {
             <RewardsLineChart
               account={checksumAddress}
               title="Rewards"
-              dataDimensionsName={['Indexer Rewards', 'Delegator Rewards']}
+              dataDimensionsName={['Node Operator Rewards', 'Delegator Rewards']}
             ></RewardsLineChart>
           </div>
 
