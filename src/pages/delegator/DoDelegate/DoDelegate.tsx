@@ -67,6 +67,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   onSuccess,
 }) => {
   const { t } = useTranslation();
+  const { balance } = useSQToken();
   const { currentEra, refetch } = useEra();
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
@@ -212,6 +213,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
               getDelegationLazy();
               getIndexerLazy();
             });
+            balance.refetch();
             onSuccess?.();
           }}
           onClick={handleClick}

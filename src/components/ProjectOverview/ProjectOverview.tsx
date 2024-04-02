@@ -122,12 +122,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
       current: BigNumber.from(
         BignumberJs(currentRewards?.toString() || '0')
           .multipliedBy(queryRewardsRate.data)
-          .toFixed() || '0',
+          .toFixed(0) || '0',
       ),
       previous: BigNumber.from(
         BignumberJs(prevRewards?.toString() || '0')
           .multipliedBy(queryRewardsRate.data)
-          .toFixed() || '0',
+          .toFixed(0) || '0',
       ),
     });
   };

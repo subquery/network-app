@@ -218,7 +218,9 @@ const Dashboard: FC = () => {
     const res = await fetch('https://sqt.subquery.foundation/circulating');
     const data: string = await res.text();
 
-    setCircleAmount(BigNumber(data).toString());
+    if (!BigNumber(data).isNaN()) {
+      setCircleAmount(BigNumber(data).toString());
+    }
   };
 
   useEffect(() => {

@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
+import { WalletRoute } from '@components';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { useSortedIndexer } from '@hooks';
@@ -77,7 +78,7 @@ const activeKeyLinks: {
   Withdrawals: '/profile/withdrawn',
 };
 
-export const MyAccount: React.FC = () => {
+export const MyAccountInner: React.FC = () => {
   const { address } = useAccount();
   const { id: profileAccount } = useParams();
   const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
@@ -237,6 +238,10 @@ export const MyAccount: React.FC = () => {
       <Footer simple></Footer>
     </div>
   );
+};
+
+export const MyAccount = () => {
+  return <WalletRoute componentMode element={<MyAccountInner></MyAccountInner>}></WalletRoute>;
 };
 
 export default MyAccount;

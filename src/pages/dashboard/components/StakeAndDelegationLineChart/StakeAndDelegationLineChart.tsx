@@ -195,7 +195,7 @@ export const StakeAndDelegationLineChart = (props: {
         },
       );
 
-    const delegateToMe = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.totalStake || '0' } })));
+    const delegateToMe = curry(paddedData.map((i) => ({ ...i, sum: { amount: i?.sum?.delegatorStake || '0' } })));
     const IDelegateToOthers = curry(
       paddedDelegatorToOthersData.map((i) => ({
         ...i,
