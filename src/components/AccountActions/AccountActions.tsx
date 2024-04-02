@@ -79,7 +79,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       Wallet balance on Base
                     </Typography>
                     {balance.result.loading ? (
-                      <Spinner size={10}></Spinner>
+                      <div style={{ lineHeight: '24px' }}>
+                        <Spinner size={12}></Spinner>
+                      </div>
                     ) : (
                       <Typography weight={600}>
                         {formatEther(balance.result.data, 4)} {TOKEN}
@@ -105,7 +107,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       </Tooltip>
                     </Typography>
                     {ethSqtBalance.result.loading ? (
-                      <Spinner size={10}></Spinner>
+                      <div style={{ lineHeight: '24px' }}>
+                        <Spinner size={12}></Spinner>
+                      </div>
                     ) : (
                       <Typography weight={600}>
                         {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
@@ -156,7 +160,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <Typography>Billing Balance:</Typography>
                     {consumerHostBalance.result.loading ? (
-                      <Spinner></Spinner>
+                      <div style={{ lineHeight: '24px' }}>
+                        <Spinner size={12}></Spinner>
+                      </div>
                     ) : (
                       <Typography>
                         {formatEther(consumerHostBalance.result.data?.balance, 4)} {TOKEN}
