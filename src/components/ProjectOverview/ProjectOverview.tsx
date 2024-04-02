@@ -266,29 +266,27 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           <div className="col-flex" style={{ gap: 16 }}>
             <div className="flex" style={{ justifyContent: 'space-between' }}>
               <Typography variant="small" type="secondary">
-                Booster Allocation Rewards
+                Boost Allocation Rewards
               </Typography>
               <Typography variant="small">
                 {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
-                {TOKEN}
-                (all time)
+                {TOKEN} (all time)
                 <Tag color="success" style={{ marginLeft: 8 }}>
-                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} Per era{' '}
-                  {TOKEN}
+                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} {TOKEN}{' '}
+                  per era
                 </Tag>
               </Typography>
             </div>
 
             <div className="flex" style={{ justifyContent: 'space-between' }}>
               <Typography variant="small" type="secondary">
-                Booster Query Rewards
+                Boost Query Rewards
               </Typography>
               <Typography variant="small">
-                {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN}
-                (all time)
+                {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
                 <Tag color="success" style={{ marginLeft: 8 }}>
-                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} Per era{' '}
-                  {TOKEN}
+                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN} per
+                  era
                 </Tag>
               </Typography>
             </div>

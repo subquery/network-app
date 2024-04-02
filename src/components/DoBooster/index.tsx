@@ -135,13 +135,13 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           }}
           disabled={!account}
         >
-          Boost
+          Boost Project
         </Button>
       )}
 
       <Modal
         open={open}
-        title="Boost"
+        title="Boost Project"
         cancelButtonProps={{
           style: {
             display: 'none',
@@ -185,7 +185,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
               </Tag>
             </div>
             <Typography>
-              Existing Boost: {formatNumber(formatSQT(existingBoost))} {TOKEN}
+              Existing Project Boost: {formatNumber(formatSQT(existingBoost))} {TOKEN}
             </Typography>
           </div>
         </div>
@@ -197,9 +197,9 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           }}
           style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
         >
-          <Radio value="add">Add Booster</Radio>
+          <Radio value="add">Add SQT to Boost</Radio>
           <Radio value="remove" disabled={existingBoostByConsumer === '0'}>
-            Remove Booster
+            Remove SQT from Boost
           </Radio>
         </Radio.Group>
 
@@ -272,7 +272,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
 
             <div className="flex">
               <Typography variant="medium" type="secondary" style={{ display: 'flex', alignItems: 'center' }}>
-                Available amount to boost {TOKEN}
+                Available {TOKEN} to boost
                 <Tooltip title="The total amount that you can freely boost to new projects.">
                   <AiOutlineInfoCircle
                     style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}

@@ -54,7 +54,7 @@ const ProjectHeader: React.FC<Props> = ({
       return {
         key,
         label: (
-          <Typography style={{ maxWidth: 400 }} className="overflowEllipsis">{`${value} - Booster: ${formatNumber(
+          <Typography style={{ maxWidth: 400 }} className="overflowEllipsis">{`${value} - Boost: ${formatNumber(
             formatSQT(booster),
           )}`}</Typography>
         ),
