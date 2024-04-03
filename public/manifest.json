@@ -1,6 +1,8 @@
 {
-  "short_name": "SubQuery Kepler Explorer",
-  "name": "SubQuery Kepler Explorer",
+  "short_name": "SubQueryNetwork Explorer",
+  "name": "SubQueryNetwork Explorer",
+  "description": "SubQueryNetwork Airdrop",
+  "iconPath": "favicon.ico",
   "icons": [
     {
       "src": "favicon.ico",
