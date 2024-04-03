@@ -38,12 +38,12 @@ export const ExternalLink: React.FC<{ link?: string; icon: 'globe' | 'github' }>
   return (
     <div className={styles.linkContainer}>
       {icon === 'github' ? (
-        <BsGithub style={{ color: 'var(--sq-blue600)', marginRight: 8 }}></BsGithub>
+        <BsGithub style={{ color: 'var(--sq-blue600)', marginRight: 8, flexShrink: 0 }}></BsGithub>
       ) : (
-        <BsGlobe style={{ color: 'var(--sq-blue600)', marginRight: 8 }}></BsGlobe>
+        <BsGlobe style={{ color: 'var(--sq-blue600)', marginRight: 8, flexShrink: 0 }}></BsGlobe>
       )}
       <Typography.Link href={link as string} className="overflowEllipsis">
-        {link || 'N/A'}
+        {link}
       </Typography.Link>
     </div>
   );
@@ -165,7 +165,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
       <div style={{ display: 'flex', flexDirection: 'column', flex: 7, width: 500 }}>
         <div style={{ width: '100%' }}>
           <Expand>
-            <Markdown.Preview>{metadata.description || 'N/A'}</Markdown.Preview>
+            <Markdown.Preview>{metadata.description || 'No description provided for this project'}</Markdown.Preview>
           </Expand>
         </div>
         <div style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginBottom: 16 }}></div>
@@ -218,7 +218,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         <div className={styles.column}>
           <div style={{ width: '100%' }}>
             <Expand>
-              <Markdown.Preview>{deploymentDescription || 'N/A'}</Markdown.Preview>
+              <Markdown.Preview>{deploymentDescription}</Markdown.Preview>
             </Expand>
           </div>
 

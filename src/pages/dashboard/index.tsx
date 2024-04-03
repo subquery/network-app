@@ -112,7 +112,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
         mainBalance: formatSQT(props.totalStake),
         secondaryBalance: formatSQT(props.nextTotalStake),
       })}
-      tooltip={`This is the total staked ${TOKEN} across the entire network right now. This includes ${TOKEN} that has been delegated to Indexers`}
+      tooltip={`This is the total staked ${TOKEN} across the entire network right now. This includes ${TOKEN} that has been delegated to Node Operators`}
       width={302}
     >
       <div className="col-flex">
