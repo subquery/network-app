@@ -170,9 +170,13 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   }, [inSearchMode, topProject, topLoading, showTopProject, onProjectClick]);
 
   const projectListItems = useMemo(() => {
-    const loadingItems = new Array(projects.length + 10 <= total ? 10 : total - projects.length).fill(0).map((_, i) => {
-      return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
-    });
+    const loadingItems = new Array(
+      projects.length + 10 <= total ? 10 : total - projects.length < 0 ? 0 : total - projects.length,
+    )
+      .fill(0)
+      .map((_, i) => {
+        return <Skeleton paragraph={{ rows: 7 }} active key={i} style={{ width: 236, height: 400 }}></Skeleton>;
+      });
     if (projects.length) {
       return (
         <>
