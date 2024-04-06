@@ -7,7 +7,8 @@ import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
-import { Typography } from '@subql/components';
+import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
+import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import {
   formatSQT,
@@ -109,6 +110,9 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [allIndexers, setAllIndexers] = React.useState<IndexerFieldsFragment[]>([]);
   const [formInitialValues, setFormInitialValues] = React.useState<DelegateFormData>({ input: 0, delegator: account });
   const allIndexerPagination = React.useRef({ offset: 0, first: 10, searchKeyword: '' });
+  const indexerCapacityFromContract = useGetCapacityFromContract(
+    styleMode === 'normal' ? indexerAddress : selectedOption?.value || indexerAddress,
+  );
 
   const indexerDelegation = useGetDelegationQuery({
     variables: {
@@ -126,14 +130,11 @@ export const DelegateForm: React.FC<FormProps> = ({
   const isYourself = React.useMemo(() => delegateFrom === account, [account, delegateFrom]);
 
   const capacityMemo = React.useMemo(() => {
-    const val =
-      styleMode === 'normal'
-        ? indexerCapacity
-        : allIndexers.find((i) => i.id === selectedOption?.value)?.capacity?.valueAfter?.value.toString() || '0';
+    const val = indexerCapacityFromContract.data.after.toString();
 
     if (BigNumberJs(val).lt(0)) return '0';
     return val;
-  }, [indexerCapacity, allIndexers, selectedOption]);
+  }, [indexerCapacity, allIndexers, selectedOption, indexerCapacityFromContract]);
 
   const sortedMaxAmount = React.useMemo(() => {
     let maxAmount: BigNumberish | undefined;
@@ -214,7 +215,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       },
       {
         label: t('delegate.remainingCapacity'),
-        value: ` ${formatEther(capacityMemo, 4)} ${TOKEN}`,
+        value: indexerCapacityFromContract.loading ? <Spinner></Spinner> : ` ${formatEther(capacityMemo, 4)} ${TOKEN}`,
         tooltip: t('delegate.remainingTooltip'),
       },
       {

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEra } from '@hooks';
+import { useAsyncMemo, useEra, useNetworkClient } from '@hooks';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
 
 import {
@@ -14,6 +14,7 @@ import {
 } from '../utils';
 import { COMMISSION_DIV_UNIT } from './useCommissionRate';
 import { CurrentEraValue, mapEraValue, parseRawEraValue } from './useEraValue';
+import { useGetCapacityFromContract } from './useGetCapacityFromContract';
 
 export const getCommission = (value: unknown, curEra: number | undefined): CurrentEraValue<string> => {
   const commission = parseRawEraValue(value, curEra);
@@ -66,8 +67,8 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   const indexerData = useGetIndexerQuery({ variables: indexerQueryParams, fetchPolicy: 'network-only' });
   const delegationQueryParams = { id: `${account ?? ''}:${account}` };
   const indexerDelegation = useGetDelegationQuery({ variables: delegationQueryParams, fetchPolicy: 'network-only' });
-
-  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation);
+  const capacityFromContract = useGetCapacityFromContract(account);
+  const { loading, error, data } = mergeAsync(currentEra, indexerData, indexerDelegation, capacityFromContract);
 
   const refresh = async () => {
     indexerData.refetch();
@@ -83,9 +84,9 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
   }
 
   try {
-    const [currentEraValue, indexer, delegation] = data;
+    const [currentEraValue, indexer, delegation, capacityFromContract] = data;
 
-    if (!currentEraValue || !indexer || !delegation) {
+    if (!currentEraValue || !indexer || !delegation || !capacityFromContract) {
       return { loading: true };
     }
 
@@ -97,7 +98,12 @@ export function useSortedIndexer(account: string): AsyncData<UseSortedIndexerRet
     // but subql record immediate.
     const commission = getCommission(indexer.indexer.commission, currentEraValue?.index - 1);
     const totalStake = getTotalStake(indexer.indexer.totalStake, currentEraValue?.index);
-    const capacity = getCapacity(indexer.indexer.capacity, currentEraValue?.index);
+    const capacity = capacityFromContract
+      ? {
+          current: convertStringToNumber(formatEther(capacityFromContract.current, 4)),
+          after: convertStringToNumber(formatEther(capacityFromContract.after, 4)),
+        }
+      : getCapacity(indexer.indexer.capacity, currentEraValue?.index);
     const ownStake = getOwnStake(delegation.delegation?.amount, currentEraValue?.index);
 
     const totalDelegations = getDelegated(totalStake, ownStake);
