@@ -154,7 +154,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   const { mutate } = useInfiniteScroll(() => loadMore(), {
     target: document,
     isNoMore: (d) => !!d?.isNoMore,
-    threshold: 1,
+    threshold: 500,
   });
 
   const topProjectItem = useMemo(() => {
