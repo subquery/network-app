@@ -4,21 +4,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { AntDTable, SearchInput, TableText } from '@components';
+import { SearchInput, TableText } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { useNetworkClient } from '@hooks';
-import { CurrentEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { IndexerFieldsFragment as Indexer } from '@subql/network-query';
+import { Indexer } from '@subql/network-clients';
+import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
-import { formatEther, getOrderedAccounts, mulToPercentage, TOKEN } from '@utils';
+import { formatEther, getOrderedAccounts, mulToPercentage, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
-import { useMount, useWhyDidYouUpdate } from 'ahooks';
-import { Table, TableProps } from 'antd';
+import { useMount } from 'ahooks';
+import { Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
 
@@ -26,20 +27,8 @@ import { DoDelegate } from '../../DoDelegate';
 import styles from './IndexerList.module.css';
 const { INDEXER } = ROUTES;
 
-interface SortedIndexerListProps {
-  commission: CurrentEraValue<number>;
-  totalStake: CurrentEraValue<number>;
-  ownStake: CurrentEraValue<number>;
-  delegated: CurrentEraValue<number>;
-  capacity: CurrentEraValue<number>;
-  __typename: 'Indexer';
-  address: string;
-  metadata: string | null;
-  controller: string | null;
-}
-
 interface props {
-  indexers?: Indexer[];
+  indexers?: IndexerFieldsFragment[];
   totalCount?: number;
   era?: number;
 }
@@ -59,7 +48,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   const [requestIndexers, fetchedIndexers] = useGetIndexersLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>();
-  const [indexerList, setIndexerList] = React.useState<any>();
+  const [indexerList, setIndexerList] = React.useState<Indexer[]>([]);
 
   const delegations = useGetAllDelegationsQuery();
   /**
@@ -105,6 +94,10 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     [fetchedIndexers, searchedIndexer],
   );
 
+  const totalCounts = React.useMemo(() => {
+    return fetchedIndexers.data?.indexers?.totalCount || totalCount;
+  }, [fetchedIndexers.data?.indexers?.totalCount, totalCount]);
+
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
       try {
@@ -119,7 +112,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
           }),
         );
 
-        setIndexerList(sortedIndexers);
+        setIndexerList(sortedIndexers.filter(notEmpty));
         return sortedIndexers;
       } finally {
         setLoadingList(false);
@@ -144,15 +137,12 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     era: number | undefined,
     viewIndexerDetail: (url: string) => void,
     pageStartIndex: number,
-  ): TableProps<SortedIndexerListProps>['columns'] => [
+  ): ColumnsType<Indexer> => [
     {
       title: <TableTitle title={'#'} />,
       key: 'idx',
       width: 20,
       render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
-      onCell: (record: SortedIndexerListProps) => ({
-        onClick: () => viewIndexerDetail(record.address),
-      }),
     },
     {
       title: <TableTitle title={t('indexer.nickname')} />,
@@ -161,9 +151,6 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       width: 100,
       render: (val: string) =>
         val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
-      onCell: (record: SortedIndexerListProps) => ({
-        onClick: () => viewIndexerDetail(record.address),
-      }),
     },
     {
       title: <TableTitle title={t('indexer.totalStake')} />,
@@ -293,7 +280,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         scroll={{ x: 1600 }}
         loading={!!isLoading}
         pagination={{
-          total: 15,
+          total: totalCounts,
           onChange: (page, pageSize) => {
             const i = (page - 1) * pageSize;
             setPageStartIndex(page);
