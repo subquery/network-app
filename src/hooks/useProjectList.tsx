@@ -10,7 +10,7 @@ import { SubqlCheckbox } from '@subql/components';
 import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/network-query';
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { categoriesOptions, notEmpty, rpcCategoriesOptions } from '@utils';
-import { useInfiniteScroll, useMount } from 'ahooks';
+import { useInfiniteScroll } from 'ahooks';
 import { Button, Input, Radio, Skeleton, Typography } from 'antd';
 
 import { useGetDeploymentManifest } from './useGetDeploymentManifest';
@@ -85,6 +85,12 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     refresh?: boolean;
     searchParams?: { categories?: string[]; keywords?: string; projectType?: ProjectType };
   }) => {
+    if (loading) {
+      return {
+        list: [],
+        isNoMore: false,
+      };
+    }
     try {
       setLoading(true);
 
