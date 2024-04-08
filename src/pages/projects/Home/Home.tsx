@@ -35,7 +35,7 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
 
   return (
     <Modal
-      title="Publish New Project to the Decentralised Network"
+      title="Publish Your Own Project to the Decentralised Network"
       width={572}
       open={showCreateModal}
       onCancel={() => setShowCreateModal(false)}

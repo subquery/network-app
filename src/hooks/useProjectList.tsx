@@ -253,18 +253,19 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             size="large"
             disabled={loading}
           />
-
-          <Button
-            style={{ alignSelf: 'flex-end' }}
-            type="primary"
-            shape="round"
-            size="large"
-            onClick={() => {
-              setShowPublishModal(true);
-            }}
-          >
-            Publish New Project
-          </Button>
+          {filterProjectType === ProjectType.RPC ? null : (
+            <Button
+              style={{ alignSelf: 'flex-end' }}
+              type="primary"
+              shape="round"
+              size="large"
+              onClick={() => {
+                setShowPublishModal(true);
+              }}
+            >
+              Publish Your Own Project
+            </Button>
+          )}
           <PublishNewProjectModal
             value={showPublishModal}
             onChange={(val) => {
