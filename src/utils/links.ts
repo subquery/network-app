@@ -6,6 +6,11 @@ import { t } from 'i18next';
 import { ROUTES } from '../router/routes';
 export const externalAppLinks = [
   {
+    label: t('header.self.title'),
+    description: t('header.self.description'),
+    link: '/',
+  },
+  {
     label: t('header.externalExplorer.title'),
     description: t('header.externalExplorer.description'),
     link: 'https://explorer.subquery.network/',
