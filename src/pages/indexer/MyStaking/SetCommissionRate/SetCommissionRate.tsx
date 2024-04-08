@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OutlineDot } from '@components/Icons/Icons';
 import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Spinner, Typography } from '@subql/components';
 import { Button, Dropdown } from 'antd';
 import assert from 'assert';
@@ -38,6 +39,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
   const { t } = useTranslation();
   const { account } = useWeb3();
   const modalRef = React.useRef<TransactionModalRef>(null);
+  const { minCommission } = useMinCommissionRate();
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const commissionRate = useCommissionRate(account);
@@ -97,7 +99,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
               },
             ]}
             inputParams={{
-              min: 0,
+              min: minCommission || 35,
               max: 100,
               showMaxButton: false,
               unit: '%',
