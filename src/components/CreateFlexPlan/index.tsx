@@ -52,6 +52,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const [depositForm] = Form.useForm<{ amount: string }>();
   const depositAmount = Form.useWatch<number>('amount', depositForm);
   const priceValue = Form.useWatch<number>('price', form);
+  const maximumValue = Form.useWatch<number>('maximum', form);
   const { consumerHostAllowance, consumerHostBalance, balance } = useSQToken();
   const { addAllowance } = useAddAllowance();
   const sqtPrice = useSqtPrice();
@@ -100,17 +101,20 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         return {
           channelMaxNum: res.data.channel_max_num,
           channelMinAmount: res.data.channel_min_amount,
+          channelMinExpiration: res.data.channel_min_days * 3600 * 24,
         };
       }
 
       return {
         channelMaxNum: 15,
         channelMinAmount: 33.33333,
+        channelMinExpiration: 3600 * 24 * 14,
       };
     } catch (e) {
       return {
         channelMaxNum: 15,
         channelMinAmount: 33.33333,
+        channelMinExpiration: 3600 * 24 * 14,
       };
     }
   }, []);
@@ -198,6 +202,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const needCreateApiKey = useMemo(() => !prevApiKey, [prevApiKey]);
 
+  const suggestDeposit = useMemo(() => {
+    const inputEstimated = BigNumberJs(priceValue || '0')
+      .multipliedBy(20)
+      .multipliedBy(maximumValue || 2);
+
+    if (inputEstimated.lt(minDeposit)) return minDeposit.toLocaleString();
+    return inputEstimated.toNumber().toLocaleString();
+  }, [minDeposit, priceValue, maximumValue]);
+
   const handleNextStep = async () => {
     if (currentStep === 0) {
       if (!selectedPlan) return;
@@ -263,11 +276,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
         const createOrUpdate = prevHostingPlan ? updateHostingPlanApi : createHostingPlanApi;
         // if already created the plan, just update it.
+        const minExpiration = estimatedChannelLimit?.data?.channelMinExpiration || 3600 * 24 * 14;
+        const expiration = flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 0;
         const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
           maximum: Math.ceil(maximum),
-          expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
+          expiration: expiration < minExpiration ? minExpiration : expiration,
           id: prevHostingPlan?.id || '0',
         });
 
@@ -494,13 +509,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             <>
               <Typography>You must deposit SQT to open this billing account</Typography>
               <Typography variant="medium" type="secondary">
-                You must deposit SQT to create this flex plan, we suggest{' '}
-                {BigNumberJs(form.getFieldValue('price') || '0')
-                  .multipliedBy(20)
-                  .multipliedBy(form.getFieldValue('maximum') || 2)
-                  .toNumber()
-                  .toLocaleString()}{' '}
-                {TOKEN}
+                You must deposit SQT to create this flex plan, we suggest {suggestDeposit} {TOKEN}
               </Typography>
             </>
           ) : (
@@ -513,13 +522,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 {TOKEN}
               </Typography>
               <Typography variant="medium" type="secondary">
-                This is enough to pay for {enoughReq} requests, we suggest{' '}
-                {BigNumberJs(form.getFieldValue('price') || '0')
-                  .multipliedBy(20)
-                  .multipliedBy(form.getFieldValue('maximum') || 2)
-                  .toNumber()
-                  .toLocaleString()}{' '}
-                {TOKEN}
+                This is enough to pay for {enoughReq} requests, we suggest {suggestDeposit} {TOKEN}
               </Typography>
             </>
           )}
@@ -559,7 +562,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
         <div className="col-flex" style={{ alignItems: 'flex-end' }}>
           <Typography variant="medium">
-            Minimum deposit amount: {minDeposit} {TOKEN}
+            Minimum deposit amount: {minDeposit.toLocaleString()} {TOKEN}
           </Typography>
 
           <Typography variant="medium">
