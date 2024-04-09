@@ -49,7 +49,7 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
   // Cache image files
-  /.+\.(?:png|jpg|jpeg|svg|gif|ico)/,
+  /.+\.(?:png|jpg|jpeg|svg|gif|ico|ttf)/,
   // Use the cache if it's available
   new workbox.strategies.StaleWhileRevalidate({
     // Use a custom cache name
