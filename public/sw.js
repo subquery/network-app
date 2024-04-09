@@ -15,6 +15,11 @@ workbox.routing.registerRoute(
   // https://developers.google.com/web/tools/workbox/reference-docs/latest/workbox.strategies
   new workbox.strategies.NetworkFirst({
     cacheName: 'workbox:html',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: 3600 * 24 * 7,
+      }),
+    ],
   }),
 );
 
@@ -22,6 +27,11 @@ workbox.routing.registerRoute(
   /\.js(?!\.json)(?=\?|$)/,
   new workbox.strategies.CacheFirst({
     cacheName: 'workbox:js',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: 3600 * 24 * 30,
+      }),
+    ],
   }),
 );
 
@@ -29,6 +39,11 @@ workbox.routing.registerRoute(
   /\.css/,
   new workbox.strategies.CacheFirst({
     cacheName: 'workbox:css',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: 3600 * 24 * 30,
+      }),
+    ],
   }),
 );
 
@@ -39,5 +54,10 @@ workbox.routing.registerRoute(
   new workbox.strategies.StaleWhileRevalidate({
     // Use a custom cache name
     cacheName: 'workbox:image',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: 3600 * 24 * 30,
+      }),
+    ],
   }),
 );
