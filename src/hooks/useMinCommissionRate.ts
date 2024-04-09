@@ -13,7 +13,7 @@ export const useMinCommissionRate = () => {
   const { contracts } = useWeb3Store();
 
   const minCommission = useAsyncMemo(async () => {
-    if (!contracts) return 20;
+    if (!contracts) return 0;
     const minConmmissionRate = await limitContract(
       () => contracts.indexerRegistry.minimumCommissionRate(),
       'minCommissionRate',
@@ -24,8 +24,8 @@ export const useMinCommissionRate = () => {
 
   const getDisplayedCommission = useCallback(
     (commission: string | number): number => {
-      if (BigNumber(commission).lt(minCommission.data || 20)) {
-        return minCommission.data || 20;
+      if (BigNumber(commission).lt(minCommission.data || 0)) {
+        return minCommission.data || 0;
       }
 
       return BigNumber(commission).toNumber();
