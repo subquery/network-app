@@ -46,10 +46,11 @@ const CreateHostingFlexPlan = forwardRef<
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const query = useRouteQuery();
-  const { getProjects, createHostingPlanApi, updateHostingPlanApi, getHostingPlanApi } = useConsumerHostServices({
-    alert: true,
-    autoLogin: false,
-  });
+  const { getProjects, createHostingPlanApi, updateHostingPlanApi, getHostingPlanApi, getChannelLimit } =
+    useConsumerHostServices({
+      alert: true,
+      autoLogin: false,
+    });
 
   const id = useMemo(() => {
     return props.id || params.id;
@@ -81,6 +82,32 @@ const CreateHostingFlexPlan = forwardRef<
       return [];
     }
   }, [id, query]);
+
+  const estimatedChannelLimit = useAsyncMemo(async () => {
+    try {
+      const res = await getChannelLimit();
+
+      if (!isConsumerHostError(res.data)) {
+        return {
+          channelMaxNum: res.data.channel_max_num,
+          channelMinAmount: res.data.channel_min_amount,
+          channelMinExpiration: res.data.channel_min_days * 3600 * 24,
+        };
+      }
+
+      return {
+        channelMaxNum: 15,
+        channelMinAmount: 33.33333,
+        channelMinExpiration: 3600 * 24 * 14,
+      };
+    } catch (e) {
+      return {
+        channelMaxNum: 15,
+        channelMinAmount: 33.33333,
+        channelMinExpiration: 3600 * 24 * 14,
+      };
+    }
+  }, []);
 
   const matchedCount = React.useMemo(() => {
     if (!priceValue || !flexPlans.data?.length) return `Matched indexers: 0`;
@@ -117,10 +144,12 @@ const CreateHostingFlexPlan = forwardRef<
     }
 
     const api = props.edit ? updateHostingPlanApi : createHostingPlanApi;
+    const minExpiration = estimatedChannelLimit?.data?.channelMinExpiration || 3600 * 24 * 14;
+    const expiration = flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 0;
+
     const res = await api({
       ...form.getFieldsValue(),
-      // default set as one era.
-      expiration: flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 3600 * 24 * 7,
+      expiration: expiration < minExpiration ? minExpiration : expiration,
       price: parseEther(`${form.getFieldValue('price')}`)
         .div(1000)
         .toString(),

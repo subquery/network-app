@@ -11,6 +11,7 @@ import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
@@ -196,6 +197,8 @@ const IndexerProfile: FC = () => {
   }, [account]);
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
+  const { getDisplayedCommission } = useMinCommissionRate();
+
   const delegatorCounts = useQuery(
     gql`
       query GetIndexerDelegatorsCount($id: String!, $offset: Int) {
@@ -279,7 +282,11 @@ const IndexerProfile: FC = () => {
                         Current Commission Rate
                       </Typography>
                       <Typography variant="small">
-                        {getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).current} %
+                        {getDisplayedCommission(
+                          getCommission(fetchedResult?.indexer?.commission || 0, (currentEra.data?.index || 1) - 1)
+                            .current,
+                        )}{' '}
+                        %
                       </Typography>
                     </div>
                     <div className={clsx(styles.cardContentLine, 'flex-between')}>
@@ -288,9 +295,10 @@ const IndexerProfile: FC = () => {
                       </Typography>
                       <EstimatedNextEraLayout
                         size="small"
-                        value={`${
-                          getCommission(fetchedResult?.indexer?.commission || 0, currentEra.data?.index).after
-                        } %`}
+                        value={`${getDisplayedCommission(
+                          getCommission(fetchedResult?.indexer?.commission || 0, (currentEra.data?.index || 1) - 1)
+                            .after || 0,
+                        )} %`}
                       ></EstimatedNextEraLayout>
                     </div>
 

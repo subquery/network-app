@@ -7,6 +7,7 @@ import { AntDTable, SearchInput, TableText } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { DelegationFieldsFragment, GetTopIndexersQuery, IndexerFieldsFragment } from '@subql/network-query';
@@ -201,6 +202,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const [filterParams, setFilterParams] = React.useState<{ address: string }>({
     address: '',
   });
+  const { getDisplayedCommission } = useMinCommissionRate();
 
   // TODO: add filter into network-query
   const delegations = useGetAllDelegationsQuery();
@@ -227,9 +229,11 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
       return {
         ...topIndex,
         ownStaked,
+        currICR: getDisplayedCommission(topIndex.currICR),
+        nextICR: getDisplayedCommission(topIndex.nextICR),
       };
     });
-  }, [indexers, account, filterParams, allIndexers]);
+  }, [indexers, account, filterParams, allIndexers, getDisplayedCommission]);
 
   const SearchAddress = () => (
     <div className={styles.indexerSearch}>

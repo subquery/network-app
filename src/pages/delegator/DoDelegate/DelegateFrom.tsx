@@ -228,7 +228,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       if (styleMode === 'reDelegate' && i.key === 'indexerInfo') return false;
       return true;
     });
-  }, [capacityMemo, delegatedAmountMemo, indexerAddress]);
+  }, [capacityMemo, delegatedAmountMemo, indexerCapacityFromContract, indexerAddress]);
 
   const initDelegations = async () => {
     if (!account) return;
@@ -423,7 +423,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                       setFieldValue('input', value);
                     },
                     value: values.input,
-                    disabled: isSubmitting,
+                    disabled: zeroCapacity || isSubmitting,
                     stringMode: true,
                     max: account && sortedMaxAmount ? sortedMaxAmount : undefined,
                     min: 0,
@@ -436,7 +436,6 @@ export const DelegateForm: React.FC<FormProps> = ({
                   }}
                 />
               </div>
-
               <Typography className={'errorText'}>{error}</Typography>
               <Alert
                 className={styles.alertInfo}
@@ -464,17 +463,19 @@ export const DelegateForm: React.FC<FormProps> = ({
               )}
 
               <div className={clsx('flex', 'flex-end')}>
-                <Button
-                  onClick={submitForm}
-                  loading={isSubmitting}
-                  disabled={zeroCapacity || !isValid || isSubmitting}
-                  className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}
-                  type="primary"
-                  shape="round"
-                  size="large"
-                >
-                  {styleMode === 'normal' ? t('delegate.title') : 'Redelegate'}
-                </Button>
+                <Tooltip title={zeroCapacity ? "This Node Operator's delegation capacity has been reached" : ''}>
+                  <Button
+                    onClick={submitForm}
+                    loading={isSubmitting}
+                    disabled={zeroCapacity || !isValid || isSubmitting}
+                    className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}
+                    type="primary"
+                    shape="round"
+                    size="large"
+                  >
+                    {styleMode === 'normal' ? t('delegate.title') : 'Redelegate'}
+                  </Button>
+                </Tooltip>
               </div>
             </div>
           </Form>

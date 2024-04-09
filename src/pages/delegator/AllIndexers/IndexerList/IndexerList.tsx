@@ -10,9 +10,10 @@ import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { useNetworkClient } from '@hooks';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { Indexer } from '@subql/network-clients';
+import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, mulToPercentage, notEmpty, TOKEN } from '@utils';
@@ -49,6 +50,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>();
   const [indexerList, setIndexerList] = React.useState<Indexer[]>([]);
+  const { getDisplayedCommission } = useMinCommissionRate();
 
   const delegations = useGetAllDelegationsQuery();
   /**
@@ -124,10 +126,18 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     getSortedIndexers();
   }, [networkClient, rawIndexerList]);
 
-  const orderedIndexerList = React.useMemo(
-    () => (indexerList ? getOrderedAccounts(indexerList, 'address', account) : []),
-    [account, indexerList],
-  );
+  const orderedIndexerList = React.useMemo(() => {
+    const fillMinCommissionIndexerList = indexerList.map((i) => {
+      return {
+        ...i,
+        commission: {
+          current: getDisplayedCommission(i.commission.current * 100),
+          after: getDisplayedCommission(i.commission.after * 100),
+        } as CurrentEraValue<number>,
+      };
+    });
+    return fillMinCommissionIndexerList ? getOrderedAccounts(fillMinCommissionIndexerList, 'address', account) : [];
+  }, [account, indexerList]);
 
   /**
    * Sort Indexers logic end
@@ -208,8 +218,8 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       render: (value: { current: number; after: number }) => {
         return (
           <div className="col-flex">
-            <Typography>{mulToPercentage(value.current)}</Typography>
-            <EstimatedNextEraLayout value={mulToPercentage(value.after)}></EstimatedNextEraLayout>
+            <Typography>{value.current}%</Typography>
+            <EstimatedNextEraLayout value={`${value.after}%`}></EstimatedNextEraLayout>
           </div>
         );
       },

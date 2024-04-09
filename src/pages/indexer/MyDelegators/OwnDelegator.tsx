@@ -8,6 +8,7 @@ import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { SubqlCard, TableTitle } from '@subql/components';
 import { Spinner, Typography } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
@@ -41,6 +42,8 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(indexer || '');
   const isIndexer = useIsIndexer(indexer);
+  const { getDisplayedCommission } = useMinCommissionRate();
+
   const columns = [
     {
       title: <TableTitle title={t('delegate.delegator')} />,
@@ -95,11 +98,11 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
             titleExtra={
               <div className="col-flex" style={{ gap: 2 }}>
                 <Typography style={{ color: 'var(--sq-blue600)' }} variant="h5">
-                  {sortedIndexer.data?.commission.current || 0} %
+                  {getDisplayedCommission(sortedIndexer.data?.commission.current || '0')} %
                 </Typography>
 
                 <Typography variant="small" type="secondary">
-                  {sortedIndexer.data?.commission.after || 0} %
+                  {getDisplayedCommission(sortedIndexer.data?.commission.after || '0')} %
                 </Typography>
               </div>
             }

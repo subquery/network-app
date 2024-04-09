@@ -334,14 +334,12 @@ const MyHostedPlan: FC = () => {
             <Typography variant="medium">Example CURL request</Typography>
 
             <Input
-              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'
-      `}
+              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'`}
               size="large"
               disabled
               suffix={
                 <Copy
-                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'
-            `}
+                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'`}
                   customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
                 ></Copy>
               }
