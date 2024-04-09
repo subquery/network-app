@@ -6,25 +6,26 @@ import { useAsyncMemo } from '@subql/react-hooks';
 import { limitContract } from '@utils/limitation';
 import BigNumber from 'bignumber.js';
 
+import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
 
 export const useMinCommissionRate = () => {
   const { contracts } = useWeb3Store();
 
   const minCommission = useAsyncMemo(async () => {
-    if (!contracts) return 35;
+    if (!contracts) return 20;
     const minConmmissionRate = await limitContract(
       () => contracts.indexerRegistry.minimumCommissionRate(),
       'minCommissionRate',
     );
 
-    return BigNumber(minConmmissionRate.toString()).toNumber();
+    return BigNumber(minConmmissionRate.toString()).div(PER_MILL).multipliedBy(100).toNumber();
   }, [contracts]);
 
   const getDisplayedCommission = useCallback(
     (commission: string | number): number => {
-      if (BigNumber(commission).lt(minCommission.data || 35)) {
-        return minCommission.data || 35;
+      if (BigNumber(commission).lt(minCommission.data || 20)) {
+        return minCommission.data || 20;
       }
 
       return BigNumber(commission).toNumber();
