@@ -19,7 +19,7 @@ import { constants } from 'ethers';
 import { AsyncData, isInsufficientAllowance, parseError } from '../../utils';
 import { Modal } from '../Modal';
 import { ModalInput } from '../ModalInput';
-import styles from './TransactionModal.module.css';
+import styles from './TransactionModal.module.less';
 
 type Action<P, T extends string> = (params: P, actionKey: T) => Promise<ContractTransaction>;
 
@@ -80,6 +80,7 @@ export type TransactionModalProps<P, T extends string> = {
   buttonClassName?: string;
   currentConfirmButtonLoading?: boolean;
   allowanceContractAddress?: ApproveContract;
+  onlyRenderInner?: boolean;
 };
 
 export interface TransactionModalRef {
@@ -114,6 +115,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
       buttonClassName = '',
       currentConfirmButtonLoading = false,
       allowanceContractAddress = ApproveContract.Staking,
+      onlyRenderInner = false,
     },
     ref,
   ) => {
@@ -232,7 +234,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
               )
             }
             width={width}
-            className={className}
+            className={clsx(className, onlyRenderInner ? 'hideModalWrapper' : '')}
           />
         )}
 

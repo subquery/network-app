@@ -6,6 +6,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import IPFSImage from '@components/IPFSImage';
 import { ApproveContract } from '@components/ModalApproveToken';
 import { NumberInput } from '@components/NumberInput';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken } from '@containers';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
@@ -133,7 +134,6 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           onClick={async () => {
             setOpen(true);
           }}
-          disabled={!account}
         >
           Boost Project
         </Button>
@@ -157,138 +157,151 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
           type: 'primary',
           size: 'large',
         }}
+        className={account ? '' : 'hideModalWrapper'}
       >
-        <Steps
-          steps={[
-            {
-              title: addOrRemove === 'add' ? 'Add Boost' : 'Remove Boost',
-            },
-            {
-              title: 'Confirm transaction',
-            },
-          ]}
-        ></Steps>
-
-        <div className="flex" style={{ marginTop: 24 }}>
-          <IPFSImage
-            src={project.data?.metadata.image || '/static/default.project.png'}
-            style={{ width: 60, height: 60, borderRadius: 8 }}
-          ></IPFSImage>
-
-          <div className="col-flex" style={{ marginLeft: 8 }}>
-            <div className={clsx('flex')} style={{ gap: 4, marginBottom: 8, height: 24 }}>
-              <Typography className="overflowEllipsis" style={{ maxWidth: 320 }}>
-                {project.data?.metadata.name}
-              </Typography>
-              <Tag className="overflowEllipsis" style={{ maxWidth: 100 }}>
-                {deploymentMetadata?.version}
-              </Tag>
-            </div>
-            <Typography>
-              Existing Project Boost: {formatNumber(formatSQT(existingBoost))} {TOKEN}
-            </Typography>
-          </div>
-        </div>
-
-        <Radio.Group
-          value={addOrRemove}
-          onChange={(val) => {
-            setAddOrRemove(val.target.value);
-          }}
-          style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
-        >
-          <Radio value="add">Add SQT to Boost</Radio>
-          <Radio value="remove" disabled={existingBoostByConsumer === '0'}>
-            Remove SQT from Boost
-          </Radio>
-        </Radio.Group>
-
-        <div style={{ height: 1, width: '100%', background: 'var(--sq-gray400)', margin: '24px 0' }}></div>
-
-        <div>
-          <Form layout="vertical" form={form}>
-            <Typography>Boost amount</Typography>
-            <Form.Item
-              style={{ marginBottom: 0 }}
-              name="boostVal"
-              rules={[
+        {account ? (
+          <>
+            <Steps
+              steps={[
                 {
-                  validator(rule, value) {
-                    if (!value && value !== 0) {
-                      return Promise.reject(new Error('Please input the amount'));
-                    }
-                    return Promise.resolve();
-                  },
+                  title: addOrRemove === 'add' ? 'Add Boost' : 'Remove Boost',
+                },
+                {
+                  title: 'Confirm transaction',
                 },
               ]}
-            >
-              <NumberInput
-                description=""
-                maxAmount={
-                  addOrRemove === 'add'
-                    ? formatSQT(balance.result.data?.toString() || '0')
-                    : formatSQT(existingBoostByConsumer || '0')
-                }
-                inputParams={{
-                  max:
-                    addOrRemove === 'add'
-                      ? formatSQT(balance.result.data?.toString() || '0')
-                      : formatSQT(existingBoostByConsumer || '0'),
-                  value: form.getFieldValue('boostVal'),
-                  onChange: (value) => {
-                    form.setFieldsValue({ boostVal: value });
-                  },
-                }}
-                onClickMax={(value) => {
-                  form.setFieldsValue({ boostVal: value });
-                }}
-              ></NumberInput>
-            </Form.Item>
-          </Form>
-          <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
-            <div className="flex">
-              <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                <Typography
-                  variant="medium"
-                  type="secondary"
-                  className="overflowEllipsis2"
-                  style={{ display: 'flex', gap: 5, width: '100%' }}
-                >
-                  Current boosted amount to
-                  <div className="overflowEllipsis" style={{ maxWidth: 200 }}>
+            ></Steps>
+
+            <div className="flex" style={{ marginTop: 24 }}>
+              <IPFSImage
+                src={project.data?.metadata.image || '/static/default.project.png'}
+                style={{ width: 60, height: 60, borderRadius: 8 }}
+              ></IPFSImage>
+
+              <div className="col-flex" style={{ marginLeft: 8 }}>
+                <div className={clsx('flex')} style={{ gap: 4, marginBottom: 8, height: 24 }}>
+                  <Typography className="overflowEllipsis" style={{ maxWidth: 320 }}>
                     {project.data?.metadata.name}
-                  </div>
+                  </Typography>
+                  <Tag className="overflowEllipsis" style={{ maxWidth: 100 }}>
+                    {deploymentMetadata?.version}
+                  </Tag>
+                </div>
+                <Typography>
+                  Existing Project Boost: {formatNumber(formatSQT(existingBoost))} {TOKEN}
                 </Typography>
-                <Tooltip title="The total amount that you have already boosted this project.">
-                  <AiOutlineInfoCircle
-                    style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                  ></AiOutlineInfoCircle>
-                </Tooltip>
               </div>
-              <Typography variant="medium">
-                {formatNumber(formatSQT(existingBoostByConsumer || '0'))} {TOKEN}
-              </Typography>
             </div>
 
-            <div className="flex">
-              <Typography variant="medium" type="secondary" style={{ display: 'flex', alignItems: 'center' }}>
-                Available {TOKEN} to boost
-                <Tooltip title="The total amount that you can freely boost to new projects.">
-                  <AiOutlineInfoCircle
-                    style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                  ></AiOutlineInfoCircle>
-                </Tooltip>
-              </Typography>
-              <span style={{ flex: 1 }}></span>
-              <Typography variant="medium">
-                {formatSQT(balance.result.data?.toString() || '0')} {TOKEN}
-              </Typography>
+            <Radio.Group
+              value={addOrRemove}
+              onChange={(val) => {
+                setAddOrRemove(val.target.value);
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
+            >
+              <Radio value="add">Add SQT to Boost</Radio>
+              <Radio value="remove" disabled={existingBoostByConsumer === '0'}>
+                Remove SQT from Boost
+              </Radio>
+            </Radio.Group>
+
+            <div style={{ height: 1, width: '100%', background: 'var(--sq-gray400)', margin: '24px 0' }}></div>
+
+            <div>
+              <Form layout="vertical" form={form}>
+                <Typography>Boost amount</Typography>
+                <Form.Item
+                  style={{ marginBottom: 0 }}
+                  name="boostVal"
+                  rules={[
+                    {
+                      validator(rule, value) {
+                        if (!value && value !== 0) {
+                          return Promise.reject(new Error('Please input the amount'));
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <NumberInput
+                    description=""
+                    maxAmount={
+                      addOrRemove === 'add'
+                        ? formatSQT(balance.result.data?.toString() || '0')
+                        : formatSQT(existingBoostByConsumer || '0')
+                    }
+                    inputParams={{
+                      max:
+                        addOrRemove === 'add'
+                          ? formatSQT(balance.result.data?.toString() || '0')
+                          : formatSQT(existingBoostByConsumer || '0'),
+                      value: form.getFieldValue('boostVal'),
+                      onChange: (value) => {
+                        form.setFieldsValue({ boostVal: value });
+                      },
+                    }}
+                    onClickMax={(value) => {
+                      form.setFieldsValue({ boostVal: value });
+                    }}
+                  ></NumberInput>
+                </Form.Item>
+              </Form>
+              <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
+                <div className="flex">
+                  <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                    <Typography
+                      variant="medium"
+                      type="secondary"
+                      className="overflowEllipsis2"
+                      style={{ display: 'flex', gap: 5, width: '100%' }}
+                    >
+                      Current boosted amount to
+                      <div className="overflowEllipsis" style={{ maxWidth: 200 }}>
+                        {project.data?.metadata.name}
+                      </div>
+                    </Typography>
+                    <Tooltip title="The total amount that you have already boosted this project.">
+                      <AiOutlineInfoCircle
+                        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                      ></AiOutlineInfoCircle>
+                    </Tooltip>
+                  </div>
+                  <Typography variant="medium">
+                    {formatNumber(formatSQT(existingBoostByConsumer || '0'))} {TOKEN}
+                  </Typography>
+                </div>
+
+                <div className="flex">
+                  <Typography variant="medium" type="secondary" style={{ display: 'flex', alignItems: 'center' }}>
+                    Available {TOKEN} to boost
+                    <Tooltip title="The total amount that you can freely boost to new projects.">
+                      <AiOutlineInfoCircle
+                        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                      ></AiOutlineInfoCircle>
+                    </Tooltip>
+                  </Typography>
+                  <span style={{ flex: 1 }}></span>
+                  <Typography variant="medium">
+                    {formatSQT(balance.result.data?.toString() || '0')} {TOKEN}
+                  </Typography>
+                </div>
+              </div>
+              {/* <Typography variant="medium">
+              Estimated allocation rewards after update: {estimatedRewardsAfterInput} {TOKEN} Per era
+            </Typography> */}
             </div>
-          </div>
-          {/* <Typography variant="medium">
-            Estimated allocation rewards after update: {estimatedRewardsAfterInput} {TOKEN} Per era
-          </Typography> */}
-        </div>
+          </>
+        ) : (
+          <WalletRoute
+            componentMode
+            element=""
+            connectWalletStyle={{
+              margin: 0,
+            }}
+          ></WalletRoute>
+        )}
       </Modal>
     </div>
   );

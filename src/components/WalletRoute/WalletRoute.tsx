@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Route } from 'react-router';
 import { ConnectWallet } from '@components/ConnectWallet';
 import { useIsLogin } from '@hooks/useIsLogin';
@@ -19,6 +19,7 @@ type WalletRouteProps = React.ComponentProps<typeof Route> & {
   subtitle?: string;
   element: React.ReactNode;
   componentMode?: boolean;
+  connectWalletStyle?: CSSProperties;
 };
 
 export const WalletRoute: React.FC<WalletRouteProps> = ({
@@ -26,6 +27,7 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({
   subtitle,
   element: Element,
   componentMode = false,
+  connectWalletStyle,
 }) => {
   const [errorAlert, setErrorAlert] = React.useState<string>();
 
@@ -55,7 +57,12 @@ export const WalletRoute: React.FC<WalletRouteProps> = ({
     return (
       <div className={clsx(styles.container, componentMode && styles.componentMode)}>
         {errorAlert && <Toast state="error" text={errorAlert} className={styles.error} />}
-        <ConnectWallet title={title} subTitle={subtitle} className={componentMode ? styles.componentModeWallet : ''} />
+        <ConnectWallet
+          title={title}
+          subTitle={subtitle}
+          className={componentMode ? styles.componentModeWallet : ''}
+          style={connectWalletStyle}
+        />
       </div>
     );
   }

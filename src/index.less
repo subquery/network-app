@@ -360,3 +360,24 @@ label,
       font-family: var(--sq-font-family);
     }
 }
+
+.hideModalWrapper {
+  width: fit-content!important;
+  .ant-modal-header {
+    display: none;
+  }
+
+  .ant-modal-content {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: unset;
+  }
+
+  .ant-modal-body.ant-modal-body.ant-modal-body {
+    padding: 0;
+  }
+
+  .ant-modal-footer {
+    display: none;
+  }
+}

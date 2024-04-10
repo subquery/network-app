@@ -14,13 +14,14 @@ type Props = {
   title?: string;
   subTitle?: string;
   className?: string;
+  style?: React.CSSProperties;
 };
 
-export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className }) => {
+export const ConnectWallet: React.FC<Props> = ({ title, subTitle, className, style }) => {
   const { t } = useTranslation();
 
   return (
-    <div className={clsx(styles.container, className)}>
+    <div className={clsx(styles.container, className)} style={style}>
       <img
         src="/static/connectWallet.png"
         alt="connect wallet"
