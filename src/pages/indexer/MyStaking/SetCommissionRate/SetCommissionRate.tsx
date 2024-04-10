@@ -99,7 +99,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
               },
             ]}
             inputParams={{
-              min: minCommission || 35,
+              min: minCommission || 0,
               max: 100,
               showMaxButton: false,
               unit: '%',
