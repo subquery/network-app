@@ -4,6 +4,10 @@ Please include a summary of the change and which issue is fixed. Please also inc
 
 Ticket: [#ticket number](https://url-for-ticket)
 
+## Test cases:
+
+Please descript tested cases.
+
 ## Type of change
 
 Please delete options that are not relevant.
