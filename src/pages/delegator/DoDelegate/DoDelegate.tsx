@@ -18,7 +18,6 @@ import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
-import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
@@ -151,14 +150,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
-  if (!account) {
-    return (
-      <Button disabled type="text">
-        {t('delegate.title')}
-      </Button>
-    );
-  }
-
   return renderAsync(currentEra, {
     error: (error) => (
       <Typography>
@@ -220,7 +211,15 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
-              return <WalletRoute componentMode element={<></>}></WalletRoute>;
+              return (
+                <WalletRoute
+                  componentMode
+                  element={<></>}
+                  connectWalletStyle={{
+                    margin: 0,
+                  }}
+                ></WalletRoute>
+              );
             }
             if (requireClaimIndexerRewards) {
               return (
@@ -253,6 +252,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           }}
           variant={isActionDisabled ? 'disabledTextBtn' : variant}
           width="540px"
+          onlyRenderInner={account ? false : true} // it's kind of weird & comfuse for maintaining, but worked= =.
         />
       );
     },

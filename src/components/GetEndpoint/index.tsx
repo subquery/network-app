@@ -5,6 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { AiOutlineCopy } from 'react-icons/ai';
 import Copy from '@components/Copy';
 import CreateFlexPlan from '@components/CreateFlexPlan';
+import { WalletRoute } from '@components/WalletRoute';
 import {
   GetUserApiKeys,
   IGetHostingPlans,
@@ -170,6 +171,16 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   };
 
   const stepRender = useMemo(() => {
+    if (!account)
+      return (
+        <WalletRoute
+          componentMode
+          element=""
+          connectWalletStyle={{
+            margin: 0,
+          }}
+        ></WalletRoute>
+      );
     const makeEndpointResult = (endpoint: string, isFree?: boolean) => (
       <div className="col-flex" style={{ gap: 24 }}>
         <Typography>
@@ -285,7 +296,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
         `${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`,
       ),
     }[currentStep];
-  }, [freeOrFlexPlan, project, currentStep, deploymentId]);
+  }, [freeOrFlexPlan, project, currentStep, deploymentId, account]);
 
   const resetAllField = () => {
     setCurrentStep('select');
@@ -317,7 +328,6 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           }
           setOpen(true);
         }}
-        disabled={!account}
       >
         Get Endpoint
       </Button>
@@ -329,6 +339,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           setOpen(false);
           resetAllField();
         }}
+        className={account ? '' : 'hideModalWrapper'}
         footer={
           // it's kind of chaos, but I don't want to handle the action out of the component.
           currentStep !== 'createFlexPlan' ? (

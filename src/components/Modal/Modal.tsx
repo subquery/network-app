@@ -65,10 +65,12 @@ export const Modal: React.FC<ModalProps> = ({
       width={width}
       className={clsx(styles.modal, className)}
     >
-      {steps && (
+      {steps && steps.length ? (
         <div className={clsx(styles.steps, 'modalSteps')}>
           <AntDSteps size="small" current={currentStep} items={steps?.map((step) => ({ title: step }))} />
         </div>
+      ) : (
+        ''
       )}
       {loading && <Spinner />}
       {!loading && (
