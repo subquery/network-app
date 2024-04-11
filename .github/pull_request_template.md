@@ -6,7 +6,7 @@ Ticket: [#ticket number](https://url-for-ticket)
 
 ## Test cases:
 
-Please descript tested cases.
+Please describe tested cases.
 
 ## Type of change
 
