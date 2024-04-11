@@ -3,9 +3,11 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router';
+import { useRouteQuery } from '@hooks';
 import { useProjectList } from '@hooks/useProjectList';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Modal, Typography } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 import { Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 
@@ -77,12 +79,14 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
 
 const Home: React.FC = () => {
   const { account } = useWeb3();
-  const navigate = useNavigate();
+  const query = useRouteQuery();
+
   const { listsWithSearch } = useProjectList({
     account,
-    onProjectClick: (projectId) => {
-      navigate(`${STUDIO_PROJECT_NAV}/${projectId}`);
+    makeRedirectHref: (projectId) => {
+      return `${STUDIO_PROJECT_NAV}/${projectId}`;
     },
+    defaultFilterProjectType: query.get('category') === 'rpc' ? ProjectType.RPC : ProjectType.SUBQUERY,
   });
 
   return (

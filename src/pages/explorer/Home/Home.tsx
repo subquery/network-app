@@ -3,14 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useRouteQuery } from '@hooks';
 import { useProjectList } from '@hooks/useProjectList';
 import { Typography } from '@subql/components';
+import { ProjectType } from '@subql/network-query';
 
-import { ROUTES } from '../../../utils';
 import styles from './Home.module.css';
-
-const { PROJECT_NAV } = ROUTES;
 
 // TODO move to components
 export const Header: React.FC = () => {
@@ -29,12 +27,11 @@ export const Header: React.FC = () => {
 };
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
+  const query = useRouteQuery();
+
   const { listsWithSearch } = useProjectList({
     showTopProject: false,
-    onProjectClick: (projectId) => {
-      navigate(`${PROJECT_NAV}/${projectId}`);
-    },
+    defaultFilterProjectType: query.get('category') === 'rpc' ? ProjectType.RPC : ProjectType.SUBQUERY,
   });
 
   return (
