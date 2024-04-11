@@ -6,7 +6,7 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
 import { formatSQT } from '@subql/react-hooks';
-import { formatNumber, TOKEN } from '@utils';
+import { formatNumber, ROUTES, TOKEN } from '@utils';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
@@ -20,9 +20,12 @@ type Props = {
       manifest?: Manifest;
     };
   onClick?: () => void;
+  href?: string;
 };
 
-const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
+const { PROJECT_NAV } = ROUTES;
+
+const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
   const ipfsImage = React.useMemo(() => {
     if (!project.metadata) {
       return '';
@@ -44,7 +47,18 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
   }, [project?.deployments?.nodes]);
 
   return (
-    <div className={styles.card} onClick={onClick}>
+    <a
+      href={href ? href : `${PROJECT_NAV}/${project.id}`}
+      className={styles.card}
+      onClick={(e) => {
+        if (onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      target="_blank"
+      rel="noreferrer"
+    >
       <IPFSImage
         src={ipfsImage}
         className={styles.image}
@@ -100,7 +114,7 @@ const ProjectCard: React.FC<Props> = ({ project, onClick }) => {
           </Typography>
         </div>
       )}
-    </div>
+    </a>
   );
 };
 

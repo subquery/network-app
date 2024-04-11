@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
 import { useProjectMetadata } from '@containers';
@@ -17,7 +18,11 @@ import { useGetDeploymentManifest } from './useGetDeploymentManifest';
 import { useLocalProjects } from './useLocalProjects';
 import styles from './useProjectList.module.less';
 
-const ProjectItem: React.FC<{ project: ProjectFieldsFragment; onClick?: () => void }> = ({ project, onClick }) => {
+const ProjectItem: React.FC<{
+  project: ProjectFieldsFragment;
+  makeRedirectHref?: (projectId: string) => string;
+  onClick?: () => void;
+}> = ({ project, makeRedirectHref, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
   const { manifest } = useGetDeploymentManifest(project.type === ProjectType.RPC ? project.deploymentId : '');
 
@@ -25,6 +30,7 @@ const ProjectItem: React.FC<{ project: ProjectFieldsFragment; onClick?: () => vo
 
   return (
     <ProjectCard
+      href={makeRedirectHref ? makeRedirectHref(project.id) : undefined}
       onClick={onClick}
       project={{
         ...project,
@@ -39,10 +45,19 @@ export interface UseProjectListProps {
   account?: string;
   showTopProject?: boolean;
   onProjectClick?: (projectId: string) => void;
+  defaultFilterProjectType?: ProjectType;
+  makeRedirectHref?: (projectId: string) => string;
 }
 
 export const useProjectList = (props: UseProjectListProps = {}) => {
-  const { account, showTopProject, onProjectClick } = props;
+  const {
+    account,
+    showTopProject,
+    defaultFilterProjectType = ProjectType.SUBQUERY,
+    makeRedirectHref,
+    onProjectClick,
+  } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
   const [getProjects, { error }] = useGetProjectsLazyQuery({
     variables: { offset: 0, type: [ProjectType.SUBQUERY] },
   });
@@ -51,7 +66,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
 
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [filterCategories, setFilterCategories] = useState<string[]>([]);
-  const [filterProjectType, setFilterProjectType] = useState<ProjectType>(ProjectType.SUBQUERY);
+  const [filterProjectType, setFilterProjectType] = useState<ProjectType>(defaultFilterProjectType);
   const [topProject, setTopProject] = React.useState<ProjectFieldsFragment>();
   const [projects, setProjects] = React.useState<ProjectFieldsFragment[]>([]);
   // ref for fetch, state for render.
@@ -190,9 +205,14 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             <ProjectItem
               project={project}
               key={project.id}
-              onClick={() => {
-                onProjectClick?.(project.id);
-              }}
+              makeRedirectHref={makeRedirectHref}
+              onClick={
+                onProjectClick
+                  ? () => {
+                      onProjectClick(project.id);
+                    }
+                  : undefined
+              }
             />
           ))}
           {loading && loadingItems}
@@ -233,7 +253,9 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             ]}
             onChange={async (val) => {
               if (loading) return;
-
+              setSearchParams({
+                category: val.target.value === ProjectType.RPC ? 'rpc' : 'subquery',
+              });
               setFilterProjectType(val.target.value);
               setFilterCategories([]);
               setProjects([]);
