@@ -3,11 +3,12 @@
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
-import { useGetDashboardQuery } from '@subql/react-hooks';
-import { renderAsync, TOKEN } from '@utils';
+import { renderAsync, useGetDashboardQuery } from '@subql/react-hooks';
+import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
@@ -200,9 +201,168 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
   );
 };
 
+const AprCard = () => {
+  const { currentEra } = useEra();
+  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useLazyQuery(
+    gql`
+      query MyQuery($currentEra: Int! = 0, $currentEraIdx: String! = "0x00") {
+        eraRewards(filter: { eraIdx: { lessThan: $currentEra } }) {
+          groupedAggregates(groupBy: ERA_IDX) {
+            sum {
+              amount
+            }
+            keys
+          }
+        }
+
+        indexerEraReward: eraRewards(filter: { eraIdx: { lessThan: $currentEra }, isIndexer: { equalTo: true } }) {
+          groupedAggregates(groupBy: ERA_IDX) {
+            sum {
+              amount
+            }
+            keys
+          }
+        }
+
+        delegationEraReward: eraRewards(filter: { eraIdx: { lessThan: $currentEra }, isIndexer: { equalTo: false } }) {
+          groupedAggregates(groupBy: ERA_IDX) {
+            sum {
+              amount
+            }
+            keys
+          }
+        }
+        indexerStakes(filter: { id: { equalTo: $currentEraIdx } }) {
+          groupedAggregates(groupBy: ERA_IDX) {
+            keys
+            sum {
+              delegatorStake
+              indexerStake
+              totalStake
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        currentEra: currentEra.data?.index || 0,
+        currentEraIdx: currentEra.data?.index ? `${numToHex(currentEra.data.index - 1)}` : '0x00',
+      },
+    },
+  );
+
+  const estimatedApr = useMemo(() => {
+    if (!latestStakeAndRewards.data || !currentEra.data?.index)
+      return {
+        totalApr: '0',
+        delegatorApr: '0',
+        indexerApr: '0',
+      };
+    const makeApr = (rewards: string, stakes: string) => {
+      return BigNumber(rewards).dividedBy(stakes).dividedBy(7).multipliedBy(365).multipliedBy(100).toFixed(2);
+    };
+    const latestTotalRewards =
+      latestStakeAndRewards.data?.eraRewards?.groupedAggregates?.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]?.sum
+        ?.amount || '0';
+    const latestIndexerRewards =
+      latestStakeAndRewards.data?.indexerEraReward?.groupedAggregates?.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]?.sum
+        ?.amount || '0';
+    const latestDelegationRewards =
+      latestStakeAndRewards.data?.delegationEraReward?.groupedAggregates.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]
+        ?.sum?.amount || '0';
+
+    const latestStakes = latestStakeAndRewards.data?.indexerStakes?.groupedAggregates?.sort(
+      (a, b) => +b.keys[0] - +a.keys[0],
+    );
+    const latestTotalStake = latestStakes?.[0]?.sum?.totalStake || '0';
+    const latestIndexerStake = latestStakes?.[0]?.sum?.indexerStake || '0';
+    const latestDelegatorStake = latestStakes?.[0]?.sum?.delegatorStake || '0';
+
+    return {
+      totalApr: makeApr(latestTotalRewards, latestTotalStake),
+      delegatorApr: makeApr(latestDelegationRewards, latestDelegatorStake),
+      indexerApr: makeApr(latestIndexerRewards, latestIndexerStake),
+    };
+  }, [latestStakeAndRewards.data]);
+
+  useEffect(() => {
+    if (!currentEra.loading) {
+      fetchLastestStakeAndRewards();
+    }
+  }, [currentEra.loading]);
+
+  return renderAsync(
+    { ...latestStakeAndRewards, loading: currentEra.loading || latestStakeAndRewards.loading },
+    {
+      loading: () => (
+        <Skeleton
+          active
+          paragraph={{ rows: 4 }}
+          style={{ display: 'flex', maxHeight: 176, width: 302, marginTop: 24, marginBottom: 40 }}
+        />
+      ),
+      error: (e) => (
+        <Skeleton
+          active
+          paragraph={{ rows: 4 }}
+          style={{ display: 'flex', maxHeight: 176, width: 302, marginTop: 24, marginBottom: 40 }}
+        />
+      ),
+      data: () => (
+        <NewCard
+          title="Estimated APR"
+          titleExtra={
+            <div className="col-flex">
+              <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)' }}>
+                {estimatedApr.totalApr || 0}%
+              </Typography>
+              <Typography variant="small" type="secondary" style={{ visibility: 'hidden' }}>
+                bigo
+              </Typography>
+            </div>
+          }
+          tooltip={
+            <div className="col-flex" style={{ gap: 24 }}>
+              <Typography variant="small" style={{ color: '#fff' }}>
+                We’ve calculated this estimated APR based on the statistics and returns from the previous era
+              </Typography>
+              <Typography variant="small" style={{ color: '#fff' }}>
+                If conditions have changed, it will likely change considerable after the end of this Era.
+              </Typography>
+              <Typography variant="small" style={{ color: '#fff' }}>
+                This APR assumes compounding returns each Era
+              </Typography>
+            </div>
+          }
+          width={302}
+        >
+          <div className="col-flex">
+            <div className={clsx(styles.cardContentLine, 'flex-between')}>
+              <Typography variant="small" type="secondary">
+                Estimated APR for Node Operators
+              </Typography>
+              <Typography variant="small">{estimatedApr.indexerApr || 0} %</Typography>
+            </div>
+
+            <div className={clsx(styles.cardContentLine, 'flex-between')}>
+              <Typography variant="small" type="secondary">
+                Estimated APR for Delegators
+              </Typography>
+              <Typography variant="small">{estimatedApr.delegatorApr || 0} %</Typography>
+            </div>
+          </div>
+        </NewCard>
+      ),
+    },
+  );
+};
+
 const Dashboard: FC = () => {
   const dashboardData = useGetDashboardQuery();
   const { currentEra } = useEra();
+
+  const [circleAmount, setCircleAmount] = useState('0');
 
   const showNextOrCur = useMemo(() => {
     if (dashboardData.data?.indexerStakeSummary?.eraIdx === currentEra.data?.index) {
@@ -211,8 +371,6 @@ const Dashboard: FC = () => {
 
     return 'next';
   }, [currentEra.data, dashboardData]);
-
-  const [circleAmount, setCircleAmount] = useState('0');
 
   const fetchCircleAmount = async () => {
     const res = await fetch('https://sqt.subquery.foundation/circulating');
@@ -256,6 +414,7 @@ const Dashboard: FC = () => {
           return (
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
+                <AprCard></AprCard>
                 <TotalRewardsCard
                   totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
                   indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
@@ -273,11 +432,6 @@ const Dashboard: FC = () => {
                   nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
                   totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
                 ></DelegationsCard>
-
-                <CirculatingCard
-                  circulatingSupply={circleAmount || '0'}
-                  totalStake={totalStake || '0'}
-                ></CirculatingCard>
               </div>
               <div className={styles.dashboardMainBottom}>
                 <div className={styles.dashboardMainBottomLeft}>
@@ -288,6 +442,10 @@ const Dashboard: FC = () => {
                   </div>
                 </div>
                 <div className={styles.dashboardMainBottomRight}>
+                  <CirculatingCard
+                    circulatingSupply={circleAmount || '0'}
+                    totalStake={totalStake || '0'}
+                  ></CirculatingCard>
                   <EraCard></EraCard>
                   <ForumCard></ForumCard>
                 </div>

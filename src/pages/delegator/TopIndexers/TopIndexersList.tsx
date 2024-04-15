@@ -60,14 +60,6 @@ const getColumns = (
     ),
   },
   {
-    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.rank')} />,
-    dataIndex: 'rank',
-    render: (rank) => <TableText>{rank}</TableText>,
-
-    sorter: (a, b) => a.rank - b.rank,
-    showSorterTooltip: false,
-  },
-  {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{truncateToDecimalPlace(upTime, 2)}%</TableText>,

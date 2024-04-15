@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsCollectionPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import { SearchInput, TableText } from '@components';
+import { SearchInput } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
@@ -16,10 +18,10 @@ import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
-import { formatEther, getOrderedAccounts, mulToPercentage, notEmpty, TOKEN } from '@utils';
+import { formatEther, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { useMount } from 'ahooks';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
@@ -80,7 +82,6 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         offset,
         first: 10,
       },
-      fetchPolicy: 'network-only',
     });
   };
   /**
@@ -93,7 +94,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
 
   const rawIndexerList = React.useMemo(
     () => searchedIndexer ?? fetchedIndexers.data?.indexers?.nodes ?? [],
-    [fetchedIndexers, searchedIndexer],
+    [fetchedIndexers.data?.indexers?.nodes, searchedIndexer],
   );
 
   const totalCounts = React.useMemo(() => {
@@ -113,7 +114,6 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
             return limit(() => networkClient?.getIndexer(indexer?.id || ''));
           }),
         );
-
         setIndexerList(sortedIndexers.filter(notEmpty));
         return sortedIndexers;
       } finally {
@@ -139,130 +139,106 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     return fillMinCommissionIndexerList ? getOrderedAccounts(fillMinCommissionIndexerList, 'address', account) : [];
   }, [account, indexerList]);
 
-  /**
-   * Sort Indexers logic end
-   */
-  const getColumns = (
-    account: string,
-    era: number | undefined,
-    viewIndexerDetail: (url: string) => void,
-    pageStartIndex: number,
-  ): ColumnsType<Indexer> => [
-    {
-      title: <TableTitle title={'#'} />,
-      key: 'idx',
-      width: 20,
-      render: (_: string, __: unknown, index: number) => <TableText>{index + 1}</TableText>,
-    },
-    {
-      title: <TableTitle title={t('indexer.nickname')} />,
-      dataIndex: 'address',
-      key: 'address',
-      width: 100,
-      render: (val: string) =>
-        val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
-    },
-    {
-      title: <TableTitle title={t('indexer.totalStake')} />,
-      key: 'totalStakeKey',
-      dataIndex: 'totalStake',
-      width: 100,
-      render: (value: { current: string; after: string }) => {
-        return (
-          <div className="col-flex">
-            <Typography>
-              <TokenAmount value={formatEther(value.current, 4)} />
-            </Typography>
-            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
-          </div>
-        );
+  const columns = useMemo(() => {
+    /**
+     * Sort Indexers logic end
+     */
+    const getColumns = (): ColumnsType<Indexer> => [
+      {
+        title: <TableTitle title={t('indexer.nickname')} />,
+        dataIndex: 'address',
+        key: 'address',
+        width: 100,
+        render: (val: string) =>
+          val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
       },
-    },
-    {
-      title: <TableTitle title={t('indexer.ownStake')} />,
-      key: 'ownStakeKey',
-      dataIndex: 'ownStake',
-      width: 100,
-      render: (value: { current: string; after: string }) => {
-        return (
-          <div className="col-flex">
-            <Typography>
-              <TokenAmount value={formatEther(value.current, 4)} />
-            </Typography>
-            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
-          </div>
-        );
+      {
+        title: <TableTitle title={t('indexer.delegated')} />,
+        key: 'delegatedKey',
+        dataIndex: 'delegated',
+        width: 100,
+        render: (value: { current: string; after: string }) => {
+          return (
+            <div className="col-flex">
+              <Typography>
+                <TokenAmount value={formatEther(value.current, 4)} />
+              </Typography>
+              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+            </div>
+          );
+        },
       },
-    },
-    {
-      title: <TableTitle title={t('indexer.delegated')} />,
-      key: 'delegatedKey',
-      dataIndex: 'delegated',
-      width: 100,
-      render: (value: { current: string; after: string }) => {
-        return (
-          <div className="col-flex">
-            <Typography>
-              <TokenAmount value={formatEther(value.current, 4)} />
-            </Typography>
-            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
-          </div>
-        );
+      {
+        title: <TableTitle title="Remaining capacity" />,
+        key: 'capacityKey',
+        dataIndex: 'capacity',
+        width: 100,
+        render: (value: { current: string; after: string }) => {
+          return (
+            <div className="col-flex">
+              <Typography>
+                <TokenAmount value={formatEther(value.current, 4)} />
+              </Typography>
+              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+            </div>
+          );
+        },
       },
-    },
-    {
-      title: <TableTitle title={t('indexer.commission')} />,
-      key: 'commissionKey',
-      dataIndex: 'commission',
-      width: 100,
-      render: (value: { current: number; after: number }) => {
-        return (
-          <div className="col-flex">
-            <Typography>{value.current}%</Typography>
-            <EstimatedNextEraLayout value={`${value.after}%`}></EstimatedNextEraLayout>
-          </div>
-        );
+      {
+        title: <TableTitle title={t('indexer.ownStake')} />,
+        key: 'ownStakeKey',
+        dataIndex: 'ownStake',
+        width: 100,
+        render: (value: { current: string; after: string }) => {
+          return (
+            <div className="col-flex">
+              <Typography>
+                <TokenAmount value={formatEther(value.current, 4)} />
+              </Typography>
+              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+            </div>
+          );
+        },
       },
-      sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
-    },
-    {
-      title: <TableTitle title={t('indexer.capacity')} />,
-      key: 'capacityKey',
-      dataIndex: 'capacity',
-      width: 100,
-      render: (value: { current: string; after: string }) => {
-        return (
-          <div className="col-flex">
-            <Typography>
-              <TokenAmount value={formatEther(value.current, 4)} />
-            </Typography>
-            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
-          </div>
-        );
+      {
+        title: <TableTitle title={t('indexer.commission')} />,
+        key: 'commissionKey',
+        dataIndex: 'commission',
+        width: 100,
+        render: (value: { current: number; after: number }) => {
+          return (
+            <div className="col-flex">
+              <Typography>{value.current}%</Typography>
+              <EstimatedNextEraLayout value={`${value.after}%`}></EstimatedNextEraLayout>
+            </div>
+          );
+        },
+        sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
       },
-    },
-    {
-      title: <TableTitle title={t('indexer.action')} />,
-      key: 'addressKey',
-      dataIndex: 'address',
-      fixed: 'right' as FixedType,
-      width: 50,
-      align: 'center',
-      render: (id: string) => {
-        if (id === account) return <Typography> - </Typography>;
-        const curIndexer = fetchedIndexers.data?.indexers?.nodes?.find((i) => i?.id === id);
-        const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
+      {
+        title: <TableTitle title={t('indexer.action')} />,
+        key: 'addressKey',
+        dataIndex: 'address',
+        fixed: 'right' as FixedType,
+        width: 50,
+        align: 'center',
+        render: (id: string) => {
+          if (id === account) return <Typography> - </Typography>;
+          const curIndexer = fetchedIndexers.data?.indexers?.nodes?.find((i) => i?.id === id);
+          const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
-        return (
-          <div className={'flex-start'}>
-            <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer} delegation={delegation} />
-          </div>
-        );
+          return (
+            <div className={'flex-start'}>
+              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer} delegation={delegation} />
+            </div>
+          );
+        },
       },
-    },
-  ];
-  const columns = getColumns(account ?? '', era, viewIndexerDetail, pageStartIndex);
+    ];
+    return getColumns();
+  }, [account, era, pageStartIndex]);
   const isLoading = React.useMemo(() => {
+    // console.warn(orderedIndexerList.length, loadingList, sortedIndexer.loading, totalCount);
     return (
       !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0))
     );
@@ -274,6 +250,37 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.tipsBanner}>
+        <Typography variant="large" weight={600}>
+          Receive rewards today as a Delegator
+        </Typography>
+
+        <Typography variant="medium" type="secondary" style={{ maxWidth: 888 }}>
+          A Delegator is a non-technical network role in the SubQuery Network and is a great way to start participating
+          in the SubQuery Network. This role enables Delegators to “delegate” their SQT to one or more Node Operator
+          (RPC Providers or Data Indexers) and earn rewards (similar to staking).
+        </Typography>
+
+        <Typography variant="medium" type="secondary">
+          To begin delegating, pick a Node Operator from below and click “Delegate”
+        </Typography>
+
+        <div className="flex" style={{ gap: 16 }}>
+          <Button size="large" type="primary" shape="round">
+            Learn More
+          </Button>
+          <Button
+            ghost
+            size="large"
+            type="primary"
+            shape="round"
+            style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+          >
+            <BsCollectionPlayFill />
+            How it works
+          </Button>
+        </div>
+      </div>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
           {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexers?.totalCount || 0 })}

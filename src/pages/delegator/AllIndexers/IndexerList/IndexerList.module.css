@@ -14,3 +14,15 @@
 .indexerSearch {
   width: 360px;
 }
+
+.tipsBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 8px;
+  background-color: #4388dd26;
+  background-image: url('/static/check.png');
+  background-repeat: no-repeat;
+  background-position: right bottom;
+}
