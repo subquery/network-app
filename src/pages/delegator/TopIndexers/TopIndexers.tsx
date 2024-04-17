@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AppPageHeader } from '@components';
 import { TOP_100_INDEXERS } from '@containers';
 import { useGetTopIndexersQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
@@ -19,6 +20,7 @@ export const TopIndexers: React.FC = () => {
 
   return (
     <div>
+      <AppPageHeader title={'All Node Operators'} desc={'View All Node Operators in the SubQuery Network'} />
       {renderAsync(topIndexers, {
         loading: () => <Spinner></Spinner>,
         error: (error) => (

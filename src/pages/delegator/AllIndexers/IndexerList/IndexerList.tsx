@@ -16,25 +16,32 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
-import { IndexerFieldsFragment } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetIndexerQuery, useGetIndexersLazyQuery } from '@subql/react-hooks';
+import { IndexerAprSummariesOrderBy } from '@subql/network-query';
+import {
+  useGetAllDelegationsQuery,
+  useGetAllIndexerByAprLazyQuery,
+  useGetAllIndexerByAprQuery,
+} from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { useMount } from 'ahooks';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import BigNumberJs from 'bignumber.js';
 import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
 import styles from './IndexerList.module.css';
+
 const { INDEXER } = ROUTES;
 
 interface props {
-  indexers?: IndexerFieldsFragment[];
   totalCount?: number;
   era?: number;
 }
+
+type IndexerWithApr = Indexer & { indexerApr: string; delegatorApr: string; aprEra: number };
 
 const limit = pLimit(5);
 
@@ -48,10 +55,10 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   const viewIndexerDetail = (id: string) => {
     navigate(`/${INDEXER}/${id}`);
   };
-  const [requestIndexers, fetchedIndexers] = useGetIndexersLazyQuery();
+  const [requestIndexers, fetchedIndexers] = useGetAllIndexerByAprLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>();
-  const [indexerList, setIndexerList] = React.useState<Indexer[]>([]);
+  const [indexerList, setIndexerList] = React.useState<IndexerWithApr[]>([]);
   const { getDisplayedCommission } = useMinCommissionRate();
 
   const delegations = useGetAllDelegationsQuery();
@@ -59,10 +66,22 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
    * SearchInput logic
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const sortedIndexer = useGetIndexerQuery({ variables: { address: searchIndexer ?? '' } });
+  const sortedIndexer = useGetAllIndexerByAprQuery({
+    variables: {
+      offset: 0,
+      first: 100,
+      filter: {
+        indexer: {
+          id: {
+            equalTo: searchIndexer,
+          },
+        },
+      },
+    },
+  });
 
   const searchedIndexer = React.useMemo(
-    () => (sortedIndexer?.data?.indexer ? [sortedIndexer?.data?.indexer] : undefined),
+    () => (sortedIndexer.data?.indexerAPRSummaries ? sortedIndexer.data?.indexerAPRSummaries.nodes : undefined),
     [sortedIndexer],
   );
 
@@ -81,6 +100,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       variables: {
         offset,
         first: 10,
+        orderBy: [IndexerAprSummariesOrderBy.DELEGATOR_APR_DESC],
       },
     });
   };
@@ -93,13 +113,13 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
    */
 
   const rawIndexerList = React.useMemo(
-    () => searchedIndexer ?? fetchedIndexers.data?.indexers?.nodes ?? [],
-    [fetchedIndexers.data?.indexers?.nodes, searchedIndexer],
+    () => searchedIndexer ?? fetchedIndexers.data?.indexerAPRSummaries?.nodes ?? [],
+    [fetchedIndexers.data?.indexerAPRSummaries?.nodes, searchedIndexer],
   );
 
   const totalCounts = React.useMemo(() => {
-    return fetchedIndexers.data?.indexers?.totalCount || totalCount;
-  }, [fetchedIndexers.data?.indexers?.totalCount, totalCount]);
+    return fetchedIndexers.data?.indexerAPRSummaries?.totalCount || totalCount;
+  }, [fetchedIndexers.data?.indexerAPRSummaries?.totalCount, totalCount]);
 
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
@@ -111,10 +131,20 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         // note networkClient.getIndexer have more sideEffects.
         const sortedIndexers = await Promise.all(
           rawIndexerList.map((indexer) => {
-            return limit(() => networkClient?.getIndexer(indexer?.id || ''));
+            return limit(() => networkClient?.getIndexer(indexer?.indexerId || ''));
           }),
         );
-        setIndexerList(sortedIndexers.filter(notEmpty));
+        setIndexerList(
+          sortedIndexers.filter(notEmpty).map((i) => {
+            const findIndexerInfo = rawIndexerList.find((indexer) => indexer?.indexerId === i?.address);
+            return {
+              ...i,
+              indexerApr: findIndexerInfo?.indexerApr.toString() || '0',
+              delegatorApr: findIndexerInfo?.delegatorApr.toString() || '0',
+              aprEra: findIndexerInfo?.eraIdx || 0,
+            };
+          }),
+        );
         return sortedIndexers;
       } finally {
         setLoadingList(false);
@@ -143,7 +173,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     /**
      * Sort Indexers logic end
      */
-    const getColumns = (): ColumnsType<Indexer> => [
+    const getColumns = (): ColumnsType<IndexerWithApr> => [
       {
         title: <TableTitle title={t('indexer.nickname')} />,
         dataIndex: 'address',
@@ -151,6 +181,15 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         width: 100,
         render: (val: string) =>
           val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
+      },
+      {
+        title: <TableTitle title="Estimated Apr" />,
+        key: 'delegatorApr',
+        dataIndex: 'delegatorApr',
+        width: '100px',
+        render: (value: string) => {
+          return <Typography>{BigNumberJs(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
+        },
       },
       {
         title: <TableTitle title={t('indexer.delegated')} />,
@@ -204,7 +243,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         title: <TableTitle title={t('indexer.commission')} />,
         key: 'commissionKey',
         dataIndex: 'commission',
-        width: 100,
+        width: 50,
         render: (value: { current: number; after: number }) => {
           return (
             <div className="col-flex">
@@ -224,12 +263,12 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         align: 'center',
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
-          const curIndexer = fetchedIndexers.data?.indexers?.nodes?.find((i) => i?.id === id);
+          const curIndexer = fetchedIndexers.data?.indexerAPRSummaries?.nodes?.find((i) => i?.indexerId === id);
           const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
             <div className={'flex-start'}>
-              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer} delegation={delegation} />
+              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer?.indexer} delegation={delegation} />
             </div>
           );
         },
@@ -238,7 +277,6 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     return getColumns();
   }, [account, era, pageStartIndex]);
   const isLoading = React.useMemo(() => {
-    // console.warn(orderedIndexerList.length, loadingList, sortedIndexer.loading, totalCount);
     return (
       !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0))
     );
@@ -283,7 +321,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       </div>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
-          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexers?.totalCount || 0 })}
+          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerAPRSummaries?.totalCount || 0 })}
         </Typography>
         <SearchAddress />
       </div>

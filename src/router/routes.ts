@@ -199,6 +199,10 @@ export const routers: BasicRouteType[] = [
         path: 'service-agreements/*',
         component: React.lazy(() => import('../pages/consumer/ServiceAgreements/index')),
       },
+      {
+        path: 'all-indexers/*',
+        component: React.lazy(() => import('../pages/delegator/TopIndexers/TopIndexers')),
+      },
     ],
   },
 
