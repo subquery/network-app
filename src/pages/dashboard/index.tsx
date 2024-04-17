@@ -3,17 +3,17 @@
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
-import { renderAsync, useGetDashboardQuery } from '@subql/react-hooks';
+import { renderAsync, useGetDashboardAprLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
 import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
+import { cloneDeep } from 'lodash-es';
 
 import { ActiveCard } from './components/ActiveCard/ActiveCard';
 import { EraCard } from './components/EraCard/EraCard';
@@ -203,54 +203,12 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
 
 const AprCard = () => {
   const { currentEra } = useEra();
-  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useLazyQuery(
-    gql`
-      query MyQuery($currentEra: Int! = 0, $currentEraIdx: String! = "0x00") {
-        eraRewards(filter: { eraIdx: { lessThan: $currentEra } }) {
-          groupedAggregates(groupBy: ERA_IDX) {
-            sum {
-              amount
-            }
-            keys
-          }
-        }
-
-        indexerEraReward: eraRewards(filter: { eraIdx: { lessThan: $currentEra }, isIndexer: { equalTo: true } }) {
-          groupedAggregates(groupBy: ERA_IDX) {
-            sum {
-              amount
-            }
-            keys
-          }
-        }
-
-        delegationEraReward: eraRewards(filter: { eraIdx: { lessThan: $currentEra }, isIndexer: { equalTo: false } }) {
-          groupedAggregates(groupBy: ERA_IDX) {
-            sum {
-              amount
-            }
-            keys
-          }
-        }
-        indexerStakes(filter: { id: { equalTo: $currentEraIdx } }) {
-          groupedAggregates(groupBy: ERA_IDX) {
-            keys
-            sum {
-              delegatorStake
-              indexerStake
-              totalStake
-            }
-          }
-        }
-      }
-    `,
-    {
-      variables: {
-        currentEra: currentEra.data?.index || 0,
-        currentEraIdx: currentEra.data?.index ? `${numToHex(currentEra.data.index - 1)}` : '0x00',
-      },
+  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useGetDashboardAprLazyQuery({
+    variables: {
+      currentEra: currentEra.data?.index || 0,
+      currentEraIdx: currentEra.data?.index ? `${numToHex(currentEra.data.index - 1)}` : '0x00',
     },
-  );
+  });
 
   const estimatedApr = useMemo(() => {
     if (!latestStakeAndRewards.data || !currentEra.data?.index)
@@ -262,27 +220,29 @@ const AprCard = () => {
     const makeApr = (rewards: string, stakes: string) => {
       return BigNumber(rewards).dividedBy(stakes).dividedBy(7).multipliedBy(365).multipliedBy(100).toFixed(2);
     };
+    const sortFunc = (a: { keys: readonly string[] | null }, b: { keys: readonly string[] | null }) =>
+      +(b?.keys?.[0] || 0) - +(a?.keys?.[0] || 0);
     const latestTotalRewards =
-      latestStakeAndRewards.data?.eraRewards?.groupedAggregates?.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]?.sum
+      [...(cloneDeep(latestStakeAndRewards.data?.eraRewards?.groupedAggregates) || [])]?.sort(sortFunc)?.[0]?.sum
         ?.amount || '0';
     const latestIndexerRewards =
-      latestStakeAndRewards.data?.indexerEraReward?.groupedAggregates?.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]?.sum
+      [...(cloneDeep(latestStakeAndRewards.data?.indexerEraReward?.groupedAggregates) || [])]?.sort(sortFunc)?.[0]?.sum
         ?.amount || '0';
     const latestDelegationRewards =
-      latestStakeAndRewards.data?.delegationEraReward?.groupedAggregates.sort((a, b) => +b.keys[0] - +a.keys[0])?.[0]
+      [...(cloneDeep(latestStakeAndRewards.data?.delegationEraReward?.groupedAggregates) || [])].sort(sortFunc)?.[0]
         ?.sum?.amount || '0';
 
-    const latestStakes = latestStakeAndRewards.data?.indexerStakes?.groupedAggregates?.sort(
-      (a, b) => +b.keys[0] - +a.keys[0],
+    const latestStakes = [...(cloneDeep(latestStakeAndRewards.data?.indexerStakes?.groupedAggregates) || [])]?.sort(
+      sortFunc,
     );
     const latestTotalStake = latestStakes?.[0]?.sum?.totalStake || '0';
     const latestIndexerStake = latestStakes?.[0]?.sum?.indexerStake || '0';
     const latestDelegatorStake = latestStakes?.[0]?.sum?.delegatorStake || '0';
 
     return {
-      totalApr: makeApr(latestTotalRewards, latestTotalStake),
-      delegatorApr: makeApr(latestDelegationRewards, latestDelegatorStake),
-      indexerApr: makeApr(latestIndexerRewards, latestIndexerStake),
+      totalApr: makeApr(latestTotalRewards.toString(), latestTotalStake.toString()),
+      delegatorApr: makeApr(latestDelegationRewards.toString(), latestDelegatorStake.toString()),
+      indexerApr: makeApr(latestIndexerRewards.toString(), latestIndexerStake.toString()),
     };
   }, [latestStakeAndRewards.data]);
 

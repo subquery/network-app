@@ -15,10 +15,15 @@ import { useEra } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { Spinner, TableTitle } from '@subql/components';
-import { truncFormatEtherStr, useGetFilteredDelegationsQuery } from '@subql/react-hooks';
+import {
+  truncFormatEtherStr,
+  useGetFilteredDelegationsQuery,
+  useGetSpecifyDelegatorsIndexerAprQuery,
+} from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
 import { retry } from '@utils/retry';
 import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
@@ -70,6 +75,14 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       },
       sorter: (a, b) => {
         return +(a?.value?.after || 0) - +(b?.value?.after || 0);
+      },
+    },
+    {
+      title: <TableTitle title="Estimated Apr"></TableTitle>,
+      width: 200,
+      dataIndex: 'apr',
+      render: (apr: string) => {
+        return <Typography>{BigNumberJs(formatEther(apr)).toFixed(2)} %</Typography>;
       },
     },
     {
@@ -134,6 +147,14 @@ export const MyDelegation: React.FC = () => {
     fetchPolicy: 'network-only',
   });
 
+  const delegationAprs = useGetSpecifyDelegatorsIndexerAprQuery({
+    variables: {
+      delegator: account ?? '',
+      indexers: delegations.data?.delegations?.nodes.map((delegation) => delegation?.indexerId || '') ?? [],
+      era: currentEra.data?.index ? currentEra.data?.index - 1 : 0,
+    },
+  });
+
   const { getColumns } = useGetColumn({
     onSuccess: () => {
       retry(
@@ -148,7 +169,7 @@ export const MyDelegation: React.FC = () => {
   });
 
   const delegationList = mapAsync(
-    ([delegations, era]) =>
+    ([delegations, era, delegationAprs]) =>
       delegations?.delegations?.nodes
         .filter(notEmpty)
         // TODO: sort by GraphQL
@@ -159,12 +180,15 @@ export const MyDelegation: React.FC = () => {
           ),
           indexer: delegation.indexerId,
           indexerActive: delegation?.indexer?.active,
+          apr:
+            delegationAprs?.eraDelegatorIndexerAPRs?.nodes.find((i) => i?.indexerId === delegation.indexerId)?.apr ??
+            '0',
         }))
         .filter(
           (delegation) =>
             parseEther(delegation.value.current || '0').gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
         ),
-    mergeAsync(delegations, currentEra),
+    mergeAsync(delegations, currentEra, delegationAprs),
   );
   const DelegationList = () => (
     <>
