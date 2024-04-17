@@ -181,7 +181,7 @@ export const MyDelegation: React.FC = () => {
           indexer: delegation.indexerId,
           indexerActive: delegation?.indexer?.active,
           apy:
-            delegationApys?.eraDelegatorIndexerAPYs?.nodes.find((i) => i?.indexerId === delegation.indexerId)?.apy ??
+            delegationApys?.eraDelegatorIndexerApies?.nodes.find((i) => i?.indexerId === delegation.indexerId)?.apy ??
             '0',
         }))
         .filter(

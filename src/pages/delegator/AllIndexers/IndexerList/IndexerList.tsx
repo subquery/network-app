@@ -81,7 +81,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   });
 
   const searchedIndexer = React.useMemo(
-    () => (sortedIndexer.data?.indexerAPYSummaries ? sortedIndexer.data?.indexerAPYSummaries.nodes : undefined),
+    () => (sortedIndexer.data?.indexerApySummaries ? sortedIndexer.data?.indexerApySummaries.nodes : undefined),
     [sortedIndexer],
   );
 
@@ -113,13 +113,13 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
    */
 
   const rawIndexerList = React.useMemo(
-    () => searchedIndexer ?? fetchedIndexers.data?.indexerAPYSummaries?.nodes ?? [],
-    [fetchedIndexers.data?.indexerAPYSummaries?.nodes, searchedIndexer],
+    () => searchedIndexer ?? fetchedIndexers.data?.indexerApySummaries?.nodes ?? [],
+    [fetchedIndexers.data?.indexerApySummaries?.nodes, searchedIndexer],
   );
 
   const totalCounts = React.useMemo(() => {
-    return fetchedIndexers.data?.indexerAPYSummaries?.totalCount || totalCount;
-  }, [fetchedIndexers.data?.indexerAPYSummaries?.totalCount, totalCount]);
+    return fetchedIndexers.data?.indexerApySummaries?.totalCount || totalCount;
+  }, [fetchedIndexers.data?.indexerApySummaries?.totalCount, totalCount]);
 
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
@@ -263,7 +263,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         align: 'center',
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
-          const curIndexer = fetchedIndexers.data?.indexerAPYSummaries?.nodes?.find((i) => i?.indexerId === id);
+          const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => i?.indexerId === id);
           const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
@@ -321,7 +321,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       </div>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
-          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerAPYSummaries?.totalCount || 0 })}
+          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerApySummaries?.totalCount || 0 })}
         </Typography>
         <SearchAddress />
       </div>

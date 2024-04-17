@@ -22,8 +22,8 @@ export const AllIndexers: React.FC = () => {
       {renderAsync(
         mapAsync(
           ([data, curEra]) => ({
-            data: data?.indexerAPYSummaries?.nodes.filter(notEmpty),
-            totalCount: data?.indexerAPYSummaries?.totalCount,
+            data: data?.indexerApySummaries?.nodes.filter(notEmpty),
+            totalCount: data?.indexerApySummaries?.totalCount,
             era: curEra?.index,
           }),
           mergeAsync(indexers, currentEra),

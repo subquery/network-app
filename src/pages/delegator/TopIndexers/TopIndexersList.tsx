@@ -209,7 +209,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
     return ordered.map((topIndex) => {
       const find = allIndexers.data?.indexers?.nodes.find((i) => i?.id === topIndex.id);
       if (!find) return topIndex;
-      const findApy = allIndexerApys.data?.indexerAPYSummaries?.nodes.find((i) => i?.indexerId === topIndex.id);
+      const findApy = allIndexerApys.data?.indexerApySummaries?.nodes.find((i) => i?.indexerId === topIndex.id);
 
       const ownStakedAmount = BigNumber(find.indexerStakes.nodes?.[0]?.indexerStake.toString() || '0');
       const totalStakedAmount = BigNumber(find.totalStake.valueAfter.value);

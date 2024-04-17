@@ -218,7 +218,12 @@ const ApyCard = () => {
         indexerApy: '0',
       };
     const makeApy = (rewards: string, stakes: string) => {
-      return BigNumber(rewards).dividedBy(stakes).dividedBy(7).multipliedBy(365).multipliedBy(100).toFixed(2);
+      return BigNumber(rewards)
+        .dividedBy(stakes === '0' ? '1' : stakes)
+        .dividedBy(7)
+        .multipliedBy(365)
+        .multipliedBy(100)
+        .toFixed(2);
     };
     const sortFunc = (a: { keys: readonly string[] | null }, b: { keys: readonly string[] | null }) =>
       +(b?.keys?.[0] || 0) - +(a?.keys?.[0] || 0);

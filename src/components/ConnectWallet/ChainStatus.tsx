@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { AppTypography } from '@components/Typography';
+import { Typography } from '@subql/components';
 import { Button } from 'antd';
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 
@@ -46,12 +46,14 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
     return (
       <div className={styles.container}>
         <div className={styles.content}>
-          <AppTypography className={styles.title}>{t('unsupportedNetwork.title')}</AppTypography>
           <div className={styles.switchContainer}>
-            <AppTypography className={styles.description}>
-              {t('unsupportedNetwork.subtitle', { supportNetwork: tipName })}
-            </AppTypography>
+            <img src="/static/switch-network.png" alt="" width="80" height="80" />
+            <Typography variant="h4">Switch to {tipName} network</Typography>
+            <Typography style={{ textAlign: 'center' }}>
+              You need to be connected to the Base network to perform this action
+            </Typography>
             <Button
+              style={{ width: '100%' }}
               onClick={() => {
                 switchNetwork?.(switchNetworkChainId);
               }}
