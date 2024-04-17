@@ -6,7 +6,7 @@ import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
 import { WalletRoute } from '@components';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
-import { useSortedIndexer } from '@hooks';
+import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
@@ -15,12 +15,15 @@ import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatSQT,
   renderAsync,
+  useGetAllIndexerByApyLazyQuery,
+  useGetDelegatorApiesLazyQuery,
   useGetTotalRewardsAndUnclaimRewardsQuery,
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
 import { formatEther, formatNumber, isRPCError, mergeAsync, notEmpty, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
+import BigNumberJs from 'bignumber.js';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
@@ -79,11 +82,13 @@ const activeKeyLinks: {
 };
 
 export const MyAccountInner: React.FC = () => {
+  const navigate = useNavigate();
   const { address } = useAccount();
+  const { currentEra } = useEra();
   const { id: profileAccount } = useParams();
   const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
 
-  const navigate = useNavigate();
+  const isIndexer = useIsIndexer(account);
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
   const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
@@ -94,8 +99,40 @@ export const MyAccountInner: React.FC = () => {
   const withdrawals = useGetWithdrawlsQuery({
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
+  const [fetchIndexerApy] = useGetAllIndexerByApyLazyQuery();
+
+  const [fetchDelegatorApy] = useGetDelegatorApiesLazyQuery();
 
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
+
+  const myAccountApr = useAsyncMemo(async () => {
+    if (isIndexer.data) {
+      const apy = await fetchIndexerApy({
+        variables: {
+          first: 1,
+          filter: {
+            indexerId: { equalTo: account },
+          },
+        },
+      });
+      if (apy.data?.indexerApySummaries?.nodes.length) {
+        return BigNumberJs(formatEther(apy.data.indexerApySummaries.nodes[0]?.indexerApy)).multipliedBy(100).toFixed(2);
+      }
+    }
+
+    const apy = await fetchDelegatorApy({
+      variables: {
+        delegator: account,
+        era: (currentEra.data?.index || 0) - 1,
+      },
+    });
+
+    if (apy.data?.eraDelegatorApies?.nodes.length) {
+      return BigNumberJs(formatEther(apy.data.eraDelegatorApies.nodes[0]?.apy)).multipliedBy(100).toFixed(2);
+    }
+
+    return '0';
+  }, [isIndexer.data, currentEra.data, account]);
 
   useEffect(() => {
     Object.keys(activeKeyLinks).forEach((key) => {
@@ -171,9 +208,15 @@ export const MyAccountInner: React.FC = () => {
                   </Typography>
                 }
                 tooltip={t('account.tooltip.rewards')}
-                titleExtra={BalanceLayout({
-                  mainBalance: +totalRewards,
-                })}
+                titleExtra={
+                  <div className="col-flex">
+                    {BalanceLayout({
+                      mainBalance: +totalRewards,
+                    })}
+
+                    <Typography variant="small">Current Estimated APR: {myAccountApr.data?.toString()}%</Typography>
+                  </div>
+                }
               >
                 <div className="col-flex">
                   <FormatCardLine

@@ -15,7 +15,7 @@ import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther, TOKEN } from '@utils';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
-import { Divider, Radio, Tooltip } from 'antd';
+import { Alert, Divider, Radio, Tooltip } from 'antd';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
@@ -154,11 +154,41 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
               .toPrecision(3);
             return (
               <div>
-                <Typography variant="medium">
-                  {t('delegate.undelegateValidNextEra', {
-                    duration: `${hours} hours`,
-                  })}
-                </Typography>
+                <Alert
+                  showIcon
+                  type="warning"
+                  style={{
+                    border: '1px solid #F87C4F80',
+                    background: '#F87C4F14',
+                    alignItems: 'flex-start',
+                  }}
+                  message={
+                    <div
+                      className="col-flex"
+                      style={{
+                        gap: 16,
+                      }}
+                    >
+                      <Typography>
+                        Tokens will be undelegated from next era. During the undelegation period the wont earn any
+                        rewards and will then be locked for {hours} hours before you can withdraw them.
+                      </Typography>
+                      <Typography>
+                        Note, you can instead{' '}
+                        <Typography.Link
+                          active
+                          style={{ textDecoration: 'underline' }}
+                          onClick={() => {
+                            setUndelegateWay('anotherIndexer');
+                          }}
+                        >
+                          redelegate
+                        </Typography.Link>{' '}
+                        to another Node Operator without waiting for an undelegation period or missing out on rewards.
+                      </Typography>
+                    </div>
+                  }
+                ></Alert>
                 <Radio.Group
                   value={undelegateWay}
                   onChange={(e) => setUndelegateWay(e.target.value)}

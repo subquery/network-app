@@ -12,6 +12,7 @@ import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import {
   formatSQT,
+  useGetAllIndexerByApyQuery,
   useGetDelegationQuery,
   useGetDelegationsLazyQuery,
   useGetIndexersLazyQuery,
@@ -120,6 +121,25 @@ export const DelegateForm: React.FC<FormProps> = ({
     },
   });
 
+  const indexerApyData = useGetAllIndexerByApyQuery({
+    variables: {
+      first: 1,
+      filter: {
+        indexerId: { equalTo: styleMode === 'normal' ? indexerAddress : selectedOption?.value || indexerAddress },
+      },
+    },
+  });
+
+  const estimatedLastEraApy = React.useMemo(() => {
+    if (indexerApyData.data?.indexerApySummaries?.nodes.length) {
+      return BigNumberJs(formatEther(indexerApyData.data.indexerApySummaries.nodes[0]?.delegatorApy.toString() || '0'))
+        .multipliedBy(100)
+        .toFixed(2);
+    }
+
+    return '0';
+  }, [indexerApyData.data?.indexerApySummaries?.nodes]);
+
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
 
@@ -222,6 +242,10 @@ export const DelegateForm: React.FC<FormProps> = ({
         label: t('delegate.existingDelegation'),
         value: ` ${delegatedAmountMemo} ${TOKEN}`,
         tooltip: t('delegate.existingDelegationTooltip'),
+      },
+      {
+        label: 'Estimated APY',
+        value: `${estimatedLastEraApy}%`,
       },
     ].filter((i) => {
       if (styleMode === 'normal') return true;
