@@ -11,7 +11,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetTopIndexersQuery } from '@subql/network-query';
-import { formatEther, useGetAllIndexerByAprQuery, useGetIndexersQuery } from '@subql/react-hooks';
+import { formatEther, useGetAllIndexerByApyQuery, useGetIndexersQuery } from '@subql/react-hooks';
 import { getOrderedAccounts, mulToPercentage, ROUTES, truncateToDecimalPlace } from '@utils';
 import { TableProps, Tag } from 'antd';
 import BigNumber from 'bignumber.js';
@@ -22,7 +22,7 @@ const { INDEXER } = ROUTES;
 
 const getColumns = (
   account: string,
-): TableProps<GetTopIndexersQuery['indexerPrograms'][number] & { indexerApr: string; aprEra: number }>['columns'] => [
+): TableProps<GetTopIndexersQuery['indexerPrograms'][number] & { indexerApy: string; apyEra: number }>['columns'] => [
   {
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
@@ -36,14 +36,14 @@ const getColumns = (
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
-    title: <TableTitle title="Estimated Apr" />,
-    key: 'indexerApr',
-    dataIndex: 'indexerApr',
+    title: <TableTitle title="Estimated Apy" />,
+    key: 'indexerApy',
+    dataIndex: 'indexerApy',
     width: 200,
     render: (value: string) => {
       return <Typography>{BigNumber(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
     },
-    sorter: (a, b) => (BigNumber(a.indexerApr).minus(b.indexerApr).lte(0) ? -1 : 1),
+    sorter: (a, b) => (BigNumber(a.indexerApy).minus(b.indexerApy).lte(0) ? -1 : 1),
   },
   {
     title: (
@@ -189,7 +189,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
     },
   });
 
-  const allIndexerAprs = useGetAllIndexerByAprQuery({
+  const allIndexerApys = useGetAllIndexerByApyQuery({
     variables: {
       first: 100,
       filter: {
@@ -209,7 +209,7 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
     return ordered.map((topIndex) => {
       const find = allIndexers.data?.indexers?.nodes.find((i) => i?.id === topIndex.id);
       if (!find) return topIndex;
-      const findApr = allIndexerAprs.data?.indexerAPRSummaries?.nodes.find((i) => i?.indexerId === topIndex.id);
+      const findApy = allIndexerApys.data?.indexerAPYSummaries?.nodes.find((i) => i?.indexerId === topIndex.id);
 
       const ownStakedAmount = BigNumber(find.indexerStakes.nodes?.[0]?.indexerStake.toString() || '0');
       const totalStakedAmount = BigNumber(find.totalStake.valueAfter.value);
@@ -219,11 +219,11 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
         ownStaked,
         currICR: getDisplayedCommission(topIndex.currICR),
         nextICR: getDisplayedCommission(topIndex.nextICR),
-        indexerApr: findApr?.indexerApr || 0,
-        aprEra: findApr?.eraIdx || 0,
+        indexerApy: findApy?.indexerApy || 0,
+        apyEra: findApy?.eraIdx || 0,
       };
     });
-  }, [indexers, account, allIndexerAprs, allIndexers, getDisplayedCommission]);
+  }, [indexers, account, allIndexerApys, allIndexers, getDisplayedCommission]);
 
   const columns = React.useMemo(() => {
     return getColumns(account ?? '');

@@ -16,11 +16,11 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
-import { IndexerAprSummariesOrderBy } from '@subql/network-query';
+import { IndexerApySummariesOrderBy } from '@subql/network-query';
 import {
   useGetAllDelegationsQuery,
-  useGetAllIndexerByAprLazyQuery,
-  useGetAllIndexerByAprQuery,
+  useGetAllIndexerByApyLazyQuery,
+  useGetAllIndexerByApyQuery,
 } from '@subql/react-hooks';
 import { formatEther, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
@@ -41,7 +41,7 @@ interface props {
   era?: number;
 }
 
-type IndexerWithApr = Indexer & { indexerApr: string; delegatorApr: string; aprEra: number };
+type IndexerWithApy = Indexer & { indexerApy: string; delegatorApy: string; apyEra: number };
 
 const limit = pLimit(5);
 
@@ -55,10 +55,10 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   const viewIndexerDetail = (id: string) => {
     navigate(`/${INDEXER}/${id}`);
   };
-  const [requestIndexers, fetchedIndexers] = useGetAllIndexerByAprLazyQuery();
+  const [requestIndexers, fetchedIndexers] = useGetAllIndexerByApyLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>();
-  const [indexerList, setIndexerList] = React.useState<IndexerWithApr[]>([]);
+  const [indexerList, setIndexerList] = React.useState<IndexerWithApy[]>([]);
   const { getDisplayedCommission } = useMinCommissionRate();
 
   const delegations = useGetAllDelegationsQuery();
@@ -66,7 +66,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
    * SearchInput logic
    */
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const sortedIndexer = useGetAllIndexerByAprQuery({
+  const sortedIndexer = useGetAllIndexerByApyQuery({
     variables: {
       offset: 0,
       first: 100,
@@ -81,7 +81,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   });
 
   const searchedIndexer = React.useMemo(
-    () => (sortedIndexer.data?.indexerAPRSummaries ? sortedIndexer.data?.indexerAPRSummaries.nodes : undefined),
+    () => (sortedIndexer.data?.indexerAPYSummaries ? sortedIndexer.data?.indexerAPYSummaries.nodes : undefined),
     [sortedIndexer],
   );
 
@@ -100,7 +100,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       variables: {
         offset,
         first: 10,
-        orderBy: [IndexerAprSummariesOrderBy.DELEGATOR_APR_DESC],
+        orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
       },
     });
   };
@@ -113,13 +113,13 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
    */
 
   const rawIndexerList = React.useMemo(
-    () => searchedIndexer ?? fetchedIndexers.data?.indexerAPRSummaries?.nodes ?? [],
-    [fetchedIndexers.data?.indexerAPRSummaries?.nodes, searchedIndexer],
+    () => searchedIndexer ?? fetchedIndexers.data?.indexerAPYSummaries?.nodes ?? [],
+    [fetchedIndexers.data?.indexerAPYSummaries?.nodes, searchedIndexer],
   );
 
   const totalCounts = React.useMemo(() => {
-    return fetchedIndexers.data?.indexerAPRSummaries?.totalCount || totalCount;
-  }, [fetchedIndexers.data?.indexerAPRSummaries?.totalCount, totalCount]);
+    return fetchedIndexers.data?.indexerAPYSummaries?.totalCount || totalCount;
+  }, [fetchedIndexers.data?.indexerAPYSummaries?.totalCount, totalCount]);
 
   const getSortedIndexers = async () => {
     if (rawIndexerList.length > 0) {
@@ -139,9 +139,9 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
             const findIndexerInfo = rawIndexerList.find((indexer) => indexer?.indexerId === i?.address);
             return {
               ...i,
-              indexerApr: findIndexerInfo?.indexerApr.toString() || '0',
-              delegatorApr: findIndexerInfo?.delegatorApr.toString() || '0',
-              aprEra: findIndexerInfo?.eraIdx || 0,
+              indexerApy: findIndexerInfo?.indexerApy.toString() || '0',
+              delegatorApy: findIndexerInfo?.delegatorApy.toString() || '0',
+              apyEra: findIndexerInfo?.eraIdx || 0,
             };
           }),
         );
@@ -173,7 +173,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
     /**
      * Sort Indexers logic end
      */
-    const getColumns = (): ColumnsType<IndexerWithApr> => [
+    const getColumns = (): ColumnsType<IndexerWithApy> => [
       {
         title: <TableTitle title={t('indexer.nickname')} />,
         dataIndex: 'address',
@@ -183,9 +183,9 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
           val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
       },
       {
-        title: <TableTitle title="Estimated Apr" />,
-        key: 'delegatorApr',
-        dataIndex: 'delegatorApr',
+        title: <TableTitle title="Estimated Apy" />,
+        key: 'delegatorApy',
+        dataIndex: 'delegatorApy',
         width: '100px',
         render: (value: string) => {
           return <Typography>{BigNumberJs(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
@@ -263,7 +263,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         align: 'center',
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
-          const curIndexer = fetchedIndexers.data?.indexerAPRSummaries?.nodes?.find((i) => i?.indexerId === id);
+          const curIndexer = fetchedIndexers.data?.indexerAPYSummaries?.nodes?.find((i) => i?.indexerId === id);
           const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
@@ -321,7 +321,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       </div>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
-          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerAPRSummaries?.totalCount || 0 })}
+          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerAPYSummaries?.totalCount || 0 })}
         </Typography>
         <SearchAddress />
       </div>

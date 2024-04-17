@@ -7,13 +7,13 @@ import { EmptyList } from '@components';
 import RpcError from '@components/RpcError';
 import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
-import { useGetAllIndexerByAprQuery } from '@subql/react-hooks';
+import { useGetAllIndexerByApyQuery } from '@subql/react-hooks';
 
 import { isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../../utils';
 import { IndexerList } from './IndexerList/IndexerList';
 
 export const AllIndexers: React.FC = () => {
-  const indexers = useGetAllIndexerByAprQuery();
+  const indexers = useGetAllIndexerByApyQuery();
   const { currentEra } = useEra();
   const { t } = useTranslation();
 
@@ -22,8 +22,8 @@ export const AllIndexers: React.FC = () => {
       {renderAsync(
         mapAsync(
           ([data, curEra]) => ({
-            data: data?.indexerAPRSummaries?.nodes.filter(notEmpty),
-            totalCount: data?.indexerAPRSummaries?.totalCount,
+            data: data?.indexerAPYSummaries?.nodes.filter(notEmpty),
+            totalCount: data?.indexerAPYSummaries?.totalCount,
             era: curEra?.index,
           }),
           mergeAsync(indexers, currentEra),

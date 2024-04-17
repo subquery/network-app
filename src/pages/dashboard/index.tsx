@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
-import { renderAsync, useGetDashboardAprLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
+import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
 import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
@@ -201,23 +201,23 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
   );
 };
 
-const AprCard = () => {
+const ApyCard = () => {
   const { currentEra } = useEra();
-  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useGetDashboardAprLazyQuery({
+  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useGetDashboardApyLazyQuery({
     variables: {
       currentEra: currentEra.data?.index || 0,
       currentEraIdx: currentEra.data?.index ? `${numToHex(currentEra.data.index - 1)}` : '0x00',
     },
   });
 
-  const estimatedApr = useMemo(() => {
+  const estimatedApy = useMemo(() => {
     if (!latestStakeAndRewards.data || !currentEra.data?.index)
       return {
-        totalApr: '0',
-        delegatorApr: '0',
-        indexerApr: '0',
+        totalApy: '0',
+        delegatorApy: '0',
+        indexerApy: '0',
       };
-    const makeApr = (rewards: string, stakes: string) => {
+    const makeApy = (rewards: string, stakes: string) => {
       return BigNumber(rewards).dividedBy(stakes).dividedBy(7).multipliedBy(365).multipliedBy(100).toFixed(2);
     };
     const sortFunc = (a: { keys: readonly string[] | null }, b: { keys: readonly string[] | null }) =>
@@ -240,9 +240,9 @@ const AprCard = () => {
     const latestDelegatorStake = latestStakes?.[0]?.sum?.delegatorStake || '0';
 
     return {
-      totalApr: makeApr(latestTotalRewards.toString(), latestTotalStake.toString()),
-      delegatorApr: makeApr(latestDelegationRewards.toString(), latestDelegatorStake.toString()),
-      indexerApr: makeApr(latestIndexerRewards.toString(), latestIndexerStake.toString()),
+      totalApy: makeApy(latestTotalRewards.toString(), latestTotalStake.toString()),
+      delegatorApy: makeApy(latestDelegationRewards.toString(), latestDelegatorStake.toString()),
+      indexerApy: makeApy(latestIndexerRewards.toString(), latestIndexerStake.toString()),
     };
   }, [latestStakeAndRewards.data]);
 
@@ -271,11 +271,11 @@ const AprCard = () => {
       ),
       data: () => (
         <NewCard
-          title="Estimated APR"
+          title="Estimated APY"
           titleExtra={
             <div className="col-flex">
               <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)' }}>
-                {estimatedApr.totalApr || 0}%
+                {estimatedApy.totalApy || 0}%
               </Typography>
               <Typography variant="small" type="secondary" style={{ visibility: 'hidden' }}>
                 bigo
@@ -285,13 +285,13 @@ const AprCard = () => {
           tooltip={
             <div className="col-flex" style={{ gap: 24 }}>
               <Typography variant="small" style={{ color: '#fff' }}>
-                We’ve calculated this estimated APR based on the statistics and returns from the previous era
+                We’ve calculated this estimated APY based on the statistics and returns from the previous era
               </Typography>
               <Typography variant="small" style={{ color: '#fff' }}>
                 If conditions have changed, it will likely change considerable after the end of this Era.
               </Typography>
               <Typography variant="small" style={{ color: '#fff' }}>
-                This APR assumes compounding returns each Era
+                This APY assumes compounding returns each Era
               </Typography>
             </div>
           }
@@ -300,16 +300,16 @@ const AprCard = () => {
           <div className="col-flex">
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary">
-                Estimated APR for Node Operators
+                Estimated APY for Node Operators
               </Typography>
-              <Typography variant="small">{estimatedApr.indexerApr || 0} %</Typography>
+              <Typography variant="small">{estimatedApy.indexerApy || 0} %</Typography>
             </div>
 
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary">
-                Estimated APR for Delegators
+                Estimated APY for Delegators
               </Typography>
-              <Typography variant="small">{estimatedApr.delegatorApr || 0} %</Typography>
+              <Typography variant="small">{estimatedApy.delegatorApy || 0} %</Typography>
             </div>
           </div>
         </NewCard>
@@ -374,7 +374,7 @@ const Dashboard: FC = () => {
           return (
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
-                <AprCard></AprCard>
+                <ApyCard></ApyCard>
                 <TotalRewardsCard
                   totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
                   indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
