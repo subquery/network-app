@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo } from 'react';
+import React, { CSSProperties, FC, useMemo } from 'react';
 import { useEra } from '@hooks';
 import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
@@ -22,8 +22,9 @@ export type FilterType = {
 };
 interface IProps {
   chartData: number[][];
-  dataDimensionsName: string[];
+  dataDimensionsName?: string[];
   value?: FilterType;
+  style?: CSSProperties;
   xAxisScales?: {
     rawData: dayjs.Dayjs[];
     renderData: string[];
@@ -62,6 +63,7 @@ const LineCharts: FC<IProps> = ({
     rawData: [],
   },
   title,
+  style,
   chartData,
   dataDimensionsName,
   onChangeDateRange,
@@ -106,7 +108,7 @@ const LineCharts: FC<IProps> = ({
   }, [chartData, xAxisScalesInner]);
 
   return (
-    <div className={styles.lineCharts}>
+    <div className={styles.lineCharts} style={style}>
       <div className={styles.headers}>
         {title && (
           <Typography variant="large" weight={600}>
@@ -132,16 +134,20 @@ const LineCharts: FC<IProps> = ({
           buttonStyle="solid"
         />
       </div>
-      <div className="flex">
-        {dataDimensionsName.map((name, index) => {
-          return (
-            <div className="flex" style={{ marginRight: 16 }} key={`${name}-${index}`}>
-              <div style={{ height: 10, width: 10, borderRadius: '50%', background: colors[index] }} />
-              <Typography style={{ marginLeft: 8, color: 'var(--sq-gray600)' }}>{name}</Typography>
-            </div>
-          );
-        })}
-      </div>
+      {dataDimensionsName ? (
+        <div className="flex">
+          {dataDimensionsName.map((name, index) => {
+            return (
+              <div className="flex" style={{ marginRight: 16 }} key={`${name}-${index}`}>
+                <div style={{ height: 10, width: 10, borderRadius: '50%', background: colors[index] }} />
+                <Typography style={{ marginLeft: 8, color: 'var(--sq-gray600)' }}>{name}</Typography>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        ''
+      )}
       {chartData.length ? (
         <ReactEChartsCore
           echarts={echarts}

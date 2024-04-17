@@ -40,7 +40,7 @@ function reduceTotal(rewards: { amount: bigint }[]) {
   );
 }
 
-const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName: string; link: string }> = ({
+export const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName?: string; link?: string }> = ({
   title,
   amount,
   linkName,
@@ -50,7 +50,7 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
 
   return (
     <div className="col-flex" style={{ marginBottom: 12 }}>
-      <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+      <div className="flex" style={{ justifyContent: 'space-between', marginBottom: link ? 8 : '' }}>
         <Typography variant="small" type="secondary">
           {title}
         </Typography>
@@ -60,7 +60,7 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
       </div>
       <Link
         onClick={() => {
-          navigate(link);
+          navigate(link || '');
         }}
         style={{ fontSize: 12, color: 'var(--sq-blue600)' }}
       >
@@ -157,7 +157,7 @@ export const MyAccountInner: React.FC = () => {
           },
           data: (data) => {
             const [d, i, r, w] = data;
-            const totalDelegating = formatEther(d, 4);
+            const totalDelegating = formatEther(d?.nextEra, 4);
             const totalRewards = formatSQT(r?.totalRewards?.aggregates?.sum?.amount ?? '0');
             const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes.filter(notEmpty) || []);
             const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);

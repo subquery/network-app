@@ -219,7 +219,7 @@ const ApyCard = () => {
       };
     const makeApy = (rewards: string, stakes: string) => {
       return BigNumber(rewards)
-        .dividedBy(stakes === '0' ? '1' : stakes)
+        .dividedBy(stakes === '0' ? '9999999999999999999999999999999999999999999' : stakes)
         .dividedBy(7)
         .multipliedBy(365)
         .multipliedBy(100)

@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
@@ -117,11 +117,15 @@ export const RewardsLineChart = (props: {
   dataDimensionsName?: string[];
   /* must have account if this set be true */
   beDelegator?: boolean;
+  onlyDelegator?: boolean;
+  chartsStyle?: CSSProperties;
 }) => {
   const {
     title = 'Network Rewards',
     dataDimensionsName = ['Node Operator Rewards', 'Delegation Rewards'],
     beDelegator = false,
+    onlyDelegator = false,
+    chartsStyle,
   } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
@@ -152,6 +156,20 @@ export const RewardsLineChart = (props: {
   const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
   const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
+
+  // TODO: add era in tip
+  const includesErasHexMemo = useMemo(() => {
+    if (!currentEra.data) return [];
+    const { getIncludesEras } = getSplitDataByEra(currentEra.data);
+
+    const { includesErasHex } = {
+      lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
+      l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
+      ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
+    }[filter.date]();
+
+    return includesErasHex;
+  }, [filter, currentEra.data]);
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
@@ -200,8 +218,11 @@ export const RewardsLineChart = (props: {
         maxPaddingLength,
       ),
     });
-
-    setRenderRewards([indexerRewards, delegationRewards]);
+    if (onlyDelegator) {
+      setRenderRewards([delegationRewards]);
+    } else {
+      setRenderRewards([indexerRewards, delegationRewards]);
+    }
   };
 
   useEffect(() => {
@@ -219,11 +240,25 @@ export const RewardsLineChart = (props: {
             setFilter(val);
             fetchRewardsByEra(val);
           }}
+          style={chartsStyle}
           xAxisScales={rewardsLineXScales.val}
           title={title}
-          dataDimensionsName={dataDimensionsName}
+          dataDimensionsName={onlyDelegator ? undefined : dataDimensionsName}
           chartData={renderRewards}
           onTriggerTooltip={(index, curDate) => {
+            if (onlyDelegator) {
+              return `<div class="col-flex" style="width: 280px; font-size: 12px;">
+                <span>${curDate.format('MMM D, YYYY')}</span>
+                <div class="flex-between">
+                  <span>
+                    My Delegation Rewards
+                  </span>
+                  <span>
+                    ${formatNumber(rawRewardsData.delegation[index])} ${TOKEN}
+                  </span>
+                  </div>
+              </div>`;
+            }
             return `<div class="col-flex" style="width: 280px; font-size: 12px;">
               <span>${curDate.format('MMM D, YYYY')}</span>
               <div class="flex-between" style="margin-top: 8px;">

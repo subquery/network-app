@@ -4,30 +4,39 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
+import { AppPageHeader, Button, EmptyList, TableText, WalletRoute } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
 import { useEra } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
-import { Spinner, TableTitle } from '@subql/components';
+import { FormatCardLine } from '@pages/account';
+import { BalanceLayout } from '@pages/dashboard';
+import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
+import { Spinner, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
+  useGetDelegatorApiesQuery,
+  useGetDelegatorTotalRewardsQuery,
   useGetFilteredDelegationsQuery,
   useGetSpecifyDelegatorsIndexerApyQuery,
+  useGetTotalDelegationWithdrawlsQuery,
+  useGetTotalRewardsAndUnclaimRewardsQuery,
 } from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
+import { formatNumber } from '@utils';
 import { retry } from '@utils/retry';
-import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
+import { Dropdown, Table, TableProps, Tag } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
 
+import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
@@ -65,7 +74,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       dataIndex: 'value',
       render: (val) => {
         return (
-          <div>
+          <div className="col-flex">
             <Typography>{<TokenAmount value={val?.current || '0'} />}</Typography>
             <EstimatedNextEraLayout
               value={`${truncFormatEtherStr(val?.after || '0')} ${TOKEN}`}
@@ -132,13 +141,99 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
     getColumns,
   };
 };
+const account = '0xfc7583241241A494191B903B473333Add121Af54';
+
+const DelegatingCard = () => {
+  // const { account } = useWeb3();
+  const { currentEra } = useEra();
+  const delegating = useDelegating(account ?? '');
+  const delegatorApy = useGetDelegatorApiesQuery({
+    variables: {
+      delegator: account ?? '',
+      era: currentEra.data?.index ? currentEra.data?.index - 1 : 0,
+    },
+  });
+
+  const totalDelegatorRewards = useGetDelegatorTotalRewardsQuery({
+    variables: {
+      delegatorId: account ?? '',
+    },
+  });
+
+  const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
+    variables: {
+      account: account || '',
+    },
+  });
+
+  const totalWithdrawls = useGetTotalDelegationWithdrawlsQuery({
+    variables: {
+      delegator: account ?? '',
+    },
+  });
+
+  return (
+    <div className="flex" style={{ margin: '24px 0' }}>
+      <NewCard
+        style={{ marginRight: 24, minWidth: 364, height: 340 }}
+        title="Current Delegation"
+        tooltip="The total amount that you have delegated to Node Operators"
+        titleExtra={BalanceLayout({
+          mainBalance: formatSQT(delegating.data?.curEra?.toString() ?? '0'),
+          secondaryBalance: formatSQT(delegating.data?.nextEra.toString() ?? '0'),
+        })}
+      >
+        <div className="col-flex">
+          <div className="flex" style={{ marginBottom: 12 }}>
+            <Typography variant="small" type="secondary">
+              Current Estimated APY
+            </Typography>
+            <span style={{ flex: 1 }}></span>
+            <Typography variant="small">
+              {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0')).toFixed(2)} %
+            </Typography>
+          </div>
+          <FormatCardLine
+            title="Total Delegation Rewards"
+            amount={formatNumber(formatSQT(totalDelegatorRewards.data?.eraRewards?.aggregates?.sum?.amount ?? '0'))}
+          ></FormatCardLine>
+          <FormatCardLine
+            title="Unclaimed Rewards"
+            amount={formatNumber(formatSQT(rewards.data?.unclaimTotalRewards?.aggregates?.sum?.amount ?? '0'))}
+            link="/profile/rewards"
+            linkName="Claim Rewards"
+          ></FormatCardLine>
+
+          <FormatCardLine
+            title="Total Delegation Withdrawls"
+            amount={formatNumber(formatSQT(totalWithdrawls.data?.withdrawls?.aggregates?.sum?.amount ?? '0'))}
+            link="/profile/withdrawn"
+            linkName="View Withdrawls"
+          ></FormatCardLine>
+        </div>
+      </NewCard>
+
+      {
+        <div style={{ width: '100%' }}>
+          <RewardsLineChart
+            account={account}
+            title="My Delegation Rewards"
+            beDelegator
+            onlyDelegator
+            chartsStyle={{
+              height: 340,
+            }}
+          ></RewardsLineChart>
+        </div>
+      }
+    </div>
+  );
+};
 
 export const MyDelegation: React.FC = () => {
   const { currentEra } = useEra();
   const { t } = useTranslation();
-  const { account } = useWeb3();
-  const delegating = useDelegating(account ?? '');
-  const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
+  // const { account } = useWeb3();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
 
   // TODO: refresh when do some actions.
@@ -215,9 +310,9 @@ export const MyDelegation: React.FC = () => {
           }
           return (
             <>
-              <Typography.Title level={3} className={styles.header}>
+              <Typography className={styles.header} style={{ marginBottom: 16 }}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
-              </Typography.Title>
+              </Typography>
               <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
             </>
           );
@@ -225,14 +320,6 @@ export const MyDelegation: React.FC = () => {
       })}
     </>
   );
-
-  const DelegatingCard = () => {
-    return (
-      <div className={styles.delegatingCard}>
-        <Card title={t('delegate.delegationAmountTitle')} value={delegatingAmount} />
-      </div>
-    );
-  };
 
   return (
     <>
