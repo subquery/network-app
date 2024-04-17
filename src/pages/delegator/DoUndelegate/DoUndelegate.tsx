@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
+import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
 import { gql, useLazyQuery } from '@apollo/client';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput } from '@components';
 import TransactionModal from '@components/TransactionModal';
@@ -162,6 +163,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
                     background: '#F87C4F14',
                     alignItems: 'flex-start',
                   }}
+                  icon={<ExclamationCircleFilled style={{ color: 'var(--sq-warning)' }} />}
                   message={
                     <div
                       className="col-flex"

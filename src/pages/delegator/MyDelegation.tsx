@@ -116,9 +116,15 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
         return (
           <div className="col-flex">
             <Typography>
-              <TokenAmount value={formatEther(value.current, 4)} />
+              <TokenAmount
+                value={BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4)}
+              />
             </Typography>
-            <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+            <EstimatedNextEraLayout
+              value={`${
+                BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4)
+              } ${TOKEN}`}
+            ></EstimatedNextEraLayout>
           </div>
         );
       },
