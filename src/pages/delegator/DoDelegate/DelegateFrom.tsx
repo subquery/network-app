@@ -20,7 +20,6 @@ import {
 } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
-import BignumberJs from 'bignumber.js';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
