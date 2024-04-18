@@ -25,7 +25,7 @@ import BigNumberJs from 'bignumber.js';
 
 import { useWeb3Store } from 'src/stores';
 
-import { DeploymentInfo, Status } from '../../../../components';
+import { APYTooltip, APYTooltipContent, DeploymentInfo, Status } from '../../../../components';
 import { Description } from '../../../../components/Description/Description';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import {
@@ -155,7 +155,19 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      title: <TableTitle title="Previous Estimated Apy" />,
+      title: (
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Previous Estimated APY
+          <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+        </Typography>
+      ),
+
       dataIndex: 'deploymentApy',
       render: (deploymentApy) => {
         return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
