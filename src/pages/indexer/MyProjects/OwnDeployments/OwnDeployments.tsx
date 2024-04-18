@@ -271,18 +271,15 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
-            const sortedData = indexerDepolymentsData
-              ?.sort((deployment) => (deployment.isOffline ? 1 : -1))
-              .map((i) => {
-                const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
-                  (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
-                );
-                return {
-                  ...i,
-                  deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
-                };
-              });
-
+            const sortedData = indexerDepolymentsData?.map((i) => {
+              const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
+                (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
+              );
+              return {
+                ...i,
+                deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
+              };
+            });
             const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
               .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))
               .plus(BigNumberJs(runnerAllocationData?.left || 0));
