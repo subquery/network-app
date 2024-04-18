@@ -3,6 +3,7 @@
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { APYTooltip, APYTooltipContent } from '@components';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
@@ -287,25 +288,14 @@ const ApyCard = () => {
               </Typography>
             </div>
           }
-          tooltip={
-            <div className="col-flex" style={{ gap: 24 }}>
-              <Typography variant="small" style={{ color: '#fff' }}>
-                We’ve calculated this estimated APY based on the statistics and returns from the previous era
-              </Typography>
-              <Typography variant="small" style={{ color: '#fff' }}>
-                If conditions have changed, it will likely change considerable after the end of this Era.
-              </Typography>
-              <Typography variant="small" style={{ color: '#fff' }}>
-                This APY assumes compounding returns each Era
-              </Typography>
-            </div>
-          }
+          tooltip={<APYTooltipContent currentEra={currentEra.data?.index} calculationDescsription={undefined} />}
           width={302}
         >
           <div className="col-flex">
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary">
                 Estimated APY for Node Operators
+                <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
               </Typography>
               <Typography variant="small">{estimatedApy.indexerApy || 0} %</Typography>
             </div>
@@ -313,6 +303,7 @@ const ApyCard = () => {
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary">
                 Estimated APY for Delegators
+                <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
               </Typography>
               <Typography variant="small">{estimatedApy.delegatorApy || 0} %</Typography>
             </div>

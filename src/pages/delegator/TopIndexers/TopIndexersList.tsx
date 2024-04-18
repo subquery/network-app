@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AntDTable, TableText } from '@components';
+import { AntDTable, APYTooltip, TableText } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
@@ -36,7 +36,11 @@ const getColumns = (
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
-    title: <TableTitle title="Estimated Apy" />,
+    title: (
+      <TableTitle title="Estimated APY">
+        <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+      </TableTitle>
+    ),
     key: 'indexerApy',
     dataIndex: 'indexerApy',
     width: 200,
