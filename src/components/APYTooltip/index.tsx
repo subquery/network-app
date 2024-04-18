@@ -18,7 +18,7 @@ export const APYTooltipContent: React.FC<Props> = ({ currentEra, calculationDesc
         {currentEra ? ` (Era ${currentEra - 1})` : null}
       </Typography>
       <Typography variant="small" style={{ color: '#fff' }}>
-        As conditions change between Eras, this estimate is not a gurantee for future Eras
+        As conditions change between Eras, this estimate is not a guarantee for future Eras
       </Typography>
       {calculationDescription ? (
         <Typography variant="small" style={{ color: '#fff' }}>
