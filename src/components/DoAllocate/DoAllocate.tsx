@@ -152,16 +152,28 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       return 'Unknown';
     }
 
+    const newAllcation =
+      BigNumber(formAllocateVal)
+        .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
+        .abs() || 0;
+
     return formatSQT(
       estimatedRewardsPerTokenOneEra
+        .multipliedBy(newAllcation)
         .multipliedBy(
-          BigNumber(formAllocateVal)
-            .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
-            .abs() || 0,
+          newAllcation.div(
+            BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
+          ),
         )
         .toString(),
     );
-  }, [estimatedRewardsPerTokenOneEra, formAllocateVal, addOrRemove, totalAllocations]);
+  }, [
+    estimatedRewardsPerTokenOneEra,
+    formAllocateVal,
+    addOrRemove,
+    totalAllocations,
+    currentAllocatedTokensOfThisDeployment,
+  ]);
 
   const estimatedApyAfterInput = useMemo(() => {
     if (estimatedRewardsAfterInput === 'Unknown') return 'Unknown';
