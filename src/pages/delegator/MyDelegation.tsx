@@ -90,7 +90,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       width: 200,
       dataIndex: 'apy',
       render: (apy: string) => {
-        return <Typography>{BigNumberJs(formatEther(apy)).toFixed(2)} %</Typography>;
+        return <Typography>{BigNumberJs(formatEther(apy)).multipliedBy(100).toFixed(2)} %</Typography>;
       },
     },
     {
@@ -297,7 +297,10 @@ const DelegatingCard = () => {
             </Typography>
             <span style={{ flex: 1 }}></span>
             <Typography variant="small">
-              {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0')).toFixed(2)} %
+              {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0'))
+                .multipliedBy(100)
+                .toFixed(2)}{' '}
+              %
             </Typography>
           </div>
           <FormatCardLine
