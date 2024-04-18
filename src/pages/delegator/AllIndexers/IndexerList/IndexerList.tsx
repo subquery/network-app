@@ -315,7 +315,12 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         </Typography>
 
         <div className="flex" style={{ gap: 16 }}>
-          <Button size="large" type="primary" shape="round">
+          <Button
+            size="large"
+            type="primary"
+            shape="round"
+            href="https://academy.subquery.network/subquery_network/delegators/introduction.html"
+          >
             Learn More
           </Button>
           <Button
@@ -324,6 +329,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
             type="primary"
             shape="round"
             style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+            href="https://academy.subquery.network/subquery_network/delegators/delegating.html"
           >
             <BsCollectionPlayFill />
             How it works

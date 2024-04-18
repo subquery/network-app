@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
-import { WalletRoute } from '@components';
+import { APYTooltip, WalletRoute } from '@components';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
@@ -105,7 +105,7 @@ export const MyAccountInner: React.FC = () => {
 
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
 
-  const myAccountApr = useAsyncMemo(async () => {
+  const myAccountAPY = useAsyncMemo(async () => {
     if (isIndexer.data) {
       const apy = await fetchIndexerApy({
         variables: {
@@ -214,7 +214,10 @@ export const MyAccountInner: React.FC = () => {
                       mainBalance: +totalRewards,
                     })}
 
-                    <Typography variant="small">Current Estimated APR: {myAccountApr.data?.toString()}%</Typography>
+                    <Typography variant="small">
+                      Current Estimated APY: {myAccountAPY.data?.toString()}%
+                      <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+                    </Typography>
                   </div>
                 }
               >
