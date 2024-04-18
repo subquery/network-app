@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AntDTable, TableText } from '@components';
+import { AntDTable, APYTooltip, TableText } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
@@ -36,10 +36,21 @@ const getColumns = (
     render: (val) => <ConnectedIndexer id={val} account={account} />,
   },
   {
-    title: <TableTitle title="Estimated Apy" />,
+    title: (
+      <Typography
+        weight={600}
+        variant="small"
+        type="secondary"
+        className="flex-center"
+        style={{ textTransform: 'uppercase' }}
+      >
+        Estimated APY
+        <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+      </Typography>
+    ),
     key: 'indexerApy',
     dataIndex: 'indexerApy',
-    width: 200,
+    width: 300,
     render: (value: string) => {
       return <Typography>{BigNumber(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
     },

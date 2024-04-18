@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { AppPageHeader, Button, EmptyList, TableText, WalletRoute } from '@components';
+import { AppPageHeader, APYTooltip, APYTooltipContent, Button, EmptyList, TableText, WalletRoute } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
@@ -86,7 +86,18 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       ),
     },
     {
-      title: <TableTitle title="Estimated Apy"></TableTitle>,
+      title: (
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Estimated APY
+          <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+        </Typography>
+      ),
       width: 200,
       dataIndex: 'apy',
       render: (apy: string) => {
@@ -292,8 +303,9 @@ const DelegatingCard = () => {
       >
         <div className="col-flex">
           <div className="flex" style={{ marginBottom: 12 }}>
-            <Typography variant="small" type="secondary">
+            <Typography variant="small" type="secondary" className="flex-center">
               Current Estimated APY
+              <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
             </Typography>
             <span style={{ flex: 1 }}></span>
             <Typography variant="small">
