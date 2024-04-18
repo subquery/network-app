@@ -52,9 +52,11 @@ export const toPercentage = (val: number, total: number, bigNumber = false) => {
 
 export const formatSQT = (val: string | bigint) => {
   const transVal = typeof val === 'bigint' ? val.toString() : val;
-  return BigNumberJs(transVal)
-    .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-    .toNumber();
+  return BigNumberJs(
+    BigNumberJs(transVal)
+      .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
+      .toFixed(6),
+  ).toNumber();
 };
 
 export function extractPercentage(value: string): number {
