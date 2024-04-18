@@ -184,9 +184,16 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       },
       {
         title: (
-          <TableTitle title="Estimated APY">
+          <Typography
+            weight={600}
+            variant="small"
+            type="secondary"
+            className="flex-center"
+            style={{ textTransform: 'uppercase' }}
+          >
+            Estimated APY
             <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
-          </TableTitle>
+          </Typography>
         ),
         key: 'delegatorApy',
         dataIndex: 'delegatorApy',

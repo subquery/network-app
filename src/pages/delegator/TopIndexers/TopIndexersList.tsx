@@ -37,13 +37,20 @@ const getColumns = (
   },
   {
     title: (
-      <TableTitle title="Estimated APY">
+      <Typography
+        weight={600}
+        variant="small"
+        type="secondary"
+        className="flex-center"
+        style={{ textTransform: 'uppercase' }}
+      >
+        Estimated APY
         <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
-      </TableTitle>
+      </Typography>
     ),
     key: 'indexerApy',
     dataIndex: 'indexerApy',
-    width: 200,
+    width: 300,
     render: (value: string) => {
       return <Typography>{BigNumber(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
     },

@@ -87,9 +87,16 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
     },
     {
       title: (
-        <TableTitle title="Estimated APY">
-          <APYTooltipContent currentEra={undefined} calculationDescsription={undefined} />
-        </TableTitle>
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Estimated APY
+          <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+        </Typography>
       ),
       width: 200,
       dataIndex: 'apy',
@@ -296,7 +303,7 @@ const DelegatingCard = () => {
       >
         <div className="col-flex">
           <div className="flex" style={{ marginBottom: 12 }}>
-            <Typography variant="small" type="secondary">
+            <Typography variant="small" type="secondary" className="flex-center">
               Current Estimated APY
               <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
             </Typography>

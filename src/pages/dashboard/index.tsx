@@ -293,15 +293,15 @@ const ApyCard = () => {
         >
           <div className="col-flex">
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
-              <Typography variant="small" type="secondary">
-                Estimated APY for Node Operators
+              <Typography variant="small" type="secondary" className="flex-center">
+                Estimated APY for Operators
                 <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
               </Typography>
               <Typography variant="small">{estimatedApy.indexerApy || 0} %</Typography>
             </div>
 
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
-              <Typography variant="small" type="secondary">
+              <Typography variant="small" type="secondary" className="flex-center">
                 Estimated APY for Delegators
                 <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
               </Typography>
