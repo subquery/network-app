@@ -7,10 +7,10 @@ import { Tooltip, Typography } from '@subql/components';
 
 type Props = {
   currentEra: number | undefined;
-  calculationDescsription: string | undefined;
+  calculationDescription: string | undefined;
 };
 
-export const APYTooltipContent: React.FC<Props> = ({ currentEra, calculationDescsription }): React.ReactNode => {
+export const APYTooltipContent: React.FC<Props> = ({ currentEra, calculationDescription }): React.ReactNode => {
   return (
     <div className="col-flex" style={{ gap: 24 }}>
       <Typography variant="small" style={{ color: '#fff' }}>
@@ -20,18 +20,18 @@ export const APYTooltipContent: React.FC<Props> = ({ currentEra, calculationDesc
       <Typography variant="small" style={{ color: '#fff' }}>
         As conditions change between Eras, this estimate is not a gurantee for future Eras
       </Typography>
-      {calculationDescsription ? (
+      {calculationDescription ? (
         <Typography variant="small" style={{ color: '#fff' }}>
-          {calculationDescsription}
+          {calculationDescription}
         </Typography>
       ) : null}
     </div>
   );
 };
 
-export const APYTooltip: React.FC<Props> = ({ currentEra, calculationDescsription }) => {
+export const APYTooltip: React.FC<Props> = ({ currentEra, calculationDescription }) => {
   return (
-    <Tooltip title={<APYTooltipContent currentEra={currentEra} calculationDescsription={calculationDescsription} />}>
+    <Tooltip title={<APYTooltipContent currentEra={currentEra} calculationDescription={calculationDescription} />}>
       <AiOutlineInfoCircle style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}></AiOutlineInfoCircle>
     </Tooltip>
   );

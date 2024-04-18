@@ -343,14 +343,26 @@ const ApyCard = () => {
               </Typography>
             </div>
           }
-          tooltip={<APYTooltipContent currentEra={currentEra.data?.index} calculationDescsription={undefined} />}
+          tooltip={
+            <APYTooltipContent
+              currentEra={currentEra.data?.index}
+              calculationDescription={
+                'This is calculated from total network rewards divided by the total network stake'
+              }
+            />
+          }
           width={302}
         >
           <div className="col-flex">
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary" className="flex-center">
                 Estimated APY for Operators
-                <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
+                <APYTooltip
+                  currentEra={currentEra.data?.index}
+                  calculationDescription={
+                    'This is the median Node Operator APY. Some Node Operators had a higher APY, some had lower'
+                  }
+                />
               </Typography>
               <Typography variant="small">{estimatedApy.indexerApy || 0} %</Typography>
             </div>
@@ -358,7 +370,12 @@ const ApyCard = () => {
             <div className={clsx(styles.cardContentLine, 'flex-between')}>
               <Typography variant="small" type="secondary" className="flex-center">
                 Estimated APY for Delegators
-                <APYTooltip currentEra={currentEra.data?.index} calculationDescsription={undefined} />
+                <APYTooltip
+                  currentEra={currentEra.data?.index}
+                  calculationDescription={
+                    'This is the median Delegator APY. Some Delegators had a higher APY, some had lower'
+                  }
+                />
               </Typography>
               <Typography variant="small">{estimatedApy.delegatorApy || 0} %</Typography>
             </div>

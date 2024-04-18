@@ -256,7 +256,7 @@ export const DelegateForm: React.FC<FormProps> = ({
         value: `${estimatedLastEraApy}%`,
         tooltip: APYTooltipContent({
           currentEra: undefined,
-          calculationDescsription: undefined,
+          calculationDescription: 'This is estimated from APY for delegators on this Node Operator from the last Era',
         }),
       },
     ].filter((i) => {

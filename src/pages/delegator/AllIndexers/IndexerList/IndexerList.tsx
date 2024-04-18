@@ -192,7 +192,12 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
             style={{ textTransform: 'uppercase' }}
           >
             Estimated APY
-            <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+            <APYTooltip
+              currentEra={undefined}
+              calculationDescription={
+                'This is the estimated APY rewarded to Delegators of this Node Operator from the last Era'
+              }
+            />
           </Typography>
         ),
         key: 'delegatorApy',
