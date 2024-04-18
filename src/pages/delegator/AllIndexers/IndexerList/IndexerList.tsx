@@ -131,7 +131,9 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         // note networkClient.getIndexer have more sideEffects.
         const sortedIndexers = await Promise.all(
           rawIndexerList.map((indexer) => {
-            return limit(() => networkClient?.getIndexer(indexer?.indexerId || ''));
+            return limit(() =>
+              networkClient?.getIndexer(indexer?.indexerId || '', undefined, indexer?.indexer || undefined),
+            );
           }),
         );
         setIndexerList(
