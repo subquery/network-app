@@ -215,8 +215,13 @@ export const MyAccountInner: React.FC = () => {
                     })}
 
                     <Typography variant="small">
-                      Current Estimated APY: {myAccountAPY.data?.toString()}%
-                      <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+                      Estimated APY: {myAccountAPY.data?.toString()}%
+                      <APYTooltip
+                        currentEra={currentEra?.data?.index}
+                        calculationDescription={
+                          'This is estimated from your total rewards from last Era divided by your total stake and delegation'
+                        }
+                      />
                     </Typography>
                   </div>
                 }

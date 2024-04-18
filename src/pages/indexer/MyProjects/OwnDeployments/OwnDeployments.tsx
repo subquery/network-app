@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 import DoAllocate from '@components/DoAllocate/DoAllocate';
 import { BalanceLayout } from '@pages/dashboard';
 import { DoStake } from '@pages/indexer/MyStaking/DoStake';
@@ -25,7 +25,7 @@ import BigNumberJs from 'bignumber.js';
 
 import { useWeb3Store } from 'src/stores';
 
-import { APYTooltip, APYTooltipContent, DeploymentInfo, Status } from '../../../../components';
+import { APYTooltip, DeploymentInfo, Status } from '../../../../components';
 import { Description } from '../../../../components/Description/Description';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import {
@@ -163,8 +163,13 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           className="flex-center"
           style={{ textTransform: 'uppercase' }}
         >
-          Previous Estimated APY
-          <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+          Estimated APY
+          <APYTooltip
+            currentEra={currentEra?.data?.index}
+            calculationDescription={
+              'This is the estimated APY you received as a Node Operator from this project from the last Era'
+            }
+          />
         </Typography>
       ),
 
