@@ -3,30 +3,26 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AntDTable, SearchInput, TableText } from '@components';
+import { AntDTable, APYTooltip, TableText } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useWeb3 } from '@containers';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
-import { DelegationFieldsFragment, GetTopIndexersQuery, IndexerFieldsFragment } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetIndexersQuery } from '@subql/react-hooks';
+import { GetTopIndexersQuery } from '@subql/network-query';
+import { formatEther, useGetAllIndexerByApyQuery, useGetIndexersQuery } from '@subql/react-hooks';
 import { getOrderedAccounts, mulToPercentage, ROUTES, truncateToDecimalPlace } from '@utils';
 import { TableProps, Tag } from 'antd';
 import BigNumber from 'bignumber.js';
 import i18next from 'i18next';
-import { FixedType } from 'rc-table/lib/interface';
 
-import { DoDelegate } from '../DoDelegate';
 import styles from './TopIndexersList.module.css';
 const { INDEXER } = ROUTES;
 
 const getColumns = (
   account: string,
-  delegations: readonly (DelegationFieldsFragment | null)[],
-  indexers: readonly (IndexerFieldsFragment | null)[],
-): TableProps<GetTopIndexersQuery['indexerPrograms'][number]>['columns'] => [
+): TableProps<GetTopIndexersQuery['indexerPrograms'][number] & { indexerApy: string; apyEra: number }>['columns'] => [
   {
     title: <TableTitle title={'#'} />,
     dataIndex: 'idx',
@@ -38,6 +34,32 @@ const getColumns = (
     dataIndex: 'id',
     width: 250,
     render: (val) => <ConnectedIndexer id={val} account={account} />,
+  },
+  {
+    title: (
+      <Typography
+        weight={600}
+        variant="small"
+        type="secondary"
+        className="flex-center"
+        style={{ textTransform: 'uppercase' }}
+      >
+        Estimated APY
+        <APYTooltip
+          currentEra={undefined}
+          calculationDescription={
+            'This is the estimated APY rewarded to Delegators of this Node Operator from the last Era'
+          }
+        />
+      </Typography>
+    ),
+    key: 'indexerApy',
+    dataIndex: 'indexerApy',
+    width: 300,
+    render: (value: string) => {
+      return <Typography>{BigNumber(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
+    },
+    sorter: (a, b) => (BigNumber(a.indexerApy).minus(b.indexerApy).lte(0) ? -1 : 1),
   },
   {
     title: (
@@ -60,14 +82,6 @@ const getColumns = (
     ),
   },
   {
-    title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.rank')} title={i18next.t('topIndexers.rank')} />,
-    dataIndex: 'rank',
-    render: (rank) => <TableText>{rank}</TableText>,
-
-    sorter: (a, b) => a.rank - b.rank,
-    showSorterTooltip: false,
-  },
-  {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.uptime')} title={i18next.t('topIndexers.uptime')} />,
     dataIndex: 'uptime',
     render: (upTime) => <TableText>{truncateToDecimalPlace(upTime, 2)}%</TableText>,
@@ -78,6 +92,7 @@ const getColumns = (
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ownStake')} title={i18next.t('topIndexers.ownStake')} />,
     dataIndex: 'ownStaked',
+    width: 150,
     render: (ownStake) => <TableText>{mulToPercentage(ownStake)}</TableText>,
 
     sorter: (a, b) => a.ownStaked - b.ownStaked,
@@ -91,6 +106,7 @@ const getColumns = (
       />
     ),
     dataIndex: 'rewardCollection',
+    width: 220,
     render: (eraRewardsCollection) => (
       <TableText>{i18next.t(eraRewardsCollection === 1 ? 'general.frequent' : 'general.infrequent')}</TableText>
     ),
@@ -113,6 +129,7 @@ const getColumns = (
   {
     title: <TableTitle tooltip={i18next.t('topIndexers.tooltip.ssl')} title={i18next.t('topIndexers.ssl')} />,
     dataIndex: 'sslEnabled',
+    width: 100,
     render: (enableSSL) => {
       if (enableSSL) {
         return <Tag color="green">{i18next.t('general.enabled')}</Tag>;
@@ -142,6 +159,7 @@ const getColumns = (
         title={i18next.t('topIndexers.socialCredibility')}
       />
     ),
+    width: 200,
     dataIndex: 'socialCredibility',
     render: (socialCredibility) => {
       if (socialCredibility) {
@@ -165,27 +183,6 @@ const getColumns = (
       return !record.socialCredibility;
     },
   },
-  {
-    title: <TableTitle title={i18next.t('indexer.action')} />,
-    dataIndex: 'id',
-    align: 'center',
-    fixed: 'right' as FixedType,
-    width: 120,
-    render: (id: string) => {
-      if (id === account) return <Typography> - </Typography>;
-      const delegation = delegations.find((i) => i?.id === `${account}:${id}`);
-      const indexer = indexers.find((i) => i?.id === id);
-      return (
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <DoDelegate indexerAddress={id} variant="textBtn" delegation={delegation} indexer={indexer} />
-        </div>
-      );
-    },
-  },
 ];
 
 interface props {
@@ -199,16 +196,21 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
   const viewIndexerDetail = (id: string) => {
     navigate(`/${INDEXER}/${id}`);
   };
-  const [filterParams, setFilterParams] = React.useState<{ address: string }>({
-    address: '',
-  });
+
   const { getDisplayedCommission } = useMinCommissionRate();
 
-  // TODO: add filter into network-query
-  const delegations = useGetAllDelegationsQuery();
   const allIndexers = useGetIndexersQuery({
     variables: {
       filter: { id: { in: indexers.map((i) => i.id) } },
+    },
+  });
+
+  const allIndexerApys = useGetAllIndexerByApyQuery({
+    variables: {
+      first: 100,
+      filter: {
+        indexerId: { in: indexers.map((i) => i.id) },
+      },
     },
   });
 
@@ -218,11 +220,13 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
       indexers.slice().sort((a, b) => b.totalPoints - a.totalPoints),
       'id',
       account,
-    ).filter((i) => i.id.includes(filterParams.address));
+    );
 
     return ordered.map((topIndex) => {
       const find = allIndexers.data?.indexers?.nodes.find((i) => i?.id === topIndex.id);
       if (!find) return topIndex;
+      const findApy = allIndexerApys.data?.indexerApySummaries?.nodes.find((i) => i?.indexerId === topIndex.id);
+
       const ownStakedAmount = BigNumber(find.indexerStakes.nodes?.[0]?.indexerStake.toString() || '0');
       const totalStakedAmount = BigNumber(find.totalStake.valueAfter.value);
       const ownStaked = ownStakedAmount.div(totalStakedAmount).toNumber();
@@ -231,45 +235,24 @@ export const TopIndexerList: React.FC<props> = ({ indexers, onLoadMore }) => {
         ownStaked,
         currICR: getDisplayedCommission(topIndex.currICR),
         nextICR: getDisplayedCommission(topIndex.nextICR),
+        indexerApy: findApy?.indexerApy || 0,
+        apyEra: findApy?.eraIdx || 0,
       };
     });
-  }, [indexers, account, filterParams, allIndexers, getDisplayedCommission]);
-
-  const SearchAddress = () => (
-    <div className={styles.indexerSearch}>
-      <SearchInput
-        defaultValue={filterParams.address}
-        onSearch={(value: string) => {
-          setFilterParams({
-            ...filterParams,
-            address: value,
-          });
-        }}
-      />
-    </div>
-  );
+  }, [indexers, account, allIndexerApys, allIndexers, getDisplayedCommission]);
 
   const columns = React.useMemo(() => {
-    if (delegations.data?.delegations?.nodes && allIndexers.data?.indexers?.nodes) {
-      return getColumns(account ?? '', delegations.data.delegations.nodes, allIndexers.data.indexers.nodes);
-    }
-
-    return [];
-  }, [account, viewIndexerDetail, delegations, allIndexers]);
+    return getColumns(account ?? '');
+  }, [account]);
 
   return (
     <div className={styles.container}>
-      <div className={styles.indexerListHeader}>
-        <SearchAddress />
-      </div>
-
       {columns?.length ? (
         <AntDTable
           customPagination
           tableProps={{
             columns,
             rowKey: 'id',
-            scroll: { x: 1600 },
             dataSource: orderedIndexerList,
             onRow: (record) => ({
               onClick: () => {

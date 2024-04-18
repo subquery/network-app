@@ -25,7 +25,6 @@ import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
-import { Button } from 'antd';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { TFunction } from 'i18next';
@@ -103,6 +102,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     },
     fetchPolicy: 'network-only',
   });
+
   const [requireClaimIndexerRewards, setRequireClaimIndexerRewards] = React.useState(true);
   const [fetchRequireClaimIndexerRewardsLoading, setFetchRequireClaimIndexerRewardsLoading] = React.useState(false);
   const isLogin = useIsLogin();

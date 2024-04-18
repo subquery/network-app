@@ -13,7 +13,7 @@ interface List {
   label: React.ReactNode;
   value: React.ReactNode;
   strong?: boolean;
-  tooltip?: string;
+  tooltip?: React.ReactNode;
 }
 
 interface SummaryListProps {

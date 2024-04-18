@@ -34,6 +34,10 @@ const Indexer: React.FC = () => {
       label: t('plans.category.offerMarketplace'),
       link: OFFER_MARKETPLACE,
     },
+    {
+      label: 'All Node Operators',
+      link: 'all-indexers',
+    },
   ];
 
   return (

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
 import { NETWORK_NAME } from '@containers/Web3';
@@ -49,6 +50,26 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const [open, setOpen] = useState(false);
   const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
+
+  const [fetchTotalDeploymentAllocation, totalDeploymentAllocation] = useLazyQuery(gql`
+    query GetDeploymentAllocationSummary($deploymentId: String!) {
+      indexerAllocationSummaries(filter: { deploymentId: { equalTo: $deploymentId } }) {
+        aggregates {
+          sum {
+            totalAmount
+          }
+        }
+      }
+    }
+  `);
+
+  const totalAllocations = useMemo(() => {
+    if (totalDeploymentAllocation?.data?.indexerAllocationSummaries) {
+      return formatSQT(totalDeploymentAllocation.data.indexerAllocationSummaries?.aggregates?.sum?.totalAmount);
+    }
+
+    return '0';
+  }, [totalDeploymentAllocation.data]);
 
   const runnerAllocation = useAsyncMemoWithLazy(async () => {
     if (!account || !open)
@@ -131,18 +152,33 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       return 'Unknown';
     }
 
-    return formatNumber(
-      formatSQT(
-        estimatedRewardsPerTokenOneEra
-          .multipliedBy(
-            BigNumber(formAllocateVal)
-              .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
-              .abs() || 0,
-          )
-          .toString(),
-      ),
+    const newAllcation =
+      BigNumber(formAllocateVal)
+        .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
+        .abs() || 0;
+
+    return formatSQT(
+      estimatedRewardsPerTokenOneEra
+        .multipliedBy(newAllcation)
+        .multipliedBy(
+          newAllcation.div(
+            BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
+          ),
+        )
+        .toString(),
     );
-  }, [estimatedRewardsPerTokenOneEra, formAllocateVal, addOrRemove]);
+  }, [
+    estimatedRewardsPerTokenOneEra,
+    formAllocateVal,
+    addOrRemove,
+    totalAllocations,
+    currentAllocatedTokensOfThisDeployment,
+  ]);
+
+  const estimatedApyAfterInput = useMemo(() => {
+    if (estimatedRewardsAfterInput === 'Unknown') return 'Unknown';
+    return formatNumber(BigNumber(estimatedRewardsAfterInput).div(7).multipliedBy(365).toString());
+  }, [estimatedRewardsAfterInput]);
 
   const updateAllocate = async () => {
     if (!deploymentId || !account) return;
@@ -180,6 +216,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const init = async () => {
     if (open && account && deploymentId && !disabled) {
       setAddOrRemove(initialStatus || 'Add');
+      fetchTotalDeploymentAllocation({
+        variables: {
+          deploymentId,
+        },
+      });
       getAllocatedStake({
         variables: {
           id: `${deploymentId}:${account}`,
@@ -345,9 +386,18 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 {avaibleStakeAmount} {TOKEN}
               </Typography>
             </div>
+            <div className="flex">
+              <Typography variant="medium" type="secondary">
+                Estimated New APY
+              </Typography>
+              <span style={{ flex: 1 }}></span>
+              <Typography variant="medium">
+                {estimatedApyAfterInput.toString()} {TOKEN}
+              </Typography>
+            </div>
           </div>
           <Typography variant="medium">
-            Estimated allocation rewards after update: {estimatedRewardsAfterInput} {TOKEN} Per era
+            Estimated allocation rewards after update: {formatNumber(estimatedRewardsAfterInput)} {TOKEN} Per era
           </Typography>
         </div>
       </Modal>

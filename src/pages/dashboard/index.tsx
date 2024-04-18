@@ -3,17 +3,21 @@
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { gql, useQuery } from '@apollo/client';
+import { APYTooltip, APYTooltipContent } from '@components';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
 import { Footer, Tooltip, Typography } from '@subql/components';
-import { useGetDashboardQuery } from '@subql/react-hooks';
-import { renderAsync, TOKEN } from '@utils';
+import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
+import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
 import { Skeleton } from 'antd';
 import Link from 'antd/es/typography/Link';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
+import { cloneDeep } from 'lodash-es';
 
+import { formatEther } from '../../utils/numberFormatters';
 import { ActiveCard } from './components/ActiveCard/ActiveCard';
 import { EraCard } from './components/EraCard/EraCard';
 import { ForumCard } from './components/ForumCard/ForumCard';
@@ -200,9 +204,193 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
   );
 };
 
+const ApyCard = () => {
+  const { currentEra } = useEra();
+  const [fetchLastestStakeAndRewards, latestStakeAndRewards] = useGetDashboardApyLazyQuery({
+    variables: {
+      currentEra: currentEra.data?.index || 0,
+      currentEraIdx: currentEra.data?.index ? `${numToHex(currentEra.data.index - 1)}` : '0x00',
+    },
+  });
+
+  const apyCountTotal = useQuery(
+    gql`
+      query GetAllApy($eraIdx: Int!) {
+        indexerApySummaries(filter: { eraIdx: { equalTo: $eraIdx } }) {
+          totalCount
+        }
+
+        eraDelegatorApies(filter: { eraIdx: { equalTo: $eraIdx }, apy: { notEqualTo: "0" } }) {
+          totalCount
+        }
+      }
+    `,
+    {
+      variables: {
+        eraIdx: (currentEra.data?.index || 0) - 1,
+      },
+    },
+  );
+
+  const apyMedian = useQuery(
+    gql`
+      query GetAllApy($eraIdx: Int!, $indexerOffset: Int!, $delegatorOffset: Int!) {
+        indexerApySummaries(
+          first: 1
+          offset: $indexerOffset
+          filter: { eraIdx: { equalTo: $eraIdx } }
+          orderBy: [INDEXER_APY_DESC]
+        ) {
+          nodes {
+            indexerApy
+          }
+        }
+
+        eraDelegatorApies(
+          first: 1
+          offset: $delegatorOffset
+          filter: { eraIdx: { equalTo: $eraIdx }, apy: { notEqualTo: "0" } }
+          orderBy: [APY_DESC]
+        ) {
+          nodes {
+            apy
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        eraIdx: (currentEra.data?.index || 0) - 1,
+        indexerOffset: Math.floor(apyCountTotal.data?.indexerApySummaries?.totalCount / 2) || 0,
+        delegatorOffset: Math.floor(apyCountTotal.data?.eraDelegatorApies?.totalCount / 2) || 0,
+      },
+    },
+  );
+
+  const estimatedApy = useMemo(() => {
+    if (!latestStakeAndRewards.data || !currentEra.data?.index)
+      return {
+        totalApy: '0',
+        delegatorApy: '0',
+        indexerApy: '0',
+      };
+    const makeApy = (rewards: string, stakes: string) => {
+      return BigNumber(rewards)
+        .dividedBy(stakes === '0' ? '9999999999999999999999999999999999999999999' : stakes)
+        .dividedBy(7)
+        .multipliedBy(365)
+        .multipliedBy(100)
+        .toFixed(2);
+    };
+    const sortFunc = (a: { keys: readonly string[] | null }, b: { keys: readonly string[] | null }) =>
+      +(b?.keys?.[0] || 0) - +(a?.keys?.[0] || 0);
+    const latestTotalRewards =
+      [...(cloneDeep(latestStakeAndRewards.data?.eraRewards?.groupedAggregates) || [])]?.sort(sortFunc)?.[0]?.sum
+        ?.amount || '0';
+
+    const latestStakes = [...(cloneDeep(latestStakeAndRewards.data?.indexerStakes?.groupedAggregates) || [])]?.sort(
+      sortFunc,
+    );
+    const latestTotalStake = latestStakes?.[0]?.sum?.totalStake || '0';
+
+    return {
+      totalApy: makeApy(latestTotalRewards.toString(), latestTotalStake.toString()),
+      delegatorApy: BigNumber(formatEther(apyMedian?.data?.eraDelegatorApies?.nodes?.[0]?.apy || 0))
+        .multipliedBy(100)
+        .toFixed(2),
+      indexerApy: BigNumber(formatEther(apyMedian?.data?.indexerApySummaries?.nodes?.[0]?.indexerApy || 0))
+        .multipliedBy(100)
+        .toFixed(2),
+    };
+  }, [latestStakeAndRewards, apyMedian]);
+
+  useEffect(() => {
+    if (!currentEra.loading) {
+      fetchLastestStakeAndRewards();
+    }
+  }, [currentEra.loading]);
+
+  return renderAsync(
+    {
+      ...latestStakeAndRewards,
+      loading: currentEra.loading || latestStakeAndRewards.loading || apyMedian.loading || apyCountTotal.loading,
+    },
+    {
+      loading: () => (
+        <Skeleton
+          active
+          paragraph={{ rows: 4 }}
+          style={{ display: 'flex', maxHeight: 176, width: 302, marginTop: 24, marginBottom: 40 }}
+        />
+      ),
+      error: (e) => (
+        <Skeleton
+          active
+          paragraph={{ rows: 4 }}
+          style={{ display: 'flex', maxHeight: 176, width: 302, marginTop: 24, marginBottom: 40 }}
+        />
+      ),
+      data: () => (
+        <NewCard
+          title="Estimated APY"
+          titleExtra={
+            <div className="col-flex">
+              <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)' }}>
+                {estimatedApy.totalApy || 0}%
+              </Typography>
+              <Typography variant="small" type="secondary" style={{ visibility: 'hidden' }}>
+                bigo
+              </Typography>
+            </div>
+          }
+          tooltip={
+            <APYTooltipContent
+              currentEra={currentEra.data?.index}
+              calculationDescription={
+                'This is calculated from total network rewards divided by the total network stake'
+              }
+            />
+          }
+          width={302}
+        >
+          <div className="col-flex">
+            <div className={clsx(styles.cardContentLine, 'flex-between')}>
+              <Typography variant="small" type="secondary" className="flex-center">
+                Estimated APY for Operators
+                <APYTooltip
+                  currentEra={currentEra.data?.index}
+                  calculationDescription={
+                    'This is the median Node Operator APY. Some Node Operators had a higher APY, some had lower'
+                  }
+                />
+              </Typography>
+              <Typography variant="small">{estimatedApy.indexerApy || 0} %</Typography>
+            </div>
+
+            <div className={clsx(styles.cardContentLine, 'flex-between')}>
+              <Typography variant="small" type="secondary" className="flex-center">
+                Estimated APY for Delegators
+                <APYTooltip
+                  currentEra={currentEra.data?.index}
+                  calculationDescription={
+                    'This is the median Delegator APY. Some Delegators had a higher APY, some had lower'
+                  }
+                />
+              </Typography>
+              <Typography variant="small">{estimatedApy.delegatorApy || 0} %</Typography>
+            </div>
+          </div>
+        </NewCard>
+      ),
+    },
+  );
+};
+
 const Dashboard: FC = () => {
   const dashboardData = useGetDashboardQuery();
   const { currentEra } = useEra();
+
+  const [circleAmount, setCircleAmount] = useState('0');
 
   const showNextOrCur = useMemo(() => {
     if (dashboardData.data?.indexerStakeSummary?.eraIdx === currentEra.data?.index) {
@@ -211,8 +399,6 @@ const Dashboard: FC = () => {
 
     return 'next';
   }, [currentEra.data, dashboardData]);
-
-  const [circleAmount, setCircleAmount] = useState('0');
 
   const fetchCircleAmount = async () => {
     const res = await fetch('https://sqt.subquery.foundation/circulating');
@@ -256,6 +442,7 @@ const Dashboard: FC = () => {
           return (
             <div className={styles.dashboardMain}>
               <div className={styles.dashboardMainTop}>
+                <ApyCard></ApyCard>
                 <TotalRewardsCard
                   totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
                   indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
@@ -273,11 +460,6 @@ const Dashboard: FC = () => {
                   nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
                   totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
                 ></DelegationsCard>
-
-                <CirculatingCard
-                  circulatingSupply={circleAmount || '0'}
-                  totalStake={totalStake || '0'}
-                ></CirculatingCard>
               </div>
               <div className={styles.dashboardMainBottom}>
                 <div className={styles.dashboardMainBottomLeft}>
@@ -288,6 +470,10 @@ const Dashboard: FC = () => {
                   </div>
                 </div>
                 <div className={styles.dashboardMainBottomRight}>
+                  <CirculatingCard
+                    circulatingSupply={circleAmount || '0'}
+                    totalStake={totalStake || '0'}
+                  ></CirculatingCard>
                   <EraCard></EraCard>
                   <ForumCard></ForumCard>
                 </div>

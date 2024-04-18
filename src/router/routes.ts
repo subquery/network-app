@@ -199,6 +199,10 @@ export const routers: BasicRouteType[] = [
         path: 'service-agreements/*',
         component: React.lazy(() => import('../pages/consumer/ServiceAgreements/index')),
       },
+      {
+        path: 'all-indexers/*',
+        component: React.lazy(() => import('../pages/delegator/TopIndexers/TopIndexers')),
+      },
     ],
   },
 
@@ -216,11 +220,8 @@ export const routers: BasicRouteType[] = [
       {
         path: 'indexers',
         component: React.lazy(() => import('../pages/delegator/Indexers')),
-        redirect: '/delegator/indexers/top',
-        children: [
-          { path: 'top', component: React.lazy(() => import('../pages/delegator/TopIndexers/TopIndexers')) },
-          { path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) },
-        ],
+        redirect: '/delegator/indexers/all',
+        children: [{ path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) }],
       },
     ],
   },

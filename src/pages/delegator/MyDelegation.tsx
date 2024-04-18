@@ -4,36 +4,67 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AppPageHeader, Button, Card, EmptyList, TableText, WalletRoute } from '@components';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
+import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { useEra } from '@hooks';
+import { useEra, useLockPeriod } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
-import { Spinner, TableTitle } from '@subql/components';
-import { truncFormatEtherStr, useGetFilteredDelegationsQuery } from '@subql/react-hooks';
+import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
+import { FormatCardLine } from '@pages/account';
+import { BalanceLayout } from '@pages/dashboard';
+import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
+import { Spinner, TableTitle, Typography } from '@subql/components';
+import {
+  truncFormatEtherStr,
+  useGetDelegatorApiesQuery,
+  useGetDelegatorTotalAndLastEraDistictiveRewardsByIndexerQuery,
+  useGetDelegatorTotalRewardsQuery,
+  useGetFilteredDelegationsQuery,
+  useGetSpecifyDelegatorsIndexerApyQuery,
+  useGetTotalDelegationWithdrawlsQuery,
+  useGetTotalRewardsAndUnclaimRewardsQuery,
+} from '@subql/react-hooks';
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
+import { formatNumber } from '@utils';
 import { retry } from '@utils/retry';
-import { Dropdown, Table, TableProps, Tag, Typography } from 'antd';
-import { BigNumber } from 'ethers';
+import { Dropdown, Table, TableProps, Tag, Tooltip } from 'antd';
+import BigNumberJs from 'bignumber.js';
+import dayjs from 'dayjs';
 import { parseEther } from 'ethers/lib/utils';
 import { TFunction } from 'i18next';
 
+import { PER_MILL } from 'src/const/const';
+
+import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
 
 const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
+  const lock = useLockPeriod();
+
+  const hours = React.useMemo(() => {
+    return dayjs
+      .duration(+(lock.data || 0), 'seconds')
+      .as('hours')
+      .toPrecision(3);
+  }, [lock]);
+
   const getColumns = (
     t: TFunction,
   ): TableProps<{
     value: CurrentEraValue<string>;
     indexer: string;
+    lastEraRewards: string;
+    indexerActive?: boolean;
   }>['columns'] => [
     {
       title: <TableTitle title={'#'} />,
@@ -55,16 +86,100 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       ),
     },
     {
-      title: <TableTitle title={t('delegate.yourDelegateAmount')} />,
+      title: (
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Estimated APY
+          <APYTooltip
+            currentEra={undefined}
+            calculationDescription={
+              'This is your estimated APY for this delegation to this Node Operator from the last Era'
+            }
+          />
+        </Typography>
+      ),
+      width: 200,
+      dataIndex: 'apy',
+      render: (apy: string) => {
+        return <Typography>{BigNumberJs(formatEther(apy)).multipliedBy(100).toFixed(2)} %</Typography>;
+      },
+    },
+    {
+      title: <TableTitle title={t('indexer.commission')} />,
+      key: 'commissionKey',
+      dataIndex: 'commission',
+      width: 50,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>{value.current}%</Typography>
+            <EstimatedNextEraLayout value={`${value.after.toString()}%`}></EstimatedNextEraLayout>
+          </div>
+        );
+      },
+    },
+    {
+      title: <TableTitle title="Remaining capacity" />,
+      key: 'capacityKey',
+      dataIndex: 'capacity',
+      width: 200,
+      render: (value: { current: string; after: string }) => {
+        return (
+          <div className="col-flex">
+            <Typography>
+              <TokenAmount
+                value={BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4)}
+              />
+            </Typography>
+            <EstimatedNextEraLayout
+              value={`${
+                BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4)
+              } ${TOKEN}`}
+            ></EstimatedNextEraLayout>
+          </div>
+        );
+      },
+    },
+    {
+      title: <TableTitle title={'Delegation amount'} />,
       width: 200,
       dataIndex: 'value',
       render: (val) => {
         return (
-          <div>
-            <Typography>{<TokenAmount value={val?.current || '0'} />}</Typography>
-            <EstimatedNextEraLayout
-              value={`${truncFormatEtherStr(val?.after || '0')} ${TOKEN}`}
-            ></EstimatedNextEraLayout>
+          <div className="flex" style={{ gap: 10 }}>
+            <div className="col-flex">
+              <Typography>{<TokenAmount value={val?.current || '0'} />}</Typography>
+              <EstimatedNextEraLayout
+                value={`${truncFormatEtherStr(val?.after || '0')} ${TOKEN}`}
+              ></EstimatedNextEraLayout>
+            </div>
+
+            {BigNumberJs(val?.after || '0').isZero() ? (
+              <Tooltip
+                title={
+                  <Typography style={{ color: '#fff' }} variant="small">
+                    You have undelegated your tokens from this node operator, Please be aware that your tokens will be
+                    locked for {hours} hours before you can withdraw them.
+                    <Typography.Link
+                      href="/profile/withdrawn"
+                      variant="small"
+                      style={{ color: '#fff', textDecoration: 'underline' }}
+                    >
+                      View Withdrawls
+                    </Typography.Link>
+                  </Typography>
+                }
+              >
+                <InfoCircleOutlined style={{ color: 'var(--sq-info)', fontSize: 14 }} />
+              </Tooltip>
+            ) : (
+              ''
+            )}
           </div>
         );
       },
@@ -73,11 +188,33 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       },
     },
     {
+      title: <TableTitle title={'Total Rewards'} />,
+      width: 200,
+      dataIndex: 'totalRewards',
+      render: (val, record) => {
+        return (
+          <div className="col-flex">
+            <Typography>{<TokenAmount value={formatNumber(formatSQT(val || '0'))} />}</Typography>
+            <EstimatedNextEraLayout
+              value={`+ ${formatNumber(formatSQT(record.lastEraRewards || '0'))} ${TOKEN}`}
+            ></EstimatedNextEraLayout>
+          </div>
+        );
+      },
+    },
+    {
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'indexerActive',
       key: 'indexerActive',
       width: 100,
-      render: (active: string) => {
+      render: (active: string, record) => {
+        if (BigNumberJs(record.value.current).isZero() && !BigNumberJs(record.value?.after || '0').isZero()) {
+          return (
+            <Tooltip title="You must delegate for an entire Era before you start receiving any rewards.">
+              <Tag color="processing">Pending</Tag>
+            </Tooltip>
+          );
+        }
         const tagColor = active ? 'success' : 'default';
         const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
 
@@ -92,24 +229,33 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       width: 100,
       render: (id: string, record) => {
         return (
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  label: (
-                    <DoDelegate onSuccess={onSuccess} indexerAddress={id} variant="textBtn" btnText="Delegate more" />
-                  ),
-                  key: 'delegate',
-                },
-                {
-                  label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
-                  key: 'Undelegate',
-                },
-              ],
-            }}
-          >
-            <OutlineDot></OutlineDot>
-          </Dropdown>
+          <div className="flex" style={{ gap: 8 }}>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    label: (
+                      <DoDelegate onSuccess={onSuccess} indexerAddress={id} variant="textBtn" btnText="Delegate more" />
+                    ),
+                    key: 'delegate',
+                  },
+                  {
+                    label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
+                    key: 'Undelegate',
+                  },
+                ],
+              }}
+            >
+              <OutlineDot></OutlineDot>
+            </Dropdown>
+            {!record.indexerActive ? (
+              <Tooltip title="This node operator has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.">
+                <InfoCircleOutlined style={{ color: 'var(--sq-error)', fontSize: 14 }} />
+              </Tooltip>
+            ) : (
+              ''
+            )}
+          </div>
         );
       },
     },
@@ -120,18 +266,127 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   };
 };
 
+const DelegatingCard = () => {
+  const { account } = useWeb3();
+  const { currentEra } = useEra();
+  const delegating = useDelegating(account ?? '');
+  const delegatorApy = useGetDelegatorApiesQuery({
+    variables: {
+      delegator: account ?? '',
+      era: currentEra.data?.index ? currentEra.data?.index - 1 : 0,
+    },
+  });
+
+  const totalDelegatorRewards = useGetDelegatorTotalRewardsQuery({
+    variables: {
+      delegatorId: account ?? '',
+    },
+  });
+
+  const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
+    variables: {
+      account: account || '',
+    },
+  });
+
+  const totalWithdrawls = useGetTotalDelegationWithdrawlsQuery({
+    variables: {
+      delegator: account ?? '',
+    },
+  });
+
+  return (
+    <div className="flex" style={{ margin: '24px 0' }}>
+      <NewCard
+        style={{ marginRight: 24, minWidth: 364, height: 340 }}
+        title="Current Delegation"
+        tooltip="The total amount that you have delegated to Node Operators"
+        titleExtra={BalanceLayout({
+          mainBalance: formatSQT(delegating.data?.curEra?.toString() ?? '0'),
+          secondaryBalance: formatSQT(delegating.data?.nextEra.toString() ?? '0'),
+        })}
+      >
+        <div className="col-flex">
+          <div className="flex" style={{ marginBottom: 12 }}>
+            <Typography variant="small" type="secondary" className="flex-center">
+              Current Estimated APY
+              <APYTooltip
+                currentEra={currentEra?.data?.index}
+                calculationDescription={'This is estimated from your total rewards from delegation in the last Era'}
+              />
+            </Typography>
+            <span style={{ flex: 1 }}></span>
+            <Typography variant="small">
+              {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0'))
+                .multipliedBy(100)
+                .toFixed(2)}{' '}
+              %
+            </Typography>
+          </div>
+          <FormatCardLine
+            title="Total Delegation Rewards"
+            amount={formatNumber(formatSQT(totalDelegatorRewards.data?.eraRewards?.aggregates?.sum?.amount ?? '0'))}
+          ></FormatCardLine>
+          <FormatCardLine
+            title="Unclaimed Rewards"
+            amount={formatNumber(formatSQT(rewards.data?.unclaimTotalRewards?.aggregates?.sum?.amount ?? '0'))}
+            link="/profile/rewards"
+            linkName="Claim Rewards"
+          ></FormatCardLine>
+
+          <FormatCardLine
+            title="Total Delegation Withdrawls"
+            amount={formatNumber(formatSQT(totalWithdrawls.data?.withdrawls?.aggregates?.sum?.amount ?? '0'))}
+            link="/profile/withdrawn"
+            linkName="View Withdrawls"
+          ></FormatCardLine>
+        </div>
+      </NewCard>
+
+      {
+        <div style={{ width: '100%' }}>
+          <RewardsLineChart
+            account={account}
+            title="My Delegation Rewards"
+            beDelegator
+            onlyDelegator
+            chartsStyle={{
+              height: 340,
+            }}
+          ></RewardsLineChart>
+        </div>
+      }
+    </div>
+  );
+};
+
 export const MyDelegation: React.FC = () => {
   const { currentEra } = useEra();
   const { t } = useTranslation();
   const { account } = useWeb3();
-  const delegating = useDelegating(account ?? '');
-  const delegatingAmount = `${formatEther(delegating.data ?? BigNumber.from(0), 4)} ${TOKEN}`;
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
+  const { getDisplayedCommission } = useMinCommissionRate();
 
   // TODO: refresh when do some actions.
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
     fetchPolicy: 'network-only',
+  });
+
+  const delegationApys = useGetSpecifyDelegatorsIndexerApyQuery({
+    variables: {
+      delegator: account ?? '',
+      indexers: delegations.data?.delegations?.nodes.map((delegation) => delegation?.indexerId || '') ?? [],
+      era: currentEra.data?.index ? currentEra.data?.index - 1 : 0,
+    },
+  });
+
+  const delegationIndexerRewards = useGetDelegatorTotalAndLastEraDistictiveRewardsByIndexerQuery({
+    variables: {
+      delegator: account ?? '',
+      indexers: delegations.data?.delegations?.nodes.map((delegation) => delegation?.indexerId || '') ?? [],
+      era: currentEra.data?.index ? currentEra.data?.index - 1 : 0,
+    },
   });
 
   const { getColumns } = useGetColumn({
@@ -148,23 +403,50 @@ export const MyDelegation: React.FC = () => {
   });
 
   const delegationList = mapAsync(
-    ([delegations, era]) =>
+    ([delegations, era, delegationApys, delegationIndexerRewardsResult]) =>
       delegations?.delegations?.nodes
         .filter(notEmpty)
         // TODO: sort by GraphQL
         .sort((a, b) => (`${a.id}` > `${b.id}` ? -1 : 1))
-        .map((delegation) => ({
-          value: mapEraValue(parseRawEraValue((delegation?.amount as RawEraValue) || '0', era?.index), (v) =>
-            formatEther(v ?? 0),
-          ),
-          indexer: delegation.indexerId,
-          indexerActive: delegation?.indexer?.active,
-        }))
+        .map((delegation) => {
+          const totalRewards = delegationIndexerRewards.data?.totalRewards?.groupedAggregates?.find((i) =>
+            i.keys?.includes(delegation.indexerId),
+          );
+          const lastEraRewards = delegationIndexerRewards.data?.lastEraCollectRewards?.groupedAggregates?.find((i) =>
+            i.keys?.includes(delegation.indexerId),
+          );
+
+          const commssion = parseRawEraValue(delegation?.indexer?.commission, currentEra.data?.index);
+          return {
+            value: mapEraValue(parseRawEraValue((delegation?.amount as RawEraValue) || '0', era?.index), (v) =>
+              formatEther(v ?? 0),
+            ),
+            indexer: delegation.indexerId,
+            commission: {
+              current: getDisplayedCommission(
+                BigNumberJs(commssion.current.toString()).div(PER_MILL).multipliedBy(100).toString(),
+              ),
+              after: getDisplayedCommission(
+                BigNumberJs(commssion.after?.toString() || '0')
+                  .div(PER_MILL)
+                  .multipliedBy(100)
+                  .toString(),
+              ),
+            },
+            capacity: parseRawEraValue(delegation?.indexer?.capacity, currentEra.data?.index),
+            indexerActive: delegation?.indexer?.active,
+            apy:
+              delegationApys?.eraDelegatorIndexerApies?.nodes.find((i) => i?.indexerId === delegation.indexerId)?.apy ??
+              '0',
+            totalRewards: totalRewards?.sum?.reward.toString() ?? '0',
+            lastEraRewards: lastEraRewards?.sum?.reward.toString() ?? '0',
+          };
+        })
         .filter(
           (delegation) =>
             parseEther(delegation.value.current || '0').gt('0') || parseEther(delegation?.value?.after ?? '0').gt('0'),
         ),
-    mergeAsync(delegations, currentEra),
+    mergeAsync(delegations, currentEra, delegationApys, delegationIndexerRewards),
   );
   const DelegationList = () => (
     <>
@@ -191,9 +473,9 @@ export const MyDelegation: React.FC = () => {
           }
           return (
             <>
-              <Typography.Title level={3} className={styles.header}>
+              <Typography className={styles.header} style={{ marginBottom: 16 }}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
-              </Typography.Title>
+              </Typography>
               <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
             </>
           );
@@ -201,14 +483,6 @@ export const MyDelegation: React.FC = () => {
       })}
     </>
   );
-
-  const DelegatingCard = () => {
-    return (
-      <div className={styles.delegatingCard}>
-        <Card title={t('delegate.delegationAmountTitle')} value={delegatingAmount} />
-      </div>
-    );
-  };
 
   return (
     <>

@@ -1,12 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BigNumber } from 'ethers';
-
-import { AsyncMemoReturn } from './useAsyncMemo';
 import { useAsyncMemo, useNetworkClient } from '.';
 
-export function useDelegating(address: string): AsyncMemoReturn<BigNumber | undefined> {
+export function useDelegating(address: string) {
   const networkClient = useNetworkClient();
 
   return useAsyncMemo(async () => {

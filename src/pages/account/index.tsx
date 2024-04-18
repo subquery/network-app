@@ -3,10 +3,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
-import { WalletRoute } from '@components';
+import { APYTooltip, WalletRoute } from '@components';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
-import { useSortedIndexer } from '@hooks';
+import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
@@ -15,12 +15,15 @@ import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatSQT,
   renderAsync,
+  useGetAllIndexerByApyLazyQuery,
+  useGetDelegatorApiesLazyQuery,
   useGetTotalRewardsAndUnclaimRewardsQuery,
   useGetWithdrawlsQuery,
 } from '@subql/react-hooks';
 import { formatEther, formatNumber, isRPCError, mergeAsync, notEmpty, TOKEN, truncFormatEtherStr } from '@utils';
 import { Skeleton, Tabs } from 'antd';
 import Link from 'antd/es/typography/Link';
+import BigNumberJs from 'bignumber.js';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
@@ -40,7 +43,7 @@ function reduceTotal(rewards: { amount: bigint }[]) {
   );
 }
 
-const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName: string; link: string }> = ({
+export const FormatCardLine: React.FC<{ title: string; amount: number | string; linkName?: string; link?: string }> = ({
   title,
   amount,
   linkName,
@@ -50,7 +53,7 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
 
   return (
     <div className="col-flex" style={{ marginBottom: 12 }}>
-      <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+      <div className="flex" style={{ justifyContent: 'space-between', marginBottom: link ? 8 : '' }}>
         <Typography variant="small" type="secondary">
           {title}
         </Typography>
@@ -60,7 +63,7 @@ const FormatCardLine: React.FC<{ title: string; amount: number | string; linkNam
       </div>
       <Link
         onClick={() => {
-          navigate(link);
+          navigate(link || '');
         }}
         style={{ fontSize: 12, color: 'var(--sq-blue600)' }}
       >
@@ -79,11 +82,13 @@ const activeKeyLinks: {
 };
 
 export const MyAccountInner: React.FC = () => {
+  const navigate = useNavigate();
   const { address } = useAccount();
+  const { currentEra } = useEra();
   const { id: profileAccount } = useParams();
   const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
 
-  const navigate = useNavigate();
+  const isIndexer = useIsIndexer(account);
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
   const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
@@ -94,8 +99,40 @@ export const MyAccountInner: React.FC = () => {
   const withdrawals = useGetWithdrawlsQuery({
     variables: { delegator: account ?? '', status: WithdrawalStatus.ONGOING, offset: 0 },
   });
+  const [fetchIndexerApy] = useGetAllIndexerByApyLazyQuery();
+
+  const [fetchDelegatorApy] = useGetDelegatorApiesLazyQuery();
 
   const [activeKey, setActiveKey] = useState<'SD' | 'Rewards' | 'Withdrawals'>('SD');
+
+  const myAccountAPY = useAsyncMemo(async () => {
+    if (isIndexer.data) {
+      const apy = await fetchIndexerApy({
+        variables: {
+          first: 1,
+          filter: {
+            indexerId: { equalTo: account },
+          },
+        },
+      });
+      if (apy.data?.indexerApySummaries?.nodes.length) {
+        return BigNumberJs(formatEther(apy.data.indexerApySummaries.nodes[0]?.indexerApy)).multipliedBy(100).toFixed(2);
+      }
+    }
+
+    const apy = await fetchDelegatorApy({
+      variables: {
+        delegator: account,
+        era: (currentEra.data?.index || 0) - 1,
+      },
+    });
+
+    if (apy.data?.eraDelegatorApies?.nodes.length) {
+      return BigNumberJs(formatEther(apy.data.eraDelegatorApies.nodes[0]?.apy)).multipliedBy(100).toFixed(2);
+    }
+
+    return '0';
+  }, [isIndexer.data, currentEra.data, account]);
 
   useEffect(() => {
     Object.keys(activeKeyLinks).forEach((key) => {
@@ -157,7 +194,7 @@ export const MyAccountInner: React.FC = () => {
           },
           data: (data) => {
             const [d, i, r, w] = data;
-            const totalDelegating = formatEther(d, 4);
+            const totalDelegating = formatEther(d?.nextEra, 4);
             const totalRewards = formatSQT(r?.totalRewards?.aggregates?.sum?.amount ?? '0');
             const totalWithdrawn = reduceTotal(w?.withdrawls?.nodes.filter(notEmpty) || []);
             const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
@@ -171,9 +208,23 @@ export const MyAccountInner: React.FC = () => {
                   </Typography>
                 }
                 tooltip={t('account.tooltip.rewards')}
-                titleExtra={BalanceLayout({
-                  mainBalance: +totalRewards,
-                })}
+                titleExtra={
+                  <div className="col-flex">
+                    {BalanceLayout({
+                      mainBalance: +totalRewards,
+                    })}
+
+                    <Typography variant="small">
+                      Estimated APY: {myAccountAPY.data?.toString()}%
+                      <APYTooltip
+                        currentEra={currentEra?.data?.index}
+                        calculationDescription={
+                          'This is estimated from your total rewards from last Era divided by your total stake and delegation'
+                        }
+                      />
+                    </Typography>
+                  </div>
+                }
               >
                 <div className="col-flex">
                   <FormatCardLine

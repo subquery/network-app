@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useAsyncMemo, useEra, useNetworkClient } from '@hooks';
+import { useEra } from '@hooks';
 import { useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
 
 import {

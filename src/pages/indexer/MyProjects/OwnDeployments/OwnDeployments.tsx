@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
+import { gql, useLazyQuery } from '@apollo/client';
 import DoAllocate from '@components/DoAllocate/DoAllocate';
 import { BalanceLayout } from '@pages/dashboard';
 import { DoStake } from '@pages/indexer/MyStaking/DoStake';
@@ -24,10 +25,11 @@ import BigNumberJs from 'bignumber.js';
 
 import { useWeb3Store } from 'src/stores';
 
-import { DeploymentInfo, Status } from '../../../../components';
+import { APYTooltip, DeploymentInfo, Status } from '../../../../components';
 import { Description } from '../../../../components/Description/Description';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import {
+  useEra,
   useIsIndexer,
   useSortedIndexer,
   useSortedIndexerDeployments,
@@ -35,6 +37,7 @@ import {
 } from '../../../../hooks';
 import { formatNumber, renderAsync, TOKEN, truncateToDecimalPlace } from '../../../../utils';
 import { ROUTES } from '../../../../utils';
+import { formatEther } from '../../../../utils/numberFormatters';
 import styles from './OwnDeployments.module.css';
 
 const { PROJECT_NAV } = ROUTES;
@@ -52,12 +55,33 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
   const isIndexer = useIsIndexer(indexer);
   const sortedIndexer = useSortedIndexer(indexer || '');
   const { contracts } = useWeb3Store();
+  const { currentEra } = useEra();
 
   const allocatedRewards = useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery({
     variables: {
       indexerId: indexer || '',
     },
   });
+
+  const [fetchIndexerDeploymentApy, indexerDeploymentApy] = useLazyQuery(
+    gql`
+      query GetDeploymentApy($account: String!, $eraIdx: Int!, $deploymentIds: [String!]) {
+        eraIndexerDeploymentApies(
+          filter: {
+            indexerId: { equalTo: $account }
+            eraIdx: { equalTo: $eraIdx }
+            deploymentId: { in: $deploymentIds }
+          }
+        ) {
+          nodes {
+            apy
+            deploymentId
+            indexerId
+          }
+        }
+      }
+    `,
+  );
 
   const runnerAllocation = useAsyncMemo(async () => {
     if (!indexer)
@@ -131,6 +155,30 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
+      title: (
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Estimated APY
+          <APYTooltip
+            currentEra={currentEra?.data?.index}
+            calculationDescription={
+              'This is the estimated APY you received as a Node Operator from this project from the last Era'
+            }
+          />
+        </Typography>
+      ),
+
+      dataIndex: 'deploymentApy',
+      render: (deploymentApy) => {
+        return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
+      },
+    },
+    {
       title: <TableTitle title="Allocated amount" />,
       dataIndex: 'allocatedAmount',
       render: (allocatedAmount: string) => {
@@ -196,6 +244,18 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
   const sortedDesc = typeof desc === 'string' ? <Description desc={desc} /> : desc;
 
+  React.useEffect(() => {
+    if (indexer && currentEra.data?.index && indexerDeployments?.data?.length) {
+      fetchIndexerDeploymentApy({
+        variables: {
+          account: indexer || '',
+          eraIdx: (currentEra.data?.index || 0) - 1,
+          deploymentIds: indexerDeployments.data?.map((item) => item.deploymentId) || [],
+        },
+      });
+    }
+  }, [indexer, currentEra.data?.index, indexerDeployments.data]);
+
   return (
     <div className={styles.container}>
       {renderAsync(
@@ -211,7 +271,17 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
-            const sortedData = indexerDepolymentsData?.sort((deployment) => (deployment.isOffline ? 1 : -1));
+            const sortedData = indexerDepolymentsData
+              ?.sort((deployment) => (deployment.isOffline ? 1 : -1))
+              .map((i) => {
+                const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
+                  (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
+                );
+                return {
+                  ...i,
+                  deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
+                };
+              });
 
             const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
               .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { BsChatLeftDots } from 'react-icons/bs';
 import NewCard from '@components/NewCard';
 import { IGetLatestTopics, useForumApis } from '@hooks/useForumApis';
-import { Spinner, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Skeleton } from 'antd';
@@ -44,7 +44,6 @@ export const ForumCard = () => {
               </Typography>
             }
             width={302}
-            style={{ marginTop: 24 }}
           >
             <div className="col-flex">
               {topics.map((topic) => {

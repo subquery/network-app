@@ -12,13 +12,14 @@ import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import {
   formatSQT,
+  useGetAllIndexerByApyQuery,
   useGetDelegationQuery,
   useGetDelegationsLazyQuery,
   useGetIndexersLazyQuery,
+  useGetIndexerStakesByIndexerAndEraQuery,
 } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
-import BignumberJs from 'bignumber.js';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -27,13 +28,14 @@ import * as yup from 'yup';
 
 import { IndexerDetails } from 'src/models';
 
-import { SummaryList } from '../../../components';
+import { APYTooltipContent, SummaryList } from '../../../components';
 import { Avatar, ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
 import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
+import { formatNumber } from '../../../utils/numberFormatters';
 import styles from './DoDelegate.module.less';
 
 export const AddressName: React.FC<{
@@ -119,6 +121,32 @@ export const DelegateForm: React.FC<FormProps> = ({
       id: `${account ?? ''}:${delegateFrom ?? ''}`,
     },
   });
+
+  const indexerApyData = useGetAllIndexerByApyQuery({
+    variables: {
+      first: 1,
+      filter: {
+        indexerId: { equalTo: styleMode === 'normal' ? indexerAddress : selectedOption?.value || indexerAddress },
+      },
+    },
+  });
+
+  const indexerStake = useGetIndexerStakesByIndexerAndEraQuery({
+    variables: {
+      indexerId: styleMode === 'normal' ? indexerAddress : selectedOption?.value || indexerAddress,
+      eraIdx: (curEra || 0) - 1,
+    },
+  });
+
+  const estimatedLastEraApy = React.useMemo(() => {
+    if (indexerApyData.data?.indexerApySummaries?.nodes.length) {
+      return BigNumberJs(formatEther(indexerApyData.data.indexerApySummaries.nodes[0]?.delegatorApy.toString() || '0'))
+        .multipliedBy(100)
+        .toFixed(2);
+    }
+
+    return '0';
+  }, [indexerApyData.data?.indexerApySummaries?.nodes]);
 
   const getIndexerDelegation = () => {
     if (!curEra || !indexerDelegation?.data?.delegation?.amount) return undefined;
@@ -223,6 +251,14 @@ export const DelegateForm: React.FC<FormProps> = ({
         value: ` ${delegatedAmountMemo} ${TOKEN}`,
         tooltip: t('delegate.existingDelegationTooltip'),
       },
+      {
+        label: 'Estimated APY',
+        value: `${estimatedLastEraApy}%`,
+        tooltip: APYTooltipContent({
+          currentEra: undefined,
+          calculationDescription: 'This is estimated from APY for delegators on this Node Operator from the last Era',
+        }),
+      },
     ].filter((i) => {
       if (styleMode === 'normal') return true;
       if (styleMode === 'reDelegate' && i.key === 'indexerInfo') return false;
@@ -320,6 +356,20 @@ export const DelegateForm: React.FC<FormProps> = ({
         });
       }
     }
+  };
+
+  const estimatedSQTAfterChange = (tokenAmounts: string | number) => {
+    if (!tokenAmounts) return 0;
+    if (!indexerApyData?.data?.indexerApySummaries?.nodes?.[0]) return 0;
+    const lastEraDelegatorRewards = indexerApyData?.data?.indexerApySummaries?.nodes?.[0].delegatorReward;
+    const lastEraDelegatorStakes = indexerStake?.data?.indexerStakes?.nodes?.[0]?.delegatorStake;
+    if (!lastEraDelegatorRewards || !lastEraDelegatorStakes) return 0;
+
+    const oneTokenGain = BigNumberJs(lastEraDelegatorRewards.toString() || '0').div(
+      lastEraDelegatorStakes.toString() || '0',
+    );
+
+    return formatNumber(oneTokenGain.multipliedBy(BigNumberJs(delegatedAmountMemo).plus(tokenAmounts)).toString());
   };
 
   React.useEffect(() => {
@@ -447,17 +497,11 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
-              {styleMode === 'normal' && !BigNumberJs(delegatedAmountMemo).isZero() && (
-                <div className="flex" style={{ justifyContent: 'space-between', marginBottom: 24 }}>
-                  <Typography type="secondary" variant="medium">
-                    Total Delegation to {indexerMetadata.name} after change
-                  </Typography>
-
-                  <Typography>
-                    {BignumberJs(delegatedAmount || 0)
-                      .plus(values.input || 0)
-                      .toFixed(2)}{' '}
-                    {TOKEN}
+              {styleMode === 'normal' && values.input && `${values.input}` !== '0' && (
+                <div className="flex" style={{ marginBottom: 24 }}>
+                  <Typography variant="medium">
+                    Estimated delegation rewards after this changes: ~ {estimatedSQTAfterChange(values.input)} {TOKEN}{' '}
+                    per Era
                   </Typography>
                 </div>
               )}
