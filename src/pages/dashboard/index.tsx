@@ -220,7 +220,7 @@ const ApyCard = () => {
           totalCount
         }
 
-        eraDelegatorApies(filter: { eraIdx: { equalTo: $eraIdx } }) {
+        eraDelegatorApies(filter: { eraIdx: { equalTo: $eraIdx }, apy: { notEqualTo: "0" } }) {
           totalCount
         }
       }
@@ -249,7 +249,7 @@ const ApyCard = () => {
         eraDelegatorApies(
           first: 1
           offset: $delegatorOffset
-          filter: { eraIdx: { equalTo: $eraIdx } }
+          filter: { eraIdx: { equalTo: $eraIdx }, apy: { notEqualTo: "0" } }
           orderBy: [APY_DESC]
         ) {
           nodes {
