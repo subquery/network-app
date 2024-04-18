@@ -43,6 +43,7 @@ export * from './Notification';
 export * from './WalletRoute';
 export * from './BreadcrumbNav';
 export * from './StepButton';
+export * from './APYTooltip';
 
 export {
   ImageInput,

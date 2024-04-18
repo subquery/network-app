@@ -28,7 +28,7 @@ import * as yup from 'yup';
 
 import { IndexerDetails } from 'src/models';
 
-import { SummaryList } from '../../../components';
+import { APYTooltipContent, SummaryList } from '../../../components';
 import { Avatar, ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
@@ -254,6 +254,10 @@ export const DelegateForm: React.FC<FormProps> = ({
       {
         label: 'Estimated APY',
         value: `${estimatedLastEraApy}%`,
+        tooltip: APYTooltipContent({
+          currentEra: undefined,
+          calculationDescsription: undefined,
+        }),
       },
     ].filter((i) => {
       if (styleMode === 'normal') return true;

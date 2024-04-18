@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsCollectionPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import { SearchInput } from '@components';
+import { APYTooltip, SearchInput } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
@@ -183,7 +183,18 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
           val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
       },
       {
-        title: <TableTitle title="Estimated Apy" />,
+        title: (
+          <Typography
+            weight={600}
+            variant="small"
+            type="secondary"
+            className="flex-center"
+            style={{ textTransform: 'uppercase' }}
+          >
+            Estimated APY
+            <APYTooltip currentEra={undefined} calculationDescsription={undefined} />
+          </Typography>
+        ),
         key: 'delegatorApy',
         dataIndex: 'delegatorApy',
         width: '100px',
