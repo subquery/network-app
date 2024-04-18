@@ -3,6 +3,7 @@
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { gql, useQuery } from '@apollo/client';
 import { APYTooltip, APYTooltipContent } from '@components';
 import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
@@ -16,6 +17,7 @@ import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
 import { cloneDeep } from 'lodash-es';
 
+import { formatEther } from '../../utils/numberFormatters';
 import { ActiveCard } from './components/ActiveCard/ActiveCard';
 import { EraCard } from './components/EraCard/EraCard';
 import { ForumCard } from './components/ForumCard/ForumCard';
@@ -211,6 +213,60 @@ const ApyCard = () => {
     },
   });
 
+  const apyCountTotal = useQuery(
+    gql`
+      query GetAllApy($eraIdx: Int!) {
+        indexerApySummaries(filter: { eraIdx: { equalTo: $eraIdx } }) {
+          totalCount
+        }
+
+        eraDelegatorApies(filter: { eraIdx: { equalTo: $eraIdx } }) {
+          totalCount
+        }
+      }
+    `,
+    {
+      variables: {
+        eraIdx: (currentEra.data?.index || 0) - 1,
+      },
+    },
+  );
+
+  const apyMedian = useQuery(
+    gql`
+      query GetAllApy($eraIdx: Int!, $indexerOffset: Int!, $delegatorOffset: Int!) {
+        indexerApySummaries(
+          first: 1
+          offset: $indexerOffset
+          filter: { eraIdx: { equalTo: $eraIdx } }
+          orderBy: [INDEXER_APY_DESC]
+        ) {
+          nodes {
+            indexerApy
+          }
+        }
+
+        eraDelegatorApies(
+          first: 1
+          offset: $delegatorOffset
+          filter: { eraIdx: { equalTo: $eraIdx } }
+          orderBy: [APY_DESC]
+        ) {
+          nodes {
+            apy
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        eraIdx: (currentEra.data?.index || 0) - 1,
+        indexerOffset: Math.floor(apyCountTotal.data?.indexerApySummaries?.totalCount / 2) || 0,
+        delegatorOffset: Math.floor(apyCountTotal.data?.eraDelegatorApies?.totalCount / 2) || 0,
+      },
+    },
+  );
+
   const estimatedApy = useMemo(() => {
     if (!latestStakeAndRewards.data || !currentEra.data?.index)
       return {
@@ -231,26 +287,22 @@ const ApyCard = () => {
     const latestTotalRewards =
       [...(cloneDeep(latestStakeAndRewards.data?.eraRewards?.groupedAggregates) || [])]?.sort(sortFunc)?.[0]?.sum
         ?.amount || '0';
-    const latestIndexerRewards =
-      [...(cloneDeep(latestStakeAndRewards.data?.indexerEraReward?.groupedAggregates) || [])]?.sort(sortFunc)?.[0]?.sum
-        ?.amount || '0';
-    const latestDelegationRewards =
-      [...(cloneDeep(latestStakeAndRewards.data?.delegationEraReward?.groupedAggregates) || [])].sort(sortFunc)?.[0]
-        ?.sum?.amount || '0';
 
     const latestStakes = [...(cloneDeep(latestStakeAndRewards.data?.indexerStakes?.groupedAggregates) || [])]?.sort(
       sortFunc,
     );
     const latestTotalStake = latestStakes?.[0]?.sum?.totalStake || '0';
-    const latestIndexerStake = latestStakes?.[0]?.sum?.indexerStake || '0';
-    const latestDelegatorStake = latestStakes?.[0]?.sum?.delegatorStake || '0';
 
     return {
       totalApy: makeApy(latestTotalRewards.toString(), latestTotalStake.toString()),
-      delegatorApy: makeApy(latestDelegationRewards.toString(), latestDelegatorStake.toString()),
-      indexerApy: makeApy(latestIndexerRewards.toString(), latestIndexerStake.toString()),
+      delegatorApy: BigNumber(formatEther(apyMedian?.data?.eraDelegatorApies?.nodes?.[0]?.apy || 0))
+        .multipliedBy(100)
+        .toFixed(2),
+      indexerApy: BigNumber(formatEther(apyMedian?.data?.indexerApySummaries?.nodes?.[0]?.indexerApy || 0))
+        .multipliedBy(100)
+        .toFixed(2),
     };
-  }, [latestStakeAndRewards.data]);
+  }, [latestStakeAndRewards, apyMedian]);
 
   useEffect(() => {
     if (!currentEra.loading) {
@@ -259,7 +311,10 @@ const ApyCard = () => {
   }, [currentEra.loading]);
 
   return renderAsync(
-    { ...latestStakeAndRewards, loading: currentEra.loading || latestStakeAndRewards.loading },
+    {
+      ...latestStakeAndRewards,
+      loading: currentEra.loading || latestStakeAndRewards.loading || apyMedian.loading || apyCountTotal.loading,
+    },
     {
       loading: () => (
         <Skeleton
