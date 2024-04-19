@@ -8,6 +8,7 @@ import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { useSQToken } from '@containers';
 import { Typography } from '@subql/components';
 import { formatEther, TOKEN } from '@utils';
+import { formatNumberWithLocale } from '@utils';
 import { Button, Tooltip } from 'antd';
 
 import { BRIDGE_URL } from 'src/const/bridge';
@@ -34,7 +35,7 @@ const TokenTooltip: FC<IProps> = (props) => {
             <Typography>You have {TOKEN} on Ethereum</Typography>
           </div>
           <Typography variant="small" type="secondary" style={{ paddingInlineStart: 22 }}>
-            Eth Wallet Balance: {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
+            Eth Wallet Balance: {formatNumberWithLocale(formatEther(ethSqtBalance.result.data, 4))} {TOKEN}
           </Typography>
           <Typography variant="small" type="secondary" style={{ paddingInlineStart: 22 }}>
             Your SQT needs to be on Base in order to be used on the SubQuery Network. To move SQT from the Ethereum to

@@ -99,8 +99,6 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     // 2s 1 block, 1800/per hour * 24 hours * 7 days
     const blocks = NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7;
 
-    console.warn(formatSQT(accTotalRewards.current.sub(accTotalRewards.previous).toString()));
-
     const estimatedQueryRewardsPerEra = accQueryRewards.current.sub(accQueryRewards.previous).mul(blocks);
 
     const estimatedTotalRewardsPerEra = accTotalRewards.current.sub(accTotalRewards.previous).mul(blocks);

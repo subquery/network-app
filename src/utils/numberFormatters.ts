@@ -84,3 +84,16 @@ export function formatNumber(num: number | string, precision = 2) {
 
   return num;
 }
+
+export function formatNumberWithLocale(num: number | string | BigNumberJs | BigNumberJs) {
+  const transform = BigNumberJs(num.toString()).toNumber();
+
+  if (isNaN(transform)) {
+    return '0';
+  }
+
+  return transform.toLocaleString(undefined, {
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
+}

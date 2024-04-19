@@ -33,7 +33,7 @@ export interface SupportedConnectorsReturn {
 export const useAccount = () => {
   const accountFromWagmi = useAccountWagmi();
   const account =
-    import.meta.env.MODE !== 'production'
+    import.meta.env.MODE !== 'production' || import.meta.env.DEV
       ? new URL(window.location.href).searchParams.get('customAddress') || accountFromWagmi.address
       : accountFromWagmi.address;
   return {
@@ -42,6 +42,8 @@ export const useAccount = () => {
     account,
   };
 };
+
+export const useWeb3 = useAccount;
 
 export const ethMethods = {
   requestAccount: 'eth_requestAccounts',

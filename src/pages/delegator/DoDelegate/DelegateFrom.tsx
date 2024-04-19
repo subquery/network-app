@@ -18,6 +18,7 @@ import {
   useGetIndexersLazyQuery,
   useGetIndexerStakesByIndexerAndEraQuery,
 } from '@subql/react-hooks';
+import { formatNumberWithLocale } from '@utils';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -243,12 +244,16 @@ export const DelegateForm: React.FC<FormProps> = ({
       },
       {
         label: t('delegate.remainingCapacity'),
-        value: indexerCapacityFromContract.loading ? <Spinner></Spinner> : ` ${formatEther(capacityMemo, 4)} ${TOKEN}`,
+        value: indexerCapacityFromContract.loading ? (
+          <Spinner></Spinner>
+        ) : (
+          ` ${formatNumberWithLocale(formatEther(capacityMemo, 4))} ${TOKEN}`
+        ),
         tooltip: t('delegate.remainingTooltip'),
       },
       {
         label: t('delegate.existingDelegation'),
-        value: ` ${delegatedAmountMemo} ${TOKEN}`,
+        value: ` ${formatNumberWithLocale(delegatedAmountMemo)} ${TOKEN}`,
         tooltip: t('delegate.existingDelegationTooltip'),
       },
       {

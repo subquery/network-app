@@ -7,6 +7,7 @@ import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router';
 import { useRouteQuery } from '@hooks';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { Typography } from '@subql/components';
+import { formatNumberWithLocale } from '@utils';
 import { Breadcrumb } from 'antd';
 import i18next from 'i18next';
 
@@ -40,12 +41,20 @@ const BalanceCards = () => {
       <div className={styles.balances}>
         <Card
           title={t('flexPlans.billBalance').toUpperCase()}
-          value={!balanceData && loadingBillingBalance ? '-' : `${formatEther(billBalance, 4)} ${TOKEN}`}
+          value={
+            !balanceData && loadingBillingBalance
+              ? '-'
+              : `${formatNumberWithLocale(formatEther(billBalance, 4))} ${TOKEN}`
+          }
           action={<BillingAction />}
         />
         <Card
           title={t('flexPlans.walletBalance')}
-          value={!loadingBillingBalance && loadingBalance ? '-' : `${formatEther(balanceData, 4)} ${TOKEN}`}
+          value={
+            !loadingBillingBalance && loadingBalance
+              ? '-'
+              : `${formatNumberWithLocale(formatEther(balanceData, 4))} ${TOKEN}`
+          }
         />
       </div>
     </div>

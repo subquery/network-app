@@ -42,7 +42,7 @@ import { TFunction } from 'i18next';
 
 import { PER_MILL } from 'src/const/const';
 
-import { formatSQT } from '../../utils/numberFormatters';
+import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
@@ -133,13 +133,15 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           <div className="col-flex">
             <Typography>
               <TokenAmount
-                value={BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4)}
+                value={formatNumberWithLocale(
+                  BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4),
+                )}
               />
             </Typography>
             <EstimatedNextEraLayout
-              value={`${
-                BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4)
-              } ${TOKEN}`}
+              value={`${formatNumberWithLocale(
+                BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4),
+              )} ${TOKEN}`}
             ></EstimatedNextEraLayout>
           </div>
         );
@@ -153,9 +155,9 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
         return (
           <div className="flex" style={{ gap: 10 }}>
             <div className="col-flex">
-              <Typography>{<TokenAmount value={val?.current || '0'} />}</Typography>
+              <Typography>{<TokenAmount value={formatNumberWithLocale(val?.current || '0')} />}</Typography>
               <EstimatedNextEraLayout
-                value={`${truncFormatEtherStr(val?.after || '0')} ${TOKEN}`}
+                value={`${formatNumberWithLocale(truncFormatEtherStr(val?.after || '0'))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
 
