@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
-import { NETWORK_NAME } from '@containers/Web3';
+import { NETWORK_NAME, useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
@@ -19,7 +19,6 @@ import { parseError, TOKEN } from '@utils';
 import { Button, Form, Radio } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';

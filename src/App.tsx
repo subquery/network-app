@@ -4,7 +4,7 @@
 import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
-import { useAccount } from 'wagmi';
+import { useAccount } from '@containers/Web3';
 
 import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';

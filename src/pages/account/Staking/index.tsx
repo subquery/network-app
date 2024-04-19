@@ -3,6 +3,7 @@
 
 import { FC, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { useAccount } from '@containers/Web3';
 import { useSortedIndexer } from '@hooks';
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { Spinner, Typography } from '@subql/components';
@@ -12,7 +13,6 @@ import { formatSQT } from '@utils';
 import { mergeAsync } from '@utils';
 import Link from 'antd/es/typography/Link';
 import BigNumberJs from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import Breakdown from './Breakdown';
 import styles from './index.module.less';

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { TableText } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
+import { useAccount } from '@containers/Web3';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
@@ -21,7 +22,6 @@ import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 

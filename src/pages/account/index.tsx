@@ -6,6 +6,7 @@ import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
 import { APYTooltip, WalletRoute } from '@components';
 import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
+import { useAccount } from '@containers/Web3';
 import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
@@ -27,7 +28,6 @@ import BigNumberJs from 'bignumber.js';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { BigNumber } from 'ethers';
 import { t } from 'i18next';
-import { useAccount } from 'wagmi';
 
 import { AccountHeader } from './AccountHeaders/Header';
 import styles from './Account.module.less';

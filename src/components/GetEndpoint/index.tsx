@@ -6,6 +6,7 @@ import { AiOutlineCopy } from 'react-icons/ai';
 import Copy from '@components/Copy';
 import CreateFlexPlan from '@components/CreateFlexPlan';
 import { WalletRoute } from '@components/WalletRoute';
+import { useAccount } from '@containers/Web3';
 import {
   GetUserApiKeys,
   IGetHostingPlans,
@@ -17,7 +18,6 @@ import { Modal, Typography } from '@subql/components';
 import { parseError } from '@utils';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
-import { useAccount } from 'wagmi';
 
 import styles from './index.module.less';
 

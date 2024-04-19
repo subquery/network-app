@@ -4,8 +4,8 @@
 import { useMemo } from 'react';
 import { CurEra } from '@components';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { useAccount } from '@containers/Web3';
 import { Typography } from '@subql/components';
-import { useAccount } from 'wagmi';
 
 import styles from './Headers.module.css';
 

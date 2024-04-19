@@ -4,13 +4,13 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { AppPageHeader, DeploymentMeta } from '@components';
 import DoBooster from '@components/DoBooster';
+import { useAccount } from '@containers/Web3';
 import { BalanceLayout } from '@pages/dashboard';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { formatSQT, useGetDeploymentBoosterProjectsAndTotalByConsumerQuery } from '@subql/react-hooks';
 import { cidToBytes32, formatNumber, notEmpty, TOKEN } from '@utils';
 import { Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
