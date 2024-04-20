@@ -8,6 +8,16 @@
   min-width: 220px;
 }
 
+@media (max-width: 768px) {
+  .container {
+    display: block;
+  }
+
+  .sidebar {
+    min-width: unset;
+  }
+}
+
 .mainContent {
   min-height: 85%;
   display: flex;
