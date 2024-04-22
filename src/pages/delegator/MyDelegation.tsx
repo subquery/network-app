@@ -488,7 +488,7 @@ export const MyDelegation: React.FC = () => {
 
   return (
     <>
-      <AppPageHeader title={t('delegate.delegating')} desc={t('delegate.delegationDesc')} />
+      <AppPageHeader title={'My Delegation'} desc={t('delegate.delegationDesc')} />
       <WalletRoute
         componentMode
         element={

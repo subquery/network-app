@@ -502,13 +502,15 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
-              {styleMode === 'normal' && values.input && `${values.input}` !== '0' && (
+              {styleMode === 'normal' && values.input && `${values.input}` !== '0' ? (
                 <div className="flex" style={{ marginBottom: 24 }}>
                   <Typography variant="medium">
                     Estimated delegation rewards after this changes: ~ {estimatedSQTAfterChange(values.input)} {TOKEN}{' '}
                     per Era
                   </Typography>
                 </div>
+              ) : (
+                ''
               )}
 
               <div className={clsx('flex', 'flex-end')}>
