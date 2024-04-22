@@ -9,7 +9,7 @@ import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { Spinner, Typography } from '@subql/components';
-import { IndexerFieldsFragment } from '@subql/network-query';
+import { IndexerFieldsFragment, IndexersOrderBy } from '@subql/network-query';
 import {
   formatSQT,
   useGetAllIndexerByApyQuery,
@@ -18,6 +18,7 @@ import {
   useGetIndexersLazyQuery,
   useGetIndexerStakesByIndexerAndEraQuery,
 } from '@subql/react-hooks';
+import { formatNumberWithLocale } from '@utils';
 import { limitQueue } from '@utils/limitation';
 import { Alert, Button, Divider, Select, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -243,12 +244,16 @@ export const DelegateForm: React.FC<FormProps> = ({
       },
       {
         label: t('delegate.remainingCapacity'),
-        value: indexerCapacityFromContract.loading ? <Spinner></Spinner> : ` ${formatEther(capacityMemo, 4)} ${TOKEN}`,
+        value: indexerCapacityFromContract.loading ? (
+          <Spinner></Spinner>
+        ) : (
+          ` ${formatNumberWithLocale(formatEther(capacityMemo, 4))} ${TOKEN}`
+        ),
         tooltip: t('delegate.remainingTooltip'),
       },
       {
         label: t('delegate.existingDelegation'),
-        value: ` ${delegatedAmountMemo} ${TOKEN}`,
+        value: ` ${formatNumberWithLocale(delegatedAmountMemo)} ${TOKEN}`,
         tooltip: t('delegate.existingDelegationTooltip'),
       },
       {
@@ -319,6 +324,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       const res = await getAllIndexersLazy({
         variables: {
           ...allIndexerPagination.current,
+          order: IndexersOrderBy.ERA_REWARDS_SUM_AMOUNT_DESC,
           filter: {
             active: { equalTo: true },
             id: {
@@ -328,10 +334,24 @@ export const DelegateForm: React.FC<FormProps> = ({
           },
         },
       });
-      const sortedRes =
+      const resFilterEmpty =
         mode === 'merge'
           ? [...allIndexers, ...(res.data?.indexers?.nodes.filter(notEmpty) || [])]
           : res.data?.indexers?.nodes.filter(notEmpty) || [];
+
+      const indexerMetadatas = resFilterEmpty.map((indexer) => {
+        return limitQueue.add(() => fetchMetadata(indexer.metadata));
+      });
+
+      const allMetadata = await Promise.allSettled(indexerMetadatas);
+      const sortedRes = resFilterEmpty.map((indexer, index) => {
+        const metadataInfo = allMetadata[index];
+        return {
+          ...indexer,
+          metadataInfo:
+            metadataInfo.status === 'fulfilled' ? metadataInfo.value : { name: indexer.id, url: '', image: '' },
+        };
+      });
       setAllIndexers(sortedRes);
       const options = sortedRes.map((item) => {
         return {
@@ -339,11 +359,11 @@ export const DelegateForm: React.FC<FormProps> = ({
             <AddressName
               curAccount={account || ''}
               address={item.id}
-              metadata={{ name: item.id, url: '', image: '' }}
+              metadata={item.metadataInfo || { name: item.id, url: '', image: '' }}
             />
           ),
           value: item.id,
-          name: item.id,
+          name: item?.metadataInfo?.name || item.id,
         };
       });
       setDelegationOptions(options);
@@ -497,13 +517,15 @@ export const DelegateForm: React.FC<FormProps> = ({
                 }}
               ></Alert>
 
-              {styleMode === 'normal' && values.input && `${values.input}` !== '0' && (
+              {styleMode === 'normal' && values.input && `${values.input}` !== '0' ? (
                 <div className="flex" style={{ marginBottom: 24 }}>
                   <Typography variant="medium">
                     Estimated delegation rewards after this changes: ~ {estimatedSQTAfterChange(values.input)} {TOKEN}{' '}
                     per Era
                   </Typography>
                 </div>
+              ) : (
+                ''
               )}
 
               <div className={clsx('flex', 'flex-end')}>

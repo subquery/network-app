@@ -42,7 +42,7 @@ export const AllIndexers: React.FC = () => {
               <EmptyList title={t('allIndexers.nonData')} description={t('allIndexers.desc')}></EmptyList>;
             }
 
-            return <IndexerList key="allInexer" totalCount={data.totalCount} era={data.era} />;
+            return <IndexerList key="allInexer" />;
           },
         },
       )}

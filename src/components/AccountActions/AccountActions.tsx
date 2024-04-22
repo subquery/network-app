@@ -15,7 +15,15 @@ import { useDisconnect, useWalletClient } from 'wagmi';
 import { BRIDGE_URL } from 'src/const/bridge';
 
 import { useSQToken } from '../../containers';
-import { formatEther, ROUTES, STABLE_TOKEN, STABLE_TOKEN_ADDRESS, TOKEN, tokenDecimals } from '../../utils';
+import {
+  formatEther,
+  formatNumberWithLocale,
+  ROUTES,
+  STABLE_TOKEN,
+  STABLE_TOKEN_ADDRESS,
+  TOKEN,
+  tokenDecimals,
+} from '../../utils';
 import styles from './AccountActions.module.less';
 
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
@@ -84,7 +92,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       </div>
                     ) : (
                       <Typography weight={600}>
-                        {formatEther(balance.result.data, 4)} {TOKEN}
+                        {formatNumberWithLocale(formatEther(balance.result.data, 4))} {TOKEN}
                       </Typography>
                     )}
                   </div>
@@ -112,7 +120,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       </div>
                     ) : (
                       <Typography weight={600}>
-                        {formatEther(ethSqtBalance.result.data, 4)} {TOKEN}
+                        {formatNumberWithLocale(formatEther(ethSqtBalance.result.data, 4))} {TOKEN}
                       </Typography>
                     )}
                   </div>
@@ -165,7 +173,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       </div>
                     ) : (
                       <Typography>
-                        {formatEther(consumerHostBalance.result.data?.balance, 4)} {TOKEN}
+                        {formatNumberWithLocale(formatEther(consumerHostBalance.result.data?.balance, 4))} {TOKEN}
                       </Typography>
                     )}
                   </div>

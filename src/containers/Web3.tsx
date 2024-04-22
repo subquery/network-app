@@ -5,7 +5,7 @@ import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
 import { base, baseSepolia } from 'viem/chains';
-import { mainnet, sepolia, useAccount } from 'wagmi';
+import { mainnet, sepolia, useAccount as useAccountWagmi } from 'wagmi';
 
 export const NETWORK_NAME: SQNetworks = import.meta.env.VITE_NETWORK;
 export const isMainnet = import.meta.env.VITE_NETWORK === 'mainnet';
@@ -30,12 +30,20 @@ export interface SupportedConnectorsReturn {
   icon?: string;
 }
 
-export const useWeb3 = () => {
-  const { address } = useAccount();
+export const useAccount = () => {
+  const accountFromWagmi = useAccountWagmi();
+  const account =
+    import.meta.env.MODE !== 'production' || import.meta.env.DEV
+      ? new URL(window.location.href).searchParams.get('customAddress') || accountFromWagmi.address
+      : accountFromWagmi.address;
   return {
-    account: address,
+    ...accountFromWagmi,
+    address: account,
+    account,
   };
 };
+
+export const useWeb3 = useAccount;
 
 export const ethMethods = {
   requestAccount: 'eth_requestAccounts',

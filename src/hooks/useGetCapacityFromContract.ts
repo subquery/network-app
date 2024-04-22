@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
-import { useAsyncMemo, useGetDelegationQuery, useGetIndexerQuery } from '@subql/react-hooks';
+import { useAsyncMemo, useGetIndexerQuery } from '@subql/react-hooks';
 import { BigNumber } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
+import { limitContract, makeCacheKey } from '../utils/limitation';
 import { useEra } from './useEra';
 import { parseRawEraValue } from './useEraValue';
 
@@ -15,7 +16,12 @@ export const useGetCapacityFromContract = (account?: string) => {
   const { currentEra } = useEra();
 
   const currentLeverageLimit = useAsyncMemo(async () => {
-    const leverageLimit = await contracts?.staking.indexerLeverageLimit();
+    if (!contracts) return 12;
+    const leverageLimit = await limitContract(
+      () => contracts.staking.indexerLeverageLimit(),
+      makeCacheKey('indexerLeverageLimit'),
+      0,
+    );
 
     return leverageLimit;
   }, []);
@@ -24,13 +30,6 @@ export const useGetCapacityFromContract = (account?: string) => {
     variables: {
       address: account || '',
     },
-    fetchPolicy: 'network-only',
-  });
-
-  const delegation = useGetDelegationQuery({
-    variables: {
-      id: `${account}:${account}`,
-    },
   });
 
   const sortedTotalStake = useMemo(() => {
@@ -38,10 +37,10 @@ export const useGetCapacityFromContract = (account?: string) => {
     return parseRawEraValue(indexerData.data?.indexer?.totalStake, currentEra.data?.index);
   }, [indexerData.data?.indexer?.totalStake, currentEra]);
   const sortedOwnStake = useMemo(() => {
-    if (!delegation.data?.delegation?.amount) return { current: BigNumber.from(0), after: BigNumber.from(0) };
+    if (!indexerData.data?.indexer?.selfStake) return { current: BigNumber.from(0), after: BigNumber.from(0) };
 
-    return parseRawEraValue(delegation.data?.delegation?.amount, currentEra.data?.index);
-  }, [delegation.data?.delegation?.amount, currentEra]);
+    return parseRawEraValue(indexerData.data?.indexer?.selfStake, currentEra.data?.index);
+  }, [indexerData.data?.indexer?.selfStake, currentEra]);
 
   const capacity = useMemo(() => {
     return {

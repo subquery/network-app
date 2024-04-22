@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { Copy } from '@components';
 import { proxyGateway, specialApiKeyName } from '@components/GetEndpoint';
 import { useProjectMetadata } from '@containers';
+import { useAccount } from '@containers/Web3';
 import { GetUserApiKeys, IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { isConsumerHostError } from '@hooks/useConsumerHostServices';
 import CreateHostingFlexPlan, {
@@ -19,7 +20,6 @@ import { formatSQT } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { Button, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import styles from './MyHostedPlan.module.less';
 

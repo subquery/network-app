@@ -52,9 +52,11 @@ export const toPercentage = (val: number, total: number, bigNumber = false) => {
 
 export const formatSQT = (val: string | bigint) => {
   const transVal = typeof val === 'bigint' ? val.toString() : val;
-  return BigNumberJs(transVal)
-    .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-    .toNumber();
+  return BigNumberJs(
+    BigNumberJs(transVal)
+      .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
+      .toFixed(6),
+  ).toNumber();
 };
 
 export function extractPercentage(value: string): number {
@@ -81,4 +83,17 @@ export function formatNumber(num: number | string, precision = 2) {
   }
 
   return num;
+}
+
+export function formatNumberWithLocale(num: number | string | BigNumberJs | BigNumberJs) {
+  const transform = BigNumberJs(num.toString()).toNumber();
+
+  if (isNaN(transform)) {
+    return '0';
+  }
+
+  return transform.toLocaleString(undefined, {
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
 }

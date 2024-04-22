@@ -25,4 +25,5 @@
   background-image: url('/static/check.png');
   background-repeat: no-repeat;
   background-position: right bottom;
+  position: relative;
 }
