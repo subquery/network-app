@@ -461,7 +461,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                 {!indexerDepolymentsData || indexerDepolymentsData.length === 0 ? (
                   <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
                 ) : (
-                  <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} />
+                  <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} pagination={false} />
                 )}
               </>
             );
