@@ -7,11 +7,12 @@ import { BsExclamationCircle } from 'react-icons/bs';
 import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
-import { ModalInput } from '@components';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput } from '@components';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther, TOKEN } from '@utils';
@@ -21,11 +22,21 @@ import assert from 'assert';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
+import { TFunction } from 'i18next';
 import { isString } from 'lodash-es';
 
 import { useWeb3Store } from 'src/stores';
 
 import { DelegateForm } from '../DoDelegate/DelegateFrom';
+
+const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | undefined, t: TFunction) => {
+  if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
+
+  return {
+    title: t('delegate.undelegate'),
+    steps: [t('delegate.undelegate'), t('indexer.confirmOnMetamask')],
+  };
+};
 
 interface DoUndelegateProps {
   indexerAddress: string;
@@ -48,6 +59,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
+  const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
@@ -98,22 +110,20 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
     return pendingTx;
   };
 
-  return renderAsync(mergeAsync(lockPeriod, delegation), {
+  return renderAsync(mergeAsync(rewardClaimStatus, lockPeriod, delegation), {
     error: (error) => {
       return '';
     },
     loading: () => <Spinner />,
     data: (data) => {
-      const [lock, targetDelegation] = data;
+      const [indexerRewards, lock, targetDelegation] = data;
+      const requireClaimIndexerRewards = !indexerRewards?.hasClaimedRewards;
       const availableBalance = formatEther(targetDelegation?.delegation?.amount?.valueAfter?.value ?? '0');
       const hasBalanceForNextEra = parseEther(availableBalance ?? '0').gt('0');
       const disabled = !hasBalanceForNextEra;
       const tooltip = !hasBalanceForNextEra ? t('delegate.nonToUndelegate') : '';
 
-      const modalText = {
-        title: t('delegate.undelegate'),
-        steps: [t('delegate.undelegate'), t('indexer.confirmOnMetamask')],
-      };
+      const modalText = getModalText(requireClaimIndexerRewards, lock, t);
       return (
         <TransactionModal
           variant={disabled ? 'disabledTextBtn' : variant}
@@ -138,6 +148,14 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
             onSuccess?.();
           }}
           renderContent={(onSubmit, onCancel, loading, error) => {
+            if (requireClaimIndexerRewards) {
+              return (
+                <ModalClaimIndexerRewards
+                  onSuccess={() => rewardClaimStatus.refetch()}
+                  indexer={indexerAddress ?? ''}
+                />
+              );
+            }
             const hours = dayjs
               .duration(+(lock || 0), 'seconds')
               .as('hours')
