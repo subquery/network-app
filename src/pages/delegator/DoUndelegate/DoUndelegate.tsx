@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
 import { ModalInput } from '@components';
 import TransactionModal from '@components/TransactionModal';
@@ -15,7 +16,7 @@ import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther, TOKEN } from '@utils';
 import { convertStringToNumber, mergeAsync, renderAsync } from '@utils';
-import { Alert, Divider, Radio, Tooltip } from 'antd';
+import { Alert, Divider, Tooltip } from 'antd';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
@@ -29,6 +30,7 @@ import { DelegateForm } from '../DoDelegate/DelegateFrom';
 interface DoUndelegateProps {
   indexerAddress: string;
   variant?: 'button' | 'textBtn';
+  initialUndelegateWay?: 'myWallet' | 'anotherIndexer';
   onSuccess?: () => void;
 }
 
@@ -37,7 +39,12 @@ interface DoUndelegateProps {
  * NOTE: USED Under Stake Tab and Delegator Tab(V2)
  * TODO: review once container upgrade from renovation
  */
-export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSuccess, variant = 'textBtn' }) => {
+export const DoUndelegate: React.FC<DoUndelegateProps> = ({
+  indexerAddress,
+  initialUndelegateWay = 'myWallet',
+  onSuccess,
+  variant = 'textBtn',
+}) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
@@ -62,7 +69,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
   );
   const { currentEra } = useEra();
 
-  const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>('myWallet');
+  const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>(initialUndelegateWay);
 
   const afterDelegatedAmount = React.useMemo(() => {
     let afterDelegatedAmount = '0';
@@ -116,7 +123,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
               ? []
               : [
                   {
-                    label: t('delegate.undelegate'),
+                    label: undelegateWay === 'myWallet' ? 'Undelegate to wallet' : 'Redelegate to other',
                     key: 'undelegate',
                     disabled,
                     tooltip,
@@ -137,52 +144,76 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({ indexerAddress, onSu
               .toPrecision(3);
             return (
               <div>
-                <Alert
-                  showIcon
-                  type="warning"
-                  style={{
-                    border: '1px solid #F87C4F80',
-                    background: '#F87C4F14',
-                    alignItems: 'flex-start',
-                  }}
-                  icon={<ExclamationCircleFilled style={{ color: 'var(--sq-warning)' }} />}
-                  message={
-                    <div
-                      className="col-flex"
+                {undelegateWay === 'myWallet' && (
+                  <>
+                    <Alert
+                      showIcon
+                      type="warning"
                       style={{
-                        gap: 16,
+                        border: '1px solid #F87C4F80',
+                        background: '#F87C4F14',
+                        alignItems: 'flex-start',
                       }}
-                    >
-                      <Typography>
-                        Tokens will be undelegated from next era. During the undelegation period the wont earn any
-                        rewards and will then be locked for {hours} hours before you can withdraw them.
-                      </Typography>
-                      <Typography>
-                        Note, you can instead{' '}
-                        <Typography.Link
-                          active
-                          style={{ textDecoration: 'underline' }}
-                          onClick={() => {
-                            setUndelegateWay('anotherIndexer');
+                      icon={<ExclamationCircleFilled style={{ color: 'var(--sq-warning)', marginTop: 4 }} />}
+                      message={
+                        <div
+                          className="col-flex"
+                          style={{
+                            gap: 16,
                           }}
                         >
-                          redelegate
-                        </Typography.Link>{' '}
-                        to another Node Operator without waiting for an undelegation period or missing out on rewards.
-                      </Typography>
-                    </div>
-                  }
-                ></Alert>
-                <Radio.Group
-                  value={undelegateWay}
-                  onChange={(e) => setUndelegateWay(e.target.value)}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
-                >
-                  <Radio value={'myWallet'}>Undelegate to my wallet ( with {hours}hr unlocking period )</Radio>
-                  <Radio value={'anotherIndexer'}>Redelegate to another Indexer (immediately at next era)</Radio>
-                </Radio.Group>
+                          <Typography>
+                            Tokens will be undelegated from next era. During the undelegation period the wont earn any
+                            rewards and will then be locked for {hours} hours before you can withdraw them.
+                          </Typography>
+                          <Typography>
+                            Note, you can instead{' '}
+                            <Typography.Link
+                              active
+                              style={{ textDecoration: 'underline' }}
+                              onClick={() => {
+                                setUndelegateWay('anotherIndexer');
+                              }}
+                            >
+                              redelegate
+                            </Typography.Link>{' '}
+                            to another Node Operator without waiting for an undelegation period or missing out on
+                            rewards.
+                          </Typography>
+                        </div>
+                      }
+                    ></Alert>
 
-                <Divider />
+                    <Divider />
+                  </>
+                )}
+
+                {undelegateWay === 'anotherIndexer' && (
+                  <Alert
+                    showIcon
+                    type="info"
+                    style={{
+                      border: '1px solid #3AA0FF80',
+                      background: '#3AA0FF14',
+                      alignItems: 'flex-start',
+                      marginBottom: 24,
+                    }}
+                    icon={<InfoCircleOutlined style={{ color: 'var(--sq-info)', marginTop: 4 }} />}
+                    message={
+                      <div
+                        className="col-flex"
+                        style={{
+                          gap: 16,
+                        }}
+                      >
+                        <Typography>
+                          Select the node operator you want to redelegate from the dropdown. The redelegation process is
+                          automatically applied at the end of the current Era, and you will not miss out on any rewards.
+                        </Typography>
+                      </div>
+                    }
+                  ></Alert>
+                )}
 
                 {undelegateWay === 'myWallet' && (
                   <div className="col-flex" style={{ gap: 8 }}>

@@ -59,7 +59,12 @@ export function currentEraValueToString(
 }
 
 export function parseRawEraValue(value: GraphQL_JSON, curEra: number | undefined): CurrentEraValue {
-  assert(isEraValue(value), `Value is not of type EraValue: ${JSON.stringify(value)}`);
+  if (!isEraValue(value)) {
+    return {
+      current: BigNumber.from(0),
+      after: BigNumber.from(0),
+    };
+  }
   const eraValue = convertRawEraValue(value);
 
   if (curEra && curEra > eraValue.era) {

@@ -9,11 +9,6 @@ import { useWeb3Store } from 'src/stores';
 import { AsyncData, convertBigNumberToNumber } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 
-/**
- * TODO: Fix the contracts not available issue when refresh on /lock path instead of push to there
- * - lockPeriod should fetch from contract
- * - lockPeriod unit: second
- */
 export const defaultLockPeriod = 7200;
 
 export function useLockPeriod(): AsyncData<number> {

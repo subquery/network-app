@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { gql, useLazyQuery } from '@apollo/client';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import {
   claimIndexerRewardsModalText,
   ModalApproveToken,
@@ -18,6 +18,7 @@ import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
@@ -25,6 +26,7 @@ import { IndexerFieldsFragment } from '@subql/network-query';
 import { useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
+import { Tooltip } from 'antd/lib';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
 import { TFunction } from 'i18next';
@@ -73,29 +75,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { stakingAllowance } = useSQToken();
   const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
+  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
 
-  // note why we don't use useGetIndexerLazy.
-  // In apollo-client, if two different query use same fragment, and the query result in the two query is different,
-  //  the two query result will both update.
-  //  so, when we have used useGetIndexers in this component's parent component,
-  //  if we use useGetIndexerLazy in here, the parent component will also update.
-  //  it's not a clear flow to do update.
-  //  explicitly update would be better.
-  const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
-    gql`
-      query GetIndexer($address: String!) {
-        indexer(id: $address) {
-          capacity
-        }
-      }
-    `,
-    {
-      variables: {
-        address: indexerAddress,
-      },
-      fetchPolicy: 'network-only',
-    },
-  );
   const [getDelegationLazy, delegationDataLazy] = useGetDelegationLazyQuery({
     variables: {
       id: `${account}:${indexerAddress}`,
@@ -127,17 +108,18 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
-    const fetchedCapacity = indexerDataLazy.data ? indexerDataLazy.data.indexer?.capacity : indexer?.capacity;
-    if (fetchedCapacity) {
-      const rawCapacity = parseRawEraValue(fetchedCapacity, currentEra.data?.index);
+    const fetchedCapacity = indexerCapacityFromContract.data;
 
-      indexerCapacity = rawCapacity.after ?? BigNumber.from(0);
+    if (fetchedCapacity) {
+      indexerCapacity = fetchedCapacity.after ?? BigNumber.from(0);
+    } else if (indexer?.capacity) {
+      indexerCapacity = BigNumber.from(parseRawEraValue(indexer.capacity, currentEra.data?.index).after ?? 0);
     }
 
     if (indexerCapacity.lt(0)) return BigNumber.from(0);
 
     return indexerCapacity;
-  }, [indexer, indexerDataLazy, currentEra]);
+  }, [indexer, indexerCapacityFromContract, currentEra]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
@@ -168,7 +150,19 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     data: (era) => {
       // if doesn't login will enter wallerRoute logical code process
       const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
-
+      const rightItem = () => {
+        if (fetchRequireClaimIndexerRewardsLoading) {
+          return <Spinner size={10} color="var(--sq-gray500)" />;
+        }
+        if (indexerCapacity.isZero()) {
+          return (
+            <Tooltip title="This node operator has reached its maximum delegation capacity. You are currently unable to delegate additional assets to this operator. Please consider redelegating your assets to another node operator to continue earning rewards">
+              <InfoCircleOutlined style={{ color: 'var(--sq-error)' }} />
+            </Tooltip>
+          );
+        }
+        return;
+      };
       return (
         <TransactionModal
           text={modalText}
@@ -176,17 +170,11 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
             {
               label: btnText || t('delegate.title'),
               key: 'delegate',
-              disabled: fetchRequireClaimIndexerRewardsLoading || isActionDisabled,
-              rightItem: fetchRequireClaimIndexerRewardsLoading ? (
-                <Spinner size={10} color="var(--sq-gray500)" />
-              ) : undefined,
+              disabled: indexerCapacity.isZero() || fetchRequireClaimIndexerRewardsLoading || isActionDisabled,
+              rightItem: rightItem(),
               onClick: async () => {
                 try {
                   setFetchRequireClaimIndexerRewardsLoading(true);
-
-                  if (!indexer) {
-                    await getIndexerLazy();
-                  }
 
                   if (!delegation) {
                     await getDelegationLazy();
@@ -203,7 +191,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           onSuccess={() => {
             retry(() => {
               getDelegationLazy();
-              getIndexerLazy();
             });
             balance.refetch();
             onSuccess?.();

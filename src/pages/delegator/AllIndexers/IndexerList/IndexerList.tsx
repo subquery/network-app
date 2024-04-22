@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsCollectionPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { APYTooltip, SearchInput } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
@@ -44,6 +45,7 @@ export const IndexerList: React.FC = () => {
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
   const [loadingList, setLoadingList] = React.useState<boolean>(false);
   const [indexerList, setIndexerList] = React.useState<IndexerWithApy[]>([]);
+  const [closeBannerTips, setCloseBannerTips] = React.useState<boolean>(false);
   const { getDisplayedCommission } = useMinCommissionRate();
 
   const delegations = useGetAllDelegationsQuery();
@@ -243,11 +245,21 @@ export const IndexerList: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.tipsBanner}>
+      <div
+        className={styles.tipsBanner}
+        style={{
+          display: closeBannerTips ? 'none' : 'flex',
+        }}
+      >
         <Typography variant="large" weight={600}>
           Receive rewards today as a Delegator
         </Typography>
-
+        <CloseOutlined
+          onClick={() => {
+            setCloseBannerTips(true);
+          }}
+          style={{ position: 'absolute', cursor: 'pointer', top: 20, right: 20 }}
+        />
         <Typography variant="medium" type="secondary" style={{ maxWidth: 888 }}>
           A Delegator is a non-technical network role in the SubQuery Network and is a great way to start participating
           in the SubQuery Network. This role enables Delegators to “delegate” their SQT to one or more Node Operator
