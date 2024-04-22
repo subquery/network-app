@@ -125,6 +125,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     assert(contracts, 'Contracts not available');
 
     const delegateAmount = parseEther(input.toString());
+
     if (delegator && delegator !== account) {
       return contracts.stakingManager.redelegate(delegator, indexerAddress, delegateAmount);
     }

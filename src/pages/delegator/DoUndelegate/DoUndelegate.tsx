@@ -63,12 +63,14 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
+
   const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
     gql`
       query GetIndexer($address: String!) {
         indexer(id: $address) {
           capacity
           metadata
+          active
         }
       }
     `,
@@ -138,7 +140,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
                     disabled,
                     tooltip,
                     onClick: async () => {
-                      getIndexerLazy();
+                      await getIndexerLazy();
                     },
                   },
                 ]
@@ -148,7 +150,8 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
             onSuccess?.();
           }}
           renderContent={(onSubmit, onCancel, loading, error) => {
-            if (requireClaimIndexerRewards) {
+            // if operator is not active, skip collect.
+            if (requireClaimIndexerRewards && indexerDataLazy.data?.indexer?.active === true) {
               return (
                 <ModalClaimIndexerRewards
                   onSuccess={() => rewardClaimStatus.refetch()}

@@ -235,7 +235,6 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       fixed: 'right',
       width: 100,
       render: (id: string, record) => {
-        console.warn(record.capacity.after);
         return (
           <div className="flex" style={{ gap: 8 }}>
             <Dropdown
