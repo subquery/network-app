@@ -16,6 +16,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
+
   if (transport.type === 'fallback') {
     return new providers.FallbackProvider(
       (transport.transports as ReturnType<HttpTransport>[]).map(
@@ -23,6 +24,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
       ),
     );
   }
+
   return new providers.JsonRpcProvider(transport.url, network);
 }
 
@@ -74,6 +76,7 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
         } catch (e) {
           return transport.request(request, ...rest);
         }
+
         return transport.request(request, ...rest);
       },
     },

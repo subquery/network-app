@@ -137,7 +137,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   }, [allocatedStake, runnerAllocation.result.data?.left]);
 
   const currentAllocatedTokensOfThisDeployment = useMemo(() => {
-    return formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount || '0');
+    return formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount || '0', {
+      fixedNum: 18,
+      toStringOrNumber: 'string',
+    });
   }, [allocatedStake.data]);
 
   const estimatedRewardsAfterInput = useMemo(() => {
@@ -156,9 +159,9 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
 
     return formatSQT(
       estimatedRewardsOneEra
-        .div(currentAllocatedTokensOfThisDeployment)
+        .div(currentAllocatedTokensOfThisDeployment === '0' ? 1 : currentAllocatedTokensOfThisDeployment)
         .multipliedBy(newAllcation)
-        .multipliedBy(percentageOfNewAllocation)
+        .multipliedBy(percentageOfNewAllocation.isFinite() ? percentageOfNewAllocation : 1)
         .toString(),
     );
   }, [estimatedRewardsOneEra, formAllocateVal, addOrRemove, totalAllocations, currentAllocatedTokensOfThisDeployment]);
@@ -182,7 +185,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       const res = await addOrRemoveFunc?.(
         cidToBytes32(deploymentId),
         account,
-        parseEther(BigNumber(form.getFieldValue('allocateVal')).toFixed()),
+        parseEther(BigNumber(form.getFieldValue('allocateVal')).toFixed(18, 1)),
       );
 
       await res?.wait();
