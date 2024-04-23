@@ -50,13 +50,25 @@ export const toPercentage = (val: number, total: number, bigNumber = false) => {
   return ((val / total) * 100).toFixed(2) + '%';
 };
 
-export const formatSQT = (val: string | bigint) => {
+export const formatSQT = (
+  val: string | bigint,
+  options: {
+    fixedNum: number;
+    toStringOrNumber: 'string' | 'number';
+  } = { fixedNum: 6, toStringOrNumber: 'number' },
+) => {
+  const { fixedNum = 6, toStringOrNumber = 'number' } = options;
   const transVal = typeof val === 'bigint' ? val.toString() : val;
-  return BigNumberJs(
+  const result = BigNumberJs(
     BigNumberJs(transVal)
       .div(10 ** tokenDecimals[SQT_TOKEN_ADDRESS])
-      .toFixed(6),
-  ).toNumber();
+      .toFixed(fixedNum, 1),
+  );
+
+  if (toStringOrNumber === 'string') {
+    return result.toString();
+  }
+  return result.toNumber();
 };
 
 export function extractPercentage(value: string): number {
