@@ -26,10 +26,10 @@ const supportedChains =
           ...base,
           rpcUrls: {
             default: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC, ...base.rpcUrls.default.http],
             },
             public: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC, ...base.rpcUrls.public.http],
             },
             fallback: {
               http: base.rpcUrls.default.http,
@@ -40,10 +40,10 @@ const supportedChains =
           ...mainnet,
           rpcUrls: {
             default: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, ...mainnet.rpcUrls.default.http],
             },
             public: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, ...mainnet.rpcUrls.public.http],
             },
             fallback: {
               http: mainnet.rpcUrls.default.http,
