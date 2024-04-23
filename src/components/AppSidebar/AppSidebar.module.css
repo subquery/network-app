@@ -20,3 +20,13 @@
   padding: 0 2rem;
   overflow: scroll;
 }
+
+@media (max-width: 768px) {
+  .container {
+    display: block;
+  }
+
+  .sidebar {
+    min-width: unset;
+  }
+}
