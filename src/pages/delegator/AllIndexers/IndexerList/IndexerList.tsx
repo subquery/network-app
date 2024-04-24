@@ -19,7 +19,7 @@ import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
-import { formatEther, formatNumberWithLocale, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
+import { formatEther, formatNumber, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -140,7 +140,7 @@ export const IndexerList: React.FC = () => {
         ),
         key: 'delegatorApy',
         dataIndex: 'delegatorApy',
-        width: '100px',
+        width: '150px',
         render: (value: string) => {
           return <Typography>{BigNumberJs(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
         },
@@ -149,15 +149,15 @@ export const IndexerList: React.FC = () => {
         title: <TableTitle title={t('indexer.delegated')} />,
         key: 'delegatedKey',
         dataIndex: 'delegated',
-        width: 100,
+        width: 130,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumberWithLocale(formatEther(value.current, 4))} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumberWithLocale(formatEther(value.after, 4))} ${TOKEN}`}
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
           );
@@ -167,15 +167,15 @@ export const IndexerList: React.FC = () => {
         title: <TableTitle title="Remaining capacity" />,
         key: 'capacityKey',
         dataIndex: 'capacity',
-        width: 100,
+        width: 150,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumberWithLocale(formatEther(value.current, 4))} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumberWithLocale(formatEther(value.after, 4))} ${TOKEN}`}
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
           );
@@ -185,15 +185,15 @@ export const IndexerList: React.FC = () => {
         title: <TableTitle title={t('indexer.ownStake')} />,
         key: 'ownStakeKey',
         dataIndex: 'ownStake',
-        width: 100,
+        width: 150,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumberWithLocale(formatEther(value.current, 4))} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumberWithLocale(formatEther(value.after, 4))} ${TOKEN}`}
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
           );
@@ -326,7 +326,6 @@ export const IndexerList: React.FC = () => {
           return `${record?.address}${record?.controller}${index}`;
         }}
         dataSource={orderedIndexerList}
-        scroll={{ x: 1600 }}
         loading={fetchedIndexers.loading || loadingList}
         pagination={{
           total: totalCounts,

@@ -7,7 +7,7 @@ import { Outlet } from 'react-router-dom';
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 
-const { INDEXERS, DELEGATING } = ROUTES;
+const { DELEGATOR_INDEXERS, DELEGATING } = ROUTES;
 
 const Delegator: React.FC = () => {
   const sidebarList = [
@@ -17,7 +17,7 @@ const Delegator: React.FC = () => {
     },
     {
       label: 'Node Operators',
-      link: INDEXERS,
+      link: DELEGATOR_INDEXERS,
     },
   ];
   return (

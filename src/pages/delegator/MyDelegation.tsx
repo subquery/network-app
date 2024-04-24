@@ -46,7 +46,7 @@ import { TFunction } from 'i18next';
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
 
-import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
+import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
@@ -138,13 +138,13 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           <div className="col-flex">
             <Typography>
               <TokenAmount
-                value={formatNumberWithLocale(
+                value={formatNumber(
                   BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4),
                 )}
               />
             </Typography>
             <EstimatedNextEraLayout
-              value={`${formatNumberWithLocale(
+              value={`${formatNumber(
                 BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4),
               )} ${TOKEN}`}
             ></EstimatedNextEraLayout>
@@ -160,9 +160,9 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
         return (
           <div className="flex" style={{ gap: 10 }}>
             <div className="col-flex">
-              <Typography>{<TokenAmount value={formatNumberWithLocale(val?.current || '0')} />}</Typography>
+              <Typography>{<TokenAmount value={formatNumber(val?.current || '0')} />}</Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumberWithLocale(truncFormatEtherStr(val?.after || '0'))} ${TOKEN}`}
+                value={`${formatNumber(truncFormatEtherStr(val?.after || '0'))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
 
@@ -513,6 +513,8 @@ export const MyDelegation: React.FC = () => {
           }
           return (
             <>
+              <DelegatingCard />
+
               <Typography className={styles.header} style={{ marginBottom: 16 }}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography>
@@ -531,7 +533,6 @@ export const MyDelegation: React.FC = () => {
         componentMode
         element={
           <>
-            <DelegatingCard />
             <DelegationList />
           </>
         }
