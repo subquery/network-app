@@ -225,6 +225,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               actionBtn={
                 <Typography
                   type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'secondary' : 'danger'}
+                  style={{ cursor: 'pointer' }}
                 >
                   Remove Allocation
                 </Typography>
