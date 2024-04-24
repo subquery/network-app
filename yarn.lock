@@ -4668,10 +4668,10 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/components@1.0.3-29":
-  version "1.0.3-29"
-  resolved "https://registry.npmjs.org/@subql/components/-/components-1.0.3-29.tgz#2af2e07baf43ab2da9c0fe7cba2d99c508a0bbf9"
-  integrity sha512-6HCOCgFTDaseXeAe9J59C/heYsJg0YSjgzsfzIHZO0mXlcMDsJ9dke+zr6Mbi3GvLfChm/Mmw5OCcur3pJ9yEA==
+"@subql/components@2.0.1-0":
+  version "2.0.1-0"
+  resolved "https://registry.npmjs.org/@subql/components/-/components-2.0.1-0.tgz#7322ad9d3d86919a0f986507c90a4cc774b1fb0d"
+  integrity sha512-/g9XxMJlM+WGoeW7JlM0rMiQBosbOFlS3Ldnc9WXIcvqJKblbktWUzQd3PLVRcb4A2NkJpKkrJgflUDnJ9NDag==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"

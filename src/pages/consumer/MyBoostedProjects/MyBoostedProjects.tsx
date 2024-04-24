@@ -187,7 +187,7 @@ const MyBoostedProjects: FC = () => {
                   <DoBooster
                     deploymentId={deploymentId}
                     projectId={record.projectId}
-                    actionBtn={<Typography.Link active>Add Boost</Typography.Link>}
+                    actionBtn={<Typography.Link type="info">Add Boost</Typography.Link>}
                     onSuccess={() =>
                       retry(() => {
                         boostedProjects.refetch();
@@ -197,7 +197,7 @@ const MyBoostedProjects: FC = () => {
                   <DoBooster
                     deploymentId={deploymentId}
                     projectId={record.projectId}
-                    actionBtn={<Typography type="danger">Remove Boost</Typography>}
+                    actionBtn={<Typography.Link type="danger">Remove Boost</Typography.Link>}
                     onSuccess={() =>
                       retry(() => {
                         boostedProjects.refetch();

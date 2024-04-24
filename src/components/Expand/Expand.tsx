@@ -59,7 +59,7 @@ const Expand: FC<IProps> = (props) => {
       {showExpandIcon && (
         <div style={{ display: 'flex', justifyContent: 'center', padding: 12 }}>
           <Typography.Link
-            active
+            type="info"
             onClick={() => {
               setExpanded(!expanded);
             }}

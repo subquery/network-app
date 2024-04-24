@@ -190,7 +190,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
                           <Typography>
                             Note, you can instead{' '}
                             <Typography.Link
-                              active
+                              type="info"
                               style={{ textDecoration: 'underline' }}
                               onClick={() => {
                                 setUndelegateWay('anotherIndexer');

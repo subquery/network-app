@@ -209,7 +209,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             <DoAllocate
               deploymentId={deployment.deploymentId}
               projectId={deployment.projectId}
-              actionBtn={<Typography.Link active>Add Allocation</Typography.Link>}
+              actionBtn={<Typography.Link type="info">Add Allocation</Typography.Link>}
               onSuccess={() => {
                 retry(() => {
                   indexerDeployments.refetch?.();
@@ -223,12 +223,12 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               projectId={deployment.projectId}
               disabled={deployment.allocatedAmount === '0' || !deployment.allocatedAmount}
               actionBtn={
-                <Typography
-                  type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'secondary' : 'danger'}
-                  style={{ cursor: 'pointer' }}
+                <Typography.Link
+                  type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'default' : 'danger'}
+                  disabled={deployment.allocatedAmount === '0' || !deployment.allocatedAmount}
                 >
                   Remove Allocation
-                </Typography>
+                </Typography.Link>
               }
               onSuccess={() => {
                 retry(() => {

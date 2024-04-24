@@ -223,7 +223,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           );
         }
         const tagColor = active ? 'success' : 'default';
-        const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
+        const tagText = active ? t('general.active') : t('general.inactive');
 
         return <Tag color={tagColor}>{tagText}</Tag>;
       },
