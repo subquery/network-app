@@ -40,6 +40,7 @@ const getModalText = (requireClaimIndexerRewards = false, lockPeriod: number | u
 
 interface DoUndelegateProps {
   indexerAddress: string;
+  showBtnIfDisabled?: boolean;
   variant?: 'button' | 'textBtn';
   initialUndelegateWay?: 'myWallet' | 'anotherIndexer';
   onSuccess?: () => void;
@@ -55,6 +56,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   initialUndelegateWay = 'myWallet',
   onSuccess,
   variant = 'textBtn',
+  showBtnIfDisabled = false,
 }) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
@@ -126,25 +128,25 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
       const tooltip = !hasBalanceForNextEra ? t('delegate.nonToUndelegate') : '';
 
       const modalText = getModalText(requireClaimIndexerRewards, lock, t);
+      const actions =
+        !disabled || showBtnIfDisabled
+          ? [
+              {
+                label: undelegateWay === 'myWallet' ? 'Undelegate to wallet' : 'Redelegate to other',
+                key: 'undelegate',
+                disabled,
+                tooltip,
+                onClick: async () => {
+                  await getIndexerLazy();
+                },
+              },
+            ]
+          : [];
       return (
         <TransactionModal
           variant={disabled ? 'disabledTextBtn' : variant}
           text={modalText}
-          actions={
-            disabled
-              ? []
-              : [
-                  {
-                    label: undelegateWay === 'myWallet' ? 'Undelegate to wallet' : 'Redelegate to other',
-                    key: 'undelegate',
-                    disabled,
-                    tooltip,
-                    onClick: async () => {
-                      await getIndexerLazy();
-                    },
-                  },
-                ]
-          }
+          actions={actions}
           onClick={handleClick}
           onSuccess={() => {
             onSuccess?.();

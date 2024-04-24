@@ -248,12 +248,17 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
                   },
                   {
                     label: (
-                      <DoUndelegate initialUndelegateWay="anotherIndexer" indexerAddress={id} onSuccess={onSuccess} />
+                      <DoUndelegate
+                        showBtnIfDisabled
+                        initialUndelegateWay="anotherIndexer"
+                        indexerAddress={id}
+                        onSuccess={onSuccess}
+                      />
                     ),
                     key: 'Redelegate',
                   },
                   {
-                    label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
+                    label: <DoUndelegate showBtnIfDisabled indexerAddress={id} onSuccess={onSuccess} />,
                     key: 'Undelegate',
                   },
                 ],
@@ -488,54 +493,45 @@ export const MyDelegation: React.FC = () => {
         ),
     mergeAsync(delegations, currentEra, delegationApys, delegationIndexerRewards, currentLeverageLimit),
   );
-  const DelegationList = () => (
-    <>
-      {renderAsync(delegationList, {
-        loading: () => <Spinner></Spinner>,
-        error: (e) => {
-          if (isRPCError(e)) {
-            return <RpcError></RpcError>;
-          }
-          return <Typography>{`Failed to load delegations: ${e.message}`}</Typography>;
-        },
-        data: (data) => {
-          if (!data || data.length === 0) {
-            return (
-              <EmptyList
-                title={t('delegate.nonDelegating')}
-                description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
-              >
-                <Button>
-                  <NavLink to={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</NavLink>
-                </Button>
-              </EmptyList>
-            );
-          }
-          return (
-            <>
-              <DelegatingCard />
-
-              <Typography className={styles.header} style={{ marginBottom: 16 }}>
-                {t('delegate.totalAmount', { count: data.length || 0 })}
-              </Typography>
-              <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
-            </>
-          );
-        },
-      })}
-    </>
-  );
 
   return (
     <>
       <AppPageHeader title={'My Delegation'} desc={t('delegate.delegationDesc')} />
       <WalletRoute
         componentMode
-        element={
-          <>
-            <DelegationList />
-          </>
-        }
+        element={renderAsync(delegationList, {
+          loading: () => <Spinner></Spinner>,
+          error: (e) => {
+            if (isRPCError(e)) {
+              return <RpcError></RpcError>;
+            }
+            return <Typography>{`Failed to load delegations: ${e.message}`}</Typography>;
+          },
+          data: (data) => {
+            if (!data || data.length === 0) {
+              return (
+                <EmptyList
+                  title={t('delegate.nonDelegating')}
+                  description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
+                >
+                  <Button>
+                    <NavLink to={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</NavLink>
+                  </Button>
+                </EmptyList>
+              );
+            }
+            return (
+              <>
+                <DelegatingCard />
+
+                <Typography className={styles.header} style={{ marginBottom: 16 }}>
+                  {t('delegate.totalAmount', { count: data.length || 0 })}
+                </Typography>
+                <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
+              </>
+            );
+          },
+        })}
       ></WalletRoute>
     </>
   );
