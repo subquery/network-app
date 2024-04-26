@@ -16,8 +16,31 @@ import { ProjectMetadata } from 'src/models';
 
 import styles from './ActiveCard.module.less';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
+export default function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
 export const ActiveCard = () => {
   const navigate = useNavigate();
+  const { width } = useWindowDimensions();
   const { getMetadataFromCid } = useProjectMetadata();
 
   const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
@@ -79,14 +102,14 @@ export const ActiveCard = () => {
             <NewCard
               title={
                 <div className="col-flex" style={{ position: 'relative', width: '100%' }}>
-                  <Typography variant="h5" weight={500}>
+                  <Typography variant="h5" weight={500} style={{ whiteSpace: 'pre-wrap' }}>
                     Decentralised RPCs and Indexed Datasets
                   </Typography>
-                  <Typography type="secondary" style={{ margin: '12px 0 8px 0' }}>
+                  <Typography type="secondary" style={{ margin: '12px 0 8px 0', whiteSpace: 'pre-wrap' }}>
                     Access decentralised data from across web3 in only a few minutes from any of our{' '}
                     {projects.projects?.totalCount} projects
                   </Typography>
-                  <div className={styles.images}>
+                  <div className={styles.images} style={{ flexWrap: 'wrap', gap: '1px' }}>
                     {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
                       <IPFSImage
                         key={project.id}
@@ -99,17 +122,19 @@ export const ActiveCard = () => {
                     ))}
                   </div>
 
-                  <Button
-                    style={{ position: 'absolute', right: 0, top: 0 }}
-                    shape="round"
-                    size="large"
-                    type="primary"
-                    onClick={() => {
-                      navigate(`/explorer`);
-                    }}
-                  >
-                    View Projects
-                  </Button>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Button
+                      style={width <= 768 ? { marginTop: '5px' } : { position: 'absolute', right: 0, top: 0 }}
+                      shape="round"
+                      size="large"
+                      type="primary"
+                      onClick={() => {
+                        navigate(`/explorer`);
+                      }}
+                    >
+                      View Projects
+                    </Button>
+                  </div>
                 </div>
               }
               style={{ marginTop: 24, marginBottom: 40, width: '100%' }}

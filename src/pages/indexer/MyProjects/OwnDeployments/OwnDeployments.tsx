@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
@@ -40,6 +41,29 @@ import { ROUTES } from '../../../../utils';
 import { formatEther } from '../../../../utils/numberFormatters';
 import styles from './OwnDeployments.module.css';
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 const { PROJECT_NAV } = ROUTES;
 
 interface Props {
@@ -51,6 +75,7 @@ interface Props {
 export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { width } = useWindowDimensions();
   const indexerDeployments = useSortedIndexerDeployments(indexer);
   const isIndexer = useIsIndexer(indexer);
   const sortedIndexer = useSortedIndexer(indexer || '');
@@ -304,7 +329,13 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             return (
               <>
                 {sortedDesc && <div className={styles.desc}>{sortedDesc}</div>}
-                <div style={{ display: 'flex', gap: 24 }}>
+                <div
+                  style={
+                    width <= 768
+                      ? { display: 'flex', gap: 1, flexWrap: 'wrap', width: '100%' }
+                      : { display: 'flex', gap: 24 }
+                  }
+                >
                   <SubqlCard
                     title={
                       <div style={{ width: '100%' }}>
@@ -367,7 +398,11 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                           ></div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: 53 }}>
+                        <div
+                          style={
+                            width <= 768 ? { display: 'flex', gap: 1, flexWrap: 'wrap' } : { display: 'flex', gap: 53 }
+                          }
+                        >
                           {[
                             {
                               name: 'Own Stake',
@@ -398,16 +433,28 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                             },
                           ].map((item) => {
                             return (
-                              <div style={{ display: 'flex', alignItems: 'baseline' }} key={item.name}>
-                                <div
-                                  style={{
-                                    width: '12px',
-                                    height: '12px',
-                                    borderRadius: 2,
-                                    background: item.color,
-                                  }}
-                                ></div>
-                                <Typography variant="medium" style={{ margin: '0 4px' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'baseline',
+                                  width: '100%',
+                                  justifyContent: 'space-between',
+                                }}
+                                key={item.name}
+                              >
+                                <Typography
+                                  variant="medium"
+                                  style={{ marginRight: 4, display: 'flex', alignItems: 'baseline' }}
+                                >
+                                  <div
+                                    style={{
+                                      width: '12px',
+                                      height: '12px',
+                                      borderRadius: 2,
+                                      background: item.color,
+                                      marginRight: 4,
+                                    }}
+                                  ></div>
                                   {item.name}
                                 </Typography>
                                 <div className="col-flex" style={{ alignItems: 'flex-end' }}>
@@ -431,7 +478,11 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                         </div>
                       </div>
                     }
-                    style={{ boxShadow: 'none', marginBottom: 24, flex: 1 }}
+                    style={
+                      width <= 768
+                        ? { boxShadow: 'none', marginBottom: 24, flex: 1, width: '100%' }
+                        : { boxShadow: 'none', marginBottom: 24, flex: 1 }
+                    }
                   ></SubqlCard>
 
                   <SubqlCard
@@ -464,7 +515,12 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                 {!indexerDepolymentsData || indexerDepolymentsData.length === 0 ? (
                   <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
                 ) : (
-                  <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} />
+                  <Table
+                    columns={columns}
+                    dataSource={sortedData}
+                    rowKey={'deploymentId'}
+                    scroll={width <= 768 ? { x: 1600 } : undefined}
+                  />
                 )}
               </>
             );

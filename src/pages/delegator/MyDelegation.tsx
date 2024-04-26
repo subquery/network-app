@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
@@ -46,6 +47,29 @@ import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
 
 const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
@@ -295,10 +319,16 @@ const DelegatingCard = () => {
     },
   });
 
+  const { width } = useWindowDimensions();
+
   return (
-    <div className="flex" style={{ margin: '24px 0' }}>
+    <div className="flex" style={width <= 768 ? { margin: '24px 0px', flexWrap: 'wrap' } : { margin: '24px 0' }}>
       <NewCard
-        style={{ marginRight: 24, minWidth: 364, height: 340 }}
+        style={
+          width <= 768
+            ? { marginRight: 24, minWidth: 364, height: 340, width: '100%' }
+            : { marginRight: 24, minWidth: 364, height: 340 }
+        }
         title="Current Delegation"
         tooltip="The total amount that you have delegated to Node Operators"
         titleExtra={BalanceLayout({
@@ -344,7 +374,7 @@ const DelegatingCard = () => {
       </NewCard>
 
       {
-        <div style={{ width: '100%' }}>
+        <div className="col-flex" style={width <= 768 ? { width: '100%', marginTop: 16 } : { width: '100%' }}>
           <RewardsLineChart
             account={account}
             title="My Delegation Rewards"
@@ -476,7 +506,7 @@ export const MyDelegation: React.FC = () => {
               <Typography className={styles.header} style={{ marginBottom: 16 }}>
                 {t('delegate.totalAmount', { count: data.length || 0 })}
               </Typography>
-              <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
+              <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} scroll={{ x: 1600 }} />
             </>
           );
         },

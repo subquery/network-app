@@ -9,10 +9,18 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 }
 
 .indexerSearch {
   width: 360px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .tipsBanner {

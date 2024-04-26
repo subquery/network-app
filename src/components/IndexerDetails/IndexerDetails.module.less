@@ -103,6 +103,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 }
 
 .searchInput {
@@ -149,7 +153,7 @@
       .ant-modal-footer {
         display: none;
       }
-  
+
       .ant-modal-close-x {
         color:#fff;
       }
