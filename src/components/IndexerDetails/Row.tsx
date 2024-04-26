@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { LazyQueryResult } from '@apollo/client';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { WalletRoute } from '@components/WalletRoute';
+import { useAccount } from '@containers/Web3';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
@@ -26,7 +27,6 @@ import assert from 'assert';
 import axios from 'axios';
 import clsx from 'clsx';
 import { t } from 'i18next';
-import { useAccount } from 'wagmi';
 
 import RpcPlaygroundIcon from 'src/images/rpcPlayground';
 import { useWeb3Store } from 'src/stores';

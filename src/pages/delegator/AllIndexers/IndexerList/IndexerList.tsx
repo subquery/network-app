@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsCollectionPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { APYTooltip, SearchInput } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
@@ -16,19 +17,13 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
-import { IndexerApySummariesOrderBy } from '@subql/network-query';
-import {
-  useGetAllDelegationsQuery,
-  useGetAllIndexerByApyLazyQuery,
-  useGetAllIndexerByApyQuery,
-} from '@subql/react-hooks';
-import { formatEther, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
+import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/network-query';
+import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
+import { formatEther, formatNumber, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
-import { useMount } from 'ahooks';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import BigNumberJs from 'bignumber.js';
-import pLimit from 'p-limit';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
@@ -36,18 +31,9 @@ import styles from './IndexerList.module.css';
 
 const { INDEXER } = ROUTES;
 
-interface props {
-  totalCount?: number;
-  era?: number;
-}
-
 type IndexerWithApy = Indexer & { indexerApy: string; delegatorApy: string; apyEra: number };
 
-const limit = pLimit(5);
-
-// TODO: `useGetIndexerQuery` has been used by DoDelegate
-// TODO: update indexer detail Page once ready
-export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
+export const IndexerList: React.FC = () => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
@@ -57,85 +43,38 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   };
   const [requestIndexers, fetchedIndexers] = useGetAllIndexerByApyLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
-  const [loadingList, setLoadingList] = React.useState<boolean>();
+  const [loadingList, setLoadingList] = React.useState<boolean>(false);
   const [indexerList, setIndexerList] = React.useState<IndexerWithApy[]>([]);
+  const [closeBannerTips, setCloseBannerTips] = React.useState<boolean>(false);
   const { getDisplayedCommission } = useMinCommissionRate();
 
   const delegations = useGetAllDelegationsQuery();
-  /**
-   * SearchInput logic
-   */
+
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
-  const sortedIndexer = useGetAllIndexerByApyQuery({
-    variables: {
-      offset: 0,
-      first: 100,
-      filter: {
-        indexer: {
-          id: {
-            equalTo: searchIndexer,
-          },
+
+  const onLoadMore = async (offset: number, filter?: IndexerApySummaryFilter) => {
+    try {
+      setLoadingList(true);
+      setIndexerList([]);
+      // TODO: if searched result may more than 1 page, need to add filter for pagination,
+      //       but now at most 1 result.
+      const res = await requestIndexers({
+        variables: {
+          offset,
+          first: 10,
+          orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
+          filter,
         },
-      },
-    },
-  });
+      });
 
-  const searchedIndexer = React.useMemo(
-    () => (sortedIndexer.data?.indexerApySummaries ? sortedIndexer.data?.indexerApySummaries.nodes : undefined),
-    [sortedIndexer],
-  );
-
-  const SearchAddress = () => (
-    <div className={styles.indexerSearch}>
-      <SearchInput
-        onSearch={(value: string) => setSearchIndexer(value)}
-        defaultValue={searchIndexer}
-        loading={sortedIndexer.loading}
-        emptyResult={!searchedIndexer}
-      />
-    </div>
-  );
-  const onLoadMore = (offset: number) => {
-    requestIndexers({
-      variables: {
-        offset,
-        first: 10,
-        orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
-      },
-    });
-  };
-  /**
-   * SearchInput logic end
-   */
-
-  /**
-   * Sort Indexers
-   */
-
-  const rawIndexerList = React.useMemo(
-    () => searchedIndexer ?? fetchedIndexers.data?.indexerApySummaries?.nodes ?? [],
-    [fetchedIndexers.data?.indexerApySummaries?.nodes, searchedIndexer],
-  );
-
-  const totalCounts = React.useMemo(() => {
-    return fetchedIndexers.data?.indexerApySummaries?.totalCount || totalCount;
-  }, [fetchedIndexers.data?.indexerApySummaries?.totalCount, totalCount]);
-
-  const getSortedIndexers = async () => {
-    if (rawIndexerList.length > 0) {
-      try {
-        setLoadingList(true);
-        setIndexerList([]);
-
-        // TODO: use batch fetch replace.
-        // note networkClient.getIndexer have more sideEffects.
+      const rawIndexerList = res.data?.indexerApySummaries?.nodes || [];
+      if (rawIndexerList.length > 0) {
         const sortedIndexers = await Promise.all(
           rawIndexerList.map((indexer) => {
-            return limit(() =>
-              networkClient?.getIndexer(indexer?.indexerId || '', undefined, indexer?.indexer || undefined),
-            );
+            return networkClient?.getIndexer(indexer?.indexerId || '', undefined, indexer?.indexer || undefined);
           }),
         );
+
         setIndexerList(
           sortedIndexers.filter(notEmpty).map((i) => {
             const findIndexerInfo = rawIndexerList.find((indexer) => indexer?.indexerId === i?.address);
@@ -148,15 +87,15 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
           }),
         );
         return sortedIndexers;
-      } finally {
-        setLoadingList(false);
       }
+    } finally {
+      setLoadingList(false);
     }
   };
 
-  React.useEffect(() => {
-    getSortedIndexers();
-  }, [networkClient, rawIndexerList]);
+  const totalCounts = React.useMemo(() => {
+    return fetchedIndexers.data?.indexerApySummaries?.totalCount;
+  }, [searchIndexer, fetchedIndexers.data?.indexerApySummaries?.totalCount]);
 
   const orderedIndexerList = React.useMemo(() => {
     const fillMinCommissionIndexerList = indexerList.map((i) => {
@@ -172,9 +111,6 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
   }, [account, indexerList]);
 
   const columns = useMemo(() => {
-    /**
-     * Sort Indexers logic end
-     */
     const getColumns = (): ColumnsType<IndexerWithApy> => [
       {
         title: <TableTitle title={t('indexer.nickname')} />,
@@ -204,7 +140,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         ),
         key: 'delegatorApy',
         dataIndex: 'delegatorApy',
-        width: '100px',
+        width: '150px',
         render: (value: string) => {
           return <Typography>{BigNumberJs(formatEther(value)).multipliedBy(100).toFixed(2)} %</Typography>;
         },
@@ -213,14 +149,16 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         title: <TableTitle title={t('indexer.delegated')} />,
         key: 'delegatedKey',
         dataIndex: 'delegated',
-        width: 100,
+        width: 130,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatEther(value.current, 4)} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
-              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+              <EstimatedNextEraLayout
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
+              ></EstimatedNextEraLayout>
             </div>
           );
         },
@@ -229,14 +167,16 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         title: <TableTitle title="Remaining capacity" />,
         key: 'capacityKey',
         dataIndex: 'capacity',
-        width: 100,
+        width: 150,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatEther(value.current, 4)} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
-              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+              <EstimatedNextEraLayout
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
+              ></EstimatedNextEraLayout>
             </div>
           );
         },
@@ -245,14 +185,16 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
         title: <TableTitle title={t('indexer.ownStake')} />,
         key: 'ownStakeKey',
         dataIndex: 'ownStake',
-        width: 100,
+        width: 150,
         render: (value: { current: string; after: string }) => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatEther(value.current, 4)} />
+                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
               </Typography>
-              <EstimatedNextEraLayout value={`${formatEther(value.after, 4)} ${TOKEN}`}></EstimatedNextEraLayout>
+              <EstimatedNextEraLayout
+                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
+              ></EstimatedNextEraLayout>
             </div>
           );
         },
@@ -293,24 +235,31 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       },
     ];
     return getColumns();
-  }, [account, era, pageStartIndex]);
-  const isLoading = React.useMemo(() => {
-    return (
-      !(orderedIndexerList?.length > 0) && (loadingList || sortedIndexer.loading || (totalCount && totalCount > 0))
-    );
-  }, [orderedIndexerList, loadingList, sortedIndexer.loading, totalCount]);
+  }, [account, pageStartIndex]);
 
-  useMount(() => {
-    onLoadMore(0);
-  });
+  React.useEffect(() => {
+    if (networkClient) {
+      onLoadMore(0);
+    }
+  }, [networkClient]);
 
   return (
     <div className={styles.container}>
-      <div className={styles.tipsBanner}>
+      <div
+        className={styles.tipsBanner}
+        style={{
+          display: closeBannerTips ? 'none' : 'flex',
+        }}
+      >
         <Typography variant="large" weight={600}>
           Receive rewards today as a Delegator
         </Typography>
-
+        <CloseOutlined
+          onClick={() => {
+            setCloseBannerTips(true);
+          }}
+          style={{ position: 'absolute', cursor: 'pointer', top: 20, right: 20 }}
+        />
         <Typography variant="medium" type="secondary" style={{ maxWidth: 888 }}>
           A Delegator is a non-technical network role in the SubQuery Network and is a great way to start participating
           in the SubQuery Network. This role enables Delegators to “delegate” their SQT to one or more Node Operator
@@ -345,9 +294,30 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
       </div>
       <div className={styles.indexerListHeader}>
         <Typography variant="h6" className={styles.title}>
-          {t('indexer.amount', { count: totalCount || fetchedIndexers.data?.indexerApySummaries?.totalCount || 0 })}
+          {t('indexer.amount', { count: fetchedIndexers.data?.indexerApySummaries?.totalCount || 0 })}
         </Typography>
-        <SearchAddress />
+        <div className={styles.indexerSearch}>
+          <SearchInput
+            onSearch={(value: string) => {
+              setSearchIndexer(value);
+              setPageStartIndex(1);
+              onLoadMore(
+                0,
+                value
+                  ? {
+                      indexer: {
+                        id: {
+                          equalTo: value,
+                        },
+                      },
+                    }
+                  : undefined,
+              );
+            }}
+            defaultValue={searchIndexer}
+            loading={fetchedIndexers.loading || loadingList}
+          />
+        </div>
       </div>
 
       <Table
@@ -356,8 +326,7 @@ export const IndexerList: React.FC<props> = ({ totalCount, era }) => {
           return `${record?.address}${record?.controller}${index}`;
         }}
         dataSource={orderedIndexerList}
-        scroll={{ x: 1600 }}
-        loading={!!isLoading}
+        loading={fetchedIndexers.loading || loadingList}
         pagination={{
           total: totalCounts,
           onChange: (page, pageSize) => {

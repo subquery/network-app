@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { assert } from '@polkadot/util';
 import { openNotification } from '@subql/components';
+import { formatNumberWithLocale } from '@utils';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
@@ -41,7 +42,9 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
       title: t('myFlexPlans.billing.withdrawToken'),
       steps: [t('myFlexPlans.billing.withdrawToken'), t('myFlexPlans.billing.confirmWithdraw')],
       inputTitle: t('myFlexPlans.billing.withdrawTitle'),
-      inputBottomText: `Current Billing balance: ${formatEther(sortedConsumerHostBalance, 4)} ${TOKEN}`,
+      inputBottomText: `Current Billing balance: ${formatNumberWithLocale(
+        formatEther(sortedConsumerHostBalance, 4),
+      )} ${TOKEN}`,
       submitText: t('myFlexPlans.billing.withdrawToken'),
       failureText: t('myFlexPlans.billing.failureWithdraw'),
       successText: t('myFlexPlans.billing.successWithdraw'),

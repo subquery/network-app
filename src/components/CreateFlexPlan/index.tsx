@@ -7,7 +7,7 @@ import { specialApiKeyName } from '@components/GetEndpoint';
 import { ApproveContract } from '@components/ModalApproveToken';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useSQToken } from '@containers';
-import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { SQT_TOKEN_ADDRESS, useAccount } from '@containers/Web3';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import {
   GetUserApiKeys,
@@ -26,7 +26,6 @@ import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 

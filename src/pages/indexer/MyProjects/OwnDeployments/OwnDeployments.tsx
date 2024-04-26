@@ -234,7 +234,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             <DoAllocate
               deploymentId={deployment.deploymentId}
               projectId={deployment.projectId}
-              actionBtn={<Typography.Link active>Add Allocation</Typography.Link>}
+              actionBtn={<Typography.Link type="info">Add Allocation</Typography.Link>}
               onSuccess={() => {
                 retry(() => {
                   indexerDeployments.refetch?.();
@@ -248,11 +248,12 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               projectId={deployment.projectId}
               disabled={deployment.allocatedAmount === '0' || !deployment.allocatedAmount}
               actionBtn={
-                <Typography
-                  type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'secondary' : 'danger'}
+                <Typography.Link
+                  type={deployment.allocatedAmount === '0' || !deployment.allocatedAmount ? 'default' : 'danger'}
+                  disabled={deployment.allocatedAmount === '0' || !deployment.allocatedAmount}
                 >
                   Remove Allocation
-                </Typography>
+                </Typography.Link>
               }
               onSuccess={() => {
                 retry(() => {
@@ -296,18 +297,15 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
-            const sortedData = indexerDepolymentsData
-              ?.sort((deployment) => (deployment.isOffline ? 1 : -1))
-              .map((i) => {
-                const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
-                  (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
-                );
-                return {
-                  ...i,
-                  deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
-                };
-              });
-
+            const sortedData = indexerDepolymentsData?.map((i) => {
+              const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
+                (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
+              );
+              return {
+                ...i,
+                deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
+              };
+            });
             const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
               .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))
               .plus(BigNumberJs(runnerAllocationData?.left || 0));
@@ -519,6 +517,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     columns={columns}
                     dataSource={sortedData}
                     rowKey={'deploymentId'}
+                    pagination={false}
                     scroll={width <= 768 ? { x: 1600 } : undefined}
                   />
                 )}

@@ -18,7 +18,7 @@ import { ProjectDetails } from 'src/models';
 import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
-import { parseError, renderAsync } from '../../../utils';
+import { renderAsync } from '../../../utils';
 import DeploymentsTab, { DeploymendRef } from './Deployments';
 import styles from './Project.module.less';
 
@@ -101,7 +101,7 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
           </Typography>
 
           <Typography.Link
-            active
+            type="info"
             weight={500}
             onClick={() => {
               form.resetFields();

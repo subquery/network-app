@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { Copy } from '@components';
 import { proxyGateway, specialApiKeyName } from '@components/GetEndpoint';
 import { useProjectMetadata } from '@containers';
+import { useAccount } from '@containers/Web3';
 import { GetUserApiKeys, IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { isConsumerHostError } from '@hooks/useConsumerHostServices';
 import CreateHostingFlexPlan, {
@@ -19,7 +20,6 @@ import { formatSQT } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
 import { Button, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import styles from './MyHostedPlan.module.less';
 
@@ -195,13 +195,9 @@ const MyHostedPlan: FC = () => {
                     type="text"
                     style={{
                       padding: '6px 10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      color: 'var(--sq-blue600)',
-                      fontSize: 16,
                       background: 'none',
                     }}
+                    className="flex-center"
                     onClick={async () => {
                       try {
                         setFetchConnectLoading(true);
@@ -216,11 +212,14 @@ const MyHostedPlan: FC = () => {
                       }
                     }}
                   >
-                    <LuArrowRightFromLine />
-                    Connect
+                    <Typography.Link type="info" className="flex-center" style={{ gap: 4 }}>
+                      <LuArrowRightFromLine />
+                      Connect
+                    </Typography.Link>
                   </Button>
-                  <Typography
-                    style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
+                  <Typography.Link
+                    type="info"
+                    style={{ padding: '6px 10px' }}
                     onClick={() => {
                       navigate(
                         `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
@@ -228,20 +227,21 @@ const MyHostedPlan: FC = () => {
                     }}
                   >
                     View Details
-                  </Typography>
-                  <Typography
-                    style={{ color: 'var(--sq-blue600)', padding: '6px 10px' }}
+                  </Typography.Link>
+                  <Typography.Link
+                    type="info"
+                    style={{ padding: '6px 10px' }}
                     onClick={() => {
                       setCurrentEditInfo(record);
                       ref.current?.showModal();
                     }}
                   >
                     {record.price === '0' ? 'Restart' : 'Update'}
-                  </Typography>
+                  </Typography.Link>
 
-                  <Typography
+                  <Typography.Link
+                    type={record.price === '0' ? 'default' : 'danger'}
                     style={{
-                      color: record.price === '0' ? 'var(--sq-gray400)' : 'var(--sq-error)',
                       padding: '6px 10px',
                     }}
                     onClick={async () => {
@@ -262,7 +262,7 @@ const MyHostedPlan: FC = () => {
                     }}
                   >
                     Stop
-                  </Typography>
+                  </Typography.Link>
                 </div>
               );
             },

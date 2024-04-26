@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
+import { gql, useQuery } from '@apollo/client';
 import Expand from '@components/Expand/Expand';
 import NewCard from '@components/NewCard';
 import { NETWORK_NAME } from '@containers/Web3';
@@ -54,6 +55,29 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic();
 
+  const deploymentId = React.useMemo(() => {
+    return query.get('deploymentId') || project.deploymentId;
+  }, [project, query]);
+
+  const totalDeploymentAllocation = useQuery(
+    gql`
+      query GetDeploymentAllocationSummary($deploymentId: String!) {
+        indexerAllocationSummaries(filter: { deploymentId: { equalTo: $deploymentId } }) {
+          aggregates {
+            sum {
+              totalAmount
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        deploymentId: deploymentId,
+      },
+    },
+  );
+
   const [accQueryRewards, setAccQueryRewards] = React.useState({
     current: BigNumber.from('0'),
     previous: BigNumber.from('0'),
@@ -63,10 +87,6 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     current: BigNumber.from('0'),
     previous: BigNumber.from('0'),
   });
-
-  const deploymentId = React.useMemo(() => {
-    return query.get('deploymentId') || project.deploymentId;
-  }, [project, query]);
 
   const currentBooster = React.useMemo(() => {
     return (
@@ -235,7 +255,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <Typography>
                   <img src="/static/booster.svg" alt="" style={{ marginRight: 10, marginTop: 4 }}></img>
-                  Boost
+                  Current Project Boost
                 </Typography>
                 <div style={{ flex: 1, paddingLeft: 32 }}>
                   {BalanceLayout({
@@ -264,7 +284,21 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           }
         >
           <div className="col-flex" style={{ gap: 16 }}>
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
+              <Typography variant="small" type="secondary">
+                Current Node Operator Stake
+              </Typography>
+              <Typography variant="small">
+                {formatNumber(
+                  formatSQT(
+                    totalDeploymentAllocation?.data?.indexerAllocationSummaries?.aggregates?.sum?.totalAmount || '0',
+                  ),
+                )}{' '}
+                {TOKEN}
+              </Typography>
+            </div>
+
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Boost Allocation Rewards
               </Typography>
@@ -278,7 +312,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Boost Query Rewards
               </Typography>
@@ -300,7 +334,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           })}
         >
           <div className="col-flex">
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Total {project.type === ProjectType.RPC ? 'RPC Providers' : 'Node Operators'}
               </Typography>
@@ -309,7 +343,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Total Active Agreements
               </Typography>
@@ -318,7 +352,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Total Agreements over all time
               </Typography>
@@ -327,7 +361,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex" style={{ justifyContent: 'space-between' }}>
+            <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Total Offers
               </Typography>

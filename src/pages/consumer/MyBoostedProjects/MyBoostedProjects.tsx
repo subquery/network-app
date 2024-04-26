@@ -4,13 +4,13 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { AppPageHeader, DeploymentMeta } from '@components';
 import DoBooster from '@components/DoBooster';
+import { useAccount } from '@containers/Web3';
 import { BalanceLayout } from '@pages/dashboard';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { formatSQT, useGetDeploymentBoosterProjectsAndTotalByConsumerQuery } from '@subql/react-hooks';
 import { cidToBytes32, formatNumber, notEmpty, TOKEN } from '@utils';
 import { Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -187,7 +187,7 @@ const MyBoostedProjects: FC = () => {
                   <DoBooster
                     deploymentId={deploymentId}
                     projectId={record.projectId}
-                    actionBtn={<Typography.Link active>Add Boost</Typography.Link>}
+                    actionBtn={<Typography.Link type="info">Add Boost</Typography.Link>}
                     onSuccess={() =>
                       retry(() => {
                         boostedProjects.refetch();
@@ -197,7 +197,7 @@ const MyBoostedProjects: FC = () => {
                   <DoBooster
                     deploymentId={deploymentId}
                     projectId={record.projectId}
-                    actionBtn={<Typography type="danger">Remove Boost</Typography>}
+                    actionBtn={<Typography.Link type="danger">Remove Boost</Typography.Link>}
                     onSuccess={() =>
                       retry(() => {
                         boostedProjects.refetch();

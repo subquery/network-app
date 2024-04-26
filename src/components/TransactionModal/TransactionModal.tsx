@@ -186,6 +186,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
             type: NotificationType.SUCCESS,
             title: 'Success',
             description: text.successText ?? t('status.changeValidIn15s'),
+            duration: 5,
           });
         } else {
           throw new Error(text.failureText);
@@ -195,6 +196,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
           type: NotificationType.ERROR,
           title: 'Failure',
           description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,
+          duration: 5,
         });
         setFailureModalText(parseError(error));
         if (rethrow) {
@@ -251,7 +253,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
                     await onClick?.();
                     handleBtnClick(key);
                   }}
-                  className={clsx(sortedStyle, buttonClassName)}
+                  className={clsx(sortedStyle, buttonClassName, styles.actionBtn)}
                   size="medium"
                   colorScheme="standard"
                   disabled={disabled || isLoading}

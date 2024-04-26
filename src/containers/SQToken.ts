@@ -4,11 +4,11 @@
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { limitContract } from '@utils/limitation';
 import assert from 'assert';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 
 import { createContainer } from './Container';
+import { useAccount } from './Web3';
 
 function useSQTokenImpl() {
   const { address: account } = useAccount();

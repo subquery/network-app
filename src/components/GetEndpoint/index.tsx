@@ -6,6 +6,7 @@ import { AiOutlineCopy } from 'react-icons/ai';
 import Copy from '@components/Copy';
 import CreateFlexPlan from '@components/CreateFlexPlan';
 import { WalletRoute } from '@components/WalletRoute';
+import { useAccount } from '@containers/Web3';
 import {
   GetUserApiKeys,
   IGetHostingPlans,
@@ -17,7 +18,6 @@ import { Modal, Typography } from '@subql/components';
 import { parseError } from '@utils';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
-import { useAccount } from 'wagmi';
 
 import styles from './index.module.less';
 
@@ -195,7 +195,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
             <Typography>This endpoint is rate limited to 5 req/s with a daily limit of 5,000 requests.</Typography>
             <Typography>
               By using this free public endpoint, you agree to our{' '}
-              <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" active>
+              <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" type="info">
                 terms of service.
               </Typography.Link>
             </Typography>

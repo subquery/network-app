@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
 import { NumberInput } from '@components/NumberInput';
-import { NETWORK_NAME } from '@containers/Web3';
+import { NETWORK_NAME, useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
@@ -19,7 +19,6 @@ import { parseError, TOKEN } from '@utils';
 import { Button, Form, Radio } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
-import { useAccount } from 'wagmi';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
@@ -48,7 +47,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const formAllocateVal = useWatch('allocateVal', form);
   const { contracts } = useWeb3Store();
   const [open, setOpen] = useState(false);
-  const [currentRewardsPerToken, setCurrentRewardsPerToken] = useState(BigNumber(0));
+  const [estimatedRewardsOneEra, setEstimatedRewardsOneEra] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
 
   const [fetchTotalDeploymentAllocation, totalDeploymentAllocation] = useLazyQuery(gql`
@@ -109,14 +108,16 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       blockTag: blockNumber - 1,
     });
 
-    const blocks = NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7;
-
     const currentWithRate = BigNumber(currentRewards?.toString() || '0')?.multipliedBy(
       allocationRewardsRate.result.data || '0',
     );
     const prevWithRate = BigNumber(prevRewards?.toString() || '0')?.multipliedBy(allocationRewardsRate.result.data);
 
-    setCurrentRewardsPerToken(currentWithRate?.minus(prevWithRate || '0').div(blocks));
+    setEstimatedRewardsOneEra(
+      currentWithRate
+        ?.minus(prevWithRate || '0')
+        .multipliedBy(NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7),
+    );
   };
 
   const currentBooster = React.useMemo(() => {
@@ -136,19 +137,14 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   }, [allocatedStake, runnerAllocation.result.data?.left]);
 
   const currentAllocatedTokensOfThisDeployment = useMemo(() => {
-    return formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount || '0');
+    return formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount || '0', {
+      fixedNum: 18,
+      toStringOrNumber: 'string',
+    });
   }, [allocatedStake.data]);
 
-  const estimatedRewardsPerTokenOneEra = useMemo(() => {
-    // 2s one block
-    // 7 days one era
-    return currentRewardsPerToken.multipliedBy(NETWORK_NAME === SQNetworks.TESTNET ? 1800 : 1800 * 24 * 7);
-  }, [currentRewardsPerToken]);
-
   const estimatedRewardsAfterInput = useMemo(() => {
-    // lack div all tokens
-    // to know all tokens that already allocated is not very easy.
-    if (estimatedRewardsPerTokenOneEra.eq(0) || !formAllocateVal) {
+    if (estimatedRewardsOneEra.eq(0) || !formAllocateVal) {
       return 'Unknown';
     }
 
@@ -157,23 +153,16 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
         .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
         .abs() || 0;
 
+    const percentageOfNewAllocation = newAllcation.div(
+      BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
+    );
+
     return formatSQT(
-      estimatedRewardsPerTokenOneEra
-        .multipliedBy(newAllcation)
-        .multipliedBy(
-          newAllcation.div(
-            BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
-          ),
-        )
+      estimatedRewardsOneEra
+        .multipliedBy(percentageOfNewAllocation.isFinite() ? percentageOfNewAllocation : 1)
         .toString(),
     );
-  }, [
-    estimatedRewardsPerTokenOneEra,
-    formAllocateVal,
-    addOrRemove,
-    totalAllocations,
-    currentAllocatedTokensOfThisDeployment,
-  ]);
+  }, [estimatedRewardsOneEra, formAllocateVal, addOrRemove, totalAllocations, currentAllocatedTokensOfThisDeployment]);
 
   const estimatedApyAfterInput = useMemo(() => {
     if (estimatedRewardsAfterInput === 'Unknown') return 'Unknown';
@@ -194,7 +183,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       const res = await addOrRemoveFunc?.(
         cidToBytes32(deploymentId),
         account,
-        parseEther(BigNumber(form.getFieldValue('allocateVal')).toFixed()),
+        parseEther(BigNumber(form.getFieldValue('allocateVal')).toFixed(18, 1)),
       );
 
       await res?.wait();

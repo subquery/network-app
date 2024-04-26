@@ -52,7 +52,7 @@ const translation = {
       'Select the source of the funds that you would like to delegate. This can be directly from your wallet, or by re-delegating tokens from an exisiting delegation.',
     delegateFromYourselfInfo: 'Once confirmed, your funds will be delegated to {{indexerName}} from the next era.',
     redelegateInfo:
-      'Once confirmed, your funds will be re-delegated from indexer {{reIndexerName}} to {{indexerName}} from the next era.',
+      'Once confirmed, your funds will be re-delegated from operator {{reIndexerName}} to {{indexerName}} from the next era.',
   },
 
   withdrawals: {

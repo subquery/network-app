@@ -8,6 +8,7 @@ import { ApproveContract } from '@components/ModalApproveToken';
 import { NumberInput } from '@components/NumberInput';
 import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken } from '@containers';
+import { useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
@@ -20,7 +21,6 @@ import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
-import { useAccount } from 'wagmi';
 
 import { useWeb3Store } from 'src/stores';
 

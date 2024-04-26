@@ -496,7 +496,7 @@ const BridgeInner: FC = () => {
                   SubQuery is providing a 100% rebate (a refund) of the gas fees that you incur bridging tokens from
                   Ethereum to Base. This means that these bridge actions will cost you nothing.{' '}
                   <Typography.Link
-                    active
+                    type="info"
                     href="https://blog.subquery.network/subquery-network-bridge-gas-rebate-program"
                   >
                     Read the terms and apply
