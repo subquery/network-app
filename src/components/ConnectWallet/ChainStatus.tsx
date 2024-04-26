@@ -50,7 +50,7 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
             <img src="/static/switch-network.png" alt="" width="80" height="80" />
             <Typography variant="h4">Switch to {tipName} network</Typography>
             <Typography style={{ textAlign: 'center' }}>
-              You need to be connected to the Base network to perform this action
+              You need to be connected to the {tipName} network to perform this action
             </Typography>
             <Button
               style={{ width: '100%' }}

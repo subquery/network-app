@@ -39,8 +39,8 @@ const CONSUMER = {
 
 const DELEGATOR = {
   DELEGATOR: 'delegator',
-  DELEGATING: 'delegating',
-  INDEXERS: 'indexers',
+  DELEGATING: 'my-delegation',
+  DELEGATOR_INDEXERS: 'node-operators',
   ALL_INDEXERS: 'all',
   TOP_INDEXERS: 'top',
 } as const;
@@ -97,7 +97,7 @@ const NAV_LINKS = {
   STUDIO_PROJECT_NAV: '/projects/project',
   STUDIO_CREATE_NAV: '/projects/create',
 
-  TOP_INDEXER_NAV: `/${DELEGATOR.DELEGATOR}/${DELEGATOR.INDEXERS}/top`,
+  TOP_INDEXER_NAV: `/${DELEGATOR.DELEGATOR}/${DELEGATOR.DELEGATOR_INDEXERS}/top`,
 
   PLAYGROUND_NAV: `/${CONSUMER.CONSUMER}/${CONSUMER.FLEX_PLANS}/${CONSUMER.PLAYGROUND}`,
   CLOSED_PLANS_NAV: `/${CONSUMER.CONSUMER}/${CONSUMER.FLEX_PLANS}/${CONSUMER.EXPIRED_PLANS}`,
@@ -214,13 +214,17 @@ export const routers: BasicRouteType[] = [
   {
     path: '/delegator',
     component: React.lazy(() => import('../pages/delegator/index')),
-    redirect: '/delegator/delegating',
+    redirect: '/delegator/my-delegation',
     children: [
-      { path: 'delegating', component: React.lazy(() => import('../pages/delegator/MyDelegation')) },
+      { path: 'my-delegation', component: React.lazy(() => import('../pages/delegator/MyDelegation')) },
+      { path: 'delegating', redirect: '/delegator/my-delegation' },
+      { path: 'indexers', redirect: '/delegator/node-operators/all' },
+      { path: 'indexers/all', redirect: '/delegator/node-operators/all' },
+      { path: 'indexers/top', redirect: '/delegator/node-operators/all' },
       {
-        path: 'indexers',
+        path: 'node-operators',
         component: React.lazy(() => import('../pages/delegator/Indexers')),
-        redirect: '/delegator/indexers/all',
+        redirect: '/delegator/node-operators/all',
         children: [{ path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) }],
       },
     ],

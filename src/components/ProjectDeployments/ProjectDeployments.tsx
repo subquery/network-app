@@ -141,7 +141,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             title: <TableTitle>{t('general.action')}</TableTitle>,
             render: (_, record) => (
               <Typography.Link
-                active
+                type="info"
                 onClick={() => {
                   setCurrentDeployment(record);
                   setDeploymentModal(true);

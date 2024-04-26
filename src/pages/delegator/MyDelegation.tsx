@@ -46,7 +46,7 @@ import { TFunction } from 'i18next';
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
 
-import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
+import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
@@ -138,13 +138,13 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           <div className="col-flex">
             <Typography>
               <TokenAmount
-                value={formatNumberWithLocale(
+                value={formatNumber(
                   BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4),
                 )}
               />
             </Typography>
             <EstimatedNextEraLayout
-              value={`${formatNumberWithLocale(
+              value={`${formatNumber(
                 BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4),
               )} ${TOKEN}`}
             ></EstimatedNextEraLayout>
@@ -160,9 +160,9 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
         return (
           <div className="flex" style={{ gap: 10 }}>
             <div className="col-flex">
-              <Typography>{<TokenAmount value={formatNumberWithLocale(val?.current || '0')} />}</Typography>
+              <Typography>{<TokenAmount value={formatNumber(val?.current || '0')} />}</Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumberWithLocale(truncFormatEtherStr(val?.after || '0'))} ${TOKEN}`}
+                value={`${formatNumber(truncFormatEtherStr(val?.after || '0'))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
 
@@ -223,7 +223,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           );
         }
         const tagColor = active ? 'success' : 'default';
-        const tagText = active ? t('general.active').toUpperCase() : t('general.inactive').toUpperCase();
+        const tagText = active ? t('general.active') : t('general.inactive');
 
         return <Tag color={tagColor}>{tagText}</Tag>;
       },
@@ -248,12 +248,17 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
                   },
                   {
                     label: (
-                      <DoUndelegate initialUndelegateWay="anotherIndexer" indexerAddress={id} onSuccess={onSuccess} />
+                      <DoUndelegate
+                        showBtnIfDisabled
+                        initialUndelegateWay="anotherIndexer"
+                        indexerAddress={id}
+                        onSuccess={onSuccess}
+                      />
                     ),
                     key: 'Redelegate',
                   },
                   {
-                    label: <DoUndelegate indexerAddress={id} onSuccess={onSuccess} />,
+                    label: <DoUndelegate showBtnIfDisabled indexerAddress={id} onSuccess={onSuccess} />,
                     key: 'Undelegate',
                   },
                 ],
@@ -488,53 +493,45 @@ export const MyDelegation: React.FC = () => {
         ),
     mergeAsync(delegations, currentEra, delegationApys, delegationIndexerRewards, currentLeverageLimit),
   );
-  const DelegationList = () => (
-    <>
-      {renderAsync(delegationList, {
-        loading: () => <Spinner></Spinner>,
-        error: (e) => {
-          if (isRPCError(e)) {
-            return <RpcError></RpcError>;
-          }
-          return <Typography>{`Failed to load delegations: ${e.message}`}</Typography>;
-        },
-        data: (data) => {
-          if (!data || data.length === 0) {
-            return (
-              <EmptyList
-                title={t('delegate.nonDelegating')}
-                description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
-              >
-                <Button>
-                  <NavLink to={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</NavLink>
-                </Button>
-              </EmptyList>
-            );
-          }
-          return (
-            <>
-              <Typography className={styles.header} style={{ marginBottom: 16 }}>
-                {t('delegate.totalAmount', { count: data.length || 0 })}
-              </Typography>
-              <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
-            </>
-          );
-        },
-      })}
-    </>
-  );
 
   return (
     <>
       <AppPageHeader title={'My Delegation'} desc={t('delegate.delegationDesc')} />
       <WalletRoute
         componentMode
-        element={
-          <>
-            <DelegatingCard />
-            <DelegationList />
-          </>
-        }
+        element={renderAsync(delegationList, {
+          loading: () => <Spinner></Spinner>,
+          error: (e) => {
+            if (isRPCError(e)) {
+              return <RpcError></RpcError>;
+            }
+            return <Typography>{`Failed to load delegations: ${e.message}`}</Typography>;
+          },
+          data: (data) => {
+            if (!data || data.length === 0) {
+              return (
+                <EmptyList
+                  title={t('delegate.nonDelegating')}
+                  description={[t('delegate.nonDelegatingDesc1'), t('delegate.nonDelegatingDesc2')]}
+                >
+                  <Button>
+                    <NavLink to={ROUTES.TOP_INDEXER_NAV}>{t('delegate.title')}</NavLink>
+                  </Button>
+                </EmptyList>
+              );
+            }
+            return (
+              <>
+                <DelegatingCard />
+
+                <Typography className={styles.header} style={{ marginBottom: 16 }}>
+                  {t('delegate.totalAmount', { count: data.length || 0 })}
+                </Typography>
+                <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
+              </>
+            );
+          },
+        })}
       ></WalletRoute>
     </>
   );

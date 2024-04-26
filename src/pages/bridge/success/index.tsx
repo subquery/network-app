@@ -17,11 +17,11 @@ const SwapSuccess: FC = () => {
         </Typography>
         <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
           Your bridge successfully completed. You can view it on{' '}
-          <Typography.Link active href="https://basescan.org/">
+          <Typography.Link type="info" href="https://basescan.org/">
             Basescan.
           </Typography.Link>{' '}
           and{' '}
-          <Typography.Link active href="https://etherscan.io/">
+          <Typography.Link type="info" href="https://etherscan.io/">
             Etherscan.
           </Typography.Link>
         </Typography>
@@ -29,7 +29,7 @@ const SwapSuccess: FC = () => {
         <Typography type="secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <BsLifePreserver />
           Need help? please
-          <Typography.Link active href="https://discord.com/invite/subquery">
+          <Typography.Link type="info" href="https://discord.com/invite/subquery">
             contact us
           </Typography.Link>
         </Typography>

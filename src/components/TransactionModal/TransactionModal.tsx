@@ -253,7 +253,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
                     await onClick?.();
                     handleBtnClick(key);
                   }}
-                  className={clsx(sortedStyle, buttonClassName)}
+                  className={clsx(sortedStyle, buttonClassName, styles.actionBtn)}
                   size="medium"
                   colorScheme="standard"
                   disabled={disabled || isLoading}

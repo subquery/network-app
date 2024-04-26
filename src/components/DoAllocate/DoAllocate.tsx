@@ -159,8 +159,6 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
 
     return formatSQT(
       estimatedRewardsOneEra
-        .div(currentAllocatedTokensOfThisDeployment === '0' ? 1 : currentAllocatedTokensOfThisDeployment)
-        .multipliedBy(newAllcation)
         .multipliedBy(percentageOfNewAllocation.isFinite() ? percentageOfNewAllocation : 1)
         .toString(),
     );

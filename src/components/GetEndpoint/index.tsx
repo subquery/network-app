@@ -195,7 +195,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
             <Typography>This endpoint is rate limited to 5 req/s with a daily limit of 5,000 requests.</Typography>
             <Typography>
               By using this free public endpoint, you agree to our{' '}
-              <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" active>
+              <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" type="info">
                 terms of service.
               </Typography.Link>
             </Typography>
