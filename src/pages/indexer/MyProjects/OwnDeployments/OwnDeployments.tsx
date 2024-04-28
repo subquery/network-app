@@ -21,6 +21,7 @@ import {
 } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { retry } from '@utils/retry';
+import { useSize } from 'ahooks';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
@@ -41,29 +42,6 @@ import { ROUTES } from '../../../../utils';
 import { formatEther } from '../../../../utils/numberFormatters';
 import styles from './OwnDeployments.module.css';
 
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowDimensions;
-}
-
 const { PROJECT_NAV } = ROUTES;
 
 interface Props {
@@ -75,7 +53,7 @@ interface Props {
 export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { width } = useWindowDimensions();
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const indexerDeployments = useSortedIndexerDeployments(indexer);
   const isIndexer = useIsIndexer(indexer);
   const sortedIndexer = useSortedIndexer(indexer || '');

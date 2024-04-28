@@ -103,10 +103,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
 }
 
 .searchInput {
@@ -203,5 +199,11 @@
     br ~ span {
       margin-left: 4px;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .indexerListHeader {
+    display: block;
   }
 }

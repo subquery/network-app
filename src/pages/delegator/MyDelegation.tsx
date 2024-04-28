@@ -37,6 +37,7 @@ import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, R
 import { formatNumber } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { retry } from '@utils/retry';
+import { useSize } from 'ahooks';
 import { Dropdown, Table, TableProps, Tag, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -51,29 +52,6 @@ import { formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
 import { DoUndelegate } from './DoUndelegate';
 import styles from './MyDelegation.module.css';
-
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowDimensions;
-}
 
 const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
@@ -344,7 +322,7 @@ const DelegatingCard = () => {
     },
   });
 
-  const { width } = useWindowDimensions();
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
 
   return (
     <div className="flex" style={width <= 768 ? { margin: '24px 0px', flexWrap: 'wrap' } : { margin: '24px 0' }}>

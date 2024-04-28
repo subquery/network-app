@@ -10,37 +10,16 @@ import { useProjectMetadata } from '@containers';
 import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, notEmpty } from '@utils';
+import { useSize } from 'ahooks';
 import { Button, Skeleton } from 'antd';
 
 import { ProjectMetadata } from 'src/models';
 
 import styles from './ActiveCard.module.less';
 
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
-
-export default function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowDimensions;
-}
 export const ActiveCard = () => {
   const navigate = useNavigate();
-  const { width } = useWindowDimensions();
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const { getMetadataFromCid } = useProjectMetadata();
 
   const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
