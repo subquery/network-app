@@ -324,13 +324,9 @@ const DelegatingCard = () => {
   const { width } = useSize(document.querySelector('body')) || { width: 0 };
 
   return (
-    <div className="flex" style={width <= 768 ? { margin: '24px 0px', flexWrap: 'wrap' } : { margin: '24px 0' }}>
+    <div className={`flex ${styles.delegationInfo}`}>
       <NewCard
-        style={
-          width <= 768
-            ? { marginRight: 24, minWidth: 364, height: 340, width: '100%' }
-            : { marginRight: 24, minWidth: 364, height: 340 }
-        }
+        className={styles.newCard}
         title="Current Delegation"
         tooltip="The total amount that you have delegated to Node Operators"
         titleExtra={BalanceLayout({
@@ -376,7 +372,7 @@ const DelegatingCard = () => {
       </NewCard>
 
       {
-        <div className="col-flex" style={width <= 768 ? { width: '100%', marginTop: 16 } : { width: '100%' }}>
+        <div className={`col-flex ${styles.rewardsLineChart}`}>
           <RewardsLineChart
             account={account}
             title="My Delegation Rewards"
@@ -399,7 +395,7 @@ export const MyDelegation: React.FC = () => {
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const { getDisplayedCommission } = useMinCommissionRate();
   const { contracts } = useWeb3Store();
-
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const currentLeverageLimit = useAsyncMemo(async () => {
     if (!contracts) return 12;
     const leverageLimit = await limitContract(
@@ -534,7 +530,12 @@ export const MyDelegation: React.FC = () => {
                 <Typography className={styles.header} style={{ marginBottom: 16 }}>
                   {t('delegate.totalAmount', { count: data.length || 0 })}
                 </Typography>
-                <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
+                <Table
+                  columns={getColumns(t)}
+                  dataSource={data}
+                  rowKey={'indexer'}
+                  scroll={width <= 768 ? { x: 1600 } : undefined}
+                />
               </>
             );
           },

@@ -304,13 +304,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             return (
               <>
                 {sortedDesc && <div className={styles.desc}>{sortedDesc}</div>}
-                <div
-                  style={
-                    width <= 768
-                      ? { display: 'flex', gap: 1, flexWrap: 'wrap', width: '100%' }
-                      : { display: 'flex', gap: 24 }
-                  }
-                >
+                <div className={styles.info}>
                   <SubqlCard
                     title={
                       <div style={{ width: '100%' }}>
@@ -373,11 +367,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                           ></div>
                         </div>
 
-                        <div
-                          style={
-                            width <= 768 ? { display: 'flex', gap: 1, flexWrap: 'wrap' } : { display: 'flex', gap: 53 }
-                          }
-                        >
+                        <div className={styles.stakeInfo}>
                           {[
                             {
                               name: 'Own Stake',
@@ -453,11 +443,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                         </div>
                       </div>
                     }
-                    style={
-                      width <= 768
-                        ? { boxShadow: 'none', marginBottom: 24, flex: 1, width: '100%' }
-                        : { boxShadow: 'none', marginBottom: 24, flex: 1 }
-                    }
+                    className={styles.totalStake}
                   ></SubqlCard>
 
                   <SubqlCard

@@ -10,7 +10,6 @@ import { useProjectMetadata } from '@containers';
 import { Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, notEmpty } from '@utils';
-import { useSize } from 'ahooks';
 import { Button, Skeleton } from 'antd';
 
 import { ProjectMetadata } from 'src/models';
@@ -19,7 +18,6 @@ import styles from './ActiveCard.module.less';
 
 export const ActiveCard = () => {
   const navigate = useNavigate();
-  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const { getMetadataFromCid } = useProjectMetadata();
 
   const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
@@ -103,7 +101,7 @@ export const ActiveCard = () => {
 
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Button
-                      style={width <= 768 ? { marginTop: '5px' } : { position: 'absolute', right: 0, top: 0 }}
+                      className={styles.explorer}
                       shape="round"
                       size="large"
                       type="primary"

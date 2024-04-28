@@ -5,6 +5,46 @@
 .desc {
   margin: 1rem 0 1rem -8px;
 }
+
 .progress {
   width: 100%;
+}
+
+.info {
+  display: flex;
+  gap: 24px;
+}
+
+.totalStake {
+  box-shadow: none;
+  margin-bottom: 24px;
+  flex: 1 1 0%;
+}
+
+.stakeInfo {
+  display: flex;
+  gap: 53px;
+}
+
+@media (max-width: 768px) {
+  .info {
+    display: flex;
+    gap: 1px;
+    flex-wrap: wrap;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .totalStake {
+    width: 100%;
+    box-shadow: none;
+    margin-bottom: 24px;
+    flex: 1 1 0%;
+  }
+
+  .stakeInfo {
+    display: flex;
+    gap: 1px;
+    flex-wrap: wrap;
+  }
 }
