@@ -23,7 +23,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
-import { useGetDelegationLazyQuery } from '@subql/react-hooks';
+import { mergeAsync, useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
 import { Tooltip } from 'antd/lib';
@@ -133,7 +133,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(currentEra, {
+  return renderAsync(mergeAsync(currentEra, indexerCapacityFromContract, stakingAllowance.result), {
     error: (error) => (
       <Typography>
         {`Error: Click to `}
@@ -148,7 +148,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       </Typography>
     ),
     loading: () => <Spinner />,
-    data: (era) => {
+    data: () => {
+      const era = currentEra.data;
       // if doesn't login will enter wallerRoute logical code process
       const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
       const rightItem = () => {
@@ -157,7 +158,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
         }
         if (indexerCapacity.isZero()) {
           return (
-            <Tooltip title="This node operator has reached its maximum delegation capacity. You are currently unable to delegate additional assets to this operator. Please consider redelegating your assets to another node operator to continue earning rewards">
+            <Tooltip title="This node operator has reached its maximum delegation capacity. You must wait for the Node Operator to increase their self stake, or for other Delegators to undelegate from this Node Operator">
               <InfoCircleOutlined style={{ color: 'var(--sq-error)' }} />
             </Tooltip>
           );

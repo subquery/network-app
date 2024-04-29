@@ -53,8 +53,8 @@ export const toPercentage = (val: number, total: number, bigNumber = false) => {
 export const formatSQT = (
   val: string | bigint,
   options: {
-    fixedNum: number;
-    toStringOrNumber: 'string' | 'number';
+    fixedNum?: number;
+    toStringOrNumber?: 'string' | 'number';
   } = { fixedNum: 6, toStringOrNumber: 'number' },
 ) => {
   const { fixedNum = 6, toStringOrNumber = 'number' } = options;
@@ -97,7 +97,7 @@ export function formatNumber(num: number | string, precision = 2) {
   return num;
 }
 
-export function formatNumberWithLocale(num: number | string | BigNumberJs | BigNumberJs) {
+export function formatNumberWithLocale(num: number | string | BigNumberJs | BigNumberJs, digits = 4) {
   const transform = BigNumberJs(num.toString()).toNumber();
 
   if (isNaN(transform)) {
@@ -105,7 +105,7 @@ export function formatNumberWithLocale(num: number | string | BigNumberJs | BigN
   }
 
   return transform.toLocaleString(undefined, {
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   });
 }

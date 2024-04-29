@@ -4,16 +4,17 @@
 import { TOKEN, truncFormatEtherStr } from '../../utils';
 import { TableText } from '../TableText';
 
-export const TokenAmount: React.FC<{ value: string | number | undefined; className?: string }> = ({
-  value,
-  className,
-}) => {
+export const TokenAmount: React.FC<{
+  value: string | number | undefined;
+  tooltip?: string;
+  className?: string;
+}> = ({ value, tooltip, className }) => {
   if (!value) return <TableText content={'-'} className={className} />;
 
   const truncatedValue = truncFormatEtherStr(value.toString());
 
   return (
-    <TableText tooltip={`${value} ${TOKEN}`} className={className}>
+    <TableText tooltip={tooltip || `${value} ${TOKEN}`} className={className}>
       {truncatedValue} {TOKEN}
     </TableText>
   );

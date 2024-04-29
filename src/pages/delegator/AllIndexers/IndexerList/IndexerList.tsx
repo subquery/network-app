@@ -19,7 +19,7 @@ import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/network-query';
 import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
-import { formatEther, formatNumber, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
+import { formatEther, formatNumber, formatNumberWithLocale, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -154,9 +154,13 @@ export const IndexerList: React.FC = () => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
+                <TokenAmount
+                  tooltip={`${formatNumberWithLocale(formatEther(value.current, 4))} ${TOKEN}`}
+                  value={formatNumber(formatEther(value.current, 4))}
+                />
               </Typography>
               <EstimatedNextEraLayout
+                valueTooltip={`${formatNumberWithLocale(formatEther(value.after, 4))} ${TOKEN}`}
                 value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
@@ -172,10 +176,22 @@ export const IndexerList: React.FC = () => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
+                <TokenAmount
+                  tooltip={`${formatNumberWithLocale(
+                    BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4),
+                  )} ${TOKEN}`}
+                  value={formatNumber(
+                    BigNumberJs(formatEther(value.current, 4)).isLessThan(0) ? 0 : formatEther(value.current, 4),
+                  )}
+                />
               </Typography>
               <EstimatedNextEraLayout
-                value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
+                valueTooltip={`${formatNumberWithLocale(
+                  BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4),
+                )} ${TOKEN}`}
+                value={`${formatNumber(
+                  BigNumberJs(formatEther(value.after, 4)).isLessThan(0) ? 0 : formatEther(value.after, 4),
+                )} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
           );
@@ -190,9 +206,13 @@ export const IndexerList: React.FC = () => {
           return (
             <div className="col-flex">
               <Typography>
-                <TokenAmount value={formatNumber(formatEther(value.current, 4))} />
+                <TokenAmount
+                  tooltip={`${formatNumberWithLocale(formatEther(value.current, 4))} ${TOKEN}`}
+                  value={formatNumber(formatEther(value.current, 4))}
+                />
               </Typography>
               <EstimatedNextEraLayout
+                valueTooltip={`${formatNumberWithLocale(formatEther(value.after, 4))} ${TOKEN}`}
                 value={`${formatNumber(formatEther(value.after, 4))} ${TOKEN}`}
               ></EstimatedNextEraLayout>
             </div>
