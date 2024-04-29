@@ -5,12 +5,14 @@ import { FC } from 'react';
 import { Typography } from '@subql/components';
 import { Tooltip } from 'antd';
 
-export const EstimatedNextEraLayout: FC<{ value: React.ReactNode; size?: 'normal' | 'small' }> = ({
-  value,
-  size = 'normal',
-}) => {
+export const EstimatedNextEraLayout: FC<{
+  value: React.ReactNode;
+  valueTooltip?: string;
+  tooltip?: string;
+  size?: 'normal' | 'small';
+}> = ({ value, valueTooltip, tooltip, size = 'normal' }) => {
   return (
-    <Tooltip title="Estimated for next Era">
+    <Tooltip title={tooltip || `Estimated for next Era ${valueTooltip ? `: ${valueTooltip}` : ''}`}>
       <Typography
         variant="small"
         type="secondary"
