@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { IPFSImage } from '@components';
-import NewCard from '@components/NewCard';
 import { useProjectMetadata } from '@containers';
-import { Typography } from '@subql/components';
+import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, notEmpty } from '@utils';
 import { Button, Skeleton } from 'antd';
@@ -76,17 +75,17 @@ export const ActiveCard = () => {
         ),
         data: (projects) => {
           return (
-            <NewCard
+            <SubqlCard
               title={
                 <div className="col-flex" style={{ position: 'relative', width: '100%' }}>
                   <Typography variant="h5" weight={500} style={{ whiteSpace: 'pre-wrap' }}>
                     Decentralised RPCs and Indexed Datasets
                   </Typography>
-                  <Typography type="secondary" style={{ margin: '12px 0 8px 0', whiteSpace: 'pre-wrap' }}>
+                  <Typography type="secondary" style={{ whiteSpace: 'pre-wrap' }}>
                     Access decentralised data from across web3 in only a few minutes from any of our{' '}
                     {projects.projects?.totalCount} projects
                   </Typography>
-                  <div className={styles.images} style={{ flexWrap: 'wrap', gap: '1px' }}>
+                  <div className={styles.images}>
                     {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
                       <IPFSImage
                         key={project.id}
@@ -99,9 +98,9 @@ export const ActiveCard = () => {
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div className="flex-center">
                     <Button
-                      className={styles.explorer}
+                      className={styles.explorerButton}
                       shape="round"
                       size="large"
                       type="primary"
@@ -115,7 +114,7 @@ export const ActiveCard = () => {
                 </div>
               }
               style={{ marginTop: 24, marginBottom: 40, width: '100%' }}
-            ></NewCard>
+            ></SubqlCard>
           );
         },
       })}

@@ -9,7 +9,6 @@ import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } 
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
@@ -20,7 +19,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Spinner, TableTitle, Typography } from '@subql/components';
+import { Spinner, SubqlCard, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
   useAsyncMemo,
@@ -321,11 +320,9 @@ const DelegatingCard = () => {
     },
   });
 
-  const { width } = useSize(document.querySelector('body')) || { width: 0 };
-
   return (
     <div className={`flex ${styles.delegationInfo}`}>
-      <NewCard
+      <SubqlCard
         className={styles.newCard}
         title="Current Delegation"
         tooltip="The total amount that you have delegated to Node Operators"
@@ -369,7 +366,7 @@ const DelegatingCard = () => {
             linkName="View Withdrawls"
           ></FormatCardLine>
         </div>
-      </NewCard>
+      </SubqlCard>
 
       {
         <div className={`col-flex ${styles.rewardsLineChart}`}>
