@@ -23,7 +23,7 @@ import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
-import { useGetDelegationLazyQuery } from '@subql/react-hooks';
+import { mergeAsync, useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
 import { Tooltip } from 'antd/lib';
@@ -133,7 +133,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(currentEra, {
+  return renderAsync(mergeAsync(currentEra, indexerCapacityFromContract, stakingAllowance.result), {
     error: (error) => (
       <Typography>
         {`Error: Click to `}
@@ -148,7 +148,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       </Typography>
     ),
     loading: () => <Spinner />,
-    data: (era) => {
+    data: () => {
+      const era = currentEra.data;
       // if doesn't login will enter wallerRoute logical code process
       const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
       const rightItem = () => {
