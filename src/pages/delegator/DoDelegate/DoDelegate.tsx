@@ -157,7 +157,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
         }
         if (indexerCapacity.isZero()) {
           return (
-            <Tooltip title="This node operator has reached its maximum delegation capacity. You are currently unable to delegate additional assets to this operator. Please consider redelegating your assets to another node operator to continue earning rewards">
+            <Tooltip title="This node operator has reached its maximum delegation capacity. You must wait for the Node Operator to increase their self stake, or for other Delegators to undelegate from this Node Operator">
               <InfoCircleOutlined style={{ color: 'var(--sq-error)' }} />
             </Tooltip>
           );
