@@ -6,3 +6,37 @@
 .doDelegate {
   margin: 1rem 0;
 }
+
+.rewardsLineChart {
+  width: 100%;
+}
+
+.delegationInfo {
+  margin: 24px 0px;
+}
+
+.newCard {
+  width: auto;
+  margin-right: 24px;
+  min-width: 364px;
+  height: 340px;
+}
+
+@media (max-width: 768px) {
+  .rewardsLineChart {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .delegationInfo {
+    margin: 24px 0px;
+    flex-wrap: wrap;
+  }
+
+  .newCard {
+    width: 100% !important;
+    min-width: 364px;
+    height: 340px;
+    margin-right: 0;
+  }
+}

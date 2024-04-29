@@ -20,6 +20,7 @@ import {
 } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
 import { retry } from '@utils/retry';
+import { useSize } from 'ahooks';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
@@ -51,6 +52,7 @@ interface Props {
 export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const indexerDeployments = useSortedIndexerDeployments(indexer);
   const isIndexer = useIsIndexer(indexer);
   const sortedIndexer = useSortedIndexer(indexer || '');
@@ -302,7 +304,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             return (
               <>
                 {sortedDesc && <div className={styles.desc}>{sortedDesc}</div>}
-                <div style={{ display: 'flex', gap: 24 }}>
+                <div className={styles.info}>
                   <SubqlCard
                     title={
                       <div style={{ width: '100%' }}>
@@ -365,7 +367,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                           ></div>
                         </div>
 
-                        <div style={{ display: 'flex', gap: 53 }}>
+                        <div className={styles.stakeInfo}>
                           {[
                             {
                               name: 'Own Stake',
@@ -396,16 +398,28 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                             },
                           ].map((item) => {
                             return (
-                              <div style={{ display: 'flex', alignItems: 'baseline' }} key={item.name}>
-                                <div
-                                  style={{
-                                    width: '12px',
-                                    height: '12px',
-                                    borderRadius: 2,
-                                    background: item.color,
-                                  }}
-                                ></div>
-                                <Typography variant="medium" style={{ margin: '0 4px' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'baseline',
+                                  width: '100%',
+                                  justifyContent: 'space-between',
+                                }}
+                                key={item.name}
+                              >
+                                <Typography
+                                  variant="medium"
+                                  style={{ marginRight: 4, display: 'flex', alignItems: 'baseline' }}
+                                >
+                                  <div
+                                    style={{
+                                      width: '12px',
+                                      height: '12px',
+                                      borderRadius: 2,
+                                      background: item.color,
+                                      marginRight: 4,
+                                    }}
+                                  ></div>
                                   {item.name}
                                 </Typography>
                                 <div className="col-flex" style={{ alignItems: 'flex-end' }}>
@@ -429,7 +443,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                         </div>
                       </div>
                     }
-                    style={{ boxShadow: 'none', marginBottom: 24, flex: 1 }}
+                    className={styles.totalStake}
                   ></SubqlCard>
 
                   <SubqlCard
@@ -462,7 +476,13 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                 {!indexerDepolymentsData || indexerDepolymentsData.length === 0 ? (
                   <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
                 ) : (
-                  <Table columns={columns} dataSource={sortedData} rowKey={'deploymentId'} pagination={false} />
+                  <Table
+                    columns={columns}
+                    dataSource={sortedData}
+                    rowKey={'deploymentId'}
+                    pagination={false}
+                    scroll={width <= 768 ? { x: 1600 } : undefined}
+                  />
                 )}
               </>
             );

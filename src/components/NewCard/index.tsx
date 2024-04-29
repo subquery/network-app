@@ -20,10 +20,10 @@ interface IProps {
 }
 
 // TODO: migrate to components
-const NewCard: FC<IProps> = (props) => {
+const NewCard: FC<IProps & { className?: string }> = (props) => {
   return (
     <Card
-      className={clsx(styles.newCard, !props.children ? styles.withoutBody : '')}
+      className={clsx(styles.newCard, !props.children ? styles.withoutBody : '', props.className)}
       title={
         <div className="col-flex">
           <div style={{ display: 'flex', alignItems: 'center' }}>

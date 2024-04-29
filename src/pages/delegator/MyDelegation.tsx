@@ -9,7 +9,6 @@ import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } 
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
@@ -20,7 +19,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Spinner, TableTitle, Typography } from '@subql/components';
+import { Spinner, SubqlCard, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
   useAsyncMemo,
@@ -36,6 +35,7 @@ import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, R
 import { formatNumber } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { retry } from '@utils/retry';
+import { useSize } from 'ahooks';
 import { Dropdown, Table, TableProps, Tag, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -321,9 +321,9 @@ const DelegatingCard = () => {
   });
 
   return (
-    <div className="flex" style={{ margin: '24px 0' }}>
-      <NewCard
-        style={{ marginRight: 24, minWidth: 364, height: 340 }}
+    <div className={`flex ${styles.delegationInfo}`}>
+      <SubqlCard
+        className={styles.newCard}
         title="Current Delegation"
         tooltip="The total amount that you have delegated to Node Operators"
         titleExtra={BalanceLayout({
@@ -366,10 +366,10 @@ const DelegatingCard = () => {
             linkName="View Withdrawls"
           ></FormatCardLine>
         </div>
-      </NewCard>
+      </SubqlCard>
 
       {
-        <div style={{ width: '100%' }}>
+        <div className={`col-flex ${styles.rewardsLineChart}`}>
           <RewardsLineChart
             account={account}
             title="My Delegation Rewards"
@@ -392,7 +392,7 @@ export const MyDelegation: React.FC = () => {
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const { getDisplayedCommission } = useMinCommissionRate();
   const { contracts } = useWeb3Store();
-
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const currentLeverageLimit = useAsyncMemo(async () => {
     if (!contracts) return 12;
     const leverageLimit = await limitContract(
@@ -527,7 +527,12 @@ export const MyDelegation: React.FC = () => {
                 <Typography className={styles.header} style={{ marginBottom: 16 }}>
                   {t('delegate.totalAmount', { count: data.length || 0 })}
                 </Typography>
-                <Table columns={getColumns(t)} dataSource={data} rowKey={'indexer'} />
+                <Table
+                  columns={getColumns(t)}
+                  dataSource={data}
+                  rowKey={'indexer'}
+                  scroll={width <= 768 ? { x: 1600 } : undefined}
+                />
               </>
             );
           },

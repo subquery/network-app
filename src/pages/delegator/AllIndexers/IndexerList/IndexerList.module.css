@@ -27,3 +27,13 @@
   background-position: right bottom;
   position: relative;
 }
+
+@media (max-width: 768px) {
+  .indexerListHeader {
+    display: block;
+  }
+
+  .indexerSearch {
+    width: 100%;
+  }
+}
