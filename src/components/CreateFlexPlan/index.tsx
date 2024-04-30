@@ -62,7 +62,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const [currentStep, setCurrentStep] = React.useState(0);
   const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
-  const [displayTransactions, setDisplayTransactions] = useState<string[]>([]);
+  const [displayTransactions, setDisplayTransactions] = useState<('allowance' | 'deposit' | 'createApiKey')[]>([]);
   const [transacitonNumbers, setTransactionNumbers] = useState<{ [key in string]: number }>({
     allowance: 1,
     deposit: 2,
@@ -359,6 +359,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       } else {
         setTransactionStep('createApiKey');
       }
+
+      // TODO: make a enum
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       setDisplayTransactions(newDisplayTransactions);
 
       setTransactionNumbers(
@@ -372,11 +376,20 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
     if (currentStep === 2) {
       setNextBtnLoading(true);
+      const getNextStepAndSet = (transactionName: 'allowance' | 'deposit' | 'createApiKeys') => {
+        const index = displayTransactions.findIndex((i) => i === transactionName) + 1;
+        if (index < displayTransactions.length) {
+          setTransactionStep(displayTransactions[index]);
+        }
+      };
       try {
         if (needAddAllowance) {
           setTransactionStep('allowance');
           await addAllowance(ApproveContract.ConsumerHost, parseEther(depositAmount?.toString() || '0').toString());
           await consumerHostAllowance.refetch();
+
+          getNextStepAndSet('allowance');
+          return;
         }
 
         if (needDepositMore) {
@@ -385,6 +398,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           await tx?.wait();
           await consumerHostBalance.refetch();
           depositForm.setFieldValue('amount', 0);
+          getNextStepAndSet('deposit');
+          return;
         }
 
         if (needCreateApiKey) {

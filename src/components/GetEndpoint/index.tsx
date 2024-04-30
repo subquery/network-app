@@ -16,7 +16,6 @@ import {
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Modal, Typography } from '@subql/components';
 import { parseError } from '@utils';
-import { useMount } from 'ahooks';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
 
