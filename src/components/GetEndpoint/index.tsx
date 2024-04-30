@@ -16,6 +16,7 @@ import {
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Modal, Typography } from '@subql/components';
 import { parseError } from '@utils';
+import { useMount } from 'ahooks';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
 
@@ -86,35 +87,37 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
     return 'Create Flex Plan';
   }, [freeOrFlexPlan, currentStep, createdHostingPlan]);
 
-  const fetchHostingPlanAndApiKeys = async () => {
+  const fetchHostingPlan = async () => {
     try {
       setNextBtnLoading(true);
       const hostingPlan = await getHostingPlanApi({
         account,
       });
+
       if (!isConsumerHostError(hostingPlan.data)) {
         setUserHostingPlan(hostingPlan.data);
 
         // no hosting plan then skip fetch api key,
         if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
           return {
-            hostingPlan: {
-              data: [],
-            },
-            apiKeys: {
-              data: [],
-            },
+            data: [],
           };
       } else {
         return {
-          hostingPlan: {
-            data: [],
-          },
-          apiKeys: {
-            data: [],
-          },
+          data: [],
         };
       }
+
+      return hostingPlan;
+    } finally {
+      setNextBtnLoading(false);
+    }
+  };
+
+  const fetchHostingPlanAndApiKeys = async () => {
+    try {
+      setNextBtnLoading(true);
+      const hostingPlan = await fetchHostingPlan();
 
       const apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
@@ -331,6 +334,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
             setFreeOrFlexPlan('flexPlan');
             await handleNextStep();
           }
+          await fetchHostingPlan();
           setOpen(true);
         }}
       >
