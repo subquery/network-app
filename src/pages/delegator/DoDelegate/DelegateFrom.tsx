@@ -8,10 +8,12 @@ import { useNavigate } from 'react-router';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
+import { useWeb3Name } from '@hooks/useSpaceId';
 import { Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment, IndexersOrderBy } from '@subql/network-query';
 import {
   formatSQT,
+  useAsyncMemo,
   useGetAllIndexerByApyQuery,
   useGetDelegationQuery,
   useGetDelegationsLazyQuery,
@@ -94,16 +96,18 @@ export const DelegateForm: React.FC<FormProps> = ({
   const navigate = useNavigate();
   const { account } = useWeb3();
   const fetchMetadata = useFetchMetadata();
-  const { indexerMetadata } = useIndexerMetadata(indexerAddress, {
+  const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress, {
     cid: indexerMetadataCid,
     immediate: true,
   });
+
   const indexerDeployments = useSortedIndexerDeployments(account ?? '');
   const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
 
   const [getAllIndexersLazy, rawAllIndexersInfo] = useGetIndexersLazyQuery();
+  const { fetchWeb3NameFromCache } = useWeb3Name();
 
   const [delegationOptions, setDelegationOptions] = React.useState<
     { label: React.ReactNode; value: string; name?: string }[]
@@ -113,6 +117,14 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [allIndexers, setAllIndexers] = React.useState<IndexerFieldsFragment[]>([]);
   const [formInitialValues, setFormInitialValues] = React.useState<DelegateFormData>({ input: 0, delegator: account });
   const allIndexerPagination = React.useRef({ offset: 0, first: 10, searchKeyword: '' });
+
+  const indexerMetadata = useAsyncMemo(async () => {
+    const web3Name = await fetchWeb3NameFromCache(indexerAddress);
+    return {
+      name: web3Name || indexerMetadataIpfs?.name || indexerAddress,
+    };
+  }, [indexerMetadataIpfs?.name, indexerAddress]);
+
   const indexerCapacityFromContract = useGetCapacityFromContract(
     styleMode === 'normal' ? indexerAddress : selectedOption?.value || indexerAddress,
   );
@@ -205,19 +217,19 @@ export const DelegateForm: React.FC<FormProps> = ({
   const alertInfoText = React.useMemo(() => {
     if (isYourself)
       return t('delegate.delegateFromYourselfInfo', {
-        indexerName: indexerMetadata.name,
+        indexerName: indexerMetadata.data?.name,
       });
     if (styleMode === 'normal') {
       return t('delegate.redelegateInfo', {
         reIndexerName: selectedOption?.name,
-        indexerName: indexerMetadata.name,
+        indexerName: indexerMetadata.data?.name,
       });
     }
     return t('delegate.redelegateInfo', {
-      reIndexerName: indexerMetadata.name,
+      reIndexerName: indexerMetadata.data?.name,
       indexerName: selectedOption?.name,
     });
-  }, [isYourself, styleMode, indexerMetadata.name, selectedOption?.name]);
+  }, [isYourself, styleMode, indexerMetadata.data?.name, selectedOption?.name]);
 
   const zeroCapacity = React.useMemo(() => {
     return BigNumberJs(capacityMemo.toString()).isZero();
@@ -291,7 +303,15 @@ export const DelegateForm: React.FC<FormProps> = ({
 
       const indexerMetadata = sortedDelegations.map((i) => {
         const cid = i?.indexer?.metadata;
-        return limitQueue.add(() => fetchMetadata(cid));
+        return limitQueue.add(async () => {
+          const metadata = await fetchMetadata(cid);
+          const web3Name = await fetchWeb3NameFromCache(i.indexerId);
+
+          return {
+            ...metadata,
+            name: web3Name || metadata.name || i.indexerId,
+          };
+        });
       });
 
       const allMetadata = await Promise.all(indexerMetadata);
@@ -340,7 +360,15 @@ export const DelegateForm: React.FC<FormProps> = ({
           : res.data?.indexers?.nodes.filter(notEmpty) || [];
 
       const indexerMetadatas = resFilterEmpty.map((indexer) => {
-        return limitQueue.add(() => fetchMetadata(indexer.metadata));
+        return limitQueue.add(async () => {
+          const metadata = await fetchMetadata(indexer.metadata);
+          const web3Name = await fetchWeb3NameFromCache(indexer.id);
+
+          return {
+            ...metadata,
+            name: web3Name || metadata.name || indexer.id,
+          };
+        });
       });
 
       const allMetadata = await Promise.allSettled(indexerMetadatas);

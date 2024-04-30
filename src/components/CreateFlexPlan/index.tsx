@@ -44,6 +44,7 @@ const converFlexPlanPrice = (price: string) => {
   return BigNumberJs(formatUnits(price, tokenDecimals[SQT_TOKEN_ADDRESS])).multipliedBy(1000);
 };
 
+// TODO: split the component to smaller components
 const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, prevApiKey, onSuccess, onBack }) => {
   const { address: account } = useAccount();
   const { contracts } = useWeb3Store();
@@ -61,6 +62,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const [currentStep, setCurrentStep] = React.useState(0);
   const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
+  const [displayTransactions, setDisplayTransactions] = useState(['allowance', 'deposit', 'createApiKey']);
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
@@ -120,8 +122,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const minDeposit = useMemo(() => {
     if (!estimatedChannelLimit.data) return 500;
-    return Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
-  }, [estimatedChannelLimit]);
+    const minimal = Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
+    const sortedMinial = BigNumberJs(minimal).minus(formatSQT(depositBalance?.toString() || '0'));
+    return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
+  }, [estimatedChannelLimit, depositBalance]);
 
   const estimatedPriceInfo = useMemo(() => {
     if (!flexPlans.data || flexPlans.data.length === 0) {
@@ -210,7 +214,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     return inputEstimated.toNumber().toLocaleString();
   }, [minDeposit, priceValue, maximumValue]);
 
-  const handleNextStep = async () => {
+  const handleNextStep = async (options?: { skipDeposit?: boolean }) => {
     if (currentStep === 0) {
       if (!selectedPlan) return;
       if (selectedPlan !== 'custom') {
@@ -225,7 +229,21 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     }
 
     if (currentStep === 1) {
-      await depositForm.validateFields();
+      const { skipDeposit = false } = options || {};
+      if (!skipDeposit) {
+        await depositForm.validateFields();
+      } else {
+        depositForm.resetFields();
+      }
+      const newDisplayTransactions = ['createApiKey'];
+      if (needAddAllowance) {
+        newDisplayTransactions.push('allowance');
+      }
+      if (depositForm.getFieldValue('amount') > 0) {
+        newDisplayTransactions.push('deposit');
+      }
+
+      setDisplayTransactions(newDisplayTransactions);
       setCurrentStep(2);
     }
 
@@ -527,7 +545,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           )}
         </div>
 
-        <Form layout="vertical" className={styles.createFlexPlanModal} form={depositForm}>
+        <Form
+          layout="vertical"
+          initialValues={{
+            amount: 0,
+          }}
+          className={styles.createFlexPlanModal}
+          form={depositForm}
+        >
           <Form.Item
             label={<Typography>Deposit amount</Typography>}
             name="amount"
@@ -581,35 +606,39 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             approve all transactions if in order to create a Flex Plan
           </Typography>
 
-          <div
-            className={clsx(styles.radioCard, !needAddAllowance ? styles.radioCardSelectedWithBackgroud : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Checkbox checked={!needAddAllowance}>
-                <Typography>Authorise Billing Permissions</Typography>
-              </Checkbox>
-              <Typography variant="medium" type="secondary">
-                This grants permission for SubQuery to manage your Billing Account automatically to pay node operators
-                for charges incurred in this new Flex Plan
-              </Typography>
+          {displayTransactions.includes('allowance') && (
+            <div
+              className={clsx(styles.radioCard, !needAddAllowance ? styles.radioCardSelectedWithBackgroud : '')}
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <div className="col-flex" style={{ gap: 8 }}>
+                <Checkbox checked={!needAddAllowance}>
+                  <Typography>Authorise Billing Permissions</Typography>
+                </Checkbox>
+                <Typography variant="medium" type="secondary">
+                  This grants permission for SubQuery to manage your Billing Account automatically to pay node operators
+                  for charges incurred in this new Flex Plan
+                </Typography>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div
-            className={clsx(styles.radioCard, !needDepositMore ? styles.radioCardSelectedWithBackgroud : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Checkbox checked={!needDepositMore}>
-                <Typography>Deposit Funds to Billing Account</Typography>
-              </Checkbox>
-              <Typography variant="medium" type="secondary">
-                This is a transaction to deposit {depositForm.getFieldsValue(true)['amount'] || '0'} SQT into your
-                personal Billing Account from your wallet balance.
-              </Typography>
+          {displayTransactions.includes('deposit') && (
+            <div
+              className={clsx(styles.radioCard, !needDepositMore ? styles.radioCardSelectedWithBackgroud : '')}
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <div className="col-flex" style={{ gap: 8 }}>
+                <Checkbox checked={!needDepositMore}>
+                  <Typography>Deposit Funds to Billing Account</Typography>
+                </Checkbox>
+                <Typography variant="medium" type="secondary">
+                  This is a transaction to deposit {depositForm.getFieldsValue(true)['amount'] || '0'} SQT into your
+                  personal Billing Account from your wallet balance.
+                </Typography>
+              </div>
             </div>
-          </div>
+          )}
 
           <div
             className={clsx(styles.radioCard, !needCreateApiKey ? styles.radioCardSelectedWithBackgroud : '')}
@@ -648,8 +677,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             shape="round"
             size="large"
             onClick={() => {
-              depositForm.resetFields();
-              setCurrentStep(2);
+              handleNextStep({
+                skipDeposit: true,
+              });
             }}
             style={{ marginRight: 12 }}
           >
@@ -660,7 +690,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           shape="round"
           size="large"
           type="primary"
-          onClick={handleNextStep}
+          onClick={() => handleNextStep()}
           loading={flexPlans.loading || nextBtnLoading}
         >
           {nextBtnText}

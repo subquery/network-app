@@ -74,12 +74,17 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const nextStepBtnText = useMemo(() => {
     if (currentStep === 'select') {
       if (freeOrFlexPlan === 'free') return 'View Free Public Endpoint';
-      if (freeOrFlexPlan === 'flexPlan') return 'Create Flex Plan';
+      if (freeOrFlexPlan === 'flexPlan') {
+        if (createdHostingPlan) {
+          return 'View Flex Plan Endpoint';
+        }
+        return 'Create Flex Plan';
+      }
     }
 
     if (currentStep === 'checkFree' || currentStep === 'checkEndpointWithApiKey') return 'Copy endpoint and Close';
     return 'Create Flex Plan';
-  }, [freeOrFlexPlan, currentStep]);
+  }, [freeOrFlexPlan, currentStep, createdHostingPlan]);
 
   const fetchHostingPlanAndApiKeys = async () => {
     try {
