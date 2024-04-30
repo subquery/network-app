@@ -35,7 +35,7 @@ import { APYTooltipContent, SummaryList } from '../../../components';
 import { Avatar, ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';
-import { useIndexerMetadata, useSortedIndexerDeployments } from '../../../hooks';
+import { useIndexerMetadata } from '../../../hooks';
 import { mapEraValue, parseRawEraValue, RawEraValue } from '../../../hooks/useEraValue';
 import { convertStringToNumber, formatEther, notEmpty, TOKEN } from '../../../utils';
 import { formatNumber } from '../../../utils/numberFormatters';
@@ -101,7 +101,6 @@ export const DelegateForm: React.FC<FormProps> = ({
     immediate: true,
   });
 
-  const indexerDeployments = useSortedIndexerDeployments(account ?? '');
   const [loadDelegations] = useGetDelegationsLazyQuery({
     variables: { delegator: account ?? '', offset: 0 },
   });
@@ -470,7 +469,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                     }
                   }}
                   className={clsx('fullWidth', styles.delegatorSelect)}
-                  loading={styleMode === 'reDelegate' ? rawAllIndexersInfo.loading : indexerDeployments.loading}
+                  loading={styleMode === 'reDelegate' ? rawAllIndexersInfo.loading : false}
                   size="large"
                   disabled={isSubmitting}
                   options={delegationOptions}

@@ -16,14 +16,15 @@ import TransactionModal from '@components/TransactionModal';
 import { idleText } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
-import { useEra } from '@hooks';
+import { useEra, useIndexerMetadata } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
-import { Spinner, Typography } from '@subql/components';
+import { useWeb3Name } from '@hooks/useSpaceId';
+import { openNotification, Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
-import { mergeAsync, useGetDelegationLazyQuery } from '@subql/react-hooks';
+import { mergeAsync, useAsyncMemo, useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { retry } from '@utils/retry';
 import { Tooltip } from 'antd/lib';
@@ -76,6 +77,15 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
   const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
+  const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
+  const { fetchWeb3NameFromCache } = useWeb3Name();
+
+  const indexerMetadata = useAsyncMemo(async () => {
+    const web3Name = await fetchWeb3NameFromCache(indexerAddress);
+    return {
+      name: web3Name || indexerMetadataIpfs?.name || indexerAddress,
+    };
+  }, [indexerMetadataIpfs?.name, indexerAddress]);
 
   const [getDelegationLazy, delegationDataLazy] = useGetDelegationLazyQuery({
     variables: {
@@ -167,6 +177,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       };
       return (
         <TransactionModal
+          showSuccessModal={false}
           text={modalText}
           actions={[
             {
@@ -190,11 +201,19 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
               },
             },
           ]}
-          onSuccess={() => {
+          onSuccess={(params: { input: number; delegator?: string }) => {
             retry(() => {
               getDelegationLazy();
             });
             balance.refetch();
+            openNotification({
+              type: 'success',
+              title: 'Success',
+              description: `You’ve successfully delegated ${params.input.toString() || '0'} SQT to ${
+                indexerMetadata?.data?.name || indexerAddress
+              }`,
+              duration: 5,
+            });
             onSuccess?.();
           }}
           onClick={handleClick}
