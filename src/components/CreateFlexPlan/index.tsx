@@ -212,11 +212,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     if (currentStep === 2) {
       if (!displayTransactions.length) return 'Create Flex Plan';
 
-      const currentStepNumber = transacitonNumbers[transactionStep || 'allowance'];
+      if (transactionStep) {
+        const currentStepNumber = transacitonNumbers[transactionStep];
 
-      return `Approve Transaction ${currentStepNumber}${
-        currentStepNumber === displayTransactions.length ? ' and Create Flex Plan' : ''
-      }`;
+        return `Approve Transaction ${currentStepNumber}${
+          currentStepNumber === displayTransactions.length ? ' and Create Flex Plan' : ''
+        }`;
+      }
 
       return 'Create Flex Plan';
     }
@@ -380,6 +382,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         const index = displayTransactions.findIndex((i) => i === transactionName) + 1;
         if (index < displayTransactions.length) {
           setTransactionStep(displayTransactions[index]);
+        } else {
+          setTransactionStep(undefined);
         }
       };
       try {
@@ -409,7 +413,6 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
           if (isConsumerHostError(checkApiKeys.data)) {
             throw new Error(checkApiKeys.data.error);
-            return;
           }
 
           if (!checkApiKeys.data?.find((i) => i.name === specialApiKeyName)) {
@@ -418,9 +421,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             });
             if (isConsumerHostError(apiKeyRes.data)) {
               throw new Error(apiKeyRes.data.error);
-              return;
             }
           }
+
+          getNextStepAndSet('createApiKeys');
         }
 
         try {
@@ -446,7 +450,6 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
         if (isConsumerHostError(res.data)) {
           throw new Error(res.data.error);
-          return;
         }
 
         await onSuccess?.();
