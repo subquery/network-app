@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useRef, useState } from 'react';
+import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
 import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
@@ -10,7 +11,7 @@ import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 import { isObject } from 'lodash-es';
-import { useAccount, useSignTypedData } from 'wagmi';
+import { useSignTypedData } from 'wagmi';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,

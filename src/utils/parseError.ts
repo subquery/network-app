@@ -206,8 +206,8 @@ export function parseError(
   };
 
   const msg =
-    mappingError() ??
     mapContractError() ??
+    mappingError() ??
     userDeniedSignature() ??
     exceedsBalance() ??
     insufficientAllowance() ??
