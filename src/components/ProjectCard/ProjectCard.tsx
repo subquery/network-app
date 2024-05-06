@@ -56,8 +56,6 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
           onClick();
         }
       }}
-      target="_blank"
-      rel="noreferrer"
     >
       <IPFSImage
         src={ipfsImage}

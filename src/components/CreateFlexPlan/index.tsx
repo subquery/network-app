@@ -401,9 +401,16 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           const tx = await contracts?.consumerHost.deposit(parseEther(depositAmount?.toString() || '0'), true);
           await tx?.wait();
           await consumerHostBalance.refetch();
+          await consumerHostAllowance.refetch();
+
           depositForm.setFieldValue('amount', 0);
           getNextStepAndSet('deposit');
-          return;
+
+          const currentStepNumber = transacitonNumbers['deposit'];
+
+          if (currentStepNumber !== displayTransactions.length) {
+            return;
+          }
         }
 
         if (needCreateApiKey) {
@@ -747,10 +754,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
       {currentStep === 2 && (
         <>
-          <Typography>
-            You must now approve a few transactions using your connected wallet to initiate this Flex Plan. You must
-            approve all transactions if in order to create a Flex Plan
-          </Typography>
+          {displayTransactions.length ? (
+            <Typography>
+              You must now approve {displayTransactions.length > 1 ? 'a few transactions' : 'a transaction'} using your
+              connected wallet to initiate this Flex Plan. You must approve all transactions if in order to create a
+              Flex Plan
+            </Typography>
+          ) : (
+            ''
+          )}
 
           <Typography>
             Flex plans incur a small fee of 1% of SQT to maintain and manage state channels with each Node Operator.
