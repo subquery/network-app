@@ -193,8 +193,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [depositBalance, priceValue, form, currentStep]);
 
   const needAddAllowance = useMemo(() => {
-    if (consumerHostAllowance.result.data?.eq(0) && depositAmount && depositAmount !== 0) return true;
-    return BigNumberJs(formatSQT(consumerHostAllowance.result.data?.toString() || '0'))?.lt(depositAmount || 0);
+    const allowance = consumerHostAllowance.result.data;
+    if (allowance?.eq(0) && depositAmount && depositAmount !== 0) return true;
+    return BigNumberJs(formatSQT(allowance?.toString() || '0'))?.lt(depositAmount || 0);
   }, [depositAmount, consumerHostAllowance.result.data]);
 
   const needDepositMore = useMemo(() => {
@@ -345,7 +346,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
       // make sure use this order.
       const newDisplayTransactions = [];
-      if (needAddAllowance) {
+      if (needAddAllowance && !skipDeposit) {
         newDisplayTransactions.push('allowance');
       }
       if (depositForm.getFieldValue('amount') > 0) {
