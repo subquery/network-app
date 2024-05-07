@@ -44,6 +44,7 @@ const converFlexPlanPrice = (price: string) => {
   return BigNumberJs(formatUnits(price, tokenDecimals[SQT_TOKEN_ADDRESS])).multipliedBy(1000);
 };
 
+// TODO: split the component to smaller components
 const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, prevApiKey, onSuccess, onBack }) => {
   const { address: account } = useAccount();
   const { contracts } = useWeb3Store();
@@ -61,6 +62,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const [currentStep, setCurrentStep] = React.useState(0);
   const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
+  const [displayTransactions, setDisplayTransactions] = useState<('allowance' | 'deposit' | 'createApiKey')[]>([]);
+  const [transacitonNumbers, setTransactionNumbers] = useState<{ [key in string]: number }>({
+    allowance: 1,
+    deposit: 2,
+    createApiKey: 3,
+  });
+  const [transactionStep, setTransactionStep] = useState<'allowance' | 'deposit' | 'createApiKey' | undefined>(
+    'allowance',
+  );
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
@@ -120,8 +130,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const minDeposit = useMemo(() => {
     if (!estimatedChannelLimit.data) return 500;
-    return Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
-  }, [estimatedChannelLimit]);
+    const minimal = Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
+    const sortedMinial = BigNumberJs(minimal).minus(formatSQT(depositBalance?.toString() || '0'));
+    return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
+  }, [estimatedChannelLimit, depositBalance]);
 
   const estimatedPriceInfo = useMemo(() => {
     if (!flexPlans.data || flexPlans.data.length === 0) {
@@ -180,18 +192,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       ?.toLocaleString();
   }, [depositBalance, priceValue, form, currentStep]);
 
-  const nextBtnText = useMemo(() => {
-    if (currentStep === 0) return 'Next';
-
-    if (currentStep === 1) return 'Deposit SQT';
-
-    if (currentStep === 2) return 'Approve Transactions and Create Flex Plan';
-    return 'Next';
-  }, [currentStep]);
-
   const needAddAllowance = useMemo(() => {
-    if (consumerHostAllowance.result.data?.eq(0) && depositAmount && depositAmount !== 0) return true;
-    return BigNumberJs(formatSQT(consumerHostAllowance.result.data?.toString() || '0'))?.lt(depositAmount || 0);
+    const allowance = consumerHostAllowance.result.data;
+    if (allowance?.eq(0) && depositAmount && depositAmount !== 0) return true;
+    return BigNumberJs(formatSQT(allowance?.toString() || '0'))?.lt(depositAmount || 0);
   }, [depositAmount, consumerHostAllowance.result.data]);
 
   const needDepositMore = useMemo(() => {
@@ -200,6 +204,27 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [depositAmount]);
 
   const needCreateApiKey = useMemo(() => !prevApiKey, [prevApiKey]);
+
+  const nextBtnText = useMemo(() => {
+    if (currentStep === 0) return 'Next';
+
+    if (currentStep === 1) return 'Deposit SQT';
+
+    if (currentStep === 2) {
+      if (!displayTransactions.length) return 'Create Flex Plan';
+
+      if (transactionStep) {
+        const currentStepNumber = transacitonNumbers[transactionStep];
+
+        return `Approve Transaction ${currentStepNumber}${
+          currentStepNumber === displayTransactions.length ? ' and Create Flex Plan' : ''
+        }`;
+      }
+
+      return 'Create Flex Plan';
+    }
+    return 'Next';
+  }, [currentStep, displayTransactions, transacitonNumbers, transactionStep]);
 
   const suggestDeposit = useMemo(() => {
     const inputEstimated = BigNumberJs(priceValue || '0')
@@ -210,7 +235,94 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     return inputEstimated.toNumber().toLocaleString();
   }, [minDeposit, priceValue, maximumValue]);
 
-  const handleNextStep = async () => {
+  const renderTransactionDisplay = useMemo(() => {
+    const allowanceDom = (index: number) => {
+      return (
+        <div
+          key={'allowance'}
+          className={clsx(
+            styles.radioCard,
+            transactionStep === 'allowance' ? styles.radioCardSelected : '',
+            !needAddAllowance ? styles.radioCardSelectedWithBackgroud : '',
+          )}
+          style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+        >
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography className="flex-center" weight={500}>
+              {!needAddAllowance && <Checkbox checked></Checkbox>}
+              {index}. Authorise Billing Permissions
+            </Typography>
+            <Typography variant="medium" type="secondary">
+              This grants permission for SubQuery to manage your Billing Account automatically to pay node operators for
+              charges incurred in this new Flex Plan
+            </Typography>
+          </div>
+        </div>
+      );
+    };
+
+    const depositDom = (index: number) => {
+      return (
+        <div
+          key={'deposit'}
+          className={clsx(
+            styles.radioCard,
+            transactionStep === 'deposit' ? styles.radioCardSelected : '',
+            !needDepositMore ? styles.radioCardSelectedWithBackgroud : '',
+          )}
+          style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+        >
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography className="flex-center" weight={500}>
+              {!needDepositMore && <Checkbox checked></Checkbox>}
+              {index}. Deposit Funds to Billing Account
+            </Typography>
+            <Typography variant="medium" type="secondary">
+              This is a transaction to deposit {depositForm.getFieldsValue(true)['amount'] || '0'} SQT into your
+              personal Billing Account from your wallet balance.
+            </Typography>
+          </div>
+        </div>
+      );
+    };
+
+    const createApiKeysDom = (index: number) => {
+      return (
+        <div
+          key={'createApiKey'}
+          className={clsx(
+            styles.radioCard,
+            transactionStep === 'createApiKey' ? styles.radioCardSelected : '',
+            !needCreateApiKey ? styles.radioCardSelectedWithBackgroud : '',
+          )}
+          style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+        >
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography className="flex-center" weight={500}>
+              {!needCreateApiKey && <Checkbox checked></Checkbox>}
+              {index}. Create Personal API Key
+            </Typography>
+            <Typography variant="medium" type="secondary">
+              This is a transaction to open a state channel and generate a personal API key for your account to secure
+              your new Flex Plan endpoint
+            </Typography>
+          </div>
+        </div>
+      );
+    };
+
+    const dicts: { [key in string]: (index: number) => React.ReactNode } = {
+      allowance: allowanceDom,
+      deposit: depositDom,
+      createApiKey: createApiKeysDom,
+    };
+
+    return displayTransactions.map((i, index) => {
+      return dicts[i](index + 1);
+    });
+  }, [displayTransactions, transactionStep, needCreateApiKey, needAddAllowance, needDepositMore, depositForm]);
+
+  const handleNextStep = async (options?: { skipDeposit?: boolean }) => {
     if (currentStep === 0) {
       if (!selectedPlan) return;
       if (selectedPlan !== 'custom') {
@@ -225,32 +337,90 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     }
 
     if (currentStep === 1) {
-      await depositForm.validateFields();
+      const { skipDeposit = false } = options || {};
+      if (!skipDeposit) {
+        await depositForm.validateFields();
+      } else {
+        depositForm.resetFields();
+      }
+
+      // make sure use this order.
+      const newDisplayTransactions = [];
+      if (needAddAllowance && !skipDeposit) {
+        newDisplayTransactions.push('allowance');
+      }
+      if (depositForm.getFieldValue('amount') > 0) {
+        newDisplayTransactions.push('deposit');
+      }
+      if (needCreateApiKey) {
+        newDisplayTransactions.push('createApiKey');
+      }
+      if (newDisplayTransactions.includes('allowance')) {
+        setTransactionStep('allowance');
+      } else if (newDisplayTransactions.includes('deposit')) {
+        setTransactionStep('deposit');
+      } else {
+        setTransactionStep('createApiKey');
+      }
+
+      // TODO: make a enum
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      setDisplayTransactions(newDisplayTransactions);
+
+      setTransactionNumbers(
+        newDisplayTransactions.reduce((acc, cur, index) => {
+          acc[cur] = index + 1;
+          return acc;
+        }, {} as { [key in string]: number }),
+      );
       setCurrentStep(2);
     }
 
     if (currentStep === 2) {
       setNextBtnLoading(true);
+      const getNextStepAndSet = (transactionName: 'allowance' | 'deposit' | 'createApiKeys') => {
+        const index = displayTransactions.findIndex((i) => i === transactionName) + 1;
+        if (index < displayTransactions.length) {
+          setTransactionStep(displayTransactions[index]);
+        } else {
+          setTransactionStep(undefined);
+        }
+      };
       try {
         if (needAddAllowance) {
+          setTransactionStep('allowance');
           await addAllowance(ApproveContract.ConsumerHost, parseEther(depositAmount?.toString() || '0').toString());
           await consumerHostAllowance.refetch();
+
+          getNextStepAndSet('allowance');
+          return;
         }
 
         if (needDepositMore) {
+          setTransactionStep('deposit');
           const tx = await contracts?.consumerHost.deposit(parseEther(depositAmount?.toString() || '0'), true);
           await tx?.wait();
           await consumerHostBalance.refetch();
+          await consumerHostAllowance.refetch();
+
           depositForm.setFieldValue('amount', 0);
+          getNextStepAndSet('deposit');
+
+          const currentStepNumber = transacitonNumbers['deposit'];
+
+          if (currentStepNumber !== displayTransactions.length) {
+            return;
+          }
         }
 
         if (needCreateApiKey) {
+          setTransactionStep('createApiKey');
           // in case user create an api key at another tab, and back to this page to continue.
           const checkApiKeys = await getUserApiKeysApi();
 
           if (isConsumerHostError(checkApiKeys.data)) {
             throw new Error(checkApiKeys.data.error);
-            return;
           }
 
           if (!checkApiKeys.data?.find((i) => i.name === specialApiKeyName)) {
@@ -259,9 +429,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             });
             if (isConsumerHostError(apiKeyRes.data)) {
               throw new Error(apiKeyRes.data.error);
-              return;
             }
           }
+
+          getNextStepAndSet('createApiKeys');
         }
 
         try {
@@ -287,7 +458,6 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
         if (isConsumerHostError(res.data)) {
           throw new Error(res.data.error);
-          return;
         }
 
         await onSuccess?.();
@@ -311,6 +481,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       consumerHostAllowance.refetch();
       consumerHostBalance.refetch();
       balance.refetch();
+      setDisplayTransactions([]);
+      setTransactionStep('allowance');
     } else {
       mounted.current = true;
     }
@@ -527,7 +699,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           )}
         </div>
 
-        <Form layout="vertical" className={styles.createFlexPlanModal} form={depositForm}>
+        <Form
+          layout="vertical"
+          initialValues={{
+            amount: 0,
+          }}
+          className={styles.createFlexPlanModal}
+          form={depositForm}
+        >
           <Form.Item
             label={<Typography>Deposit amount</Typography>}
             name="amount"
@@ -576,55 +755,21 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
       {currentStep === 2 && (
         <>
+          {displayTransactions.length ? (
+            <Typography>
+              You must now approve {displayTransactions.length > 1 ? 'a few transactions' : 'a transaction'} using your
+              connected wallet to initiate this Flex Plan. You must approve all transactions if in order to create a
+              Flex Plan
+            </Typography>
+          ) : (
+            ''
+          )}
+
           <Typography>
-            You must now approve a few transactions using your connected wallet to initiate this Flex Plan. You must
-            approve all transactions if in order to create a Flex Plan
+            Flex plans incur a small fee of 1% of SQT to maintain and manage state channels with each Node Operator.
           </Typography>
 
-          <div
-            className={clsx(styles.radioCard, !needAddAllowance ? styles.radioCardSelectedWithBackgroud : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Checkbox checked={!needAddAllowance}>
-                <Typography>Authorise Billing Permissions</Typography>
-              </Checkbox>
-              <Typography variant="medium" type="secondary">
-                This grants permission for SubQuery to manage your Billing Account automatically to pay node operators
-                for charges incurred in this new Flex Plan
-              </Typography>
-            </div>
-          </div>
-
-          <div
-            className={clsx(styles.radioCard, !needDepositMore ? styles.radioCardSelectedWithBackgroud : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Checkbox checked={!needDepositMore}>
-                <Typography>Deposit Funds to Billing Account</Typography>
-              </Checkbox>
-              <Typography variant="medium" type="secondary">
-                This is a transaction to deposit {depositForm.getFieldsValue(true)['amount'] || '0'} SQT into your
-                personal Billing Account from your wallet balance.
-              </Typography>
-            </div>
-          </div>
-
-          <div
-            className={clsx(styles.radioCard, !needCreateApiKey ? styles.radioCardSelectedWithBackgroud : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Checkbox checked={!needCreateApiKey}>
-                <Typography>Create Personal API Key</Typography>
-              </Checkbox>
-              <Typography variant="medium" type="secondary">
-                This is a transaction to open a state channel and generate a personal API key for your account to secure
-                your new Flex Plan endpoint
-              </Typography>
-            </div>
-          </div>
+          {renderTransactionDisplay}
         </>
       )}
 
@@ -648,8 +793,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             shape="round"
             size="large"
             onClick={() => {
-              depositForm.resetFields();
-              setCurrentStep(2);
+              handleNextStep({
+                skipDeposit: true,
+              });
             }}
             style={{ marginRight: 12 }}
           >
@@ -660,7 +806,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           shape="round"
           size="large"
           type="primary"
-          onClick={handleNextStep}
+          onClick={() => handleNextStep()}
           loading={flexPlans.loading || nextBtnLoading}
         >
           {nextBtnText}

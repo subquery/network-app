@@ -17,7 +17,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  cursor: pointer;
 
   &&Selected {
     border-color: var(--sq-blue400);
@@ -26,6 +25,14 @@
   &&SelectedWithBackgroud {
     border-color: var(--sq-blue400);
     background: #4388DD14;
+  }
+
+  :global {
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: var(--sq-blue600);
+      border-color: var(--sq-blue600);
+      margin-right: 8px;
+    }
   }
 }
 

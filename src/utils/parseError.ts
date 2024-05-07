@@ -47,6 +47,10 @@ export const errorsMapping = [
     error: 'network does not support ENS',
     message: `The address is not support ENS or invalid.`,
   },
+  {
+    error: 'sending a transaction requires a signer',
+    message: "Please clear the cache and reconnect the wallet try again, can't detect the signer.",
+  },
 ];
 
 export enum USER_REJECT {
@@ -202,8 +206,8 @@ export function parseError(
   };
 
   const msg =
-    mappingError() ??
     mapContractError() ??
+    mappingError() ??
     userDeniedSignature() ??
     exceedsBalance() ??
     insufficientAllowance() ??

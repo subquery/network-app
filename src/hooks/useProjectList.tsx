@@ -57,7 +57,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     makeRedirectHref,
     onProjectClick,
   } = props;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   const [getProjects, { error }] = useGetProjectsLazyQuery({
     variables: { offset: 0, type: [ProjectType.SUBQUERY] },
   });
@@ -326,10 +326,13 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             onKeyUp={async (e) => {
               if (e.key.toUpperCase() === 'ENTER') {
                 setProjects([]);
-                const res = await loadMore({ refresh: true });
+                const res = await loadMore({
+                  refresh: true,
+                });
                 mutate(res);
               }
             }}
+            value={searchKeywords}
             disabled={loading}
             onChange={(e) => {
               setSearchKeywords(e.target.value);
@@ -346,7 +349,18 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
       </>
     );
-  }, [error, inSearchMode, topError, loading, projects, onProjectClick]);
+  }, [
+    error,
+    inSearchMode,
+    topError,
+    filterCategories,
+    showPublishModal,
+    filterProjectType,
+    searchKeywords,
+    loading,
+    projects,
+    onProjectClick,
+  ]);
 
   return {
     listsWithSearch,

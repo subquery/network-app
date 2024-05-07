@@ -72,7 +72,7 @@ export type TransactionModalProps<P, T extends string> = {
   ) => React.ReactNode | undefined;
   variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
   initialCheck?: AsyncData<unknown>;
-  onSuccess?: () => void;
+  onSuccess?: (params?: any) => void;
   loading?: boolean; // status for whole modal (Update at: Sep 22)
   rethrowWhenSubmit?: boolean;
   width?: string;
@@ -81,6 +81,7 @@ export type TransactionModalProps<P, T extends string> = {
   currentConfirmButtonLoading?: boolean;
   allowanceContractAddress?: ApproveContract;
   onlyRenderInner?: boolean;
+  showSuccessModal?: boolean;
 };
 
 export interface TransactionModalRef {
@@ -116,6 +117,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
       currentConfirmButtonLoading = false,
       allowanceContractAddress = ApproveContract.Staking,
       onlyRenderInner = false,
+      showSuccessModal = true,
     },
     ref,
   ) => {
@@ -180,14 +182,16 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
         const result = await tx.wait();
 
         if (result.status) {
-          onSuccess && onSuccess();
+          onSuccess && onSuccess(params);
           setSuccessModalText(text.successText || 'Success');
-          openNotification({
-            type: NotificationType.SUCCESS,
-            title: 'Success',
-            description: text.successText ?? t('status.changeValidIn15s'),
-            duration: 5,
-          });
+          if (showSuccessModal) {
+            openNotification({
+              type: NotificationType.SUCCESS,
+              title: 'Success',
+              description: text.successText ?? t('status.changeValidIn15s'),
+              duration: 5,
+            });
+          }
         } else {
           throw new Error(text.failureText);
         }

@@ -74,42 +74,49 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const nextStepBtnText = useMemo(() => {
     if (currentStep === 'select') {
       if (freeOrFlexPlan === 'free') return 'View Free Public Endpoint';
-      if (freeOrFlexPlan === 'flexPlan') return 'Create Flex Plan';
+      if (freeOrFlexPlan === 'flexPlan') {
+        if (createdHostingPlan) {
+          return 'View Flex Plan Endpoint';
+        }
+        return 'Create Flex Plan';
+      }
     }
 
     if (currentStep === 'checkFree' || currentStep === 'checkEndpointWithApiKey') return 'Copy endpoint and Close';
     return 'Create Flex Plan';
-  }, [freeOrFlexPlan, currentStep]);
+  }, [freeOrFlexPlan, currentStep, createdHostingPlan]);
 
-  const fetchHostingPlanAndApiKeys = async () => {
+  const fetchHostingPlan = async () => {
     try {
       setNextBtnLoading(true);
       const hostingPlan = await getHostingPlanApi({
         account,
       });
+
       if (!isConsumerHostError(hostingPlan.data)) {
         setUserHostingPlan(hostingPlan.data);
 
         // no hosting plan then skip fetch api key,
         if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
           return {
-            hostingPlan: {
-              data: [],
-            },
-            apiKeys: {
-              data: [],
-            },
+            data: [],
           };
       } else {
         return {
-          hostingPlan: {
-            data: [],
-          },
-          apiKeys: {
-            data: [],
-          },
+          data: [],
         };
       }
+
+      return hostingPlan;
+    } finally {
+      setNextBtnLoading(false);
+    }
+  };
+
+  const fetchHostingPlanAndApiKeys = async () => {
+    try {
+      setNextBtnLoading(true);
+      const hostingPlan = await fetchHostingPlan();
 
       const apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
@@ -326,6 +333,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
             setFreeOrFlexPlan('flexPlan');
             await handleNextStep();
           }
+          await fetchHostingPlan();
           setOpen(true);
         }}
       >

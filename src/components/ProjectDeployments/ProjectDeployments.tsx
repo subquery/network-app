@@ -7,6 +7,7 @@ import Expand from '@components/Expand/Expand';
 import { useCreateDeployment } from '@hooks';
 import { Markdown, Modal, openNotification, TableTitle, Typography } from '@subql/components';
 import { parseError } from '@utils';
+import { useUpdate } from 'ahooks';
 import { Form, Radio, Table } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
@@ -30,6 +31,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
+  const update = useUpdate();
   const handleSubmitUpdate = async () => {
     try {
       await form.validateFields();
@@ -62,21 +64,24 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
         }}
         okText="Update"
         onSubmit={handleSubmitUpdate}
+        forceRender
       >
         <div>
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={{
-              description: currentDeployment?.description || '',
-            }}
-          >
-            <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
+          <Form form={form} layout="vertical">
+            <Form.Item
+              initialValue={currentDeployment?.description}
+              label="Deployment Description"
+              name="description"
+              rules={[{ required: true }]}
+            >
               <div className={styles.markdownWrapper}>
                 <Markdown
                   value={form.getFieldValue('description')}
                   onChange={(e) => {
-                    form.setFieldValue('description', e);
+                    form.setFieldsValue({
+                      description: e,
+                    });
+                    update();
                   }}
                 ></Markdown>
               </div>
@@ -102,7 +107,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             title: <TableTitle>RECOMMENDED</TableTitle>,
             render: (val) => (
               <p className={styles.value}>
-                <Radio checked={currentDeploymentCid === val}>RECOMMENDED</Radio>
+                {currentDeploymentCid === val ? <Radio checked={currentDeploymentCid === val}>RECOMMENDED</Radio> : ''}
               </p>
             ),
           },
@@ -145,6 +150,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
                 onClick={() => {
                   setCurrentDeployment(record);
                   setDeploymentModal(true);
+                  form.setFieldValue('description', record.description);
                 }}
               >
                 Edit
