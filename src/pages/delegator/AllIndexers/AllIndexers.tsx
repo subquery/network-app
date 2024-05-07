@@ -13,7 +13,17 @@ import { isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync } from '../../.
 import { IndexerList } from './IndexerList/IndexerList';
 
 export const AllIndexers: React.FC = () => {
-  const indexers = useGetAllIndexerByApyQuery();
+  const indexers = useGetAllIndexerByApyQuery({
+    variables: {
+      filter: {
+        indexer: {
+          active: {
+            equalTo: true,
+          },
+        },
+      },
+    },
+  });
   const { currentEra } = useEra();
   const { t } = useTranslation();
 

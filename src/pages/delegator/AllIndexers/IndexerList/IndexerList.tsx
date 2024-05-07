@@ -63,7 +63,15 @@ export const IndexerList: React.FC = () => {
           offset,
           first: 10,
           orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
-          filter,
+          filter: {
+            ...filter,
+            indexer: {
+              ...filter?.indexer,
+              active: {
+                equalTo: true,
+              },
+            },
+          },
         },
       });
 
