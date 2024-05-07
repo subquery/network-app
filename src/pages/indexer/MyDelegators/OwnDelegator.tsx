@@ -14,7 +14,6 @@ import { Spinner, Typography } from '@subql/components';
 import { renderAsyncArray, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { convertStringToNumber, mapAsync, mergeAsync, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
-import { retry } from '@utils/retry';
 import { Table } from 'antd';
 import { formatEther } from 'ethers/lib/utils';
 
@@ -86,10 +85,8 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
                   <Typography>Current Commission Rate</Typography>
                   <span style={{ flex: 1 }}></span>
                   <SetCommissionRate
-                    onSuccess={() => {
-                      retry(() => {
-                        sortedIndexer.refresh?.();
-                      });
+                    onSuccess={async () => {
+                      await sortedIndexer.refresh?.();
                     }}
                   ></SetCommissionRate>
                 </div>

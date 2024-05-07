@@ -22,11 +22,11 @@ import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { useWeb3Name } from '@hooks/useSpaceId';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { openNotification, Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import { mergeAsync, useAsyncMemo, useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
-import { retry } from '@utils/retry';
 import { Tooltip } from 'antd/lib';
 import assert from 'assert';
 import { BigNumber } from 'ethers';
@@ -71,6 +71,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { t } = useTranslation();
   const { balance } = useSQToken();
   const { currentEra, refetch } = useEra();
+  const waitTransactionHandled = useWaitTransactionhandled();
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const { stakingAllowance } = useSQToken();
@@ -201,11 +202,11 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
               },
             },
           ]}
-          onSuccess={(params: { input: number; delegator?: string }) => {
-            retry(() => {
-              getDelegationLazy();
-            });
-            balance.refetch();
+          onSuccess={async (params: { input: number; delegator?: string }, receipt) => {
+            await waitTransactionHandled(receipt?.blockNumber);
+
+            await Promise.all([getDelegationLazy(), balance.refetch(), onSuccess?.()]);
+
             openNotification({
               type: 'success',
               title: 'Success',
@@ -214,7 +215,6 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
               }`,
               duration: 5,
             });
-            onSuccess?.();
           }}
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {

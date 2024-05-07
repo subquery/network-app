@@ -27,7 +27,6 @@ import {
 } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
-import { retry } from '@utils/retry';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
@@ -161,9 +160,7 @@ export const MyOffers: React.FC = () => {
 
   React.useEffect(() => {
     const refresh = () => {
-      retry(() => {
-        offers.refetch();
-      });
+      offers.refetch();
     };
     EventBus.on(EVENT_TYPE.CREATED_CONSUMER_OFFER, refresh);
 

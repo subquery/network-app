@@ -9,7 +9,6 @@ import { Spinner, Typography } from '@subql/components';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsyncArray, URLS } from '@utils';
 
-import { retry } from '../../../../utils/retry';
 import List from '../List';
 import styles from './Specific.module.css';
 
@@ -63,7 +62,7 @@ const Specific: React.FC = () => {
                           </div>
 
                           {plans ? (
-                            <List data={plans} onRefresh={() => retry(specificPlans.refetch)} />
+                            <List data={plans} onRefresh={() => specificPlans.refetch()} />
                           ) : (
                             <Typography>{t('plans.specific.nonDeployment')}</Typography>
                           )}

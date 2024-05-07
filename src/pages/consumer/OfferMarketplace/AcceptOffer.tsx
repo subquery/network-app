@@ -11,6 +11,7 @@ import { useAsyncMemo, useGetIndexerQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
 import assert from 'assert';
 import dayjs from 'dayjs';
+import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -133,7 +134,7 @@ type Props = {
   deployment: IndexerDeploymentFieldsFragment;
   requiredBlockHeight: number;
   disabled: boolean;
-  onAcceptOffer: () => void;
+  onAcceptOffer: (_: unknown, receipt?: ContractReceipt) => void;
 };
 
 export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockHeight, disabled, onAcceptOffer }) => {
@@ -217,7 +218,7 @@ export const AcceptOffer: React.FC<Props> = ({ deployment, offer, requiredBlockH
           tooltip: disableAcceptInfo.tooltip,
         },
       ]}
-      onSuccess={() => onAcceptOffer()}
+      onSuccess={onAcceptOffer}
       onClick={handleClick}
       onClose={() => setCurStep(0)}
       allowanceContractAddress={ApproveContract.PurchaseOfferMarket}

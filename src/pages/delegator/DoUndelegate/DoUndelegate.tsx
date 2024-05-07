@@ -13,6 +13,7 @@ import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
 import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
 import { useGetDelegationQuery } from '@subql/react-hooks';
 import { formatEther, TOKEN } from '@utils';
@@ -62,6 +63,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
+  const waitTransactionHandled = useWaitTransactionhandled();
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
@@ -148,8 +150,9 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
           text={modalText}
           actions={actions}
           onClick={handleClick}
-          onSuccess={() => {
-            onSuccess?.();
+          onSuccess={async (_, receipt) => {
+            await waitTransactionHandled(receipt?.blockNumber);
+            await onSuccess?.();
           }}
           renderContent={(onSubmit, onCancel, loading, error) => {
             // if operator is not active, skip collect.

@@ -14,7 +14,7 @@ import { Button } from '@subql/components';
 import { ButtonProps } from '@subql/components/dist/common/button/Button';
 import { Tooltip } from 'antd';
 import clsx from 'clsx';
-import { constants } from 'ethers';
+import { constants, ContractReceipt } from 'ethers';
 
 import { AsyncData, isInsufficientAllowance, parseError } from '../../utils';
 import { Modal } from '../Modal';
@@ -72,7 +72,7 @@ export type TransactionModalProps<P, T extends string> = {
   ) => React.ReactNode | undefined;
   variant?: 'button' | 'errButton' | 'disabledButton' | 'textBtn' | 'errTextBtn' | 'disabledTextBtn';
   initialCheck?: AsyncData<unknown>;
-  onSuccess?: (params?: any) => void;
+  onSuccess?: (params?: any, txReceipt?: ContractReceipt) => void;
   loading?: boolean; // status for whole modal (Update at: Sep 22)
   rethrowWhenSubmit?: boolean;
   width?: string;
@@ -178,12 +178,10 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
           }
         }
         resetModal();
-        openNotification({ title: t('transaction.submmited') });
+        openNotification({ title: t('transaction.submmited'), duration: 5 });
         const result = await tx.wait();
 
         if (result.status) {
-          onSuccess && onSuccess(params);
-          setSuccessModalText(text.successText || 'Success');
           if (showSuccessModal) {
             openNotification({
               type: NotificationType.SUCCESS,
@@ -192,6 +190,8 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
               duration: 5,
             });
           }
+          setSuccessModalText(text.successText || 'Success');
+          onSuccess && (await onSuccess(params, result));
         } else {
           throw new Error(text.failureText);
         }

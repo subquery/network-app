@@ -12,15 +12,16 @@ import { useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
-import { retry } from '@utils/retry';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
+import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -38,15 +39,11 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
-
   const { balance } = useSQToken();
-
   const { contracts } = useWeb3Store();
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
   const { checkAllowanceEnough, addAllowance } = useAddAllowance();
+  const waitTransactionHandled = useWaitTransactionhandled();
+
   // better to lazy all of these fetch
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
@@ -58,6 +55,10 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
     },
     fetchPolicy: 'network-only',
   });
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
 
   const existingBoost = useMemo(() => {
     return BigNumberJs(
@@ -79,21 +80,23 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
       const { boostVal } = form.getFieldsValue();
       const submitVal = parseEther(BigNumberJs(boostVal).toString() || '0').toString();
 
+      let receipt: ContractReceipt | undefined;
       if (addOrRemove === 'add') {
         const isEnough = await checkAllowanceEnough(ApproveContract.RewardsBooster, account || '', submitVal);
         if (!isEnough) {
           await addAllowance(ApproveContract.RewardsBooster, submitVal);
         }
         const tx = await contracts?.rewardsBooster.boostDeployment(deploymentToByte32, submitVal);
-        await tx?.wait();
+        receipt = await tx?.wait(5);
       } else {
         const tx = await contracts?.rewardsBooster.removeBoosterDeployment(deploymentToByte32, submitVal);
-        await tx?.wait();
+        receipt = await tx?.wait(5);
       }
       await balance.refetch();
-      retry(() => {
-        deploymentBooster.refetch();
-      });
+
+      await waitTransactionHandled(receipt?.blockNumber);
+      await deploymentBooster.refetch();
+
       openNotification({
         type: 'success',
         title: 'Boost completed successfully',

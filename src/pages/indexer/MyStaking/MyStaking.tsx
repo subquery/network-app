@@ -8,7 +8,6 @@ import { useWeb3 } from '@containers';
 import { useIsIndexer, useSortedIndexer } from '@hooks';
 import { Spinner, Typography } from '@subql/components';
 import { mergeAsync, renderAsync, TOKEN, truncFormatEtherStr } from '@utils';
-import { retry } from '@utils/retry';
 
 import { DoStake } from './DoStake';
 import { Indexing, NotRegisteredIndexer } from './Indexing';
@@ -50,18 +49,14 @@ export const MyStaking: React.FC = () => {
                       {
                         <div className={styles.stakingActions}>
                           <DoStake
-                            onSuccess={() => {
-                              retry(() => {
-                                sortedIndexer?.refetch?.();
-                              });
+                            onSuccess={async () => {
+                              await sortedIndexer?.refetch?.();
                             }}
                           />
                           <div>
                             <SetCommissionRate
-                              onSuccess={() => {
-                                retry(() => {
-                                  sortedIndexer?.refetch?.();
-                                });
+                              onSuccess={async () => {
+                                await sortedIndexer?.refetch?.();
                               }}
                             />
                           </div>

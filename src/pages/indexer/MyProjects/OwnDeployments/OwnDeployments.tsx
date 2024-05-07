@@ -19,7 +19,6 @@ import {
   useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
 } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
-import { retry } from '@utils/retry';
 import { useSize } from 'ahooks';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -212,10 +211,8 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               deploymentId={deployment.deploymentId}
               projectId={deployment.projectId}
               actionBtn={<Typography.Link type="info">Add Allocation</Typography.Link>}
-              onSuccess={() => {
-                retry(() => {
-                  indexerDeployments.refetch?.();
-                });
+              onSuccess={async () => {
+                await Promise.all([indexerDeployments.refetch?.(), runnerAllocation.refetch()]);
               }}
               initialStatus="Add"
             ></DoAllocate>
@@ -232,10 +229,8 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                   Remove Allocation
                 </Typography.Link>
               }
-              onSuccess={() => {
-                retry(() => {
-                  indexerDeployments.refetch?.();
-                });
+              onSuccess={async () => {
+                await Promise.all([indexerDeployments.refetch?.(), runnerAllocation.refetch()]);
               }}
               initialStatus="Remove"
             ></DoAllocate>
@@ -262,7 +257,12 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
   return (
     <div className={styles.container}>
       {renderAsync(
-        mergeAsync(indexerDeployments, isIndexer, sortedIndexer, runnerAllocation),
+        {
+          ...mergeAsync(indexerDeployments, isIndexer, sortedIndexer, runnerAllocation),
+          ...{
+            loading: isIndexer.loading || sortedIndexer.loading,
+          },
+        },
 
         {
           error: (error) => <Typography type="danger">{`Failed to get projects: ${error.message}`}</Typography>,
@@ -316,10 +316,8 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                           <span style={{ flex: 1 }}></span>
 
                           <DoStake
-                            onSuccess={() => {
-                              retry(() => {
-                                sortedIndexer?.refresh?.();
-                              });
+                            onSuccess={async () => {
+                              await sortedIndexer?.refresh?.();
                             }}
                           ></DoStake>
                         </div>
@@ -473,7 +471,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     </div>
                   </SubqlCard>
                 </div>
-                {!indexerDepolymentsData || indexerDepolymentsData.length === 0 ? (
+                {!indexerDeployments.loading && (!indexerDepolymentsData || indexerDepolymentsData.length === 0) ? (
                   <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
                 ) : (
                   <Table
@@ -482,6 +480,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     rowKey={'deploymentId'}
                     pagination={false}
                     scroll={width <= 768 ? { x: 1600 } : undefined}
+                    loading={indexerDeployments.loading}
                   />
                 )}
               </>

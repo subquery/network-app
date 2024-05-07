@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { openNotification, Typography } from '@subql/components';
 import { Button } from 'antd';
 import assert from 'assert';
+import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -18,7 +19,7 @@ type Props = {
   indexers: Array<string>;
   totalUnclaimed: string;
   unCliamedCountByIndexer: number;
-  onClaimed?: () => void;
+  onClaimed?: (tx?: ContractReceipt) => void;
 };
 
 export const ClaimRewards: React.FC<Props> = ({
@@ -52,9 +53,9 @@ export const ClaimRewards: React.FC<Props> = ({
         duration: 5,
       });
     }
-
-    const pendingTx = contracts.rewardsHelper.batchClaim(account, indexers);
-    pendingTx.then((tx) => tx.wait()).then(() => onClaimed?.());
+    const pendingTx = await contracts.rewardsHelper.batchClaim(account, indexers);
+    const recepit = await pendingTx.wait();
+    await onClaimed?.(recepit);
     return pendingTx;
   };
 

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { OutlineDot } from '@components/Icons/Icons';
 import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
 import { Button, Dropdown } from 'antd';
 import assert from 'assert';
@@ -40,6 +41,7 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
   const { account } = useWeb3();
   const modalRef = React.useRef<TransactionModalRef>(null);
   const { minCommission } = useMinCommissionRate();
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const commissionRate = useCommissionRate(account);
@@ -105,9 +107,9 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
               unit: '%',
             }}
             onClick={handleClick}
-            onSuccess={() => {
-              commissionRate.refetch(true);
-              onSuccess();
+            onSuccess={async (_, receipt) => {
+              await waitTransactionHandled(receipt?.blockNumber);
+              await Promise.all([commissionRate.refetch(true), onSuccess()]);
             }}
             renderContent={(onSubmit, _, loading) => {
               if (requireClaimIndexerRewards) {

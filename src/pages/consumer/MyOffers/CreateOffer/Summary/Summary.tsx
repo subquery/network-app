@@ -5,9 +5,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { assert } from '@polkadot/util';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
-import { retry } from '@utils/retry';
 import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
@@ -38,6 +38,8 @@ export const Summary: React.FC = () => {
   const navigate = useNavigate();
   const { contracts } = useWeb3Store();
   const createOfferContext = React.useContext(CreateOfferContext);
+
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   // TODO: need to add a new field in the offer form to set the minimum staking amount
   const minimumStakingAmount = 0;
@@ -78,17 +80,17 @@ export const Summary: React.FC = () => {
       });
 
       navigate(CONSUMER_OPEN_OFFERS_NAV);
+      const receipt = await tx.wait();
 
-      tx.wait().then(() => {
-        openNotification({
-          type: NotificationType.SUCCESS,
-          title: 'Offer created!',
-          description: t('status.changeValidIn15s'),
-        });
-        retry(() => {
-          EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
-        });
+      await waitTransactionHandled(receipt.blockNumber);
+
+      openNotification({
+        type: NotificationType.SUCCESS,
+        title: 'Offer created!',
+        description: t('status.changeValidIn15s'),
       });
+
+      EventBus.emit(EVENT_TYPE.CREATED_CONSUMER_OFFER, 'success');
     } catch (error) {
       openNotification({
         type: NotificationType.ERROR,

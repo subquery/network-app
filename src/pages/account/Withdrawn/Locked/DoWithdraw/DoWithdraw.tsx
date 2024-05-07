@@ -9,6 +9,7 @@ import { Typography } from '@subql/components';
 import { truncFormatEtherStr } from '@utils';
 import assert from 'assert';
 import clsx from 'clsx';
+import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -17,7 +18,7 @@ import styles from './DoWithdraw.module.css';
 interface DoWithdrawProps {
   unlockedAmount: string;
   disabled: boolean;
-  onSuccess: () => void;
+  onSuccess: (_: unknown, receipt?: ContractReceipt) => void;
 }
 
 export const DoWithdraw: React.FC<DoWithdrawProps> = ({ unlockedAmount, disabled, onSuccess }) => {

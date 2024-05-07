@@ -74,13 +74,13 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
 
   if (msg instanceof Error) {
-    if (msg.message.includes('event=') || msg.message.includes('Transaction reverted without a reason string')) {
+    if (msg?.message.includes?.('event=') || msg?.message?.includes?.('Transaction reverted without a reason string')) {
       return true;
     }
     return false;
   }
 
-  if (msg.includes('event=') || msg.includes('Transaction reverted without a reason string')) {
+  if (msg?.includes?.('event=') || msg?.includes?.('Transaction reverted without a reason string')) {
     return true;
   }
 
@@ -91,13 +91,12 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
   if (!msg) return false;
 
   if (msg instanceof Error) {
-    if (msg.message.includes('insufficient allowance')) {
+    if (msg?.message?.includes?.('insufficient allowance')) {
       return true;
     }
     return false;
   }
-
-  if (msg.includes('insufficient allowance')) {
+  if (msg?.includes?.('insufficient allowance')) {
     return true;
   }
 
@@ -107,13 +106,13 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
 export const amountExceedsBalance = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
   if (msg instanceof Error) {
-    if (msg.message.includes('transfer amount exceeds balance')) {
+    if (msg?.message?.includes?.('transfer amount exceeds balance')) {
       return true;
     }
     return false;
   }
 
-  if (msg.includes('transfer amount exceeds balance')) {
+  if (msg?.includes?.('transfer amount exceeds balance')) {
     return true;
   }
 

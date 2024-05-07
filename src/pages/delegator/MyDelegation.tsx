@@ -34,7 +34,6 @@ import {
 import { formatEther, isRPCError, mapAsync, mergeAsync, notEmpty, renderAsync, ROUTES, TOKEN } from '@utils';
 import { formatNumber } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
-import { retry } from '@utils/retry';
 import { useSize } from 'ahooks';
 import { Dropdown, Table, TableProps, Tag, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -426,7 +425,6 @@ export const MyDelegation: React.FC = () => {
     return leverageLimit;
   }, []);
 
-  // TODO: refresh when do some actions.
   const delegations = useGetFilteredDelegationsQuery({
     variables: filterParams,
     fetchPolicy: 'network-only',
@@ -449,15 +447,8 @@ export const MyDelegation: React.FC = () => {
   });
 
   const { getColumns } = useGetColumn({
-    onSuccess: () => {
-      retry(
-        () => {
-          delegations.refetch();
-        },
-        {
-          retryTime: 3,
-        },
-      );
+    onSuccess: async () => {
+      await delegations.refetch();
     },
   });
 
