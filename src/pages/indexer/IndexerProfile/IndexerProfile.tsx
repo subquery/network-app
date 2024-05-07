@@ -364,7 +364,7 @@ const IndexerProfile: FC = () => {
                   <div className="col-flex">
                     <div className={clsx(styles.cardContentLine, 'flex-between')}>
                       <Typography variant="small" type="secondary">
-                        Remaining Capacity
+                        Remaining Capacity (next Era)
                       </Typography>
                       <Typography variant="small">
                         {(fetchedSortedIndexer.capacity.after || 0) < 0
