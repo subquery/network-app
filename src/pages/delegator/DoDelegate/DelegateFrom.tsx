@@ -115,6 +115,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [selectedOption, setSelectedOption] = React.useState<(typeof delegationOptions)[number]>();
   const [allIndexers, setAllIndexers] = React.useState<IndexerFieldsFragment[]>([]);
   const [formInitialValues, setFormInitialValues] = React.useState<DelegateFormData>({ input: 0, delegator: account });
+  const [inputFormError, setInputFormError] = React.useState<string | undefined>(undefined);
   const allIndexerPagination = React.useRef({ offset: 0, first: 10, searchKeyword: '' });
 
   const indexerMetadata = useAsyncMemo(async () => {
@@ -531,6 +532,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                     setErrors({ input: undefined });
                     setFieldValue('input', value);
                   }}
+                  errorMsg={inputFormError}
                 />
               </div>
               <Typography className={'errorText'}>{error}</Typography>
@@ -558,7 +560,14 @@ export const DelegateForm: React.FC<FormProps> = ({
               <div className={clsx('flex', 'flex-end')}>
                 <Tooltip title={zeroCapacity ? "This Node Operator's delegation capacity has been reached" : ''}>
                   <Button
-                    onClick={submitForm}
+                    onClick={() => {
+                      if (values.input <= 0) {
+                        setInputFormError('Must be greater than 0');
+                      } else {
+                        setInputFormError('');
+                      }
+                      submitForm();
+                    }}
                     loading={isSubmitting}
                     disabled={zeroCapacity || !isValid || isSubmitting}
                     className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}

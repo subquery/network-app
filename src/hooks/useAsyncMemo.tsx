@@ -57,7 +57,15 @@ export function useAsyncMemoWithLazy<T>(
   factory: () => Promise<T> | undefined | null,
   deps: DependencyList,
   initial: T | undefined = undefined,
-): { result: Omit<AsyncMemoReturn<T>, 'refetch'>; refetch: () => void } {
+): {
+  result: Omit<AsyncMemoReturn<T>, 'refetch'>;
+  refetch: () => Promise<
+    | {
+        data: Awaited<T>;
+      }
+    | undefined
+  >;
+} {
   const installed = useRef(false);
   const [result, setResult] = useState<AsyncData<T>>({ data: initial, loading: false });
   const [isLazyLoad, setIsLazyLoad] = useState(true);
@@ -99,10 +107,14 @@ export function useAsyncMemoWithLazy<T>(
       const promise = factory();
       if (promise === undefined || promise === null) return;
       setResult((current) => ({ loading: true, data: retainCurrent ? current.data : undefined }));
-
-      promise
-        .then((data) => setResult({ data, loading: false }))
-        .catch((error) => setResult({ error, loading: false }));
+      try {
+        const res = await promise;
+        setResult({ data: res, loading: false });
+        return { data: res };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        setResult({ error: e, loading: false });
+      }
     },
     [factory],
   );

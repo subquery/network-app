@@ -196,7 +196,7 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
             Percentage Staked
           </Typography>
           <Typography variant="small">
-            {toPercentage(formatSQT(props.totalStake), BigNumber(props.circulatingSupply).toNumber())}
+            {toPercentage(formatSQT(props.totalStake) as number, BigNumber(props.circulatingSupply).toNumber())}
           </Typography>
         </div>
       </div>

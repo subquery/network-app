@@ -69,13 +69,11 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   onSuccess,
 }) => {
   const { t } = useTranslation();
-  const { balance } = useSQToken();
+  const { balance, stakingAllowance } = useSQToken();
   const { currentEra, refetch } = useEra();
   const waitTransactionHandled = useWaitTransactionhandled();
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
-  const { stakingAllowance } = useSQToken();
-  const requireTokenApproval = useMemo(() => stakingAllowance?.result.data?.isZero(), [stakingAllowance?.result.data]);
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
   const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
   const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
@@ -96,7 +94,9 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   });
 
   const [requireClaimIndexerRewards, setRequireClaimIndexerRewards] = React.useState(true);
-  const [fetchRequireClaimIndexerRewardsLoading, setFetchRequireClaimIndexerRewardsLoading] = React.useState(false);
+  const [requireTokenApproval, setRequireTokenApproval] = React.useState(false);
+  const [shouldFetchStatus, setShouldFetchStatus] = React.useState(false);
+  const [fetchCheckStatusLoading, setFetchCheckStatusLoading] = React.useState(false);
   const isLogin = useIsLogin();
 
   const modalText = useMemo(() => {
@@ -144,7 +144,24 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     return contracts.stakingManager.delegate(indexerAddress, delegateAmount);
   };
 
-  return renderAsync(mergeAsync(currentEra, indexerCapacityFromContract, stakingAllowance.result), {
+  const fetchCheck = async () => {
+    try {
+      if (!isLogin) return;
+      setFetchCheckStatusLoading(true);
+      const approval = await stakingAllowance.refetch();
+      setRequireTokenApproval(approval?.data?.isZero() || false);
+      if (!delegation) {
+        await getDelegationLazy();
+      }
+
+      const res = await rewardClaimStatus.refetch();
+      setRequireClaimIndexerRewards(!res);
+    } finally {
+      setFetchCheckStatusLoading(false);
+    }
+  };
+
+  return renderAsync(mergeAsync(currentEra, indexerCapacityFromContract), {
     error: (error) => (
       <Typography>
         {`Error: Click to `}
@@ -161,10 +178,9 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     loading: () => <Spinner />,
     data: () => {
       const era = currentEra.data;
-      // if doesn't login will enter wallerRoute logical code process
-      const isActionDisabled = isLogin ? !stakingAllowance.result.data : false;
+
       const rightItem = () => {
-        if (fetchRequireClaimIndexerRewardsLoading) {
+        if (fetchCheckStatusLoading) {
           return <Spinner size={10} color="var(--sq-gray500)" />;
         }
         if (indexerCapacity.isZero()) {
@@ -178,28 +194,16 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       };
       return (
         <TransactionModal
+          loading={fetchCheckStatusLoading}
           showSuccessModal={false}
           text={modalText}
           actions={[
             {
               label: btnText || t('delegate.title'),
               key: 'delegate',
-              disabled: indexerCapacity.isZero() || fetchRequireClaimIndexerRewardsLoading || isActionDisabled,
+              disabled: indexerCapacity.isZero() || fetchCheckStatusLoading,
               rightItem: rightItem(),
-              onClick: async () => {
-                try {
-                  setFetchRequireClaimIndexerRewardsLoading(true);
-
-                  if (!delegation) {
-                    await getDelegationLazy();
-                  }
-
-                  const res = await rewardClaimStatus.refetch();
-                  setRequireClaimIndexerRewards(!res);
-                } finally {
-                  setFetchRequireClaimIndexerRewardsLoading(false);
-                }
-              },
+              onClick: fetchCheck,
             },
           ]}
           onSuccess={async (params: { input: number; delegator?: string }, receipt) => {
@@ -219,6 +223,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
+              setShouldFetchStatus(true);
               return (
                 <WalletRoute
                   componentMode
@@ -228,7 +233,14 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
                   }}
                 ></WalletRoute>
               );
+            } else {
+              setShouldFetchStatus(false);
             }
+
+            if (shouldFetchStatus) {
+              fetchCheck();
+            }
+
             if (requireClaimIndexerRewards) {
               return (
                 <ModalClaimIndexerRewards
@@ -258,7 +270,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
               />
             );
           }}
-          variant={isActionDisabled ? 'disabledTextBtn' : variant}
+          variant={variant}
           width="540px"
           onlyRenderInner={account ? false : true} // it's kind of weird & comfuse for maintaining, but worked= =.
         />

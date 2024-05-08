@@ -10,7 +10,6 @@ import { Button, InputNumber, InputNumberProps } from 'antd';
 import BigNumber from 'bignumber.js';
 import { BigNumberish } from 'ethers';
 
-import { AppTypography } from '../Typography';
 import styles from './NumberInput.module.css';
 
 interface NumberInputProps extends InputNumberProps {
@@ -57,9 +56,9 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           </Button>
         )}
         {unit && (
-          <AppTypography className={styles.unit} type="secondary" key="token">
+          <Typography className={styles.unit} type="secondary" key="token">
             {unit}
-          </AppTypography>
+          </Typography>
         )}
       </div>
     );
@@ -88,17 +87,17 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 
   const ErrorText = () => (
-    <AppTypography className={styles.inputBottomText} type="danger">
+    <Typography variant="medium" type="danger">
       {errorMsg}
-    </AppTypography>
+    </Typography>
   );
 
   return (
     <div className={styles.input}>
       {title && (
-        <AppTypography tooltip={tooltip} className={styles.inputTitle}>
+        <Typography tooltip={tooltip} className={styles.inputTitle}>
           {title}
-        </AppTypography>
+        </Typography>
       )}
 
       <InputNumber
