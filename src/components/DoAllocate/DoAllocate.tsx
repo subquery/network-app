@@ -191,8 +191,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       const receipt = await res?.wait();
       // runnerAllocation fetch from contract, so if the transaction confirmed, then the data should be updated
       await Promise.all([waitTransactionHandled(receipt?.blockNumber), runnerAllocation.refetch()]);
-
       await onSuccess?.();
+      form.resetFields();
       openNotification({
         type: 'success',
         description: 'Update allocation successfully',

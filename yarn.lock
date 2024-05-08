@@ -4725,10 +4725,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@1.1.2-7":
-  version "1.1.2-7"
-  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.2-7.tgz#48973fd9a1b4217d7c5ea22b188b238692e58f9b"
-  integrity sha512-eKVsrwD2tsshIS9lveHf1SViunPRYPWjgElnABkx/MYDrad/mxHTirShqYi7Vb80QVf3rn/+zG7yCuW1kMj/Hg==
+"@subql/network-query@1.1.2-8":
+  version "1.1.2-8"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-8.tgz#1e1738e2e8c19557069153638d991a1ee294476e"
+  integrity sha512-I6AJyxImji3wjY29aHAsXjniVrFNRta6VaqwUbCvSK7hOwpNwEPLVHKtZKmq6VMieLqaRjmrTj33AD5srWoZcg==
   dependencies:
     graphql "^16.5.0"
 
@@ -4743,15 +4743,15 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/react-hooks@1.1.2-8":
-  version "1.1.2-8"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-8.tgz#1e4726de5bf46a9df9977b3a8810f0148957b6f0"
-  integrity sha512-WMc+qUYzQB+x94whMgkpvTcGUUtU7nJg/4/JXIpbJhKrQb2Yi7m4dzypIlxHIrn8iA4JYN9kj7I+VXILegsVBw==
+"@subql/react-hooks@1.1.2-9":
+  version "1.1.2-9"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-1.1.2-9.tgz#a8517126de5b1eef0bafd19e8daa647837bc31a8"
+  integrity sha512-zICqA1venCiB9BPIYCFUwPs/sRR2EtanMFWJWUkKIlQ3ZEIiMDoy/MsWzUYMNoDjw/ywEZGbqhV2QdgxGqKB3w==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "1.1.2-7"
+    "@subql/network-query" "1.1.2-8"
     ahooks "^3.7.8"
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"

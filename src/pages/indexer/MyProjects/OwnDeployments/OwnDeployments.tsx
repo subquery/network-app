@@ -19,7 +19,7 @@ import {
   useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
 } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
-import { useSize } from 'ahooks';
+import { usePrevious, useSize } from 'ahooks';
 import { Table, TableProps, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
@@ -99,11 +99,26 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       left: formatSQT(res?.total.sub(res.used).toString() || '0'),
     };
   }, [indexer]);
+  const previousRunnerAllocation = usePrevious(runnerAllocation.data);
 
   const isOverAllocate = React.useMemo(() => {
     if (!runnerAllocation.data?.used || !runnerAllocation.data?.total) return false;
     return +runnerAllocation.data?.used > +runnerAllocation.data?.total;
   }, [runnerAllocation.data?.used, runnerAllocation.data?.total]);
+
+  const sortedData = React.useMemo(() => {
+    return indexerDeployments.data?.map((i) => {
+      const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
+        (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
+      );
+      return {
+        ...i,
+        deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
+      };
+    });
+  }, [indexerDeployments.data, indexerDeploymentApy.data]);
+
+  const previousSortedData = usePrevious(sortedData);
 
   const columns: TableProps<UseSortedIndexerDeploymentsReturn>['columns'] = [
     {
@@ -274,15 +289,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
-            const sortedData = indexerDepolymentsData?.map((i) => {
-              const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
-                (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
-              );
-              return {
-                ...i,
-                deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
-              };
-            });
             const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
               .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))
               .plus(BigNumberJs(runnerAllocationData?.left || 0));
@@ -451,7 +457,11 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                       </div>
                     }
                     titleExtra={BalanceLayout({
-                      mainBalance: formatNumber(runnerAllocationData?.used || '0'),
+                      mainBalance: formatNumber(
+                        runnerAllocation.loading
+                          ? previousRunnerAllocation?.used || '0'
+                          : runnerAllocationData?.used || '0',
+                      ),
                     })}
                     style={{ boxShadow: 'none', marginBottom: 24, flex: 1 }}
                   >
@@ -476,7 +486,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                 ) : (
                   <Table
                     columns={columns}
-                    dataSource={sortedData}
+                    dataSource={indexerDeployments.loading ? previousSortedData : sortedData}
                     rowKey={'deploymentId'}
                     pagination={false}
                     scroll={width <= 768 ? { x: 1600 } : undefined}
