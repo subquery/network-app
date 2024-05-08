@@ -42,7 +42,7 @@ const Staking: FC = () => {
       BigNumberJs(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.totalStake?.toString() || '0')
         .minus(delegateToOthersByEra.data?.eraDelegatorIndexers?.nodes?.[0]?.selfStake?.toString() || '0')
         .toString(),
-    );
+    ) as number;
   }, [delegateToOthersByEra]);
 
   return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
