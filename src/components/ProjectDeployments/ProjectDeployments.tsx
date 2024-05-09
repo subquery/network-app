@@ -32,12 +32,18 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
   const update = useUpdate();
+  const [ruleTips, setRuleTips] = React.useState<string>('');
   const handleSubmitUpdate = async () => {
     try {
-      await form.validateFields();
+      if (!form.getFieldValue('description')) {
+        setRuleTips('Please provide a description for this deployment');
+        return;
+      } else {
+        setRuleTips('');
+      }
       await updateDeployment({
         ...currentDeployment,
-        ...form.getFieldsValue(),
+        ...form.getFieldsValue(true),
       });
       await onRefresh();
       form.resetFields();
@@ -71,16 +77,21 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             <Form.Item
               initialValue={currentDeployment?.description}
               label="Deployment Description"
-              name="description"
               rules={[{ required: true }]}
+              required
+              help={ruleTips}
+              validateStatus="error"
             >
               <div className={styles.markdownWrapper}>
                 <Markdown
                   value={form.getFieldValue('description')}
                   onChange={(e) => {
-                    form.setFieldsValue({
-                      description: e,
-                    });
+                    if (!e) {
+                      setRuleTips('Please provide a description for this deployment');
+                    } else {
+                      setRuleTips('');
+                    }
+                    form.setFieldValue('description', e);
                     update();
                   }}
                 ></Markdown>

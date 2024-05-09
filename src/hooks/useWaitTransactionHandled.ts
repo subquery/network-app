@@ -25,7 +25,7 @@ export const useWaitTransactionhandled = () => {
         });
         return data?._metadata?.lastProcessedHeight >= targetHeight;
       },
-      splitTime: 1000,
+      splitTime: 2000,
       timeout: 30_000,
     });
 

@@ -9,6 +9,7 @@ import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Markdown, Modal, SubqlCheckbox, Typography } from '@subql/components';
+import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
@@ -26,6 +27,8 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
   const [form] = useForm();
   const createDeployment = useCreateDeployment(id ?? '');
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
+  const update = useUpdate();
+  const [ruleTips, setRuleTips] = React.useState<string>('');
 
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const deploymentsRef = React.useRef<DeploymendRef>(null);
@@ -36,10 +39,17 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
   );
 
   const handleSubmitCreate = async () => {
+    if (!form.getFieldValue('description')) {
+      setRuleTips('Please provide a description for this deployment');
+      await form.validateFields();
+      return;
+    } else {
+      setRuleTips('');
+    }
     await form.validateFields();
     const processNext = await getIfUnsafeAndWarn(form.getFieldValue('deploymentId'));
     if (processNext === 'cancel') return;
-    await createDeployment(form.getFieldsValue());
+    await createDeployment(form.getFieldsValue(true));
     await deploymentsRef.current?.refresh();
     form.resetFields();
     setDeploymentModal(false);
@@ -80,12 +90,24 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
                 Set as recommended version
               </SubqlCheckbox>
             </Form.Item>
-            <Form.Item label="Deployment Description" name="description" rules={[{ required: true }]}>
+            <Form.Item
+              label="Deployment Description"
+              rules={[{ required: true }]}
+              help={ruleTips}
+              validateStatus="error"
+              required
+            >
               <div className={styles.markdownWrapper}>
                 <Markdown
                   value={form.getFieldValue('description')}
                   onChange={(e) => {
+                    if (!e) {
+                      setRuleTips('Please provide a description for this deployment');
+                    } else {
+                      setRuleTips('');
+                    }
                     form.setFieldValue('description', e);
+                    update();
                   }}
                 ></Markdown>
               </div>

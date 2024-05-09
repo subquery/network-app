@@ -30,5 +30,5 @@ export const waitForSomething = async (
 
   await sleep(splitTime);
 
-  return waitForSomething({ func, timeout }, splitTime + sleepTime);
+  return waitForSomething({ func, timeout, splitTime }, splitTime + sleepTime);
 };

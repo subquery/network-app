@@ -13,7 +13,7 @@ import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { Modal, openNotification, Spinner, Steps, Tag, Typography } from '@subql/components';
 import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
@@ -43,7 +43,6 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
   const { contracts } = useWeb3Store();
   const { checkAllowanceEnough, addAllowance } = useAddAllowance();
   const waitTransactionHandled = useWaitTransactionhandled();
-
   // better to lazy all of these fetch
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
@@ -77,7 +76,8 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
       if (!deploymentId) return;
       setLoading(true);
       const deploymentToByte32 = cidToBytes32(deploymentId);
-      const { boostVal } = form.getFieldsValue();
+      const { boostVal } = form.getFieldsValue(true);
+
       const submitVal = parseEther(BigNumberJs(boostVal).toString() || '0').toString();
 
       let receipt: ContractReceipt | undefined;
@@ -162,7 +162,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
         }}
         className={account ? '' : 'hideModalWrapper'}
       >
-        {account ? (
+        {account && open ? (
           <>
             <Steps
               steps={[
@@ -197,6 +197,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
             </div>
 
             <Radio.Group
+              disabled={loading}
               value={addOrRemove}
               onChange={(val) => {
                 setAddOrRemove(val.target.value);
@@ -204,7 +205,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
               style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
             >
               <Radio value="add">Add SQT to Boost</Radio>
-              <Radio value="remove" disabled={existingBoostByConsumer === '0'}>
+              <Radio value="remove" disabled={existingBoostByConsumer === '0' || loading}>
                 Remove SQT from Boost
               </Radio>
             </Radio.Group>
@@ -229,6 +230,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                   ]}
                 >
                   <NumberInput
+                    disabled={loading}
                     description=""
                     maxAmount={
                       addOrRemove === 'add'
@@ -287,13 +289,15 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                   </Typography>
                   <span style={{ flex: 1 }}></span>
                   <Typography variant="medium">
-                    {formatSQT(balance.result.data?.toString() || '0')} {TOKEN}
+                    {balance.result.loading ? (
+                      <Spinner size={10}></Spinner>
+                    ) : (
+                      formatSQT(balance.result.data?.toString() || '0')
+                    )}{' '}
+                    {TOKEN}
                   </Typography>
                 </div>
               </div>
-              {/* <Typography variant="medium">
-              Estimated allocation rewards after update: {estimatedRewardsAfterInput} {TOKEN} Per era
-            </Typography> */}
             </div>
           </>
         ) : (
