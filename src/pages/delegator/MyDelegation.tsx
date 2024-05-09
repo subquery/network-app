@@ -40,7 +40,7 @@ import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 import { BigNumberish } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
-import { TFunction } from 'i18next';
+import { t, TFunction } from 'i18next';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
@@ -52,6 +52,7 @@ import styles from './MyDelegation.module.css';
 
 const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   const navigate = useNavigate();
+  const { currentEra } = useEra();
   const lock = useLockPeriod();
 
   const hours = React.useMemo(() => {
@@ -69,6 +70,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
     lastEraRewards: string;
     indexerActive?: boolean;
     capacity: CurrentEraValue<BigNumberish>;
+    lastDelegationEra: number;
   }>['columns'] => [
     {
       title: <TableTitle title={'#'} />,
@@ -109,7 +111,15 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       ),
       width: 200,
       dataIndex: 'apy',
-      render: (apy: string) => {
+      render: (apy: string, record) => {
+        // if era 1 did delegate, at least wait era 3 will receive rewards
+        if (apy === '0' && (currentEra.data?.index || 0) < (record.lastDelegationEra || 0) + 2)
+          return (
+            <Tooltip title={t('rewards.receiveRewardsInfo')}>
+              <Typography>-</Typography>
+              <InfoCircleOutlined style={{ marginLeft: 4, color: 'var(--sq-gray500)' }} />
+            </Tooltip>
+          );
         return <Typography>{BigNumberJs(formatEther(apy)).multipliedBy(100).toFixed(2)} %</Typography>;
       },
     },
@@ -312,7 +322,12 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
   };
 };
 
-const DelegatingCard = () => {
+const DelegatingCard = (props: {
+  delegationList: {
+    apy: string | bigint;
+    lastDelegationEra: number;
+  }[];
+}) => {
   const { account } = useWeb3();
   const { currentEra } = useEra();
   const delegating = useDelegating(account ?? '');
@@ -341,6 +356,31 @@ const DelegatingCard = () => {
     },
   });
 
+  const apy = React.useMemo(() => {
+    const estimated = props.delegationList.every((i) => {
+      const receiveRewardsEra = (i.lastDelegationEra || 0) + 2;
+      return (currentEra.data?.index || 0) < receiveRewardsEra;
+    });
+
+    if (estimated)
+      return (
+        <Tooltip title={t('rewards.receiveRewardsInfo')}>
+          <Typography>-</Typography>
+        </Tooltip>
+      );
+
+    const realApy = (
+      <Typography variant="small">
+        {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0'))
+          .multipliedBy(100)
+          .toFixed(2)}{' '}
+        %
+      </Typography>
+    );
+
+    return realApy;
+  }, [delegatorApy.data?.eraDelegatorApies, props.delegationList]);
+
   return (
     <div className={`flex ${styles.delegationInfo}`}>
       <SubqlCard
@@ -362,12 +402,7 @@ const DelegatingCard = () => {
               />
             </Typography>
             <span style={{ flex: 1 }}></span>
-            <Typography variant="small">
-              {BigNumberJs(formatEther(delegatorApy.data?.eraDelegatorApies?.nodes?.[0]?.apy ?? '0'))
-                .multipliedBy(100)
-                .toFixed(2)}{' '}
-              %
-            </Typography>
+            {apy}
           </div>
           <FormatCardLine
             title="Total Delegation Rewards"
@@ -498,6 +533,7 @@ export const MyDelegation: React.FC = () => {
               '0',
             totalRewards: totalRewards?.sum?.reward.toString() ?? '0',
             lastEraRewards: lastEraRewards?.sum?.reward.toString() ?? '0',
+            lastDelegationEra: (delegation?.amount?.era || 0) as number,
           };
         })
         .filter(
@@ -535,7 +571,7 @@ export const MyDelegation: React.FC = () => {
             }
             return (
               <>
-                <DelegatingCard />
+                <DelegatingCard delegationList={delegationList.data || []} />
 
                 <Typography className={styles.header} style={{ marginBottom: 16 }}>
                   {t('delegate.totalAmount', { count: data.length || 0 })}
