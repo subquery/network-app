@@ -196,7 +196,13 @@ const IndexerProfile: FC = () => {
     gql`
       query GetIndexerDelegatorsCount($id: String!, $offset: Int) {
         indexer(id: $id) {
-          delegations(offset: $offset, filter: { delegatorId: { notEqualTo: $id } }) {
+          delegations(
+            offset: $offset
+            filter: {
+              delegatorId: { notEqualTo: $id }
+              or: [{ exitEra: { isNull: true } }, { exitEra: { equalTo: ${currentEra.data?.index || 0} } }]
+            }
+          ) {
             totalCount
           }
         }

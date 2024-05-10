@@ -35,9 +35,12 @@ export const OwnDelegator: React.FC<Props> = ({ indexer, showEmpty, hideCard, sh
     offset: 0,
     first: 10,
   });
-  const indexerDelegations = useGetIndexerDelegatorsQuery({ variables: { id: indexer ?? '', ...pagination } });
-
   const { currentEra } = useEra();
+
+  const indexerDelegations = useGetIndexerDelegatorsQuery({
+    variables: { id: indexer ?? '', eraId: (currentEra.data?.index || 0) + 1, ...pagination },
+  });
+
   const navigate = useNavigate();
   const sortedIndexer = useSortedIndexer(indexer || '');
   const isIndexer = useIsIndexer(indexer);
