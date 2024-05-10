@@ -7,6 +7,7 @@ import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
 import { Copy } from '@components';
 import { proxyGateway, specialApiKeyName } from '@components/GetEndpoint';
+import { OutlineDot } from '@components/Icons/Icons';
 import { useProjectMetadata } from '@containers';
 import { useAccount } from '@containers/Web3';
 import { GetUserApiKeys, IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
@@ -18,7 +19,7 @@ import { Modal, Tag, Typography } from '@subql/components';
 import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
-import { Button, Input, message, Table } from 'antd';
+import { Button, Dropdown, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
 import styles from './MyHostedPlan.module.less';
@@ -186,7 +187,7 @@ const MyHostedPlan: FC = () => {
             title: 'Action',
             fixed: 'right',
             dataIndex: 'spent',
-            width: 450,
+            width: 50,
             render: (_, record) => {
               return (
                 <div className="flex">
@@ -217,52 +218,69 @@ const MyHostedPlan: FC = () => {
                       Connect
                     </Typography.Link>
                   </Button>
-                  <Typography.Link
-                    type="info"
-                    style={{ padding: '6px 10px' }}
-                    onClick={() => {
-                      navigate(
-                        `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
-                      );
-                    }}
-                  >
-                    View Details
-                  </Typography.Link>
-                  <Typography.Link
-                    type="info"
-                    style={{ padding: '6px 10px' }}
-                    onClick={() => {
-                      setCurrentEditInfo(record);
-                      ref.current?.showModal();
-                    }}
-                  >
-                    {record.price === '0' ? 'Restart' : 'Update'}
-                  </Typography.Link>
 
-                  <Typography.Link
-                    type={record.price === '0' ? 'default' : 'danger'}
-                    style={{
-                      padding: '6px 10px',
-                    }}
-                    onClick={async () => {
-                      if (record.price === '0') return;
-                      try {
-                        setLoading(true);
-                        await updateHostingPlanApi({
-                          id: record.id,
-                          deploymentId: record.deployment.deployment,
-                          price: '0',
-                          maximum: 2,
-                          expiration: 0,
-                        });
-                        init();
-                      } finally {
-                        setLoading(false);
-                      }
+                  <Dropdown
+                    menu={{
+                      items: [
+                        {
+                          label: (
+                            <Typography.Link type="info" style={{ padding: '6px 10px' }}>
+                              View Details
+                            </Typography.Link>
+                          ),
+                          key: 1,
+                          onClick: () => {
+                            navigate(
+                              `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
+                            );
+                          },
+                        },
+                        {
+                          label: (
+                            <Typography.Link type="info" style={{ padding: '6px 10px' }}>
+                              {record.price === '0' ? 'Restart' : 'Update'}
+                            </Typography.Link>
+                          ),
+                          key: 2,
+                          onClick: () => {
+                            setCurrentEditInfo(record);
+                            ref.current?.showModal();
+                          },
+                        },
+                        {
+                          label: (
+                            <Typography.Link
+                              type={record.price === '0' ? 'default' : 'danger'}
+                              style={{
+                                padding: '6px 10px',
+                              }}
+                            >
+                              Stop
+                            </Typography.Link>
+                          ),
+                          key: 3,
+                          onClick: async () => {
+                            if (record.price === '0') return;
+                            try {
+                              setLoading(true);
+                              await updateHostingPlanApi({
+                                id: record.id,
+                                deploymentId: record.deployment.deployment,
+                                price: '0',
+                                maximum: 2,
+                                expiration: 0,
+                              });
+                              init();
+                            } finally {
+                              setLoading(false);
+                            }
+                          },
+                        },
+                      ],
                     }}
                   >
-                    Stop
-                  </Typography.Link>
+                    <OutlineDot></OutlineDot>
+                  </Dropdown>
                 </div>
               );
             },

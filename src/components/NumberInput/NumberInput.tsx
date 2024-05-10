@@ -9,8 +9,9 @@ import { TOKEN } from '@utils';
 import { Button, InputNumber, InputNumberProps } from 'antd';
 import BigNumber from 'bignumber.js';
 import { BigNumberish } from 'ethers';
+import { isString } from 'lodash-es';
 
-import styles from './NumberInput.module.css';
+import styles from './NumberInput.module.less';
 
 interface NumberInputProps extends InputNumberProps {
   inputParams?: InputNumberProps;
@@ -42,8 +43,21 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   const Suffix = React.useCallback(() => {
     return (
       <div className={styles.prefix}>
+        {unit && (
+          <Typography
+            className={styles.unit}
+            variant="medium"
+            type="secondary"
+            key="token"
+            style={{ color: 'var(--sq-gray500)' }}
+          >
+            {unit}
+          </Typography>
+        )}
+
         {BigNumber(maxAmount.toString()).gt(0) && (
           <Button
+            ghost
             shape="round"
             size="small"
             type={'primary'}
@@ -54,11 +68,6 @@ export const NumberInput: React.FC<NumberInputProps> = ({
           >
             Max
           </Button>
-        )}
-        {unit && (
-          <Typography className={styles.unit} type="secondary" key="token">
-            {unit}
-          </Typography>
         )}
       </div>
     );
@@ -107,13 +116,17 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         className={styles.inputNumber}
         size="large"
         status={errorMsg && 'error'}
+        controls={false}
       />
 
-      {inputBottomText && (
-        <Typography className={styles.inputBottomText} variant="medium">
-          {inputBottomText}
-        </Typography>
-      )}
+      {inputBottomText &&
+        (isString(inputBottomText) ? (
+          <Typography className={styles.inputBottomText} variant="medium">
+            {inputBottomText}
+          </Typography>
+        ) : (
+          inputBottomText
+        ))}
       {subDescription && <DescriptionText text={subDescription} />}
       {errorMsg && <ErrorText />}
     </div>

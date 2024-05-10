@@ -45,7 +45,7 @@ export type TransactionModalProps<P, T extends string> = {
     steps: string[];
     description?: string;
     inputTitle?: string;
-    inputBottomText?: string;
+    inputBottomText?: React.ReactNode;
     submitText?: string;
     failureText?: string;
     successText?: string;

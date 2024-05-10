@@ -3,6 +3,29 @@
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
+
+  :global {
+    .ant-input-number-wrapper {
+      .ant-input-number {
+        border-color: var(--sq-gray300);
+        border-right: none;
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
+
+      .ant-input-number-group-addon {
+        border-color: var(--sq-gray300);
+        background: transparent;
+        border-left: none;
+      }
+
+      .ant-input-number-disabled ~ .ant-input-number-group-addon {
+        background: rgba(0, 0, 0, 0.04);
+      }
+    }
+  }
 }
 
 .inputTitle {
@@ -52,3 +75,4 @@
   background: var(--gray500) !important;
   color: var(--gray700);
 }
+

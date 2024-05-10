@@ -4,12 +4,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineDown } from 'react-icons/ai';
-import { BsBoxArrowInUpRight, BsBoxArrowLeft } from 'react-icons/bs';
+import { BsBoxArrowInUpRight, BsBoxArrowLeft, BsInfoCircle } from 'react-icons/bs';
+import { IoWarning } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Address, Spinner, Typography } from '@subql/components';
+import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { Button, Dropdown, Tooltip } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import { useDisconnect, useWalletClient } from 'wagmi';
 
 import { BRIDGE_URL } from 'src/const/bridge';
@@ -65,6 +69,37 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   };
 
   const [open, setOpen] = React.useState(false);
+
+  const { getChannelLimit } = useConsumerHostServices({
+    autoLogin: false,
+  });
+
+  const channelLimit = useAsyncMemo(async () => {
+    const res = await getChannelLimit();
+
+    return res.data;
+  }, []);
+
+  const minDeposit = React.useMemo(() => {
+    return Math.ceil(channelLimit.data?.channel_max_num || 8) * (channelLimit.data?.channel_min_amount || 200);
+  }, [channelLimit]);
+
+  const warnDeposit = React.useMemo(() => {
+    if (!consumerHostBalance.result.loading && open) {
+      if (
+        !BigNumberJs(formatSQT(consumerHostBalance.result?.data?.balance.toString() || '0')).isZero() &&
+        BigNumberJs(formatSQT(consumerHostBalance.result.data?.balance?.toString() || '0')).lt(minDeposit)
+      ) {
+        return (
+          <Tooltip title="Your Billing account balance is running low. Please top up your Billing account promptly to avoid any disruption in usage.">
+            <IoWarning style={{ fontSize: 16, color: 'var(--sq-error)', marginLeft: 8 }} />
+          </Tooltip>
+        );
+      }
+    }
+
+    return '';
+  }, [open, minDeposit, consumerHostBalance.result]);
 
   const menu = React.useMemo(
     () =>
@@ -165,17 +200,49 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Typography>Billing Balance:</Typography>
-                    {consumerHostBalance.result.loading ? (
-                      <div style={{ lineHeight: '24px' }}>
-                        <Spinner size={12}></Spinner>
-                      </div>
-                    ) : (
-                      <Typography>
-                        {formatNumberWithLocale(formatEther(consumerHostBalance.result.data?.balance, 4))} {TOKEN}
+                  <div className="flex" style={{ width: '100%' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography className="flex-center">
+                        Billing Balance:
+                        <Tooltip
+                          title={
+                            <div className="col-flex" style={{ gap: 24 }}>
+                              <Typography variant="medium" style={{ color: '#fff' }}>
+                                When you create Flex plan, you need to deposit SQT to your billing account from your
+                                wallet.
+                              </Typography>
+                              <Typography variant="medium" style={{ color: '#fff' }}>
+                                The funds are kept in your billing account to allow you to purchase multiple Flex plans
+                                using the same funds.
+                              </Typography>
+
+                              <Typography variant="medium" style={{ color: '#fff' }}>
+                                Some of your billing balance is locked in the plan, and will be unlocked shortly after
+                                plan is terminated.
+                              </Typography>
+                            </div>
+                          }
+                        >
+                          <BsInfoCircle
+                            style={{ color: 'var(--sq-gray500)', fontSize: 14, marginLeft: 8 }}
+                          ></BsInfoCircle>
+                        </Tooltip>
                       </Typography>
-                    )}
+                      {consumerHostBalance.result.loading ? (
+                        <div style={{ lineHeight: '24px' }}>
+                          <Spinner size={12}></Spinner>
+                        </div>
+                      ) : (
+                        <Typography>
+                          {formatNumberWithLocale(formatEther(consumerHostBalance.result.data?.balance, 4))} {TOKEN}
+                          {warnDeposit}
+                        </Typography>
+                      )}
+                    </div>
+                    <span style={{ flex: 1 }}></span>
+                    <Typography.Link href="/consumer/flex-plans/ongoing" type="info">
+                      View Details
+                    </Typography.Link>
                   </div>
                 </div>
               ),

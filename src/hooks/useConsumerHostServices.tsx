@@ -326,6 +326,15 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const getChannelSpent = async (params: { consumer: string; channel?: string }) => {
+    const res = await instance.get<IGetChannelSpent>('/channel-spent', {
+      headers: authHeaders.current,
+      params,
+    });
+
+    return res;
+  };
+
   const refreshUserInfo = async () => {
     const res = await instance.get('/users/refresh', {
       headers: authHeaders.current,
@@ -390,10 +399,18 @@ export const useConsumerHostServices = (
     checkIfHasLogin,
     loginConsumerHost,
     requestTokenLayout,
+    getChannelSpent,
     hasLogin,
     loading,
   };
 };
+
+export interface IGetChannelSpent {
+  consumer: string;
+  total: string;
+  spent: string;
+  remain: string;
+}
 
 export interface IGetChannelLimit {
   channel_max_num: number;
