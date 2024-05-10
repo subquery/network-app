@@ -147,6 +147,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const fetchCheck = async () => {
     try {
       if (!isLogin) return;
+      setShouldFetchStatus(false);
       setFetchCheckStatusLoading(true);
       const approval = await stakingAllowance.refetch();
       setRequireTokenApproval(approval?.data?.isZero() || false);
@@ -223,7 +224,9 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           onClick={handleClick}
           renderContent={(onSubmit, onCancel, _, error) => {
             if (!isLogin) {
-              setShouldFetchStatus(true);
+              setTimeout(() => {
+                setShouldFetchStatus(true);
+              });
               return (
                 <WalletRoute
                   componentMode
@@ -234,11 +237,15 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
                 ></WalletRoute>
               );
             } else {
-              setShouldFetchStatus(false);
+              setTimeout(() => {
+                setShouldFetchStatus(false);
+              });
             }
 
             if (shouldFetchStatus) {
-              fetchCheck();
+              setTimeout(() => {
+                fetchCheck();
+              });
             }
 
             if (requireClaimIndexerRewards) {

@@ -79,7 +79,7 @@ export const IndexerName: React.FC<Props> = ({
       <div className={styles.indexerText}>
         {sortedName && (
           <Typography className={styles.name} variant={size === 'large' ? 'h5' : 'text'} weight={500}>
-            {sortedName}
+            {sortedName.length > 15 ? sortedName.slice(0, 15) + '...' : sortedName}
           </Typography>
         )}
         <div>
