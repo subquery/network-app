@@ -217,17 +217,17 @@ export const DelegateForm: React.FC<FormProps> = ({
   const alertInfoText = React.useMemo(() => {
     if (isYourself)
       return t('delegate.delegateFromYourselfInfo', {
-        indexerName: indexerMetadata.data?.name,
+        indexerName: indexerMetadata.data?.name.slice(0, 15),
       });
     if (styleMode === 'normal') {
       return t('delegate.redelegateInfo', {
-        reIndexerName: selectedOption?.name,
-        indexerName: indexerMetadata.data?.name,
+        reIndexerName: selectedOption?.name?.slice(0, 15),
+        indexerName: indexerMetadata.data?.name?.slice(0, 15),
       });
     }
     return t('delegate.redelegateInfo', {
-      reIndexerName: indexerMetadata.data?.name,
-      indexerName: selectedOption?.name,
+      reIndexerName: indexerMetadata.data?.name?.slice(0, 15),
+      indexerName: selectedOption?.name?.slice(0, 15),
     });
   }, [isYourself, styleMode, indexerMetadata.data?.name, selectedOption?.name]);
 
