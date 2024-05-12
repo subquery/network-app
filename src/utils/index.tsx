@@ -43,6 +43,13 @@ export function truncateAddress(address: string): string {
   return `${address.substr(0, 6)}...${address.substr(address.length - 4)}`;
 }
 
+export function truncateDeploymentId(deploymentId: string): string {
+  if (!deploymentId) {
+    return deploymentId;
+  }
+  return `${deploymentId.substr(0, 15)}...${deploymentId.substr(deploymentId.length - 15)}`;
+}
+
 export function genesisHashToName(genesisHash: string): string {
   switch (genesisHash) {
     case '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3':

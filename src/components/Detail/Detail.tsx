@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { Typography } from '@subql/components';
+import { truncateDeploymentId } from '@utils';
 
 import Copy from '../Copy';
 import styles from './Details.module.css';
@@ -14,9 +15,10 @@ type Props = {
   className?: string;
   canCopy?: boolean;
   children?: React.ReactNode;
+  isTruncate?: boolean;
 };
 
-const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, children }) => {
+const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, children, isTruncate }) => {
   const renderValue = () => {
     if (href) {
       return (
@@ -29,7 +31,7 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
     if (value) {
       return (
         <Typography className={styles.value} variant="medium">
-          {value}
+          {isTruncate ? truncateDeploymentId(value) : value}
         </Typography>
       );
     }

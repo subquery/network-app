@@ -182,7 +182,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           width: 1px equal 500px, 
           but suggest add a reasonable value in case this rule change in the future
         */}
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 7, width: 500 }}>
+      <div className={styles.description}>
         <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'No description provided for this project'}</Markdown.Preview>
@@ -247,17 +247,17 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         </div>
       </div>
 
-      <div style={{ marginLeft: 48, flex: 5, display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className={styles.cardInfo}>
         <NewCard
           style={{ width: '100%' }}
           titleExtra={
-            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+            <div className={styles.titleExtra}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <Typography>
                   <img src="/static/booster.svg" alt="" style={{ marginRight: 10, marginTop: 4 }}></img>
                   Current Project Boost
                 </Typography>
-                <div style={{ flex: 1, paddingLeft: 32 }}>
+                <div className={styles.currentBooster}>
                   {BalanceLayout({
                     mainBalance: formatSQT(currentBooster),
                   })}
@@ -305,7 +305,8 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small">
                 {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
                 {TOKEN} (all time)
-                <Tag color="success" style={{ marginLeft: 8 }}>
+                <br></br>
+                <Tag color="success" style={{ marginRight: 0 }}>
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} {TOKEN}{' '}
                   per era
                 </Tag>
@@ -318,7 +319,8 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
               <Typography variant="small">
                 {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
-                <Tag color="success" style={{ marginLeft: 8 }}>
+                <br></br>
+                <Tag color="success" style={{ marginRight: 0 }}>
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN} per
                   era
                 </Tag>
