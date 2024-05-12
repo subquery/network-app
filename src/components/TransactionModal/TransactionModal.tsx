@@ -111,7 +111,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
       initialCheck,
       loading,
       rethrowWhenSubmit = false,
-      width = '45%',
+      width = '572px',
       className = '',
       buttonClassName = '',
       currentConfirmButtonLoading = false,

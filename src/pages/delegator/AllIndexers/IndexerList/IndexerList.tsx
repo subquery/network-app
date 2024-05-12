@@ -21,6 +21,7 @@ import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/netw
 import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
 import { formatEther, formatNumber, formatNumberWithLocale, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
+import { useSize } from 'ahooks';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import BigNumberJs from 'bignumber.js';
@@ -38,6 +39,7 @@ export const IndexerList: React.FC = () => {
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
   const navigate = useNavigate();
+  const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const viewIndexerDetail = (id: string) => {
     navigate(`/${INDEXER}/${id}`);
   };
@@ -364,6 +366,7 @@ export const IndexerList: React.FC = () => {
           },
           current: pageStartIndex,
         }}
+        scroll={width <= 768 ? { x: 1600 } : undefined}
       ></Table>
     </div>
   );

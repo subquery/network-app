@@ -171,7 +171,7 @@ export const MyAccountInner: React.FC = () => {
     >
       <AccountHeader profileAccount={account} />
 
-      <div className="flex">
+      <div className={`flex ${styles.dashboard}`}>
         {renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
           loading: () => (
             <Skeleton style={{ width: 304, marginRight: 24, flexShrink: 0 }} paragraph={{ rows: 9 }}></Skeleton>
@@ -201,7 +201,8 @@ export const MyAccountInner: React.FC = () => {
 
             return (
               <NewCard
-                style={{ marginRight: 24, minHeight: 426, minWidth: 304 }}
+                className={styles.totalRewardsCard}
+                // style={{ marginRight: 24, minHeight: 426, minWidth: 304 }}
                 title={
                   <Typography variant="large" weight={600}>
                     {profileAccount ? 'Total Rewards' : 'Your Total Rewards'}
