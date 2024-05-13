@@ -90,16 +90,16 @@ const ProjectHeader: React.FC<Props> = ({
               style={{ marginRight: 8, maxWidth: 500 }}
             >
               {project.metadata.name}
-              <Address address={project.owner} size="small" />
             </Typography>
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
-            <div className="flex" style={{ gap: 10, marginTop: '10px' }}>
+            <div className={`flex ${styles.groupButton}`}>
               <DoBooster projectId={project.id} deploymentId={currentVersion}></DoBooster>
               <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
             </div>
           </div>
+          <Address address={project.owner} size="small" />
 
           <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {/* in case of someone skip the legal process add more than 2 categories */}

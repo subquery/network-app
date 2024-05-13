@@ -537,7 +537,7 @@ const BridgeInner: FC = () => {
         {currentTab === 'baseToEth' && (
           <>
             <div className={styles.bridgeContent}>
-              <div className="col-flex" style={{ alignItems: 'center', gap: 8, minWidth: '-webkit-fill-available' }}>
+              <div className="col-flex" style={{ alignItems: 'center', gap: 8, minWidth: '100%' }}>
                 <Steps
                   steps={[
                     {
