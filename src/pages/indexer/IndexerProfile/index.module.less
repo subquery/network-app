@@ -51,3 +51,43 @@
   }
 }
 }
+
+.cardInfos {
+  display: flex;
+  justify-content: space-between;
+  margin: 24px 0px;
+}
+
+@media (max-width: 768px) {
+  .indexerProfile {
+    min-width: 100%;
+    margin: 0 auto;
+    padding: 40px;
+  
+    .accountBaseInfo {
+      border-radius: 8px;
+      border: 1px solid  rgba(223, 227, 232, 0.60);
+      background: #FFF;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      text-align: center;
+    }
+  }
+
+  .cardInfos {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    margin: 24px 0px 0px 0px !important;
+  }
+  .cardDetails{
+    flex-direction: column;
+    margin-bottom: 24px;
+    width: 100% !important;
+  }
+  .indexerInfo{
+    flex-direction: column;
+  }
+}

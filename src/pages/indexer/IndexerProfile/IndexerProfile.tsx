@@ -50,7 +50,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
   });
 
   return (
-    <div className="flex" style={{ width: '100%' }}>
+    <div className={`flex ${styles.indexerInfo}`} style={{ width: '100%' }}>
       <div className="flex">
         <ConnectedIndexer id={account} size="large"></ConnectedIndexer>
       </div>
@@ -75,7 +75,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
 const AccountBaseInfo = (props: { account: string }) => {
   const makeChunk = ({ title, value }: { title: ReactNode; value: ReactNode }) => {
     return (
-      <div className="col-flex">
+      <div className="col-flex flex-between">
         <Typography variant="small">{title}</Typography>
 
         <div style={{ marginTop: 8 }}>
@@ -145,6 +145,7 @@ const ActiveCard = (props: { account: string }) => {
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: () => (
       <NewCard
+        className={styles.cardDetails}
         title="Active Projects"
         titleExtra={
           <>
@@ -256,12 +257,13 @@ const IndexerProfile: FC = () => {
 
           <AccountBaseInfo account={checksumAddress ?? ''}></AccountBaseInfo>
 
-          <div className="flex-between" style={{ margin: '24px 0' }}>
+          <div className={styles.cardInfos} style={{ margin: '24px 0' }}>
             {renderAsync(result, {
               loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedResult) => (
                 <NewCard
+                  className={styles.cardDetails}
                   title="Total Rewards"
                   titleExtra={BalanceLayout({
                     mainBalance: formatSQT(fetchedResult?.eraRewards?.aggregates?.sum?.amount || '0'),
@@ -314,6 +316,7 @@ const IndexerProfile: FC = () => {
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedSortedIndexer) => (
                 <NewCard
+                  className={styles.cardDetails}
                   title="Current Total Stake"
                   titleExtra={BalanceLayout({
                     mainBalance: fetchedSortedIndexer.totalStake.current,
@@ -353,6 +356,7 @@ const IndexerProfile: FC = () => {
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedSortedIndexer) => (
                 <NewCard
+                  className={styles.cardDetails}
                   title="Current Total Delegation"
                   titleExtra={BalanceLayout({
                     mainBalance: fetchedSortedIndexer.totalDelegations.current,
