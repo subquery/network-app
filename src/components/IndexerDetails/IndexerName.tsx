@@ -76,7 +76,7 @@ export const IndexerName: React.FC<Props> = ({
     >
       <IPFSImage src={image} renderPlaceholder={() => <Avatar size={size} address={address}></Avatar>} />
 
-      <div className={styles.indexerText}>
+      <div className={`${styles.indexerText} overflowEllipsis`}>
         {sortedName && (
           <Typography className={styles.name} variant={size === 'large' ? 'h5' : 'text'} weight={500}>
             {sortedName.length > 15 ? sortedName.slice(0, 15) + '...' : sortedName}
