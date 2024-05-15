@@ -7,7 +7,6 @@ import { gql, useQuery } from '@apollo/client';
 import { CurEra, IPFSImage } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
-import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
@@ -18,7 +17,7 @@ import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/R
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
-import { Typography } from '@subql/components';
+import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDelegationQuery, useGetIndexersQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
@@ -144,7 +143,7 @@ const ActiveCard = (props: { account: string }) => {
     loading: () => <Skeleton style={{ width: 302 }}></Skeleton>,
     error: (e) => <Typography>{parseError(e)}</Typography>,
     data: () => (
-      <NewCard
+      <SubqlCard
         className={styles.cardDetails}
         title="Active Projects"
         titleExtra={
@@ -179,7 +178,7 @@ const ActiveCard = (props: { account: string }) => {
               ))}
           </div>
         </>
-      </NewCard>
+      </SubqlCard>
     ),
   });
 };
@@ -257,12 +256,12 @@ const IndexerProfile: FC = () => {
 
           <AccountBaseInfo account={checksumAddress ?? ''}></AccountBaseInfo>
 
-          <div className={styles.cardInfos} style={{ margin: '24px 0' }}>
+          <div className={styles.cardInfos}>
             {renderAsync(result, {
               loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedResult) => (
-                <NewCard
+                <SubqlCard
                   className={styles.cardDetails}
                   title="Total Rewards"
                   titleExtra={BalanceLayout({
@@ -307,7 +306,7 @@ const IndexerProfile: FC = () => {
                       </Typography>
                     </div>
                   </div>
-                </NewCard>
+                </SubqlCard>
               ),
             })}
 
@@ -315,7 +314,7 @@ const IndexerProfile: FC = () => {
               loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedSortedIndexer) => (
-                <NewCard
+                <SubqlCard
                   className={styles.cardDetails}
                   title="Current Total Stake"
                   titleExtra={BalanceLayout({
@@ -347,7 +346,7 @@ const IndexerProfile: FC = () => {
                       </div>
                     )}
                   </div>
-                </NewCard>
+                </SubqlCard>
               ),
             })}
 
@@ -355,7 +354,7 @@ const IndexerProfile: FC = () => {
               loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,
               error: (e) => <Typography>{parseError(e)}</Typography>,
               data: (fetchedSortedIndexer) => (
-                <NewCard
+                <SubqlCard
                   className={styles.cardDetails}
                   title="Current Total Delegation"
                   titleExtra={BalanceLayout({
@@ -385,7 +384,7 @@ const IndexerProfile: FC = () => {
                       <Typography variant="small">{delegatorCounts.data?.indexer?.delegations.totalCount}</Typography>
                     </div>
                   </div>
-                </NewCard>
+                </SubqlCard>
               ),
             })}
 

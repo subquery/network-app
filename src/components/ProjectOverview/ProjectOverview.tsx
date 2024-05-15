@@ -5,14 +5,13 @@ import * as React from 'react';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
 import Expand from '@components/Expand/Expand';
-import NewCard from '@components/NewCard';
 import { NETWORK_NAME } from '@containers/Web3';
 import { useRouteQuery } from '@hooks';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
-import { Markdown, Tag, Typography } from '@subql/components';
+import { Markdown, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -248,7 +247,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
       </div>
 
       <div className={styles.cardInfo}>
-        <NewCard
+        <SubqlCard
           style={{ width: '100%' }}
           titleExtra={
             <div className={styles.titleExtra}>
@@ -302,11 +301,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small" type="secondary">
                 Boost Allocation Rewards
               </Typography>
-              <Typography variant="small">
-                {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
-                {TOKEN} (all time)
-                <br></br>
-                <Tag color="success" style={{ marginRight: 0 }}>
+              <Typography variant="small" className={styles.boosterRewards}>
+                <span>
+                  {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
+                  {TOKEN} (all time)
+                </span>
+                <Tag color="success">
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} {TOKEN}{' '}
                   per era
                 </Tag>
@@ -317,18 +317,19 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small" type="secondary">
                 Boost Query Rewards
               </Typography>
-              <Typography variant="small">
-                {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
-                <br></br>
-                <Tag color="success" style={{ marginRight: 0 }}>
+              <Typography variant="small" className={styles.boosterRewards}>
+                <span>
+                  {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
+                </span>
+                <Tag color="success">
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN} per
                   era
                 </Tag>
               </Typography>
             </div>
           </div>
-        </NewCard>
-        <NewCard
+        </SubqlCard>
+        <SubqlCard
           style={{ width: '100%' }}
           title="Total Rewards"
           titleExtra={BalanceLayout({
@@ -370,7 +371,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small">{offerCounts.data?.offers?.totalCount || 0}</Typography>
             </div>
           </div>
-        </NewCard>
+        </SubqlCard>
       </div>
     </div>
   );
