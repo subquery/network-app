@@ -129,7 +129,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, []);
 
   const depositRequireFromConsumerHost = useMemo(() => {
-    if (!estimatedChannelLimit.data) return 500;
+    if (!estimatedChannelLimit.data) return 400;
     return Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
   }, [estimatedChannelLimit]);
 
