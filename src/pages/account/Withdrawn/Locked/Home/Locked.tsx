@@ -242,7 +242,7 @@ export const Locked: React.FC = () => {
 
             return (
               <div className={styles.container}>
-                <div className="flex" style={{ alignItems: 'flex-start' }}>
+                <div className="flex">
                   <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8, marginTop: 5 }} />
                   <Typography type="secondary" style={{ maxWidth: 820 }}>
                     {t('withdrawals.info')}
@@ -259,7 +259,7 @@ export const Locked: React.FC = () => {
                 <div className={styles.header}>
                   <Typography className={styles.title}>{headerTitle}</Typography>
                 </div>
-                <Table columns={columns} dataSource={sortedData} rowKey="idx" />
+                <Table columns={columns} dataSource={sortedData} rowKey="idx" scroll={{ x: 600 }} />
               </div>
             );
           },

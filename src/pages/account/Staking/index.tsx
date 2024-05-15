@@ -57,7 +57,7 @@ const Staking: FC = () => {
               Breakdown
             </Typography>
 
-            <div className="flex" style={{ marginTop: 8, justifyContent: 'center' }}>
+            <div className={`flex ${styles.breakdownDashboard}`} style={{ marginTop: 8, justifyContent: 'center' }}>
               <Breakdown
                 data={[
                   {
@@ -69,7 +69,7 @@ const Staking: FC = () => {
                 ]}
               ></Breakdown>
 
-              <div style={{ marginLeft: 24 }}>
+              <div className={styles.breakdownInfo}>
                 <div className="col-flex">
                   <div className="flex">
                     <div

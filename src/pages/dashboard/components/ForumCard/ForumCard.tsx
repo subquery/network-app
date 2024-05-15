@@ -3,9 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import { BsChatLeftDots } from 'react-icons/bs';
-import NewCard from '@components/NewCard';
 import { IGetLatestTopics, useForumApis } from '@hooks/useForumApis';
-import { Typography } from '@subql/components';
+import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Skeleton } from 'antd';
@@ -36,7 +35,7 @@ export const ForumCard = () => {
       error: (e) => <>{parseError(e)}</>,
       data: (topics) => {
         return (
-          <NewCard
+          <SubqlCard
             title={
               <Typography style={{ display: 'flex', alignItems: 'flex-end' }}>
                 Forum
@@ -65,7 +64,7 @@ export const ForumCard = () => {
               })}
               <Link href="https://forum.subquery.network/c/kepler-network/16">View Forum</Link>
             </div>
-          </NewCard>
+          </SubqlCard>
         );
       },
     },

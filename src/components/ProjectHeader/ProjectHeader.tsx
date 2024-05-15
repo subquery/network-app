@@ -10,7 +10,7 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Address, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { formatNumber, formatSQT } from '@utils';
+import { formatNumber, formatSQT, truncateAddress } from '@utils';
 import { Button } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -94,7 +94,7 @@ const ProjectHeader: React.FC<Props> = ({
             {isUnsafeDeployment && <UnsafeWarn></UnsafeWarn>}
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
-            <div className="flex" style={{ gap: 10 }}>
+            <div className={`flex ${styles.groupButton}`}>
               <DoBooster projectId={project.id} deploymentId={currentVersion}></DoBooster>
               <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
             </div>
@@ -122,7 +122,9 @@ const ProjectHeader: React.FC<Props> = ({
             ''
           )}
           <Detail label="Type" value={project.type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}></Detail>
-          {currentVersion && <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} />}
+          {currentVersion && (
+            <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} isTruncate={true} />
+          )}
           <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
           <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />
         </div>

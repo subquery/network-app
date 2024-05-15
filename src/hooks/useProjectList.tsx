@@ -295,7 +295,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             }}
           ></PublishNewProjectModal>
         </div>
-        <div style={{ display: 'flex', marginBottom: 32 }}>
+        <div className={styles.projectType}>
           <div>
             <SubqlCheckbox.Group
               disabled={loading}
@@ -320,7 +320,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
           </div>
           <span style={{ flex: 1 }}></span>
           <Input
-            style={{ width: 200, height: 48, padding: 12 }}
+            className={styles.search}
             prefix={<SearchOutlined style={{ color: 'var(--sq-gray500)' }} />}
             placeholder="Search"
             onKeyUp={async (e) => {

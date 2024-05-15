@@ -40,7 +40,14 @@ export function truncateAddress(address: string): string {
   if (!address) {
     return address;
   }
-  return `${address.substr(0, 6)}...${address.substr(address.length - 4)}`;
+  return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
+}
+
+export function truncateDeploymentId(deploymentId: string): string {
+  if (!deploymentId) {
+    return deploymentId;
+  }
+  return `${deploymentId.slice(0, 15)}...${deploymentId.slice(deploymentId.length - 15)}`;
 }
 
 export function genesisHashToName(genesisHash: string): string {

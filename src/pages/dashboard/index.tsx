@@ -5,9 +5,8 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { APYTooltip, APYTooltipContent } from '@components';
-import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
-import { Footer, Tooltip, Typography } from '@subql/components';
+import { Footer, SubqlCard, Tooltip, Typography } from '@subql/components';
 import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
 import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
@@ -75,7 +74,7 @@ const TotalRewardsCard = (props: {
   delegationRewards: string | bigint;
 }) => {
   return (
-    <NewCard
+    <SubqlCard
       title="Total Network Rewards"
       titleExtra={BalanceLayout({
         mainBalance: formatSQT(props.totalRewards),
@@ -102,7 +101,7 @@ const TotalRewardsCard = (props: {
           </Typography>
         </div>
       </div>
-    </NewCard>
+    </SubqlCard>
   );
 };
 
@@ -110,7 +109,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
   const navigate = useNavigate();
 
   return (
-    <NewCard
+    <SubqlCard
       title="Current Network Stake"
       titleExtra={BalanceLayout({
         mainBalance: formatSQT(props.totalStake),
@@ -137,7 +136,7 @@ const StakeCard = (props: { totalStake: string | bigint; nextTotalStake: string 
           </Link>
         </div>
       </div>
-    </NewCard>
+    </SubqlCard>
   );
 };
 
@@ -149,7 +148,7 @@ const DelegationsCard = (props: {
   const navigate = useNavigate();
 
   return (
-    <NewCard
+    <SubqlCard
       title="Current Network Delegation"
       titleExtra={BalanceLayout({
         mainBalance: formatSQT(props.delegatorStake),
@@ -176,13 +175,13 @@ const DelegationsCard = (props: {
           </Link>
         </div>
       </div>
-    </NewCard>
+    </SubqlCard>
   );
 };
 
 const CirculatingCard = (props: { circulatingSupply: string; totalStake: string | bigint }) => {
   return (
-    <NewCard
+    <SubqlCard
       title="Circulating Supply"
       titleExtra={BalanceLayout({
         mainBalance: props.circulatingSupply,
@@ -196,11 +195,11 @@ const CirculatingCard = (props: { circulatingSupply: string; totalStake: string 
             Percentage Staked
           </Typography>
           <Typography variant="small">
-            {toPercentage(formatSQT(props.totalStake), BigNumber(props.circulatingSupply).toNumber())}
+            {toPercentage(formatSQT(props.totalStake) as number, BigNumber(props.circulatingSupply).toNumber())}
           </Typography>
         </div>
       </div>
-    </NewCard>
+    </SubqlCard>
   );
 };
 
@@ -331,7 +330,7 @@ const ApyCard = () => {
         />
       ),
       data: () => (
-        <NewCard
+        <SubqlCard
           title="Estimated APY"
           titleExtra={
             <div className="col-flex">
@@ -380,7 +379,7 @@ const ApyCard = () => {
               <Typography variant="small">{estimatedApy.delegatorApy || 0} %</Typography>
             </div>
           </div>
-        </NewCard>
+        </SubqlCard>
       ),
     },
   );

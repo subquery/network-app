@@ -16,9 +16,11 @@ export const Header: React.FC = () => {
 
   return (
     <div className={styles.header}>
-      <Typography variant="h3">{t('explorer.home.header')}</Typography>
+      <Typography style={{ width: 'max-content' }} variant="h3">
+        {t('explorer.home.header')}
+      </Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography style={{ width: 565, marginTop: 16 }} type="secondary">
+        <Typography className={styles.typographySecondary} type="secondary">
           {t('explorer.home.headerDesc')}
         </Typography>
       </div>

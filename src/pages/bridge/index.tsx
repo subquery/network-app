@@ -416,7 +416,7 @@ const BridgeInner: FC = () => {
           Bridge
         </Typography>
 
-        <Typography type="secondary" variant="medium" style={{ width: 421, textAlign: 'center' }}>
+        <Typography className={styles.typography} type="secondary" variant="medium">
           SubQuery mainnet has launched, you can now bridge your SQT from Ethereum to Base to access the SubQuery
           Network.
         </Typography>
@@ -527,7 +527,7 @@ const BridgeInner: FC = () => {
             <Typography type="secondary" style={{ display: 'flex', alignItems: 'center', gap: 8 }} variant="medium">
               <BsLifePreserver />
               <div>
-                Need help? please message #network-bridge-support on
+                Need help? please message <span>#network-bridge-support on</span>
                 <a href="https://discord.com/invite/subquery"> Discord</a>
               </div>
             </Typography>
@@ -537,7 +537,7 @@ const BridgeInner: FC = () => {
         {currentTab === 'baseToEth' && (
           <>
             <div className={styles.bridgeContent}>
-              <div className="col-flex" style={{ alignItems: 'center', gap: 8, minWidth: 500 }}>
+              <div className="col-flex" style={{ alignItems: 'center', gap: 8, width: '100%' }}>
                 <Steps
                   steps={[
                     {

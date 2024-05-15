@@ -4,14 +4,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
 import { APYTooltip, WalletRoute } from '@components';
-import NewCard from '@components/NewCard';
 import RpcError from '@components/RpcError';
 import { useAccount } from '@containers/Web3';
 import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Footer, Typography } from '@subql/components';
+import { Footer, SubqlCard, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatSQT,
@@ -171,7 +170,7 @@ export const MyAccountInner: React.FC = () => {
     >
       <AccountHeader profileAccount={account} />
 
-      <div className="flex">
+      <div className={`flex ${styles.dashboard}`}>
         {renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
           loading: () => (
             <Skeleton style={{ width: 304, marginRight: 24, flexShrink: 0 }} paragraph={{ rows: 9 }}></Skeleton>
@@ -200,8 +199,8 @@ export const MyAccountInner: React.FC = () => {
             const totalStaking = truncFormatEtherStr(`${i?.totalStake?.current ?? 0}`, 4);
 
             return (
-              <NewCard
-                style={{ marginRight: 24, minHeight: 426, minWidth: 304 }}
+              <SubqlCard
+                className={styles.totalRewardsCard}
                 title={
                   <Typography variant="large" weight={600}>
                     {profileAccount ? 'Total Rewards' : 'Your Total Rewards'}
@@ -252,7 +251,7 @@ export const MyAccountInner: React.FC = () => {
                     link="/profile/withdrawn"
                   ></FormatCardLine>
                 </div>
-              </NewCard>
+              </SubqlCard>
             );
           },
         })}

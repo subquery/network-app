@@ -5,14 +5,13 @@ import * as React from 'react';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
 import Expand from '@components/Expand/Expand';
-import NewCard from '@components/NewCard';
 import { NETWORK_NAME } from '@containers/Web3';
 import { useRouteQuery } from '@hooks';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
-import { Markdown, Tag, Typography } from '@subql/components';
+import { Markdown, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -182,7 +181,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           width: 1px equal 500px, 
           but suggest add a reasonable value in case this rule change in the future
         */}
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 7, width: 500 }}>
+      <div className={styles.description}>
         <div style={{ width: '100%' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'No description provided for this project'}</Markdown.Preview>
@@ -247,17 +246,17 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
         </div>
       </div>
 
-      <div style={{ marginLeft: 48, flex: 5, display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <NewCard
+      <div className={styles.cardInfo}>
+        <SubqlCard
           style={{ width: '100%' }}
           titleExtra={
-            <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+            <div className={styles.titleExtra}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <Typography>
                   <img src="/static/booster.svg" alt="" style={{ marginRight: 10, marginTop: 4 }}></img>
                   Current Project Boost
                 </Typography>
-                <div style={{ flex: 1, paddingLeft: 32 }}>
+                <div className={styles.currentBooster}>
                   {BalanceLayout({
                     mainBalance: formatSQT(currentBooster),
                   })}
@@ -302,10 +301,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small" type="secondary">
                 Boost Allocation Rewards
               </Typography>
-              <Typography variant="small">
-                {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
-                {TOKEN} (all time)
-                <Tag color="success" style={{ marginLeft: 8 }}>
+              <Typography variant="small" className={styles.boosterRewards}>
+                <span>
+                  {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
+                  {TOKEN} (all time)
+                </span>
+                <Tag color="success">
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} {TOKEN}{' '}
                   per era
                 </Tag>
@@ -316,17 +317,19 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small" type="secondary">
                 Boost Query Rewards
               </Typography>
-              <Typography variant="small">
-                {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
-                <Tag color="success" style={{ marginLeft: 8 }}>
+              <Typography variant="small" className={styles.boosterRewards}>
+                <span>
+                  {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
+                </span>
+                <Tag color="success">
                   + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN} per
                   era
                 </Tag>
               </Typography>
             </div>
           </div>
-        </NewCard>
-        <NewCard
+        </SubqlCard>
+        <SubqlCard
           style={{ width: '100%' }}
           title="Total Rewards"
           titleExtra={BalanceLayout({
@@ -368,7 +371,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small">{offerCounts.data?.offers?.totalCount || 0}</Typography>
             </div>
           </div>
-        </NewCard>
+        </SubqlCard>
       </div>
     </div>
   );

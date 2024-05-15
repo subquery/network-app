@@ -63,3 +63,9 @@
   align-items: center;
   margin: 1rem 0 1rem 0;
 }
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+}

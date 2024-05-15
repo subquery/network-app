@@ -3,9 +3,8 @@
 
 import { useState } from 'react';
 import { getEraProgress, getEraTimeLeft } from '@components';
-import NewCard from '@components/NewCard';
 import { useEra } from '@hooks';
-import { Typography } from '@subql/components';
+import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { useInterval } from 'ahooks';
@@ -30,7 +29,7 @@ export const EraCard = () => {
         loading: () => <Skeleton active></Skeleton>,
         error: (e) => <>{parseError(e)}</>,
         data: (eraData) => (
-          <NewCard
+          <SubqlCard
             title="Current Era"
             titleExtra={
               <div className="col-flex">
@@ -53,7 +52,7 @@ export const EraCard = () => {
             }
             tooltip={t('era.tooltip', { hour: eraData.period / 3600 })}
             width={302}
-          ></NewCard>
+          ></SubqlCard>
         ),
       })}
     </>

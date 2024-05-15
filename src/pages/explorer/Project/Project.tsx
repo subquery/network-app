@@ -152,7 +152,7 @@ const ProjectInner: React.FC = () => {
             </div>
             <TabButtons tabs={sortedTabList} withUnderline />
           </div>
-          <div style={{ padding: '0 78px 24px 78px' }}>
+          <div className={styles.contentOverview}>
             {/* TODO: just render the components rather than routes. */}
             <Routes>
               <Route
