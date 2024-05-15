@@ -64,7 +64,7 @@ const BalanceCards = () => {
   }, []);
 
   const minDeposit = useMemo(() => {
-    return Math.ceil(channelLimit.data?.channel_max_num || 8) * (channelLimit.data?.channel_min_amount || 200);
+    return Math.ceil(channelLimit.data?.channel_max_num || 2) * (channelLimit.data?.channel_min_amount || 200);
   }, [channelLimit]);
 
   const warnDeposit = useMemo(() => {
