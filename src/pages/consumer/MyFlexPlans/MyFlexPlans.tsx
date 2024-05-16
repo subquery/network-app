@@ -45,7 +45,7 @@ const BalanceCards = () => {
   );
   const [billBalance] = useMemo(() => billingBalanceData ?? [], [billingBalanceData]);
 
-  const { getChannelSpent, getChannelLimit } = useConsumerHostServices({
+  const { getChannelSpent } = useConsumerHostServices({
     autoLogin: false,
   });
 
@@ -57,15 +57,9 @@ const BalanceCards = () => {
     return res.data;
   }, [account]);
 
-  const channelLimit = useAsyncMemo(async () => {
-    const res = await getChannelLimit();
-
-    return res.data;
-  }, []);
-
   const minDeposit = useMemo(() => {
-    return Math.ceil(channelLimit.data?.channel_max_num || 2) * (channelLimit.data?.channel_min_amount || 200);
-  }, [channelLimit]);
+    return 400;
+  }, []);
 
   const warnDeposit = useMemo(() => {
     if (!loadingBillingBalance) {

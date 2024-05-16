@@ -9,9 +9,8 @@ import { IoWarning } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
-import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Address, Spinner, Typography } from '@subql/components';
-import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
+import { formatSQT } from '@subql/react-hooks';
 import { Button, Dropdown, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { useDisconnect, useWalletClient } from 'wagmi';
@@ -70,19 +69,9 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
 
   const [open, setOpen] = React.useState(false);
 
-  const { getChannelLimit } = useConsumerHostServices({
-    autoLogin: false,
-  });
-
-  const channelLimit = useAsyncMemo(async () => {
-    const res = await getChannelLimit();
-
-    return res.data;
-  }, []);
-
   const minDeposit = React.useMemo(() => {
-    return Math.ceil(channelLimit.data?.channel_max_num || 2) * (channelLimit.data?.channel_min_amount || 200);
-  }, [channelLimit]);
+    return 400;
+  }, []);
 
   const warnDeposit = React.useMemo(() => {
     if (!consumerHostBalance.result.loading && open) {
