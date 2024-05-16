@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
@@ -76,6 +76,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   // If use it would not update by project's update.
   // would give a flush for user.
   const [loading, setLoading] = React.useState(false);
+  const loadingStatusForDebounce = useRef(false);
   // assum there at lease have 11 projects
   const [total, setTotal] = React.useState(10);
   const [inSearchMode, setInSearchMode] = React.useState(false);
@@ -100,7 +101,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     refresh?: boolean;
     searchParams?: { categories?: string[]; keywords?: string; projectType?: ProjectType };
   }) => {
-    if (loading) {
+    if (loading || loadingStatusForDebounce.current) {
       return {
         list: [],
         isNoMore: false,
@@ -108,7 +109,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     }
     try {
       setLoading(true);
-
+      loadingStatusForDebounce.current = true;
       // TODO: If there have more params, need to optimise
       const searchParams = {
         keywords: searchKeywords,
@@ -163,13 +164,14 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       };
     } finally {
       setLoading(false);
+      loadingStatusForDebounce.current = false;
     }
   };
 
   const { mutate } = useInfiniteScroll(() => loadMore(), {
     target: document,
     isNoMore: (d) => !!d?.isNoMore,
-    threshold: 1500,
+    threshold: 300,
   });
 
   const topProjectItem = useMemo(() => {
