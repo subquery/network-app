@@ -8,7 +8,6 @@ import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { useGetPlansQuery } from '@subql/react-hooks';
 import { mapAsync, notEmpty, renderAsyncArray } from '@utils';
-import { retry } from '@utils/retry';
 
 import List from '../List';
 
@@ -34,7 +33,7 @@ export const Default: React.FC = () => {
           data: (data) => (
             <List
               data={data.sort((a, b) => parseInt(a.id || '0x00', 16) - parseInt(b.id || '0x00', 16))}
-              onRefresh={() => retry(plans.refetch)}
+              onRefresh={() => plans.refetch()}
               title={t('plans.default.title')}
             />
           ),

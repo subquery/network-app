@@ -17,6 +17,7 @@ import { parseEther } from '@ethersproject/units';
 import { useEra, useLockPeriod } from '@hooks';
 import { useMaxUnstakeAmount } from '@hooks/useMaxUnstakeAmount';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
 import { formatEther, isUndefined, mergeAsync, renderAsyncArray } from '@utils';
 import { Button, Dropdown, Tooltip } from 'antd';
@@ -79,6 +80,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const lockPeriod = useLockPeriod();
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   const maxUnstake = useMaxUnstakeAmount(account || '', +(currentEra.data?.index.toString() || 0));
   const rewardClaimStatus = useRewardCollectStatus(account || '');
@@ -197,9 +199,10 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
               showMaxButton: true,
               curAmount: formatEther(curAmount),
             }}
-            onSuccess={() => {
+            onSuccess={async (_, receipt) => {
+              await waitTransactionHandled(receipt?.blockNumber);
               stakeAction === StakeAction.Stake ? balance.refetch() : maxUnstake.refetch(true);
-              onSuccess();
+              await onSuccess();
             }}
             onClick={handleClick}
             renderContent={(onSubmit, _, loading) => {

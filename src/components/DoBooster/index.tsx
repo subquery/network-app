@@ -12,15 +12,16 @@ import { useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
-import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
+import { Modal, openNotification, Spinner, Steps, Tag, Typography } from '@subql/components';
 import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
-import { retry } from '@utils/retry';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
+import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -38,15 +39,10 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
-
   const { balance } = useSQToken();
-
   const { contracts } = useWeb3Store();
-
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
   const { checkAllowanceEnough, addAllowance } = useAddAllowance();
+  const waitTransactionHandled = useWaitTransactionhandled();
   // better to lazy all of these fetch
   const project = useProjectFromQuery(projectId ?? '');
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
@@ -58,6 +54,10 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
     },
     fetchPolicy: 'network-only',
   });
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
 
   const existingBoost = useMemo(() => {
     return BigNumberJs(
@@ -76,24 +76,27 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
       if (!deploymentId) return;
       setLoading(true);
       const deploymentToByte32 = cidToBytes32(deploymentId);
-      const { boostVal } = form.getFieldsValue();
+      const { boostVal } = form.getFieldsValue(true);
+
       const submitVal = parseEther(BigNumberJs(boostVal).toString() || '0').toString();
 
+      let receipt: ContractReceipt | undefined;
       if (addOrRemove === 'add') {
         const isEnough = await checkAllowanceEnough(ApproveContract.RewardsBooster, account || '', submitVal);
         if (!isEnough) {
           await addAllowance(ApproveContract.RewardsBooster, submitVal);
         }
         const tx = await contracts?.rewardsBooster.boostDeployment(deploymentToByte32, submitVal);
-        await tx?.wait();
+        receipt = await tx?.wait(5);
       } else {
         const tx = await contracts?.rewardsBooster.removeBoosterDeployment(deploymentToByte32, submitVal);
-        await tx?.wait();
+        receipt = await tx?.wait(5);
       }
       await balance.refetch();
-      retry(() => {
-        deploymentBooster.refetch();
-      });
+
+      await waitTransactionHandled(receipt?.blockNumber);
+      await deploymentBooster.refetch();
+
       openNotification({
         type: 'success',
         title: 'Boost completed successfully',
@@ -159,7 +162,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
         }}
         className={account ? '' : 'hideModalWrapper'}
       >
-        {account ? (
+        {account && open ? (
           <>
             <Steps
               steps={[
@@ -194,6 +197,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
             </div>
 
             <Radio.Group
+              disabled={loading}
               value={addOrRemove}
               onChange={(val) => {
                 setAddOrRemove(val.target.value);
@@ -201,7 +205,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
               style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
             >
               <Radio value="add">Add SQT to Boost</Radio>
-              <Radio value="remove" disabled={existingBoostByConsumer === '0'}>
+              <Radio value="remove" disabled={existingBoostByConsumer === '0' || loading}>
                 Remove SQT from Boost
               </Radio>
             </Radio.Group>
@@ -226,6 +230,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                   ]}
                 >
                   <NumberInput
+                    disabled={loading}
                     description=""
                     maxAmount={
                       addOrRemove === 'add'
@@ -284,13 +289,15 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                   </Typography>
                   <span style={{ flex: 1 }}></span>
                   <Typography variant="medium">
-                    {formatSQT(balance.result.data?.toString() || '0')} {TOKEN}
+                    {balance.result.loading ? (
+                      <Spinner size={10}></Spinner>
+                    ) : (
+                      formatSQT(balance.result.data?.toString() || '0')
+                    )}{' '}
+                    {TOKEN}
                   </Typography>
                 </div>
               </div>
-              {/* <Typography variant="medium">
-              Estimated allocation rewards after update: {estimatedRewardsAfterInput} {TOKEN} Per era
-            </Typography> */}
             </div>
           </>
         ) : (

@@ -15,7 +15,6 @@ import BigNumberJs from 'bignumber.js';
 import { useWeb3Store } from 'src/stores';
 
 import { EmptyList } from '../../../components/EmptyList/EmptyList';
-import { retry } from '../../../utils/retry';
 import styles from './index.module.less';
 
 const MyBoostedProjects: FC = () => {
@@ -188,21 +187,13 @@ const MyBoostedProjects: FC = () => {
                     deploymentId={deploymentId}
                     projectId={record.projectId}
                     actionBtn={<Typography.Link type="info">Add Boost</Typography.Link>}
-                    onSuccess={() =>
-                      retry(() => {
-                        boostedProjects.refetch();
-                      })
-                    }
+                    onSuccess={() => boostedProjects.refetch()}
                   ></DoBooster>
                   <DoBooster
                     deploymentId={deploymentId}
                     projectId={record.projectId}
                     actionBtn={<Typography.Link type="danger">Remove Boost</Typography.Link>}
-                    onSuccess={() =>
-                      retry(() => {
-                        boostedProjects.refetch();
-                      })
-                    }
+                    onSuccess={() => boostedProjects.refetch()}
                     initAddOrRemove="remove"
                   ></DoBooster>
                 </div>

@@ -115,6 +115,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const [selectedOption, setSelectedOption] = React.useState<(typeof delegationOptions)[number]>();
   const [allIndexers, setAllIndexers] = React.useState<IndexerFieldsFragment[]>([]);
   const [formInitialValues, setFormInitialValues] = React.useState<DelegateFormData>({ input: 0, delegator: account });
+  const [inputFormError, setInputFormError] = React.useState<string | undefined>(undefined);
   const allIndexerPagination = React.useRef({ offset: 0, first: 10, searchKeyword: '' });
 
   const indexerMetadata = useAsyncMemo(async () => {
@@ -216,17 +217,17 @@ export const DelegateForm: React.FC<FormProps> = ({
   const alertInfoText = React.useMemo(() => {
     if (isYourself)
       return t('delegate.delegateFromYourselfInfo', {
-        indexerName: indexerMetadata.data?.name,
+        indexerName: indexerMetadata.data?.name.slice(0, 15),
       });
     if (styleMode === 'normal') {
       return t('delegate.redelegateInfo', {
-        reIndexerName: selectedOption?.name,
-        indexerName: indexerMetadata.data?.name,
+        reIndexerName: selectedOption?.name?.slice(0, 15),
+        indexerName: indexerMetadata.data?.name?.slice(0, 15),
       });
     }
     return t('delegate.redelegateInfo', {
-      reIndexerName: indexerMetadata.data?.name,
-      indexerName: selectedOption?.name,
+      reIndexerName: indexerMetadata.data?.name?.slice(0, 15),
+      indexerName: selectedOption?.name?.slice(0, 15),
     });
   }, [isYourself, styleMode, indexerMetadata.data?.name, selectedOption?.name]);
 
@@ -531,6 +532,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                     setErrors({ input: undefined });
                     setFieldValue('input', value);
                   }}
+                  errorMsg={inputFormError}
                 />
               </div>
               <Typography className={'errorText'}>{error}</Typography>
@@ -558,7 +560,14 @@ export const DelegateForm: React.FC<FormProps> = ({
               <div className={clsx('flex', 'flex-end')}>
                 <Tooltip title={zeroCapacity ? "This Node Operator's delegation capacity has been reached" : ''}>
                   <Button
-                    onClick={submitForm}
+                    onClick={() => {
+                      if (values.input <= 0) {
+                        setInputFormError('Must be greater than 0');
+                      } else {
+                        setInputFormError('');
+                      }
+                      submitForm();
+                    }}
                     loading={isSubmitting}
                     disabled={zeroCapacity || !isValid || isSubmitting}
                     className={clsx(styles.button, !isValid || isSubmitting ? styles.disabledButton : '')}

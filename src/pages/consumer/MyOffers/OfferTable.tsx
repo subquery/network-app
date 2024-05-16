@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, TableTitle } from '@subql/components';
 import { OfferFieldsFragment } from '@subql/network-query';
 import {
@@ -16,11 +17,10 @@ import {
   useGetSpecificOpenOffersLazyQuery,
 } from '@subql/react-hooks';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
-import { retry } from '@utils/retry';
 import { TableProps, Typography } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { BigNumber } from 'ethers';
+import { BigNumber, ContractReceipt } from 'ethers';
 import i18next from 'i18next';
 
 import { AntDTable, DeploymentMeta, EmptyList, SearchInput, TableText } from '../../../components';
@@ -48,6 +48,7 @@ const { INDEXER_OFFER_MARKETPLACE_NAV, CONSUMER_EXPIRED_OFFERS_NAV, CONSUMER_OPE
 
 const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
   const { account } = useWeb3();
+  const waitTransactionHandled = useWaitTransactionhandled();
   const indexerDeploymentResult = useGetIndexerDeploymentQuery({
     variables: {
       indexerAddress: account ?? '',
@@ -86,8 +87,9 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
             <AcceptOffer
               deployment={deploymentIndexer}
               disabled={acceptedOffersCount > 0}
-              onAcceptOffer={() => {
-                retry(acceptedOffersResult.refetch);
+              onAcceptOffer={async (_, receipt) => {
+                await waitTransactionHandled(receipt?.blockNumber);
+                await acceptedOffersResult.refetch();
               }}
               offer={offer}
               requiredBlockHeight={convertBigNumberToNumber(offer.minimumAcceptHeight)}
@@ -102,7 +104,7 @@ const AcceptButton: React.FC<{ offer: OfferFieldsFragment }> = ({ offer }) => {
 const getColumns = (
   path: typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
   connectedAccount?: string | null,
-  onCancelSuccess?: () => void,
+  onCancelSuccess?: (_: unknown, receipt?: ContractReceipt) => void,
 ) => {
   const idColumns: TableProps<OfferFieldsFragment>['columns'] = [
     {
@@ -276,6 +278,7 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const { account } = useWeb3();
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   /**
    * SearchInput logic
@@ -401,8 +404,9 @@ export const OfferTable: React.FC<MyOfferTableProps> = ({ queryFn, queryParams, 
                       columns: getColumns(
                         pathname as typeof CONSUMER_OPEN_OFFERS_NAV | typeof INDEXER_OFFER_MARKETPLACE_NAV,
                         account,
-                        () => {
-                          retry(refreshAfterCancel);
+                        async (_, receipt) => {
+                          await waitTransactionHandled(receipt?.blockNumber);
+                          await refreshAfterCancel();
                         },
                       ),
                       dataSource: offerList,

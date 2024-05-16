@@ -25,7 +25,7 @@ interface Props extends InputNumberProps {
   submitText?: string;
   curAmount?: number | string;
   showMaxButton?: boolean;
-  inputBottomText?: string;
+  inputBottomText?: React.ReactNode;
   failureModalText?: string;
   unit?: string;
   isLoading?: boolean;

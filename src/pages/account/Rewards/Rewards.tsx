@@ -7,23 +7,16 @@ import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { TableText } from '@components';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
-import {
-  renderAsync,
-  useGetEraRewardsByIndexerAndPageLazyQuery,
-  useGetFilteredDelegationsQuery,
-  useGetRewardsQuery,
-} from '@subql/react-hooks';
+import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
 import { ExcludeNull, formatEther, notEmpty } from '@utils';
-import { retry } from '@utils/retry';
 import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
-
-import { useWeb3Store } from 'src/stores';
 
 import { ClaimRewards } from './ClaimRewards';
 import styles from './Rewards.module.css';
@@ -31,7 +24,6 @@ import styles from './Rewards.module.css';
 export const Rewards: React.FC = () => {
   const { address: account } = useAccount();
 
-  const { contracts } = useWeb3Store();
   const update = useUpdate();
   const filterParams = { address: account || '' };
   // if more than 100 delegations, need claim twice.
@@ -44,6 +36,7 @@ export const Rewards: React.FC = () => {
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
+  const waitTransactionHandled = useWaitTransactionhandled();
   const { t } = useTranslation();
 
   const totalUnclaimedRewards = React.useMemo(() => {
@@ -125,66 +118,6 @@ export const Rewards: React.FC = () => {
     update();
   };
 
-  // this is a hotfix for unclaimed rewards.
-  const [unClaimedRewardsFromContracts, setUnClaimedRewardsFromContracts] = React.useState<{
-    indexers: string[];
-    amount: BigNumber;
-  }>({
-    indexers: [],
-    amount: BigNumber.from(0),
-  });
-
-  const delegations = useGetFilteredDelegationsQuery({
-    variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
-  });
-  const indexerIds = React.useMemo(() => {
-    return [...(delegations.data?.delegations?.nodes.map((i) => i?.indexerId) || []), account];
-  }, [delegations.data?.delegations, unclaimedRewards, account]);
-
-  const getUnclaimedRewards = async () => {
-    if (!account || !contracts || !indexerIds?.length) return;
-
-    const inner = async (indexerId: string | undefined) => {
-      if (!indexerId) return true;
-      const res = await contracts?.rewardsDistributor.userRewards(indexerId, account);
-      return [res, indexerId];
-    };
-
-    const res = await Promise.allSettled(indexerIds.map((indexer) => inner(indexer)));
-
-    const unClaimedRewardsIndexers = res
-      .map((i) => {
-        if (i.status === 'fulfilled') {
-          const [amount, indexerAddress] = i.value as [BigNumber, string];
-
-          if (!amount.eq(0)) return indexerAddress;
-        }
-
-        return undefined;
-      })
-      .filter((i) => i);
-
-    const unClaimedRewardsAmount = res.reduce((cur, add) => {
-      if (add.status === 'fulfilled') {
-        const [amount] = add.value as [BigNumber, string];
-
-        return cur.add(amount);
-      }
-      return cur;
-    }, BigNumber.from(0));
-
-    setUnClaimedRewardsFromContracts({
-      indexers: unClaimedRewardsIndexers as string[],
-      amount: unClaimedRewardsAmount,
-    });
-  };
-
-  React.useEffect(() => {
-    // recover the hotfix for unclaimed rewards
-    // getUnclaimedRewards();
-  }, [indexerIds, account, unclaimedRewards]);
-  // the above codes is a hotfix
-
   React.useEffect(() => {
     if (!account) return;
     queryParams.current.offset = 0;
@@ -221,25 +154,16 @@ export const Rewards: React.FC = () => {
                     <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
                     <Typography type="secondary">{t('rewards.info')}</Typography>
                     <span style={{ flex: 1 }}></span>
-                    {(totalUnclaimedRewards > 0 && unclaimedRewards?.indexers) ||
-                    unClaimedRewardsFromContracts.indexers.length ? (
+                    {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers ? (
                       <ClaimRewards
-                        indexers={
-                          unClaimedRewardsFromContracts.indexers.length
-                            ? unClaimedRewardsFromContracts.indexers
-                            : (unclaimedRewards?.indexers as string[])
-                        }
+                        indexers={unclaimedRewards?.indexers as string[]}
                         account={account ?? ''}
-                        totalUnclaimed={formatEther(
-                          unClaimedRewardsFromContracts.indexers.length
-                            ? unClaimedRewardsFromContracts.amount
-                            : unclaimedRewards?.totalAmount,
-                        )}
-                        onClaimed={() => {
-                          retry(() => {
-                            fetchIndexerEraRewards();
-                            rewards.refetch();
-                          });
+                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                        onClaimed={async (tx) => {
+                          await waitTransactionHandled(tx?.blockNumber);
+
+                          fetchIndexerEraRewards();
+                          rewards.refetch();
                         }}
                         unCliamedCountByIndexer={unclaimedRewardsCountByIndexer}
                       />

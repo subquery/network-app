@@ -112,6 +112,8 @@ const translation = {
     claimed: 'Claimed',
     unclaimed: 'Unclaimed',
     info: 'View and claim your rewards earned by participating in the SubQuery Network through delegating or staking',
+    receiveRewardsInfo:
+      'You will only receive delegation rewards when you delegate for an entire complete Era, please wait till the next complete Era is over to see your APY',
   },
 
   missions: {

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { SummaryList, TableText } from '@components';
 import TransactionModal from '@components/TransactionModal';
 import { NETWORK_NAME } from '@containers/Web3';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Button, Tag, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
@@ -32,6 +33,8 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
   const { pricePreview } = useStableCoin(contracts, NETWORK_NAME);
+  const waitTransactionHandled = useWaitTransactionhandled();
+
   const handleRemovePlan = async (id: string) => {
     assert(contracts, 'Contracts not available');
 
@@ -39,9 +42,10 @@ const List: React.FC<Props> = ({ data, onRefresh, title }) => {
 
     assert(planId, 'Unable to get planId');
 
-    const pendingTx = contracts.planManager.removePlan(planId);
-
-    pendingTx.then((tx) => tx.wait()).then(() => onRefresh());
+    const pendingTx = await contracts.planManager.removePlan(planId);
+    const receipt = await pendingTx.wait();
+    await waitTransactionHandled(receipt.blockNumber);
+    await onRefresh();
 
     return pendingTx;
   };

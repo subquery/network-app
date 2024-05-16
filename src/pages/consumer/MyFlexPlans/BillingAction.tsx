@@ -2,29 +2,28 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import MoreOutlined from '@ant-design/icons/MoreOutlined';
-import { Dropdown, Menu } from 'antd';
+import { OutlineDot } from '@components/Icons/Icons';
+import { Dropdown } from 'antd';
 
 import { BillingExchangeModal } from '../../../components/BillingTransferModal';
-import styles from './MyFlexPlans.module.css';
 
 export const BillingAction: React.FC = () => {
-  const menuList = (
-    <Menu>
-      <Menu.Item key={'Transfer'}>
-        <BillingExchangeModal action="Transfer" />
-      </Menu.Item>
-      <Menu.Item key={'Withdraw'}>
-        <BillingExchangeModal action="Withdraw" />
-      </Menu.Item>
-    </Menu>
-  );
-
   return (
-    <Dropdown overlay={menuList} trigger={['click']}>
-      <a onClick={(e) => e.preventDefault()} href="/" className={styles.billingAction}>
-        <MoreOutlined />
-      </a>
+    <Dropdown
+      menu={{
+        items: [
+          {
+            label: <BillingExchangeModal action="Transfer" />,
+            key: 1,
+          },
+          {
+            label: <BillingExchangeModal action="Withdraw" />,
+            key: 2,
+          },
+        ],
+      }}
+    >
+      <OutlineDot></OutlineDot>
     </Dropdown>
   );
 };

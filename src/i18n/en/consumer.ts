@@ -135,6 +135,8 @@ const translation = {
       confirmWithdraw: 'Confirm withdraw',
       failureWithdraw: `Sorry, failed to withdraw ${TOKEN ?? 'SQT'}`,
       successWithdraw: `You have successfully withdrawn ${TOKEN ?? 'SQT'}`,
+      lockedInfo:
+        'Some of your billing balance is locked in the plan, and will be unlocked shortly after plan is terminated.',
     },
     claim: {
       title: 'Claim remaining deposit',

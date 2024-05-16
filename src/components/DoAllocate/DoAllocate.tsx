@@ -10,6 +10,7 @@ import { parseEther } from '@ethersproject/units';
 import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
@@ -49,6 +50,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const [open, setOpen] = useState(false);
   const [estimatedRewardsOneEra, setEstimatedRewardsOneEra] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   const [fetchTotalDeploymentAllocation, totalDeploymentAllocation] = useLazyQuery(gql`
     query GetDeploymentAllocationSummary($deploymentId: String!) {
@@ -186,9 +188,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
         parseEther(BigNumber(form.getFieldValue('allocateVal')).toFixed(18, 1)),
       );
 
-      await res?.wait();
-      await runnerAllocation.refetch();
-      onSuccess?.();
+      const receipt = await res?.wait();
+      // runnerAllocation fetch from contract, so if the transaction confirmed, then the data should be updated
+      await Promise.all([waitTransactionHandled(receipt?.blockNumber), runnerAllocation.refetch()]);
+      await onSuccess?.();
+      form.resetFields();
       openNotification({
         type: 'success',
         description: 'Update allocation successfully',

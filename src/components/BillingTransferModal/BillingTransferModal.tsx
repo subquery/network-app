@@ -3,8 +3,12 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BsInfoCircle } from 'react-icons/bs';
+import { useAccount } from '@containers/Web3';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { assert } from '@polkadot/util';
-import { openNotification } from '@subql/components';
+import { openNotification, Tooltip, Typography } from '@subql/components';
+import { useAsyncMemo } from '@subql/react-hooks';
 import { formatNumberWithLocale } from '@utils';
 import { parseEther } from 'ethers/lib/utils';
 
@@ -19,11 +23,24 @@ type TransferAction = 'Transfer' | 'Withdraw';
 
 export const BillingExchangeModal = ({ action }: { action: TransferAction }) => {
   const { t } = useTranslation();
+  const { account } = useAccount();
   const { contracts } = useWeb3Store();
   const { consumerHostAllowance, balance, consumerHostBalance } = useSQToken();
   const sortedBalance = balance.result.data;
   const sortedConsumerHostBalance = consumerHostBalance.result.data?.balance;
   const requireTokenApproval = consumerHostAllowance?.result.data?.isZero();
+  const { getChannelSpent } = useConsumerHostServices({
+    autoLogin: false,
+  });
+
+  const channelSpent = useAsyncMemo(async () => {
+    const res = await getChannelSpent({
+      consumer: account || '',
+    });
+
+    return res.data;
+  }, [account]);
+
   const [loadingIncreateAllowance, setLoadingIncreateAllowance] = useState(false);
   const getModalText = (action: TransferAction) => {
     if (action === 'Transfer') {
@@ -42,9 +59,33 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
       title: t('myFlexPlans.billing.withdrawToken'),
       steps: [t('myFlexPlans.billing.withdrawToken'), t('myFlexPlans.billing.confirmWithdraw')],
       inputTitle: t('myFlexPlans.billing.withdrawTitle'),
-      inputBottomText: `Current Billing balance: ${formatNumberWithLocale(
-        formatEther(sortedConsumerHostBalance, 4),
-      )} ${TOKEN}`,
+      inputBottomText: (
+        <div className="col-flex" style={{ gap: 16, width: '100%' }}>
+          <div className="flex-between">
+            <Typography variant="medium" type="secondary">
+              Unlocked Billing Balance
+            </Typography>
+            {formatNumberWithLocale(formatEther(sortedConsumerHostBalance, 4))} {TOKEN}
+          </div>
+
+          <div className="flex-center">
+            <Typography variant="medium" type="secondary">
+              Locked Billing Balance
+            </Typography>
+            <Tooltip
+              title={
+                <Typography variant="medium" style={{ color: '#fff' }}>
+                  {t('myFlexPlans.billing.lockedInfo')}
+                </Typography>
+              }
+            >
+              <BsInfoCircle style={{ color: 'var(--sq-gray500)', fontSize: 14, marginLeft: 8 }}></BsInfoCircle>
+            </Tooltip>
+            <span style={{ flex: 1 }}></span>
+            {formatNumberWithLocale(formatEther(channelSpent.data?.remain, 4))} {TOKEN}
+          </div>
+        </div>
+      ),
       submitText: t('myFlexPlans.billing.withdrawToken'),
       failureText: t('myFlexPlans.billing.failureWithdraw'),
       successText: t('myFlexPlans.billing.successWithdraw'),
@@ -111,6 +152,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
         balance.refetch();
       }}
       variant={'textBtn'}
+      width={'572px'}
       renderContent={(onSubmit, onCancel, isLoading, error) => {
         if (requireTokenApproval && action === 'Transfer') {
           return (

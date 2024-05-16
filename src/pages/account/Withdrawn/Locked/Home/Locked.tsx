@@ -10,17 +10,17 @@ import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { defaultLockPeriod, useLockPeriod } from '@hooks';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { openNotification, Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { WithdrawalFieldsFragment as Withdrawls, WithdrawalType } from '@subql/network-query';
 import { WithdrawalStatus } from '@subql/network-query';
 import { useGetWithdrawlsLazyQuery } from '@subql/react-hooks';
 import { formatEther, LOCK_STATUS, mapAsync, mergeAsync, notEmpty, renderAsyncArray } from '@utils';
-import { retry } from '@utils/retry';
 import { Button, Table, TableProps, Tag } from 'antd';
 import assert from 'assert';
 import dayjs from 'dayjs';
-import { BigNumber } from 'ethers';
+import { BigNumber, ContractReceipt } from 'ethers';
 import { t } from 'i18next';
 import { capitalize } from 'lodash-es';
 
@@ -60,7 +60,7 @@ const CancelUnbonding: React.FC<{
   id: string;
   type: WithdrawalType;
   indexerAddress: string;
-  onSuccess?: () => void;
+  onSuccess?: (params?: unknown, txReceipt?: ContractReceipt) => void;
 }> = ({ id, type, indexerAddress, onSuccess }) => {
   const { contracts } = useWeb3Store();
 
@@ -143,6 +143,7 @@ const withdrwalsTypeText = {
 export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   const filterParams = {
     delegator: account || '',
@@ -200,8 +201,9 @@ export const Locked: React.FC = () => {
           id={id}
           indexerAddress={record.indexer}
           type={record.type}
-          onSuccess={() => {
-            retry(getWithdrawals);
+          onSuccess={async (_, receipt) => {
+            await waitTransactionHandled(receipt?.blockNumber);
+            await getWithdrawals();
           }}
         ></CancelUnbonding>
       ),
@@ -249,8 +251,9 @@ export const Locked: React.FC = () => {
                   </Typography>
                   <span style={{ flex: 1 }}></span>
                   <DoWithdraw
-                    onSuccess={() => {
-                      retry(getWithdrawals);
+                    onSuccess={async (_, receipt) => {
+                      await waitTransactionHandled(receipt?.blockNumber);
+                      await getWithdrawals();
                     }}
                     unlockedAmount={sortedWithdrawalsAmount}
                     disabled={!hasUnlockedRewards}

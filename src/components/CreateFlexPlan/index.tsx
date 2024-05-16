@@ -128,12 +128,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     }
   }, []);
 
+  const depositRequireFromConsumerHost = useMemo(() => {
+    if (!estimatedChannelLimit.data) return 400;
+    return Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
+  }, [estimatedChannelLimit]);
+
   const minDeposit = useMemo(() => {
-    if (!estimatedChannelLimit.data) return 500;
-    const minimal = Math.ceil(estimatedChannelLimit.data?.channelMaxNum * estimatedChannelLimit.data?.channelMinAmount);
-    const sortedMinial = BigNumberJs(minimal).minus(formatSQT(depositBalance?.toString() || '0'));
+    const sortedMinial = BigNumberJs(depositRequireFromConsumerHost).minus(
+      formatSQT(depositBalance?.toString() || '0'),
+    );
     return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
-  }, [estimatedChannelLimit, depositBalance]);
+  }, [depositRequireFromConsumerHost, depositBalance]);
 
   const estimatedPriceInfo = useMemo(() => {
     if (!flexPlans.data || flexPlans.data.length === 0) {
@@ -231,9 +236,9 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       .multipliedBy(20)
       .multipliedBy(maximumValue || 2);
 
-    if (inputEstimated.lt(minDeposit)) return minDeposit.toLocaleString();
+    if (inputEstimated.lt(depositRequireFromConsumerHost)) return depositRequireFromConsumerHost.toLocaleString();
     return inputEstimated.toNumber().toLocaleString();
-  }, [minDeposit, priceValue, maximumValue]);
+  }, [depositRequireFromConsumerHost, priceValue, maximumValue]);
 
   const renderTransactionDisplay = useMemo(() => {
     const allowanceDom = (index: number) => {

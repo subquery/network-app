@@ -12,7 +12,7 @@ import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
 import { useWeb3 } from '@containers';
-import { useNetworkClient } from '@hooks';
+import { useEra, useNetworkClient } from '@hooks';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
@@ -25,6 +25,7 @@ import { useSize } from 'ahooks';
 import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import BigNumberJs from 'bignumber.js';
+import { BigNumber } from 'ethers';
 import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
@@ -38,6 +39,8 @@ export const IndexerList: React.FC = () => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
   const { account } = useWeb3();
+  const { currentEra } = useEra();
+
   const navigate = useNavigate();
   const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const viewIndexerDetail = (id: string) => {
@@ -81,7 +84,11 @@ export const IndexerList: React.FC = () => {
       if (rawIndexerList.length > 0) {
         const sortedIndexers = await Promise.all(
           rawIndexerList.map((indexer) => {
-            return networkClient?.getIndexer(indexer?.indexerId || '', undefined, indexer?.indexer || undefined);
+            return networkClient?.getIndexer(
+              indexer?.indexerId || '',
+              BigNumber.from(currentEra.data?.index || 0) || undefined,
+              indexer?.indexer || undefined,
+            );
           }),
         );
 
