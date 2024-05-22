@@ -98,6 +98,7 @@ const LineCharts: FC<IProps> = ({
         smooth: true,
         data: source,
         type: 'line',
+        stack: 'total',
         showSymbol: false,
         color: colors[index],
         areaStyle: {
