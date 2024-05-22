@@ -62,7 +62,7 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
     const amounts = rawData.map((i) => {
       return {
         key: (i.keys as string[])[0],
-        amount: formatSQT((i.sum as { amount: string | bigint }).amount),
+        amount: formatSQT((i.sum as { amount: string | bigint }).amount) as number,
       };
     });
 
@@ -156,20 +156,6 @@ export const RewardsLineChart = (props: {
   const [fetchRewards, rewardsData] = useGetAggregatesEraRewardsLazyQuery();
 
   const [fetchRewardsByIndexer, indexerRewardsData] = useGetAggregatesEraRewardsByIndexerLazyQuery();
-
-  // TODO: add era in tip
-  const includesErasHexMemo = useMemo(() => {
-    if (!currentEra.data) return [];
-    const { getIncludesEras } = getSplitDataByEra(currentEra.data);
-
-    const { includesErasHex } = {
-      lm: () => getIncludesEras(dayjs().subtract(31, 'day')),
-      l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
-      ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
-    }[filter.date]();
-
-    return includesErasHex;
-  }, [filter, currentEra.data]);
 
   const fetchRewardsByEra = async (filterVal: FilterType | undefined = filter) => {
     if (!currentEra.data) return;
