@@ -317,12 +317,19 @@ export const useMakeNotification = () => {
     await makeUnClaimedNotification();
     await makeOverAllocateAndUnStakeAllocationNotification();
     await makeLowBillingBalanceNotification();
-  }, [makeOverAllocateAndUnStakeAllocationNotification, makeUnClaimedNotification, makeLowBillingBalanceNotification]);
+    await makeInactiveOperatorNotification();
+  }, [
+    makeOverAllocateAndUnStakeAllocationNotification,
+    makeUnClaimedNotification,
+    makeLowBillingBalanceNotification,
+    makeInactiveOperatorNotification,
+  ]);
 
   return {
     makeOverAllocateNotification: () => idleCallback(makeOverAllocateAndUnStakeAllocationNotification),
     makeUnClaimedNotification: () => idleCallback(makeUnClaimedNotification),
     makeLowBillingBalanceNotification: () => idleCallback(makeLowBillingBalanceNotification),
+    makeInactiveOperatorNotification: () => idleCallback(makeInactiveOperatorNotification),
     initNewNotification: () => idleCallback(initAllNotification),
   };
 };
