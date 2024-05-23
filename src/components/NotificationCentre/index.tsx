@@ -9,7 +9,7 @@ import { useSQToken } from '@containers/SQToken';
 import { useAccount } from '@containers/Web3';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
-import { useGetRewardsLazyQuery } from '@subql/react-hooks';
+import { useGetFilteredDelegationsLazyQuery, useGetRewardsLazyQuery } from '@subql/react-hooks';
 import { formatSQT } from '@utils';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Badge, Button, Modal, Popover } from 'antd';
@@ -161,6 +161,9 @@ export const useMakeNotification = () => {
     autoLogin: false,
   });
 
+  // TODO: filter inactive by Graphql
+  const [fetchDelegations] = useGetFilteredDelegationsLazyQuery();
+
   const makeOverAllocateAndUnStakeAllocationNotification = useCallback(async () => {
     // over and unused share same api, so must query both at the same time
     // TODO: Maybe can optimise
@@ -276,6 +279,34 @@ export const useMakeNotification = () => {
         buttonProps: {
           label: 'Add Balance',
           navigateHref: '/consumer/flex-plans/ongoing',
+        },
+      });
+      notificationStore.sortNotificationList();
+    }
+  }, [account, notificationStore.notificationList]);
+
+  const makeInactiveOperatorNotification = useCallback(async () => {
+    if (notificationStore.notificationList.find((item) => item.key === 'inactiveOperator')) return;
+    const res = await fetchDelegations({
+      variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
+      fetchPolicy: 'network-only',
+    });
+
+    if (res.data?.delegations?.nodes.some((i) => i?.indexer?.active === false)) {
+      notificationStore.addNotification({
+        key: 'inactiveOperator',
+        level: 'critical',
+        message:
+          'This node operator has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.',
+        title: 'Node Operator Inactive',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: 1000 * 60 * 60 * 24,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Change Delegation',
+          navigateHref: '/delegator/my-delegation',
         },
       });
       notificationStore.sortNotificationList();
