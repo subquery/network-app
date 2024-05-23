@@ -1,15 +1,19 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { GoAlertFill, GoBell } from 'react-icons/go';
 import { IoIosAlert, IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router';
+import { useSQToken } from '@containers/SQToken';
 import { useAccount } from '@containers/Web3';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
+import { useGetRewardsLazyQuery } from '@subql/react-hooks';
 import { formatSQT } from '@utils';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Badge, Button, Modal, Popover } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
@@ -36,19 +40,30 @@ const EmptyNotification = () => {
 export const useToastNotificationModal = () => {
   const notificationStore = useNotification();
   const navigate = useNavigate();
+  const toasting = useRef(false);
+  const toastedKeys = useRef<string[]>([]);
 
   const toastRestNotifications = useCallback(
     async (notification?: NotificationItemType) => {
+      if (toasting.current) {
+        await waitForSomething({
+          func: () => toasting.current === false,
+        });
+      }
       const canBeToastNotification = (notification ? [notification] : notificationStore.notificationList).filter(
         (item) => {
-          return !item.dismissTo || (item.dismissTo && item.dismissTo < Date.now());
+          return (
+            (!item.dismissTo || (item.dismissTo && item.dismissTo < Date.now())) &&
+            !toastedKeys.current.includes(item.key)
+          );
         },
       );
 
       let continueShowToastStatus: 'continue' | 'stop' | 'pending' = 'pending';
-
+      toasting.current = true;
       for (const noti of canBeToastNotification) {
         continueShowToastStatus = 'pending';
+        toastedKeys.current.push(noti.key);
         Modal.confirm({
           icon: null,
           width: 376,
@@ -61,7 +76,7 @@ export const useToastNotificationModal = () => {
               <Typography weight={600} variant="large">
                 {noti.title}
               </Typography>
-              <Typography style={{ textAlign: 'center' }}>{noti.message}</Typography>
+              {noti.message ? <Typography style={{ textAlign: 'center' }}>{noti.message}</Typography> : ''}
             </div>
           ),
           cancelButtonProps: {
@@ -120,6 +135,7 @@ export const useToastNotificationModal = () => {
           return;
         }
       }
+      toasting.current = false;
     },
     [notificationStore.notificationList],
   );
@@ -139,9 +155,19 @@ export const useMakeNotification = () => {
   const notificationStore = useNotification();
   const { contracts } = useWeb3Store();
   const { account } = useAccount();
+  const [fetchRewardsApi] = useGetRewardsLazyQuery();
+  const { consumerHostBalance } = useSQToken();
+  const { getHostingPlanApi } = useConsumerHostServices({
+    autoLogin: false,
+  });
 
-  const makeOverAllocateNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'overAllocate')) {
+  const makeOverAllocateAndUnStakeAllocationNotification = useCallback(async () => {
+    // over and unused share same api, so must query both at the same time
+    // TODO: Maybe can optimise
+    if (
+      notificationStore.notificationList.find((item) => item.key === 'overAllocate') &&
+      notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation')
+    ) {
       return;
     }
     const res = await contracts?.stakingAllocation.runnerAllocation(account || '');
@@ -151,7 +177,26 @@ export const useMakeNotification = () => {
     };
 
     const isOverAllocated = +runnerAllocation?.used > +runnerAllocation?.total;
-    if (isOverAllocated) {
+    const isUnused = +runnerAllocation.total - +runnerAllocation.used > 1000;
+    if (isUnused && !notificationStore.notificationList.find((item) => item.key === 'overAllocate')) {
+      // add a notification to inform user that they have unused allocation
+      notificationStore.addNotification({
+        key: 'unstakeAllocation',
+        level: 'info',
+        message: `You have ${+runnerAllocation.total - +runnerAllocation.used} SQT unused`,
+        title: 'Unused Allocation',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: 1000 * 60 * 60 * 24,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Unstake Allocation',
+          navigateHref: '/indexer',
+        },
+      });
+    }
+    if (isOverAllocated && !notificationStore.notificationList.find((item) => item.key === 'overAllocate')) {
       notificationStore.addNotification({
         key: 'overAllocate',
         level: 'critical',
@@ -167,15 +212,86 @@ export const useMakeNotification = () => {
           navigateHref: '/indexer',
         },
       });
+      notificationStore.sortNotificationList();
     }
   }, [account, contracts, notificationStore.notificationList]);
 
+  const makeUnClaimedNotification = useCallback(async () => {
+    if (notificationStore.notificationList.find((item) => item.key === 'unclaimedRewards')) {
+      return;
+    }
+    const res = await fetchRewardsApi({
+      variables: {
+        address: account || '',
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (res.data?.unclaimedRewards?.totalCount) {
+      notificationStore.addNotification({
+        key: 'unclaimedRewards',
+        level: 'info',
+        message: '',
+        title: 'Unclaimed Rewards',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: 1000 * 60 * 60 * 24,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Claim Rewards',
+          navigateHref: '/profile/rewards',
+        },
+      });
+    }
+  }, [account, notificationStore.notificationList]);
+
+  const makeLowBillingBalanceNotification = useCallback(async () => {
+    if (notificationStore.notificationList.find((item) => item.key === 'lowBillingBalance')) {
+      return;
+    }
+
+    const hostingPlan = await getHostingPlanApi({ account: account || '' });
+    if (!hostingPlan?.data?.length) {
+      return;
+    }
+
+    const res = await consumerHostBalance?.refetch();
+    const [billingBalance] = res?.data || [];
+    if (
+      !BigNumberJs(formatSQT(billingBalance?.toString() || '0')).isZero() &&
+      BigNumberJs(formatSQT(billingBalance?.toString() || '0')).lt(400)
+    ) {
+      notificationStore.addNotification({
+        key: 'lowBillingBalance',
+        level: 'critical',
+        message:
+          'Your Billing account balance is running low. Please top up your Billing account promptly to avoid any disruption in usage.',
+        title: 'Low Billing Balance',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: 1000 * 60 * 60 * 24,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Add Balance',
+          navigateHref: '/consumer/flex-plans/ongoing',
+        },
+      });
+      notificationStore.sortNotificationList();
+    }
+  }, [account, notificationStore.notificationList]);
+
   const initAllNotification = useCallback(async () => {
-    await makeOverAllocateNotification();
-  }, [makeOverAllocateNotification]);
+    await makeUnClaimedNotification();
+    await makeOverAllocateAndUnStakeAllocationNotification();
+    await makeLowBillingBalanceNotification();
+  }, [makeOverAllocateAndUnStakeAllocationNotification, makeUnClaimedNotification, makeLowBillingBalanceNotification]);
 
   return {
-    makeOverAllocateNotification: () => idleCallback(makeOverAllocateNotification),
+    makeOverAllocateNotification: () => idleCallback(makeOverAllocateAndUnStakeAllocationNotification),
+    makeUnClaimedNotification: () => idleCallback(makeUnClaimedNotification),
+    makeLowBillingBalanceNotification: () => idleCallback(makeLowBillingBalanceNotification),
     initNewNotification: () => idleCallback(initAllNotification),
   };
 };
@@ -199,9 +315,11 @@ const NotificationItem: FC<{ item: NotificationItemType }> = ({ item }) => {
             {item.title}
           </Typography>
         </div>
-        <Typography variant="small" type="secondary">
-          {item.message}
-        </Typography>
+        {item.message && (
+          <Typography variant="small" type="secondary">
+            {item.message}
+          </Typography>
+        )}
         <Typography variant="small" type="secondary">
           {dayjs(item.createdAt).fromNow()}
         </Typography>

@@ -88,7 +88,11 @@
 
       .ant-btn {
         width: 100%;
+      }
 
+      .ant-btn:not(:disabled):focus-visible {
+        outline: unset;
+        outline-offset: 0;
       }
     }
   }

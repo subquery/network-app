@@ -114,9 +114,8 @@ export const useNotification = create<NotificationStore>((set, get) => ({
       set({ notificationList: filterList });
       await localforage.setItem(cacheKey, filterList);
     } else {
-      if (notificationList) {
-        await localforage.setItem(cacheKey, []);
-      }
+      set({ notificationList: [] });
+      await localforage.setItem(cacheKey, []);
     }
 
     set({ mounted: true });
