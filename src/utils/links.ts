@@ -40,15 +40,22 @@ export const entryLinks = [
   },
   {
     link: ROUTES.INDEXER,
-    label: t('indexer.title'),
-  },
-  {
-    link: ROUTES.CONSUMER,
-    label: t('consumer'),
-  },
-  {
-    link: ROUTES.DELEGATOR,
-    label: t('delegator'),
+    label: 'Participants',
+    key: 'participants',
+    dropdown: [
+      {
+        link: ROUTES.INDEXER,
+        label: t('indexer.title'),
+      },
+      {
+        link: ROUTES.CONSUMER,
+        label: t('consumer'),
+      },
+      {
+        link: ROUTES.DELEGATOR,
+        label: t('delegator'),
+      },
+    ],
   },
   {
     link: '/bridge',
