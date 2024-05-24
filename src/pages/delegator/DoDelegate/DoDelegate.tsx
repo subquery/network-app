@@ -12,6 +12,7 @@ import {
   tokenApprovalModalText,
   WalletRoute,
 } from '@components';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import TransactionModal from '@components/TransactionModal';
 import { idleText } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
@@ -78,6 +79,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
   const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
   const { fetchWeb3NameFromCache } = useWeb3Name();
+  const { refreshAndMakeInactiveOperatorNotification } = useMakeNotification();
 
   const indexerMetadata = useAsyncMemo(async () => {
     const web3Name = await fetchWeb3NameFromCache(indexerAddress);
@@ -211,6 +213,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
             await waitTransactionHandled(receipt?.blockNumber);
 
             await Promise.all([getDelegationLazy(), balance.refetch(), onSuccess?.()]);
+
+            refreshAndMakeInactiveOperatorNotification();
 
             openNotification({
               type: 'success',

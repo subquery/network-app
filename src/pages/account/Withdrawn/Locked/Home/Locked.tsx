@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { EmptyList } from '@components';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
@@ -144,7 +145,7 @@ export const Locked: React.FC = () => {
   const { t } = useTranslation();
   const { account } = useWeb3();
   const waitTransactionHandled = useWaitTransactionhandled();
-
+  const { refreshAndMakeUnlockWithdrawalNotification } = useMakeNotification();
   const filterParams = {
     delegator: account || '',
     status: WithdrawalStatus.ONGOING,
@@ -204,6 +205,7 @@ export const Locked: React.FC = () => {
           onSuccess={async (_, receipt) => {
             await waitTransactionHandled(receipt?.blockNumber);
             await getWithdrawals();
+            refreshAndMakeUnlockWithdrawalNotification();
           }}
         ></CancelUnbonding>
       ),
@@ -254,6 +256,7 @@ export const Locked: React.FC = () => {
                     onSuccess={async (_, receipt) => {
                       await waitTransactionHandled(receipt?.blockNumber);
                       await getWithdrawals();
+                      refreshAndMakeUnlockWithdrawalNotification();
                     }}
                     unlockedAmount={sortedWithdrawalsAmount}
                     disabled={!hasUnlockedRewards}

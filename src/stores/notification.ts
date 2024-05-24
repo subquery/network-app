@@ -46,7 +46,7 @@ export type NotificationStore = {
   addNotification: (notification: NotificationItem) => void;
   sortNotificationList: () => void;
   updateNotification: (notification: NotificationItem) => void;
-  removeNotification: (notification: NotificationItem) => void;
+  removeNotification: (notification: NotificationKey | NotificationKey[]) => void;
   initNotification: (address: string) => Promise<void>;
 };
 
@@ -95,9 +95,14 @@ export const useNotification = create<NotificationStore>((set, get) => ({
     }));
     await localforage.setItem(get().cacheKey, sortedList);
   },
-  removeNotification: async (notification) => {
+  removeNotification: async (notificationKeys) => {
     const state = get();
-    const filterList = state.notificationList.filter((n) => n.key !== notification.key);
+    const filterList = state.notificationList.filter((n) => {
+      if (Array.isArray(notificationKeys)) {
+        return !notificationKeys.includes(n.key as NotificationKey);
+      }
+      return n.key !== notificationKeys;
+    });
     set(() => ({
       notificationList: filterList,
     }));

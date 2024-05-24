@@ -8,6 +8,7 @@ import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
 import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput } from '@components';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
@@ -67,6 +68,8 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   const lockPeriod = useLockPeriod();
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
+
+  const { refreshAndMakeInactiveOperatorNotification } = useMakeNotification();
 
   const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
     gql`
@@ -153,6 +156,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
           onSuccess={async (_, receipt) => {
             await waitTransactionHandled(receipt?.blockNumber);
             await onSuccess?.();
+            refreshAndMakeInactiveOperatorNotification();
           }}
           renderContent={(onSubmit, onCancel, loading, error) => {
             // if operator is not active, skip collect.
