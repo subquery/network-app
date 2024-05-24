@@ -35,6 +35,7 @@ export function useEra(): {
 } {
   const { contracts } = useWeb3Store();
 
+  // TODO: refactor this variable.
   const { refetch, ...currentEra } = useAsyncMemo(async () => {
     if (!contracts) {
       console.error('contracts not available');

@@ -40,43 +40,19 @@ export const entryLinks = [
   },
   {
     link: ROUTES.INDEXER,
-    label: 'Participants',
-    key: 'participants',
-    dropdown: [
-      {
-        link: ROUTES.INDEXER,
-        label: t('indexer.title'),
-      },
-      {
-        link: ROUTES.CONSUMER,
-        label: t('consumer'),
-      },
-      {
-        link: ROUTES.DELEGATOR,
-        label: t('delegator'),
-      },
-    ],
+    label: t('indexer.title'),
   },
   {
-    link: '/bridge',
-    label: 'Bridge',
+    link: ROUTES.CONSUMER,
+    label: t('consumer'),
+  },
+  {
+    link: ROUTES.DELEGATOR,
+    label: t('delegator'),
   },
   {
     link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',
     label: t('header.documentation'),
-  },
-  {
-    label: t('header.ecosystem'),
-    dropdown: [
-      {
-        link: 'https://forum.subquery.network/c/kepler-network/16',
-        label: t('header.forum'),
-      },
-      {
-        link: 'https://snapshot.org/#/subquerynetwork.eth',
-        label: t('header.governance'),
-      },
-    ],
   },
 ];
 export const SUBQL_EXPLORER = 'https://explorer.subquery.network/';

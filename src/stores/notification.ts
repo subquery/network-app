@@ -12,7 +12,7 @@ const ButtonProps = t.type({
 });
 
 const NotificationItemFromIo = t.type({
-  key: t.string,
+  key: t.string, // TODO: make enum for it
   level: t.union([t.literal('info'), t.literal('critical')]),
   message: t.string,
   title: t.string,

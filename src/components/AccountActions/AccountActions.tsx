@@ -268,13 +268,42 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                   }}
                 >
                   <div className={styles.dropdownItemInner} onClick={handleNavAccount}>
-                    {t('indexer.myProfile')}
+                    <Typography>{t('indexer.myProfile')}</Typography>
                   </div>
                   <div className={styles.dropdownItemInner} onClick={handleNavRewards}>
-                    {t('indexer.rewards')}
+                    <Typography>{t('indexer.rewards')}</Typography>
                   </div>
                   <div className={styles.dropdownItemInner} onClick={handleNavWithdrawn}>
-                    {t('indexer.withdrawn')}
+                    <Typography>{t('indexer.withdrawn')}</Typography>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              // econocys
+              key: 'ecosystem',
+              label: (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '8px 0',
+                    borderBottom: '1px solid var(--sq-gray200)',
+                  }}
+                >
+                  <div className={styles.dropdownItemInner}>
+                    <Typography.Link
+                      href="https://forum.subquery.network/c/subquery-mainnet/17"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {t('header.forum')}
+                    </Typography.Link>
+                  </div>
+                  <div className={styles.dropdownItemInner}>
+                    <Typography.Link href="https://snapshot.org/#/subquerynetwork.eth" target="_blank" rel="noreferrer">
+                      {t('header.governance')}
+                    </Typography.Link>
                   </div>
                 </div>
               ),

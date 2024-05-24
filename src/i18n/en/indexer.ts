@@ -15,7 +15,7 @@ const translation = {
     ended: 'This Era has ended',
   },
   indexer: {
-    title: 'Operator',
+    title: 'Node Operator',
     nickname: 'Node Operator',
     indexers: 'Node Operator',
     profile: 'My Profile', // Explorer V1

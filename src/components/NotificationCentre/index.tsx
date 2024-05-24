@@ -5,12 +5,22 @@ import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { GoAlertFill, GoBell } from 'react-icons/go';
 import { IoIosAlert, IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router';
+import { gql, useLazyQuery } from '@apollo/client';
 import { useSQToken } from '@containers/SQToken';
 import { useAccount } from '@containers/Web3';
+import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { useEthersSigner } from '@hooks/useEthersProvider';
+import { getTotalStake } from '@hooks/useSortedIndexer';
 import { Typography } from '@subql/components';
-import { useGetFilteredDelegationsLazyQuery, useGetRewardsLazyQuery } from '@subql/react-hooks';
-import { formatSQT } from '@utils';
+import {
+  formatEther,
+  useGetFilteredDelegationsLazyQuery,
+  useGetIndexerLazyQuery,
+  useGetRewardsLazyQuery,
+} from '@subql/react-hooks';
+import { convertBigNumberToNumber, formatSQT } from '@utils';
+import { limitContract, makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Badge, Button, Modal, Popover } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -37,6 +47,7 @@ const EmptyNotification = () => {
   );
 };
 
+// TODO: split to other files
 export const useToastNotificationModal = () => {
   const notificationStore = useNotification();
   const navigate = useNavigate();
@@ -96,6 +107,11 @@ export const useToastNotificationModal = () => {
           },
           // eslint-disable-next-line no-loop-func
           onOk: () => {
+            if (!noti.buttonProps.navigateHref) {
+              continueShowToastStatus = 'continue';
+              return;
+            }
+
             continueShowToastStatus = 'stop';
             // window.open may be block by browser
             if (
@@ -153,9 +169,32 @@ const idleCallback = window.requestIdleCallback || idleTimeout;
 
 export const useMakeNotification = () => {
   const notificationStore = useNotification();
+  const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
+  const { provider } = useEthersSigner();
   const { account } = useAccount();
   const [fetchRewardsApi] = useGetRewardsLazyQuery();
+  const [fetchIndexerData] = useGetIndexerLazyQuery();
+  const [fetchIndexerController] = useLazyQuery<{ indexer?: { controller?: string } }>(gql`
+    query Indexer($address: String!) {
+      indexer(id: $address) {
+        controller
+      }
+    }
+  `);
+  const [fetchUnlockWithdrawal] = useLazyQuery<{ withdrawls: { totalCount?: number } }>(gql`
+    query MyQuery($address: String!, $startTime: Datetime!) {
+      withdrawls(
+        filter: {
+          delegator: { equalTo: $address }
+          status: { equalTo: ONGOING }
+          startTime: { lessThanOrEqualTo: $startTime }
+        }
+      ) {
+        totalCount
+      }
+    }
+  `);
   const { consumerHostBalance } = useSQToken();
   const { getHostingPlanApi } = useConsumerHostServices({
     autoLogin: false,
@@ -169,7 +208,8 @@ export const useMakeNotification = () => {
     // TODO: Maybe can optimise
     if (
       notificationStore.notificationList.find((item) => item.key === 'overAllocate') &&
-      notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation')
+      notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation') &&
+      notificationStore.notificationList.find((item) => item.key === 'overAllocateNextEra')
     ) {
       return;
     }
@@ -181,7 +221,7 @@ export const useMakeNotification = () => {
 
     const isOverAllocated = +runnerAllocation?.used > +runnerAllocation?.total;
     const isUnused = +runnerAllocation.total - +runnerAllocation.used > 1000;
-    if (isUnused && !notificationStore.notificationList.find((item) => item.key === 'overAllocate')) {
+    if (isUnused && !notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation')) {
       // add a notification to inform user that they have unused allocation
       notificationStore.addNotification({
         key: 'unstakeAllocation',
@@ -195,7 +235,7 @@ export const useMakeNotification = () => {
         type: '',
         buttonProps: {
           label: 'Unstake Allocation',
-          navigateHref: '/indexer',
+          navigateHref: '/indexer/my-projects',
         },
       });
     }
@@ -212,12 +252,43 @@ export const useMakeNotification = () => {
         type: '',
         buttonProps: {
           label: 'Increase Allocation',
-          navigateHref: '/indexer',
+          navigateHref: '/indexer/my-projects',
         },
       });
       notificationStore.sortNotificationList();
     }
-  }, [account, contracts, notificationStore.notificationList]);
+
+    if (!notificationStore.notificationList.find((item) => item.key === 'overAllocateNextEra')) {
+      const indexerData = await fetchIndexerData({
+        variables: {
+          address: account || '',
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (indexerData.data?.indexer?.id) {
+        const totalStake = getTotalStake(indexerData.data.indexer.totalStake, currentEra.data?.index);
+
+        if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
+          // add notification to inform user that they may over allocated next era
+          notificationStore.addNotification({
+            key: 'overAllocateNextEra',
+            level: 'info',
+            message: `You have used ${runnerAllocation.used} SQT out of ${totalStake.after} SQT allocated in the next era`,
+            title: 'Over Allocation Next Era',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Adjust Allocation',
+              navigateHref: '/indexer/my-projects',
+            },
+          });
+        }
+      }
+    }
+  }, [account, contracts, notificationStore.notificationList, currentEra.data?.index]);
 
   const makeUnClaimedNotification = useCallback(async () => {
     if (notificationStore.notificationList.find((item) => item.key === 'unclaimedRewards')) {
@@ -313,16 +384,89 @@ export const useMakeNotification = () => {
     }
   }, [account, notificationStore.notificationList]);
 
-  const initAllNotification = useCallback(async () => {
-    await makeUnClaimedNotification();
-    await makeOverAllocateAndUnStakeAllocationNotification();
-    await makeLowBillingBalanceNotification();
-    await makeInactiveOperatorNotification();
+  const makeLowControllerBalanceNotification = useCallback(async () => {
+    if (notificationStore.notificationList.find((item) => item.key === 'lowControllerBalance')) {
+      return;
+    }
+    const res = await fetchIndexerController({
+      variables: {
+        address: account || '',
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (res.data?.indexer?.controller) {
+      const controller = res.data.indexer.controller;
+      const controllerBalance = await provider?.getBalance(controller);
+
+      if (BigNumberJs(formatEther(controllerBalance)).lt(0.002)) {
+        notificationStore.addNotification({
+          key: 'lowControllerBalance',
+          level: 'critical',
+          message:
+            'Your Controller Account’s balance is running now. Top up now to ensure rewards are paid out in time.',
+          title: 'Low Controller Balance',
+          createdAt: Date.now(),
+          canBeDismissed: false,
+          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTo: undefined,
+          type: '',
+          buttonProps: {
+            label: 'Add Balance',
+            navigateHref: '',
+          },
+        });
+        notificationStore.sortNotificationList();
+      }
+    }
+  }, [account, notificationStore.notificationList, provider]);
+
+  const makeUnlockWithdrawalNotification = useCallback(async () => {
+    if (notificationStore.notificationList.find((item) => item.key === 'unlockWithdrawal') || !contracts) {
+      return;
+    }
+    const lockPeriod = await limitContract(() => contracts.staking.lockPeriod(), makeCacheKey('lockPeriod'), 0);
+    const res = await fetchUnlockWithdrawal({
+      variables: {
+        address: account || '',
+        startTime: dayjs().subtract(convertBigNumberToNumber(lockPeriod), 'seconds').toISOString(),
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    if (res.data?.withdrawls.totalCount) {
+      notificationStore.addNotification({
+        key: 'unlockWithdrawal',
+        level: 'info',
+        message: 'Your withdrawal has been unlocked.',
+        title: 'Unlock Withdrawal',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: 1000 * 60 * 60 * 24,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Withdraw',
+          navigateHref: '/profile/withdrawn',
+        },
+      });
+    }
+  }, [account, notificationStore.notificationList, contracts]);
+
+  const initAllNotification = useCallback(() => {
+    idleCallback(makeOverAllocateAndUnStakeAllocationNotification);
+    idleCallback(makeUnClaimedNotification);
+    idleCallback(makeLowBillingBalanceNotification);
+    idleCallback(makeInactiveOperatorNotification);
+    idleCallback(makeLowControllerBalanceNotification);
+    idleCallback(makeUnlockWithdrawalNotification);
   }, [
     makeOverAllocateAndUnStakeAllocationNotification,
     makeUnClaimedNotification,
     makeLowBillingBalanceNotification,
     makeInactiveOperatorNotification,
+    makeLowControllerBalanceNotification,
+    makeUnlockWithdrawalNotification,
   ]);
 
   return {
@@ -330,6 +474,8 @@ export const useMakeNotification = () => {
     makeUnClaimedNotification: () => idleCallback(makeUnClaimedNotification),
     makeLowBillingBalanceNotification: () => idleCallback(makeLowBillingBalanceNotification),
     makeInactiveOperatorNotification: () => idleCallback(makeInactiveOperatorNotification),
+    makeLowControllerBalanceNotification: () => idleCallback(makeLowControllerBalanceNotification),
+    makeUnlockWithdrawalNotification: () => idleCallback(makeUnlockWithdrawalNotification),
     initNewNotification: () => idleCallback(initAllNotification),
   };
 };
@@ -368,6 +514,7 @@ const NotificationItem: FC<{ item: NotificationItemType }> = ({ item }) => {
             type="primary"
             danger={item.level === 'critical' ? true : false}
             onClick={() => {
+              if (!item.buttonProps.navigateHref) return;
               if (
                 !item.buttonProps.navigateHref.includes('https://') &&
                 !item.buttonProps.navigateHref.includes('http://')
@@ -403,6 +550,7 @@ const NotificationList: FC = () => {
 };
 
 const NotificationCentre: FC = () => {
+  const { currentEra } = useEra();
   const { account } = useAccount();
   const [open, setOpen] = useState(false);
   const notificationStore = useNotification();
@@ -418,10 +566,10 @@ const NotificationCentre: FC = () => {
   }, [account]);
 
   useEffect(() => {
-    if (notificationStore.mounted) {
+    if (notificationStore.mounted && !currentEra.loading && !currentEra.error) {
       initNewNotification();
     }
-  }, [notificationStore.mounted]);
+  }, [notificationStore.mounted, currentEra.data?.index, currentEra.loading, currentEra.error]);
 
   useEffect(() => {
     toastRestNotifications();
@@ -499,4 +647,5 @@ const NotificationCentre: FC = () => {
     </div>
   );
 };
+
 export default NotificationCentre;
