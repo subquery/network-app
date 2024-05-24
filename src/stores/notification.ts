@@ -4,12 +4,24 @@
 import { makeCacheKey } from '@utils/limitation';
 import * as t from 'io-ts';
 import localforage from 'localforage';
+import { unionBy } from 'lodash-es';
 import { create } from 'zustand';
 
 const ButtonProps = t.type({
   label: t.string,
   navigateHref: t.string,
 });
+
+export enum NotificationKey {
+  OverAllocate = 'overAllocate',
+  UnstakeAllocation = 'unstakeAllocation',
+  OverAllocateNextEra = 'overAllocateNextEra',
+  UnclaimedRewards = 'unclaimedRewards',
+  LowBillingBalance = 'lowBillingBalance',
+  InactiveOperator = 'inactiveOperator',
+  LowControllerBalance = 'lowControllerBalance',
+  UnlockWithdrawal = 'unlockWithdrawal',
+}
 
 const NotificationItemFromIo = t.type({
   key: t.string, // TODO: make enum for it
@@ -32,7 +44,6 @@ export type NotificationStore = {
   notificationList: NotificationItem[];
   clearNotificationList: () => void;
   addNotification: (notification: NotificationItem) => void;
-  addNotificationShift: (notification: NotificationItem) => void;
   sortNotificationList: () => void;
   updateNotification: (notification: NotificationItem) => void;
   removeNotification: (notification: NotificationItem) => void;
@@ -49,13 +60,9 @@ export const useNotification = create<NotificationStore>((set, get) => ({
   },
   addNotification: async (notification) => {
     const rawList = get().notificationList;
-    set(() => ({ notificationList: [...rawList, notification] }));
-    await localforage.setItem(get().cacheKey, [...rawList, notification]);
-  },
-  addNotificationShift: async (notification) => {
-    const rawList = get().notificationList;
-    set(() => ({ notificationList: [notification, ...rawList] }));
-    await localforage.setItem(get().cacheKey, [notification, ...rawList]);
+    const newList = unionBy([...rawList, notification], (i) => i.key);
+    set(() => ({ notificationList: newList }));
+    await localforage.setItem(get().cacheKey, newList);
   },
   updateNotification: async (notification) => {
     const state = get();

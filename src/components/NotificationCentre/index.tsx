@@ -27,7 +27,11 @@ import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
-import { type NotificationItem as NotificationItemType, useNotification } from 'src/stores/notification';
+import {
+  type NotificationItem as NotificationItemType,
+  NotificationKey,
+  useNotification,
+} from 'src/stores/notification';
 
 import styles from './index.module.less';
 
@@ -206,10 +210,11 @@ export const useMakeNotification = () => {
   const makeOverAllocateAndUnStakeAllocationNotification = useCallback(async () => {
     // over and unused share same api, so must query both at the same time
     // TODO: Maybe can optimise
+
     if (
-      notificationStore.notificationList.find((item) => item.key === 'overAllocate') &&
-      notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation') &&
-      notificationStore.notificationList.find((item) => item.key === 'overAllocateNextEra')
+      notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocate) &&
+      notificationStore.notificationList.find((item) => item.key === NotificationKey.UnstakeAllocation) &&
+      notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocateNextEra)
     ) {
       return;
     }
@@ -221,7 +226,10 @@ export const useMakeNotification = () => {
 
     const isOverAllocated = +runnerAllocation?.used > +runnerAllocation?.total;
     const isUnused = +runnerAllocation.total - +runnerAllocation.used > 1000;
-    if (isUnused && !notificationStore.notificationList.find((item) => item.key === 'unstakeAllocation')) {
+    if (
+      isUnused &&
+      !notificationStore.notificationList.find((item) => item.key === NotificationKey.UnstakeAllocation)
+    ) {
       // add a notification to inform user that they have unused allocation
       notificationStore.addNotification({
         key: 'unstakeAllocation',
@@ -239,7 +247,10 @@ export const useMakeNotification = () => {
         },
       });
     }
-    if (isOverAllocated && !notificationStore.notificationList.find((item) => item.key === 'overAllocate')) {
+    if (
+      isOverAllocated &&
+      !notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocate)
+    ) {
       notificationStore.addNotification({
         key: 'overAllocate',
         level: 'critical',
@@ -258,7 +269,7 @@ export const useMakeNotification = () => {
       notificationStore.sortNotificationList();
     }
 
-    if (!notificationStore.notificationList.find((item) => item.key === 'overAllocateNextEra')) {
+    if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocateNextEra)) {
       const indexerData = await fetchIndexerData({
         variables: {
           address: account || '',
@@ -291,7 +302,7 @@ export const useMakeNotification = () => {
   }, [account, contracts, notificationStore.notificationList, currentEra.data?.index]);
 
   const makeUnClaimedNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'unclaimedRewards')) {
+    if (notificationStore.notificationList.find((item) => item.key === NotificationKey.UnclaimedRewards)) {
       return;
     }
     const res = await fetchRewardsApi({
@@ -303,7 +314,7 @@ export const useMakeNotification = () => {
 
     if (res.data?.unclaimedRewards?.totalCount) {
       notificationStore.addNotification({
-        key: 'unclaimedRewards',
+        key: NotificationKey.UnclaimedRewards,
         level: 'info',
         message: '',
         title: 'Unclaimed Rewards',
@@ -321,7 +332,7 @@ export const useMakeNotification = () => {
   }, [account, notificationStore.notificationList]);
 
   const makeLowBillingBalanceNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'lowBillingBalance')) {
+    if (notificationStore.notificationList.find((item) => item.key === NotificationKey.LowBillingBalance)) {
       return;
     }
 
@@ -337,7 +348,7 @@ export const useMakeNotification = () => {
       BigNumberJs(formatSQT(billingBalance?.toString() || '0')).lt(400)
     ) {
       notificationStore.addNotification({
-        key: 'lowBillingBalance',
+        key: NotificationKey.LowBillingBalance,
         level: 'critical',
         message:
           'Your Billing account balance is running low. Please top up your Billing account promptly to avoid any disruption in usage.',
@@ -357,7 +368,7 @@ export const useMakeNotification = () => {
   }, [account, notificationStore.notificationList]);
 
   const makeInactiveOperatorNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'inactiveOperator')) return;
+    if (notificationStore.notificationList.find((item) => item.key === NotificationKey.InactiveOperator)) return;
     const res = await fetchDelegations({
       variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
       fetchPolicy: 'network-only',
@@ -365,7 +376,7 @@ export const useMakeNotification = () => {
 
     if (res.data?.delegations?.nodes.some((i) => i?.indexer?.active === false)) {
       notificationStore.addNotification({
-        key: 'inactiveOperator',
+        key: NotificationKey.InactiveOperator,
         level: 'critical',
         message:
           'This node operator has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.',
@@ -385,7 +396,7 @@ export const useMakeNotification = () => {
   }, [account, notificationStore.notificationList]);
 
   const makeLowControllerBalanceNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'lowControllerBalance')) {
+    if (notificationStore.notificationList.find((item) => item.key === NotificationKey.LowControllerBalance)) {
       return;
     }
     const res = await fetchIndexerController({
@@ -399,9 +410,9 @@ export const useMakeNotification = () => {
       const controller = res.data.indexer.controller;
       const controllerBalance = await provider?.getBalance(controller);
 
-      if (BigNumberJs(formatEther(controllerBalance)).lt(0.002)) {
+      if (BigNumberJs(formatEther(controllerBalance)).lt(0.001)) {
         notificationStore.addNotification({
-          key: 'lowControllerBalance',
+          key: NotificationKey.LowControllerBalance,
           level: 'critical',
           message:
             'Your Controller Account’s balance is running now. Top up now to ensure rewards are paid out in time.',
@@ -422,7 +433,10 @@ export const useMakeNotification = () => {
   }, [account, notificationStore.notificationList, provider]);
 
   const makeUnlockWithdrawalNotification = useCallback(async () => {
-    if (notificationStore.notificationList.find((item) => item.key === 'unlockWithdrawal') || !contracts) {
+    if (
+      notificationStore.notificationList.find((item) => item.key === NotificationKey.UnlockWithdrawal) ||
+      !contracts
+    ) {
       return;
     }
     const lockPeriod = await limitContract(() => contracts.staking.lockPeriod(), makeCacheKey('lockPeriod'), 0);
@@ -436,7 +450,7 @@ export const useMakeNotification = () => {
 
     if (res.data?.withdrawls.totalCount) {
       notificationStore.addNotification({
-        key: 'unlockWithdrawal',
+        key: NotificationKey.UnlockWithdrawal,
         level: 'info',
         message: 'Your withdrawal has been unlocked.',
         title: 'Unlock Withdrawal',
