@@ -299,7 +299,7 @@ export const useMakeNotification = () => {
             level: 'critical',
             message:
               'Your Controller Account’s balance is running now. Top up now to ensure rewards are paid out in time.',
-            title: 'Low Controller Balance',
+            title: 'Low Controller Account Balance',
             createdAt: Date.now(),
             canBeDismissed: false,
             dismissTime: 1000 * 60 * 60 * 24,
@@ -338,8 +338,8 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: NotificationKey.UnlockWithdrawal,
           level: 'info',
-          message: 'Your withdrawal has been unlocked.',
-          title: 'Unlock Withdrawal',
+          message: '',
+          title: 'Unlocked Withdrawals Available',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
