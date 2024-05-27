@@ -6,6 +6,7 @@ import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
 import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
+import { limitContract, makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
@@ -200,7 +201,7 @@ export const useConsumerHostServices = (
     try {
       setLoading(true);
       authHeaders.current = getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || '');
-      const res = await getUserApiKeysApi();
+      const res = await limitContract(() => getUserApiKeysApi(), makeCacheKey('checkIfHasLogin', { prefix: account }));
       if (isConsumerHostError(res.data) && `${res.data.code}` === '403') {
         setHasLogin(false);
         return;
