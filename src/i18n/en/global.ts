@@ -41,13 +41,13 @@ const translation = {
     progress: 'progress',
     cancelUndelegation: 'Cancel Delegation Withdrawal',
     cancelUndelegationTips:
-      'If you cancel undelegation process, the following amount will be returned to delegation and you will continue to earn delegation rewards.',
+      'If you cancel undelegation process, your SQT will be returned to delegation and you will continue to earn delegation rewards.',
     cancelUnstaking: 'Cancel Staking Withdrawal',
     cancelUnstakingTips:
-      'If you cancel unstaking process, the following amount will be returned to staking and you will continue to earn staking rewards.',
+      'If you cancel unstaking process, your SQT will be returned to staking and you will continue to earn staking rewards.',
     cancelCommission: 'Cancel Commission Withdrawal',
     cancelCommissionTips:
-      'If you cancel commission processs, the following amount will be returned to staking and you will continue to earn staking rewards.',
+      'If you cancel the undelegation process, your SQT will be returned to delegation and you will continue to earn delegation rewards.',
   },
   status: {
     success: 'Success!',
