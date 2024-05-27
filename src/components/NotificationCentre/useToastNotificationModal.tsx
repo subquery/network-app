@@ -31,6 +31,7 @@ export const useToastNotificationModal = () => {
       const canBeToastNotification = (notification ? [notification] : notificationStore.notificationList).filter(
         (item) => {
           return (
+            item.level === 'critical' &&
             (!item.dismissTo || (item.dismissTo && item.dismissTo < Date.now())) &&
             !toastedKeys.current.includes(item.key)
           );
