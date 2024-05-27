@@ -52,7 +52,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const [estimatedRewardsOneEra, setEstimatedRewardsOneEra] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
   const waitTransactionHandled = useWaitTransactionhandled();
-  const { refreshAndMakeOverAllocateNotification } = useMakeNotification();
+  const { refreshAndMakeOverAllocateNotification, refreshAndMakeOutdateAllocationProjects } = useMakeNotification();
 
   const [fetchTotalDeploymentAllocation, totalDeploymentAllocation] = useLazyQuery(gql`
     query GetDeploymentAllocationSummary($deploymentId: String!) {
@@ -199,6 +199,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       await Promise.all([waitTransactionHandled(receipt?.blockNumber), runnerAllocation.refetch()]);
       await onSuccess?.();
       refreshAndMakeOverAllocateNotification();
+      refreshAndMakeOutdateAllocationProjects();
       form.resetFields();
       openNotification({
         type: 'success',

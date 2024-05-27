@@ -55,6 +55,54 @@ export const useMakeNotification = () => {
       }
     }
   `);
+  const [fetchAllocationProjects] = useLazyQuery<{
+    indexerAllocationSummaries: { nodes: { deploymentId: string; project: { deploymentId: string } }[] };
+  }>(gql`
+    query GetIndexerAllocationProjects($id: String!) {
+      indexerAllocationSummaries(filter: { indexerId: { equalTo: $id }, totalAmount: { greaterThan: "0" } }) {
+        nodes {
+          deploymentId
+          project {
+            deploymentId
+          }
+        }
+      }
+    }
+  `);
+  const [fetchBooster] = useLazyQuery<{
+    deploymentBoosterSummaries?: {
+      groupedAggregates?: {
+        sum?: {
+          totalAmount?: string;
+        };
+        keys?: string[];
+      }[];
+    };
+  }>(gql`
+    query GetBooster($deploymentIds: [String!]) {
+      deploymentBoosterSummaries(filter: { deploymentId: { in: $deploymentIds } }) {
+        groupedAggregates(groupBy: DEPLOYMENT_ID) {
+          sum {
+            totalAmount
+          }
+          keys
+        }
+      }
+    }
+  `);
+  const [fetchTerminatedProjects] = useLazyQuery<{ indexerDeployments: { totalCount?: number } }>(gql`
+    query GetTerminatedProjects($indexerId: String!, $deploymentIds: [String!]!) {
+      indexerDeployments(
+        filter: {
+          indexerId: { equalTo: $indexerId }
+          deploymentId: { in: $deploymentIds }
+          status: { equalTo: TERMINATED }
+        }
+      ) {
+        totalCount
+      }
+    }
+  `);
   const { consumerHostBalance } = useSQToken();
   const { getHostingPlanApi } = useConsumerHostServices({
     autoLogin: false,
@@ -76,6 +124,10 @@ export const useMakeNotification = () => {
           return;
         }
       }
+
+      const isIndexer = await contracts?.indexerRegistry.isIndexer(account || '');
+      if (!isIndexer) return;
+
       const res = await contracts?.stakingAllocation.runnerAllocation(account || '');
       const runnerAllocation = {
         used: formatSQT(res?.used.toString() || '0'),
@@ -101,7 +153,7 @@ export const useMakeNotification = () => {
           dismissTo: undefined,
           type: '',
           buttonProps: {
-            label: 'Unstake Allocation',
+            label: 'Adjust Allocation',
             navigateHref: '/indexer/my-projects',
           },
         });
@@ -164,6 +216,91 @@ export const useMakeNotification = () => {
       }
     },
     [account, contracts, notificationStore.notificationList, currentEra.data?.index],
+  );
+
+  const makeOutdateAllocationProjects = useCallback(
+    async (mode?: 'reload') => {
+      if (mode !== 'reload') {
+        if (
+          notificationStore.notificationList.find((item) => item.key === NotificationKey.OutdatedAllocation) &&
+          notificationStore.notificationList.find((item) => item.key === NotificationKey.MislaborAllocation)
+        ) {
+          return;
+        }
+      }
+
+      const res = await fetchAllocationProjects({
+        variables: {
+          id: account || '',
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.OutdatedAllocation)) {
+        const newVersionOfProject = res.data?.indexerAllocationSummaries?.nodes
+          .filter((node) => node?.deploymentId !== node?.project?.deploymentId)
+          .map((i) => i?.project?.deploymentId);
+
+        if (!newVersionOfProject?.length) return;
+
+        const boosterRes = await fetchBooster({
+          variables: {
+            deploymentIds: newVersionOfProject,
+          },
+        });
+
+        const haveBoosterProjects = boosterRes.data?.deploymentBoosterSummaries?.groupedAggregates?.filter((i) => {
+          return i.sum?.totalAmount && BigNumberJs(i.sum.totalAmount).gt(0);
+        });
+
+        if (haveBoosterProjects?.length) {
+          notificationStore.addNotification({
+            key: NotificationKey.OutdatedAllocation,
+            level: 'info',
+            message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.`,
+            title: 'Outdated Allocation Projects',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Adjust Allocation',
+              navigateHref: '/indexer/my-projects',
+            },
+          });
+        }
+      }
+
+      if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.MislaborAllocation)) {
+        const allocatedDeployments = res.data?.indexerAllocationSummaries.nodes.map((i) => i?.deploymentId);
+        const terminatedProjects = await fetchTerminatedProjects({
+          variables: {
+            indexerId: account || '',
+            deploymentIds: allocatedDeployments,
+          },
+        });
+
+        if (terminatedProjects.data?.indexerDeployments.totalCount) {
+          notificationStore.addNotification({
+            key: NotificationKey.MislaborAllocation,
+            level: 'info',
+            message: `You have allocated to a terminated deployment. Terminated deployment will not receive rewards.`,
+            title: 'Mislabor Allocation Projects',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Adjust Allocation',
+              navigateHref: '/indexer/my-projects',
+            },
+          });
+        }
+      }
+    },
+    [account, notificationStore.notificationList],
   );
 
   const makeUnClaimedNotification = useCallback(
@@ -362,6 +499,7 @@ export const useMakeNotification = () => {
     idleCallback(() => makeInactiveOperatorNotification());
     idleCallback(() => makeLowControllerBalanceNotification());
     idleCallback(() => makeUnlockWithdrawalNotification());
+    idleCallback(() => makeOutdateAllocationProjects());
   }, [
     makeOverAllocateAndUnStakeAllocationNotification,
     makeUnClaimedNotification,
@@ -369,6 +507,7 @@ export const useMakeNotification = () => {
     makeInactiveOperatorNotification,
     makeLowControllerBalanceNotification,
     makeUnlockWithdrawalNotification,
+    makeOutdateAllocationProjects,
   ]);
 
   return {
@@ -379,6 +518,8 @@ export const useMakeNotification = () => {
     makeInactiveOperatorNotification: () => idleCallback(() => makeInactiveOperatorNotification()),
     makeLowControllerBalanceNotification: () => idleCallback(() => makeLowControllerBalanceNotification()),
     makeUnlockWithdrawalNotification: () => idleCallback(() => makeUnlockWithdrawalNotification()),
+    makeOutdateAllocationProjects: () => idleCallback(() => makeOutdateAllocationProjects()),
+
     refreshAndMakeOverAllocateNotification: () => {
       notificationStore.removeNotification([
         NotificationKey.OverAllocate,
@@ -406,6 +547,10 @@ export const useMakeNotification = () => {
     refreshAndMakeUnlockWithdrawalNotification: () => {
       notificationStore.removeNotification(NotificationKey.UnlockWithdrawal);
       idleCallback(() => makeUnlockWithdrawalNotification('reload'));
+    },
+    refreshAndMakeOutdateAllocationProjects: () => {
+      notificationStore.removeNotification(NotificationKey.OutdatedAllocation);
+      idleCallback(() => makeOutdateAllocationProjects('reload'));
     },
     initNewNotification: () => idleCallback(initAllNotification),
   };

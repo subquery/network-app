@@ -21,6 +21,8 @@ export enum NotificationKey {
   InactiveOperator = 'inactiveOperator',
   LowControllerBalance = 'lowControllerBalance',
   UnlockWithdrawal = 'unlockWithdrawal',
+  OutdatedAllocation = 'outdatedAllocation',
+  MislaborAllocation = 'mislaborAllocation',
 }
 
 const NotificationItemFromIo = t.type({
