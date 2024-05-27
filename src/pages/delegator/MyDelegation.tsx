@@ -200,7 +200,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
                       variant="small"
                       style={{ color: '#fff', textDecoration: 'underline' }}
                     >
-                      View Withdrawls
+                      View Withdrawals
                     </Typography.Link>
                   </Typography>
                 }
@@ -416,10 +416,10 @@ const DelegatingCard = (props: {
           ></FormatCardLine>
 
           <FormatCardLine
-            title="Total Delegation Withdrawls"
+            title="Total Delegation Withdrawals"
             amount={formatNumber(formatSQT(totalWithdrawls.data?.withdrawls?.aggregates?.sum?.amount ?? '0'))}
             link="/profile/withdrawn"
-            linkName="View Withdrawls"
+            linkName="View Withdrawals"
           ></FormatCardLine>
         </div>
       </SubqlCard>

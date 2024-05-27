@@ -247,7 +247,7 @@ export const MyAccountInner: React.FC = () => {
                   <FormatCardLine
                     title="Total withdrawals"
                     amount={formatNumber(totalWithdrawn)}
-                    linkName="View Withdrawls"
+                    linkName="View Withdrawals"
                     link="/profile/withdrawn"
                   ></FormatCardLine>
                 </div>
