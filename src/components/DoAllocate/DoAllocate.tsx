@@ -153,9 +153,13 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     }
 
     const newAllcation =
-      BigNumber(formAllocateVal)
-        .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
-        .abs() || 0;
+      addOrRemove === 'Add'
+        ? BigNumber(formAllocateVal).plus(
+            formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'),
+          )
+        : BigNumber(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0')).minus(
+            formAllocateVal,
+          );
 
     const percentageOfNewAllocation = newAllcation.div(
       BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
