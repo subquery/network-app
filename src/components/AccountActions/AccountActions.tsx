@@ -296,12 +296,18 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       href="https://forum.subquery.network/c/subquery-mainnet/17"
                       target="_blank"
                       rel="noreferrer"
+                      style={{ color: 'var(--sq-gray900)' }}
                     >
                       {t('header.forum')}
                     </Typography.Link>
                   </div>
                   <div className={styles.dropdownItemInner}>
-                    <Typography.Link href="https://snapshot.org/#/subquerynetwork.eth" target="_blank" rel="noreferrer">
+                    <Typography.Link
+                      href="https://snapshot.org/#/subquerynetwork.eth"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: 'var(--sq-gray900)' }}
+                    >
                       {t('header.governance')}
                     </Typography.Link>
                   </div>

@@ -135,58 +135,58 @@ const NotificationCentre: FC = () => {
   }, [notificationStore.notificationList]);
 
   return (
-    <div className={styles.notificationCentre}>
-      <Popover
-        arrow={false}
-        placement={'bottom'}
-        trigger="click"
-        open={open}
-        onOpenChange={(val) => {
-          setOpen(val);
-        }}
-        overlayClassName={styles.notificationCentrePopover}
-        content={
-          <div className={styles.notificationCentreContent}>
-            <div className={styles.notificationCentreContentTitle}>
-              <Typography variant="h5" weight={600}>
-                Notification
+    <Popover
+      arrow={false}
+      placement={'bottom'}
+      trigger="click"
+      open={open}
+      onOpenChange={(val) => {
+        setOpen(val);
+      }}
+      overlayClassName={styles.notificationCentrePopover}
+      content={
+        <div className={styles.notificationCentreContent}>
+          <div className={styles.notificationCentreContentTitle}>
+            <Typography variant="h5" weight={600}>
+              Notification
+            </Typography>
+
+            <div
+              className="flex-center"
+              style={{
+                background: 'var(--sq-gray200)',
+                border: '1px solid #DFE3E880',
+                borderRadius: 4,
+                padding: '2px 8px',
+                marginLeft: 8,
+              }}
+            >
+              <Typography variant="small" type="secondary">
+                {notificationStore.notificationList.length}
               </Typography>
-
-              <div
-                className="flex-center"
-                style={{
-                  background: 'var(--sq-gray200)',
-                  border: '1px solid #DFE3E880',
-                  borderRadius: 4,
-                  padding: '2px 8px',
-                  marginLeft: 8,
+            </div>
+            <span style={{ flex: 1 }}></span>
+            <Typography.Link>
+              <IoIosClose
+                style={{ fontSize: 24, cursor: 'pointer' }}
+                onClick={() => {
+                  setOpen(!open);
                 }}
-              >
-                <Typography variant="small" type="secondary">
-                  {notificationStore.notificationList.length}
-                </Typography>
-              </div>
-              <span style={{ flex: 1 }}></span>
-              <Typography.Link>
-                <IoIosClose
-                  style={{ fontSize: 24, cursor: 'pointer' }}
-                  onClick={() => {
-                    setOpen(!open);
-                  }}
-                />
-              </Typography.Link>
-            </div>
-
-            <div className={styles.notificationCentreContentInner}>
-              {notificationStore.notificationList.length ? (
-                <NotificationList></NotificationList>
-              ) : (
-                <EmptyNotification></EmptyNotification>
-              )}
-            </div>
+              />
+            </Typography.Link>
           </div>
-        }
-      >
+
+          <div className={styles.notificationCentreContentInner}>
+            {notificationStore.notificationList.length ? (
+              <NotificationList></NotificationList>
+            ) : (
+              <EmptyNotification></EmptyNotification>
+            )}
+          </div>
+        </div>
+      }
+    >
+      <div className={styles.notificationCentre}>
         <Badge
           dot={
             notificationStore.notificationList.length > 0 &&
@@ -202,8 +202,8 @@ const NotificationCentre: FC = () => {
         >
           <GoBell style={{ fontSize: 24, color: 'var(--sq-gray800)' }} />
         </Badge>
-      </Popover>
-    </div>
+      </div>
+    </Popover>
   );
 };
 
