@@ -24,5 +24,27 @@ const tagManagerArgs = {
 const isProd = import.meta.env.PROD;
 isProd && TagManager.initialize(tagManagerArgs);
 
+const cleanExpiryLocalStorage = () => {
+  try {
+    Object.keys(localStorage).forEach((key) => {
+      const item = localStorage.getItem(key);
+      if (item) {
+        try {
+          const parsed = JSON.parse(item);
+          if (parsed.expiry && parsed.expiry < Date.now()) {
+            localStorage.removeItem(key);
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+    });
+  } catch (e) {
+    // ignore
+  }
+};
+
+cleanExpiryLocalStorage();
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivElement);
 root.render(<App></App>);
