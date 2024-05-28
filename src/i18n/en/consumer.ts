@@ -343,7 +343,7 @@ const translation = {
       dailyRewardsError: `Please stake more ${TOKEN} or get more delegation to increase daily reward capacity.`,
       failureText: 'Failed to accept offer',
       afterAcceptOffer:
-        'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on MetaMask.',
+        'By accepting the offer, a service agreement will be created between you and the Consumer after you confirm on Wallet.',
     },
   },
 } as const;

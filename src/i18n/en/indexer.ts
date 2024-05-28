@@ -42,7 +42,7 @@ const translation = {
     disabledStakeBeforeRewardCollect: `You can't stake until you collect all early era's rewards. Please check the Node Operator admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
     disabledUnstakeBeforeRewardCollect: `You can't unstake until you collect all early era's rewards. Please check the Node Operator admin app to ensure the lastClaimedEra = ‘currentEra - 1’.`,
     enterStakeAmount: 'Enter Staking Amount',
-    confirmOnMetamask: 'Confirm On MetaMask',
+    confirmOnMetamask: 'Confirm On Wallet',
     stakeValidNextEra: 'Once confirm, your tokens will be staked from next era.',
     stakeInputTitle: `Enter the amount of ${TOKEN} you want to stake`,
     confirmStake: 'Confirm Stake',
