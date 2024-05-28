@@ -434,7 +434,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.LowControllerBalance,
             level: 'critical',
             message:
-              'Your Controller Account’s balance is running now. Top up now to ensure rewards are paid out in time.',
+              'Your Controller Account’s balance is running low. Top up now to ensure rewards are paid out in time.',
             title: 'Low Controller Account Balance',
             createdAt: Date.now(),
             canBeDismissed: true,
