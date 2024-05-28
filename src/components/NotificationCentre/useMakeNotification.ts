@@ -393,8 +393,8 @@ export const useMakeNotification = () => {
           key: NotificationKey.InactiveOperator,
           level: 'critical',
           message:
-            'This node operator has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.',
-          title: 'Node Operator Inactive',
+            'One or more of the Node Operators you delegate to has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.',
+          title: 'Delegated Node Operator Inactive',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
