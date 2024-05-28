@@ -292,6 +292,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                   }}
                 >
                   <div className={styles.dropdownItemInner}>
+                    <BsBoxArrowInUpRight style={{ marginRight: 8 }} />
                     <Typography.Link
                       href="https://forum.subquery.network/c/subquery-mainnet/17"
                       target="_blank"
@@ -302,6 +303,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                     </Typography.Link>
                   </div>
                   <div className={styles.dropdownItemInner}>
+                    <BsBoxArrowInUpRight style={{ marginRight: 8 }} />
                     <Typography.Link
                       href="https://snapshot.org/#/subquerynetwork.eth"
                       target="_blank"
