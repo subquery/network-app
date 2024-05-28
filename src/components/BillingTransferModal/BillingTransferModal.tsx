@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsInfoCircle } from 'react-icons/bs';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { useAccount } from '@containers/Web3';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { assert } from '@polkadot/util';
@@ -29,6 +30,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
   const sortedBalance = balance.result.data;
   const sortedConsumerHostBalance = consumerHostBalance.result.data?.balance;
   const requireTokenApproval = consumerHostAllowance?.result.data?.isZero();
+  const { refreshAndMakeLowBillingBalanceNotification } = useMakeNotification();
   const { getChannelSpent } = useConsumerHostServices({
     autoLogin: false,
   });
@@ -150,6 +152,7 @@ export const BillingExchangeModal = ({ action }: { action: TransferAction }) => 
       onSuccess={() => {
         consumerHostBalance.refetch();
         balance.refetch();
+        refreshAndMakeLowBillingBalanceNotification();
       }}
       variant={'textBtn'}
       width={'572px'}

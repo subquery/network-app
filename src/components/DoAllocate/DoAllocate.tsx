@@ -4,6 +4,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { NumberInput } from '@components/NumberInput';
 import { NETWORK_NAME, useAccount } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
@@ -51,6 +52,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const [estimatedRewardsOneEra, setEstimatedRewardsOneEra] = useState(BigNumber(0));
   const [addOrRemove, setAddOrRemove] = useState<'Add' | 'Remove'>(initialStatus || 'Add');
   const waitTransactionHandled = useWaitTransactionhandled();
+  const { refreshAndMakeOverAllocateNotification, refreshAndMakeOutdateAllocationProjects } = useMakeNotification();
 
   const [fetchTotalDeploymentAllocation, totalDeploymentAllocation] = useLazyQuery(gql`
     query GetDeploymentAllocationSummary($deploymentId: String!) {
@@ -151,9 +153,13 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     }
 
     const newAllcation =
-      BigNumber(formAllocateVal)
-        .minus(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'))
-        .abs() || 0;
+      addOrRemove === 'Add'
+        ? BigNumber(formAllocateVal).plus(
+            formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0'),
+          )
+        : BigNumber(formatSQT(allocatedStake.data?.indexerAllocationSummary?.totalAmount.toString() || '0')).minus(
+            formAllocateVal,
+          );
 
     const percentageOfNewAllocation = newAllcation.div(
       BigNumber(totalAllocations).minus(currentAllocatedTokensOfThisDeployment).plus(newAllcation),
@@ -192,6 +198,8 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       // runnerAllocation fetch from contract, so if the transaction confirmed, then the data should be updated
       await Promise.all([waitTransactionHandled(receipt?.blockNumber), runnerAllocation.refetch()]);
       await onSuccess?.();
+      refreshAndMakeOverAllocateNotification();
+      refreshAndMakeOutdateAllocationProjects();
       form.resetFields();
       openNotification({
         type: 'success',

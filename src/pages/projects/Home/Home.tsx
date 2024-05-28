@@ -58,7 +58,11 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0' }}>
         <Typography style={{ color: 'var(--sq-gray700)' }}>
           Please enter the deployment ID of your SubQuery project below. To get the deployment ID, run subql publish
-          from your project code to publish it to IPFS. Learn how to publish a SubQuery project here.
+          from your project code to publish it to IPFS. Learn how to publish a SubQuery project{' '}
+          <Typography.Link href="https://academy.subquery.network/subquery_network/architects/publish.html#publishing-your-project-to-the-subquery-network">
+            here
+          </Typography.Link>
+          .
         </Typography>
 
         <Form layout="vertical" form={form}>

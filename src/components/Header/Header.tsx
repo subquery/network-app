@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
+import NotificationCentre from '@components/NotificationCentre';
 import { useAccount } from '@containers/Web3';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Header as SubqlHeader } from '@subql/components';
@@ -78,6 +79,9 @@ export const Header: React.FC = () => {
         rightElement={
           <>
             <span style={{ flex: 1 }}></span>
+            <div style={{ marginRight: 16 }}>
+              <NotificationCentre></NotificationCentre>
+            </div>
             <div className={clsx(styles.right)}>
               {account ? (
                 <AccountActions account={account} />

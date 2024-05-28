@@ -1,0 +1,107 @@
+.notificationCentre {
+  cursor: pointer;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  &Popover {
+    width: 600px;
+    margin-right: 40px;
+    
+    :global {
+      .ant-popover-inner {
+        border-radius: 8px;
+        min-height: 430px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        
+        &-content {
+          height: 1px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+  }
+
+  &Content {
+    display: flex;
+    flex-direction: column;
+    height: 1px;
+    flex: 1;
+    &Title {
+      display: flex;
+      align-items: center;
+      padding-bottom: 24px;
+    }
+
+    &Inner {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .notificationList {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow: auto;
+        max-height: 500px;
+        .notificationItem {
+          display: flex;
+          gap: 8px;
+          padding: 16px 0;
+          border-top: 1px solid #DFE3E899;
+          &Icon {
+            padding-top: 5px;
+          }
+
+          &Right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            :global {
+              .ant-btn.ant-btn-round.ant-btn-sm {
+                padding: 6px 12px;
+                line-height: 1;
+                height: auto;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.notificationModal {
+  :global {
+    .ant-modal-content {
+      padding: 32px;
+    }
+    .ant-modal-confirm-paragraph {
+      max-width: 100%;
+    }
+    
+    .ant-modal-confirm-btns {
+      display: flex;
+      justify-content: space-between;
+
+      .ant-btn {
+        width: 100%;
+      }
+
+      .ant-btn:not(:disabled):focus-visible {
+        outline: unset;
+        outline-offset: 0;
+      }
+    }
+  }
+  &Content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+}

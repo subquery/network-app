@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { TableText } from '@components';
+import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
@@ -37,6 +38,7 @@ export const Rewards: React.FC = () => {
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
   const waitTransactionHandled = useWaitTransactionhandled();
+  const { refreshAndMakeUnClaimedNotification } = useMakeNotification();
   const { t } = useTranslation();
 
   const totalUnclaimedRewards = React.useMemo(() => {
@@ -164,6 +166,7 @@ export const Rewards: React.FC = () => {
 
                           fetchIndexerEraRewards();
                           rewards.refetch();
+                          refreshAndMakeUnClaimedNotification();
                         }}
                         unCliamedCountByIndexer={unclaimedRewardsCountByIndexer}
                       />

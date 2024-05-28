@@ -344,7 +344,7 @@ export const DelegateForm: React.FC<FormProps> = ({
       const res = await getAllIndexersLazy({
         variables: {
           ...allIndexerPagination.current,
-          order: IndexersOrderBy.ERA_REWARDS_SUM_AMOUNT_DESC,
+          order: IndexersOrderBy.TOTAL_STAKE_DESC,
           filter: {
             active: { equalTo: true },
             id: {

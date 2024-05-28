@@ -26,7 +26,7 @@ const translation = {
     plans: 'Plan & Offer',
     missions: 'Missions',
     governance: 'Governance',
-    documentation: 'Documentation',
+    documentation: 'Docs',
     ecosystem: 'Ecosystem',
     forum: 'Forum',
     github: 'Github',
