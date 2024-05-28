@@ -55,7 +55,16 @@ export const useToastNotificationModal = () => {
               <Typography weight={600} variant="large">
                 {noti.title}
               </Typography>
-              {noti.message ? <Typography style={{ textAlign: 'center' }}>{noti.message}</Typography> : ''}
+              {noti.message ? (
+                <Typography
+                  style={{ textAlign: 'center' }}
+                  dangerouslySetInnerHTML={{
+                    __html: noti.message.replaceAll('\n', '<br />'),
+                  }}
+                ></Typography>
+              ) : (
+                ''
+              )}
             </div>
           ),
           cancelButtonProps: {

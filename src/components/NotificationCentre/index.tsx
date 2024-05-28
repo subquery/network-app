@@ -53,9 +53,13 @@ const NotificationItem: FC<{ item: NotificationItemType }> = ({ item }) => {
           </Typography>
         </div>
         {item.message && (
-          <Typography variant="small" type="secondary">
-            {item.message}
-          </Typography>
+          <Typography
+            variant="small"
+            type="secondary"
+            dangerouslySetInnerHTML={{
+              __html: item.message.replaceAll('\n', '<br/> <br/>'),
+            }}
+          ></Typography>
         )}
         <Typography variant="small" type="secondary">
           {dayjs(item.createdAt).fromNow()}

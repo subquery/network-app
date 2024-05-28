@@ -7,6 +7,7 @@ import { useSQToken } from '@containers';
 import { useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import { parseRawEraValue } from '@hooks/useEraValue';
 import { useEthersSigner } from '@hooks/useEthersProvider';
 import { getTotalStake } from '@hooks/useSortedIndexer';
 import {
@@ -388,12 +389,16 @@ export const useMakeNotification = () => {
         fetchPolicy: 'network-only',
       });
 
-      if (res.data?.delegations?.nodes.some((i) => i?.indexer?.active === false)) {
+      if (
+        res.data?.delegations?.nodes.some(
+          (i) => i?.indexer?.active === false && parseRawEraValue(i.amount, currentEra.data?.index)?.after?.gt(0),
+        )
+      ) {
         notificationStore.addNotification({
           key: NotificationKey.InactiveOperator,
           level: 'critical',
           message:
-            'One or more of the Node Operators you delegate to has unregistered from SubQuery Network and you are receiving no more rewards. You should redelegate your SQT to another Node Operator to continue to receive rewards.',
+            'One or more of the Node Operators you delegate to has unregistered from SubQuery Network and you are receiving no more rewards.\n You should redelegate your SQT to another Node Operator to continue to receive rewards.',
           title: 'Delegated Node Operator Inactive',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -408,7 +413,7 @@ export const useMakeNotification = () => {
         notificationStore.sortNotificationList();
       }
     },
-    [account, notificationStore.notificationList],
+    [account, notificationStore.notificationList, currentEra.data?.index],
   );
 
   const makeLowControllerBalanceNotification = useCallback(
