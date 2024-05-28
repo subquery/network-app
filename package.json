@@ -153,6 +153,7 @@
     "ipfs-http-client": "53.0.1",
     "@polkadot/x-global": "7.9.2",
     "graphql": "16.7.1",
-    "@walletconnect/ethereum-provider": "2.11.1"
+    "@walletconnect/ethereum-provider": "2.11.1",
+    "@subql/network-support": "1.2.7-2"
   }
 }

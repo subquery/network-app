@@ -4736,13 +4736,14 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-support@1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@subql/network-support/-/network-support-1.2.3.tgz#535566a7d81899487499fc001b278f37b43d4026"
-  integrity sha512-yaMAf0aUoOW3Xe46pA2SvN7wIqBS4kADeThzE6a7zLWjXFMGF22VW3Zk7k1BOd/nJzqDAjJ6ftwZIFHRGBfCaQ==
+"@subql/network-support@1.2.3", "@subql/network-support@1.2.7-2":
+  version "1.2.7-2"
+  resolved "https://registry.yarnpkg.com/@subql/network-support/-/network-support-1.2.7-2.tgz#aa70bf0063fad802d55fd1bfe0b1d2a1ab5c6ad6"
+  integrity sha512-/NlH7IFpVnt/I0sHNmxthQJkJcigTl39RkeI95fFTzGrm8yhOsW+KtD0Ih5w8N9dkgDP2ckLk7ZmVnabBHI25g==
   dependencies:
     "@metamask/eth-sig-util" "^7.0.0"
     cross-fetch "^4.0.0"
+    crypto-js "^4.2.0"
     js-base64 "^3.7.5"
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
