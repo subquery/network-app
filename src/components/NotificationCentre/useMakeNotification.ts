@@ -144,16 +144,16 @@ export const useMakeNotification = () => {
         // add a notification to inform user that they have unused allocation
         notificationStore.addNotification({
           key: 'unstakeAllocation',
-          level: 'info',
-          message: `You have ${+runnerAllocation.total - +runnerAllocation.used} SQT unused`,
-          title: 'Unused Allocation',
+          level: 'critical',
+          message: `You have a high ratio of stake not allocated to any projects. Allocate them to increase your rewards`,
+          title: 'High Unallocated Stake',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
           dismissTo: undefined,
           type: '',
           buttonProps: {
-            label: 'Adjust Allocation',
+            label: 'Allocate Stake',
             navigateHref: '/indexer/my-projects',
           },
         });
@@ -233,7 +233,6 @@ export const useMakeNotification = () => {
         variables: {
           id: account || '',
         },
-        fetchPolicy: 'network-only',
       });
 
       if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.OutdatedAllocation)) {
