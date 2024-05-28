@@ -81,6 +81,9 @@ export const useToastNotificationModal = () => {
             type: 'primary',
             shape: 'round',
             danger: noti.level === 'critical' ? true : false,
+            style: {
+              display: noti.buttonProps.navigateHref ? 'block' : 'none',
+            },
           },
           // eslint-disable-next-line no-loop-func
           onOk: () => {

@@ -9,7 +9,6 @@ import { useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import { Badge, Button, Popover } from 'antd';
-import dayjs from 'dayjs';
 
 import { type NotificationItem as NotificationItemType, useNotification } from 'src/stores/notification';
 
@@ -33,7 +32,7 @@ const EmptyNotification = () => {
   );
 };
 
-const NotificationItem: FC<{ item: NotificationItemType }> = ({ item }) => {
+const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => void }> = ({ item, onButtonClick }) => {
   const navigate = useNavigate();
   return (
     <div className={styles.notificationItem}>
@@ -61,46 +60,56 @@ const NotificationItem: FC<{ item: NotificationItemType }> = ({ item }) => {
             }}
           ></Typography>
         )}
-        <Typography variant="small" type="secondary">
-          {dayjs(item.createdAt).fromNow()}
-        </Typography>
-        <div className={styles.notificationItemButton}>
-          <Button
-            shape="round"
-            size="small"
-            type="primary"
-            danger={item.level === 'critical' ? true : false}
-            onClick={() => {
-              if (!item.buttonProps.navigateHref) return;
-              if (
-                !item.buttonProps.navigateHref.includes('https://') &&
-                !item.buttonProps.navigateHref.includes('http://')
-              ) {
-                navigate(item.buttonProps.navigateHref);
-              }
-            }}
-          >
-            {item.buttonProps.navigateHref.includes('http://') || item.buttonProps.navigateHref.includes('https://') ? (
-              <Typography.Link variant="small" style={{ color: '#fff' }} href={item.buttonProps.navigateHref}>
-                {item.buttonProps.label}
-              </Typography.Link>
-            ) : (
-              item.buttonProps.label
-            )}
-          </Button>
-        </div>
+
+        {item.buttonProps.navigateHref && (
+          <div className={styles.notificationItemButton}>
+            <Button
+              shape="round"
+              size="small"
+              type="primary"
+              danger={item.level === 'critical' ? true : false}
+              onClick={() => {
+                onButtonClick?.();
+                if (!item.buttonProps.navigateHref) return;
+                if (
+                  !item.buttonProps.navigateHref.includes('https://') &&
+                  !item.buttonProps.navigateHref.includes('http://')
+                ) {
+                  navigate(item.buttonProps.navigateHref);
+                }
+              }}
+            >
+              {item.buttonProps.navigateHref.includes('http://') ||
+              item.buttonProps.navigateHref.includes('https://') ? (
+                <Typography.Link variant="small" style={{ color: '#fff' }} href={item.buttonProps.navigateHref}>
+                  {item.buttonProps.label}
+                </Typography.Link>
+              ) : (
+                item.buttonProps.label
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const NotificationList: FC = () => {
+const NotificationList: FC<{ onButtonClick?: () => void }> = ({ onButtonClick }) => {
   const notificationStore = useNotification();
 
   return (
     <div className={styles.notificationList}>
       {notificationStore.notificationList.map((item) => {
-        return <NotificationItem item={item} key={item.key}></NotificationItem>;
+        return (
+          <NotificationItem
+            onButtonClick={() => {
+              onButtonClick?.();
+            }}
+            item={item}
+            key={item.key}
+          ></NotificationItem>
+        );
       })}
     </div>
   );
@@ -178,7 +187,11 @@ const NotificationCentre: FC = () => {
 
           <div className={styles.notificationCentreContentInner}>
             {notificationStore.notificationList.length ? (
-              <NotificationList></NotificationList>
+              <NotificationList
+                onButtonClick={() => {
+                  setOpen(false);
+                }}
+              ></NotificationList>
             ) : (
               <EmptyNotification></EmptyNotification>
             )}

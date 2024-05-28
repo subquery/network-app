@@ -146,8 +146,8 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: 'unstakeAllocation',
           level: 'critical',
-          message: `You have a high ratio of stake not allocated to any projects. Allocate them to increase your rewards`,
-          title: 'High Unallocated Stake',
+          message: `You have stake not allocated to any projects.\nAllocate them to increase rewards for yourself and any delegators`,
+          title: 'Unallocated Stake',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
@@ -167,8 +167,8 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: 'overAllocate',
           level: 'critical',
-          message: `You have used ${runnerAllocation.used} SQT out of ${runnerAllocation.total} SQT allocated`,
-          title: 'Over Allocation',
+          message: `Your stake is over allocated for the current era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
+          title: 'Stake Over Allocated',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
@@ -200,8 +200,8 @@ export const useMakeNotification = () => {
             notificationStore.addNotification({
               key: 'overAllocateNextEra',
               level: 'info',
-              message: `You have used ${runnerAllocation.used} SQT out of ${totalStake.after} SQT allocated in the next era`,
-              title: 'Over Allocation Next Era',
+              message: `Your stake is over allocated for the next era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
+              title: 'Stake Over Allocated Next Era',
               createdAt: Date.now(),
               canBeDismissed: true,
               dismissTime: 1000 * 60 * 60 * 24,
@@ -321,7 +321,7 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: NotificationKey.UnclaimedRewards,
           level: 'info',
-          message: '',
+          message: 'You have rewards available to claim',
           title: 'Unclaimed Rewards',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -418,11 +418,6 @@ export const useMakeNotification = () => {
 
   const makeLowControllerBalanceNotification = useCallback(
     async (mode?: 'reload') => {
-      if (mode !== 'reload') {
-        if (notificationStore.notificationList.find((item) => item.key === NotificationKey.LowControllerBalance)) {
-          return;
-        }
-      }
       const res = await fetchIndexerController({
         variables: {
           address: account || '',
@@ -442,16 +437,18 @@ export const useMakeNotification = () => {
               'Your Controller Account’s balance is running now. Top up now to ensure rewards are paid out in time.',
             title: 'Low Controller Account Balance',
             createdAt: Date.now(),
-            canBeDismissed: false,
+            canBeDismissed: true,
             dismissTime: 1000 * 60 * 60 * 24,
             dismissTo: undefined,
             type: '',
             buttonProps: {
-              label: 'Add Balance',
+              label: '',
               navigateHref: '',
             },
           });
           notificationStore.sortNotificationList();
+        } else {
+          notificationStore.removeNotification(NotificationKey.LowControllerBalance);
         }
       }
     },
@@ -479,8 +476,8 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: NotificationKey.UnlockWithdrawal,
           level: 'info',
-          message: '',
-          title: 'Unlocked Withdrawals Available',
+          message: 'You have unlocked withdrawals available',
+          title: 'Unlocked Withdrawals',
           createdAt: Date.now(),
           canBeDismissed: true,
           dismissTime: 1000 * 60 * 60 * 24,
