@@ -28,6 +28,8 @@ import { NotificationKey, useNotification } from 'src/stores/notification';
 const idleTimeout = (func: () => void) => setTimeout(func, 200);
 const idleCallback = window.requestIdleCallback || idleTimeout;
 
+const defaultDismissTime = 1000 * 60 * 60 * 24;
+
 export const useMakeNotification = () => {
   const notificationStore = useNotification();
   const { currentEra } = useEra();
@@ -112,17 +114,51 @@ export const useMakeNotification = () => {
   // TODO: filter inactive by Graphql
   const [fetchDelegations] = useGetFilteredDelegationsLazyQuery();
 
+  const checkIfExistAndExpired = useCallback(
+    (notificationKeys: NotificationKey | NotificationKey[]) => {
+      const keys = Array.isArray(notificationKeys) ? notificationKeys : [notificationKeys];
+
+      const exist = keys.every((key) => notificationStore.notificationList.find((item) => item.key === key));
+
+      if (exist) {
+        const exipred = keys.some((key) => {
+          const item = notificationStore.notificationList.find((item) => item.key === key);
+          if (!item) return false;
+          return item.dismissTo && item.dismissTo < Date.now();
+        });
+
+        return {
+          exist: true,
+          expired: exipred,
+        };
+      }
+
+      return {
+        exist,
+        expired: false,
+      };
+    },
+    [notificationStore.notificationList],
+  );
+
   const makeOverAllocateAndUnStakeAllocationNotification = useCallback(
     async (mode?: 'reload') => {
       // over and unused share same api, so must query both at the same time
-      // TODO: Maybe can optimise
       if (mode !== 'reload') {
-        if (
-          notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocate) &&
-          notificationStore.notificationList.find((item) => item.key === NotificationKey.UnstakeAllocation) &&
-          notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocateNextEra)
-        ) {
-          return;
+        const { exist, expired } = checkIfExistAndExpired([
+          NotificationKey.OverAllocate,
+          NotificationKey.OverAllocateNextEra,
+          NotificationKey.UnstakeAllocation,
+        ]);
+        if (exist) {
+          if (!expired) {
+            return;
+          }
+          notificationStore.removeNotification([
+            NotificationKey.OverAllocate,
+            NotificationKey.UnstakeAllocation,
+            NotificationKey.OverAllocateNextEra,
+          ]);
         }
       }
 
@@ -137,11 +173,9 @@ export const useMakeNotification = () => {
 
       const isOverAllocated = +runnerAllocation?.used > +runnerAllocation?.total;
       const isUnused = +runnerAllocation.total - +runnerAllocation.used > 1000;
-      if (
-        isUnused &&
-        (mode === 'reload' ||
-          !notificationStore.notificationList.find((item) => item.key === NotificationKey.UnstakeAllocation))
-      ) {
+
+      const { exist: unstakeExist, expired: unstakeExpire } = checkIfExistAndExpired(NotificationKey.UnstakeAllocation);
+      if (isUnused && (mode === 'reload' || !unstakeExist || unstakeExpire)) {
         // add a notification to inform user that they have unused allocation
         notificationStore.addNotification({
           key: 'unstakeAllocation',
@@ -150,7 +184,7 @@ export const useMakeNotification = () => {
           title: 'Unallocated Stake',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -159,11 +193,11 @@ export const useMakeNotification = () => {
           },
         });
       }
-      if (
-        isOverAllocated &&
-        (mode === 'reload' ||
-          !notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocate))
-      ) {
+
+      const { exist: overAllocateExist, expired: overAllocateExpire } = checkIfExistAndExpired(
+        NotificationKey.OverAllocate,
+      );
+      if (isOverAllocated && (mode === 'reload' || !overAllocateExist || overAllocateExpire)) {
         notificationStore.addNotification({
           key: 'overAllocate',
           level: 'critical',
@@ -171,7 +205,7 @@ export const useMakeNotification = () => {
           title: 'Stake Over Allocated',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -182,10 +216,10 @@ export const useMakeNotification = () => {
         notificationStore.sortNotificationList();
       }
 
-      if (
-        mode === 'reload' ||
-        !notificationStore.notificationList.find((item) => item.key === NotificationKey.OverAllocateNextEra)
-      ) {
+      const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
+        NotificationKey.OverAllocate,
+      );
+      if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {
         const indexerData = await fetchIndexerData({
           variables: {
             address: account || '',
@@ -204,7 +238,7 @@ export const useMakeNotification = () => {
               title: 'Stake Over Allocated Next Era',
               createdAt: Date.now(),
               canBeDismissed: true,
-              dismissTime: 1000 * 60 * 60 * 24,
+              dismissTime: defaultDismissTime,
               dismissTo: undefined,
               type: '',
               buttonProps: {
@@ -222,12 +256,14 @@ export const useMakeNotification = () => {
   const makeOutdateAllocationProjects = useCallback(
     async (mode?: 'reload') => {
       if (mode !== 'reload') {
-        if (
-          notificationStore.notificationList.find((item) => item.key === NotificationKey.OutdatedAllocation) &&
-          notificationStore.notificationList.find((item) => item.key === NotificationKey.MislaborAllocation)
-        ) {
+        const { exist, expired } = checkIfExistAndExpired([
+          NotificationKey.OutdatedAllocation,
+          NotificationKey.MislaborAllocation,
+        ]);
+        if (exist && !expired) {
           return;
         }
+        notificationStore.removeNotification([NotificationKey.OutdatedAllocation, NotificationKey.MislaborAllocation]);
       }
 
       const res = await fetchAllocationProjects({
@@ -236,7 +272,11 @@ export const useMakeNotification = () => {
         },
       });
 
-      if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.OutdatedAllocation)) {
+      const { exist: outdatedExist, expired: outdatedExpired } = checkIfExistAndExpired([
+        NotificationKey.OutdatedAllocation,
+      ]);
+
+      if (mode === 'reload' || !outdatedExist || outdatedExpired) {
         const newVersionOfProject = res.data?.indexerAllocationSummaries?.nodes
           .filter((node) => node?.deploymentId !== node?.project?.deploymentId)
           .map((i) => i?.project?.deploymentId);
@@ -261,7 +301,7 @@ export const useMakeNotification = () => {
             title: 'Outdated Allocation Projects',
             createdAt: Date.now(),
             canBeDismissed: true,
-            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTime: defaultDismissTime,
             dismissTo: undefined,
             type: '',
             buttonProps: {
@@ -272,7 +312,10 @@ export const useMakeNotification = () => {
         }
       }
 
-      if (!notificationStore.notificationList.find((item) => item.key === NotificationKey.MislaborAllocation)) {
+      const { exist: misLaborExist, expired: misLaborExpired } = checkIfExistAndExpired([
+        NotificationKey.MislaborAllocation,
+      ]);
+      if (mode === 'reload' || !misLaborExist || misLaborExpired) {
         const allocatedDeployments = res.data?.indexerAllocationSummaries.nodes.map((i) => i?.deploymentId);
         const terminatedProjects = await fetchTerminatedProjects({
           variables: {
@@ -289,7 +332,7 @@ export const useMakeNotification = () => {
             title: 'Mislabor Allocation Projects',
             createdAt: Date.now(),
             canBeDismissed: true,
-            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTime: defaultDismissTime,
             dismissTo: undefined,
             type: '',
             buttonProps: {
@@ -306,10 +349,14 @@ export const useMakeNotification = () => {
   const makeUnClaimedNotification = useCallback(
     async (mode?: 'reload') => {
       if (mode !== 'reload') {
-        if (notificationStore.notificationList.find((item) => item.key === NotificationKey.UnclaimedRewards)) {
+        const { exist, expired } = checkIfExistAndExpired(NotificationKey.UnclaimedRewards);
+        if (exist && !expired) {
           return;
         }
+
+        notificationStore.removeNotification(NotificationKey.UnclaimedRewards);
       }
+
       const res = await fetchRewardsApi({
         variables: {
           address: account || '',
@@ -325,7 +372,7 @@ export const useMakeNotification = () => {
           title: 'Unclaimed Rewards',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -341,9 +388,12 @@ export const useMakeNotification = () => {
   const makeLowBillingBalanceNotification = useCallback(
     async (mode?: 'reload') => {
       if (mode !== 'reload') {
-        if (notificationStore.notificationList.find((item) => item.key === NotificationKey.LowBillingBalance)) {
+        const { exist, expired } = checkIfExistAndExpired(NotificationKey.LowBillingBalance);
+
+        if (exist && !expired) {
           return;
         }
+        notificationStore.removeNotification(NotificationKey.LowBillingBalance);
       }
 
       const hostingPlan = await getHostingPlanApi({ account: account || '' });
@@ -365,7 +415,7 @@ export const useMakeNotification = () => {
           title: 'Low Billing Balance',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -382,7 +432,10 @@ export const useMakeNotification = () => {
   const makeInactiveOperatorNotification = useCallback(
     async (mode?: 'reload') => {
       if (mode !== 'reload') {
-        if (notificationStore.notificationList.find((item) => item.key === NotificationKey.InactiveOperator)) return;
+        const { exist, expired } = checkIfExistAndExpired(NotificationKey.LowBillingBalance);
+
+        if (exist && !expired) return;
+        notificationStore.removeNotification(NotificationKey.LowBillingBalance);
       }
       const res = await fetchDelegations({
         variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
@@ -402,7 +455,7 @@ export const useMakeNotification = () => {
           title: 'Delegated Node Operator Inactive',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -438,7 +491,7 @@ export const useMakeNotification = () => {
             title: 'Low Controller Account Balance',
             createdAt: Date.now(),
             canBeDismissed: true,
-            dismissTime: 1000 * 60 * 60 * 24,
+            dismissTime: defaultDismissTime,
             dismissTo: undefined,
             type: '',
             buttonProps: {
@@ -459,9 +512,12 @@ export const useMakeNotification = () => {
     async (mode?: 'reload') => {
       if (!contracts) return;
       if (mode !== 'reload') {
-        if (notificationStore.notificationList.find((item) => item.key === NotificationKey.UnlockWithdrawal)) {
+        const { exist, expired } = checkIfExistAndExpired(NotificationKey.UnlockWithdrawal);
+
+        if (exist && !expired) {
           return;
         }
+        notificationStore.removeNotification(NotificationKey.UnlockWithdrawal);
       }
       const lockPeriod = await limitContract(() => contracts.staking.lockPeriod(), makeCacheKey('lockPeriod'), 0);
       const res = await fetchUnlockWithdrawal({
@@ -480,7 +536,7 @@ export const useMakeNotification = () => {
           title: 'Unlocked Withdrawals',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: 1000 * 60 * 60 * 24,
+          dismissTime: defaultDismissTime,
           dismissTo: undefined,
           type: '',
           buttonProps: {
