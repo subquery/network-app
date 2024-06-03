@@ -4,7 +4,7 @@
 import { useCallback } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { TOP_100_INDEXERS, useSQToken } from '@containers';
-import { useAccount } from '@containers/Web3';
+import { l2Chain, useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { parseRawEraValue } from '@hooks/useEraValue';
@@ -21,7 +21,6 @@ import { convertBigNumberToNumber } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
-import { base } from 'viem/chains';
 
 import { useWeb3Store } from 'src/stores';
 import { NotificationKey, useNotification } from 'src/stores/notification';
@@ -37,7 +36,7 @@ export const useMakeNotification = () => {
   const notificationStore = useNotification();
   const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
-  const provider = useEthersProviderWithPublic({ chainId: base.id });
+  const provider = useEthersProviderWithPublic({ chainId: l2Chain.id });
   const { account } = useAccount();
   const [fetchRewardsApi] = useGetRewardsLazyQuery();
   const [fetchIndexerData] = useGetIndexerLazyQuery();
@@ -194,7 +193,7 @@ export const useMakeNotification = () => {
       if (isUnused && (mode === 'reload' || !unstakeExist || unstakeExpire)) {
         // add a notification to inform user that they have unused allocation
         notificationStore.addNotification({
-          key: 'unstakeAllocation',
+          key: NotificationKey.UnstakeAllocation,
           level: 'critical',
           message: `You have stake not allocated to any projects.\nAllocate them to increase rewards for yourself and any delegators`,
           title: 'Unallocated Stake',
@@ -210,12 +209,16 @@ export const useMakeNotification = () => {
         });
       }
 
+      if (!isUnused && unstakeExist && !unstakeExpire) {
+        notificationStore.removeNotification(NotificationKey.UnstakeAllocation);
+      }
+
       const { exist: overAllocateExist, expired: overAllocateExpire } = checkIfExistAndExpired(
         NotificationKey.OverAllocate,
       );
       if (isOverAllocated && (mode === 'reload' || !overAllocateExist || overAllocateExpire)) {
         notificationStore.addNotification({
-          key: 'overAllocate',
+          key: NotificationKey.OverAllocate,
           level: 'critical',
           message: `Your stake is over allocated for the current era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
           title: 'Stake Over Allocated',
@@ -229,6 +232,10 @@ export const useMakeNotification = () => {
             navigateHref: '/indexer/my-projects',
           },
         });
+      }
+
+      if (!isOverAllocated && overAllocateExist && !overAllocateExpire) {
+        notificationStore.removeNotification(NotificationKey.OverAllocate);
       }
 
       const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
@@ -247,13 +254,13 @@ export const useMakeNotification = () => {
           if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
             // add notification to inform user that they may over allocated next era
             notificationStore.addNotification({
-              key: 'overAllocateNextEra',
+              key: NotificationKey.OverAllocateNextEra,
               level: 'info',
               message: `Your stake is over allocated for the next era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
               title: 'Stake Over Allocated Next Era',
               createdAt: Date.now(),
               canBeDismissed: true,
-              dismissTime: defaultDismissTime,
+              dismissTime: 1000 * 60 * 60, // 1 hour
               dismissTo: undefined,
               type: '',
               buttonProps: {
@@ -653,6 +660,10 @@ export const useMakeNotification = () => {
           });
         }
 
+        if (decreaseExist && !decreaseExpired && !hasDecreaseCommission) {
+          notificationStore.removeNotification(NotificationKey.DecreaseCommissionRate);
+        }
+
         const { exist: increaseExist, expired: increaseExpired } = checkIfExistAndExpired(
           NotificationKey.IncreaseCommissionRate,
         );
@@ -674,6 +685,10 @@ export const useMakeNotification = () => {
               navigateHref: '/delegator/my-delegation',
             },
           });
+        }
+
+        if (increaseExist && !increaseExpired && !hasIncreaseCommission) {
+          notificationStore.removeNotification(NotificationKey.IncreaseCommissionRate);
         }
       }
     },
