@@ -18,7 +18,7 @@ import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
 import { useGetIndexerAllocationSummaryLazyQuery } from '@subql/react-hooks';
 import { parseError, TOKEN } from '@utils';
-import { Button, Form, Radio } from 'antd';
+import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
 
@@ -86,7 +86,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     return {
       total: formatSQT(res?.total.toString() || '0'),
       used: formatSQT(res?.used.toString() || '0'),
-      left: formatSQT(res?.total.sub(res.used).toString() || '0'),
+      left: formatSQT(res?.total.sub(res.used).toString() || '0', { fixedNum: 18 }),
     };
   }, [account, open]);
 
@@ -137,7 +137,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
       ? BigNumber(runnerAllocation.result.data?.left)
       : BigNumber(0);
 
-    return leftAllocation.toString();
+    return leftAllocation.toFixed(18);
   }, [allocatedStake, runnerAllocation.result.data?.left]);
 
   const currentAllocatedTokensOfThisDeployment = useMemo(() => {
@@ -373,17 +373,21 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 </div>
               </Typography>
               <span style={{ flex: 1 }}></span>
-              <Typography variant="medium">
-                {formatNumber(currentAllocatedTokensOfThisDeployment)} {TOKEN}
-              </Typography>
+              <Tooltip title={currentAllocatedTokensOfThisDeployment}>
+                <Typography variant="medium">
+                  {formatNumber(currentAllocatedTokensOfThisDeployment)} {TOKEN}
+                </Typography>
+              </Tooltip>
             </div>
 
             <div className="flex">
-              <Typography variant="medium" type="secondary">
-                Available stake to allocate {TOKEN}
-              </Typography>
+              <div style={{ flexShrink: 0 }}>
+                <Typography variant="medium" type="secondary">
+                  Available stake to allocate {TOKEN}
+                </Typography>
+              </div>
               <span style={{ flex: 1 }}></span>
-              <Typography variant="medium">
+              <Typography variant="medium" style={{ overflowWrap: 'anywhere' }}>
                 {avaibleStakeAmount} {TOKEN}
               </Typography>
             </div>
