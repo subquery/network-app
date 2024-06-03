@@ -31,6 +31,8 @@ const idleCallback = window.requestIdleCallback || idleTimeout;
 
 const defaultDismissTime = 1000 * 60 * 60 * 24;
 
+// can be split into multiple hooks
+// those notification function not depend on each other
 export const useMakeNotification = () => {
   const notificationStore = useNotification();
   const { currentEra } = useEra();
@@ -126,7 +128,6 @@ export const useMakeNotification = () => {
     autoLogin: false,
   });
 
-  // TODO: filter inactive by Graphql
   const [fetchDelegations] = useGetFilteredDelegationsLazyQuery();
 
   const checkIfExistAndExpired = useCallback(
@@ -452,7 +453,6 @@ export const useMakeNotification = () => {
       }
       const res = await fetchDelegations({
         variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
-        fetchPolicy: 'network-only',
       });
 
       if (
@@ -562,7 +562,12 @@ export const useMakeNotification = () => {
 
   const makeUnhealthyAllocationNotification = useCallback(
     async (mode?: 'reload') => {
-      // this may change passively, so need to check every time.
+      if (mode !== 'reload') {
+        const { exist, expired } = checkIfExistAndExpired(NotificationKey.UnhealthyAllocation);
+        if (exist && !expired) return;
+        notificationStore.removeNotification(NotificationKey.UnhealthyAllocation);
+      }
+
       const res = await fetchUnhealthyAllocation({
         variables: {
           indexer: account || '',
@@ -592,6 +597,89 @@ export const useMakeNotification = () => {
     [account, notificationStore.notificationList],
   );
 
+  const makeInOrDecreaseCommissionNotification = useCallback(
+    async (mode?: 'reload') => {
+      if (mode !== 'reload') {
+        const { exist, expired } = checkIfExistAndExpired([
+          NotificationKey.DecreaseCommissionRate,
+          NotificationKey.IncreaseCommissionRate,
+        ]);
+
+        if (exist && !expired) {
+          return;
+        }
+        notificationStore.removeNotification([
+          NotificationKey.DecreaseCommissionRate,
+          NotificationKey.IncreaseCommissionRate,
+        ]);
+      }
+
+      const res = await fetchDelegations({
+        variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
+      });
+
+      if (res.data?.delegations?.totalCount) {
+        const delegations = res.data.delegations.nodes;
+        const hasDecreaseCommission = delegations.some((delegation) => {
+          const eraValue = parseRawEraValue(delegation?.indexer?.commission, currentEra.data?.index);
+          return eraValue.after?.lt(eraValue.current);
+        });
+
+        const hasIncreaseCommission = delegations.some((delegation) => {
+          const eraValue = parseRawEraValue(delegation?.indexer?.commission, currentEra.data?.index);
+          return eraValue.after?.gt(eraValue.current);
+        });
+
+        const { exist: decreaseExist, expired: decreaseExpired } = checkIfExistAndExpired(
+          NotificationKey.DecreaseCommissionRate,
+        );
+
+        if ((!decreaseExist || decreaseExpired || mode === 'reload') && hasDecreaseCommission) {
+          notificationStore.addNotification({
+            key: NotificationKey.DecreaseCommissionRate,
+            level: 'info',
+            message:
+              'One or more Node Operator you delegate to is planning to decrease their commission rate, you might want to review your current delegation settings to take advantage of this.',
+            title: 'Commission Rate Decreasing',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: defaultDismissTime,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Review Delegation',
+              navigateHref: '/delegator/my-delegation',
+            },
+          });
+        }
+
+        const { exist: increaseExist, expired: increaseExpired } = checkIfExistAndExpired(
+          NotificationKey.IncreaseCommissionRate,
+        );
+
+        if ((!increaseExist || increaseExpired || mode === 'reload') && hasIncreaseCommission) {
+          notificationStore.addNotification({
+            key: NotificationKey.IncreaseCommissionRate,
+            level: 'info',
+            message:
+              'One or more Node Operator you delegate to is planning to increase their commission rate, you might want to review your current delegation settings to reassess delegation.',
+            title: 'Commission Rate Increasing',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: defaultDismissTime,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Review Delegation',
+              navigateHref: '/delegator/my-delegation',
+            },
+          });
+        }
+      }
+    },
+    [account, notificationStore.notificationList, currentEra.data?.index],
+  );
+
   const initAllNotification = useCallback(() => {
     idleCallback(() => makeOverAllocateAndUnStakeAllocationNotification());
     idleCallback(() => makeUnClaimedNotification());
@@ -600,7 +688,8 @@ export const useMakeNotification = () => {
     idleCallback(() => makeLowControllerBalanceNotification());
     idleCallback(() => makeUnlockWithdrawalNotification());
     idleCallback(() => makeOutdateAllocationProjects());
-    idleCallback(() => makeUnhealthyAllocationNotification());
+    // idleCallback(() => makeUnhealthyAllocationNotification());
+    idleCallback(() => makeInOrDecreaseCommissionNotification());
   }, [
     makeOverAllocateAndUnStakeAllocationNotification,
     makeUnClaimedNotification,
@@ -610,6 +699,7 @@ export const useMakeNotification = () => {
     makeUnlockWithdrawalNotification,
     makeOutdateAllocationProjects,
     makeUnhealthyAllocationNotification,
+    makeInOrDecreaseCommissionNotification,
   ]);
 
   return {
@@ -621,6 +711,8 @@ export const useMakeNotification = () => {
     makeLowControllerBalanceNotification: () => idleCallback(() => makeLowControllerBalanceNotification()),
     makeUnlockWithdrawalNotification: () => idleCallback(() => makeUnlockWithdrawalNotification()),
     makeOutdateAllocationProjects: () => idleCallback(() => makeOutdateAllocationProjects()),
+    makeUnhealthyAllocationNotification: () => idleCallback(() => makeUnhealthyAllocationNotification()),
+    makeInOrDecreaseCommissionNotification: () => idleCallback(() => makeInOrDecreaseCommissionNotification()),
 
     refreshAndMakeOverAllocateNotification: () => {
       notificationStore.removeNotification([
@@ -653,6 +745,17 @@ export const useMakeNotification = () => {
     refreshAndMakeOutdateAllocationProjects: () => {
       notificationStore.removeNotification(NotificationKey.OutdatedAllocation);
       idleCallback(() => makeOutdateAllocationProjects('reload'));
+    },
+    refreshAndMakeUnhealthyAllocationNotification: () => {
+      notificationStore.removeNotification(NotificationKey.UnhealthyAllocation);
+      idleCallback(() => makeUnhealthyAllocationNotification('reload'));
+    },
+    refreshAndMakeInOrDecreaseCommissionNotification: () => {
+      notificationStore.removeNotification([
+        NotificationKey.DecreaseCommissionRate,
+        NotificationKey.IncreaseCommissionRate,
+      ]);
+      idleCallback(() => makeInOrDecreaseCommissionNotification('reload'));
     },
     initNewNotification: () => idleCallback(initAllNotification),
   };

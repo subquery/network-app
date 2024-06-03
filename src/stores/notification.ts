@@ -24,6 +24,8 @@ export enum NotificationKey {
   OutdatedAllocation = 'outdatedAllocation',
   MislaborAllocation = 'mislaborAllocation',
   UnhealthyAllocation = 'unhealthyAllocation',
+  DecreaseCommissionRate = 'decreaseCommissionRate',
+  IncreaseCommissionRate = 'increaseCommissionRate',
 }
 
 const NotificationItemFromIo = t.type({

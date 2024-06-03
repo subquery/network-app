@@ -79,7 +79,8 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
   const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
   const { fetchWeb3NameFromCache } = useWeb3Name();
-  const { refreshAndMakeInactiveOperatorNotification } = useMakeNotification();
+  const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
+    useMakeNotification();
 
   const indexerMetadata = useAsyncMemo(async () => {
     const web3Name = await fetchWeb3NameFromCache(indexerAddress);
@@ -215,6 +216,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
             await Promise.all([getDelegationLazy(), balance.refetch(), onSuccess?.()]);
 
             refreshAndMakeInactiveOperatorNotification();
+            refreshAndMakeInOrDecreaseCommissionNotification();
 
             openNotification({
               type: 'success',

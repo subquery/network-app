@@ -69,7 +69,8 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
 
-  const { refreshAndMakeInactiveOperatorNotification } = useMakeNotification();
+  const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
+    useMakeNotification();
 
   const [getIndexerLazy, indexerDataLazy] = useLazyQuery(
     gql`
@@ -157,6 +158,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
             await waitTransactionHandled(receipt?.blockNumber);
             await onSuccess?.();
             refreshAndMakeInactiveOperatorNotification();
+            refreshAndMakeInOrDecreaseCommissionNotification();
           }}
           renderContent={(onSubmit, onCancel, loading, error) => {
             // if operator is not active, skip collect.
