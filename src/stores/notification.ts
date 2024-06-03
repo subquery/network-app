@@ -23,6 +23,7 @@ export enum NotificationKey {
   UnlockWithdrawal = 'unlockWithdrawal',
   OutdatedAllocation = 'outdatedAllocation',
   MislaborAllocation = 'mislaborAllocation',
+  UnhealthyAllocation = 'unhealthyAllocation',
 }
 
 const NotificationItemFromIo = t.type({
@@ -52,6 +53,17 @@ export type NotificationStore = {
   initNotification: (address: string) => Promise<void>;
 };
 
+const notificationSort = (a: NotificationItem, b: NotificationItem) => {
+  // sort by level
+  if (a.level === 'critical' && b.level === 'info') {
+    return -1;
+  }
+  if (a.level === 'info' && b.level === 'critical') {
+    return 1;
+  }
+  return 0;
+};
+
 export const useNotification = create<NotificationStore>((set, get) => ({
   cacheKey: '',
   mounted: false,
@@ -62,7 +74,7 @@ export const useNotification = create<NotificationStore>((set, get) => ({
   },
   addNotification: async (notification) => {
     const rawList = get().notificationList;
-    const newList = unionBy([notification, ...rawList], (i) => i.key);
+    const newList = unionBy([notification, ...rawList], (i) => i.key).sort(notificationSort);
     set(() => ({ notificationList: newList }));
     await localforage.setItem(get().cacheKey, newList);
   },
@@ -82,16 +94,7 @@ export const useNotification = create<NotificationStore>((set, get) => ({
   },
   sortNotificationList: async () => {
     const state = get();
-    const sortedList = state.notificationList.sort((a, b) => {
-      // sort by level
-      if (a.level === 'critical' && b.level === 'info') {
-        return -1;
-      }
-      if (a.level === 'info' && b.level === 'critical') {
-        return 1;
-      }
-      return 0;
-    });
+    const sortedList = state.notificationList.sort(notificationSort);
     set(() => ({
       notificationList: sortedList,
     }));

@@ -131,7 +131,9 @@ const NotificationCentre: FC = () => {
   // react's update flow need to wait until next tick or pass as parameter.
   // I don't want to pass, just use useEffect to make sure init finish.
   useEffect(() => {
-    init();
+    if (account) {
+      init();
+    }
   }, [account]);
   useEffect(() => {
     if (notificationStore.mounted && !currentEra.loading && !currentEra.error) {

@@ -3,12 +3,12 @@
 
 import { useCallback } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
-import { useSQToken } from '@containers';
+import { TOP_100_INDEXERS, useSQToken } from '@containers';
 import { useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { parseRawEraValue } from '@hooks/useEraValue';
-import { useEthersSigner } from '@hooks/useEthersProvider';
+import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { getTotalStake } from '@hooks/useSortedIndexer';
 import {
   formatEther,
@@ -21,6 +21,7 @@ import { convertBigNumberToNumber } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
+import { base } from 'viem/chains';
 
 import { useWeb3Store } from 'src/stores';
 import { NotificationKey, useNotification } from 'src/stores/notification';
@@ -34,7 +35,7 @@ export const useMakeNotification = () => {
   const notificationStore = useNotification();
   const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
-  const { provider } = useEthersSigner();
+  const provider = useEthersProviderWithPublic({ chainId: base.id });
   const { account } = useAccount();
   const [fetchRewardsApi] = useGetRewardsLazyQuery();
   const [fetchIndexerData] = useGetIndexerLazyQuery();
@@ -106,6 +107,20 @@ export const useMakeNotification = () => {
       }
     }
   `);
+  const [fetchUnhealthyAllocation] = useLazyQuery<{ getIndexerServicesStatuses: { endpointSuccess: boolean }[] }>(
+    gql`
+      query GetIndexerServicesStatuses($indexer: String!) {
+        getIndexerServicesStatuses(indexer: $indexer) {
+          endpointSuccess
+        }
+      }
+    `,
+    {
+      context: {
+        clientName: TOP_100_INDEXERS,
+      },
+    },
+  );
   const { consumerHostBalance } = useSQToken();
   const { getHostingPlanApi } = useConsumerHostServices({
     autoLogin: false,
@@ -213,7 +228,6 @@ export const useMakeNotification = () => {
             navigateHref: '/indexer/my-projects',
           },
         });
-        notificationStore.sortNotificationList();
       }
 
       const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
@@ -423,7 +437,6 @@ export const useMakeNotification = () => {
             navigateHref: '/consumer/flex-plans/ongoing',
           },
         });
-        notificationStore.sortNotificationList();
       }
     },
     [account, notificationStore.notificationList],
@@ -463,7 +476,6 @@ export const useMakeNotification = () => {
             navigateHref: '/delegator/my-delegation',
           },
         });
-        notificationStore.sortNotificationList();
       }
     },
     [account, notificationStore.notificationList, currentEra.data?.index],
@@ -499,7 +511,6 @@ export const useMakeNotification = () => {
               navigateHref: '',
             },
           });
-          notificationStore.sortNotificationList();
         } else {
           notificationStore.removeNotification(NotificationKey.LowControllerBalance);
         }
@@ -549,6 +560,38 @@ export const useMakeNotification = () => {
     [account, notificationStore.notificationList, contracts],
   );
 
+  const makeUnhealthyAllocationNotification = useCallback(
+    async (mode?: 'reload') => {
+      // this may change passively, so need to check every time.
+      const res = await fetchUnhealthyAllocation({
+        variables: {
+          indexer: account || '',
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      if (res.data?.getIndexerServicesStatuses.some((i) => i.endpointSuccess === false)) {
+        notificationStore.addNotification({
+          key: NotificationKey.UnhealthyAllocation,
+          level: 'critical',
+          message:
+            'One or more of the projects you run is currently unhealthy.\nYou, along with any delegators, will not receive rewards for this project and risk having your rewards burned.',
+          title: 'Project Unhealthy',
+          createdAt: Date.now(),
+          canBeDismissed: true,
+          dismissTime: defaultDismissTime,
+          dismissTo: undefined,
+          type: '',
+          buttonProps: {
+            label: 'View Projects',
+            navigateHref: '/indexer/my-projects',
+          },
+        });
+      }
+    },
+    [account, notificationStore.notificationList],
+  );
+
   const initAllNotification = useCallback(() => {
     idleCallback(() => makeOverAllocateAndUnStakeAllocationNotification());
     idleCallback(() => makeUnClaimedNotification());
@@ -557,6 +600,7 @@ export const useMakeNotification = () => {
     idleCallback(() => makeLowControllerBalanceNotification());
     idleCallback(() => makeUnlockWithdrawalNotification());
     idleCallback(() => makeOutdateAllocationProjects());
+    idleCallback(() => makeUnhealthyAllocationNotification());
   }, [
     makeOverAllocateAndUnStakeAllocationNotification,
     makeUnClaimedNotification,
@@ -565,6 +609,7 @@ export const useMakeNotification = () => {
     makeLowControllerBalanceNotification,
     makeUnlockWithdrawalNotification,
     makeOutdateAllocationProjects,
+    makeUnhealthyAllocationNotification,
   ]);
 
   return {
