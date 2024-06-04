@@ -9,6 +9,7 @@ import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { parseRawEraValue } from '@hooks/useEraValue';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
+import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { getTotalStake } from '@hooks/useSortedIndexer';
 import {
   formatEther,
@@ -17,7 +18,7 @@ import {
   useGetIndexerLazyQuery,
   useGetRewardsLazyQuery,
 } from '@subql/react-hooks';
-import { convertBigNumberToNumber } from '@utils';
+import { convertBigNumberToNumber, numToHex } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -27,6 +28,13 @@ import { NotificationKey, useNotification } from 'src/stores/notification';
 
 const idleTimeout = (func: () => void) => setTimeout(func, 200);
 const idleCallback = window.requestIdleCallback || idleTimeout;
+
+const idleQueue = async (queue: (() => void)[]) => {
+  const [first, ...rest] = queue;
+  if (!first) return;
+  await first();
+  idleCallback(() => idleQueue(rest));
+};
 
 const defaultDismissTime = 1000 * 60 * 60 * 24;
 
@@ -38,6 +46,7 @@ export const useMakeNotification = () => {
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic({ chainId: l2Chain.id });
   const { account } = useAccount();
+  const fetchMetadata = useFetchMetadata();
   const [fetchRewardsApi] = useGetRewardsLazyQuery();
   const [fetchIndexerData] = useGetIndexerLazyQuery();
   const [fetchIndexerController] = useLazyQuery<{ indexer?: { controller?: string } }>(gql`
@@ -122,6 +131,29 @@ export const useMakeNotification = () => {
       },
     },
   );
+
+  const [fetchPreviousEra] = useLazyQuery<{ eras: { nodes: { createdBlock: number }[] } }>(
+    gql`
+      query GetPreviousEra($eraId: String!) {
+        eras(filter: { id: { equalTo: $eraId } }) {
+          nodes {
+            createdBlock
+          }
+        }
+      }
+    `,
+  );
+
+  const [fetchNewOperators] = useLazyQuery<{ indexers: { nodes: { id: string; metadata: string }[] } }>(gql`
+    query GetNewOperators($block: Int!) {
+      indexers(filter: { active: { equalTo: true }, createdBlock: { greaterThan: $block } }) {
+        nodes {
+          id
+          metadata
+        }
+      }
+    }
+  `);
   const { consumerHostBalance } = useSQToken();
   const { getHostingPlanApi } = useConsumerHostServices({
     autoLogin: false,
@@ -165,15 +197,8 @@ export const useMakeNotification = () => {
           NotificationKey.OverAllocateNextEra,
           NotificationKey.UnstakeAllocation,
         ]);
-        if (exist) {
-          if (!expired) {
-            return;
-          }
-          notificationStore.removeNotification([
-            NotificationKey.OverAllocate,
-            NotificationKey.UnstakeAllocation,
-            NotificationKey.OverAllocateNextEra,
-          ]);
+        if (exist && !expired) {
+          return;
         }
       }
 
@@ -195,7 +220,7 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: NotificationKey.UnstakeAllocation,
           level: 'critical',
-          message: `You have stake not allocated to any projects.\nAllocate them to increase rewards for yourself and any delegators`,
+          message: `You have stake not allocated to any projects.\n\nAllocate them to increase rewards for yourself and any delegators`,
           title: 'Unallocated Stake',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -220,7 +245,7 @@ export const useMakeNotification = () => {
         notificationStore.addNotification({
           key: NotificationKey.OverAllocate,
           level: 'critical',
-          message: `Your stake is over allocated for the current era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
+          message: `Your stake is over allocated for the current era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
           title: 'Stake Over Allocated',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -256,7 +281,7 @@ export const useMakeNotification = () => {
             notificationStore.addNotification({
               key: NotificationKey.OverAllocateNextEra,
               level: 'info',
-              message: `Your stake is over allocated for the next era and risk having your rewards burned.\nRemove Allocation from your projects to restore rewards`,
+              message: `Your stake is over allocated for the next era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
               title: 'Stake Over Allocated Next Era',
               createdAt: Date.now(),
               canBeDismissed: true,
@@ -285,7 +310,6 @@ export const useMakeNotification = () => {
         if (exist && !expired) {
           return;
         }
-        notificationStore.removeNotification([NotificationKey.OutdatedAllocation, NotificationKey.MislaborAllocation]);
       }
 
       const res = await fetchAllocationProjects({
@@ -375,8 +399,6 @@ export const useMakeNotification = () => {
         if (exist && !expired) {
           return;
         }
-
-        notificationStore.removeNotification(NotificationKey.UnclaimedRewards);
       }
 
       const res = await fetchRewardsApi({
@@ -415,7 +437,6 @@ export const useMakeNotification = () => {
         if (exist && !expired) {
           return;
         }
-        notificationStore.removeNotification(NotificationKey.LowBillingBalance);
       }
 
       const hostingPlan = await getHostingPlanApi({ account: account || '' });
@@ -456,7 +477,6 @@ export const useMakeNotification = () => {
         const { exist, expired } = checkIfExistAndExpired(NotificationKey.LowBillingBalance);
 
         if (exist && !expired) return;
-        notificationStore.removeNotification(NotificationKey.LowBillingBalance);
       }
       const res = await fetchDelegations({
         variables: { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 },
@@ -471,7 +491,7 @@ export const useMakeNotification = () => {
           key: NotificationKey.InactiveOperator,
           level: 'critical',
           message:
-            'One or more of the Node Operators you delegate to has unregistered from SubQuery Network and you are receiving no more rewards.\n You should redelegate your SQT to another Node Operator to continue to receive rewards.',
+            'One or more of the Node Operators you delegate to has unregistered from SubQuery Network and you are receiving no more rewards.\n\n You should redelegate your SQT to another Node Operator to continue to receive rewards.',
           title: 'Delegated Node Operator Inactive',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -535,7 +555,6 @@ export const useMakeNotification = () => {
         if (exist && !expired) {
           return;
         }
-        notificationStore.removeNotification(NotificationKey.UnlockWithdrawal);
       }
       const lockPeriod = await limitContract(() => contracts.staking.lockPeriod(), makeCacheKey('lockPeriod'), 0);
       const res = await fetchUnlockWithdrawal({
@@ -572,7 +591,6 @@ export const useMakeNotification = () => {
       if (mode !== 'reload') {
         const { exist, expired } = checkIfExistAndExpired(NotificationKey.UnhealthyAllocation);
         if (exist && !expired) return;
-        notificationStore.removeNotification(NotificationKey.UnhealthyAllocation);
       }
 
       const res = await fetchUnhealthyAllocation({
@@ -587,7 +605,7 @@ export const useMakeNotification = () => {
           key: NotificationKey.UnhealthyAllocation,
           level: 'critical',
           message:
-            'One or more of the projects you run is currently unhealthy.\nYou, along with any delegators, will not receive rewards for this project and risk having your rewards burned.',
+            'One or more of the projects you run is currently unhealthy.\n\nYou, along with any delegators, will not receive rewards for this project and risk having your rewards burned.',
           title: 'Project Unhealthy',
           createdAt: Date.now(),
           canBeDismissed: true,
@@ -615,10 +633,6 @@ export const useMakeNotification = () => {
         if (exist && !expired) {
           return;
         }
-        notificationStore.removeNotification([
-          NotificationKey.DecreaseCommissionRate,
-          NotificationKey.IncreaseCommissionRate,
-        ]);
       }
 
       const res = await fetchDelegations({
@@ -695,16 +709,79 @@ export const useMakeNotification = () => {
     [account, notificationStore.notificationList, currentEra.data?.index],
   );
 
+  const makeNewOperatorNotification = useCallback(async () => {
+    const res = await fetchPreviousEra({
+      variables: {
+        eraId: numToHex((currentEra.data?.index || 0) - 1),
+      },
+    });
+
+    if (res.data?.eras.nodes[0]) {
+      const { createdBlock } = res.data.eras.nodes[0];
+      const newOperators = await fetchNewOperators({
+        variables: {
+          block: createdBlock,
+        },
+      });
+
+      const count = newOperators.data?.indexers.nodes.length;
+      if (count) {
+        const metadatas = await Promise.allSettled(
+          newOperators.data?.indexers?.nodes?.map((i) => fetchMetadata(i.metadata)) || [],
+        );
+
+        const operatorNames = metadatas.map((i, index) => {
+          const address = newOperators.data?.indexers.nodes[index].id;
+          const name =
+            i.status === 'fulfilled'
+              ? `- ${(i.value.name?.length as number) > 15 ? i.value.name?.slice(0, 15) + '...' : i.value.name}`
+              : `- ${address?.slice(0, 6)}...${address?.slice(-4)}`;
+          return name;
+        });
+
+        notificationStore.addNotification(
+          {
+            key: NotificationKey.NewOperator,
+            level: 'info',
+            message: `${count} new Node Operators ${
+              count > 1 ? 'have' : 'has'
+            } joined the SubQuery Network.\n\n${operatorNames.join('\n')}`,
+            title: 'New Node Operators',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: defaultDismissTime,
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'View New Operators',
+              navigateHref: '/delegator/node-operators/all',
+            },
+          },
+          true,
+        );
+      } else {
+        notificationStore.removeNotification(NotificationKey.NewOperator);
+      }
+    }
+  }, [currentEra.data?.index, notificationStore.notificationList, fetchMetadata]);
+
   const initAllNotification = useCallback(() => {
-    idleCallback(() => makeOverAllocateAndUnStakeAllocationNotification());
-    idleCallback(() => makeUnClaimedNotification());
-    idleCallback(() => makeLowBillingBalanceNotification());
-    idleCallback(() => makeInactiveOperatorNotification());
-    idleCallback(() => makeLowControllerBalanceNotification());
-    idleCallback(() => makeUnlockWithdrawalNotification());
-    idleCallback(() => makeOutdateAllocationProjects());
-    // idleCallback(() => makeUnhealthyAllocationNotification());
-    idleCallback(() => makeInOrDecreaseCommissionNotification());
+    idleCallback(() =>
+      idleQueue([
+        // use this sort to make sure the most important notification show first
+        //
+        () => makeOverAllocateAndUnStakeAllocationNotification(),
+        () => makeLowControllerBalanceNotification(),
+        // () => makeUnhealthyAllocationNotification(),
+        () => makeInactiveOperatorNotification(),
+        () => makeLowBillingBalanceNotification(),
+        () => makeUnlockWithdrawalNotification(),
+        () => makeUnClaimedNotification(),
+        () => makeInOrDecreaseCommissionNotification(),
+        () => makeOutdateAllocationProjects(),
+        () => makeNewOperatorNotification(),
+      ]),
+    );
   }, [
     makeOverAllocateAndUnStakeAllocationNotification,
     makeUnClaimedNotification,
@@ -715,6 +792,7 @@ export const useMakeNotification = () => {
     makeOutdateAllocationProjects,
     makeUnhealthyAllocationNotification,
     makeInOrDecreaseCommissionNotification,
+    makeNewOperatorNotification,
   ]);
 
   return {

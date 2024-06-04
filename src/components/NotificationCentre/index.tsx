@@ -56,7 +56,7 @@ const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => v
             variant="small"
             type="secondary"
             dangerouslySetInnerHTML={{
-              __html: item.message.replaceAll('\n', '<br/> <br/>'),
+              __html: item.message.replaceAll('\n', '<br/>'),
             }}
           ></Typography>
         )}
@@ -97,7 +97,6 @@ const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => v
 
 const NotificationList: FC<{ onButtonClick?: () => void }> = ({ onButtonClick }) => {
   const notificationStore = useNotification();
-
   return (
     <div className={styles.notificationList}>
       {notificationStore.notificationList.map((item) => {

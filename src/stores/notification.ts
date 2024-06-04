@@ -26,6 +26,7 @@ export enum NotificationKey {
   UnhealthyAllocation = 'unhealthyAllocation',
   DecreaseCommissionRate = 'decreaseCommissionRate',
   IncreaseCommissionRate = 'increaseCommissionRate',
+  NewOperator = 'newOperator',
 }
 
 const NotificationItemFromIo = t.type({
@@ -48,7 +49,7 @@ export type NotificationStore = {
   mounted: boolean;
   notificationList: NotificationItem[];
   clearNotificationList: () => void;
-  addNotification: (notification: NotificationItem) => void;
+  addNotification: (notification: NotificationItem, replace?: boolean) => void;
   sortNotificationList: () => void;
   updateNotification: (notification: NotificationItem) => void;
   removeNotification: (notification: NotificationKey | NotificationKey[]) => void;
@@ -74,9 +75,11 @@ export const useNotification = create<NotificationStore>((set, get) => ({
     set({ notificationList: [] });
     await localforage.setItem(get().cacheKey, []);
   },
-  addNotification: async (notification) => {
+  addNotification: async (notification, replace) => {
     const rawList = get().notificationList;
-    const newList = unionBy([...rawList, notification], (i) => i.key).sort(notificationSort);
+    const newList = unionBy(replace ? [notification, ...rawList] : [...rawList, notification], (i) => i.key).sort(
+      notificationSort,
+    );
     set(() => ({ notificationList: newList }));
     await localforage.setItem(get().cacheKey, newList);
   },
