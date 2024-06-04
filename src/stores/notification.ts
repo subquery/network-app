@@ -76,7 +76,7 @@ export const useNotification = create<NotificationStore>((set, get) => ({
   },
   addNotification: async (notification) => {
     const rawList = get().notificationList;
-    const newList = unionBy([notification, ...rawList], (i) => i.key).sort(notificationSort);
+    const newList = unionBy([...rawList, notification], (i) => i.key).sort(notificationSort);
     set(() => ({ notificationList: newList }));
     await localforage.setItem(get().cacheKey, newList);
   },

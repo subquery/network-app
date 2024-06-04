@@ -10,7 +10,7 @@ import { useMakeNotification } from '@components/NotificationCentre/useMakeNotif
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
-import { defaultLockPeriod, useLockPeriod } from '@hooks';
+import { useLockPeriod } from '@hooks';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { openNotification, Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
@@ -216,6 +216,7 @@ export const Locked: React.FC = () => {
     getWithdrawals();
   }, []);
 
+  // if (withdrawals.loading || lockPeriod.loading) return <Spinner />;
   return (
     <div className={styles.withdrawnContainer}>
       {renderAsyncArray(
@@ -223,7 +224,7 @@ export const Locked: React.FC = () => {
           ([withdrawlsResult, lockPeriod]) =>
             withdrawlsResult?.withdrawls?.nodes.filter(notEmpty).map((withdrawal, idx) => {
               const utcStartAt = dayjs.utc(withdrawal?.startTime);
-              const utcEndAt = dayjs.utc(utcStartAt).add(lockPeriod || defaultLockPeriod, 'second');
+              const utcEndAt = dayjs.utc(utcStartAt).add(lockPeriod as number, 'second');
               const lockStatus = dayjs.utc() > utcEndAt ? LOCK_STATUS.UNLOCK : LOCK_STATUS.LOCK;
               return { ...withdrawal, endAt: utcEndAt.local().format(), lockStatus, idx };
             }),
