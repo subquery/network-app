@@ -9,7 +9,6 @@ import { useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { parseRawEraValue } from '@hooks/useEraValue';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
-import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { getTotalStake } from '@hooks/useSortedIndexer';
 import {
   formatEther,
@@ -25,6 +24,8 @@ import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
 import { NotificationKey, useNotification } from 'src/stores/notification';
+
+import { CanRenderOnNotification } from '.';
 
 const idleTimeout = (func: () => void) => setTimeout(func, 200);
 const idleCallback = window.requestIdleCallback || idleTimeout;
@@ -46,7 +47,6 @@ export const useMakeNotification = () => {
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic({ chainId: l2Chain.id });
   const { account } = useAccount();
-  const fetchMetadata = useFetchMetadata();
   const [fetchRewardsApi] = useGetRewardsLazyQuery();
   const [fetchIndexerData] = useGetIndexerLazyQuery();
   const [fetchIndexerController] = useLazyQuery<{ indexer?: { controller?: string } }>(gql`
@@ -726,26 +726,18 @@ export const useMakeNotification = () => {
 
       const count = newOperators.data?.indexers.nodes.length;
       if (count) {
-        const metadatas = await Promise.allSettled(
-          newOperators.data?.indexers?.nodes?.map((i) => fetchMetadata(i.metadata)) || [],
-        );
-
-        const operatorNames = metadatas.map((i, index) => {
-          const address = newOperators.data?.indexers.nodes[index].id;
-          const name =
-            i.status === 'fulfilled'
-              ? `- ${(i.value.name?.length as number) > 15 ? i.value.name?.slice(0, 15) + '...' : i.value.name}`
-              : `- ${address?.slice(0, 6)}...${address?.slice(-4)}`;
-          return name;
-        });
-
         notificationStore.addNotification(
           {
             key: NotificationKey.NewOperator,
             level: 'info',
             message: `${count} new Node Operators ${
               count > 1 ? 'have' : 'has'
-            } joined the SubQuery Network.\n\n${operatorNames.join('\n')}`,
+            } joined the SubQuery Network.\n\n${newOperators.data?.indexers.nodes
+              .map(
+                (i) =>
+                  `{{ {"componentKey": "${CanRenderOnNotification.ConnectedIndexer}", "componentProps": { "id": "${i.id}", "size": "small", "clickToProfile": true } } }}`,
+              )
+              .join('\n')}`,
             title: 'New Node Operators',
             createdAt: Date.now(),
             canBeDismissed: true,
@@ -763,7 +755,7 @@ export const useMakeNotification = () => {
         notificationStore.removeNotification(NotificationKey.NewOperator);
       }
     }
-  }, [currentEra.data?.index, notificationStore.notificationList, fetchMetadata]);
+  }, [currentEra.data?.index, notificationStore.notificationList]);
 
   const initAllNotification = useCallback(() => {
     idleCallback(() =>

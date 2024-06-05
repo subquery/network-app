@@ -86,7 +86,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
     return {
       total: formatSQT(res?.total.toString() || '0'),
       used: formatSQT(res?.used.toString() || '0'),
-      left: formatSQT(res?.total.sub(res.used).toString() || '0', { fixedNum: 18 }),
+      left: formatSQT(res?.total.sub(res.used).toString() || '0', { fixedNum: 18, toStringOrNumber: 'string' }),
     };
   }, [account, open]);
 

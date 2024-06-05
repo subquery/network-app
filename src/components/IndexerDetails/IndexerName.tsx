@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FC, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
 import { limitQueue } from '@utils/limitation';
 import { toSvg } from 'jdenticon';
@@ -110,8 +111,10 @@ export const ConnectedIndexer: React.FC<{
   account?: string | null;
   onAddressClick?: (id: string) => void;
   onClick?: (address: string) => void;
-}> = ({ id, account, size = 'normal', onAddressClick, onClick }) => {
+  clickToProfile?: boolean;
+}> = ({ id, account, size = 'normal', clickToProfile, onAddressClick, onClick }) => {
   const { indexerMetadata, loading } = useIndexerMetadata(id);
+  const navigate = useNavigate();
 
   return (
     <IndexerName
@@ -120,7 +123,13 @@ export const ConnectedIndexer: React.FC<{
       image={indexerMetadata?.image}
       address={id}
       onAddressClick={onAddressClick}
-      onClick={onClick}
+      onClick={
+        clickToProfile
+          ? () => {
+              navigate(`/indexer/${id}`);
+            }
+          : onClick
+      }
     />
   );
 };
