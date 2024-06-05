@@ -155,6 +155,13 @@ const defaultLoading = () => <Spinner />;
  *
  */
 export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: HandlersArray<T>): RenderResult {
+  if (data.error) {
+    parseError(data.error);
+    return handlers.error(data.error);
+  } else if (data.loading) {
+    return handlers.loading ? handlers.loading() : defaultLoading();
+  }
+
   if (data.data?.findIndex((d) => d === undefined) === -1) {
     try {
       if (data.data === null || (Array.isArray(data.data) && !data.data.length)) {
@@ -166,12 +173,6 @@ export function renderAsyncArray<T extends any[]>(data: AsyncData<T>, handlers: 
       // TODO not sure this is desired behaviour
       return handlers.error(e as Error);
     }
-  }
-  if (data.error) {
-    parseError(data.error);
-    return handlers.error(data.error);
-  } else if (data.loading) {
-    return handlers.loading ? handlers.loading() : defaultLoading();
   }
 
   return handlers.empty();

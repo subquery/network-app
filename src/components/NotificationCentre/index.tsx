@@ -1,10 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { GoBell } from 'react-icons/go';
 import { IoIosAlert, IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router';
+import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
 import { Typography } from '@subql/components';
@@ -32,8 +33,59 @@ const EmptyNotification = () => {
   );
 };
 
+export enum CanRenderOnNotification {
+  ConnectedIndexer = 'ConnectedIndexer',
+}
+
+const RenderCustomComponents: FC<{ componentKey: CanRenderOnNotification; componentProps: Record<any, any> }> = ({
+  componentKey,
+  componentProps,
+}) => {
+  const components = useMemo(() => {
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ConnectedIndexer: () => <ConnectedIndexer {...componentProps}></ConnectedIndexer>,
+    };
+  }, [componentProps]);
+
+  if (components[componentKey] !== undefined) {
+    const ComponentToRender = components[componentKey];
+
+    return <ComponentToRender></ComponentToRender>;
+  }
+
+  return <div></div>;
+};
+
 const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => void }> = ({ item, onButtonClick }) => {
   const navigate = useNavigate();
+
+  const handledMessage = useMemo(() => {
+    const parseMessage = (message: string) => {
+      const parts = message.split('\n');
+      const parsedParts = parts.flatMap((part) => {
+        const jsonRegex = /{{(.*?)}}/g;
+        const jsonMatches = [...part.matchAll(jsonRegex)];
+        if (jsonMatches.length > 0) {
+          return jsonMatches.map((match) => {
+            try {
+              return JSON.parse(match[1].trim());
+            } catch (error) {
+              return '';
+            }
+          });
+        } else {
+          return part;
+        }
+      });
+
+      return parsedParts;
+    };
+
+    return parseMessage(item.message);
+  }, [item.message]);
+
   return (
     <div className={styles.notificationItem}>
       <div className={styles.notificationItemIcon}>
@@ -52,13 +104,24 @@ const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => v
           </Typography>
         </div>
         {item.message && (
-          <Typography
-            variant="small"
-            type="secondary"
-            dangerouslySetInnerHTML={{
-              __html: item.message.replaceAll('\n', '<br/> <br/>'),
-            }}
-          ></Typography>
+          <div className="flexCol">
+            {handledMessage.map((msg, index) => {
+              if (typeof msg === 'string') {
+                return (
+                  <Typography key={index} variant="small" type="secondary">
+                    {msg}
+                  </Typography>
+                );
+              }
+              return (
+                <RenderCustomComponents
+                  key={index}
+                  componentKey={msg.componentKey}
+                  componentProps={msg.componentProps}
+                ></RenderCustomComponents>
+              );
+            })}
+          </div>
         )}
 
         {item.buttonProps.navigateHref && (
@@ -97,7 +160,6 @@ const NotificationItem: FC<{ item: NotificationItemType; onButtonClick?: () => v
 
 const NotificationList: FC<{ onButtonClick?: () => void }> = ({ onButtonClick }) => {
   const notificationStore = useNotification();
-
   return (
     <div className={styles.notificationList}>
       {notificationStore.notificationList.map((item) => {
@@ -131,7 +193,9 @@ const NotificationCentre: FC = () => {
   // react's update flow need to wait until next tick or pass as parameter.
   // I don't want to pass, just use useEffect to make sure init finish.
   useEffect(() => {
-    init();
+    if (account) {
+      init();
+    }
   }, [account]);
   useEffect(() => {
     if (notificationStore.mounted && !currentEra.loading && !currentEra.error) {

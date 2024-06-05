@@ -177,7 +177,6 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
             throw e;
           }
         }
-        resetModal();
         openNotification({ title: t('transaction.submmited'), duration: 5 });
         const result = await tx.wait();
 
@@ -191,7 +190,11 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
             });
           }
           setSuccessModalText(text.successText || 'Success');
-          onSuccess && (await onSuccess(params, result));
+          try {
+            onSuccess && (await onSuccess(params, result));
+          } catch (e) {
+            parseError(e);
+          }
         } else {
           throw new Error(text.failureText);
         }
@@ -207,6 +210,7 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
           throw error;
         }
       } finally {
+        resetModal();
         setIsLoading(false);
       }
     };
