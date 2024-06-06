@@ -9,10 +9,12 @@ import { IoWarning } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { SQT_TOKEN_ADDRESS } from '@containers/Web3';
+import { useIsMobile } from '@hooks/useIsMobile';
 import { Address, Spinner, Typography } from '@subql/components';
 import { formatSQT } from '@subql/react-hooks';
 import { Button, Dropdown, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import clsx from 'clsx';
 import { useDisconnect, useWalletClient } from 'wagmi';
 
 import { BRIDGE_URL } from 'src/const/bridge';
@@ -32,6 +34,7 @@ import styles from './AccountActions.module.less';
 export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
   const { t } = useTranslation();
   const { disconnect } = useDisconnect();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { balance, ethSqtBalance, consumerHostBalance } = useSQToken();
   const { data: walletClient } = useWalletClient();
@@ -52,7 +55,6 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
       },
     });
   };
-
   const handleAddStableToken = () => {
     walletClient?.request({
       method: 'wallet_watchAsset',
@@ -105,8 +107,8 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
             {
               key: 'walletBalance',
               label: (
-                <div className="flex" style={{ gap: 16, padding: '16px' }}>
-                  <div className="col-flex" style={{ gap: 8 }}>
+                <div className={clsx(styles.balanceOnNetworks, 'flex')} style={{ gap: 16, padding: '16px' }}>
+                  <div className="col-flex" style={{ gap: 8, width: '100%' }}>
                     <Typography variant="small" type="secondary">
                       Wallet balance on Base
                     </Typography>
@@ -120,7 +122,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       </Typography>
                     )}
                   </div>
-                  <div className="col-flex" style={{ gap: 8 }}>
+                  <div className="col-flex" style={{ gap: 8, width: '100%' }}>
                     <Typography variant="small" type="secondary">
                       Wallet balance on Ethereum
                       <Tooltip
@@ -326,25 +328,46 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                 </div>
               ),
             },
-          ]
+          ].filter((i) => {
+            if (!isMobile) return true;
+            if (i.key === 'header' || i.key === 'bridge tokens') {
+              return false;
+            }
+
+            return true;
+          })
         : [],
     [open, balance.result.loading, ethSqtBalance.result.loading, consumerHostBalance.result.loading],
   );
 
+  React.useEffect(() => {
+    if (isMobile) {
+      setOpen(true);
+    }
+  }, [isMobile]);
+
   return (
-    <Dropdown
-      onOpenChange={(val) => {
-        setOpen(val);
-      }}
-      overlayClassName={styles.accountActionDropdown}
-      menu={{ items: menu }}
-      placement="bottom"
-      arrow={{ pointAtCenter: true }}
-    >
-      <div className={styles.address}>
-        <Address address={account} size="large" />
-        <AiOutlineDown className={styles.downIcon} />
-      </div>
-    </Dropdown>
+    <>
+      <Dropdown
+        open={open}
+        onOpenChange={(val) => {
+          if (isMobile) return;
+          setOpen(val);
+        }}
+        overlayClassName={styles.accountActionDropdown}
+        menu={{ items: menu }}
+        placement="bottom"
+        arrow={{ pointAtCenter: true }}
+        getPopupContainer={() =>
+          isMobile ? (document.getElementById('mobile-dropdown-container') as HTMLElement) : document.body
+        }
+      >
+        <div className={styles.address}>
+          <Address address={account} size="large" />
+          <AiOutlineDown className={styles.downIcon} />
+        </div>
+      </Dropdown>
+      {isMobile && <div id="mobile-dropdown-container"></div>}
+    </>
   );
 };

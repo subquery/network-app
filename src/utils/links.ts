@@ -22,6 +22,79 @@ export const externalAppLinks = [
   },
 ];
 
+const {
+  MY_PROJECTS,
+  MY_PLANS,
+  SERVICE_AGREEMENTS,
+  OFFER_MARKETPLACE,
+  MY_DELEGATORS,
+  FLEX_PLANS,
+  MY_OFFERS,
+  DELEGATOR_INDEXERS,
+  DELEGATING,
+} = ROUTES;
+
+export const IndexerSidebar = [
+  {
+    label: t('myProjects.title'),
+    link: `/${ROUTES.INDEXER}/${MY_PROJECTS}`,
+  },
+  {
+    label: t('indexer.myDelegators'),
+    link: `/${ROUTES.INDEXER}/${MY_DELEGATORS}`,
+  },
+  {
+    label: t('plans.category.serviceAgreement'),
+    link: `/${ROUTES.INDEXER}/${SERVICE_AGREEMENTS}`,
+  },
+  {
+    label: t('indexer.myPlans'),
+    link: `/${ROUTES.INDEXER}/${MY_PLANS}`,
+  },
+  {
+    label: t('plans.category.offerMarketplace'),
+    link: `/${ROUTES.INDEXER}/${OFFER_MARKETPLACE}`,
+  },
+  {
+    label: 'All Node Operators',
+    link: `/${ROUTES.INDEXER}/all-indexers`,
+  },
+];
+
+export const ConsumerSidebar = [
+  {
+    label: t('plans.category.myFlexPlans'),
+    link: `/${ROUTES.CONSUMER}/${FLEX_PLANS}`,
+  },
+  {
+    label: 'My Boosted Projects',
+    link: `/${ROUTES.CONSUMER}/boosted-projects`,
+  },
+  {
+    label: t('plans.category.myOffers'),
+    link: `/${ROUTES.CONSUMER}/${MY_OFFERS}`,
+  },
+  {
+    label: t('plans.category.serviceAgreement'),
+    link: `/${ROUTES.CONSUMER}/${SERVICE_AGREEMENTS}`,
+  },
+  {
+    label: t('plans.category.offerMarketplace'),
+    link: `/${ROUTES.CONSUMER}/${OFFER_MARKETPLACE}`,
+  },
+];
+
+export const DelegatorSidebar = [
+  {
+    label: 'My Delegation',
+    link: `/${ROUTES.DELEGATOR}/${DELEGATING}`,
+  },
+  {
+    label: 'Node Operators',
+    link: `/${ROUTES.DELEGATOR}/${DELEGATOR_INDEXERS}`,
+  },
+];
+
 export const studioLink = {
   link: ROUTES.STUDIO,
   label: t('header.studio'),
@@ -39,16 +112,22 @@ export const entryLinks = [
     dropdown: [studioLink],
   },
   {
+    key: 'indexer',
     link: ROUTES.INDEXER,
     label: t('indexer.title'),
+    dropdown: IndexerSidebar,
   },
   {
+    key: 'consumer',
     link: ROUTES.CONSUMER,
     label: t('consumer'),
+    dropdown: ConsumerSidebar,
   },
   {
+    key: 'delegator',
     link: ROUTES.DELEGATOR,
     label: t('delegator'),
+    dropdown: DelegatorSidebar,
   },
   {
     link: 'https://academy.subquery.network/subquery_network/kepler/welcome.html',

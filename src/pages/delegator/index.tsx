@@ -3,25 +3,13 @@
 
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
+import { DelegatorSidebar } from '@utils/links';
 
 import { AppSidebar } from '../../components';
-import { ROUTES } from '../../utils';
-
-const { DELEGATOR_INDEXERS, DELEGATING } = ROUTES;
 
 const Delegator: React.FC = () => {
-  const sidebarList = [
-    {
-      label: 'My Delegation',
-      link: DELEGATING,
-    },
-    {
-      label: 'Node Operators',
-      link: DELEGATOR_INDEXERS,
-    },
-  ];
   return (
-    <AppSidebar list={sidebarList}>
+    <AppSidebar list={DelegatorSidebar}>
       <Outlet></Outlet>
     </AppSidebar>
   );

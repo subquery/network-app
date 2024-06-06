@@ -28,5 +28,6 @@
 
   .sidebar {
     min-width: unset;
+    display: none;
   }
 }
