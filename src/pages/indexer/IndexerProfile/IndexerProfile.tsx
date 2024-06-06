@@ -401,6 +401,7 @@ const IndexerProfile: FC = () => {
             account={checksumAddress}
             title="Stake"
             dataDimensionsName={['Own Stake', 'Delegation']}
+            skeletonHeight={426}
           />
 
           <div style={{ marginTop: 24 }}>
@@ -408,6 +409,7 @@ const IndexerProfile: FC = () => {
               account={checksumAddress}
               title="Rewards"
               dataDimensionsName={['Node Operator Rewards', 'Delegator Rewards']}
+              skeletonHeight={426}
             ></RewardsLineChart>
           </div>
 

@@ -462,10 +462,10 @@ const Dashboard: FC = () => {
               </div>
               <div className={styles.dashboardMainBottom}>
                 <div className={styles.dashboardMainBottomLeft}>
-                  <StakeAndDelegationLineChart></StakeAndDelegationLineChart>
+                  <StakeAndDelegationLineChart skeletonHeight={426}></StakeAndDelegationLineChart>
 
                   <div style={{ marginTop: 24 }}>
-                    <RewardsLineChart></RewardsLineChart>
+                    <RewardsLineChart skeletonHeight={426}></RewardsLineChart>
                   </div>
                 </div>
                 <div className={styles.dashboardMainBottomRight}>

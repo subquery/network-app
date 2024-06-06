@@ -119,6 +119,7 @@ export const RewardsLineChart = (props: {
   beDelegator?: boolean;
   onlyDelegator?: boolean;
   chartsStyle?: CSSProperties;
+  skeletonHeight?: number;
 }) => {
   const {
     title = 'Network Rewards',
@@ -126,6 +127,7 @@ export const RewardsLineChart = (props: {
     beDelegator = false,
     onlyDelegator = false,
     chartsStyle,
+    skeletonHeight,
   } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
@@ -215,25 +217,43 @@ export const RewardsLineChart = (props: {
     fetchRewardsByEra();
   }, [currentEra.data?.index, props.account]);
 
-  return renderAsync(props.account ? indexerRewardsData : rewardsData, {
-    loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
-    error: (e) => <Typography>{parseError(e)}</Typography>,
-    data: () => {
-      return (
-        <LineCharts
-          value={filter}
-          onChange={(val) => {
-            setFilter(val);
-            fetchRewardsByEra(val);
-          }}
-          style={chartsStyle}
-          xAxisScales={rewardsLineXScales.val}
-          title={title}
-          dataDimensionsName={onlyDelegator ? undefined : dataDimensionsName}
-          chartData={renderRewards}
-          onTriggerTooltip={(index, curDate) => {
-            if (onlyDelegator) {
-              return `<div class="col-flex" style="width: 280px; font-size: 12px;">
+  return renderAsync(
+    props.account
+      ? {
+          ...indexerRewardsData,
+          loading: indexerRewardsData.previousData ? false : indexerRewardsData.loading,
+          data: indexerRewardsData.data || indexerRewardsData.previousData,
+        }
+      : {
+          ...rewardsData,
+          loading: rewardsData.previousData ? false : rewardsData.loading,
+          data: rewardsData.data || rewardsData.previousData,
+        },
+    {
+      loading: () => (
+        <Skeleton
+          active
+          paragraph={{ rows: 8 }}
+          style={{ height: skeletonHeight ? skeletonHeight : 'auto' }}
+        ></Skeleton>
+      ),
+      error: (e) => <Typography>{parseError(e)}</Typography>,
+      data: () => {
+        return (
+          <LineCharts
+            value={filter}
+            onChange={(val) => {
+              setFilter(val);
+              fetchRewardsByEra(val);
+            }}
+            style={chartsStyle}
+            xAxisScales={rewardsLineXScales.val}
+            title={title}
+            dataDimensionsName={onlyDelegator ? undefined : dataDimensionsName}
+            chartData={renderRewards}
+            onTriggerTooltip={(index, curDate) => {
+              if (onlyDelegator) {
+                return `<div class="col-flex" style="width: 280px; font-size: 12px;">
                 <span>${curDate.format('MMM D, YYYY')}</span>
                 <div class="flex-between">
                   <span>
@@ -244,8 +264,8 @@ export const RewardsLineChart = (props: {
                   </span>
                   </div>
               </div>`;
-            }
-            return `<div class="col-flex" style="width: 280px; font-size: 12px;">
+              }
+              return `<div class="col-flex" style="width: 280px; font-size: 12px;">
               <span>${curDate.format('MMM D, YYYY')}</span>
               <div class="flex-between" style="margin-top: 8px;">
                 <span>Total</span>
@@ -254,21 +274,22 @@ export const RewardsLineChart = (props: {
               <div class="flex-between" style="margin: 8px 0;">
                 <span>${dataDimensionsName[0]}</span>
                 <span>${formatNumber(rawRewardsData.indexer[index])} ${TOKEN} (${toPercentage(
-              rawRewardsData.indexer[index],
-              rawRewardsData.total[index],
-            )})</span>
+                rawRewardsData.indexer[index],
+                rawRewardsData.total[index],
+              )})</span>
               </div>
               <div class="flex-between">
               <span>${dataDimensionsName[1]}</span>
               <span>${formatNumber(rawRewardsData.delegation[index])} ${TOKEN} (${toPercentage(
-              rawRewardsData.delegation[index],
-              rawRewardsData.total[index],
-            )})</span>
+                rawRewardsData.delegation[index],
+                rawRewardsData.total[index],
+              )})</span>
             </div>
             </div>`;
-          }}
-        ></LineCharts>
-      );
+            }}
+          ></LineCharts>
+        );
+      },
     },
-  });
+  );
 };
