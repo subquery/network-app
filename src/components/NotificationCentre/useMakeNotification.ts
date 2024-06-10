@@ -660,7 +660,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.DecreaseCommissionRate,
             level: 'info',
             message:
-              'One or more Node Operator you delegate to is planning to decrease their commission rate, you might want to review your current delegation settings to take advantage of this.',
+              'One or more Node Operators you delegate to is planning to decrease their commission rate, you might want to review your current delegation settings to take advantage of this.',
             title: 'Commission Rate Decreasing',
             createdAt: Date.now(),
             canBeDismissed: true,
@@ -687,7 +687,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.IncreaseCommissionRate,
             level: 'info',
             message:
-              'One or more Node Operator you delegate to is planning to increase their commission rate, you might want to review your current delegation settings to reassess delegation.',
+              'One or more Node Operators you delegate to is planning to increase their commission rate, you might want to review your current delegation settings to reassess delegation.',
             title: 'Commission Rate Increasing',
             createdAt: Date.now(),
             canBeDismissed: true,
