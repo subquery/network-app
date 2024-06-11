@@ -64,7 +64,7 @@ export const ClaimRewards: React.FC<Props> = ({
       variant="button"
       text={text}
       buttonClassName={styles.claimButton}
-      actions={[{ label: t('rewards.claim.button'), key: 'claim' }]}
+      actions={[{ label: t('rewards.claim.button'), key: 'claim', style: { width: '100%' } }]}
       onClick={handleClick}
       rethrowWhenSubmit
       renderContent={(onSubmit, _, isLoading, error) => {

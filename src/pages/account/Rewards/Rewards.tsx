@@ -8,6 +8,7 @@ import { TableText } from '@components';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
+import { useIsMobile } from '@hooks/useIsMobile';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
@@ -27,6 +28,7 @@ export const Rewards: React.FC = () => {
 
   const update = useUpdate();
   const filterParams = { address: account || '' };
+  const isMobile = useIsMobile();
   // if more than 100 delegations, need claim twice.
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
   const [loading, setLoading] = React.useState(false);
@@ -152,9 +154,11 @@ export const Rewards: React.FC = () => {
 
               return (
                 <>
-                  <div className="flex">
-                    <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
-                    <Typography type="secondary">{t('rewards.info')}</Typography>
+                  <div className={isMobile ? 'col-flex' : 'flex'} style={{ gap: 24 }}>
+                    <div className="flex" style={{ alignItems: 'flex-start' }}>
+                      <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
+                      <Typography type="secondary">{t('rewards.info')}</Typography>
+                    </div>
                     <span style={{ flex: 1 }}></span>
                     {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers ? (
                       <ClaimRewards

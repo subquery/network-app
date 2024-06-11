@@ -252,12 +252,14 @@ export const IndexerList: React.FC = () => {
         sorter: (a, b) => (a.commission.current ?? 0) - (b?.commission?.current ?? 0),
       },
       {
-        title: <TableTitle title={t('indexer.action')} />,
-        key: 'addressKey',
+        title: (
+          <div style={{ padding: '0 10px' }}>
+            <TableTitle title={t('indexer.action')} />
+          </div>
+        ),
+        key: 'action',
         dataIndex: 'address',
-        fixed: 'right' as FixedType,
-        width: 50,
-        align: 'center',
+        width: 150,
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
           const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => i?.indexerId === id);
