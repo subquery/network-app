@@ -266,35 +266,39 @@ export const useMakeNotification = () => {
       const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
         NotificationKey.OverAllocate,
       );
-      if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {
-        const indexerData = await fetchIndexerData({
-          variables: {
-            address: account || '',
-          },
-          fetchPolicy: 'network-only',
-        });
-        if (indexerData.data?.indexer?.id) {
-          const totalStake = getTotalStake(indexerData.data.indexer.totalStake, currentEra.data?.index);
+      // TODO: think about a more efficient way to check this
+      // refresh all the time for now.
+      // if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {
+      const indexerData = await fetchIndexerData({
+        variables: {
+          address: account || '',
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (indexerData.data?.indexer?.id) {
+        const totalStake = getTotalStake(indexerData.data.indexer.totalStake, currentEra.data?.index);
 
-          if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
-            // add notification to inform user that they may over allocated next era
-            notificationStore.addNotification({
-              key: NotificationKey.OverAllocateNextEra,
-              level: 'info',
-              message: `Your stake is over allocated for the next era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
-              title: 'Stake Over Allocated Next Era',
-              createdAt: Date.now(),
-              canBeDismissed: true,
-              dismissTime: 1000 * 60 * 60, // 1 hour
-              dismissTo: undefined,
-              type: '',
-              buttonProps: {
-                label: 'Adjust Allocation',
-                navigateHref: '/indexer/my-projects',
-              },
-            });
-          }
+        if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
+          // add notification to inform user that they may over allocated next era
+          notificationStore.addNotification({
+            key: NotificationKey.OverAllocateNextEra,
+            level: 'info',
+            message: `Your stake is over allocated for the next era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
+            title: 'Stake Over Allocated Next Era',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: 1000, // 1 hour
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Adjust Allocation',
+              navigateHref: '/indexer/my-projects',
+            },
+          });
+        } else {
+          notificationStore.removeNotification(NotificationKey.OverAllocateNextEra);
         }
+        // }
       }
     },
     [account, contracts, notificationStore.notificationList, currentEra.data?.index],
