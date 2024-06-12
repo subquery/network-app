@@ -15,7 +15,10 @@ import { cloneDeep } from 'lodash-es';
 
 import { Manifest, useGetDeploymentManifest } from './useGetDeploymentManifest';
 
-const cacheKey = makeCacheKey('localProjectWithMetadata');
+// clear previous cache
+const previousCacheKey = makeCacheKey('localProjectWithMetadata');
+localforage.removeItem(previousCacheKey);
+const cacheKey = makeCacheKey('localProjectWithMetadata-1');
 
 type ProjectWithMetadata = {
   description: string;
@@ -67,6 +70,7 @@ export const useLocalProjects = () => {
             offset: tempProjects.length,
             orderBy: [ProjectsOrderBy.ID_ASC],
             ids: [],
+            type: [ProjectType.RPC, ProjectType.SUBGRAPH, ProjectType.SUBQUERY],
           },
           defaultOptions: {
             fetchPolicy: 'network-only',
@@ -168,6 +172,9 @@ export const useLocalProjects = () => {
 
     if (params.projectType) {
       total = total.filter((i) => {
+        if (Array.isArray(params.projectType)) {
+          return params.projectType.includes(i.type);
+        }
         return i.type === params.projectType;
       });
     }
