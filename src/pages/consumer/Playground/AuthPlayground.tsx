@@ -90,7 +90,9 @@ export const AuthPlayground: React.FC<AuthPlaygroundProps> = ({
     <div className={styles.content}>
       {loading && <Spinner />}
       {requireAuth && <RequestToken {...requestTokenProps} />}
-      {type === ProjectType.SUBQUERY && playgroundVisible && <GraphQLQuery {...graphqlQueryProps} />}
+      {(type === ProjectType.SUBQUERY || type === ProjectType.SUBGRAPH) && playgroundVisible && (
+        <GraphQLQuery {...graphqlQueryProps} />
+      )}
       {type === ProjectType.RPC && playgroundVisible && (
         <RpcPlayground
           url={graphqlQueryProps.queryUrl}
