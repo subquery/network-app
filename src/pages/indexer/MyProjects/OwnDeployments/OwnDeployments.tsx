@@ -289,21 +289,18 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               return <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>;
             }
 
-            const total = BigNumberJs(sortedIndexerData?.ownStake.current || 0)
-              .plus(BigNumberJs(sortedIndexerData?.totalDelegations.current || 0))
-              .plus(BigNumberJs(runnerAllocationData?.left || 0));
+            const totalStake = BigNumberJs(sortedIndexerData?.ownStake.current || 0).plus(
+              BigNumberJs(sortedIndexerData?.totalDelegations.current || 0),
+            );
+            const unallocatedStakeRatio = BigNumberJs(runnerAllocationData?.left || 0).div(totalStake);
+            const allocatedStakeRatio = BigNumberJs(1).minus(unallocatedStakeRatio);
+            const ownStakeRatio = BigNumberJs(sortedIndexerData?.ownStake.current || 0).div(totalStake);
             const renderLineData = {
-              ownStake: BigNumberJs(sortedIndexerData?.ownStake.current || 0)
-                .div(total)
+              unAllocation: unallocatedStakeRatio.multipliedBy(100).toFixed(2),
+              ownStake: allocatedStakeRatio.multipliedBy(100).multipliedBy(ownStakeRatio).toFixed(2),
+              delegation: allocatedStakeRatio
                 .multipliedBy(100)
-                .toFixed(2),
-              delegation: BigNumberJs(sortedIndexerData?.totalDelegations.current || 0)
-                .div(total)
-                .multipliedBy(100)
-                .toFixed(2),
-              unAllocation: BigNumberJs(runnerAllocationData?.left || 0)
-                .div(total)
-                .multipliedBy(100)
+                .multipliedBy(BigNumberJs(1).minus(ownStakeRatio))
                 .toFixed(2),
             };
 
