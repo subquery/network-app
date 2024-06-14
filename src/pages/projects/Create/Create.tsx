@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
+import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
 import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Typography } from '@subql/components';
 import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
@@ -25,13 +26,13 @@ const Create: React.FC = () => {
   const query = useRouteQuery();
   const asyncProject = useProject(query.get('id') ?? '');
 
-  const isEdit = React.useMemo(() => query.get('id'), [query]);
+  const isEdit = React.useMemo(() => !!query.get('id'), [query]);
 
   const navigate = useNavigate();
   const createProject = useCreateProject();
   const updateMetadata = useUpdateProjectMetadata(query.get('id') ?? '');
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
-
+  const { verifyIfSubGraph, verifyIfSubQuery } = useVerifyDeployment();
   const handleSubmit = React.useCallback(
     async (project: FormCreateProjectMetadata & { versionDescription: string; type: ProjectType }) => {
       try {
@@ -51,6 +52,27 @@ const Create: React.FC = () => {
         } else {
           const processNext = await getIfUnsafeAndWarn(project.deploymentId);
           if (processNext === 'cancel') return;
+          if (project.type === ProjectType.SUBGRAPH) {
+            const isSubGraph = await verifyIfSubGraph(project.deploymentId);
+            if (!isSubGraph) {
+              openNotification({
+                type: 'error',
+                description: 'The deployment is not a SubGraph, please check the deployment ID or the project type',
+              });
+              return;
+            }
+          }
+
+          if (project.type === ProjectType.SUBQUERY) {
+            const isSubQuery = await verifyIfSubQuery(project.deploymentId);
+            if (!isSubQuery) {
+              openNotification({
+                type: 'error',
+                description: 'The deployment is not a SubQuery, please check the deployment ID or the project type',
+              });
+              return;
+            }
+          }
           // Form can give us a File type that doesn't match the schema
           const queryId = await createProject(project);
 
@@ -101,7 +123,7 @@ const Create: React.FC = () => {
         });
       }
     },
-    [getIfUnsafeAndWarn, navigate, createProject, isEdit],
+    [getIfUnsafeAndWarn, navigate, createProject, verifyIfSubGraph, verifyIfSubQuery, isEdit],
   );
 
   if (isEdit && !asyncProject.data)
@@ -221,8 +243,7 @@ const Create: React.FC = () => {
                       );
                     }}
                   ></FieldArray>
-                  {/* TODO: now user forbidden publish RPC */}
-                  <div style={{ display: 'none' }}>
+                  <div className={styles.fields}>
                     <Typography>Project Type</Typography>
                     <Field name="type">
                       {({
@@ -239,10 +260,10 @@ const Create: React.FC = () => {
                             onChange={(val) => {
                               form.setFieldValue(field.name, val.target.value);
                             }}
-                            disabled={true}
+                            disabled={isEdit}
                           >
                             <Radio value={ProjectType.SUBQUERY}>SubQuery</Radio>
-                            <Radio value={ProjectType.RPC}>RPC</Radio>
+                            <Radio value={ProjectType.SUBGRAPH}>SubGraph</Radio>
                           </Radio.Group>
                         );
                       }}

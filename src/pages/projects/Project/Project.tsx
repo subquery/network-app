@@ -8,13 +8,14 @@ import NormalError from '@components/NormalError';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { Markdown, Modal, SubqlCheckbox, Typography } from '@subql/components';
+import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
+import { Markdown, Modal, openNotification, SubqlCheckbox, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
 
-import { ProjectDetails } from 'src/models';
+import { ProjectDetails, ProjectType } from 'src/models';
 
 import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
@@ -27,6 +28,7 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
   const [form] = useForm();
   const createDeployment = useCreateDeployment(id ?? '');
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
+  const { verifyIfSubGraph, verifyIfSubQuery } = useVerifyDeployment();
   const update = useUpdate();
   const [ruleTips, setRuleTips] = React.useState<string>('');
 
@@ -49,6 +51,28 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
     await form.validateFields();
     const processNext = await getIfUnsafeAndWarn(form.getFieldValue('deploymentId'));
     if (processNext === 'cancel') return;
+    if (project.type === ProjectType.SUBGRAPH) {
+      const isSubGraph = await verifyIfSubGraph(form.getFieldValue('deploymentId'));
+      if (!isSubGraph) {
+        openNotification({
+          type: 'error',
+          description: 'The deployment is not a SubGraph, please check the deployment ID or the project type',
+        });
+        return;
+      }
+    }
+
+    if (project.type === ProjectType.SUBQUERY) {
+      const isSubQuery = await verifyIfSubQuery(form.getFieldValue('deploymentId'));
+      if (!isSubQuery) {
+        openNotification({
+          type: 'error',
+          description: 'The deployment is not a SubQuery, please check the deployment ID or the project type',
+        });
+        return;
+      }
+    }
+
     await createDeployment(form.getFieldsValue(true));
     await deploymentsRef.current?.refresh();
     form.resetFields();

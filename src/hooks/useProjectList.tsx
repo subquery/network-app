@@ -59,7 +59,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   } = props;
   const [, setSearchParams] = useSearchParams();
   const [getProjects, { error }] = useGetProjectsLazyQuery({
-    variables: { offset: 0, type: [ProjectType.SUBQUERY] },
+    variables: { offset: 0, type: [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] },
   });
 
   const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
@@ -114,7 +114,9 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       const searchParams = {
         keywords: searchKeywords,
         categories: filterCategories,
-        projectType: filterProjectType,
+        // TODO: Need refactor.
+        projectType:
+          filterProjectType === ProjectType.SUBQUERY ? [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] : filterProjectType,
         ...options?.searchParams,
       };
       const isSearch = searchParams.categories.length || searchParams.keywords.length;

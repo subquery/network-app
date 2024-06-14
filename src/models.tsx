@@ -8,6 +8,8 @@ import { CIDv0 } from './utils';
 export enum ProjectType {
   SUBQUERY,
   RPC,
+  DICTIONARY,
+  SUBGRAPH,
 }
 
 export const projectMetadataSchema = yup.object({
