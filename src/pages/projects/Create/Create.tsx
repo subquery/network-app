@@ -7,7 +7,8 @@ import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Typography } from '@subql/components';
+import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
+import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
 import { Field, FieldArray, Form, Formik } from 'formik';
@@ -27,7 +28,7 @@ const Create: React.FC = () => {
   const asyncProject = useProject(query.get('id') ?? '');
 
   const isEdit = React.useMemo(() => !!query.get('id'), [query]);
-
+  const isSubgraph = React.useMemo(() => +(query.get('type') || 0) === ProjectType.SUBGRAPH, [query]);
   const navigate = useNavigate();
   const createProject = useCreateProject();
   const updateMetadata = useUpdateProjectMetadata(query.get('id') ?? '');
@@ -96,7 +97,14 @@ const Create: React.FC = () => {
             <Result
               status="success"
               title="Successfully published project to Network"
-              subTitle="Your project has been successfully published, you are able to view it in the Subquery explorer, and indexers will be able to index it."
+              subTitle={`Your ${
+                {
+                  0: 'SubQuery',
+                  1: 'RPC',
+                  2: 'Dictionary',
+                  3: 'Subgraph',
+                }[project.type]
+              } project has been successfully published, you are able to view it in the Subquery explorer, and indexers will be able to index it.`}
               extra={[
                 <Button
                   type="primary"
@@ -107,7 +115,7 @@ const Create: React.FC = () => {
                     destroy();
                   }}
                 >
-                  View project in Explorer
+                  View project
                 </Button>,
               ]}
             ></Result>
@@ -135,10 +143,12 @@ const Create: React.FC = () => {
 
   return (
     <div>
+      <SubgraphAlert></SubgraphAlert>
       <Formik
         initialValues={{
           name: query.get('name') ?? '',
-          type: ProjectType.SUBQUERY,
+          // may be need check this, if need.
+          type: +(query.get('type') ?? ProjectType.SUBQUERY),
           description: '',
           websiteUrl: undefined,
           codeUrl: undefined,
@@ -173,7 +183,14 @@ const Create: React.FC = () => {
                       onChange={(value) => setFieldValue('image', value)}
                       placeholder="/static/default.project.png"
                     />
-                    <FTextInput label={t('studio.create.name')} id="name" />
+                    <div>
+                      {isSubgraph && (
+                        <Tag style={{ background: '#6B46EF', color: '#fff', border: '1px solid #DFE3E880' }}>
+                          Subgraph
+                        </Tag>
+                      )}
+                      <FTextInput label={t('studio.create.name')} id="name" />
+                    </div>
                   </div>
                   <div>
                     <Button
@@ -243,7 +260,7 @@ const Create: React.FC = () => {
                       );
                     }}
                   ></FieldArray>
-                  <div className={styles.fields}>
+                  <div className={styles.fields} style={{ display: 'none' }}>
                     <Typography>Project Type</Typography>
                     <Field name="type">
                       {({

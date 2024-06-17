@@ -8,7 +8,7 @@ import GetEndpoint from '@components/GetEndpoint';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
-import { Address, Typography } from '@subql/components';
+import { Address, Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { formatNumber, formatSQT, truncateAddress } from '@utils';
 import { Button } from 'antd';
@@ -121,7 +121,19 @@ const ProjectHeader: React.FC<Props> = ({
           ) : (
             ''
           )}
-          <Detail label="Type" value={project.type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}></Detail>
+          <Detail
+            label="Type"
+            value={
+              {
+                [ProjectType.RPC]: 'RPC Endpoint',
+                [ProjectType.SUBQUERY]: 'Indexed Dataset',
+                [ProjectType.SQ_DICT]: 'Dictionary',
+                [ProjectType.SUBGRAPH]: (
+                  <Tag style={{ background: '#6B46EF', color: '#fff', border: '1px solid #DFE3E880' }}>Subgraph</Tag>
+                ),
+              }[project.type] || ''
+            }
+          ></Detail>
           {currentVersion && (
             <Detail label={t('projectHeader.deploymentId')} value={currentVersion} canCopy={true} isTruncate={true} />
           )}

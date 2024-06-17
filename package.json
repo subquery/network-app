@@ -111,7 +111,8 @@
     "lint-staged": ">=10",
     "prettier": "^2.4.1",
     "rollup-plugin-visualizer": "^5.9.2",
-    "typescript-plugin-css-modules": "^3.4.0"
+    "typescript-plugin-css-modules": "^3.4.0",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "eslintConfig": {
     "extends": [

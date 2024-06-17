@@ -263,9 +263,6 @@ export const useMakeNotification = () => {
         notificationStore.removeNotification(NotificationKey.OverAllocate);
       }
 
-      const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
-        NotificationKey.OverAllocate,
-      );
       // TODO: think about a more efficient way to check this
       // refresh all the time for now.
       // if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {

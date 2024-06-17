@@ -304,7 +304,17 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             <SubqlCheckbox.Group
               disabled={loading}
               value={filterCategories}
-              options={filterProjectType === ProjectType.RPC ? rpcCategoriesOptions : categoriesOptions}
+              options={
+                filterProjectType === ProjectType.RPC
+                  ? rpcCategoriesOptions
+                  : [
+                      ...categoriesOptions,
+                      {
+                        label: 'Subgraph',
+                        value: 'Subgraph',
+                      },
+                    ]
+              }
               onChange={async (val) => {
                 if (loading) return;
                 setFilterCategories(val as string[]);

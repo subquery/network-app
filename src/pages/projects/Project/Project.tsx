@@ -9,7 +9,7 @@ import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import { Markdown, Modal, openNotification, SubqlCheckbox, Typography } from '@subql/components';
+import { Markdown, Modal, openNotification, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
@@ -242,7 +242,14 @@ const Project: React.FC = () => {
                   </Button>
                 </div>
 
-                <div style={{ marginTop: 8, display: 'flex' }}>{isUnsafe && <UnsafeWarn></UnsafeWarn>}</div>
+                <div style={{ marginTop: 8, display: 'flex' }}>
+                  {isUnsafe && <UnsafeWarn></UnsafeWarn>}
+                  {project.type === ProjectType.SUBGRAPH && (
+                    <Tag style={{ background: '#6B46EF', color: '#fff', border: '1px solid #DFE3E880' }}>Subgraph</Tag>
+                  )}
+                </div>
+
+                <div></div>
               </div>
             </div>
 

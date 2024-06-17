@@ -22,6 +22,7 @@ import { EraCard } from './components/EraCard/EraCard';
 import { ForumCard } from './components/ForumCard/ForumCard';
 import { RewardsLineChart } from './components/RewardsLineChart/RewardsLineChart';
 import { StakeAndDelegationLineChart } from './components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
+import SubgraphAlert from './components/SubgraphAlert/SubgraphAlert';
 import styles from './index.module.less';
 
 export const BalanceLayout = ({
@@ -413,75 +414,79 @@ const Dashboard: FC = () => {
   }, []);
 
   return (
-    <div className={styles.dashboard}>
-      <Typography variant="h4" weight={600}>
-        👋 Welcome to SubQuery Network
-      </Typography>
+    <div className="col-flex" style={{ width: '100%' }}>
+      <SubgraphAlert center></SubgraphAlert>
 
-      <ActiveCard></ActiveCard>
+      <div className={styles.dashboard}>
+        <Typography variant="h4" weight={600}>
+          👋 Welcome to SubQuery Network
+        </Typography>
 
-      {renderAsync(dashboardData, {
-        loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
-        error: (e) => <Skeleton active avatar paragraph={{ rows: 20 }} />,
-        data: (fetchedData) => {
-          const delegatorsTotalCount =
-            +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -
-            (fetchedData.indexers?.totalCount || 0);
+        <ActiveCard></ActiveCard>
 
-          const totalStake =
-            showNextOrCur === 'cur'
-              ? fetchedData.indexerStakeSummary?.totalStake
-              : fetchedData.indexerStakeSummary?.nextTotalStake;
+        {renderAsync(dashboardData, {
+          loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
+          error: (e) => <Skeleton active avatar paragraph={{ rows: 20 }} />,
+          data: (fetchedData) => {
+            const delegatorsTotalCount =
+              +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -
+              (fetchedData.indexers?.totalCount || 0);
 
-          const totalDelegation =
-            showNextOrCur === 'cur'
-              ? fetchedData.indexerStakeSummary?.delegatorStake
-              : fetchedData.indexerStakeSummary?.nextDelegatorStake;
+            const totalStake =
+              showNextOrCur === 'cur'
+                ? fetchedData.indexerStakeSummary?.totalStake
+                : fetchedData.indexerStakeSummary?.nextTotalStake;
 
-          return (
-            <div className={styles.dashboardMain}>
-              <div className={styles.dashboardMainTop}>
-                <ApyCard></ApyCard>
-                <TotalRewardsCard
-                  totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
-                  indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
-                  delegationRewards={fetchedData.rewardsToDelegation?.aggregates?.sum?.amount || '0'}
-                ></TotalRewardsCard>
+            const totalDelegation =
+              showNextOrCur === 'cur'
+                ? fetchedData.indexerStakeSummary?.delegatorStake
+                : fetchedData.indexerStakeSummary?.nextDelegatorStake;
 
-                <StakeCard
-                  totalStake={totalStake || '0'}
-                  nextTotalStake={fetchedData?.indexerStakeSummary?.nextTotalStake || '0'}
-                  totalCount={fetchedData?.indexers?.totalCount || 0}
-                ></StakeCard>
+            return (
+              <div className={styles.dashboardMain}>
+                <div className={styles.dashboardMainTop}>
+                  <ApyCard></ApyCard>
+                  <TotalRewardsCard
+                    totalRewards={fetchedData?.indexerRewards?.aggregates?.sum?.amount || '0'}
+                    indexerRewards={fetchedData?.rewardsToIndexer?.aggregates?.sum?.amount || '0'}
+                    delegationRewards={fetchedData.rewardsToDelegation?.aggregates?.sum?.amount || '0'}
+                  ></TotalRewardsCard>
 
-                <DelegationsCard
-                  delegatorStake={totalDelegation || '0'}
-                  nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
-                  totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
-                ></DelegationsCard>
-              </div>
-              <div className={styles.dashboardMainBottom}>
-                <div className={styles.dashboardMainBottomLeft}>
-                  <StakeAndDelegationLineChart></StakeAndDelegationLineChart>
+                  <StakeCard
+                    totalStake={totalStake || '0'}
+                    nextTotalStake={fetchedData?.indexerStakeSummary?.nextTotalStake || '0'}
+                    totalCount={fetchedData?.indexers?.totalCount || 0}
+                  ></StakeCard>
 
-                  <div style={{ marginTop: 24 }}>
-                    <RewardsLineChart></RewardsLineChart>
+                  <DelegationsCard
+                    delegatorStake={totalDelegation || '0'}
+                    nextDelegatorStake={fetchedData?.indexerStakeSummary?.nextDelegatorStake || '0'}
+                    totalCount={delegatorsTotalCount < 0 ? 0 : delegatorsTotalCount}
+                  ></DelegationsCard>
+                </div>
+                <div className={styles.dashboardMainBottom}>
+                  <div className={styles.dashboardMainBottomLeft}>
+                    <StakeAndDelegationLineChart></StakeAndDelegationLineChart>
+
+                    <div style={{ marginTop: 24 }}>
+                      <RewardsLineChart></RewardsLineChart>
+                    </div>
+                  </div>
+                  <div className={styles.dashboardMainBottomRight}>
+                    <CirculatingCard
+                      circulatingSupply={circleAmount || '0'}
+                      totalStake={totalStake || '0'}
+                    ></CirculatingCard>
+                    <EraCard></EraCard>
+                    <ForumCard></ForumCard>
                   </div>
                 </div>
-                <div className={styles.dashboardMainBottomRight}>
-                  <CirculatingCard
-                    circulatingSupply={circleAmount || '0'}
-                    totalStake={totalStake || '0'}
-                  ></CirculatingCard>
-                  <EraCard></EraCard>
-                  <ForumCard></ForumCard>
-                </div>
               </div>
-            </div>
-          );
-        },
-      })}
-      <Footer simple />
+            );
+          },
+        })}
+        <Footer simple />
+      </div>
     </div>
   );
 };
