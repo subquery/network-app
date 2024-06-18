@@ -5,12 +5,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import DoBooster from '@components/DoBooster';
 import GetEndpoint from '@components/GetEndpoint';
+import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
-import { Address, Tag, Typography } from '@subql/components';
+import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { formatNumber, formatSQT, truncateAddress } from '@utils';
+import { formatNumber, formatSQT } from '@utils';
 import { Button } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -99,7 +100,7 @@ const ProjectHeader: React.FC<Props> = ({
               <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
             </div>
           </div>
-          <Address address={project.owner} size="small" />
+          <IndexerName address={project.owner} size="tiny"></IndexerName>
 
           <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {/* in case of someone skip the legal process add more than 2 categories */}
