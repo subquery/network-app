@@ -270,9 +270,8 @@ label,
   text-overflow: ellipsis;
 }
 
-
 .overflowEllipsis2 {
-  overflow : hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   word-break: break-all;
@@ -293,7 +292,6 @@ label,
   max-height: 60px;
 }
 
-
 .ant-btn-primary {
   background-color: var(--sq-blue600);
 }
@@ -304,7 +302,7 @@ label,
 }
 
 .staticButton.ant-btn-primary {
-  background-color: rgba(67, 136, 221, 0.10);
+  background-color: rgba(67, 136, 221, 0.1);
   color: var(--sq-blue600);
 }
 
@@ -328,39 +326,39 @@ label,
 }
 
 .confirmModal {
-    .ant-modal-content {
-      padding: 16px 32px;
-    }
+  .ant-modal-content {
+    padding: 16px 32px;
+  }
 
-    .ant-modal-confirm-paragraph {
-      row-gap: 16px;
-    }
+  .ant-modal-confirm-paragraph {
+    row-gap: 16px;
+  }
 
-    .ant-modal-confirm-content {
-      padding: 24px 0 0 0;
-      position: relative;
-      &::before {
-        content: ' ';
-        height: 1px;
-        width: 572px;
-        background: #F4F6F8;
-        position: absolute;
-        top: 0;
-        left: -32px;
-      }
+  .ant-modal-confirm-content {
+    padding: 24px 0 0 0;
+    position: relative;
+    &::before {
+      content: ' ';
+      height: 1px;
+      width: 572px;
+      background: #f4f6f8;
+      position: absolute;
+      top: 0;
+      left: -32px;
     }
+  }
 
-    .ant-modal-confirm-btns {
-      margin: 36px 0 16px 0;
-    }
+  .ant-modal-confirm-btns {
+    margin: 36px 0 16px 0;
+  }
 
-    .ant-modal-confirm-title {
-      font-family: var(--sq-font-family);
-    }
+  .ant-modal-confirm-title {
+    font-family: var(--sq-font-family);
+  }
 }
 
 .hideModalWrapper {
-  width: fit-content!important;
+  width: fit-content !important;
   .ant-modal-header {
     display: none;
   }
@@ -377,5 +375,46 @@ label,
 
   .ant-modal-footer {
     display: none;
+  }
+}
+
+
+:root {
+  --animate-duration: 1s;
+  --animate-delay: 1s;
+  --animate-repeat: 1;
+}
+.animate__animated {
+  animation-duration: 1s;
+  animation-duration: var(--animate-duration);
+  animation-fill-mode: both;
+}
+
+.animate__fadeIn {
+  animation-name: fadeIn;
+}
+
+
+.animate__fadeOut {
+  animation-name: fadeOut;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
   }
 }

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import clsx from 'clsx';
 
 import { useIPFS } from '../../containers';
 import { CIDv0, CIDv1 } from '../../utils';
@@ -11,11 +12,10 @@ type Props = {
   renderPlaceholder?: () => React.ReactNode;
 } & Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'>;
 
-const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, ...rest }) => {
+const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, className, ...rest }) => {
   const [source, setSource] = React.useState<string>();
-  const ipfs = useIPFS();
+  const { catSingle } = useIPFS();
 
-  const { catSingle } = ipfs;
   React.useEffect(() => {
     if (typeof src === 'string') {
       const srcIPFS = src.replace('ipfs://', '');
@@ -37,7 +37,7 @@ const IPFSImage: React.FC<Props> = ({ src, renderPlaceholder, ...rest }) => {
     return <>{renderPlaceholder()}</>;
   }
 
-  return <img src={source} alt="" {...rest} />;
+  return <img src={source} alt="" {...rest} className={clsx('animate__animated', 'animate__fadeIn', className)} />;
 };
 
 export default IPFSImage;

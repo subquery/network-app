@@ -1,11 +1,18 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useCallback, useMemo } from 'react';
+import { makeCacheKey } from '@utils/limitation';
 import { createWeb3Name } from '@web3-name-sdk/core';
 import localforage from 'localforage';
 import { once } from 'lodash-es';
 
-type Web3ReturnFuncType = (address?: string) => Promise<string | null | undefined>;
+type ReturnType = {
+  expired: number;
+  web3Name: string | null | undefined;
+};
+
+type Web3ReturnFuncType = (address?: string) => Promise<ReturnType | null | undefined>;
 
 const rpcMainnet = [
   'https://eth.llamarpc.com',
@@ -37,52 +44,59 @@ export function useWeb3Name(address?: string): {
   fetchWeb3NameOnce: Web3ReturnFuncType;
   fetchWeb3NameFromCache: Web3ReturnFuncType;
 } {
-  const web3Name = createWeb3Name();
+  const web3Name = useMemo(() => createWeb3Name(), []);
 
-  const rpcMainnetRandom = rpcMainnet[Math.floor(Math.random() * rpcMainnet.length)];
+  const fetchWeb3Name = useCallback(
+    async (customAddress?: string) => {
+      if ((!address && !customAddress) || !web3Name) return undefined;
+      const rpcMainnetRandom = rpcMainnet[Math.floor(Math.random() * rpcMainnet.length)];
+      const rpcBNBRandom = rpcBNB[Math.floor(Math.random() * rpcBNB.length)];
+      const rpcARBRandom = rpcARB[Math.floor(Math.random() * rpcARB.length)];
 
-  const rpcBNBRandom = rpcBNB[Math.floor(Math.random() * rpcBNB.length)];
-
-  const rpcARBRandom = rpcARB[Math.floor(Math.random() * rpcARB.length)];
-
-  const fetchWeb3Name = async (customAddress?: string) => {
-    if ((!address && !customAddress) || !web3Name) return undefined;
-    let web3name = await web3Name.getDomainName({
-      address: customAddress || address || '',
-      queryTldList: ['eth'],
-      rpcUrl: rpcMainnetRandom,
-    });
-    // If there is no eth domain name for that address check for bnb
-    if (web3name === null) {
-      web3name = await web3Name.getDomainName({
+      let domainName = await web3Name.getDomainName({
         address: customAddress || address || '',
-        queryTldList: ['bnb'],
-        rpcUrl: rpcBNBRandom,
+        queryTldList: ['eth'],
+        rpcUrl: rpcMainnetRandom,
       });
-    }
-    // if there is no bnb domain name for that address check for arb
-    if (web3name === null) {
-      web3name = await web3Name.getDomainName({
-        address: customAddress || address || '',
-        queryTldList: ['arb'],
-        rpcUrl: rpcARBRandom,
-      });
-    }
-    // if there is no arb domain name for that address then check for any other tld for that address
-    if (web3name === null) {
-      web3name = await web3Name.getDomainName({
-        address: customAddress || address || '',
-      });
-    }
-    localforage.setItem(`web3name-${address}`, web3name);
-    return web3name;
-  };
+      // If there is no eth domain name for that address check for bnb
+      if (domainName === null) {
+        domainName = await web3Name.getDomainName({
+          address: customAddress || address || '',
+          queryTldList: ['bnb'],
+          rpcUrl: rpcBNBRandom,
+        });
+      }
+      // if there is no bnb domain name for that address check for arb
+      if (domainName === null) {
+        domainName = await web3Name.getDomainName({
+          address: customAddress || address || '',
+          queryTldList: ['arb'],
+          rpcUrl: rpcARBRandom,
+        });
+      }
+      // if there is no arb domain name for that address then check for any other tld for that address
+      if (domainName === null) {
+        domainName = await web3Name.getDomainName({
+          address: customAddress || address || '',
+        });
+      }
 
-  const fetchWeb3NameFromCache = async (customAddress?: string) => {
+      const res = {
+        expired: domainName ? Date.now() + 1000 * 60 * 60 * 24 * 30 : Date.now() + 1000 * 60 * 60 * 24, // expect no expired if have web3Name.
+        web3Name: domainName,
+      };
+
+      localforage.setItem(makeCacheKey(`web3name-${address}`), res);
+      return res;
+    },
+    [web3Name],
+  );
+
+  const fetchWeb3NameFromCache = useCallback(async (customAddress?: string) => {
     if (!address && !customAddress) return;
     const ads = customAddress || address;
-    return await localforage.getItem<string | null | undefined>(`web3name-${ads}`);
-  };
+    return await localforage.getItem<ReturnType | null | undefined>(makeCacheKey(`web3name-${ads}`));
+  }, []);
 
   return {
     fetchWeb3Name,

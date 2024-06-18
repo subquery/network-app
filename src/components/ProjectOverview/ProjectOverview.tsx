@@ -11,7 +11,7 @@ import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
-import { Markdown, SubqlCard, Tag, Typography } from '@subql/components';
+import { Markdown, Spinner, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -77,11 +77,11 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
     },
   );
 
+  const [loading, setLoading] = React.useState(true);
   const [accQueryRewards, setAccQueryRewards] = React.useState({
     current: BigNumber.from('0'),
     previous: BigNumber.from('0'),
   });
-
   const [accTotalRewards, setAccTotalRewards] = React.useState({
     current: BigNumber.from('0'),
     previous: BigNumber.from('0'),
@@ -122,34 +122,38 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
       .toFixed();
   }, []);
 
-  const getAccRewards = async () => {
+  const getAccRewards = React.useCallback(async () => {
     if (!blockNumber.data || !queryRewardsRate.data) return;
+    try {
+      setLoading(true);
+      const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+        blockTag: blockNumber.data,
+      });
+      const prevRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
+        blockTag: blockNumber.data - 1,
+      });
 
-    const currentRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
-      blockTag: blockNumber.data,
-    });
-    const prevRewards = await contracts?.rewardsBooster.getAccRewardsForDeployment(cidToBytes32(deploymentId), {
-      blockTag: blockNumber.data - 1,
-    });
+      setAccTotalRewards({
+        current: currentRewards || BigNumber.from('0'),
+        previous: prevRewards || BigNumber.from('0'),
+      });
 
-    setAccTotalRewards({
-      current: currentRewards || BigNumber.from('0'),
-      previous: prevRewards || BigNumber.from('0'),
-    });
-
-    setAccQueryRewards({
-      current: BigNumber.from(
-        BignumberJs(currentRewards?.toString() || '0')
-          .multipliedBy(queryRewardsRate.data)
-          .toFixed(0) || '0',
-      ),
-      previous: BigNumber.from(
-        BignumberJs(prevRewards?.toString() || '0')
-          .multipliedBy(queryRewardsRate.data)
-          .toFixed(0) || '0',
-      ),
-    });
-  };
+      setAccQueryRewards({
+        current: BigNumber.from(
+          BignumberJs(currentRewards?.toString() || '0')
+            .multipliedBy(queryRewardsRate.data)
+            .toFixed(0) || '0',
+        ),
+        previous: BigNumber.from(
+          BignumberJs(prevRewards?.toString() || '0')
+            .multipliedBy(queryRewardsRate.data)
+            .toFixed(0) || '0',
+        ),
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [queryRewardsRate.data, blockNumber.data, contracts, deploymentId]);
 
   const [getOfferCounts, offerCounts] = useGetOfferCountByDeploymentIdLazyQuery({
     variables: {
@@ -267,15 +271,23 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 <Typography>Total Boost Rewards over All Time</Typography>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex' }}>
-                    {BalanceLayout({
-                      mainBalance: formatSQT(accTotalRewards.current.toString()),
-                    })}
-                    <div style={{ paddingTop: 8, paddingLeft: 20 }}>
-                      <Tag color="success">
-                        + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedTotalRewardsPerEra.toString()))} Per
-                        era
-                      </Tag>
-                    </div>
+                    {loading ? (
+                      <div style={{ paddingTop: 8 }}>
+                        <Spinner size={10}></Spinner>
+                      </div>
+                    ) : (
+                      <>
+                        {BalanceLayout({
+                          mainBalance: formatSQT(accTotalRewards.current.toString()),
+                        })}
+                        <div style={{ paddingTop: 8, paddingLeft: 20 }}>
+                          <Tag color="success">
+                            + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedTotalRewardsPerEra.toString()))}{' '}
+                            Per era
+                          </Tag>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -287,45 +299,57 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               <Typography variant="small" type="secondary">
                 Current Node Operator Stake
               </Typography>
-              <Typography variant="small">
-                {formatNumber(
-                  formatSQT(
-                    totalDeploymentAllocation?.data?.indexerAllocationSummaries?.aggregates?.sum?.totalAmount || '0',
-                  ),
-                )}{' '}
-                {TOKEN}
-              </Typography>
+              {totalDeploymentAllocation.loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <Typography variant="small">
+                  {formatNumber(
+                    formatSQT(
+                      totalDeploymentAllocation?.data?.indexerAllocationSummaries?.aggregates?.sum?.totalAmount || '0',
+                    ),
+                  )}{' '}
+                  {TOKEN}
+                </Typography>
+              )}
             </div>
 
             <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Boost Allocation Rewards
               </Typography>
-              <Typography variant="small" className={styles.boosterRewards}>
-                <span>
-                  {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
-                  {TOKEN} (all time)
-                </span>
-                <Tag color="success">
-                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))} {TOKEN}{' '}
-                  per era
-                </Tag>
-              </Typography>
+              {loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <Typography variant="small" className={styles.boosterRewards}>
+                  <span>
+                    {formatNumber(formatSQT(accTotalRewards.current.sub(accQueryRewards.current).toString() || '0'))}{' '}
+                    {TOKEN} (all time)
+                  </span>
+                  <Tag color="success">
+                    + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedAllocatedPerEraRewards.toString()))}{' '}
+                    {TOKEN} per era
+                  </Tag>
+                </Typography>
+              )}
             </div>
 
             <div className="flex-between">
               <Typography variant="small" type="secondary">
                 Boost Query Rewards
               </Typography>
-              <Typography variant="small" className={styles.boosterRewards}>
-                <span>
-                  {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
-                </span>
-                <Tag color="success">
-                  + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN} per
-                  era
-                </Tag>
-              </Typography>
+              {loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <Typography variant="small" className={styles.boosterRewards}>
+                  <span>
+                    {formatNumber(formatSQT(accQueryRewards.current.toString() || '0'))} {TOKEN} (all time)
+                  </span>
+                  <Tag color="success">
+                    + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedQueryRewardsPerEra.toString()))} {TOKEN}{' '}
+                    per era
+                  </Tag>
+                </Typography>
+              )}
             </div>
           </div>
         </SubqlCard>

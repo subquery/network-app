@@ -4,6 +4,7 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
+import { idleCallback } from '@utils/idleCallback';
 import { limitQueue } from '@utils/limitation';
 import { toSvg } from 'jdenticon';
 
@@ -49,18 +50,19 @@ export const IndexerName: React.FC<Props> = ({
   const fetchWeb3 = async () => {
     const fetchedWeb3 = await limitQueue.add(() => fetchWeb3NameOnce());
     if (fetchedWeb3) {
-      setWeb3Name(fetchedWeb3);
+      const { web3Name } = fetchedWeb3;
+      setWeb3Name(web3Name || '');
     }
   };
 
   const initWeb3 = async () => {
     const cachedName = await fetchWeb3NameFromCache();
-    if (cachedName) {
-      setWeb3Name(cachedName);
+    if (cachedName && cachedName.expired > Date.now()) {
+      setWeb3Name(cachedName.web3Name || '');
       return;
     }
 
-    fetchWeb3();
+    idleCallback(fetchWeb3);
   };
 
   useEffect(() => {
