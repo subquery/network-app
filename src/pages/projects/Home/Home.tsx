@@ -176,7 +176,7 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
                     textDecoration: 'underline',
                   }}
                   type="info"
-                  href="https://academy.subquery.network/subquery_network/architects/publish.html#publishing-your-project-to-the-subquery-network"
+                  href="https://academy.subquery.network/subquery_network/architects/publish-subgraph.html"
                   target="_blank"
                 >
                   Read more about how to publish a Subgraph

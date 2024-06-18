@@ -70,7 +70,13 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
             </div>
             <span style={{ flex: 1 }}></span>
             <Button shape="round" size="large">
-              <Typography.Link type="info">Learn More</Typography.Link>
+              <Typography.Link
+                href="https://academy.subquery.network/subquery_network/architects/publish-subgraph.html"
+                type="info"
+                target="_blank"
+              >
+                Learn More
+              </Typography.Link>
             </Button>
           </div>
         }
