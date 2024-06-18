@@ -165,6 +165,10 @@ export const useLocalProjects = () => {
     if (params.categories && params.categories.length) {
       const setCategories = new Set(params.categories);
       total = total.filter((i) => {
+        if (setCategories.has('Subgraph')) {
+          return i.type === ProjectType.SUBGRAPH;
+        }
+
         if (!i.categories) return false;
         return i.categories?.filter((ii) => setCategories.has(ii)).length;
       });

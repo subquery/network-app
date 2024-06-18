@@ -56,7 +56,7 @@ export const tipsChainIds: number[] = import.meta.env.VITE_NETWORK === 'testnet'
 export const tipsL1ChainIds: number[] =
   import.meta.env.VITE_NETWORK === 'testnet' ? [sepolia.id, baseSepolia.id] : [mainnet.id, base.id];
 // This should ok. It seems is a bug of Ts.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 const { chains, publicClient } = configureChains(supportedChains, [publicProvider()]);
 

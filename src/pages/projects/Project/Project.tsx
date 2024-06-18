@@ -9,7 +9,8 @@ import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import { Markdown, Modal, openNotification, SubqlCheckbox, Typography } from '@subql/components';
+import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
+import { Markdown, Modal, openNotification, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
@@ -170,119 +171,133 @@ const Project: React.FC = () => {
   const { isUnsafe } = useGetIfUnsafeDeployment(asyncProject.data?.deploymentId);
   const navigate = useNavigate();
 
-  return renderAsync(asyncProject, {
-    loading: () => <Spinner />,
-    error: (error: Error) => {
-      return (
-        <NormalError withWrapper>
-          This project looks like have wrong metadata, Please contact the project creator to fix it.
-        </NormalError>
-      );
-    },
-    data: (project) => {
-      if (!project) {
-        // Should never happen
-        return <span>Project doesn't exist</span>;
-      }
+  return (
+    <div>
+      <SubgraphAlert></SubgraphAlert>
+      {renderAsync(asyncProject, {
+        loading: () => <Spinner />,
+        error: (error: Error) => {
+          return (
+            <NormalError withWrapper>
+              This project looks like have wrong metadata, Please contact the project creator to fix it.
+            </NormalError>
+          );
+        },
+        data: (project) => {
+          if (!project) {
+            // Should never happen
+            return <span>Project doesn&apos;t exist</span>;
+          }
 
-      if (project.owner !== account) {
-        navigate('/projects');
-      }
+          if (project.owner !== account) {
+            navigate('/projects');
+          }
 
-      return (
-        <>
-          <div
-            className="content-width"
-            style={{ padding: '24px 80px 0 80px', display: 'flex', flexDirection: 'column' }}
-          >
-            <Breadcrumb
-              items={[
-                {
-                  key: 'explorer',
-                  title: (
-                    <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
-                      SubQuery Projects
-                    </Typography>
-                  ),
-                  onClick: () => {
-                    navigate('/projects');
-                  },
-                },
-                {
-                  key: 'current',
-                  title: (
-                    <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
-                      {project.metadata.name}
-                    </Typography>
-                  ),
-                },
-              ]}
-            ></Breadcrumb>
+          return (
+            <>
+              <div
+                className="content-width"
+                style={{ padding: '24px 80px 0 80px', display: 'flex', flexDirection: 'column' }}
+              >
+                <Breadcrumb
+                  items={[
+                    {
+                      key: 'explorer',
+                      title: (
+                        <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
+                          SubQuery Projects
+                        </Typography>
+                      ),
+                      onClick: () => {
+                        navigate('/projects');
+                      },
+                    },
+                    {
+                      key: 'current',
+                      title: (
+                        <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                          {project.metadata.name}
+                        </Typography>
+                      ),
+                    },
+                  ]}
+                ></Breadcrumb>
 
-            <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
-              <IPFSImage
-                src={project.metadata.image || '/static/default.project.png'}
-                style={{ width: 160, height: 160 }}
-              />{' '}
-              <div className="col-flex" style={{ flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <Typography variant="h4" weight={600} className="overflowEllipsis" style={{ maxWidth: 500 }}>
-                    {project.metadata.name}
-                  </Typography>
+                <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
+                  <IPFSImage
+                    src={project.metadata.image || '/static/default.project.png'}
+                    style={{ width: 160, height: 160 }}
+                  />{' '}
+                  <div className="col-flex" style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                      <Typography variant="h4" weight={600} className="overflowEllipsis" style={{ maxWidth: 500 }}>
+                        {project.metadata.name}
+                      </Typography>
 
-                  <Button
-                    type="primary"
-                    shape="round"
-                    size="large"
-                    onClick={() => {
-                      navigate(`/projects/create?id=${project.id}`);
-                    }}
-                  >
-                    Edit
-                  </Button>
+                      <Button
+                        type="primary"
+                        shape="round"
+                        size="large"
+                        onClick={() => {
+                          navigate(`/projects/create?id=${project.id}`);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+
+                    <div style={{ marginTop: 8, display: 'flex' }}>
+                      {isUnsafe && <UnsafeWarn></UnsafeWarn>}
+                      {project.type === ProjectType.SUBGRAPH && (
+                        <Tag style={{ background: '#6B46EF', color: '#fff', border: '1px solid #DFE3E880' }}>
+                          Subgraph
+                        </Tag>
+                      )}
+                    </div>
+
+                    <div></div>
+                  </div>
                 </div>
 
-                <div style={{ marginTop: 8, display: 'flex' }}>{isUnsafe && <UnsafeWarn></UnsafeWarn>}</div>
+                <Typography variant="large" weight={600} style={{ margin: '24px 0' }}>
+                  Project Detail
+                </Typography>
+
+                <div style={{ marginBottom: 16 }}>
+                  <Expand>
+                    <Markdown.Preview>{project.metadata.description}</Markdown.Preview>
+                  </Expand>
+                </div>
+
+                <Typography variant="large" style={{ margin: '24px 0 8px 0' }}>
+                  Categories
+                </Typography>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                  {project.metadata.categories?.map((category) => {
+                    return (
+                      <Button key={category} type="primary" className="staticButton" shape="round">
+                        {category}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <ExternalLink icon="globe" link={project.metadata.websiteUrl} />
+                <ExternalLink icon="github" link={project.metadata.codeUrl} />
+
+                <div
+                  style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginTop: 8, marginBottom: 24 }}
+                ></div>
               </div>
-            </div>
 
-            <Typography variant="large" weight={600} style={{ margin: '24px 0' }}>
-              Project Detail
-            </Typography>
-
-            <div style={{ marginBottom: 16 }}>
-              <Expand>
-                <Markdown.Preview>{project.metadata.description}</Markdown.Preview>
-              </Expand>
-            </div>
-
-            <Typography variant="large" style={{ margin: '24px 0 8px 0' }}>
-              Categories
-            </Typography>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-              {project.metadata.categories?.map((category) => {
-                return (
-                  <Button key={category} type="primary" className="staticButton" shape="round">
-                    {category}
-                  </Button>
-                );
-              })}
-            </div>
-
-            <ExternalLink icon="globe" link={project.metadata.websiteUrl} />
-            <ExternalLink icon="github" link={project.metadata.codeUrl} />
-
-            <div
-              style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginTop: 8, marginBottom: 24 }}
-            ></div>
-          </div>
-
-          <ProjectDeploymentsDetail id={id} project={project}></ProjectDeploymentsDetail>
-        </>
-      );
-    },
-  });
+              <ProjectDeploymentsDetail id={id} project={project}></ProjectDeploymentsDetail>
+            </>
+          );
+        },
+      })}
+    </div>
+  );
 };
 
 export default Project;

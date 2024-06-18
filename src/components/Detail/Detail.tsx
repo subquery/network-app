@@ -4,13 +4,14 @@
 import * as React from 'react';
 import { Typography } from '@subql/components';
 import { truncateDeploymentId } from '@utils';
+import { isString } from 'lodash-es';
 
 import Copy from '../Copy';
 import styles from './Details.module.css';
 
 type Props = {
   label: string;
-  value?: string;
+  value?: React.ReactNode;
   href?: string;
   className?: string;
   canCopy?: boolean;
@@ -26,6 +27,10 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
           {value ?? '-'}
         </a>
       );
+    }
+
+    if (!isString(value)) {
+      return value;
     }
 
     if (value) {
@@ -46,7 +51,7 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
       </Typography>
       <div className={styles.valueCont}>
         {renderValue()}
-        {canCopy && <Copy value={href ?? value} className={styles.copy} />}
+        {canCopy && isString(value) && <Copy value={href ?? value} className={styles.copy} />}
       </div>
     </div>
   );

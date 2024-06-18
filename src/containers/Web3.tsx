@@ -20,7 +20,7 @@ export const l1Chain = import.meta.env.VITE_NETWORK === 'testnet' ? sepolia : ma
 export const l2Chain = import.meta.env.VITE_NETWORK === 'testnet' ? baseSepolia : base;
 
 // TODO: FIXME, Mainnet dont have this yet
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-ignore
 export const SQT_TOKEN_ADDRESS = NETWORK_DEPLOYMENT_DETAILS.child.L2SQToken.address;
 

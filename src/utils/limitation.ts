@@ -27,7 +27,6 @@ export const makeCacheKey = (
   return `${prefix}-${type}-${key}-${suffix}`;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const cachedResult: Map<string, any> = new Map();
 
 export enum limitContractCacheEnum {
@@ -35,13 +34,12 @@ export enum limitContractCacheEnum {
 }
 
 // limit 1 concurrency and will retry 4 times, interval 10s.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export const limitContract = async <T extends Promise<any>>(
   asyncFunc: () => T,
   cacheName?: string,
   cacheTime = 3000,
 ): Promise<T extends Promise<infer F> ? F : unknown> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let error: any = null;
   if (cacheName) {
     if (cachedResult.has(cacheName)) {
