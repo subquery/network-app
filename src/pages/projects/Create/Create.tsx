@@ -107,6 +107,7 @@ const Create: React.FC = () => {
               } project has been successfully published, you are able to view it in the Subquery explorer, and indexers will be able to index it.`}
               extra={[
                 <Button
+                  key="view-project"
                   type="primary"
                   shape="round"
                   size="large"
@@ -220,7 +221,6 @@ const Create: React.FC = () => {
                       form,
                     }: {
                       field: { name: string; value: string };
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       form: { setFieldValue: (field: string, val: any) => void };
                     }) => {
                       return (
@@ -268,7 +268,6 @@ const Create: React.FC = () => {
                         form,
                       }: {
                         field: { name: string; value: string };
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         form: { setFieldValue: (field: string, val: any) => void };
                       }) => {
                         return (
@@ -302,7 +301,6 @@ const Create: React.FC = () => {
                           form,
                         }: {
                           field: { name: string; value: string };
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           form: { setFieldValue: (field: string, val: any) => void };
                         }) => {
                           return (
