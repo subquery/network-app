@@ -182,7 +182,7 @@ const Project: React.FC = () => {
     data: (project) => {
       if (!project) {
         // Should never happen
-        return <span>Project doesn't exist</span>;
+        return <span>Project doesn&apos;t exist</span>;
       }
 
       if (project.owner !== account) {
