@@ -142,7 +142,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             defaultOptions: { fetchPolicy: 'network-only' },
           };
       // The type define at top.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       const res = await api(params);
 

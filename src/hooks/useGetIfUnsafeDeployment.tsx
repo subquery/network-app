@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { useEffect, useState } from 'react';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { useIPFS } from '@containers';
@@ -44,8 +44,8 @@ export const useGetIfUnsafeDeployment = (currentDeploymentId?: string) => {
               In most cases, Indexers will still run this project, however they might be reluctant to do so.
             </Typography>
             <Typography variant="medium" type="secondary">
-              By proceeding, you acknowledge the potential risks associated with deploying an 'unsafe' project. Learn
-              more about unsafe project.
+              By proceeding, you acknowledge the potential risks associated with deploying an &apos;unsafe&apos;
+              project. Learn more about unsafe project.
             </Typography>
           </div>
         ),

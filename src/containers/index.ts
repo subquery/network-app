@@ -4,6 +4,6 @@
 export { IPFSProvider, useIPFS } from './IPFS';
 export { ProjectMetadataProvider, useProjectMetadata } from './ProjectMetadata';
 export { ProjectRegistryProvider, useProjectRegistry } from './ProjectRegistry';
-export { useWeb3 } from './Web3';
 export * from './QueryApolloProvider';
 export * from './SQToken';
+export { useWeb3 } from './Web3';

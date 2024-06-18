@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { FC, LazyExoticComponent, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Spinner } from '@subql/components';

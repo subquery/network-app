@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getOrderedAccounts = <T extends any[], K extends keyof T[number]>(
   accounts: T,
   key: K,

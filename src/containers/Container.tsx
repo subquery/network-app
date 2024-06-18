@@ -1,7 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
 
 const EMPTY: unique symbol = Symbol();
@@ -13,17 +12,14 @@ export class Logger {
     return new Logger(`${this.prefix}[${scope}]`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public l(message: any, ...rest: any[]): void {
     console.log(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public w(message: any, ...rest: any[]): void {
     console.warn(`${this.prefix}${message?.toString()}`, ...rest);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public e(message: any, ...rest: any[]): void {
     console.error(`${this.prefix}${message?.toString()}`, ...rest);
   }

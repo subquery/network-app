@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
@@ -64,7 +64,7 @@ export const useConsumerHostServices = (
         },
         primaryType: 'messageType',
         // TODO: FIX, it seems is wagmi bug.
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore
         domain,
         message: signMsg,
@@ -212,7 +212,6 @@ export const useConsumerHostServices = (
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const alertResDecorator = <T extends (...args: any) => any>(
     func: T,
   ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
@@ -231,7 +230,6 @@ export const useConsumerHostServices = (
     };
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loginResDecorator = <T extends (...args: any) => any>(
     func: T,
   ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
