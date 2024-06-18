@@ -1,6 +1,5 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react';
 import { useMemo } from 'react';
 
@@ -16,7 +15,6 @@ export function useAsyncMemo<T>(
   initial: T | undefined = undefined,
 ): AsyncMemoReturn<T> {
   const [result, setResult] = useState<AsyncData<T>>({ data: initial, loading: false });
-
   useEffect(() => {
     const promise = factory();
     if (promise === undefined || promise === null) return;
@@ -31,7 +29,6 @@ export function useAsyncMemo<T>(
     return () => {
       isSubscribed = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps]);
 
   const refetch = useCallback(
@@ -99,7 +96,6 @@ export function useAsyncMemoWithLazy<T>(
     return () => {
       isSubscribed = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLazyLoad, ...deps]);
 
   const refetch = useCallback(
@@ -111,7 +107,6 @@ export function useAsyncMemoWithLazy<T>(
         const res = await promise;
         setResult({ data: res, loading: false });
         return { data: res };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         setResult({ error: e, loading: false });
       }

@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { NETWORK_NAME } from '@containers/Web3';
 import { Spinner, Typography } from '@subql/components';
 import { STABLE_COIN_ADDRESSES, STABLE_COIN_SYMBOLS, TOKEN_SYMBOLS } from '@subql/network-config';

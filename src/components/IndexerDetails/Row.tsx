@@ -385,7 +385,7 @@ const ConnectedRow: React.FC<{
             </span>
           </Typography>
         </div>
-        {type === ProjectType.SUBQUERY && queryUrl && trailToken && (
+        {(type === ProjectType.SUBQUERY || type === ProjectType.SUBGRAPH) && queryUrl && trailToken && (
           <GraphiQL url={queryUrl} bearToken={trailToken} theme="dark"></GraphiQL>
         )}
         {type === ProjectType.RPC && (

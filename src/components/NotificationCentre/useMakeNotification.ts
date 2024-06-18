@@ -132,17 +132,15 @@ export const useMakeNotification = () => {
     },
   );
 
-  const [fetchPreviousEra] = useLazyQuery<{ eras: { nodes: { createdBlock: number }[] } }>(
-    gql`
-      query GetPreviousEra($eraId: String!) {
-        eras(filter: { id: { equalTo: $eraId } }) {
-          nodes {
-            createdBlock
-          }
+  const [fetchPreviousEra] = useLazyQuery<{ eras: { nodes: { createdBlock: number }[] } }>(gql`
+    query GetPreviousEra($eraId: String!) {
+      eras(filter: { id: { equalTo: $eraId } }) {
+        nodes {
+          createdBlock
         }
       }
-    `,
-  );
+    }
+  `);
 
   const [fetchNewOperators] = useLazyQuery<{ indexers: { nodes: { id: string; metadata: string }[] } }>(gql`
     query GetNewOperators($block: Int!) {
@@ -263,38 +261,39 @@ export const useMakeNotification = () => {
         notificationStore.removeNotification(NotificationKey.OverAllocate);
       }
 
-      const { exist: overAllocateNextExist, expired: overAllocateNextExpire } = checkIfExistAndExpired(
-        NotificationKey.OverAllocate,
-      );
-      if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {
-        const indexerData = await fetchIndexerData({
-          variables: {
-            address: account || '',
-          },
-          fetchPolicy: 'network-only',
-        });
-        if (indexerData.data?.indexer?.id) {
-          const totalStake = getTotalStake(indexerData.data.indexer.totalStake, currentEra.data?.index);
+      // TODO: think about a more efficient way to check this
+      // refresh all the time for now.
+      // if (mode === 'reload' || !overAllocateNextExist || overAllocateNextExpire) {
+      const indexerData = await fetchIndexerData({
+        variables: {
+          address: account || '',
+        },
+        fetchPolicy: 'network-only',
+      });
+      if (indexerData.data?.indexer?.id) {
+        const totalStake = getTotalStake(indexerData.data.indexer.totalStake, currentEra.data?.index);
 
-          if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
-            // add notification to inform user that they may over allocated next era
-            notificationStore.addNotification({
-              key: NotificationKey.OverAllocateNextEra,
-              level: 'info',
-              message: `Your stake is over allocated for the next era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
-              title: 'Stake Over Allocated Next Era',
-              createdAt: Date.now(),
-              canBeDismissed: true,
-              dismissTime: 1000 * 60 * 60, // 1 hour
-              dismissTo: undefined,
-              type: '',
-              buttonProps: {
-                label: 'Adjust Allocation',
-                navigateHref: '/indexer/my-projects',
-              },
-            });
-          }
+        if (totalStake.after && BigNumberJs(totalStake.after).lt(runnerAllocation.used)) {
+          // add notification to inform user that they may over allocated next era
+          notificationStore.addNotification({
+            key: NotificationKey.OverAllocateNextEra,
+            level: 'info',
+            message: `Your stake is over allocated for the next era and risk having your rewards burned.\n\nRemove Allocation from your projects to restore rewards`,
+            title: 'Stake Over Allocated Next Era',
+            createdAt: Date.now(),
+            canBeDismissed: true,
+            dismissTime: 1000, // 1 hour
+            dismissTo: undefined,
+            type: '',
+            buttonProps: {
+              label: 'Adjust Allocation',
+              navigateHref: '/indexer/my-projects',
+            },
+          });
+        } else {
+          notificationStore.removeNotification(NotificationKey.OverAllocateNextEra);
         }
+        // }
       }
     },
     [account, contracts, notificationStore.notificationList, currentEra.data?.index],
@@ -660,7 +659,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.DecreaseCommissionRate,
             level: 'info',
             message:
-              'One or more Node Operator you delegate to is planning to decrease their commission rate, you might want to review your current delegation settings to take advantage of this.',
+              'One or more Node Operators you delegate to is planning to decrease their commission rate, you might want to review your current delegation settings to take advantage of this.',
             title: 'Commission Rate Decreasing',
             createdAt: Date.now(),
             canBeDismissed: true,
@@ -687,7 +686,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.IncreaseCommissionRate,
             level: 'info',
             message:
-              'One or more Node Operator you delegate to is planning to increase their commission rate, you might want to review your current delegation settings to reassess delegation.',
+              'One or more Node Operators you delegate to is planning to increase their commission rate, you might want to review your current delegation settings to reassess delegation.',
             title: 'Commission Rate Increasing',
             createdAt: Date.now(),
             canBeDismissed: true,

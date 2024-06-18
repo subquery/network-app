@@ -92,7 +92,7 @@ const translation = {
   },
   rewards: {
     none: `You don't have any rewards.`,
-    indexer: 'Indexer',
+    indexer: 'Node Operator',
     amount: 'Amount',
     time: 'Time',
     era: 'Era',

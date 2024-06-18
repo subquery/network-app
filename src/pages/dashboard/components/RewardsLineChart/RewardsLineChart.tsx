@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
 import { Era, useEra } from '@hooks';
 import { Typography } from '@subql/components';
@@ -187,7 +187,7 @@ export const RewardsLineChart = (props: {
 
     const delegationRewards = beDelegator
       ? // if beDelegator, will have
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore
         curry(res?.data?.delegatorEraReward?.groupedAggregates || [])
       : curry(res?.data?.delegationEraReward?.groupedAggregates || []);
@@ -198,7 +198,7 @@ export const RewardsLineChart = (props: {
       total: fillData(
         (beDelegator
           ? // if beDelegator, will have
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
             // @ts-ignore
             res?.data?.delegatorTotalRewards?.groupedAggregates
           : res?.data?.eraRewards?.groupedAggregates) || [],
@@ -274,9 +274,9 @@ export const RewardsLineChart = (props: {
               <div class="flex-between" style="margin: 8px 0;">
                 <span>${dataDimensionsName[0]}</span>
                 <span>${formatNumber(rawRewardsData.indexer[index])} ${TOKEN} (${toPercentage(
-                rawRewardsData.indexer[index],
-                rawRewardsData.total[index],
-              )})</span>
+                  rawRewardsData.indexer[index],
+                  rawRewardsData.total[index],
+                )})</span>
               </div>
               <div class="flex-between">
               <span>${dataDimensionsName[1]}</span>

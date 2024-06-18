@@ -301,7 +301,7 @@ export const IndexerList: React.FC = () => {
         />
         <Typography variant="medium" type="secondary" style={{ maxWidth: 888 }}>
           A Delegator is a non-technical network role in the SubQuery Network and is a great way to start participating
-          in the SubQuery Network. This role enables Delegators to “delegate” their SQT to one or more Node Operator
+          in the SubQuery Network. This role enables Delegators to “delegate” their SQT to one or more Node Operators
           (RPC Providers or Data Indexers) and earn rewards (similar to staking).
         </Typography>
 

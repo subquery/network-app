@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { TextInput } from '@subql/components';
 import { useField } from 'formik';
 

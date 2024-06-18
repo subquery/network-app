@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteQuery } from '@hooks';
 import { useProjectList } from '@hooks/useProjectList';
+import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 
@@ -37,9 +38,12 @@ const Home: React.FC = () => {
   });
 
   return (
-    <div className={styles.explorer}>
-      <Header />
-      {listsWithSearch}
+    <div>
+      <SubgraphAlert></SubgraphAlert>
+      <div className={styles.explorer}>
+        <Header />
+        {listsWithSearch}
+      </div>
     </div>
   );
 };

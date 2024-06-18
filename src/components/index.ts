@@ -14,49 +14,49 @@ import ProjectHeader from './ProjectHeader';
 import ProjectOverview from './ProjectOverview';
 import Spinner from './Spinner';
 import Status from './Status';
-export * from './Header';
-export * from './ConnectWallet';
-export * from './DeploymentInfo';
-export * from './Sidebar';
+export * from './AppPageHeader';
+export * from './AppSidebar';
+export * from './APYTooltip';
+export * from './BreadcrumbNav';
+export * from './Button';
 export * from './Card';
+export * from './ConnectWallet';
 export * from './CurEra';
+export * from './DeploymentInfo';
+export * from './Description';
+export * from './EmptyList';
+export * from './GlobalBanner';
+export * from './Header';
 export * from './Modal';
-export * from './ModalInput';
-export * from './NumberInput';
 export * from './ModalApproveToken';
 export * from './ModalClaimIndexerRewards';
-export * from './TransactionModal';
-export * from './AppSidebar';
-export * from './AppPageHeader';
-export * from './TabButton';
-export * from './SummaryList';
-export * from './TableText';
-export * from './SearchInput';
-export * from './Typography';
-export * from './Table';
-export * from './GlobalBanner';
-export * from './Stat';
-export * from './Button';
-export * from './EmptyList';
-export * from './Description';
+export * from './ModalInput';
 export * from './Notification';
-export * from './WalletRoute';
-export * from './BreadcrumbNav';
+export * from './NumberInput';
+export * from './SearchInput';
+export * from './Sidebar';
+export * from './Stat';
 export * from './StepButton';
-export * from './APYTooltip';
+export * from './SummaryList';
+export * from './TabButton';
+export * from './Table';
+export * from './TableText';
+export * from './TransactionModal';
+export * from './Typography';
+export * from './WalletRoute';
 
 export {
-  ImageInput,
+  Banner,
+  Copy,
+  CreateInstructions,
   FTextInput,
+  ImageInput,
+  IndexerProgress,
   IPFSImage,
-  ProjectHeader,
   ProjectCard,
   ProjectDeployments,
+  ProjectHeader,
   ProjectOverview,
-  IndexerProgress,
   Spinner,
-  Banner,
-  CreateInstructions,
-  Copy,
   Status,
 };

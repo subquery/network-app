@@ -59,7 +59,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   } = props;
   const [, setSearchParams] = useSearchParams();
   const [getProjects, { error }] = useGetProjectsLazyQuery({
-    variables: { offset: 0, type: [ProjectType.SUBQUERY] },
+    variables: { offset: 0, type: [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] },
   });
 
   const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
@@ -114,7 +114,9 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       const searchParams = {
         keywords: searchKeywords,
         categories: filterCategories,
-        projectType: filterProjectType,
+        // TODO: Need refactor.
+        projectType:
+          filterProjectType === ProjectType.SUBQUERY ? [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] : filterProjectType,
         ...options?.searchParams,
       };
       const isSearch = searchParams.categories.length || searchParams.keywords.length;
@@ -140,7 +142,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             defaultOptions: { fetchPolicy: 'network-only' },
           };
       // The type define at top.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       const res = await api(params);
 
@@ -302,7 +304,17 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             <SubqlCheckbox.Group
               disabled={loading}
               value={filterCategories}
-              options={filterProjectType === ProjectType.RPC ? rpcCategoriesOptions : categoriesOptions}
+              options={
+                filterProjectType === ProjectType.RPC
+                  ? rpcCategoriesOptions
+                  : [
+                      ...categoriesOptions,
+                      {
+                        label: 'Subgraph',
+                        value: 'Subgraph',
+                      },
+                    ]
+              }
               onChange={async (val) => {
                 if (loading) return;
                 setFilterCategories(val as string[]);

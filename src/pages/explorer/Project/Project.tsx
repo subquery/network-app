@@ -8,6 +8,7 @@ import NormalError from '@components/NormalError';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
+import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
@@ -103,95 +104,102 @@ const ProjectInner: React.FC = () => {
     }
   }, [deployments, getVersionMetadata]);
 
-  const page = renderAsync(asyncProject, {
-    loading: () => <Spinner />,
-    error: (e) => (
-      <NormalError withWrapper>
-        This project looks like have wrong metadata, Please contact the project creator to fix it.
-      </NormalError>
-    ),
-    data: (project) => {
-      if (!project) {
-        // Should never happen
-        return <span>Project doesn't exist</span>;
-      }
-      return (
-        <div className={styles.container}>
-          <div className={styles.upper}>
-            <Breadcrumb
-              items={[
-                {
-                  key: 'explorer',
-                  title: (
-                    <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
-                      Explorer
-                    </Typography>
-                  ),
-                  onClick: () => {
-                    navigate('/explorer/home');
-                  },
-                },
-                {
-                  key: 'current',
-                  title: (
-                    <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
-                      {project.metadata.name}
-                    </Typography>
-                  ),
-                },
-              ]}
-            ></Breadcrumb>
-            <div className={styles.projectHeader}>
-              <ProjectHeader
-                project={project}
-                versions={deploymentVersions}
-                currentVersion={deploymentId}
-                onChangeVersion={handleChangeVersion}
-                isUnsafeDeployment={isUnsafe}
-              />
-            </div>
-            <TabButtons tabs={sortedTabList} withUnderline />
-          </div>
-          <div className={styles.contentOverview}>
-            {/* TODO: just render the components rather than routes. */}
-            <Routes>
-              <Route
-                path={OVERVIEW}
-                element={
-                  <ProjectOverview
+  return (
+    <>
+      <SubgraphAlert></SubgraphAlert>
+      {renderAsync(asyncProject, {
+        loading: () => <Spinner />,
+        error: (e) => (
+          <NormalError withWrapper>
+            This project looks like have wrong metadata, Please contact the project creator to fix it.
+          </NormalError>
+        ),
+        data: (project) => {
+          if (!project) {
+            // Should never happen
+            return <span>Project doesn&apos;t exist</span>;
+          }
+          return (
+            <div className={styles.container}>
+              <div className={styles.upper}>
+                <Breadcrumb
+                  items={[
+                    {
+                      key: 'explorer',
+                      title: (
+                        <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
+                          Explorer
+                        </Typography>
+                      ),
+                      onClick: () => {
+                        navigate('/explorer/home');
+                      },
+                    },
+                    {
+                      key: 'current',
+                      title: (
+                        <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                          {project.metadata.name}
+                        </Typography>
+                      ),
+                    },
+                  ]}
+                ></Breadcrumb>
+                <div className={styles.projectHeader}>
+                  <ProjectHeader
                     project={project}
-                    metadata={project.metadata}
-                    deploymentDescription={asyncDeploymentMetadata?.data?.description}
-                    manifest={manifest}
+                    versions={deploymentVersions}
+                    currentVersion={deploymentId}
+                    onChangeVersion={handleChangeVersion}
+                    isUnsafeDeployment={isUnsafe}
                   />
-                }
-              />
-              <Route
-                path={INDEXERS}
-                element={
-                  <IndexerDetails deploymentId={deploymentId} project={project} manifest={manifest}></IndexerDetails>
-                }
-              />
-              <Route
-                path={SERVICE_AGREEMENTS}
-                element={
-                  <ServiceAgreementsTable
-                    queryFn={useGetProjectOngoingServiceAgreementsQuery}
-                    queryParams={{ deploymentId }}
+                </div>
+                <TabButtons tabs={sortedTabList} withUnderline />
+              </div>
+              <div className={styles.contentOverview}>
+                {/* TODO: just render the components rather than routes. */}
+                <Routes>
+                  <Route
+                    path={OVERVIEW}
+                    element={
+                      <ProjectOverview
+                        project={project}
+                        metadata={project.metadata}
+                        deploymentDescription={asyncDeploymentMetadata?.data?.description}
+                        manifest={manifest}
+                      />
+                    }
                   />
-                }
-              />
-              <Route path={FLEX_PLANS} element={<FlexPlans />} />
+                  <Route
+                    path={INDEXERS}
+                    element={
+                      <IndexerDetails
+                        deploymentId={deploymentId}
+                        project={project}
+                        manifest={manifest}
+                      ></IndexerDetails>
+                    }
+                  />
+                  <Route
+                    path={SERVICE_AGREEMENTS}
+                    element={
+                      <ServiceAgreementsTable
+                        queryFn={useGetProjectOngoingServiceAgreementsQuery}
+                        queryParams={{ deploymentId }}
+                      />
+                    }
+                  />
+                  <Route path={FLEX_PLANS} element={<FlexPlans />} />
 
-              <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
-            </Routes>
-          </div>
-        </div>
-      );
-    },
-  });
-
-  return page ? page : <span>Failed to load project: can't find project detail information</span>;
+                  <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
+                </Routes>
+              </div>
+            </div>
+          );
+        },
+      })}
+    </>
+  );
 };
 
 export default ProjectInner;

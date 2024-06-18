@@ -1,6 +1,6 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+import React from 'react';
 import { OperationVariables, QueryResult } from '@apollo/client';
 import { Spinner } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';
@@ -8,22 +8,22 @@ import { BigNumber, BigNumberish, utils } from 'ethers';
 import { cloneDeep } from 'lodash-es';
 
 import { parseError } from './parseError';
-export * from './numberFormatters';
-export * from './stringFormatters';
-export * from './dateFormatters';
-export * from './parseError';
-export * from './getDeploymentProgress';
-export * from './getTrimmedStr';
-export * from './useDebounce';
-export * from './fetch';
-export * from './localStorage';
+export * from '../router/routes';
 export * from './colors';
 export * from './constants';
-export * from './USDC';
-export * from './getOrderedAccounts';
-export * from './getFlexPlanPrice';
-export * from '../router/routes';
+export * from './dateFormatters';
 export * from './eip721SignTokenReq';
+export * from './fetch';
+export * from './getDeploymentProgress';
+export * from './getFlexPlanPrice';
+export * from './getOrderedAccounts';
+export * from './getTrimmedStr';
+export * from './localStorage';
+export * from './numberFormatters';
+export * from './parseError';
+export * from './stringFormatters';
+export * from './USDC';
+export * from './useDebounce';
 
 export { renderAsync };
 
@@ -90,7 +90,7 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
   if (value === null || value === undefined) return false;
 
   // Extra typecheck
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const _: TValue = value;
   return true;
 }

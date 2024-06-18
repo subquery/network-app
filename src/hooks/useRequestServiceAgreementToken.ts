@@ -41,7 +41,7 @@ export const useRequestServiceAgreementToken = () => {
           messageType: trail ? trailSAMessageType : ConsumerSAMessageType,
         },
         primaryType: 'messageType',
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore
         // TODO: FIX, it seems is wagmi bug.
         domain,
