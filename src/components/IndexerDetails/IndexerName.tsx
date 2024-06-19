@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
 import { idleCallback } from '@utils/idleCallback';
-import { limitQueue } from '@utils/limitation';
+import { limitContract } from '@utils/limitation';
 import { message } from 'antd';
 import { toSvg } from 'jdenticon';
 
@@ -49,14 +49,13 @@ export const IndexerName: React.FC<Props> = ({
   const sortedName = useMemo(() => {
     return web3Name || name || `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
   }, [name, web3Name]);
-
   const fetchWeb3 = useCallback(async () => {
-    const fetchedWeb3 = await limitQueue.add(() => fetchWeb3NameOnce());
+    const fetchedWeb3 = await limitContract(() => fetchWeb3NameOnce(), `fetchWeb3Name-${address}`);
     if (fetchedWeb3) {
       const { web3Name } = fetchedWeb3;
       setWeb3Name(web3Name || '');
     }
-  }, [fetchWeb3NameOnce]);
+  }, [fetchWeb3NameOnce, address]);
 
   const initWeb3 = useCallback(async () => {
     const cachedName = await fetchWeb3NameFromCache();
