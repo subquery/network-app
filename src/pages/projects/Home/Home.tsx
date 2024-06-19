@@ -189,7 +189,13 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
             <Typography>
               Please enter the deployment ID of your SubQuery project below. To get the deployment ID, run subql publish
               from your project code to publish it to IPFS. Learn how to publish a SubQuery project{' '}
-              <Typography.Link type="info">here.</Typography.Link>
+              <Typography.Link
+                type="info"
+                href="https://academy.subquery.network/subquery_network/architects/publish.html#deploying-your-project"
+                target="_blank"
+              >
+                here.
+              </Typography.Link>
             </Typography>
           )}
 
