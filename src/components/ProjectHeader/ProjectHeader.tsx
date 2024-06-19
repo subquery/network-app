@@ -16,6 +16,8 @@ import { Button } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
+import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
+
 import Detail from '../Detail';
 import { Dropdown } from '../Dropdown';
 import IPFSImage from '../IPFSImage';
@@ -76,6 +78,21 @@ const ProjectHeader: React.FC<Props> = ({
     );
   };
 
+  const networkVal = React.useMemo(() => {
+    if (project.type === ProjectType.RPC && manifest?.rpcFamily) {
+      return manifest?.rpcFamily[0];
+    }
+
+    const chainId =
+      project.type === ProjectType.SUBQUERY ? manifest?.network?.chainId : manifest?.dataSources?.[0]?.network;
+    if (!chainId) return '-';
+
+    const polkadotName = NETWORK_TYPE_DICTION[chainId];
+    const ethName = ETH_TYPE_DICTION[chainId];
+
+    return polkadotName || ethName || chainId;
+  }, [project.type, manifest]);
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -117,11 +134,11 @@ const ProjectHeader: React.FC<Props> = ({
           </div>
         </div>
         <div className={styles.lower}>
-          {project.type === ProjectType.RPC && manifest?.rpcFamily ? (
-            <Detail label="Network" value={manifest?.rpcFamily[0]}></Detail>
-          ) : (
-            ''
-          )}
+          <Detail
+            label="Network"
+            value={networkVal.length > 30 ? `${networkVal.slice(0, 30)}...` : networkVal}
+            capitalize
+          ></Detail>
           <Detail
             label="Type"
             value={

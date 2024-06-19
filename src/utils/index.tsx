@@ -47,25 +47,8 @@ export function truncateDeploymentId(deploymentId: string): string {
   if (!deploymentId) {
     return deploymentId;
   }
-  return `${deploymentId.slice(0, 15)}...${deploymentId.slice(deploymentId.length - 15)}`;
-}
 
-export function genesisHashToName(genesisHash: string): string {
-  switch (genesisHash) {
-    case '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3':
-      return 'Polkadot';
-    case '0x3fd7b9eb6a00376e5be61f01abb429ffb0b104be05eaff4d458da48fcd425baf':
-      return 'Kusama';
-    case '0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b':
-      return 'Moonriver';
-    case '0x956876d5b80e47e523a6629b3c3ac3e42f2850ad12e236d87a0aaac87c9f6bc9':
-      return 'Moonbeam DEV';
-    case '0x91bc6e169807aaa54802737e1c504b2577d4fafedd5a02c10293b1cd60e39527':
-      return 'Moonbase Alpha';
-    /* TODO add more network names */
-    default:
-      return genesisHash;
-  }
+  return `${deploymentId.slice(0, 15)}...${deploymentId.slice(deploymentId.length - 15)}`;
 }
 
 export const CIDv0 = new RegExp(/Qm[1-9A-HJ-NP-Za-km-z]{44}/i);
