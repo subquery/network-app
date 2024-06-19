@@ -130,7 +130,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                         title={
                           <Typography variant="small">
                             SubQuery launched on Base network, To move assets from the Ethereum network to Base network,
-                            you'll need to connect to a bridge and deposit funds.
+                            you&apos;ll need to connect to a bridge and deposit funds.
                           </Typography>
                         }
                         overlayInnerStyle={{

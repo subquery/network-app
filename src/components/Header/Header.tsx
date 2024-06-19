@@ -53,14 +53,14 @@ export const Header: React.FC = () => {
   `);
 
   const renderEntryLinks = React.useMemo(() => {
-    const displayExplorerDropdown = !account || (projects.data?.projects?.totalCount || 0) === 0;
+    const hideExplorerDropdown = !account || (projects.data?.projects?.totalCount || 0) === 0;
 
     if (isMobile) {
       return entryLinks.map((i) => {
         if (i.key === 'explorer') {
           return {
             ...i,
-            dropdown: displayExplorerDropdown ? i.dropdown : undefined,
+            dropdown: hideExplorerDropdown ? undefined : i.dropdown,
           };
         }
         return {
@@ -74,7 +74,7 @@ export const Header: React.FC = () => {
       if (i.key === 'explorer') {
         return {
           ...i,
-          dropdown: displayExplorerDropdown ? i.dropdown : undefined,
+          dropdown: hideExplorerDropdown ? undefined : i.dropdown,
         };
       }
 
