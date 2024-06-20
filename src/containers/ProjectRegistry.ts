@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { cidToBytes32 } from '@subql/network-clients';
-import { ProjectType as InputProjectType } from '@subql/network-query';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 
 import { ProjectType } from 'src/models';
@@ -27,7 +26,7 @@ function useProjectRegistryImpl(logger: Logger) {
   const projectCache = React.useRef<Record<string, QueryDetails>>({});
 
   const registerProject = async (
-    type: InputProjectType,
+    type: ProjectType,
     metadataCid: string,
     deploymentId: string,
     deploymentMetadata: string,

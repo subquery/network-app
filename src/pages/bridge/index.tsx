@@ -8,7 +8,7 @@ import { gql, useQuery } from '@apollo/client';
 import { WalletRoute } from '@components';
 import { useSQToken } from '@containers';
 import { l1Chain, l2Chain } from '@containers/Web3';
-import { CrossChainMessenger } from '@eth-optimism/sdk/src/cross-chain-messenger';
+import { type CrossChainMessenger } from '@eth-optimism/sdk/src/cross-chain-messenger';
 import { MessageStatus } from '@eth-optimism/sdk/src/interfaces/types';
 import { publicClientToProvider, useEthersSigner } from '@hooks/useEthersProvider';
 import { Footer, Modal, openNotification, Spinner, Steps, Typography } from '@subql/components';
@@ -144,6 +144,7 @@ const BridgeInner: FC = () => {
 
   const initCrossChainMessenger = async () => {
     if (!signer) return;
+    const { CrossChainMessenger } = await import('@eth-optimism/sdk/src/cross-chain-messenger');
     const l2Provider = new ethers.providers.JsonRpcProvider(l2Chain.rpcUrls.public.http[0]);
     const newCrossChainMessenger = new CrossChainMessenger({
       l1ChainId: l1Chain.id,
