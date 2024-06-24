@@ -4497,10 +4497,10 @@
     jwt-decode "^3.1.2"
     lru-cache "^10.0.1"
 
-"@subql/components@2.0.1-1":
-  version "2.0.1-1"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-2.0.1-1.tgz#9fac7f6d7f1d6c29428dce0161279efa174aaf5c"
-  integrity sha512-Y1VyI4BS6+Zx40JPUUmpyPtkzJxzDKBihNTeg82g3v2cNMJHJYzOfQDgVlDknNR65ds9x4jXntecXCjDPAKLUg==
+"@subql/components@2.0.1-2":
+  version "2.0.1-2"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-2.0.1-2.tgz#d48e8cf400131fbadf41d7e578cb8edb2aac8b99"
+  integrity sha512-hB7+HgrbRcgyGXfFOYBVBE4W+pxZsfsLmup+Fq95WR4xmcinUdYSN1Ls/T2LDO6vTd7P0VYUeGVtnpqOSxqjig==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"
