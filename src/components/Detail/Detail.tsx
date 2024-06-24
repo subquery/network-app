@@ -17,9 +17,19 @@ type Props = {
   canCopy?: boolean;
   children?: React.ReactNode;
   isTruncate?: boolean;
+  capitalize?: boolean;
 };
 
-const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, children, isTruncate }) => {
+const Detail: React.FC<Props> = ({
+  label,
+  value,
+  href,
+  className,
+  canCopy,
+  children,
+  capitalize = false,
+  isTruncate,
+}) => {
   const renderValue = () => {
     if (href) {
       return (
@@ -49,7 +59,12 @@ const Detail: React.FC<Props> = ({ label, value, href, className, canCopy, child
       <Typography type="secondary" variant="medium">
         {label}
       </Typography>
-      <div className={styles.valueCont}>
+      <div
+        className={styles.valueCont}
+        style={{
+          textTransform: capitalize ? 'capitalize' : 'none',
+        }}
+      >
         {renderValue()}
         {canCopy && isString(value) && <Copy value={href ?? value} className={styles.copy} />}
       </div>

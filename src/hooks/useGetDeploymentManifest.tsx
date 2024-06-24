@@ -12,7 +12,11 @@ export enum RPCFAMILY {
 
 export type Manifest = {
   nodeType?: string;
-  network?: string;
+  // subquery
+  network?: {
+    chainId: string;
+  };
+  // rpc
   rpcFamily?: (string | RPCFAMILY)[];
   client?: {
     name: string;
@@ -20,6 +24,11 @@ export type Manifest = {
   chain?: {
     chainId: string;
   };
+
+  // subgraph
+  dataSources: {
+    network: string;
+  }[];
 };
 
 export const useGetDeploymentManifest = (currentDeploymentId?: string) => {
@@ -35,7 +44,7 @@ export const useGetDeploymentManifest = (currentDeploymentId?: string) => {
 
       return yaml.load(result) as Manifest;
     } catch (e) {
-      return {};
+      return {} as Manifest;
     }
   };
 

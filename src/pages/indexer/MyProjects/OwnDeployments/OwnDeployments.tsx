@@ -64,25 +64,19 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
     },
   });
 
-  const [fetchIndexerDeploymentApy, indexerDeploymentApy] = useLazyQuery(
-    gql`
-      query GetDeploymentApy($account: String!, $eraIdx: Int!, $deploymentIds: [String!]) {
-        eraIndexerDeploymentApies(
-          filter: {
-            indexerId: { equalTo: $account }
-            eraIdx: { equalTo: $eraIdx }
-            deploymentId: { in: $deploymentIds }
-          }
-        ) {
-          nodes {
-            apy
-            deploymentId
-            indexerId
-          }
+  const [fetchIndexerDeploymentApy, indexerDeploymentApy] = useLazyQuery(gql`
+    query GetDeploymentApy($account: String!, $eraIdx: Int!, $deploymentIds: [String!]) {
+      eraIndexerDeploymentApies(
+        filter: { indexerId: { equalTo: $account }, eraIdx: { equalTo: $eraIdx }, deploymentId: { in: $deploymentIds } }
+      ) {
+        nodes {
+          apy
+          deploymentId
+          indexerId
         }
       }
-    `,
-  );
+    }
+  `);
 
   const runnerAllocation = useAsyncMemo(async () => {
     if (!indexer)

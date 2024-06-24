@@ -7,6 +7,7 @@ import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
 import NotificationCentre from '@components/NotificationCentre';
 import { useAccount } from '@containers/Web3';
+import { useIsMobile } from '@hooks/useIsMobile';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button, Header as SubqlHeader } from '@subql/components';
 import { entryLinks, externalAppLinks } from '@utils/links';
@@ -39,7 +40,7 @@ export interface AppNavigation {
 export const Header: React.FC = () => {
   const { address: account } = useAccount();
   const navigate = useNavigate();
-
+  const isMobile = useIsMobile();
   const projects = useQuery(gql`
     query {
       projects(
@@ -52,21 +53,42 @@ export const Header: React.FC = () => {
   `);
 
   const renderEntryLinks = React.useMemo(() => {
-    if (!account || (projects.data?.projects?.totalCount || 0) === 0) {
+    const hideExplorerDropdown = !account || (projects.data?.projects?.totalCount || 0) === 0;
+
+    if (isMobile) {
       return entryLinks.map((i) => {
+        if (i.key === 'explorer') {
+          return {
+            ...i,
+            dropdown: hideExplorerDropdown ? undefined : i.dropdown,
+          };
+        }
         return {
           ...i,
-          dropdown: i.key === 'explorer' ? undefined : i.dropdown,
+          link: ['indexer', 'consumer', 'delegator'].includes(i.key || '') ? undefined : i.link,
         };
       });
     }
 
-    return entryLinks;
-  }, [account, projects.data]);
+    return entryLinks.map((i) => {
+      if (i.key === 'explorer') {
+        return {
+          ...i,
+          dropdown: hideExplorerDropdown ? undefined : i.dropdown,
+        };
+      }
+
+      return {
+        ...i,
+        dropdown: ['indexer', 'consumer', 'delegator'].includes(i.key || '') ? undefined : i.dropdown,
+      };
+    });
+  }, [account, projects.data, isMobile]);
 
   return (
     <div className={styles.header}>
       <SubqlHeader
+        closeDrawerAfterNavigate
         navigate={(link) => {
           navigate(link);
         }}
@@ -95,6 +117,9 @@ export const Header: React.FC = () => {
                         }}
                         type="secondary"
                         label="Connect"
+                        style={{
+                          width: '100%',
+                        }}
                       ></Button>
                     );
                   }}

@@ -253,31 +253,29 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
           const sortedStyle = disabled ? (isTextButton ? 'disabledTextBtn' : 'disabledButton') : variant;
 
           return (
-            <div className="flex-center" key={key}>
-              <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips}>
-                <Button
-                  label={label}
-                  onClick={async () => {
-                    await onClick?.();
-                    handleBtnClick(key);
-                  }}
-                  className={clsx(sortedStyle, buttonClassName, styles.actionBtn)}
-                  size="medium"
-                  colorScheme="standard"
-                  disabled={disabled || isLoading}
-                  rightItem={
-                    rightItem ? (
-                      rightItem
-                    ) : isLoading ? (
-                      <LoadingOutlined className={sortedStyle} />
-                    ) : (
-                      tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
-                    )
-                  }
-                  {...rest}
-                />
-              </Tooltip>
-            </div>
+            <Tooltip title={tooltip} defaultOpen={!!defaultOpenTooltips} key={key}>
+              <Button
+                label={label}
+                onClick={async () => {
+                  await onClick?.();
+                  handleBtnClick(key);
+                }}
+                className={clsx(sortedStyle, buttonClassName, styles.actionBtn)}
+                size="medium"
+                colorScheme="standard"
+                disabled={disabled || isLoading}
+                rightItem={
+                  rightItem ? (
+                    rightItem
+                  ) : isLoading ? (
+                    <LoadingOutlined className={sortedStyle} />
+                  ) : (
+                    tooltip && disabled && <MdErrorOutline className={styles.errorButtonIcon} />
+                  )
+                }
+                {...rest}
+              />
+            </Tooltip>
           );
         })}
       </div>

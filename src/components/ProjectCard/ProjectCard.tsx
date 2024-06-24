@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
@@ -72,8 +73,8 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
         </Typography>
       </div>
 
-      {project.type === ProjectType.SUBQUERY ? (
-        <Address address={project.owner} size="small" />
+      {project.type === ProjectType.SUBQUERY || project.type === ProjectType.SUBGRAPH ? (
+        <IndexerName address={project.owner} size="tiny" />
       ) : (
         <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}

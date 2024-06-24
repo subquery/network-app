@@ -42,7 +42,7 @@
 
 }
 
-@media screen and (max-width: 600px) { 
+@media screen and (max-width: 768px) { 
   .lineCharts {
     padding: 20px;
 
@@ -61,21 +61,19 @@
 
         .ant-radio-button-wrapper {
           padding: 0 11px;
+          height: auto;
         }
       }
     }
 
     :global {
       .lineChartToolTip {
-        width: 174px;
-        height: 82px;
-
+        width: 100%;
+        height: auto;
+        transform: scale(0.66)!important;
         &>div {
-          width: 220px!important;
+          width: 100%!important;
           font-size: 12px;
-          transform: scale(0.66);
-          margin-left: -40px;
-          margin-top: -23px;
         }
       }
     }

@@ -138,6 +138,7 @@ const Staking: FC = () => {
               title="Total Staked Tokens"
               dataDimensionsName={['Staked to your Node Operator', 'Delegated to other Node Operators']}
               showDelegatedToOthers
+              skeletonHeight={426}
             ></StakeAndDelegationLineChart>
           )}
         </div>

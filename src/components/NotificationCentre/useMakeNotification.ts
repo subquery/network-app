@@ -18,6 +18,7 @@ import {
   useGetRewardsLazyQuery,
 } from '@subql/react-hooks';
 import { convertBigNumberToNumber, numToHex } from '@utils';
+import { idleCallback, idleQueue } from '@utils/idleCallback';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -26,16 +27,6 @@ import { useWeb3Store } from 'src/stores';
 import { NotificationKey, useNotification } from 'src/stores/notification';
 
 import { CanRenderOnNotification } from '.';
-
-const idleTimeout = (func: () => void) => setTimeout(func, 200);
-const idleCallback = window.requestIdleCallback || idleTimeout;
-
-const idleQueue = async (queue: (() => void)[]) => {
-  const [first, ...rest] = queue;
-  if (!first) return;
-  await first();
-  idleCallback(() => idleQueue(rest));
-};
 
 const defaultDismissTime = 1000 * 60 * 60 * 24;
 
@@ -132,17 +123,15 @@ export const useMakeNotification = () => {
     },
   );
 
-  const [fetchPreviousEra] = useLazyQuery<{ eras: { nodes: { createdBlock: number }[] } }>(
-    gql`
-      query GetPreviousEra($eraId: String!) {
-        eras(filter: { id: { equalTo: $eraId } }) {
-          nodes {
-            createdBlock
-          }
+  const [fetchPreviousEra] = useLazyQuery<{ eras: { nodes: { createdBlock: number }[] } }>(gql`
+    query GetPreviousEra($eraId: String!) {
+      eras(filter: { id: { equalTo: $eraId } }) {
+        nodes {
+          createdBlock
         }
       }
-    `,
-  );
+    }
+  `);
 
   const [fetchNewOperators] = useLazyQuery<{ indexers: { nodes: { id: string; metadata: string }[] } }>(gql`
     query GetNewOperators($block: Int!) {

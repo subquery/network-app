@@ -434,6 +434,7 @@ const DelegatingCard = (props: {
             chartsStyle={{
               height: 340,
             }}
+            skeletonHeight={340}
           ></RewardsLineChart>
         </div>
       }

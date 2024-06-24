@@ -342,6 +342,15 @@ export const useConsumerHostServices = (
     return res;
   };
 
+  const getSpentInfo = async (params: { account: string; start?: string; end?: string }) => {
+    const res = await instance.get<IGetSpentInfo>(`/aggregation/${params.account}`, {
+      headers: authHeaders.current,
+      params,
+    });
+
+    return res;
+  };
+
   const requestTokenLayout = (pageTitle: string) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -392,6 +401,7 @@ export const useConsumerHostServices = (
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
     refreshUserInfo: loginResDecorator(refreshUserInfo),
+    getSpentInfo,
     getHostingPlanApi,
     getChannelLimit,
     requestConsumerHostToken,
@@ -403,6 +413,12 @@ export const useConsumerHostServices = (
     loading,
   };
 };
+
+export interface IGetSpentInfo {
+  days?: string[];
+  today: string;
+  total: string;
+}
 
 export interface IGetChannelSpent {
   consumer: string;

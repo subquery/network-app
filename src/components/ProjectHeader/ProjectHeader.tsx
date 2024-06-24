@@ -5,15 +5,18 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import DoBooster from '@components/DoBooster';
 import GetEndpoint from '@components/GetEndpoint';
+import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
-import { Address, Tag, Typography } from '@subql/components';
+import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { formatNumber, formatSQT, truncateAddress } from '@utils';
+import { formatNumber, formatSQT } from '@utils';
 import { Button } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+
+import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
 
 import Detail from '../Detail';
 import { Dropdown } from '../Dropdown';
@@ -75,6 +78,21 @@ const ProjectHeader: React.FC<Props> = ({
     );
   };
 
+  const networkVal = React.useMemo(() => {
+    if (project.type === ProjectType.RPC && manifest?.rpcFamily) {
+      return manifest?.rpcFamily[0];
+    }
+
+    const chainId =
+      project.type === ProjectType.SUBQUERY ? manifest?.network?.chainId : manifest?.dataSources?.[0]?.network;
+    if (!chainId) return '-';
+
+    const polkadotName = NETWORK_TYPE_DICTION[chainId];
+    const ethName = ETH_TYPE_DICTION[chainId];
+
+    return polkadotName || ethName || chainId;
+  }, [project.type, manifest]);
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -99,7 +117,7 @@ const ProjectHeader: React.FC<Props> = ({
               <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
             </div>
           </div>
-          <Address address={project.owner} size="small" />
+          <IndexerName address={project.owner} size="tiny"></IndexerName>
 
           <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {/* in case of someone skip the legal process add more than 2 categories */}
@@ -116,11 +134,11 @@ const ProjectHeader: React.FC<Props> = ({
           </div>
         </div>
         <div className={styles.lower}>
-          {project.type === ProjectType.RPC && manifest?.rpcFamily ? (
-            <Detail label="Network" value={manifest?.rpcFamily[0]}></Detail>
-          ) : (
-            ''
-          )}
+          <Detail
+            label="Network"
+            value={networkVal.length > 30 ? `${networkVal.slice(0, 30)}...` : networkVal}
+            capitalize
+          ></Detail>
           <Detail
             label="Type"
             value={

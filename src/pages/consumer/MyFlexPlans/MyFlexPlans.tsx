@@ -15,6 +15,7 @@ import { Spinner, SubqlCard, Typography } from '@subql/components';
 import { formatNumberWithLocale, formatSQT } from '@utils';
 import { Breadcrumb, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import dayjs from 'dayjs';
 import i18next from 'i18next';
 
 import { AppPageHeader, TabButtons, WalletRoute } from '../../../components';
@@ -45,13 +46,22 @@ const BalanceCards = () => {
   );
   const [billBalance] = useMemo(() => billingBalanceData ?? [], [billingBalanceData]);
 
-  const { getChannelSpent } = useConsumerHostServices({
+  const { getChannelSpent, getSpentInfo } = useConsumerHostServices({
     autoLogin: false,
   });
 
   const channelSpent = useAsyncMemo(async () => {
     const res = await getChannelSpent({
       consumer: account || '',
+    });
+
+    return res.data;
+  }, [account]);
+
+  const spentInfo = useAsyncMemo(async () => {
+    const res = await getSpentInfo({
+      account: account || '',
+      start: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
     });
 
     return res.data;
@@ -170,6 +180,31 @@ const BalanceCards = () => {
             </div>
           </div>
         </SubqlCard>
+
+        <SubqlCard
+          title={
+            <div className="flex" style={{ width: '100%' }}>
+              <Typography>SQT spent in past 7 days</Typography>
+            </div>
+          }
+          titleExtra={
+            <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
+              {spentInfo.loading ? (
+                <div style={{ marginRight: 8 }}>
+                  <Spinner size={12}></Spinner>
+                </div>
+              ) : (
+                <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
+                  {formatNumberWithLocale(formatSQT(spentInfo.data?.total?.toString() || '0'))}
+                </Typography>
+              )}
+              {TOKEN}
+            </div>
+          }
+          style={{
+            width: 360,
+          }}
+        ></SubqlCard>
       </div>
     </div>
   );

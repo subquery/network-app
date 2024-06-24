@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { IPFSImage } from '@components';
@@ -77,7 +77,7 @@ export const ActiveCard = () => {
           return (
             <SubqlCard
               title={
-                <div className="col-flex" style={{ position: 'relative', width: '100%' }}>
+                <div className="col-flex" style={{ position: 'relative', width: '100%', gap: 16 }}>
                   <Typography variant="h5" weight={500} style={{ whiteSpace: 'pre-wrap' }}>
                     Decentralised RPCs and Indexed Datasets
                   </Typography>

@@ -121,7 +121,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const indexerMetadata = useAsyncMemo(async () => {
     const web3Name = await fetchWeb3NameFromCache(indexerAddress);
     return {
-      name: web3Name || indexerMetadataIpfs?.name || indexerAddress,
+      name: web3Name?.web3Name || indexerMetadataIpfs?.name || indexerAddress,
     };
   }, [indexerMetadataIpfs?.name, indexerAddress]);
 
@@ -309,7 +309,7 @@ export const DelegateForm: React.FC<FormProps> = ({
 
           return {
             ...metadata,
-            name: web3Name || metadata.name || i.indexerId,
+            name: web3Name?.web3Name || metadata.name || i.indexerId,
           };
         });
       });
@@ -366,7 +366,7 @@ export const DelegateForm: React.FC<FormProps> = ({
 
           return {
             ...metadata,
-            name: web3Name || metadata.name || indexer.id,
+            name: web3Name?.web3Name || metadata.name || indexer.id,
           };
         });
       });

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
+import { ConsumerSidebar } from '@utils/links';
 
 import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
@@ -20,38 +20,8 @@ const { SERVICE_AGREEMENTS, FLEX_PLANS, PLAYGROUND, MY_OFFERS, OFFER_MARKETPLACE
 const isFlexPlanActive = true;
 
 const Consumer: React.FC = () => {
-  const { t } = useTranslation();
-
-  const FlexPlanTab = [
-    {
-      label: t('plans.category.myFlexPlans'),
-      link: FLEX_PLANS,
-    },
-  ];
-
-  const sidebarList = [
-    {
-      label: 'My Boosted Projects',
-      link: 'boosted-projects',
-    },
-    {
-      label: t('plans.category.myOffers'),
-      link: MY_OFFERS,
-    },
-    {
-      label: t('plans.category.serviceAgreement'),
-      link: SERVICE_AGREEMENTS,
-    },
-    {
-      label: t('plans.category.offerMarketplace'),
-      link: OFFER_MARKETPLACE,
-    },
-  ];
-
-  const updatedSidebarList = isFlexPlanActive ? [...FlexPlanTab, ...sidebarList] : [...sidebarList];
-
   return (
-    <AppSidebar list={updatedSidebarList}>
+    <AppSidebar list={ConsumerSidebar}>
       <Routes>
         <Route path={`${SERVICE_AGREEMENTS}/${PLAYGROUND}/:id`} element={<SAPlayground />} />
         <Route path={`${SERVICE_AGREEMENTS}/*`} element={<ServiceAgreements USER_ROLE={'consumer'} />} />

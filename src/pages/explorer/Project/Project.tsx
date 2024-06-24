@@ -61,7 +61,7 @@ const ProjectInner: React.FC = () => {
 
   const asyncDeploymentMetadata = useDeploymentMetadata(deploymentId);
   const { isUnsafe } = useGetIfUnsafeDeployment(deploymentId);
-  const { manifest } = useGetDeploymentManifest(asyncProject.data?.type === ProjectType.RPC ? deploymentId : '');
+  const { manifest } = useGetDeploymentManifest(deploymentId);
 
   const handleChangeVersion = (value: string) => {
     navigate(`${location.pathname}?deploymentId=${value}`);
@@ -152,6 +152,7 @@ const ProjectInner: React.FC = () => {
                     currentVersion={deploymentId}
                     onChangeVersion={handleChangeVersion}
                     isUnsafeDeployment={isUnsafe}
+                    manifest={manifest}
                   />
                 </div>
                 <TabButtons tabs={sortedTabList} withUnderline />

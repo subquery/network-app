@@ -35,11 +35,13 @@ export const StakeAndDelegationLineChart = (props: {
   title?: string;
   dataDimensionsName?: string[];
   showDelegatedToOthers?: boolean;
+  skeletonHeight?: number;
 }) => {
   const {
     title = 'Network Staking and Delegation',
     dataDimensionsName = ['Staking', 'Delegation'],
     showDelegatedToOthers = false,
+    skeletonHeight,
   } = props;
 
   const { currentEra } = useEra();
@@ -229,15 +231,29 @@ export const StakeAndDelegationLineChart = (props: {
   }
 
   return renderAsyncArray(
+    // only display loading when the first time fetch data.
     mergeAsync(
-      props.account ? stakeAndDelegationByIndexer : stakeAndDelegation,
+      props.account
+        ? {
+            ...stakeAndDelegationByIndexer,
+            loading: stakeAndDelegationByIndexer.previousData ? false : stakeAndDelegationByIndexer.loading,
+          }
+        : { ...stakeAndDelegation, loading: stakeAndDelegation.previousData ? false : stakeAndDelegation.loading },
       // it doesn't matter, don't use the data.
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      showDelegatedToOthers ? delegateToOthers : { loading: false, data: 1 },
+      showDelegatedToOthers
+        ? { ...delegateToOthers, loading: delegateToOthers.previousData ? false : delegateToOthers.loading }
+        : { loading: false, data: 1 },
     ),
     {
-      loading: () => <Skeleton active paragraph={{ rows: 8 }}></Skeleton>,
+      loading: () => (
+        <Skeleton
+          active
+          paragraph={{ rows: 8 }}
+          style={{ height: skeletonHeight ? skeletonHeight : 'auto' }}
+        ></Skeleton>
+      ),
       error: (e) => (
         <Typography>{isRPCError(currentEra.error) ? <RpcError size="small"></RpcError> : parseError(e)}</Typography>
       ),

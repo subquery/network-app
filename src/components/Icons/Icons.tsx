@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { HTMLAttributes } from 'react';
+import React, { HTMLAttributes } from 'react';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { clsx } from 'clsx';
 

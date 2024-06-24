@@ -41,3 +41,26 @@
   }
 }
 
+@media screen and (max-width: 768px){
+  .accountActionDropdown {
+    width: 100vw;
+    margin-left: -24px;
+    :global {
+      .ant-dropdown-menu {
+        box-shadow: none;
+      }
+    }
+
+    .balanceOnNetworks {
+      flex-direction: column;
+    }
+  }
+
+  :global {
+    #mobile-dropdown-container {
+      .ant-dropdown {
+        position: static;
+      }
+    }
+  }
+}
