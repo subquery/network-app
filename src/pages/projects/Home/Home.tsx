@@ -170,7 +170,7 @@ export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: 
                 SubQuery Network.
               </Typography>
               <Typography>
-                To publish a Subgraph, you must obtain the deployment ID from xxx, then you can enter it below.
+                To get the Deploment ID first publish your Subgraph to IPFS and use the IPFS CID and enter it below.
                 <Typography.Link
                   style={{
                     textDecoration: 'underline',
