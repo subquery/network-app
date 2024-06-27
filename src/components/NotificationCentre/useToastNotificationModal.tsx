@@ -57,7 +57,7 @@ export const useToastNotificationModal = () => {
               </Typography>
               {noti.message ? (
                 <Typography
-                  style={{ textAlign: 'center' }}
+                  style={{ textAlign: 'center', wordBreak: 'break-word' }}
                   dangerouslySetInnerHTML={{
                     __html: noti.message.replaceAll('\n', '<br />'),
                   }}
@@ -85,7 +85,7 @@ export const useToastNotificationModal = () => {
               display: noti.buttonProps.navigateHref ? 'block' : 'none',
             },
           },
-          // eslint-disable-next-line no-loop-func
+
           onOk: () => {
             if (!noti.buttonProps.navigateHref) {
               continueShowToastStatus = 'continue';
@@ -103,7 +103,7 @@ export const useToastNotificationModal = () => {
               window.open(noti.buttonProps.navigateHref, '_blank');
             }
           },
-          // eslint-disable-next-line no-loop-func
+
           onCancel: () => {
             continueShowToastStatus = 'continue';
             if (noti.dismissTime) {
@@ -117,14 +117,12 @@ export const useToastNotificationModal = () => {
         });
 
         await waitForSomething({
-          // eslint-disable-next-line no-loop-func
           func: () => {
             return continueShowToastStatus !== 'pending';
           },
           splitTime: 500,
         });
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         if (continueShowToastStatus === 'stop') {
           notificationStore.removeNotification(noti.key as NotificationKey);

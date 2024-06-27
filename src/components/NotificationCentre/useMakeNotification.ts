@@ -294,7 +294,7 @@ export const useMakeNotification = () => {
     async (mode?: 'reload') => {
       if (mode !== 'reload') {
         const { exist, expired } = checkIfExistAndExpired([
-          NotificationKey.OutdatedAllocation,
+          NotificationKey.OutdatedAllocationV2,
           NotificationKey.MislaborAllocation,
         ]);
         if (exist && !expired) {
@@ -309,31 +309,46 @@ export const useMakeNotification = () => {
       });
 
       const { exist: outdatedExist, expired: outdatedExpired } = checkIfExistAndExpired([
-        NotificationKey.OutdatedAllocation,
+        NotificationKey.OutdatedAllocationV2,
       ]);
 
       if (mode === 'reload' || !outdatedExist || outdatedExpired) {
         const newVersionOfProject = res.data?.indexerAllocationSummaries?.nodes
           .filter((node) => node?.deploymentId !== node?.project?.deploymentId)
-          .map((i) => i?.project?.deploymentId);
+          // first is previous deploymentId, second is current deploymentId
+          .map((i) => [i?.deploymentId, i?.project?.deploymentId]);
 
         if (!newVersionOfProject?.length) return;
 
         const boosterRes = await fetchBooster({
           variables: {
-            deploymentIds: newVersionOfProject,
+            deploymentIds: newVersionOfProject.flat(),
           },
         });
 
-        const haveBoosterProjects = boosterRes.data?.deploymentBoosterSummaries?.groupedAggregates?.filter((i) => {
-          return i.sum?.totalAmount && BigNumberJs(i.sum.totalAmount).gt(0);
+        const outdatedDeployment = newVersionOfProject.filter((i) => {
+          const [previous, current] = i;
+          const previousBooster = BigNumberJs(
+            boosterRes.data?.deploymentBoosterSummaries?.groupedAggregates?.find((i) => i.keys?.includes(previous))?.sum
+              ?.totalAmount || 0,
+          );
+
+          const currentBooster = BigNumberJs(
+            boosterRes.data?.deploymentBoosterSummaries?.groupedAggregates?.find((i) => i.keys?.includes(current))?.sum
+              ?.totalAmount || 0,
+          );
+
+          if (currentBooster.gt(previousBooster)) {
+            return true;
+          }
+          return false;
         });
 
-        if (haveBoosterProjects?.length) {
+        if (outdatedDeployment?.length) {
           notificationStore.addNotification({
-            key: NotificationKey.OutdatedAllocation,
-            level: 'info',
-            message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.`,
+            key: NotificationKey.OutdatedAllocationV2,
+            level: 'critical',
+            message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
             title: 'Outdated Allocation Projects',
             createdAt: Date.now(),
             canBeDismissed: true,
@@ -818,7 +833,11 @@ export const useMakeNotification = () => {
       idleCallback(() => makeUnlockWithdrawalNotification('reload'));
     },
     refreshAndMakeOutdateAllocationProjects: () => {
-      notificationStore.removeNotification(NotificationKey.OutdatedAllocation);
+      notificationStore.removeNotification([
+        NotificationKey.OutdatedAllocation,
+        NotificationKey.OutdatedAllocationV2,
+        NotificationKey.MislaborAllocation,
+      ]);
       idleCallback(() => makeOutdateAllocationProjects('reload'));
     },
     refreshAndMakeUnhealthyAllocationNotification: () => {
