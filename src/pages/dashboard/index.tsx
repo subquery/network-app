@@ -387,8 +387,12 @@ const ApyCard = () => {
 };
 
 const Dashboard: FC = () => {
-  const dashboardData = useGetDashboardQuery();
   const { currentEra } = useEra();
+  const dashboardData = useGetDashboardQuery({
+    variables: {
+      nextEra: (currentEra.data?.index || 0) + 1,
+    },
+  });
 
   const [circleAmount, setCircleAmount] = useState('0');
 
@@ -428,9 +432,7 @@ const Dashboard: FC = () => {
           loading: () => <Skeleton active avatar paragraph={{ rows: 20 }} />,
           error: (e) => <Skeleton active avatar paragraph={{ rows: 20 }} />,
           data: (fetchedData) => {
-            const delegatorsTotalCount =
-              +(fetchedData?.delegations?.aggregates?.distinctCount?.delegatorId?.toString() || 0) -
-              (fetchedData.indexers?.totalCount || 0);
+            const delegatorsTotalCount = fetchedData?.delegators?.totalCount || 0;
 
             const totalStake =
               showNextOrCur === 'cur'

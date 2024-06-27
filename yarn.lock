@@ -4547,17 +4547,17 @@
   resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.2-0.tgz#ff1738d751b12562f18d3b79c128686d3abcfa4e"
   integrity sha512-Dp2KngyjmZAOebeK+IrfgmWMsWv21gAJO7CUgZZRkcQ3OQhL1PfZflK33tzgGJjM/o2b2h5eq6b3nj0bg+co7g==
 
+"@subql/network-query@1.1.2-11":
+  version "1.1.2-11"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-11.tgz#7452f71646a3c0ff7819e74b2539b83db30d423c"
+  integrity sha512-tkhU2PoFVpq1EYs1nJkrbHHLvFn9XuuiNDje5OMrE3Wi79ZIZHppXx/Uikekt9y4PZKqGHldUkbKACpQ7PEkRA==
+  dependencies:
+    graphql "^16.5.0"
+
 "@subql/network-query@1.1.2-6":
   version "1.1.2-6"
   resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.2-6.tgz#7dfa68e38a34898530beef16b32b9affb9e352cd"
   integrity sha512-bkquEa5/eUHqMJX8ljDee0PWLkvvKUgGokE4wv2KMeQK40cOeSv77HM73bJDg6vd1E3NWiQJuSO2SApnsyH73w==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/network-query@1.1.2-9":
-  version "1.1.2-9"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-9.tgz#cebc101a7d33245615a60a03715c8e134a06695d"
-  integrity sha512-dMdbJHCQk8aRFHFzFQgTSKcC/0vwnO14vSFZRFb+I88Dza4oTFCYzJ2KYPVt7MZLBUuPOLUwiXqQPFl65pHRcA==
   dependencies:
     graphql "^16.5.0"
 
@@ -4574,15 +4574,15 @@
     lru-cache "^10.0.1"
     semver "^7.6.0"
 
-"@subql/react-hooks@1.1.2-10":
-  version "1.1.2-10"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-1.1.2-10.tgz#b3062c666d408d45ac890e5540930673222c1171"
-  integrity sha512-LwaFpnBYtDsRv5rZ1146zrxVoiFgY5ZWO91SAwrY+eAgzcNs1F4c4JNcC96OaW5yYcQvJ4IGiNDHeCAh7qEZSA==
+"@subql/react-hooks@1.1.2-12":
+  version "1.1.2-12"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-1.1.2-12.tgz#b4917dbf43f72d853b2a6b20dc3e8768461aa1e1"
+  integrity sha512-c8xjwpZgsjMdduDys6zdVCJbW+tPnQJb/QT1ZdfdojqHyTjUEJt6hfKUNPEHSgPL4arnBR4NGZyl7+nA3GU7XA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "1.1.2-9"
+    "@subql/network-query" "1.1.2-11"
     ahooks "^3.7.8"
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"
