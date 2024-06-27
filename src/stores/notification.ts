@@ -21,7 +21,9 @@ export enum NotificationKey {
   InactiveOperator = 'inactiveOperator',
   LowControllerBalance = 'lowControllerBalance',
   UnlockWithdrawal = 'unlockWithdrawal',
+  // v1 is info
   OutdatedAllocation = 'outdatedAllocation',
+  OutdatedAllocationV2 = 'outdatedAllocationV2',
   MislaborAllocation = 'mislaborAllocation',
   UnhealthyAllocation = 'unhealthyAllocation',
   DecreaseCommissionRate = 'decreaseCommissionRate',
