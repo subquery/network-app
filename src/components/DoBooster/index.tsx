@@ -138,7 +138,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
             setOpen(true);
           }}
         >
-          Boost Project
+          Boost
         </Button>
       )}
 

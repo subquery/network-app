@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { BsGithub, BsGlobe } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
+import DoBooster from '@components/DoBooster';
 import Expand from '@components/Expand/Expand';
 import { NETWORK_NAME } from '@containers/Web3';
 import { useRouteQuery } from '@hooks';
@@ -11,6 +12,7 @@ import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
+import { DeploymentRewardsLine } from '@pages/explorer/Project/components/DeploymentRewardsChart';
 import { Markdown, Spinner, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
@@ -263,10 +265,10 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 <div className={styles.currentBooster}>
                   {BalanceLayout({
                     mainBalance: formatSQT(currentBooster),
+                    hideSecondary: true,
                   })}
                 </div>
               </div>
-              <span style={{ flex: 1 }}></span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <Typography>Total Boost Rewards over All Time</Typography>
                 <div style={{ flex: 1 }}>
@@ -279,6 +281,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                       <>
                         {BalanceLayout({
                           mainBalance: formatSQT(accTotalRewards.current.toString()),
+                          hideSecondary: true,
                         })}
                         <div style={{ paddingTop: 8, paddingLeft: 20 }}>
                           <Tag color="success">
@@ -291,6 +294,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                   </div>
                 </div>
               </div>
+              <span style={{ flex: 1 }}></span>
+
+              <DoBooster projectId={project.id} deploymentId={deploymentId}></DoBooster>
             </div>
           }
         >
@@ -351,6 +357,8 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 </Typography>
               )}
             </div>
+
+            <DeploymentRewardsLine allocation deploymentId={deploymentId} skeletonHeight={402}></DeploymentRewardsLine>
           </div>
         </SubqlCard>
         <SubqlCard
@@ -388,12 +396,14 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </Typography>
             </div>
 
-            <div className="flex-between">
+            <div className="flex-between" style={{ marginBottom: 12 }}>
               <Typography variant="small" type="secondary">
                 Total Offers
               </Typography>
               <Typography variant="small">{offerCounts.data?.offers?.totalCount || 0}</Typography>
             </div>
+
+            <DeploymentRewardsLine deploymentId={deploymentId} skeletonHeight={402}></DeploymentRewardsLine>
           </div>
         </SubqlCard>
       </div>

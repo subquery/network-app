@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DoBooster from '@components/DoBooster';
 import GetEndpoint from '@components/GetEndpoint';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
@@ -113,7 +112,6 @@ const ProjectHeader: React.FC<Props> = ({
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
             <div className={`flex ${styles.groupButton}`}>
-              <DoBooster projectId={project.id} deploymentId={currentVersion}></DoBooster>
               <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
             </div>
           </div>
@@ -122,7 +120,7 @@ const ProjectHeader: React.FC<Props> = ({
           <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {/* in case of someone skip the legal process add more than 2 categories */}
             {project.metadata.categories &&
-              project.metadata.categories.slice(2).map((val) => {
+              project.metadata.categories.slice(0, 2).map((val) => {
                 return (
                   <Button key={val} type="primary" shape="round" className={clsx('staticButton', 'overflowEllipsis')}>
                     <span className="overflowEllipsis" style={{ maxWidth: 300 }}>

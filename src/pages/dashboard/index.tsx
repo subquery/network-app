@@ -30,19 +30,23 @@ export const BalanceLayout = ({
   secondaryBalance,
   secondaryTooltip = 'Estimated for next Era',
   token = TOKEN,
+  hideSecondary = false,
 }: {
   mainBalance: number | string;
   secondaryBalance?: number | string;
   secondaryTooltip?: React.ReactNode;
   token?: string;
+  hideSecondary?: boolean;
 }) => {
   const secondaryRender = () => {
+    if (hideSecondary) return null;
     if (!secondaryBalance)
       return (
         <Typography variant="small" type="secondary" style={{ visibility: 'hidden' }}>
           bigo
         </Typography>
       );
+
     return secondaryTooltip ? (
       <Tooltip title={secondaryTooltip} placement="topLeft">
         <Typography variant="small" type="secondary">
