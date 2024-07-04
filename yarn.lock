@@ -4547,10 +4547,10 @@
   resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.2-0.tgz#ff1738d751b12562f18d3b79c128686d3abcfa4e"
   integrity sha512-Dp2KngyjmZAOebeK+IrfgmWMsWv21gAJO7CUgZZRkcQ3OQhL1PfZflK33tzgGJjM/o2b2h5eq6b3nj0bg+co7g==
 
-"@subql/network-query@1.1.2-11":
-  version "1.1.2-11"
-  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-11.tgz#7452f71646a3c0ff7819e74b2539b83db30d423c"
-  integrity sha512-tkhU2PoFVpq1EYs1nJkrbHHLvFn9XuuiNDje5OMrE3Wi79ZIZHppXx/Uikekt9y4PZKqGHldUkbKACpQ7PEkRA==
+"@subql/network-query@1.1.2-12":
+  version "1.1.2-12"
+  resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-12.tgz#378a7b8a527ab1b9b735748777c0c5134a609d6f"
+  integrity sha512-viVnVcY0zvd9fLEWBBqwxxru2rgVeJyfSfSgfbdbf3iQ0nsNaQcvIOwf43MJieYeugbPsVwqfwx19+KOuRUy5w==
   dependencies:
     graphql "^16.5.0"
 
@@ -4574,15 +4574,15 @@
     lru-cache "^10.0.1"
     semver "^7.6.0"
 
-"@subql/react-hooks@1.1.2-12":
-  version "1.1.2-12"
-  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-1.1.2-12.tgz#b4917dbf43f72d853b2a6b20dc3e8768461aa1e1"
-  integrity sha512-c8xjwpZgsjMdduDys6zdVCJbW+tPnQJb/QT1ZdfdojqHyTjUEJt6hfKUNPEHSgPL4arnBR4NGZyl7+nA3GU7XA==
+"@subql/react-hooks@1.1.2-13":
+  version "1.1.2-13"
+  resolved "https://registry.yarnpkg.com/@subql/react-hooks/-/react-hooks-1.1.2-13.tgz#14c972a986a3a1c6cd7dcdf7f79b56799bc2ace6"
+  integrity sha512-fd26zO9/3dKOBqJSMUfPHb5sBI7wQDCmoVIy8m46keBsHMxR4b/YJAcO7t7Wf/8BlMr0aalvpV7XeRbI0VHzpA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
     "@graphql-tools/load" "^7.7.7"
-    "@subql/network-query" "1.1.2-11"
+    "@subql/network-query" "1.1.2-12"
     ahooks "^3.7.8"
     bignumber.js "^9.1.2"
     class-transformer "^0.5.1"
