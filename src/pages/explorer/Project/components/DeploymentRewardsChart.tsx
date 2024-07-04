@@ -91,15 +91,6 @@ export const DeploymentRewardsLine = (props: {
         maxPaddingLength,
       );
 
-      console.warn(
-        res.data.eraDeploymentRewards?.nodes?.map((item) => {
-          return {
-            keys: item?.eraIdx ? [`0x${Number(item.eraIdx).toString(16).padStart(2, '0')}`] : null,
-            sum: { amount: item?.allocationRewards || '0' },
-          };
-        }),
-      );
-
       setRawRewardsData({ total, allocationRewrads });
       setRenderRewards([allocation ? allocationRewrads : total]);
     }
