@@ -185,7 +185,7 @@ export const IndexerList: React.FC = () => {
         },
       },
       {
-        title: <TableTitle title="Remaining capacity" />,
+        title: <TableTitle title="Remaining capacity (next Era)" />,
         key: 'capacityKey',
         dataIndex: 'capacity',
         width: 150,
