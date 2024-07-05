@@ -195,11 +195,11 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
                           }}
                         >
                           <Typography>
-                            Tokens will be undelegated from next era. During the undelegation period the wont earn any
-                            rewards and will then be locked for {hours} hours before you can withdraw them.
+                            Tokens will remain delegated until the end of the current Era. Afterwards, there is a lock
+                            period of {hours} hours during which you won’t earn rewards.
                           </Typography>
                           <Typography>
-                            Note, you can instead{' '}
+                            Note: you can instead{' '}
                             <Typography.Link
                               type="info"
                               style={{ textDecoration: 'underline' }}
@@ -209,8 +209,7 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
                             >
                               redelegate
                             </Typography.Link>{' '}
-                            to another Node Operator without waiting for an undelegation period or missing out on
-                            rewards.
+                            to another Node Operator without waiting for a lock period or missing out on rewards
                           </Typography>
                         </div>
                       }
