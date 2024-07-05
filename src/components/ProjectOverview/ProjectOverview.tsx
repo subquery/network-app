@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { BsGithub, BsGlobe } from 'react-icons/bs';
+import { BsGithub, BsGlobe, BsInfoCircle } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
 import DoBooster from '@components/DoBooster';
 import Expand from '@components/Expand/Expand';
@@ -13,7 +13,7 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
 import { DeploymentRewardsLine } from '@pages/explorer/Project/components/DeploymentRewardsChart';
-import { Markdown, Spinner, SubqlCard, Tag, Typography } from '@subql/components';
+import { Markdown, Spinner, SubqlCard, Tag, Tooltip, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -261,6 +261,21 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 <Typography>
                   <img src="/static/booster.svg" alt="" style={{ marginRight: 10, marginTop: 4 }}></img>
                   Current Project Boost
+                  <Tooltip
+                    title={
+                      <div>
+                        Boosting generates Query Rewards allowing you to make free queries to this project. Boosting
+                        also encourages more Node Operators to join by directing a higher ratio of Allocation Rewards to
+                        this project, enhancing performance and resilience.
+                        <br></br>
+                        <br></br>
+                        Boosting differs from Delegating in that it promotes the overall health of the project, while
+                        Delegating supports individual Node Operators
+                      </div>
+                    }
+                  >
+                    <BsInfoCircle style={{ color: 'var(--sq-gray500)', fontSize: 14, marginLeft: 8 }}></BsInfoCircle>
+                  </Tooltip>
                 </Typography>
                 <div className={styles.currentBooster}>
                   {BalanceLayout({
