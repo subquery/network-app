@@ -22,6 +22,7 @@ import {
 } from '@subql/network-query';
 import { useGetDeploymentPlansLazyQuery } from '@subql/react-hooks';
 import { getDeploymentStatus } from '@utils/getIndexerStatus';
+import { makeCacheKey } from '@utils/limitation';
 import { Modal as AntdModal, Table, TableProps, Tooltip, Typography } from 'antd';
 import assert from 'assert';
 import axios from 'axios';
@@ -212,7 +213,26 @@ const ConnectedRow: React.FC<{
               margin: '0 auto',
             }}
             className={styles.playgroundButton}
-            onClick={() => {
+            onClick={async () => {
+              const trailKey = makeCacheKey(type, {
+                prefix: deploymentId,
+                suffix: indexer.indexerId,
+              });
+              const existToken = localStorage.getItem(trailKey);
+              if (existToken) {
+                try {
+                  const token = JSON.parse(existToken) as { data: string; expire: number };
+                  if (token.expire < Date.now()) {
+                    localStorage.removeItem(trailKey);
+                    setShowReqTokenConfirmModal(true);
+                    return;
+                  }
+                  await updateQueryLimit(indexerMetadata.url, token.data);
+                  setTrailToken(token.data);
+                  setShowPlayground(true);
+                  return;
+                } catch (e) {}
+              }
               setShowReqTokenConfirmModal(true);
             }}
           >
@@ -308,6 +328,17 @@ const ConnectedRow: React.FC<{
         await updateQueryLimit(indexerMetadata.url, res.data);
         setShowReqTokenConfirmModal(false);
         setTrailToken(res.data);
+        const trailKey = makeCacheKey(type, {
+          prefix: deploymentId,
+          suffix: indexer.indexerId,
+        });
+        localStorage.setItem(
+          trailKey,
+          JSON.stringify({
+            data: res.data,
+            expire: Date.now() + 24 * 60 * 60 * 1000,
+          }),
+        );
         setShowPlayground(true);
       }
     }
