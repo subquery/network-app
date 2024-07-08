@@ -61,21 +61,17 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
                     fill="white"
                   />
                 </svg>
-                SubQuery now supports Subgraph indexing!
+                Join the Summer Delegation Frenzy today to earn extra rewards!
               </Typography>
               <Typography variant="medium" style={{ color: '#fff' }}>
-                Deploy your Subgraphs to the SubQuery Network today. Get indexed data and RPCs endpoint access for your
-                dApps from the same decentralised network.
+                Delegate in the network and then register today. The more points you earn, the more rewards you'll
+                receive from the SQT prize pool!
               </Typography>
             </div>
             <span style={{ flex: 1 }}></span>
             <Button shape="round" size="large">
-              <Typography.Link
-                href="https://academy.subquery.network/subquery_network/architects/publish-subgraph.html"
-                type="info"
-                target="_blank"
-              >
-                Learn More
+              <Typography.Link href="https://frenzy.subquery.foundation" type="info" target="_blank">
+                Register Now
               </Typography.Link>
             </Button>
           </div>
