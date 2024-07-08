@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 import { Typography } from '@subql/components';
 import { Button } from 'antd';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 
 import { tipsChainIds, tipsL1ChainIds } from 'src/config/rainbowConf';
 
@@ -14,9 +14,8 @@ import { ECOSYSTEM_NETWORK, SUPPORTED_NETWORK } from '../../containers/Web3';
 import styles from './ChainStatus.module.css';
 
 export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { isConnected, chain } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
   const { t } = useTranslation();
   const location = useLocation();
 
@@ -55,7 +54,9 @@ export const ChainStatus: React.FC<React.PropsWithChildren> = ({ children }) => 
             <Button
               style={{ width: '100%' }}
               onClick={() => {
-                switchNetwork?.(switchNetworkChainId);
+                switchChainAsync?.({
+                  chainId: switchNetworkChainId,
+                });
               }}
               type="primary"
               size="large"

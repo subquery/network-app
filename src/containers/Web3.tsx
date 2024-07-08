@@ -4,8 +4,8 @@
 import mainnetJSON from '@subql/contract-sdk/publish/mainnet.json';
 import testnetJSON from '@subql/contract-sdk/publish/testnet.json';
 import { NETWORKS_CONFIG_INFO, SQNetworks } from '@subql/network-config';
-import { base, baseSepolia } from 'viem/chains';
-import { mainnet, sepolia, useAccount as useAccountWagmi } from 'wagmi';
+import { base, baseSepolia, mainnet, sepolia } from 'viem/chains';
+import { useAccount as useAccountWagmi } from 'wagmi';
 
 export const NETWORK_NAME: SQNetworks = import.meta.env.VITE_NETWORK;
 export const isMainnet = import.meta.env.VITE_NETWORK === 'mainnet';

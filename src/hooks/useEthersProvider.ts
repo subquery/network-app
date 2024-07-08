@@ -5,10 +5,14 @@ import * as React from 'react';
 import { providers } from 'ethers';
 import { type HttpTransport } from 'viem';
 import { base, mainnet } from 'viem/chains';
-import { type PublicClient, usePublicClient } from 'wagmi';
-import { useWalletClient, type WalletClient } from 'wagmi';
+import { Config, usePublicClient } from 'wagmi';
+import { type UsePublicClientReturnType, useWalletClient } from 'wagmi';
+import { type GetWalletClientData } from 'wagmi/query';
 
-export function publicClientToProvider(publicClient: PublicClient) {
+export function publicClientToProvider(publicClient: UsePublicClientReturnType) {
+  if (!publicClient) {
+    return new providers.JsonRpcProvider(base.rpcUrls.default.http[0]);
+  }
   const { chain, transport } = publicClient;
 
   const network = {
@@ -36,7 +40,7 @@ export function useEthersProviderWithPublic({ chainId }: { chainId?: number } = 
 
 let requestId = 0;
 
-export function walletClientToSignerAndProvider(walletClient: WalletClient) {
+export function walletClientToSignerAndProvider(walletClient: GetWalletClientData<Config, number>) {
   const { account, chain, transport } = walletClient;
   const network = {
     chainId: chain.id,
@@ -50,9 +54,9 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
       async request(request, ...rest) {
         try {
           const fetchUrl = {
-            [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC,
-            [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
-          }[chain.id];
+            [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC as string,
+            [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC as string,
+          }[chain.id as number];
           if (fetchUrl) {
             requestId += 1;
             const res = await fetch(fetchUrl, {
@@ -93,6 +97,7 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: walletClient } = useWalletClient({ chainId });
+
   return React.useMemo(
     () => (walletClient ? walletClientToSignerAndProvider(walletClient) : { signer: undefined, provider: undefined }),
     [walletClient],

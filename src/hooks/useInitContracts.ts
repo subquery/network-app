@@ -45,9 +45,9 @@ export function useInitContracts(): { loading: boolean } {
         }
       }
 
-      if (ethereumProvider) {
+      if (signer || ethereumProvider) {
         const rootContractInstance = RootContractSDK.create(
-          signer?.provider.network.chainId === l1Chain.id ? signer : ethereumProvider,
+          signer && signer?.provider.network.chainId === l1Chain.id ? signer : ethereumProvider,
           { network: NETWORK_NAME },
         );
         setRootContracts(rootContractInstance);

@@ -7,6 +7,7 @@ import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
+import { ProjectType as ProjectTypeFromSubql } from '@subql/network-query';
 import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
 
@@ -23,7 +24,7 @@ type Props = {
   project?: ProjectMetadata;
   deploymentId?: string;
   deploymentVersion?: string;
-  type?: ProjectType;
+  type?: ProjectType | ProjectTypeFromSubql;
 };
 
 export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type }) => {
@@ -34,6 +35,13 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
   const versionHeader = deploymentMeta.data?.version
     ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
     : t('projects.deploymentId');
+
+  const deploymentType = React.useMemo(() => {
+    if (type === ProjectType.RPC || type === ProjectTypeFromSubql.RPC) return ProjectType.RPC;
+    if (type === ProjectType.SQ_DICT || type === ProjectTypeFromSubql.SQ_DICT) return ProjectType.SQ_DICT;
+    if (type === ProjectType.SUBGRAPH || type === ProjectTypeFromSubql.SUBGRAPH) return ProjectType.SUBGRAPH;
+    if (type === ProjectType.SUBQUERY || type === ProjectTypeFromSubql.SUBQUERY) return ProjectType.SUBQUERY;
+  }, [type]);
 
   return (
     <div className={styles.projectInfo}>
@@ -58,7 +66,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
           ) : (
             <div>
               <Typography variant="small" className={styles.text}>
-                Type: {type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}
+                Type: {deploymentType === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}
               </Typography>
             </div>
           )}
