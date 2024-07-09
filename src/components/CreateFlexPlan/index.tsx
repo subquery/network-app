@@ -369,15 +369,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       }
 
       // TODO: make a enum
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setDisplayTransactions(newDisplayTransactions);
 
       setTransactionNumbers(
-        newDisplayTransactions.reduce((acc, cur, index) => {
-          acc[cur] = index + 1;
-          return acc;
-        }, {} as { [key in string]: number }),
+        newDisplayTransactions.reduce(
+          (acc, cur, index) => {
+            acc[cur] = index + 1;
+            return acc;
+          },
+          {} as { [key in string]: number },
+        ),
       );
       setCurrentStep(2);
     }

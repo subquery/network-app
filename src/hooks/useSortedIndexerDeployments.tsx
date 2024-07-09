@@ -44,6 +44,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     },
     fetchPolicy: 'network-only',
   });
+
   const allocatedRewards = useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery({
     variables: {
       indexerId: indexer || '',
@@ -62,12 +63,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     );
 
     // merge have allocation but not indexing project
-    const mergedDeployments = [
-      ...filteredDeployments,
-      ...(allocatedProjects.data?.indexerAllocationSummaries?.nodes.filter(
-        (i) => !filteredDeployments.find((j) => j?.deploymentId === i?.deploymentId),
-      ) || []),
-    ];
+    const mergedDeployments = filteredDeployments;
 
     return await Promise.all(
       mergedDeployments.map(async (indexerDeployment) => {
@@ -83,10 +79,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
               categories: [],
             };
 
-        const deploymentId =
-          indexerDeployment?.__typename === 'IndexerAllocationSummary'
-            ? indexerDeployment.deploymentId
-            : indexerDeployment?.deployment?.id;
+        const deploymentId = indexerDeployment?.deployment?.id;
         // TODO: get `offline` status from external api call
         const isOffline = false;
         let indexingErr = '';
@@ -119,13 +112,10 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           })
           ?.sum?.reward.toString();
 
-        const projectId =
-          indexerDeployment?.__typename === 'IndexerDeployment'
-            ? indexerDeployment.deployment?.project?.id
-            : indexerDeployment?.projectId;
+        const projectId = indexerDeployment?.deployment?.project?.id;
 
         return {
-          status: indexerDeployment?.__typename === 'IndexerAllocationSummary' ? undefined : indexerDeployment?.status,
+          status: indexerDeployment?.status,
           indexingErr,
           indexingProgress: sortedIndexingProcess,
           lastHeight,
@@ -138,11 +128,8 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           },
           allocatedAmount,
           allocatedTotalRewards,
-          id:
-            indexerDeployment?.__typename === 'IndexerAllocationSummary'
-              ? indexerDeployment.deploymentId
-              : indexerDeployment?.id,
-          deployment: indexerDeployment?.__typename === 'IndexerDeployment' ? indexerDeployment.deployment : null,
+          id: indexerDeployment?.id,
+          deployment: indexerDeployment?.deployment || null,
         };
       }),
     );
