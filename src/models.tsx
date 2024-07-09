@@ -8,7 +8,7 @@ import { CIDv0 } from './utils';
 export enum ProjectType {
   SUBQUERY,
   RPC,
-  DICTIONARY,
+  SQ_DICT,
   SUBGRAPH,
 }
 

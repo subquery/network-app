@@ -119,6 +119,22 @@ export const amountExceedsBalance = (msg: Error | string | undefined): boolean =
   return false;
 };
 
+export const isNeedSignerToDoTransaction = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+  if (msg instanceof Error) {
+    if (msg?.message?.includes?.('sending a transaction requires a signer')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg?.includes?.('sending a transaction requires a signer')) {
+    return true;
+  }
+
+  return false;
+};
+
 export function parseError(
   error: any,
   options: { alert?: boolean; defaultGeneralMsg?: string | null; errorMappings?: typeof errorsMapping } = {
@@ -186,6 +202,17 @@ export function parseError(
     }
   };
 
+  const needSignerMsg = () => {
+    if (isNeedSignerToDoTransaction(rawErrorMsg)) {
+      captureException(`Detected need signer error: ${rawErrorMsg}`, {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
+      return "Can't detect the signer, please reconnect the wallet or clear the cache try again.";
+    }
+  };
+
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
@@ -213,6 +240,7 @@ export function parseError(
     RpcUnavailableMsg() ??
     insufficientFunds() ??
     callRevert() ??
+    needSignerMsg() ??
     options.defaultGeneralMsg ??
     generalErrorMsg();
 

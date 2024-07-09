@@ -26,7 +26,7 @@ export type Manifest = {
   };
 
   // subgraph
-  dataSources: {
+  dataSources?: {
     network: string;
   }[];
 };

@@ -5,6 +5,7 @@ import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
+import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
 
 import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';
@@ -43,13 +44,31 @@ const makeDebugInfo = (debugInfo: object) => {
 };
 
 const RenderRouter: React.FC = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
+  const { signer } = useEthersSigner();
+  const provider = useEthersProviderWithPublic();
 
   useEffect(() => {
-    makeDebugInfo({
-      address,
-    });
-  }, [address]);
+    (async () => {
+      makeDebugInfo({
+        address,
+        walletName: connector?.name,
+        signerAddress: 'not collected',
+        signerChainId: 'not collected',
+        providerNetwork: provider._network.name,
+      });
+
+      const signerAddress = await signer?.getAddress();
+      const signerChainId = await signer?.getChainId();
+      makeDebugInfo({
+        address,
+        walletName: connector?.name,
+        signerAddress,
+        signerChainId,
+        providerNetwork: provider._network.name,
+      });
+    })();
+  }, [address, connector, signer, provider]);
 
   return (
     <BrowserRouter>
