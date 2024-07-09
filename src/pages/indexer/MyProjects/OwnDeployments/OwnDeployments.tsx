@@ -178,7 +178,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           className="flex-center"
           style={{ textTransform: 'uppercase' }}
         >
-          Estimated APY
+          Previous Estimated APY
           <APYTooltip
             currentEra={currentEra?.data?.index}
             calculationDescription={
@@ -187,13 +187,14 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           />
         </Typography>
       ),
-
+      width: 230,
       dataIndex: 'deploymentApy',
       render: (deploymentApy) => {
         return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
       },
     },
     {
+      width: 230,
       title: <TableTitle title="Allocated amount" />,
       dataIndex: 'allocatedAmount',
       render: (allocatedAmount: string) => {
@@ -203,21 +204,54 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           </Typography>
         );
       },
+      sorter: (a, b) => {
+        return BigNumberJs(a.allocatedAmount || '0').comparedTo(b.allocatedAmount || '0');
+      },
     },
     {
-      title: <TableTitle title="Total rewards" />,
-      dataIndex: 'allocatedTotalRewards',
-      render: (allocatedTotalRewards, deployment) => {
+      width: 230,
+      title: <TableTitle title="LAST ERA ALLOCATION REWARDS" />,
+      dataIndex: 'lastEraAllocatedRewards',
+      render: (lastEraAllocatedRewards) => {
         return (
           <Typography>
-            {formatNumber(formatSQT(allocatedTotalRewards || '0'))} {TOKEN}
+            {formatNumber(formatSQT(lastEraAllocatedRewards || '0'))} {TOKEN}
           </Typography>
         );
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.lastEraAllocatedRewards || '0').comparedTo(b.lastEraAllocatedRewards || '0');
+      },
+    },
+    {
+      width: 230,
+      title: <TableTitle title="LAST ERA BURNED REWARDS" />,
+      dataIndex: 'lastEraBurnt',
+      render: (lastEraBurnt, deployment) => {
+        const haveBurnt = !BigNumberJs(lastEraBurnt || '0').isZero();
+        const percentageOfBurnt = BigNumberJs(lastEraBurnt || '0')
+          .div(BigNumberJs(deployment.lastEraAllocatedRewards || '0').plus(lastEraBurnt || '0'))
+          .multipliedBy(100)
+          .toFixed(2);
+        return (
+          <Typography type={haveBurnt ? 'danger' : 'default'} className="col-flex">
+            {formatNumber(formatSQT(lastEraBurnt || '0'))} {TOKEN}
+            {haveBurnt ? (
+              <Typography variant="small" type="secondary">
+                {percentageOfBurnt}% of rewards
+              </Typography>
+            ) : null}
+          </Typography>
+        );
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.lastEraBurnt || '0').comparedTo(b.lastEraBurnt || '0');
       },
     },
     {
       title: <TableTitle title={t('general.action')} />,
       dataIndex: 'status',
+      fixed: 'right',
       render: (status, deployment) => {
         return (
           <div style={{ display: 'flex', gap: 26 }}>
@@ -627,20 +661,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                         );
                       })}
                     </div>
-                    {/* <div className="flex">
-                      <Typography>Total Allocation Rewards</Typography>
-                      <span style={{ flex: 1 }}></span>
-                      <Typography>
-                        {formatNumber(
-                          formatSQT(
-                            allocatedRewards.data?.indexerAllocationRewards?.groupedAggregates
-                              ?.reduce((cur, add) => cur.plus(add.sum?.reward.toString() || '0'), BigNumberJs(0))
-                              .toString() || '0',
-                          ),
-                        )}{' '}
-                        {TOKEN}
-                      </Typography>
-                    </div> */}
                   </SubqlCard>
                 </div>
                 {!indexerDeployments.loading && (!indexerDepolymentsData || indexerDepolymentsData.length === 0) ? (
@@ -651,7 +671,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     dataSource={indexerDeployments.loading ? previousSortedData : sortedData}
                     rowKey={'deploymentId'}
                     pagination={false}
-                    scroll={width <= 768 ? { x: 1600 } : undefined}
+                    scroll={width <= 1800 ? { x: 1800 } : undefined}
                     loading={indexerDeployments.loading}
                   />
                 )}
