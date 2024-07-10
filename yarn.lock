@@ -4523,14 +4523,14 @@
   resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.0.3.tgz#02af55c7778d13eb87d4dac41518268a00632d34"
   integrity sha512-ONJkxNL86YyLFTt26+dagnsZQUXV1of/ncoFTKXt+jX6Gj+X26U74k6cJ4x7gBCP8U61VPFdxD4D5TJmaKw7zQ==
 
-"@subql/network-clients@1.1.1-3":
-  version "1.1.1-3"
-  resolved "https://registry.npmjs.org/@subql/network-clients/-/network-clients-1.1.1-3.tgz#c99c4368799fe885cb7b215d3eb76eff6efd355a"
-  integrity sha512-fNB6OoiekdyYnIR2f9NFHzP9r4u1/AdWT/UvMMHrOPEWjedwvfsAbXhjdG4qmPCUFGzXtZ2JtXee9bNXU+pBLA==
+"@subql/network-clients@1.1.1-4":
+  version "1.1.1-4"
+  resolved "https://registry.yarnpkg.com/@subql/network-clients/-/network-clients-1.1.1-4.tgz#78ae911a60af9e04b02718730a1c724be2f07205"
+  integrity sha512-kxvKGCE+YE1F2S4rUtmIfCa5tiulExebVLaQXc68M7qe9ZzS3Rr9biKAJHyKQXoDbvZyv+DgZzyPij2OaiLm6Q==
   dependencies:
     "@ethersproject/bignumber" "^5.7.0"
     "@subql/network-config" "1.1.2-0"
-    "@subql/network-query" "1.1.2-6"
+    "@subql/network-query" "1.1.2-12"
     axios "^0.27.2"
     buffer "^6.0.3"
     cross-fetch "^3.1.5"
@@ -4551,13 +4551,6 @@
   version "1.1.2-12"
   resolved "https://registry.yarnpkg.com/@subql/network-query/-/network-query-1.1.2-12.tgz#378a7b8a527ab1b9b735748777c0c5134a609d6f"
   integrity sha512-viVnVcY0zvd9fLEWBBqwxxru2rgVeJyfSfSgfbdbf3iQ0nsNaQcvIOwf43MJieYeugbPsVwqfwx19+KOuRUy5w==
-  dependencies:
-    graphql "^16.5.0"
-
-"@subql/network-query@1.1.2-6":
-  version "1.1.2-6"
-  resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.2-6.tgz#7dfa68e38a34898530beef16b32b9affb9e352cd"
-  integrity sha512-bkquEa5/eUHqMJX8ljDee0PWLkvvKUgGokE4wv2KMeQK40cOeSv77HM73bJDg6vd1E3NWiQJuSO2SApnsyH73w==
   dependencies:
     graphql "^16.5.0"
 
