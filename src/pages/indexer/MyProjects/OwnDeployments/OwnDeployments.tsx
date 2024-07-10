@@ -119,7 +119,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
   const previousSortedData = usePrevious(sortedData);
 
-  const columns: TableProps<UseSortedIndexerDeploymentsReturn>['columns'] = [
+  const columns: TableProps<UseSortedIndexerDeploymentsReturn & { deploymentApy: BigNumberJs }>['columns'] = [
     {
       title: 'Project',
       dataIndex: 'deploymentId',
@@ -191,6 +191,9 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       dataIndex: 'deploymentApy',
       render: (deploymentApy) => {
         return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.deploymentApy || '0').comparedTo(b.deploymentApy || '0');
       },
     },
     {

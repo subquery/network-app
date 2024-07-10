@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
 import localforage from 'localforage';
@@ -36,6 +36,7 @@ export function useIndexerMetadata(
   const [metadata, setMetadata] = useState<IndexerDetails>();
   const [loading, setLoading] = useState(false);
   const [getIndexerQuery] = useGetIndexerLazyQuery();
+  const mounted = useRef(false);
   const fetchCid = async () => {
     const res = await getIndexerQuery({
       variables: {
@@ -94,6 +95,11 @@ export function useIndexerMetadata(
   }, [optionWithDefault.immediate]);
 
   useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    if (!address) return;
     refresh();
   }, [address]);
 
