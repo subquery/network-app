@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
-import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 import { isObject } from 'lodash-es';
-import { useSignTypedData } from 'wagmi';
+import { generateNonce, SiweMessage } from 'siwe';
+import { useChainId, useSignMessage } from 'wagmi';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,
@@ -40,7 +40,9 @@ export const useConsumerHostServices = (
   { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
 ) => {
   const { address: account } = useAccount();
-  const { signTypedDataAsync } = useSignTypedData();
+  const chainId = useChainId();
+  const { signMessageAsync } = useSignMessage();
+
   const authHeaders = useRef<{ Authorization: string }>(
     getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || ''),
   );
@@ -50,31 +52,29 @@ export const useConsumerHostServices = (
   const requestConsumerHostToken = async (account: string) => {
     try {
       const tokenRequestUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/login`;
-      const timestamp = new Date().getTime();
 
-      const signMsg = {
-        consumer: account,
-        timestamp,
-      };
-
-      const eip721Signature = await signTypedDataAsync({
-        types: {
-          EIP712Domain,
-          messageType: ConsumerHostMessageType,
-        },
-        primaryType: 'messageType',
-        // TODO: FIX, it seems is wagmi bug.
-
-        // @ts-ignore
-        domain,
-        message: signMsg,
+      const newMsg = new SiweMessage({
+        domain: window.location.host,
+        address: account,
+        statement: `Login to SubQuery Network`,
+        uri: window.location.origin,
+        version: '1',
+        chainId,
+        nonce: generateNonce(),
       });
 
-      if (!eip721Signature) throw new Error();
+      const signature = await signMessageAsync({
+        message: newMsg.prepareMessage(),
+      });
+
+      if (!signature) throw new Error();
 
       const { response, error } = await POST({
         endpoint: tokenRequestUrl,
-        requestBody: withChainIdRequestBody(signMsg, eip721Signature),
+        requestBody: {
+          message: newMsg.prepareMessage(),
+          signature: signature,
+        },
       });
 
       const sortedResponse = response && (await response.json());
