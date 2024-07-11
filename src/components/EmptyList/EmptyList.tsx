@@ -4,12 +4,13 @@
 import * as React from 'react';
 import { Trans } from 'react-i18next';
 import { Typography } from '@subql/components';
+import { isString } from 'lodash-es';
 
 import styles from './EmptyList.module.css';
 
 interface IEmptyList {
   title?: string;
-  description?: string | Array<string> | readonly string[];
+  description?: React.ReactNode | string | Array<string> | readonly string[];
   infoI18nKey?: string;
   infoLinkDesc?: string;
   infoLink?: string;
@@ -29,15 +30,19 @@ export const EmptyList: React.FC<IEmptyList> = ({
     <div className={styles.emptyListContainer}>
       <div className={styles.emptyListContent}>
         {title && <Typography className={styles.title}>{title}</Typography>}
-        <div className={styles.description}>
-          {sortedDescriptions.map((description, idx) => (
-            <Typography key={idx}>{description}</Typography>
-          ))}
-        </div>
+        {isString(description) || Array.isArray(description) ? (
+          <div className={styles.description}>
+            {sortedDescriptions.map((description, idx) => (
+              <Typography key={idx}>{description}</Typography>
+            ))}
+          </div>
+        ) : (
+          description
+        )}
         {infoI18nKey && (
           <Typography className={styles.infoLink}>
             {/* TODO: will fix this ts error when i18n issue fix. */}
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {}
             {/* @ts-ignore */}
             <Trans i18nKey={infoI18nKey}>
               {infoLinkDesc}
