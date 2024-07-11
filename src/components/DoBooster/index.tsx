@@ -100,11 +100,26 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
       openNotification({
         type: 'success',
         title: 'Boost completed successfully',
-        description: `Boost amount: ${formatSQT(
-          BigNumberJs(existingBoostByConsumer)
-            .plus(addOrRemove === 'add' ? BigNumberJs(submitVal) : BigNumberJs(submitVal).negated())
-            .toString(),
-        )} SQT`,
+        // @ts-ignore
+        description: (
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography>
+              {`Boost amount: ${formatSQT(
+                BigNumberJs(existingBoostByConsumer)
+                  .plus(addOrRemove === 'add' ? BigNumberJs(submitVal) : BigNumberJs(submitVal).negated())
+                  .toString(),
+              )} SQT`}
+            </Typography>
+
+            <Typography>
+              You can view your detailed boosts in{' '}
+              <Typography.Link type="info" href="/consumer/boosted-projects">
+                My Boosts
+              </Typography.Link>{' '}
+              under Consumer
+            </Typography>
+          </div>
+        ),
         duration: 5,
       });
       onSuccess?.();
@@ -174,7 +189,23 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                 },
               ]}
             ></Steps>
-
+            <div
+              style={{
+                marginTop: 24,
+              }}
+            >
+              <Typography variant="medium">
+                Boosting generates Query Rewards allowing you to make free queries to this project. Boosting also
+                encourages more Node Operators to join by directing a higher ratio of Allocation Rewards to this
+                project, enhancing performance and resilience.
+              </Typography>
+              <br></br>
+              <br></br>
+              <Typography variant="medium">
+                Boosting differs from Delegating in that it promotes the overall health of the project, while Delegating
+                supports individual Node Operators
+              </Typography>
+            </div>
             <div className="flex" style={{ marginTop: 24 }}>
               <IPFSImage
                 src={project.data?.metadata.image || '/static/default.project.png'}
