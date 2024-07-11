@@ -526,7 +526,14 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                         {
                           name: isOverAllocate ? 'Over Allocated' : 'Unallocated Stake',
                           color: 'var(--sq-warning)',
-                          currentBalance: formatNumber(BigNumberJs(runnerAllocationData?.left || 0).toString()),
+                          currentBalance: formatNumber(
+                            BigNumberJs(runnerAllocationData?.left || 0)
+                              .abs()
+                              .toString(),
+                          ),
+                          rawValue: BigNumberJs(runnerAllocationData?.left || 0)
+                            .abs()
+                            .toFixed(18),
                           isOverAllocate: isOverAllocate,
                         },
                       ].map((item) => {
@@ -557,7 +564,9 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                             </Typography>
                             <div className="col-flex" style={{ alignItems: 'flex-end' }}>
                               <Typography variant="medium">
-                                {item.currentBalance} {TOKEN}
+                                <Tooltip title={item.rawValue ? item.rawValue : ''}>
+                                  {item.currentBalance} {TOKEN}
+                                </Tooltip>
                                 {item.isOverAllocate && (
                                   <Tooltip title="Your current allocation amount exceeds your available stake. Please adjust to align with your available balance. ">
                                     <WarningOutlined style={{ marginLeft: 4, color: 'var(--sq-error)' }} />
