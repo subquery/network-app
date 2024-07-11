@@ -91,7 +91,11 @@ export function formatNumber(num: number | string, precision = 2) {
   }
 
   if (+num < 1) {
-    return (+num).toFixed(precision);
+    const result = (+num).toFixed(precision);
+    if (+result === 0 && +num !== 0) {
+      return `~${result}`;
+    }
+    return result;
   }
 
   return num;

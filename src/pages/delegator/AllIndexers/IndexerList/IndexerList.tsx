@@ -11,8 +11,9 @@ import { APYTooltip, SearchInput } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { TokenAmount } from '@components/TokenAmount';
-import { useWeb3 } from '@containers';
+import { useIPFS, useWeb3 } from '@containers';
 import { useEra, useNetworkClient } from '@hooks';
+import { getIndexerMetadata } from '@hooks/useIndexerMetadata';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
@@ -26,7 +27,6 @@ import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import BigNumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
-import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
 import styles from './IndexerList.module.css';
@@ -38,6 +38,7 @@ type IndexerWithApy = Indexer & { indexerApy: string; delegatorApy: string; apyE
 export const IndexerList: React.FC = () => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
+  const ipfs = useIPFS();
   const { account } = useWeb3();
   const { currentEra } = useEra();
 
@@ -48,6 +49,7 @@ export const IndexerList: React.FC = () => {
   };
   const [requestIndexers, fetchedIndexers] = useGetAllIndexerByApyLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
+  const [currentPageSize, setCurrentPageSize] = React.useState<number>(50);
   const [loadingList, setLoadingList] = React.useState<boolean>(false);
   const [indexerList, setIndexerList] = React.useState<IndexerWithApy[]>([]);
   const [closeBannerTips, setCloseBannerTips] = React.useState<boolean>(false);
@@ -57,7 +59,7 @@ export const IndexerList: React.FC = () => {
 
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
 
-  const onLoadMore = async (offset: number, filter?: IndexerApySummaryFilter) => {
+  const onLoadMore = async (offset: number, filter?: IndexerApySummaryFilter, pageSize = 50) => {
     try {
       setLoadingList(true);
       setIndexerList([]);
@@ -66,7 +68,7 @@ export const IndexerList: React.FC = () => {
       const res = await requestIndexers({
         variables: {
           offset,
-          first: 10,
+          first: pageSize,
           orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
           filter: {
             ...filter,
@@ -88,6 +90,7 @@ export const IndexerList: React.FC = () => {
               indexer?.indexerId || '',
               BigNumber.from(currentEra.data?.index || 0) || undefined,
               indexer?.indexer || undefined,
+              (cid: string) => getIndexerMetadata(ipfs.catSingle, cid),
             );
           }),
         );
@@ -103,6 +106,7 @@ export const IndexerList: React.FC = () => {
             };
           }),
         );
+
         return sortedIndexers;
       }
     } finally {
@@ -134,8 +138,13 @@ export const IndexerList: React.FC = () => {
         dataIndex: 'address',
         key: 'address',
         width: 100,
-        render: (val: string) =>
-          val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
+        render: (val: string, record) => {
+          return val ? (
+            <ConnectedIndexer metadata={record.metadata} id={val} account={account} onClick={viewIndexerDetail} />
+          ) : (
+            <></>
+          );
+        },
       },
       {
         title: (
@@ -213,6 +222,9 @@ export const IndexerList: React.FC = () => {
             </div>
           );
         },
+        sorter: (a, b) => {
+          return BigNumberJs(a?.capacity?.after.toString() || 0).comparedTo(b?.capacity?.after.toString() || 0);
+        },
       },
       {
         title: <TableTitle title={t('indexer.ownStake')} />,
@@ -262,7 +274,9 @@ export const IndexerList: React.FC = () => {
         width: 150,
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
-          const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => i?.indexerId === id);
+          const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => {
+            return i?.indexerId === id;
+          });
           const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
@@ -274,7 +288,7 @@ export const IndexerList: React.FC = () => {
       },
     ];
     return getColumns();
-  }, [account, pageStartIndex]);
+  }, [account, pageStartIndex, fetchedIndexers.data, orderedIndexerList]);
 
   React.useEffect(() => {
     if (networkClient) {
@@ -351,6 +365,7 @@ export const IndexerList: React.FC = () => {
                       },
                     }
                   : undefined,
+                currentPageSize,
               );
             }}
             defaultValue={searchIndexer}
@@ -370,10 +385,13 @@ export const IndexerList: React.FC = () => {
           total: totalCounts,
           onChange: (page, pageSize) => {
             const i = (page - 1) * pageSize;
+            setCurrentPageSize(pageSize);
             setPageStartIndex(page);
-            onLoadMore?.(i);
+            onLoadMore?.(i, {}, pageSize);
           },
           current: pageStartIndex,
+          pageSize: currentPageSize,
+          pageSizeOptions: [10, 50, 100],
         }}
         scroll={width <= 768 ? { x: 1600 } : undefined}
       ></Table>

@@ -76,8 +76,10 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
-  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
-  const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
+  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress, indexer);
+  const { indexerMetadata: indexerMetadataIpfs, refresh } = useIndexerMetadata(indexerAddress, {
+    immediate: false,
+  });
   const { fetchWeb3NameFromCache } = useWeb3Name();
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
     useMakeNotification();
@@ -152,6 +154,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       if (!isLogin) return;
       setShouldFetchStatus(false);
       setFetchCheckStatusLoading(true);
+      await refresh();
       const approval = await stakingAllowance.refetch();
       setRequireTokenApproval(approval?.data?.isZero() || false);
       if (!delegation) {

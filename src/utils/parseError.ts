@@ -4,7 +4,7 @@
 import { captureException } from '@sentry/react';
 import { openNotification } from '@subql/components';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
-import { isObject } from 'lodash-es';
+import { isObject, isString } from 'lodash-es';
 
 export const walletConnectionErrors = [
   {
@@ -72,16 +72,27 @@ function logError(msg: Error | string | Record<string, unknown>): void {
 
 export const isRPCError = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
-
-  if (msg instanceof Error) {
-    if (msg?.message.includes?.('event=') || msg?.message?.includes?.('Transaction reverted without a reason string')) {
+  if (isString(msg)) {
+    if (
+      msg.includes?.("Non-200 status code: '429'") ||
+      msg?.includes?.('event=') ||
+      msg?.includes?.('Transaction reverted without a reason string')
+    ) {
       return true;
     }
+
     return false;
   }
 
-  if (msg?.includes?.('event=') || msg?.includes?.('Transaction reverted without a reason string')) {
-    return true;
+  if (Object.hasOwn(msg, 'message') || msg instanceof Error) {
+    if (
+      msg?.message?.includes?.("Non-200 status code: '429'") ||
+      msg?.message?.includes?.('event=') ||
+      msg?.message?.includes?.('Transaction reverted without a reason string')
+    ) {
+      return true;
+    }
+    return false;
   }
 
   return false;
@@ -90,14 +101,18 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
 export const isInsufficientAllowance = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
 
-  if (msg instanceof Error) {
-    if (msg?.message?.includes?.('insufficient allowance')) {
+  if (isString(msg)) {
+    if (msg?.includes?.('insufficient allowance')) {
       return true;
     }
     return false;
   }
-  if (msg?.includes?.('insufficient allowance')) {
-    return true;
+
+  if (Object.hasOwn(msg, 'message')) {
+    if (msg?.message?.includes?.('insufficient allowance')) {
+      return true;
+    }
+    return false;
   }
 
   return false;
@@ -105,15 +120,20 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
 
 export const amountExceedsBalance = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
-  if (msg instanceof Error) {
+
+  if (isString(msg)) {
+    if (msg?.includes?.('transfer amount exceeds balance')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message')) {
     if (msg?.message?.includes?.('transfer amount exceeds balance')) {
       return true;
     }
     return false;
-  }
-
-  if (msg?.includes?.('transfer amount exceeds balance')) {
-    return true;
   }
 
   return false;
@@ -121,15 +141,20 @@ export const amountExceedsBalance = (msg: Error | string | undefined): boolean =
 
 export const isNeedSignerToDoTransaction = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
-  if (msg instanceof Error) {
+
+  if (isString(msg)) {
+    if (msg?.includes?.('sending a transaction requires a signer')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message')) {
     if (msg?.message?.includes?.('sending a transaction requires a signer')) {
       return true;
     }
     return false;
-  }
-
-  if (msg?.includes?.('sending a transaction requires a signer')) {
-    return true;
   }
 
   return false;
@@ -228,7 +253,7 @@ export function parseError(
   };
 
   const RpcUnavailableMsg = () => {
-    if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable';
+    if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable, please try again or change a RPC Endpoint.';
   };
 
   const msg =

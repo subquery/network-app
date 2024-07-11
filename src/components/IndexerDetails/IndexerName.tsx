@@ -5,10 +5,13 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
+import { IndexerMetadata } from '@subql/network-clients';
 import { idleCallback } from '@utils/idleCallback';
 import { limitContract } from '@utils/limitation';
 import { message } from 'antd';
 import { toSvg } from 'jdenticon';
+
+import { IndexerDetails } from 'src/models';
 
 import { useIndexerMetadata } from '../../hooks';
 import { useWeb3Name } from '../../hooks/useSpaceId';
@@ -136,8 +139,11 @@ export const ConnectedIndexer: React.FC<{
   onAddressClick?: (id: string) => void;
   onClick?: (address: string) => void;
   clickToProfile?: boolean;
-}> = ({ id, account, size = 'normal', clickToProfile, onAddressClick, onClick }) => {
-  const { indexerMetadata, loading } = useIndexerMetadata(id);
+  metadata?: IndexerMetadata | IndexerDetails;
+}> = ({ id, account, size = 'normal', clickToProfile, onAddressClick, onClick, metadata }) => {
+  const { indexerMetadata, loading } = useIndexerMetadata(id, {
+    immediate: metadata ? false : true,
+  });
   const navigate = useNavigate();
 
   return (

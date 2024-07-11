@@ -23,7 +23,8 @@
 
 .stakeInfo {
   display: flex;
-  gap: 53px;
+  gap: 12px;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {
