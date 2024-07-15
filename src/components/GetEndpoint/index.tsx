@@ -18,6 +18,7 @@ import { Modal, Typography } from '@subql/components';
 import { parseError } from '@utils';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
+import { isString } from 'lodash-es';
 
 import styles from './index.module.less';
 
@@ -29,7 +30,12 @@ interface IProps {
 export const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
 
 const sponsoredProjects: {
-  [key: string]: string;
+  [key: string]:
+    | string
+    | {
+        http: string;
+        ws: string;
+      };
 } = {
   '0x03': `${proxyGateway}/rpc/eth`,
   '0x04': `${proxyGateway}/rpc/eth`,
@@ -41,6 +47,14 @@ const sponsoredProjects: {
   '0x25': `${proxyGateway}/rpc/polygon`,
   '0x26': `${proxyGateway}/rpc/ethereum-sepolia`,
   '0x27': `${proxyGateway}/rpc/ethereum-sepolia`,
+  '0x30': {
+    http: `https://polkadot.rpc.subquery.network/public`,
+    ws: `wss://polkadot.rpc.subquery.network/public/ws`,
+  },
+  '0x31': {
+    http: `https://kusama.rpc.subquery.network/public`,
+    ws: `wss://kusama.rpc.subquery.network/public/ws`,
+  },
 };
 
 export const specialApiKeyName = 'Get Endpoint Api Key';
@@ -163,7 +177,9 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
     }
 
     if (currentStep === 'checkFree') {
-      navigator.clipboard.writeText(sponsoredProjects[project.id]);
+      const publicEndpoint = sponsoredProjects[project.id];
+      const copyEndpoint = isString(publicEndpoint) ? publicEndpoint : publicEndpoint?.ws;
+      navigator.clipboard.writeText(copyEndpoint);
       message.success('Copied!');
       setOpen(false);
       resetAllField();
@@ -188,61 +204,93 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           }}
         ></WalletRoute>
       );
-    const makeEndpointResult = (endpoint: string, isFree?: boolean) => (
-      <div className="col-flex" style={{ gap: 24 }}>
-        <Typography>
-          You can now connect to the {project.metadata.name} using the following endpoint and API key details below
-        </Typography>
-        {isFree ? (
-          <>
-            <Typography>
-              The creator of this project has sponsored a free public endpoint. This might be significantly rate limited
-              and have no performance or uptime guarantees.
-            </Typography>
-            <Typography>This endpoint is rate limited to 5 req/s with a daily limit of 5,000 requests.</Typography>
-            <Typography>
-              By using this free public endpoint, you agree to our{' '}
-              <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" type="info">
-                terms of service.
-              </Typography.Link>
-            </Typography>
-          </>
-        ) : (
-          <>
-            <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
-          </>
-        )}
-        <Input
-          value={endpoint}
-          size="large"
-          disabled
-          suffix={
-            <Copy
-              value={endpoint}
-              customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
-            ></Copy>
-          }
-        ></Input>
+    const makeEndpointResult = (endpoint: string | { http: string; ws: string }, isFree?: boolean) => {
+      const httpEndpoint = isString(endpoint) ? endpoint : endpoint?.http;
+      const wsEndpoint = isString(endpoint) ? '' : endpoint?.ws;
 
-        <div className="col-flex" style={{ gap: 8 }}>
-          <Typography variant="medium">Example CURL request</Typography>
+      return (
+        <div className="col-flex" style={{ gap: 24 }}>
+          <Typography>
+            You can now connect to the {project.metadata.name} using the following endpoint and API key details below
+          </Typography>
+          {isFree ? (
+            <>
+              <Typography>
+                The creator of this project has sponsored a free public endpoint. This might be significantly rate
+                limited and have no performance or uptime guarantees.
+              </Typography>
+              <Typography>This endpoint is rate limited to 5 req/s with a daily limit of 5,000 requests.</Typography>
+              <Typography>
+                By using this free public endpoint, you agree to our{' '}
+                <Typography.Link href="https://subquery.foundation/public-rpc-terms" target="_blank" type="info">
+                  terms of service.
+                </Typography.Link>
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
+            </>
+          )}
 
-          <Input
-            value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${endpoint}'
+          {wsEndpoint && (
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Typography variant="medium">Websocket Endpoint</Typography>
+              <Input
+                value={wsEndpoint}
+                size="large"
+                disabled
+                suffix={
+                  <Copy
+                    value={wsEndpoint}
+                    customIcon={
+                      <AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />
+                    }
+                  ></Copy>
+                }
+              ></Input>
+            </div>
+          )}
+
+          {httpEndpoint && (
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Typography variant="medium">HTTP Endpoint</Typography>
+              <Input
+                value={httpEndpoint}
+                size="large"
+                disabled
+                suffix={
+                  <Copy
+                    value={httpEndpoint}
+                    customIcon={
+                      <AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />
+                    }
+                  ></Copy>
+                }
+              ></Input>
+            </div>
+          )}
+
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography variant="medium">Example CURL request</Typography>
+
+            <Input
+              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${httpEndpoint}'
       `}
-            size="large"
-            disabled
-            suffix={
-              <Copy
-                value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${endpoint}'
+              size="large"
+              disabled
+              suffix={
+                <Copy
+                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${httpEndpoint}'
             `}
-                customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
-              ></Copy>
-            }
-          ></Input>
+                  customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
+                ></Copy>
+              }
+            ></Input>
+          </div>
         </div>
-      </div>
-    );
+      );
+    };
     return {
       select: (
         <div className="col-flex" style={{ gap: 24 }}>
