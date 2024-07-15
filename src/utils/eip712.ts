@@ -44,7 +44,7 @@ const IndexerMessageType = [
 ];
 
 export const domain = {
-  name: 'Subquery',
+  name: 'SubQuery',
   chainId: defaultChainId,
 };
 

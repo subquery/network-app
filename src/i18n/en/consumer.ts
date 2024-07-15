@@ -108,7 +108,7 @@ const translation = {
     own: 'Created by you',
     flexPlan: 'Flex Plan',
     flexPlanDesc:
-      'For provide a better experience, Subquery will pick the optimal Node Operator for your Flex Plan based on a combination of price and historical performance.',
+      'For provide a better experience, SubQuery will pick the optimal Node Operator for your Flex Plan based on a combination of price and historical performance.',
     deposit: 'Deposit',
     createFlexPlan: 'Create Flex Plan',
   },

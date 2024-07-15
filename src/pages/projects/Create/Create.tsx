@@ -104,7 +104,7 @@ const Create: React.FC = () => {
                   2: 'Dictionary',
                   3: 'Subgraph',
                 }[project.type]
-              } project has been successfully published, you are able to view it in the Subquery explorer, and indexers will be able to index it.`}
+              } project has been successfully published, you are able to view it in the SubQuery explorer, and indexers will be able to index it.`}
               extra={[
                 <Button
                   key="view-project"
