@@ -31,6 +31,8 @@ export interface UseSortedIndexerDeploymentsReturn extends Pick<DeploymentIndexe
   allocatedAmount?: string;
   lastEraAllocatedRewards?: string;
   lastEraBurnt?: string;
+  lastEraQueryRewards?: string;
+  totalRewards?: string;
 }
 
 // TODO: apply with query hook
@@ -49,6 +51,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     fetchPolicy: 'network-only',
   });
 
+  // TODO: migrate to network-query
   const lastEraAllocatedRewardsAndBurned = useQuery<{
     indexerAllocationRewards: {
       groupedAggregates: Array<{
@@ -77,6 +80,63 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
       variables: {
         indexerId: indexer || '',
         eraIdx: (currentEra.data?.index || 0) - 1,
+      },
+    },
+  );
+
+  const queryAndTotalRewardsSortByDeploymentIdAndEra = useQuery<{
+    indexerEraDeploymentRewards: {
+      nodes: Array<{
+        deploymentId: string;
+        totalRewards: string;
+        queryRewards: string;
+      }>;
+    };
+    totalRewardsOfDeployment: {
+      groupedAggregates: {
+        keys: string[];
+        sum: {
+          totalRewards: string;
+        };
+      }[];
+    };
+  }>(
+    gql`
+      query GetAllocationRewardsByDeploymentIdAndIndexerId(
+        $indexerId: String!
+        $deploymentId: [String!]
+        $eraIdx: Int!
+      ) {
+        indexerEraDeploymentRewards(
+          filter: {
+            indexerId: { equalTo: $indexerId }
+            deploymentId: { in: $deploymentId }
+            eraIdx: { equalTo: $eraIdx }
+          }
+        ) {
+          nodes {
+            deploymentId
+            queryRewards
+          }
+        }
+
+        totalRewardsOfDeployment: indexerEraDeploymentRewards(
+          filter: { indexerId: { equalTo: $indexerId }, deploymentId: { in: $deploymentId } }
+        ) {
+          groupedAggregates(groupBy: DEPLOYMENT_ID) {
+            keys
+            sum {
+              totalRewards
+            }
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        indexerId: indexer || '',
+        eraIdx: (currentEra.data?.index || 0) - 1,
+        deploymentId: indexerDeployments.data?.indexerDeployments?.nodes.map((i) => i?.deploymentId),
       },
     },
   );
@@ -140,6 +200,15 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
             return i?.keys?.[0] === deploymentId;
           },
         );
+        const queryRewards =
+          queryAndTotalRewardsSortByDeploymentIdAndEra.data?.indexerEraDeploymentRewards?.nodes?.find(
+            (i) => i.deploymentId === deploymentId,
+          );
+        const totalRewards =
+          queryAndTotalRewardsSortByDeploymentIdAndEra.data?.totalRewardsOfDeployment?.groupedAggregates?.find(
+            (i) => i?.keys?.[0] === deploymentId,
+          );
+
         const lastEraAllocatedRewards = allocationInfo?.sum?.reward?.toString();
         const lastEraBurnt = allocationInfo?.sum?.burnt?.toString();
 
@@ -162,10 +231,18 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
           lastEraBurnt,
           id: indexerDeployment?.id,
           deployment: indexerDeployment?.deployment || null,
+          lastEraQueryRewards: queryRewards?.queryRewards,
+          totalRewards: totalRewards?.sum.totalRewards,
         };
       }),
     );
-  }, [indexerDeployments.loading, proxyEndpoint, allocatedProjects.data, lastEraAllocatedRewardsAndBurned.data]);
+  }, [
+    indexerDeployments.loading,
+    proxyEndpoint,
+    allocatedProjects.data,
+    lastEraAllocatedRewardsAndBurned.data,
+    queryAndTotalRewardsSortByDeploymentIdAndEra.data,
+  ]);
 
   return {
     ...sortedIndexerDeployments,
