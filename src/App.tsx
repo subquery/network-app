@@ -44,7 +44,7 @@ const makeDebugInfo = (debugInfo: object) => {
 };
 
 const RenderRouter: React.FC = () => {
-  const { address, connector } = useAccount();
+  const { address, connector, isConnected } = useAccount();
   const { signer } = useEthersSigner();
   const provider = useEthersProviderWithPublic();
 
@@ -56,6 +56,7 @@ const RenderRouter: React.FC = () => {
         signerAddress: 'not collected',
         signerChainId: 'not collected',
         providerNetwork: provider._network.name,
+        isConnected: isConnected,
       });
 
       const signerAddress = await signer?.getAddress();
@@ -66,6 +67,7 @@ const RenderRouter: React.FC = () => {
         signerAddress,
         signerChainId,
         providerNetwork: provider._network.name,
+        isConnected: isConnected,
       });
     })();
   }, [address, connector, signer, provider]);
