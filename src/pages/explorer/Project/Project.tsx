@@ -132,7 +132,9 @@ const ProjectInner: React.FC = () => {
                         </Typography>
                       ),
                       onClick: () => {
-                        navigate('/explorer/home');
+                        navigate(
+                          `/explorer/home?category=${asyncProject.data?.type === ProjectType.RPC ? 'rpc' : 'subquery'}`,
+                        );
                       },
                     },
                     {
