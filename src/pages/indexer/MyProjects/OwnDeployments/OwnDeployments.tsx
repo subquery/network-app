@@ -198,6 +198,21 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
     },
     {
       width: 230,
+      title: <TableTitle title="Total Rewards" />,
+      dataIndex: 'totalRewards',
+      render: (totalRewards) => {
+        return (
+          <Typography>
+            {formatNumber(formatSQT(totalRewards || '0'))} {TOKEN}
+          </Typography>
+        );
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.totalRewards || '0').comparedTo(b.totalRewards || '0');
+      },
+    },
+    {
+      width: 230,
       title: <TableTitle title="Allocated amount" />,
       dataIndex: 'allocatedAmount',
       render: (allocatedAmount: string) => {
@@ -226,6 +241,22 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
         return BigNumberJs(a.lastEraAllocatedRewards || '0').comparedTo(b.lastEraAllocatedRewards || '0');
       },
     },
+    {
+      width: 230,
+      title: <TableTitle title="LAST ERA QUERY REWARDS" />,
+      dataIndex: 'lastEraQueryRewards',
+      render: (lastEraQueryRewards) => {
+        return (
+          <Typography>
+            {formatNumber(formatSQT(lastEraQueryRewards || '0'))} {TOKEN}
+          </Typography>
+        );
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.lastEraQueryRewards || '0').comparedTo(b.lastEraQueryRewards || '0');
+      },
+    },
+
     {
       width: 230,
       title: <TableTitle title="LAST ERA BURNED REWARDS" />,
@@ -683,7 +714,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     dataSource={indexerDeployments.loading ? previousSortedData : sortedData}
                     rowKey={'deploymentId'}
                     pagination={false}
-                    scroll={width <= 1800 ? { x: 1800 } : undefined}
+                    scroll={width <= 2260 ? { x: 2260 } : undefined}
                     loading={indexerDeployments.loading}
                   />
                 )}

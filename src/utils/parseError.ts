@@ -157,6 +157,10 @@ export const isNeedSignerToDoTransaction = (msg: Error | string | undefined): bo
     return false;
   }
 
+  if (msg.toString().includes('sending a transaction requires a signer')) {
+    return true;
+  }
+
   return false;
 };
 
