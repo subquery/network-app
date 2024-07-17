@@ -32,7 +32,9 @@ export const APYTooltipContent: React.FC<Props> = ({ currentEra, calculationDesc
 export const APYTooltip: React.FC<Props> = ({ currentEra, calculationDescription }) => {
   return (
     <Tooltip title={<APYTooltipContent currentEra={currentEra} calculationDescription={calculationDescription} />}>
-      <AiOutlineInfoCircle style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}></AiOutlineInfoCircle>
+      <AiOutlineInfoCircle
+        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)', flexShrink: 0 }}
+      ></AiOutlineInfoCircle>
     </Tooltip>
   );
 };

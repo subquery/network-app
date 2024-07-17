@@ -122,6 +122,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
   const columns: TableProps<UseSortedIndexerDeploymentsReturn & { deploymentApy: BigNumberJs }>['columns'] = [
     {
+      width: 200,
       title: 'Project',
       dataIndex: 'deploymentId',
       render: (deploymentId: string, deployment) => (
@@ -138,6 +139,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
+      width: 150,
       title: <TableTitle title={t('general.status')} />,
       dataIndex: 'indexingProgress',
       render: (indexingProgress: number, deployment) => {
@@ -171,6 +173,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
+      width: 150,
       title: (
         <Typography
           weight={600}
@@ -188,7 +191,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           />
         </Typography>
       ),
-      width: 230,
       dataIndex: 'deploymentApy',
       render: (deploymentApy) => {
         return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
@@ -198,7 +200,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      width: 230,
+      width: 150,
       title: <TableTitle title="Total Rewards" />,
       dataIndex: 'totalRewards',
       render: (totalRewards) => {
@@ -213,7 +215,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      width: 230,
+      width: 150,
       title: <TableTitle title="Allocated amount" />,
       dataIndex: 'allocatedAmount',
       render: (allocatedAmount: string) => {
@@ -228,7 +230,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      width: 230,
+      width: 150,
       title: <TableTitle title="LAST ERA ALLOCATION REWARDS" />,
       dataIndex: 'lastEraAllocatedRewards',
       render: (lastEraAllocatedRewards) => {
@@ -243,7 +245,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
-      width: 230,
+      width: 150,
       title: <TableTitle title="LAST ERA QUERY REWARDS" />,
       dataIndex: 'lastEraQueryRewards',
       render: (lastEraQueryRewards) => {
@@ -259,7 +261,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
     },
 
     {
-      width: 230,
+      width: 150,
       title: <TableTitle title="LAST ERA BURNED REWARDS" />,
       dataIndex: 'lastEraBurnt',
       render: (lastEraBurnt, deployment) => {
@@ -284,6 +286,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
     },
     {
+      width: 150,
       title: <TableTitle title={t('general.action')} />,
       dataIndex: 'status',
       fixed: 'right',
