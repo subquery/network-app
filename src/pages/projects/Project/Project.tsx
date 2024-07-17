@@ -209,7 +209,9 @@ const Project: React.FC = () => {
                         </Typography>
                       ),
                       onClick: () => {
-                        navigate('/projects');
+                        navigate(
+                          `/projects?category=${asyncProject.data?.type === ProjectType.RPC ? 'rpc' : 'subquery'}`,
+                        );
                       },
                     },
                     {
