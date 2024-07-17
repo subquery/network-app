@@ -15,7 +15,7 @@
     "lint": "eslint src/**/*.{ts,tsx} --fix"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.5",
+    "@ant-design/icons": "^5.3.7",
     "@apollo/client": "^3.8.10",
     "@eth-optimism/sdk": "^3.2.0",
     "@polkadot/util": "^7.8.2",

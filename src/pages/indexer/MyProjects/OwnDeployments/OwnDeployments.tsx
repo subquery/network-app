@@ -32,6 +32,7 @@ import {
 import { formatNumber, numToHex, renderAsync, TOKEN, truncateToDecimalPlace } from '../../../../utils';
 import { ROUTES } from '../../../../utils';
 import { formatEther } from '../../../../utils/numberFormatters';
+import AutoReduceAllocation from '../AutoReduceOverAllocation';
 import styles from './OwnDeployments.module.css';
 
 const { PROJECT_NAV } = ROUTES;
@@ -706,6 +707,8 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     </div>
                   </SubqlCard>
                 </div>
+
+                <AutoReduceAllocation></AutoReduceAllocation>
                 {!indexerDeployments.loading && (!indexerDepolymentsData || indexerDepolymentsData.length === 0) ? (
                   <>{emptyList ?? <Typography> {t('projects.nonDeployments')} </Typography>}</>
                 ) : (
