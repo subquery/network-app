@@ -38,12 +38,10 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
 
   if (close) return null;
 
-  console.warn(isOpen.data);
-
   return (
     <div
       style={{
-        display: isOpen.data === 'Unknown' ? 'none' : 'flex',
+        display: isOpen.data === 'Unknown' || isOpen.data === undefined ? 'none' : 'flex',
       }}
       className={clsx(styles.autoReduceAllocation, isOpen.data === true ? styles.enabled : styles.disabled)}
     >

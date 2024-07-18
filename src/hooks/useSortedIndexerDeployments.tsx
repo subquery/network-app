@@ -10,16 +10,20 @@ import {
   useGetIndexerAllocationProjectsQuery,
 } from '@subql/react-hooks';
 
-import { useProjectMetadata } from '../containers';
+import { TOP_100_INDEXERS, useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
 import { AsyncData, getDeploymentMetadata } from '../utils';
 import { useAsyncMemo } from './useAsyncMemo';
 import { useEra } from './useEra';
 import { useIndexerMetadata } from './useIndexerMetadata';
 
+export enum DeploymentStatus {
+  Unhealthy = 'Unhealthy',
+}
+
 export interface UseSortedIndexerDeploymentsReturn extends Pick<DeploymentIndexer, 'deployment'> {
   id?: string;
-  status: ServiceStatus | undefined;
+  status: DeploymentStatus | ServiceStatus | undefined;
   indexingErr?: string;
   deploymentId?: string;
   projectId?: string;
@@ -33,6 +37,7 @@ export interface UseSortedIndexerDeploymentsReturn extends Pick<DeploymentIndexe
   lastEraBurnt?: string;
   lastEraQueryRewards?: string;
   totalRewards?: string;
+  unhealthyReason?: string;
 }
 
 // TODO: apply with query hook
@@ -141,6 +146,32 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     },
   );
 
+  const unhealthyProjects = useQuery<{
+    getIndexerServicesStatuses: { endpointErrorMsg: string; deploymentId: string }[];
+  }>(
+    gql`
+      query GetIndexerServicesStatuses($indexer: String!, $deploymentIds: [String!]) {
+        getIndexerServicesStatuses(
+          indexer: $indexer
+          filter: { allocationAmount: { greaterThan: "0" }, endpointSuccess: { equalTo: false } }
+          deploymentIds: $deploymentIds
+        ) {
+          endpointErrorMsg
+          deploymentId
+        }
+      }
+    `,
+    {
+      variables: {
+        indexer,
+        deploymentIds: indexerDeployments.data?.indexerDeployments?.nodes.map((i) => i?.deploymentId),
+      },
+      context: {
+        clientName: TOP_100_INDEXERS,
+      },
+    },
+  );
+
   const { indexerMetadata } = useIndexerMetadata(indexer);
   const proxyEndpoint = indexerMetadata?.url;
 
@@ -209,13 +240,18 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
             (i) => i?.keys?.[0] === deploymentId,
           );
 
+        const ifThisDeploymentIsUnhealthy = unhealthyProjects.data?.getIndexerServicesStatuses?.find(
+          (i) => i.deploymentId === deploymentId,
+        );
+
         const lastEraAllocatedRewards = allocationInfo?.sum?.reward?.toString();
         const lastEraBurnt = allocationInfo?.sum?.burnt?.toString();
 
         const projectId = indexerDeployment?.deployment?.project?.id;
 
         return {
-          status: indexerDeployment?.status,
+          status: ifThisDeploymentIsUnhealthy ? DeploymentStatus.Unhealthy : indexerDeployment?.status,
+          unhealthyReason: ifThisDeploymentIsUnhealthy?.endpointErrorMsg,
           indexingErr,
           indexingProgress: sortedIndexingProcess,
           lastHeight,
@@ -242,6 +278,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     allocatedProjects.data,
     lastEraAllocatedRewardsAndBurned.data,
     queryAndTotalRewardsSortByDeploymentIdAndEra.data,
+    unhealthyProjects.data,
   ]);
 
   return {
