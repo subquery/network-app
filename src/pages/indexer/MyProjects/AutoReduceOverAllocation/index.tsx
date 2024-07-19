@@ -20,7 +20,7 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
   const isOpen = useAsyncMemo(async () => {
     if (!indexerMetadata.indexerMetadata.url) return 'Unknown';
     try {
-      const result = await fetch(indexerMetadata.indexerMetadata.url);
+      const result = await fetch(`${indexerMetadata.indexerMetadata.url}/healthy`);
       const data: { autoReduceAllocation?: boolean } = await result.json();
 
       if (data.autoReduceAllocation) {
@@ -38,12 +38,10 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
 
   if (close) return null;
 
-  console.warn(isOpen.data);
-
   return (
     <div
       style={{
-        display: isOpen.data === 'Unknown' ? 'none' : 'flex',
+        display: isOpen.data === 'Unknown' || isOpen.data === undefined ? 'none' : 'flex',
       }}
       className={clsx(styles.autoReduceAllocation, isOpen.data === true ? styles.enabled : styles.disabled)}
     >

@@ -172,48 +172,35 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
         );
       },
     },
-    {
-      width: 150,
-      title: (
-        <Typography
-          weight={600}
-          variant="small"
-          type="secondary"
-          className="flex-center"
-          style={{ textTransform: 'uppercase' }}
-        >
-          Previous Estimated APY
-          <APYTooltip
-            currentEra={currentEra?.data?.index}
-            calculationDescription={
-              'This is the estimated APY you received as a Node Operator from this project from the last Era'
-            }
-          />
-        </Typography>
-      ),
-      dataIndex: 'deploymentApy',
-      render: (deploymentApy) => {
-        return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
-      },
-      sorter: (a, b) => {
-        return BigNumberJs(a.deploymentApy || '0').comparedTo(b.deploymentApy || '0');
-      },
-    },
-    {
-      width: 150,
-      title: <TableTitle title="Total Rewards" />,
-      dataIndex: 'totalRewards',
-      render: (totalRewards) => {
-        return (
-          <Typography>
-            {formatNumber(formatSQT(totalRewards || '0'))} {TOKEN}
-          </Typography>
-        );
-      },
-      sorter: (a, b) => {
-        return BigNumberJs(a.totalRewards || '0').comparedTo(b.totalRewards || '0');
-      },
-    },
+    // hide it for now
+    // TODO:
+    // {
+    //   width: 150,
+    //   title: (
+    //     <Typography
+    //       weight={600}
+    //       variant="small"
+    //       type="secondary"
+    //       className="flex-center"
+    //       style={{ textTransform: 'uppercase' }}
+    //     >
+    //       Previous Estimated APY
+    //       <APYTooltip
+    //         currentEra={currentEra?.data?.index}
+    //         calculationDescription={
+    //           'This is the estimated APY you received as a Node Operator from this project from the last Era'
+    //         }
+    //       />
+    //     </Typography>
+    //   ),
+    //   dataIndex: 'deploymentApy',
+    //   render: (deploymentApy) => {
+    //     return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
+    //   },
+    //   sorter: (a, b) => {
+    //     return BigNumberJs(a.deploymentApy || '0').comparedTo(b.deploymentApy || '0');
+    //   },
+    // },
     {
       width: 150,
       title: <TableTitle title="Allocated amount" />,
@@ -259,7 +246,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
         return BigNumberJs(a.lastEraQueryRewards || '0').comparedTo(b.lastEraQueryRewards || '0');
       },
     },
-
     {
       width: 150,
       title: <TableTitle title="LAST ERA BURNED REWARDS" />,
@@ -283,6 +269,21 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       },
       sorter: (a, b) => {
         return BigNumberJs(a.lastEraBurnt || '0').comparedTo(b.lastEraBurnt || '0');
+      },
+    },
+    {
+      width: 150,
+      title: <TableTitle title="Total Rewards" />,
+      dataIndex: 'totalRewards',
+      render: (totalRewards) => {
+        return (
+          <Typography>
+            {formatNumber(formatSQT(totalRewards || '0'))} {TOKEN}
+          </Typography>
+        );
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.totalRewards || '0').comparedTo(b.totalRewards || '0');
       },
     },
     {
