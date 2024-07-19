@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
 
   return (
     <div className={styles.header}>
-      <Typography style={{ width: 'max-content' }} variant="h3">
+      <Typography style={{ width: '100%' }} variant="h3">
         {t('explorer.home.header')}
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

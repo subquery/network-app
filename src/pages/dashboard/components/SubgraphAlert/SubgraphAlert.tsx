@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC } from 'react';
+import { useIsMobile } from '@hooks/useIsMobile';
 import { Typography } from '@subql/components';
 import { Alert, Button } from 'antd';
 
 const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
+  const isMobile = useIsMobile();
   return (
     <div style={{ position: 'relative' }}>
       <Alert
@@ -13,14 +15,19 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
           borderRadius: 0,
           background: 'var(--sq-blue600)',
           border: 'none',
-          padding: '14px 80px',
+          padding: isMobile ? '20px' : '14px 80px',
           margin: center ? '0 auto' : '',
-          width: center ? '1440px' : '100%',
+          width: !isMobile && center ? '1440px' : '100%',
           position: 'relative',
           zIndex: 1,
         }}
         message={
-          <div className="flex">
+          <div
+            className={isMobile ? 'col-flex' : 'flex'}
+            style={{
+              gap: isMobile ? '10px' : '0',
+            }}
+          >
             <div className="col-flex" style={{ gap: 8 }}>
               <Typography variant="large" style={{ color: '#fff', display: 'flex', gap: 8 }} weight={600}>
                 <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +71,7 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
                 Join the Summer Delegation Frenzy today to earn extra rewards!
               </Typography>
               <Typography variant="medium" style={{ color: '#fff' }}>
-                Delegate in the network and then register today. The more points you earn, the more rewards you'll
+                Delegate in the network and then register today. The more points you earn, the more rewards you&apos;ll
                 receive from the SQT prize pool!
               </Typography>
             </div>
