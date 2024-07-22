@@ -146,11 +146,19 @@ export const ConnectedIndexer: React.FC<{
   });
   const navigate = useNavigate();
 
+  const name = useMemo(() => {
+    return indexerMetadata?.name || metadata?.name;
+  }, [indexerMetadata, metadata]);
+
+  const image = useMemo(() => {
+    return indexerMetadata?.image || metadata?.image;
+  }, [indexerMetadata, metadata]);
+
   return (
     <IndexerName
       size={size}
-      name={loading ? undefined : id === account ? 'You' : indexerMetadata?.name}
-      image={indexerMetadata?.image}
+      name={loading ? undefined : id === account ? 'You' : name}
+      image={image}
       address={id}
       onAddressClick={onAddressClick}
       onClick={
