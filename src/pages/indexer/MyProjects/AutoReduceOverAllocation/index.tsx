@@ -31,7 +31,7 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
       }
 
       return 'Unknown';
-    } finally {
+    } catch (e) {
       return 'Unknown';
     }
   }, [indexerMetadata.indexerMetadata.url]);
@@ -82,7 +82,7 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
         )}
         <Typography type="secondary" variant="medium">
           {isOpen.data === true
-            ? 'Your have enabled the &quot;Auto Reduce Over Allocation&quot; feature, the system will automatically detect when your allocation amount exceeds your available stake.'
+            ? 'Your have enabled the "Auto Reduce Over Allocation" feature, the system will automatically detect when your allocation amount exceeds your available stake.'
             : ''}
 
           {isOpen.data === false
