@@ -23,15 +23,12 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
       const result = await fetch(`${indexerMetadata.indexerMetadata.url}/healthy`);
       const data: { autoReduceAllocation?: boolean } = await result.json();
 
-      if (data.autoReduceAllocation) {
-        if (data.autoReduceAllocation || data.autoReduceAllocation === 'true') {
-          return true;
-        }
-        return false;
+      if (Object.hasOwn(data, 'autoReduceAllocation')) {
+        return data.autoReduceAllocation;
       }
 
       return 'Unknown';
-    } finally {
+    } catch (e) {
       return 'Unknown';
     }
   }, [indexerMetadata.indexerMetadata.url]);
@@ -55,12 +52,13 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
 
         <span style={{ flex: 1 }}></span>
 
-        <Typography.Link
+        {/* TODO: fill the link */}
+        {/* <Typography.Link
           type={isOpen.data === true ? 'info' : isOpen.data === false ? 'danger' : 'info'}
           style={{ textDecoration: 'underline' }}
         >
           Learn More
-        </Typography.Link>
+        </Typography.Link> */}
         <IoClose
           style={{ color: 'var(--sq-gray500)', fontSize: 18, cursor: 'pointer' }}
           onClick={() => {
@@ -82,7 +80,7 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
         )}
         <Typography type="secondary" variant="medium">
           {isOpen.data === true
-            ? 'Your have enabled the &quot;Auto Reduce Over Allocation&quot; feature, the system will automatically detect when your allocation amount exceeds your available stake.'
+            ? 'Your have enabled the "Auto Reduce Over Allocation" feature, the system will automatically detect when your allocation amount exceeds your available stake.'
             : ''}
 
           {isOpen.data === false
