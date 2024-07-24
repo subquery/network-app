@@ -52,13 +52,13 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
 
         <span style={{ flex: 1 }}></span>
 
-        {/* TODO: fill the link */}
-        {/* <Typography.Link
+        <Typography.Link
           type={isOpen.data === true ? 'info' : isOpen.data === false ? 'danger' : 'info'}
           style={{ textDecoration: 'underline' }}
+          href="https://academy.subquery.network/subquery_network/node_operators/stake.html"
         >
           Learn More
-        </Typography.Link> */}
+        </Typography.Link>
         <IoClose
           style={{ color: 'var(--sq-gray500)', fontSize: 18, cursor: 'pointer' }}
           onClick={() => {
