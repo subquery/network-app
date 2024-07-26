@@ -23,6 +23,7 @@ import { APYTooltip, DeploymentInfo, Status } from '../../../../components';
 import { Description } from '../../../../components/Description/Description';
 import { deploymentStatus } from '../../../../components/Status/Status';
 import {
+  DeploymentStatus,
   useEra,
   useIsIndexer,
   useSortedIndexer,
@@ -107,15 +108,20 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
   }, [runnerAllocation.data?.used, runnerAllocation.data?.total]);
 
   const sortedData = React.useMemo(() => {
-    return indexerDeployments.data?.map((i) => {
-      const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
-        (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
-      );
-      return {
-        ...i,
-        deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
-      };
-    });
+    return indexerDeployments.data
+      ?.map((i) => {
+        const find = indexerDeploymentApy.data?.eraIndexerDeploymentApies?.nodes?.find(
+          (item: { apy: string; deploymentId: string }) => item.deploymentId === i.deploymentId,
+        );
+        return {
+          ...i,
+          deploymentApy: BigNumberJs(formatEther(find?.apy || '0')).multipliedBy(100),
+        };
+      })
+      .sort((a, b) => {
+        if (a.status === DeploymentStatus.Unhealthy) return -1;
+        return 1;
+      });
   }, [indexerDeployments.data, indexerDeploymentApy.data]);
 
   const previousSortedData = usePrevious(sortedData);
@@ -147,6 +153,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
         const sortedStatus = deployment.status ? getDeploymentStatus(deployment.status, false) : 'NOTINDEXING';
 
         const { indexingErr } = deployment;
+
         if (indexingErr)
           return (
             <div>
@@ -155,21 +162,27 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           );
         return (
           <div>
-            <div>
-              <Typography variant="medium" style={{ marginRight: 8 }}>
-                {truncateToDecimalPlace(indexingProgress * 100, 2)} %
-              </Typography>
-              <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />
-            </div>
-            {deployment.lastHeight ? (
-              <Typography type="secondary" variant="small">
-                Current blocks: #{deployment.lastHeight}
-              </Typography>
-            ) : (
-              ''
-            )}
+            <Tooltip title={deployment.unhealthyReason}>
+              <div>
+                <Typography variant="medium" style={{ marginRight: 8 }}>
+                  {truncateToDecimalPlace(indexingProgress * 100, 2)} %
+                </Typography>
+                <Status text={sortedStatus} color={deploymentStatus[sortedStatus]} />
+              </div>
+              {deployment.lastHeight ? (
+                <Typography type="secondary" variant="small">
+                  Current blocks: #{deployment.lastHeight}
+                </Typography>
+              ) : (
+                ''
+              )}
+            </Tooltip>
           </div>
         );
+      },
+      sorter: (a, b) => {
+        if (a.status === DeploymentStatus.Unhealthy) return -1;
+        return 1;
       },
     },
     // hide it for now
