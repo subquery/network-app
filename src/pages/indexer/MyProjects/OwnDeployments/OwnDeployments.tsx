@@ -185,35 +185,33 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
         return 1;
       },
     },
-    // hide it for now
-    // TODO:
-    // {
-    //   width: 150,
-    //   title: (
-    //     <Typography
-    //       weight={600}
-    //       variant="small"
-    //       type="secondary"
-    //       className="flex-center"
-    //       style={{ textTransform: 'uppercase' }}
-    //     >
-    //       Previous Estimated APY
-    //       <APYTooltip
-    //         currentEra={currentEra?.data?.index}
-    //         calculationDescription={
-    //           'This is the estimated APY you received as a Node Operator from this project from the last Era'
-    //         }
-    //       />
-    //     </Typography>
-    //   ),
-    //   dataIndex: 'deploymentApy',
-    //   render: (deploymentApy) => {
-    //     return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
-    //   },
-    //   sorter: (a, b) => {
-    //     return BigNumberJs(a.deploymentApy || '0').comparedTo(b.deploymentApy || '0');
-    //   },
-    // },
+    {
+      width: 150,
+      title: (
+        <Typography
+          weight={600}
+          variant="small"
+          type="secondary"
+          className="flex-center"
+          style={{ textTransform: 'uppercase' }}
+        >
+          Previous Estimated APY
+          <APYTooltip
+            currentEra={currentEra?.data?.index}
+            calculationDescription={
+              'This is the estimated APY you received as a Node Operator from this project from the last Era'
+            }
+          />
+        </Typography>
+      ),
+      dataIndex: 'deploymentApy',
+      render: (deploymentApy) => {
+        return <Typography>{deploymentApy.toFixed(2)} %</Typography>;
+      },
+      sorter: (a, b) => {
+        return BigNumberJs(a.deploymentApy || '0').comparedTo(b.deploymentApy || '0');
+      },
+    },
     {
       width: 150,
       title: <TableTitle title="Allocated amount" />,
