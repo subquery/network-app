@@ -6,8 +6,8 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
 import { IndexerMetadata } from '@subql/network-clients';
-import { idleCallback } from '@utils/idleCallback';
-import { limitContract } from '@utils/limitation';
+import { idleCallback, idleQueue } from '@utils/idleCallback';
+import { limitContract, limitQueue } from '@utils/limitation';
 import { message } from 'antd';
 import { toSvg } from 'jdenticon';
 
@@ -67,7 +67,7 @@ export const IndexerName: React.FC<Props> = ({
       return;
     }
 
-    idleCallback(fetchWeb3);
+    limitQueue.add(() => fetchWeb3());
   }, [fetchWeb3NameFromCache]);
 
   useEffect(() => {
