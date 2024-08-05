@@ -352,7 +352,7 @@ export const useMakeNotification = () => {
             key: NotificationKey.OutdatedAllocationV2,
             level: 'critical',
             message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
-            title: 'Outdated Allocation Projects',
+            title: 'Outdated Project Allocation',
             createdAt: Date.now(),
             canBeDismissed: true,
             dismissTime: defaultDismissTime,
