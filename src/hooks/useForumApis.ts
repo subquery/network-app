@@ -9,7 +9,7 @@ const instance = axios.create({
 
 export const useForumApis = () => {
   const getLatestApi = async () => {
-    const res = await instance.get<IGetLatestTopics>('/c/kepler-network/16/l/latest.json', {
+    const res = await instance.get<IGetLatestTopics>('/c/subquery-mainnet/17/l/latest.json', {
       params: {
         filter: 'default',
         ascending: 'false',
@@ -32,6 +32,8 @@ export interface IGetLatestTopics {
   topic_list: {
     topics: {
       last_posted_at: string;
+      created_at: string;
+
       title: string;
       slug: string;
     }[];

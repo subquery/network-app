@@ -57,7 +57,9 @@ export const ForumCard = () => {
                       {topic.title}
                     </Typography>
                     <Typography variant="small" type="secondary" style={{ marginTop: 8, marginBottom: 0 }}>
-                      {dayjs(topic.last_posted_at).utc(true).fromNow()}
+                      {dayjs(topic.last_posted_at || topic.created_at)
+                        .utc(true)
+                        .fromNow()}
                     </Typography>
                   </Link>
                 );

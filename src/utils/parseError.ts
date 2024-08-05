@@ -72,11 +72,14 @@ function logError(msg: Error | string | Record<string, unknown>): void {
 
 export const isRPCError = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
+
   if (isString(msg)) {
+    const stringMsg = msg.toLowerCase();
     if (
-      msg.includes?.("Non-200 status code: '429'") ||
-      msg?.includes?.('event=') ||
-      msg?.includes?.('Transaction reverted without a reason string')
+      stringMsg.includes?.("non-200 status code: '429'") ||
+      stringMsg?.includes?.('event=') ||
+      stringMsg?.includes?.('transaction reverted without a reason string') ||
+      stringMsg.includes?.('network error')
     ) {
       return true;
     }
@@ -85,14 +88,32 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
   }
 
   if (Object.hasOwn(msg, 'message') || msg instanceof Error) {
+    const stringMsg = msg?.message.toLowerCase();
     if (
-      msg?.message?.includes?.("Non-200 status code: '429'") ||
-      msg?.message?.includes?.('event=') ||
-      msg?.message?.includes?.('Transaction reverted without a reason string')
+      stringMsg?.includes?.("non-200 status code: '429'") ||
+      stringMsg?.includes?.('event=') ||
+      stringMsg?.includes?.('transaction reverted without a reason string') ||
+      stringMsg.includes?.('network error')
     ) {
       return true;
     }
     return false;
+  }
+
+  try {
+    // @ts-ignore
+    const stringMsg = msg.toString().toLowerCase();
+
+    if (
+      stringMsg.includes("non-200 status code: '429'") ||
+      stringMsg.includes?.('event=') ||
+      stringMsg.includes?.('transaction reverted without a reason string') ||
+      stringMsg.includes?.('network error')
+    ) {
+      return true;
+    }
+  } catch (e) {
+    // ignore
   }
 
   return false;
@@ -257,7 +278,8 @@ export function parseError(
   };
 
   const RpcUnavailableMsg = () => {
-    if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable, please try again or change a RPC Endpoint.';
+    if (isRPCError(error) || isRPCError(rawErrorMsg))
+      return 'Unfortunately, RPC Service Unavailable, please try again or change a RPC Endpoint.';
   };
 
   const msg =
