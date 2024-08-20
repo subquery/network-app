@@ -6,7 +6,6 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
 import { IndexerMetadata } from '@subql/network-clients';
-import { idleCallback, idleQueue } from '@utils/idleCallback';
 import { limitContract, limitQueue } from '@utils/limitation';
 import { message } from 'antd';
 import { toSvg } from 'jdenticon';

@@ -120,7 +120,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       afterDelegatedAmount = delegate.after ?? 0;
     }
     return afterDelegatedAmount;
-  }, [currentEra, delegation, delegationDataLazy.data?.delegation?.amount]);
+  }, [currentEra.data?.index, delegation, delegationDataLazy.data?.delegation?.amount]);
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
@@ -135,7 +135,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     if (indexerCapacity.lt(0)) return BigNumber.from(0);
 
     return indexerCapacity;
-  }, [indexer, indexerCapacityFromContract, currentEra]);
+  }, [indexer, indexerCapacityFromContract, currentEra.data?.index]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');

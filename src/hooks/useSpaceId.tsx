@@ -74,12 +74,6 @@ export function useWeb3Name(address?: string): {
           rpcUrl: rpcARBRandom,
         });
       }
-      // if there is no arb domain name for that address then check for any other tld for that address
-      if (domainName === null) {
-        domainName = await web3Name.getDomainName({
-          address: customAddress || address || '',
-        });
-      }
 
       const res = {
         expired: domainName ? Date.now() + 1000 * 60 * 60 * 24 * 30 : Date.now() + 1000 * 60 * 60 * 24, // expect no expired if have web3Name.
