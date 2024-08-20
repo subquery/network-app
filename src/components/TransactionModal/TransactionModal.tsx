@@ -202,7 +202,9 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
         openNotification({
           type: NotificationType.ERROR,
           title: 'Failure',
-          description: `${text.failureText ?? 'Error'}: ${parseError(error)}`,
+          description: `${text.failureText ?? 'Error'}: ${parseError(error, {
+            defaultGeneralMsg: t('general.rpcUnavailable'),
+          })}`,
           duration: 5,
         });
         setFailureModalText(parseError(error));
@@ -283,4 +285,5 @@ const TransactionModal = React.forwardRef<TransactionModalRef, TransactionModalP
   },
 );
 
+TransactionModal.displayName = 'TransactionModal';
 export default TransactionModal;

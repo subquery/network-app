@@ -48,6 +48,8 @@ const translation = {
     cancelCommission: 'Cancel Commission Withdrawal',
     cancelCommissionTips:
       'If you cancel the undelegation process, your SQT will be returned to delegation and you will continue to earn delegation rewards.',
+    rpcUnavailable:
+      'Oops! Looks like the RPC service is temporarily unavaiable, please try again or change a RPC Endpoint.',
   },
   status: {
     success: 'Success!',
