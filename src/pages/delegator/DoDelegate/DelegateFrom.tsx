@@ -502,7 +502,7 @@ export const DelegateForm: React.FC<FormProps> = ({
                   disabled={isSubmitting}
                   options={delegationOptions}
                   showSearch
-                  searchValue={allIndexerPagination.current.searchKeyword}
+                  searchValue={styleMode === 'reDelegate' ? allIndexerPagination.current.searchKeyword : undefined}
                   autoClearSearchValue={false}
                   filterOption={
                     styleMode === 'normal'

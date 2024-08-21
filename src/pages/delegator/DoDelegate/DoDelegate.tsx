@@ -18,18 +18,19 @@ import { idleText } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra, useIndexerMetadata } from '@hooks';
-import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
 import { useWeb3Name } from '@hooks/useSpaceId';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { openNotification, Spinner, Typography } from '@subql/components';
 import { IndexerFieldsFragment } from '@subql/network-query';
-import { useAsyncMemo, useGetDelegationLazyQuery } from '@subql/react-hooks';
+import { mergeAsync, useAsyncMemo, useGetDelegationLazyQuery } from '@subql/react-hooks';
 import { convertStringToNumber, renderAsync } from '@utils';
 import { Tooltip } from 'antd/lib';
 import assert from 'assert';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
@@ -78,6 +79,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { indexerMetadata: indexerMetadataIpfs, refresh } = useIndexerMetadata(indexerAddress, {
     immediate: false,
   });
+  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress, indexer);
   const { fetchWeb3NameFromCache } = useWeb3Name();
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
     useMakeNotification();
@@ -122,15 +124,18 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
+    const fetchedCapacity = indexerCapacityFromContract.data;
 
-    if (indexer?.capacity) {
+    if (fetchedCapacity) {
+      indexerCapacity = fetchedCapacity.after ?? BigNumber.from(0);
+    } else if (indexer?.capacity) {
       indexerCapacity = BigNumber.from(parseRawEraValue(indexer.capacity, currentEra.data?.index).after ?? 0);
     }
 
     if (indexerCapacity.lt(0)) return BigNumber.from(0);
 
     return indexerCapacity;
-  }, [indexer, currentEra.data?.index]);
+  }, [indexer, indexerCapacityFromContract, currentEra.data?.index]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
