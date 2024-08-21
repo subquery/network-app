@@ -88,6 +88,7 @@ export const Header: React.FC = () => {
   return (
     <div className={styles.header}>
       <SubqlHeader
+        customLogo={<img src="/static/logo.png" width="140px"></img>}
         closeDrawerAfterNavigate
         navigate={(link) => {
           navigate(link);
