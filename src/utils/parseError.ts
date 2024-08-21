@@ -4,6 +4,7 @@
 import { captureException } from '@sentry/react';
 import { openNotification } from '@subql/components';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
+import { t } from 'i18next';
 import { isObject, isString } from 'lodash-es';
 
 export const walletConnectionErrors = [
@@ -278,8 +279,7 @@ export function parseError(
   };
 
   const RpcUnavailableMsg = () => {
-    if (isRPCError(error) || isRPCError(rawErrorMsg))
-      return 'Unfortunately, RPC Service Unavailable, please try again or change a RPC Endpoint.';
+    if (isRPCError(error) || isRPCError(rawErrorMsg)) return t('general.rpcUnavailable');
   };
 
   const msg =

@@ -18,7 +18,7 @@ import { idleText } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra, useIndexerMetadata } from '@hooks';
-import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
@@ -30,7 +30,7 @@ import { mergeAsync, useAsyncMemo, useGetDelegationLazyQuery } from '@subql/reac
 import { convertStringToNumber, renderAsync } from '@utils';
 import { Tooltip } from 'antd/lib';
 import assert from 'assert';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
@@ -76,10 +76,10 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
-  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress, indexer);
   const { indexerMetadata: indexerMetadataIpfs, refresh } = useIndexerMetadata(indexerAddress, {
     immediate: false,
   });
+  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress, indexer);
   const { fetchWeb3NameFromCache } = useWeb3Name();
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
     useMakeNotification();
@@ -120,7 +120,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       afterDelegatedAmount = delegate.after ?? 0;
     }
     return afterDelegatedAmount;
-  }, [currentEra, delegation, delegationDataLazy.data?.delegation?.amount]);
+  }, [currentEra.data?.index, delegation, delegationDataLazy.data?.delegation?.amount]);
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
@@ -135,7 +135,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     if (indexerCapacity.lt(0)) return BigNumber.from(0);
 
     return indexerCapacity;
-  }, [indexer, indexerCapacityFromContract, currentEra]);
+  }, [indexer, indexerCapacityFromContract, currentEra.data?.index]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');

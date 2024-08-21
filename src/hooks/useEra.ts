@@ -1,10 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { bnToDate } from '@utils';
-import { limitContract, makeCacheKey } from '@utils/limitation';
-
-import { useWeb3Store } from 'src/stores';
+import { useMemo } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
+import dayjs from 'dayjs';
 
 import { useAsyncMemo } from './useAsyncMemo';
 
@@ -33,42 +32,54 @@ export function useEra(): {
   };
   refetch: () => void;
 } {
-  const { contracts } = useWeb3Store();
-
-  // TODO: refactor this variable.
-  const { refetch, ...currentEra } = useAsyncMemo(async () => {
-    if (!contracts) {
-      console.error('contracts not available');
-      return;
+  const [fetchEraInfomation] = useLazyQuery<{
+    eras: {
+      nodes: { eraPeriod: string; startTime: Date; id: string }[];
+    };
+  }>(gql`
+    query {
+      eras(orderBy: CREATED_BLOCK_DESC) {
+        nodes {
+          eraPeriod
+          startTime
+          id
+        }
+      }
     }
+  `);
 
-    const { eraManager } = contracts;
+  const { refetch, data, loading, error } = useAsyncMemo(async () => {
+    const res = await fetchEraInfomation();
 
-    const [period, index, startTime] = await Promise.all([
-      limitContract(() => eraManager.eraPeriod(), makeCacheKey('eraPeriod'), 0),
-      limitContract(() => eraManager.eraNumber(), makeCacheKey('eraNumber'), 0),
-      limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime'), 0),
-    ]);
+    const lastestEra = res?.data?.eras?.nodes?.[0];
 
-    let era: Era;
-    if (startTime && period && index) {
-      era = {
-        startTime: bnToDate(startTime),
-        estEndTime: bnToDate(startTime.add(period)),
-        period: period.toNumber(),
-        index: index.toNumber(),
-      };
-    } else {
-      era = {
-        startTime: new Date(),
-        estEndTime: new Date(),
-        period: 0,
-        index: 0,
+    if (lastestEra) {
+      const { startTime, eraPeriod: period, id: index } = lastestEra;
+      return {
+        startTime: dayjs.utc(startTime).local().toDate(),
+        estEndTime: dayjs.utc(startTime).add(Number(period), 'millisecond').toDate(),
+        period: Math.floor(Number(period) / 1000),
+        index: parseInt(index),
       };
     }
 
-    return era;
-  }, [contracts]);
+    return {
+      startTime: new Date(),
+      estEndTime: new Date(),
+      period: 0,
+      index: 0,
+    };
+  }, [fetchEraInfomation]);
+
+  // use memo to avoid re-render
+  // these are a historical reason, see the history of this file if want to know.
+  const currentEra = useMemo(() => {
+    return {
+      data,
+      loading,
+      error,
+    };
+  }, [data?.estEndTime, data?.index, data?.period, data?.startTime, loading, error]);
 
   return {
     currentEra,

@@ -5,6 +5,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import { ProjectCard } from '@components';
+import RpcError from '@components/RpcError';
 import { useProjectMetadata } from '@containers';
 import { PublishNewProjectModal } from '@pages/projects/Home/Home';
 import { SubqlCheckbox } from '@subql/components';
@@ -230,6 +231,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   }, [inSearchMode, loading, projects, onProjectClick]);
 
   const emptyResult = useMemo(() => {
+    if (error) return <RpcError></RpcError>;
     if (loading || topLoading) return '';
     if (inSearchMode && !projects.length)
       return (
@@ -244,7 +246,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
           <Typography>No projects</Typography>
         </div>
       );
-  }, [loading, inSearchMode, projects, topProject, showTopProject, topLoading]);
+  }, [loading, inSearchMode, projects, topProject, showTopProject, topLoading, error]);
 
   const listsWithSearch = useMemo(() => {
     return (
@@ -359,8 +361,6 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         </div>
 
         {emptyResult}
-
-        {(error || topError) && <span>{`We have an error: ${error?.message || topError?.message}`}</span>}
       </>
     );
   }, [
