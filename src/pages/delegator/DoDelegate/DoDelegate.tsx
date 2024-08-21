@@ -168,7 +168,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     }
   };
 
-  return renderAsync(currentEra, {
+  return renderAsync(mergeAsync(currentEra, indexerCapacityFromContract), {
     error: (error) => (
       <Typography>
         {`Error: Click to `}
