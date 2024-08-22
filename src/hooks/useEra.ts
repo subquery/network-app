@@ -55,11 +55,13 @@ export function useEra(): {
 
     if (lastestEra) {
       const { startTime, eraPeriod: period, id: index } = lastestEra;
+      const eraIndex = new URL(window.location.href).searchParams.get('customEra') || index;
+
       return {
         startTime: dayjs.utc(startTime).local().toDate(),
         estEndTime: dayjs.utc(startTime).add(Number(period), 'millisecond').toDate(),
         period: Math.floor(Number(period) / 1000),
-        index: parseInt(index),
+        index: parseInt(eraIndex),
       };
     }
 
