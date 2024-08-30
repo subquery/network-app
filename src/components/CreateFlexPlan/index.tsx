@@ -455,10 +455,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         // if already created the plan, just update it.
         const minExpiration = estimatedChannelLimit?.data?.channelMinExpiration || 3600 * 24 * 14;
         const expiration = flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 0;
+        const maximumValue =
+          (estimatedChannelLimit.data?.channelMaxNum || 0) < Math.ceil(maximum)
+            ? estimatedChannelLimit.data?.channelMaxNum
+            : Math.ceil(maximum);
         const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
-          maximum: Math.ceil(maximum),
+          maximum: maximumValue || 2,
           expiration: expiration < minExpiration ? minExpiration : expiration,
           id: prevHostingPlan?.id || '0',
         });
@@ -632,6 +636,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                         type: 'number',
                         required: true,
                         message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
+                      },
+                      {
+                        max: estimatedChannelLimit.data?.channelMaxNum,
+                        type: 'number',
+                        message: `The maximum number of Node Operators can not be more than ${estimatedChannelLimit.data?.channelMaxNum}`,
                       },
                     ]}
                   >
