@@ -34,6 +34,7 @@ import { formatNumber, numToHex, renderAsync, TOKEN, truncateToDecimalPlace } fr
 import { ROUTES } from '../../../../utils';
 import { formatEther } from '../../../../utils/numberFormatters';
 import AutoReduceAllocation from '../AutoReduceOverAllocation';
+import CurrentEraRewards from '../CurrentEraRewards/index';
 import styles from './OwnDeployments.module.css';
 
 const { PROJECT_NAV } = ROUTES;
@@ -732,6 +733,14 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     dataSource={indexerDeployments.loading ? previousSortedData : sortedData}
                     rowKey={'deploymentId'}
                     pagination={false}
+                    expandable={{
+                      expandedRowRender: (record) => (
+                        <CurrentEraRewards
+                          indexerAddress={indexer}
+                          deploymentId={record.deployment?.id || record.deploymentId || ''}
+                        ></CurrentEraRewards>
+                      ),
+                    }}
                     scroll={width <= 2260 ? { x: 2260 } : undefined}
                     loading={indexerDeployments.loading}
                   />
