@@ -6,7 +6,12 @@ import { AiOutlineCopy } from 'react-icons/ai';
 import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
 import { Copy } from '@components';
-import { proxyGateway, specialApiKeyName } from '@components/GetEndpoint';
+import {
+  getHttpEndpointWithApiKey,
+  getWsEndpointWithApiKey,
+  proxyGateway,
+  specialApiKeyName,
+} from '@components/GetEndpoint';
 import { OutlineDot } from '@components/Icons/Icons';
 import { useProjectMetadata } from '@containers';
 import { useAccount } from '@containers/Web3';
@@ -18,7 +23,7 @@ import CreateHostingFlexPlan, {
 import { Modal, Tag, Typography } from '@subql/components';
 import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
-import { parseError, TOKEN } from '@utils';
+import { numToHex, parseError, TOKEN } from '@utils';
 import { Button, Dropdown, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
@@ -36,26 +41,40 @@ const useGetConnectUrl = () => {
     return userApiKeys.find((key) => key.name === specialApiKeyName);
   }, [userApiKeys]);
 
-  const getConnectUrl = async (deploymentId: string) => {
+  const getConnectUrl = async (
+    deploymentId: string,
+    projectId: string,
+  ): Promise<{
+    http: string;
+    ws: string;
+  }> => {
     try {
       if (createdApiKey) {
-        return `${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`;
+        return {
+          http: getHttpEndpointWithApiKey(deploymentId, createdApiKey.value),
+          ws: getWsEndpointWithApiKey(projectId, createdApiKey.value),
+        };
       }
 
       const res = await getUserApiKeysApi();
       if (!isConsumerHostError(res.data)) {
         setUserApiKeys(res.data);
         if (res.data.find((key) => key.name === specialApiKeyName)) {
-          return `${proxyGateway}/query/${deploymentId}?apikey=${
-            res.data.find((key) => key.name === specialApiKeyName)?.value
-          }`;
+          const apiKey = res.data.find((key) => key.name === specialApiKeyName)?.value;
+          return {
+            http: getHttpEndpointWithApiKey(deploymentId, apiKey || ''),
+            ws: getWsEndpointWithApiKey(projectId, apiKey || ''),
+          };
         } else {
           const newKey = await createNewApiKey({
             name: specialApiKeyName,
           });
 
           if (!isConsumerHostError(newKey.data)) {
-            return `${proxyGateway}/query/${deploymentId}?apikey=${newKey.data.value}`;
+            return {
+              http: getHttpEndpointWithApiKey(deploymentId, newKey.data.value),
+              ws: getWsEndpointWithApiKey(projectId, newKey.data.value),
+            };
           }
         }
       }
@@ -64,7 +83,10 @@ const useGetConnectUrl = () => {
       parseError(e, {
         alert: true,
       });
-      return '';
+      return {
+        http: '',
+        ws: '',
+      };
     }
   };
 
@@ -86,7 +108,10 @@ const MyHostedPlan: FC = () => {
 
   const { address: account } = useAccount();
   const { getConnectUrl } = useGetConnectUrl();
-  const [currentConnectUrl, setCurrentConnectUrl] = useState('');
+  const [currentConnectUrl, setCurrentConnectUrl] = useState({
+    http: '',
+    ws: '',
+  });
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchConnectLoading, setFetchConnectLoading] = useState(false);
@@ -202,7 +227,10 @@ const MyHostedPlan: FC = () => {
                     onClick={async () => {
                       try {
                         setFetchConnectLoading(true);
-                        const url = await getConnectUrl(record.deployment.deployment);
+                        const url = await getConnectUrl(
+                          record.deployment.deployment,
+                          numToHex(record.deployment.project_id),
+                        );
                         if (!url) return;
                         setCurrentEditInfo(record);
 
@@ -313,7 +341,7 @@ const MyHostedPlan: FC = () => {
               size="large"
               type="primary"
               onClick={() => {
-                navigator.clipboard.writeText(currentConnectUrl);
+                navigator.clipboard.writeText(currentConnectUrl.ws || currentConnectUrl.http);
                 message.success('Copied!');
                 setOpen(false);
               }}
@@ -336,17 +364,33 @@ const MyHostedPlan: FC = () => {
           </Typography>
           <Typography>Your API key (in the URL) should be kept private, never give it to anyone else!</Typography>
 
-          <Input
-            value={currentConnectUrl}
-            size="large"
-            disabled
-            suffix={
-              <Copy
-                value={currentConnectUrl}
-                customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
-              ></Copy>
-            }
-          ></Input>
+          {currentConnectUrl.ws && (
+            <Input
+              value={currentConnectUrl.ws}
+              size="large"
+              disabled
+              suffix={
+                <Copy
+                  value={currentConnectUrl.ws}
+                  customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
+                ></Copy>
+              }
+            ></Input>
+          )}
+
+          {currentConnectUrl.http && (
+            <Input
+              value={currentConnectUrl.http}
+              size="large"
+              disabled
+              suffix={
+                <Copy
+                  value={currentConnectUrl.http}
+                  customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
+                ></Copy>
+              }
+            ></Input>
+          )}
 
           <div className="col-flex" style={{ gap: 8 }}>
             <Typography variant="medium">Example CURL request</Typography>
