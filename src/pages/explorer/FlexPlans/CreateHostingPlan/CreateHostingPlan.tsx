@@ -339,7 +339,19 @@ const CreateHostingFlexPlan = forwardRef<
                 </Typography>
               }
               name="maximum"
-              rules={[{ required: true }]}
+              rules={[
+                {
+                  min: 2,
+                  type: 'number',
+                  required: true,
+                  message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
+                },
+                {
+                  max: estimatedChannelLimit.data?.channelMaxNum,
+                  type: 'number',
+                  message: `The maximum number of Node Operators can not be more than ${estimatedChannelLimit.data?.channelMaxNum}`,
+                },
+              ]}
             >
               <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
             </Form.Item>
@@ -352,4 +364,6 @@ const CreateHostingFlexPlan = forwardRef<
     </>
   );
 });
+
+CreateHostingFlexPlan.displayName = 'CreateHostingFlexPlan';
 export default CreateHostingFlexPlan;
