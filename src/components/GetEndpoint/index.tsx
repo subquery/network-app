@@ -59,6 +59,19 @@ const sponsoredProjects: {
 
 export const specialApiKeyName = 'Get Endpoint Api Key';
 
+export const getHttpEndpointWithApiKey = (deploymentId: string, apiKey: string) =>
+  `${proxyGateway}/query/${deploymentId}?apikey=${apiKey}`;
+
+export const getWsEndpointWithApiKey = (projectId: string, apiKey: string) =>
+  projectId === '0x30' || projectId === '0x31'
+    ? `${proxyGateway.replace('https:', 'wss:')}/${
+        {
+          '0x30': 'polkadot',
+          '0x31': 'kusama',
+        }[projectId]
+      }-archive/ws?apikey=${apiKey}`
+    : '';
+
 const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
   const { address: account } = useAccount();
   const [open, setOpen] = React.useState(false);
@@ -100,98 +113,13 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
     return 'Create Flex Plan';
   }, [freeOrFlexPlan, currentStep, createdHostingPlan]);
 
-  const fetchHostingPlan = async () => {
-    try {
-      setNextBtnLoading(true);
-      const hostingPlan = await getHostingPlanApi({
-        account,
-      });
+  const httpEndpointWithApiKey = useMemo(() => {
+    return getHttpEndpointWithApiKey(deploymentId, createdApiKey?.value || '');
+  }, [deploymentId, createdApiKey?.value]);
 
-      if (!isConsumerHostError(hostingPlan.data)) {
-        setUserHostingPlan(hostingPlan.data);
-
-        // no hosting plan then skip fetch api key,
-        if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
-          return {
-            data: [],
-          };
-      } else {
-        return {
-          data: [],
-        };
-      }
-
-      return hostingPlan;
-    } finally {
-      setNextBtnLoading(false);
-    }
-  };
-
-  const fetchHostingPlanAndApiKeys = async () => {
-    try {
-      setNextBtnLoading(true);
-      const hostingPlan = await fetchHostingPlan();
-
-      const apiKeys = await getUserApiKeysApi();
-      if (!isConsumerHostError(apiKeys.data)) {
-        setUserApiKeys(apiKeys.data);
-      }
-      return {
-        hostingPlan,
-        apiKeys,
-      };
-    } catch (e) {
-      parseError(e, {
-        alert: true,
-      });
-      return false;
-    } finally {
-      setNextBtnLoading(false);
-    }
-  };
-
-  const handleNextStep = async () => {
-    beforeStep.current = currentStep;
-
-    if (currentStep === 'select') {
-      if (freeOrFlexPlan === 'free') {
-        setCurrentStep('checkFree');
-      } else {
-        const fetched = await fetchHostingPlanAndApiKeys();
-
-        if (fetched) {
-          if (!isConsumerHostError(fetched.hostingPlan.data) && !isConsumerHostError(fetched.apiKeys.data)) {
-            if (
-              fetched.apiKeys?.data.find((key) => key.name === specialApiKeyName) &&
-              fetched.hostingPlan?.data.find((plan) => plan.deployment.deployment === deploymentId && plan.is_actived)
-            ) {
-              setCurrentStep('checkEndpointWithApiKey');
-            } else {
-              setCurrentStep('createFlexPlan');
-            }
-          } else {
-            setCurrentStep('createFlexPlan');
-          }
-        }
-      }
-    }
-
-    if (currentStep === 'checkFree') {
-      const publicEndpoint = sponsoredProjects[project.id];
-      const copyEndpoint = isString(publicEndpoint) ? publicEndpoint : publicEndpoint?.ws;
-      navigator.clipboard.writeText(copyEndpoint);
-      message.success('Copied!');
-      setOpen(false);
-      resetAllField();
-    }
-
-    if (currentStep === 'checkEndpointWithApiKey') {
-      navigator.clipboard.writeText(`${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`);
-      message.success('Copied!');
-      setOpen(false);
-      resetAllField();
-    }
-  };
+  const wsEndpointWithApiKey = useMemo(() => {
+    return getWsEndpointWithApiKey(project.id, createdApiKey?.value || '');
+  }, [project.id, createdApiKey?.value]);
 
   const stepRender = useMemo(() => {
     if (!account)
@@ -204,6 +132,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           }}
         ></WalletRoute>
       );
+
     const makeEndpointResult = (endpoint: string | { http: string; ws: string }, isFree?: boolean) => {
       const httpEndpoint = isString(endpoint) ? endpoint : endpoint?.http;
       const wsEndpoint = isString(endpoint) ? '' : endpoint?.ws;
@@ -347,11 +276,105 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
           }}
         ></CreateFlexPlan>
       ),
-      checkEndpointWithApiKey: makeEndpointResult(
-        `${proxyGateway}/query/${deploymentId}?apikey=${createdApiKey?.value}`,
-      ),
+      checkEndpointWithApiKey: makeEndpointResult({
+        http: httpEndpointWithApiKey,
+        ws: wsEndpointWithApiKey,
+      }),
     }[currentStep];
-  }, [freeOrFlexPlan, project, currentStep, deploymentId, account]);
+  }, [freeOrFlexPlan, project, currentStep, deploymentId, account, httpEndpointWithApiKey, wsEndpointWithApiKey]);
+
+  const fetchHostingPlan = async () => {
+    try {
+      setNextBtnLoading(true);
+      const hostingPlan = await getHostingPlanApi({
+        account,
+      });
+
+      if (!isConsumerHostError(hostingPlan.data)) {
+        setUserHostingPlan(hostingPlan.data);
+
+        // no hosting plan then skip fetch api key,
+        if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
+          return {
+            data: [],
+          };
+      } else {
+        return {
+          data: [],
+        };
+      }
+
+      return hostingPlan;
+    } finally {
+      setNextBtnLoading(false);
+    }
+  };
+
+  const fetchHostingPlanAndApiKeys = async () => {
+    try {
+      setNextBtnLoading(true);
+      const hostingPlan = await fetchHostingPlan();
+
+      const apiKeys = await getUserApiKeysApi();
+      if (!isConsumerHostError(apiKeys.data)) {
+        setUserApiKeys(apiKeys.data);
+      }
+      return {
+        hostingPlan,
+        apiKeys,
+      };
+    } catch (e) {
+      parseError(e, {
+        alert: true,
+      });
+      return false;
+    } finally {
+      setNextBtnLoading(false);
+    }
+  };
+
+  const handleNextStep = async () => {
+    beforeStep.current = currentStep;
+
+    if (currentStep === 'select') {
+      if (freeOrFlexPlan === 'free') {
+        setCurrentStep('checkFree');
+      } else {
+        const fetched = await fetchHostingPlanAndApiKeys();
+
+        if (fetched) {
+          if (!isConsumerHostError(fetched.hostingPlan.data) && !isConsumerHostError(fetched.apiKeys.data)) {
+            if (
+              fetched.apiKeys?.data.find((key) => key.name === specialApiKeyName) &&
+              fetched.hostingPlan?.data.find((plan) => plan.deployment.deployment === deploymentId && plan.is_actived)
+            ) {
+              setCurrentStep('checkEndpointWithApiKey');
+            } else {
+              setCurrentStep('createFlexPlan');
+            }
+          } else {
+            setCurrentStep('createFlexPlan');
+          }
+        }
+      }
+    }
+
+    if (currentStep === 'checkFree') {
+      const publicEndpoint = sponsoredProjects[project.id];
+      const copyEndpoint = isString(publicEndpoint) ? publicEndpoint : publicEndpoint?.ws;
+      navigator.clipboard.writeText(copyEndpoint);
+      message.success('Copied!');
+      setOpen(false);
+      resetAllField();
+    }
+
+    if (currentStep === 'checkEndpointWithApiKey') {
+      navigator.clipboard.writeText(wsEndpointWithApiKey ? wsEndpointWithApiKey : httpEndpointWithApiKey);
+      message.success('Copied!');
+      setOpen(false);
+      resetAllField();
+    }
+  };
 
   const resetAllField = () => {
     setCurrentStep('select');
