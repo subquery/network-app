@@ -291,10 +291,10 @@ export const IndexerList: React.FC = () => {
   }, [account, pageStartIndex, fetchedIndexers.data, orderedIndexerList]);
 
   React.useEffect(() => {
-    if (networkClient) {
+    if (networkClient && currentEra.data?.index) {
       onLoadMore(0);
     }
-  }, [networkClient]);
+  }, [networkClient, currentEra.data?.index]);
 
   return (
     <div className={styles.container}>
