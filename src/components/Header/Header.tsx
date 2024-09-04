@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { BiChart } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { AccountActions } from '@components/AccountActions';
@@ -129,6 +130,61 @@ export const Header: React.FC = () => {
             </div>
           </>
         }
+      ></SubqlHeader>
+    </div>
+  );
+};
+
+export const ScannerHeader: React.FC = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className={styles.scannerHeader}>
+      <SubqlHeader
+        customLogo={
+          <img src="/logo-new.svg" width="140px" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}></img>
+        }
+        closeDrawerAfterNavigate
+        navigate={(link) => {
+          navigate(link);
+        }}
+        appNavigation={[
+          {
+            link: '/dashboard',
+            // TODO: fix this type
+            // @ts-ignore
+            label: (
+              <span className="flex" style={{ gap: 4 }}>
+                <BiChart style={{ fontSize: 20 }} />
+                Dashboard
+              </span>
+            ),
+          },
+          {
+            link: '/project-deployment-rewards',
+            // @ts-ignore
+            label: (
+              <span className="flex" style={{ gap: 4 }}>
+                <BiChart style={{ fontSize: 20 }} />
+                Project Deployment Rewards
+              </span>
+            ),
+          },
+          {
+            link: '/node-operators',
+            // @ts-ignore
+            label: (
+              <span className="flex" style={{ gap: 4 }}>
+                <BiChart style={{ fontSize: 20 }} />
+                Node Operators
+              </span>
+            ),
+          },
+        ]}
+        active={(to) => {
+          if (window.location.pathname.startsWith(to) || window.location.pathname.startsWith(`/${to}`)) return true;
+          return false;
+        }}
       ></SubqlHeader>
     </div>
   );

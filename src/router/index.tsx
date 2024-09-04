@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Spinner } from '@subql/components';
 
 import { BasicRouteType, routers } from './routes';
+import { scannerRouters } from './routes';
 
 const LazyComponent = (Component: LazyExoticComponent<FC>) => {
   return (
@@ -71,6 +72,10 @@ const renderRoutes: FC<{ routers: BasicRouteType[]; parentPath?: string }> = ({ 
 
 const RouterComponent: FC = () => {
   return <Routes>{renderRoutes({ routers })}</Routes>;
+};
+
+export const ScannerRouterComponent: FC = () => {
+  return <Routes>{renderRoutes({ routers: scannerRouters })}</Routes>;
 };
 
 export default RouterComponent;

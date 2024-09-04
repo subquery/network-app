@@ -1,14 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren, useEffect } from 'react';
+import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
+import { Footer, SubqlProvider } from '@subql/components';
 
 import { RainbowProvider } from './config/rainbowConf';
-import { ChainStatus, Header } from './components';
+import { ChainStatus, Header, ScannerHeader } from './components';
 import {
   IPFSProvider,
   ProjectMetadataProvider,
@@ -16,9 +17,11 @@ import {
   QueryApolloProvider,
   SQTokenProvider,
 } from './containers';
-import RouterComponent from './router';
+import RouterComponent, { ScannerRouterComponent } from './router';
 
 import './App.css';
+
+const isScanner = window.location.host.includes('scanner') || import.meta.env.VITE_USE_SCANNER;
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -29,7 +32,9 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
           <AppInitProvider>
             <ProjectMetadataProvider>
               <ProjectRegistryProvider>
-                <SQTokenProvider>{children}</SQTokenProvider>
+                <SQTokenProvider>
+                  <SubqlProvider theme={isScanner ? 'dark' : 'light'}>{children}</SubqlProvider>
+                </SQTokenProvider>
               </ProjectRegistryProvider>
             </ProjectMetadataProvider>
           </AppInitProvider>
@@ -74,17 +79,32 @@ const RenderRouter: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <div className="Main">
-        <div className="Header">
-          <Header />
-        </div>
+      <>
+        {isScanner ? (
+          <div className="scannerMain">
+            <ScannerHeader></ScannerHeader>
+            <ScannerRouterComponent></ScannerRouterComponent>
+            <Footer simple></Footer>
+          </div>
+        ) : (
+          ''
+        )}
+        {!isScanner ? (
+          <div className="Main">
+            <div className="Header">
+              <Header />
+            </div>
 
-        <div className="Content">
-          <ChainStatus>
-            <RouterComponent></RouterComponent>
-          </ChainStatus>
-        </div>
-      </div>
+            <div className="Content">
+              <ChainStatus>
+                <RouterComponent></RouterComponent>
+              </ChainStatus>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+      </>
     </BrowserRouter>
   );
 };

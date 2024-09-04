@@ -39,7 +39,42 @@
       }
     }
   }
+}
 
+.dark.lineCharts {
+  background: var(--dark-mode-card);
+  border-color: var(--dark-mode-border);
+  .headers {
+    :global {
+      .ant-radio-group {
+        background: var(--sq-gray700);
+        border-radius: 28px;
+        border: 2px solid var(--sq-gray700);
+        .ant-radio-button-wrapper {
+          border-radius: 28px;
+          border: none;
+          background: var(--sq-gray700);
+          color: var(--sq-gray400);
+          font-family: var(--sq-font-family);
+          &:not(:first-child)::before {
+            display: none;
+          }
+  
+          &-checked {
+            background: var(--sq-gray800);
+            box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.05);
+            color: var(--sq-blue600);
+  
+            &:hover {
+              background: var(--sq-gray800);
+              box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.05);
+              color: var(--sq-blue600);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 768px) { 

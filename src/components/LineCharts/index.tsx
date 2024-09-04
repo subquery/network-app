@@ -7,6 +7,7 @@ import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
 import { formatNumber } from '@utils/numberFormatters';
 import { Radio } from 'antd';
+import { clsx } from 'clsx';
 import dayjs from 'dayjs';
 import { LineChart } from 'echarts/charts';
 import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components';
@@ -29,6 +30,7 @@ interface IProps {
     rawData: dayjs.Dayjs[];
     renderData: string[];
   };
+  theme?: 'light' | 'dark';
   onChange?: (newFilter: FilterType) => void;
   onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
   onChangeDateRange?: (dateType: DateRangeType) => void;
@@ -66,6 +68,7 @@ const LineCharts: FC<IProps> = ({
   style,
   chartData,
   dataDimensionsName,
+  theme = 'light',
   onChangeDateRange,
   onTriggerTooltip,
 }) => {
@@ -109,7 +112,7 @@ const LineCharts: FC<IProps> = ({
   }, [chartData, xAxisScalesInner]);
 
   return (
-    <div className={styles.lineCharts} style={style}>
+    <div className={clsx(styles.lineCharts, theme === 'dark' ? styles.dark : '')} style={style}>
       <div className={styles.headers}>
         {title && (
           <Typography variant="large" weight={600}>
@@ -176,6 +179,9 @@ const LineCharts: FC<IProps> = ({
               type: 'value',
               axisLabel: {
                 formatter: (val: number) => formatNumber(val),
+              },
+              splitLine: {
+                lineStyle: theme === 'light' ? { color: '#fff' } : { color: 'var(--dark-mode-border)' },
               },
             },
             tooltip: {
