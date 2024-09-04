@@ -239,4 +239,8 @@ export const routers: BasicRouteType[] = [
 export const scannerRouters: BasicRouteType[] = [
   { path: '/', redirect: '/dashboard' },
   { path: '/dashboard', component: React.lazy(() => import('../pages/scanner/dashboard/index')) },
+  {
+    path: '/project-deployment-rewards',
+    component: React.lazy(() => import('../pages/scanner/projectDeploymentRewards/index')),
+  },
 ];

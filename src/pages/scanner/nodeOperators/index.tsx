@@ -1,43 +1,58 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { IoSearch } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
-import { Button, Table } from 'antd';
+import { usePrevious } from 'ahooks';
+import { Button, Input, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
-import { OperatorRewardsLineChart } from './components/operatorRewardsChart/OperatorRewardsLineChart';
 import styles from './index.module.less';
 
 interface IProps {}
 
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
-  const top5Deployments = useQuery<{
+  const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
+  const [pageInfo, setPageInfo] = useState({
+    pageSize: 30,
+    currentPage: 1,
+  });
+  const allDeployments = useQuery<{
     eraDeploymentRewards: {
       nodes: { deploymentId: string; totalRewards: string }[];
+      totalCount: number;
     };
   }>(
     gql`
-      query top5Deployments($currentIdx: Int!) {
-        eraDeploymentRewards(orderBy: TOTAL_REWARDS_DESC, filter: { eraIdx: { equalTo: $currentIdx } }, first: 5) {
+      query allDeployments($currentIdx: Int!, $first: Int! = 30, $offset: Int! = 0) {
+        eraDeploymentRewards(
+          orderBy: TOTAL_REWARDS_DESC
+          filter: { eraIdx: { equalTo: $currentIdx } }
+          first: $first
+          offset: $offset
+        ) {
           nodes {
             deploymentId
             totalRewards
           }
+          totalCount
         }
       }
     `,
     {
       variables: {
-        currentIdx: (currentEra.data?.index || 0) - 1,
+        currentIdx: selectEra,
+        first: pageInfo.pageSize,
+        offset: (pageInfo.currentPage - 1) * pageInfo.pageSize,
       },
     },
   );
 
-  const top5DeploymentsInfomations = useQuery<{
+  const allDeploymentsInfomations = useQuery<{
     deployments: {
       nodes: {
         id: string;
@@ -61,7 +76,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
     };
   }>(
     gql`
-      query top5DeploymentsInfomations($deploymentIds: [String!], $currentIdx: Int!) {
+      query allDeploymentsInfomations($deploymentIds: [String!], $currentIdx: Int!) {
         deployments(filter: { id: { in: $deploymentIds } }) {
           nodes {
             id
@@ -106,29 +121,33 @@ const ScannerDashboard: FC<IProps> = (props) => {
     `,
     {
       variables: {
-        deploymentIds: top5Deployments.data?.eraDeploymentRewards.nodes.map((node: any) => node.deploymentId) || [],
-        currentIdx: (currentEra.data?.index || 0) - 1,
+        deploymentIds: allDeployments.data?.eraDeploymentRewards.nodes.map((node: any) => node.deploymentId) || [],
+        currentIdx: selectEra,
       },
     },
   );
 
   const renderData = useMemo(() => {
-    return top5Deployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
-      const eraDeploymentRewardsItem = top5DeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
+    return allDeployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
+      const eraDeploymentRewardsItem = allDeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
         (i) => i.keys[0] === node.deploymentId,
       );
       const allocationRewards = eraDeploymentRewardsItem?.sum.allocationRewards || '0';
-      const totalCount = top5DeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)
+      const totalCount = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)
         ?.indexers.totalCount;
 
       const totalAllocation =
-        top5DeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
+        allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
           (i) => i.keys[0] === node.deploymentId,
         )?.sum.totalAmount || '0';
       const totalQueryRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
         .minus(allocationRewards)
         .toFixed();
-      const deploymentInfo = top5DeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
+      const deploymentInfo = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
+      const allocationApy = BigNumberJs(allocationRewards || 0)
+        .div(totalAllocation === '0' ? 1 : totalAllocation)
+        .multipliedBy(52)
+        .multipliedBy(100);
       return {
         deploymentId: node.deploymentId,
         projectMetadata: deploymentInfo?.project.metadata,
@@ -136,7 +155,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         allocationAmount: formatNumber(formatSQT(totalAllocation)),
         boosterAmount: formatNumber(
           formatSQT(
-            top5DeploymentsInfomations.data?.deploymentBoosterSummaries.groupedAggregates.find(
+            allDeploymentsInfomations.data?.deploymentBoosterSummaries.groupedAggregates.find(
               (i) => i.keys[0] === node.deploymentId,
             )?.sum.totalAmount || '0',
           ),
@@ -149,11 +168,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               .toFixed(),
           ),
         ),
-        allocationApy: BigNumberJs(allocationRewards)
-          .div(totalAllocation)
-          .multipliedBy(52)
-          .multipliedBy(100)
-          .toFixed(2),
+        allocationApy: allocationApy.gt(1000) ? '1000+' : allocationApy.toFixed(2),
         queryRewards: formatNumber(formatSQT(totalQueryRewards)),
         averageQueryRewards: formatNumber(
           formatSQT(
@@ -172,30 +187,50 @@ const ScannerDashboard: FC<IProps> = (props) => {
         ),
       };
     });
-  }, [top5Deployments.data, top5DeploymentsInfomations.data]);
+  }, [allDeployments.data, allDeploymentsInfomations.data]);
+
+  const previousRenderData = usePrevious(renderData);
+
+  useEffect(() => {
+    if (currentEra.data?.index) {
+      setSelectEra(currentEra.data?.index - 1);
+    }
+  }, [currentEra.data?.index]);
 
   return (
     <div className={styles.dashboard}>
-      <Typography variant="h5" weight={600}>
-        Dashboard
-      </Typography>
-      <OperatorRewardsLineChart></OperatorRewardsLineChart>
       <div className={styles.dashboardInner}>
         <div className="flex" style={{ marginBottom: 24 }}>
           <Typography variant="large" weight={600}>
-            Top 5 Project Rewards
+            Project Deployment Rewards
           </Typography>
-          <span style={{ flex: 1 }}></span>
-          <Button type="primary" shape="round">
-            <a href="https://app.subquery.network/explorer/home" target="_blank" rel="noreferrer">
-              View All Projects
-            </a>
-          </Button>
+        </div>
+
+        <div className="flex" style={{ marginBottom: 24, gap: 24 }}>
+          <Select
+            className="darkSelector"
+            style={{ width: 200 }}
+            value={selectEra}
+            options={new Array((currentEra.data?.index || 0) + 1 || 0).fill(0).map((_, index) => ({
+              label: `Era ${index}`,
+              value: index,
+            }))}
+            onChange={(value) => {
+              setSelectEra(value);
+            }}
+            loading={currentEra.loading}
+          ></Select>
+          <Input
+            className="darkInput"
+            style={{ width: 342 }}
+            placeholder="Search by deployment id"
+            prefix={<IoSearch />}
+          ></Input>
         </div>
 
         <Table
           className={'darkTable'}
-          loading={top5Deployments.loading || top5DeploymentsInfomations.loading}
+          loading={allDeploymentsInfomations.loading}
           columns={[
             {
               title: 'Project',
@@ -297,8 +332,21 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
           ]}
-          dataSource={renderData}
-          pagination={false}
+          dataSource={renderData?.length ? renderData : previousRenderData}
+          pagination={{
+            total:
+              allDeployments.data?.eraDeploymentRewards.totalCount ||
+              allDeployments.previousData?.eraDeploymentRewards.totalCount,
+            pageSize: pageInfo.pageSize,
+            pageSizeOptions: ['10', '30', '50', '100'],
+            current: pageInfo.currentPage,
+            onChange(page, pageSize) {
+              setPageInfo({
+                pageSize,
+                currentPage: page,
+              });
+            },
+          }}
         ></Table>
       </div>
     </div>
