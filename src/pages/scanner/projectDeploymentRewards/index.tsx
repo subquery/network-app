@@ -1,13 +1,15 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { IoSearch } from 'react-icons/io5';
+import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { useEra } from '@hooks';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
-import { Button, Input, Select, Table } from 'antd';
+import { Button, Input, Radio, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import { parseEther } from 'ethers/lib/utils';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
 import styles from './index.module.less';
@@ -16,13 +18,15 @@ interface IProps {}
 
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
+  const navigate = useNavigate();
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 30,
     currentPage: 1,
   });
-  const [calcInput, setCalcInput] = useState<number>(0);
+  const [calcInput, setCalcInput] = useState<number>(100000);
   const [rowSelected, setRowSelected] = useState<{ deploymentId: string }>();
+  const [statisticGroup, setStatisticGroup] = useState<'averageRewards' | 'projectedRewards'>('averageRewards');
   const allDeployments = useQuery<{
     eraDeploymentRewards: {
       nodes: { deploymentId: string; totalRewards: string }[];
@@ -60,6 +64,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         id: string;
         metadata: string;
         project: {
+          id: string;
           metadata: string;
         };
         indexers: {
@@ -84,6 +89,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
             id
             metadata
             project {
+              id
               metadata
             }
             indexers(filter: { indexer: { active: { equalTo: true } }, status: { notEqualTo: TERMINATED } }) {
@@ -130,29 +136,49 @@ const ScannerDashboard: FC<IProps> = (props) => {
   );
 
   const renderData = useMemo(() => {
-    return allDeployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
+    if (!allDeployments.data?.eraDeploymentRewards.nodes) return [];
+    return allDeployments.data?.eraDeploymentRewards.nodes.map((node) => {
+      const inputStake = BigNumberJs(calcInput).gt(100000000) ? '100000000' : calcInput;
       const eraDeploymentRewardsItem = allDeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
         (i) => i.keys[0] === node.deploymentId,
       );
-      const allocationRewards = eraDeploymentRewardsItem?.sum.allocationRewards || '0';
-      const totalCount = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)
-        ?.indexers.totalCount;
 
-      const totalAllocation =
+      const oneTokenRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.allocationRewards || '0').div(
         allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
           (i) => i.keys[0] === node.deploymentId,
-        )?.sum.totalAmount || '0';
+        )?.sum.totalAmount || '1',
+      );
+
+      const totalCount =
+        (allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)?.indexers
+          .totalCount || 0) + (statisticGroup === 'averageRewards' ? 0 : 1);
+
+      const totalAllocation = BigNumberJs(
+        allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
+          (i) => i.keys[0] === node.deploymentId,
+        )?.sum.totalAmount || '0',
+      )
+        .plus(statisticGroup === 'averageRewards' ? 0 : parseEther(inputStake.toString()).toString())
+        .toString();
+
+      const allocationRewards =
+        statisticGroup === 'projectedRewards'
+          ? oneTokenRewards.multipliedBy(parseEther(inputStake.toString()).toString()).toString()
+          : eraDeploymentRewardsItem?.sum.allocationRewards || '0';
+
       const totalQueryRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
-        .minus(allocationRewards)
+        .minus(eraDeploymentRewardsItem?.sum.allocationRewards || '0')
         .toFixed();
       const deploymentInfo = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
       const allocationApy = BigNumberJs(allocationRewards || 0)
         .div(totalAllocation === '0' ? 1 : totalAllocation)
         .multipliedBy(52)
         .multipliedBy(100);
+
       return {
         deploymentId: node.deploymentId,
         projectMetadata: deploymentInfo?.project.metadata,
+        projectId: deploymentInfo?.project.id,
         operatorCount: totalCount,
         rawAllocationAmount: totalAllocation,
         rawAllocationRewards: allocationRewards,
@@ -181,7 +207,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               .toFixed(),
           ),
         ),
-        totalRewards: formatNumber(formatSQT(eraDeploymentRewardsItem?.sum.totalRewards || '0')),
+        totalRewards: formatNumber(formatSQT(BigNumberJs(allocationRewards).plus(totalQueryRewards).toString())),
         averageRewards: formatNumber(
           formatSQT(
             BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
@@ -191,7 +217,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         ),
       };
     });
-  }, [allDeployments.data, allDeploymentsInfomations.data]);
+  }, [allDeployments.data, allDeploymentsInfomations.data, calcInput, statisticGroup]);
 
   const previousRenderData = usePrevious(renderData);
 
@@ -202,8 +228,17 @@ const ScannerDashboard: FC<IProps> = (props) => {
     }
 
     const { rawAllocationAmount, rawAllocationRewards } = selectedRow;
-    const oneTokenRewards = BigNumberJs(rawAllocationRewards).div(rawAllocationAmount);
-    return oneTokenRewards.multipliedBy(calcInput).toFixed(6);
+    if (BigNumberJs(rawAllocationAmount).isZero()) {
+      return 0;
+    }
+    const oneTokenRewards = BigNumberJs(rawAllocationRewards).div(
+      rawAllocationAmount === '0' ? 1 : rawAllocationAmount,
+    );
+    const result = oneTokenRewards.multipliedBy(calcInput).toFixed(6);
+    if (isNaN(+result)) {
+      return '0.000000';
+    }
+    return result;
   }, [rowSelected, calcInput]);
 
   useEffect(() => {
@@ -222,6 +257,19 @@ const ScannerDashboard: FC<IProps> = (props) => {
         </div>
 
         <div className="flex" style={{ marginBottom: 24, gap: 24 }}>
+          <Radio.Group
+            className="darkRadioGroup"
+            options={[
+              { label: 'Previous Average Rewards', value: 'averageRewards' },
+              { label: 'Projected Rewards', value: 'projectedRewards' },
+            ]}
+            onChange={(val) => {
+              setStatisticGroup(val.target.value);
+            }}
+            value={statisticGroup}
+            optionType="button"
+            buttonStyle="solid"
+          />
           <Select
             className="darkSelector"
             style={{ width: 200 }}
@@ -242,40 +290,55 @@ const ScannerDashboard: FC<IProps> = (props) => {
             prefix={<IoSearch />}
           ></Input>
         </div>
-        <div
-          style={{
-            padding: 24,
-            display: 'flex',
-            gap: 16,
-            width: 700,
-            border: '1px solid var(--dark-mode-border)',
-            borderRadius: 8,
-            marginBottom: 24,
-          }}
-        >
-          <div className="col-flex" style={{ justifyContent: 'space-between' }}>
-            <Typography>Projected Rewards Calculator</Typography>
-            <Typography>
-              Estimated Rewards One Era: <br></br>
-              {estimatedStakeRewards} {TOKEN}
-            </Typography>
-          </div>
+        {statisticGroup === 'projectedRewards' ? (
+          <div
+            style={{
+              padding: 24,
+              display: 'flex',
+              gap: 16,
+              width: 700,
+              border: '1px solid var(--dark-mode-border)',
+              borderRadius: 8,
+              marginBottom: 24,
+            }}
+          >
+            <div className="col-flex" style={{ justifyContent: 'space-between' }}>
+              <Typography>Projected Rewards Calculator</Typography>
+              <Typography style={{ visibility: 'hidden' }}>
+                Estimated Rewards One Era: <br></br>
+                {estimatedStakeRewards} {TOKEN}
+              </Typography>
+            </div>
 
-          <div className="col-flex" style={{ gap: 8 }}>
-            <Typography>Enter Your Stake</Typography>
-            <Input
-              className="darkInput"
-              style={{ width: 342 }}
-              placeholder="Enter your stake"
-              type="number"
-              suffix={<Typography>{TOKEN}</Typography>}
-              value={calcInput}
-              onChange={(e) => {
-                setCalcInput(Number(e.target.value));
-              }}
-            ></Input>
+            <div className="col-flex" style={{ gap: 8 }}>
+              <Typography>Enter Your Stake</Typography>
+              <Input
+                className="darkInput"
+                style={{ width: 342 }}
+                placeholder="Enter your stake"
+                type="number"
+                suffix={<Typography>{TOKEN}</Typography>}
+                value={calcInput}
+                onChange={(e) => {
+                  if (Number(e.target.value) > 100000000) {
+                    setCalcInput(100000000);
+                    return;
+                  }
+
+                  if (Number(e.target.value) < 1) {
+                    setCalcInput(1);
+                    return;
+                  }
+                  setCalcInput(Number(e.target.value));
+                }}
+                min="1"
+                max={100000000}
+              ></Input>
+            </div>
           </div>
-        </div>
+        ) : (
+          ''
+        )}
 
         <Table
           rowKey={(record) => record.deploymentId}
@@ -286,17 +349,27 @@ const ScannerDashboard: FC<IProps> = (props) => {
               title: 'Project',
               dataIndex: 'name',
               key: 'name',
-              render: (_, record) => {
+              render: (_: string, record: (typeof renderData)[number]) => {
                 return <DeploymentMeta deploymentId={record.deploymentId} projectMetadata={record.projectMetadata} />;
+              },
+              onCell: (record: (typeof renderData)[number]) => {
+                return {
+                  onClick: () => {
+                    navigate(
+                      `/project-deployment-rewards/${record.deploymentId}?projectMetadata=${record.projectMetadata}&projectId=${record.projectId}`,
+                    );
+                  },
+                };
               },
             },
             {
               title: 'Node Operators',
               dataIndex: 'operatorCount',
               key: 'operatorCount',
+              render: (text: number) => <Typography>{text}</Typography>,
             },
             {
-              title: 'Stake',
+              title: statisticGroup === 'averageRewards' ? 'Stake' : 'Projected Total Stake',
               dataIndex: 'allocationAmount',
               key: 'allocationAmount',
               render: (text: string) => (
@@ -316,7 +389,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Total Stake Rewards',
+              title: 'Projected Stake Rewards',
               dataIndex: 'allocationRewards',
               key: 'allocationRewards',
               render: (text: string) => (
@@ -336,13 +409,13 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Stake Apy',
+              title: statisticGroup === 'averageRewards' ? 'Stake Apy' : 'Projected Stake APY',
               dataIndex: 'allocationApy',
               key: 'allocationApy',
               render: (text: string) => <Typography>{text} %</Typography>,
             },
             {
-              title: 'Total Query Rewards',
+              title: 'Projected Query Rewards',
               dataIndex: 'queryRewards',
               key: 'queryRewards',
               render: (text: string) => (
@@ -362,7 +435,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Total Rewards',
+              title: 'Projected Rewards',
               dataIndex: 'totalRewards',
               key: 'totalRewards',
               render: (text: string) => (
@@ -381,7 +454,33 @@ const ScannerDashboard: FC<IProps> = (props) => {
                 </Typography>
               ),
             },
-          ]}
+          ].filter((i) => {
+            const keysOfAver = [
+              'name',
+              'operatorCount',
+              'allocationAmount',
+              'boosterAmount',
+              'averageAllocationRewards',
+              'allocationApy',
+              'averageQueryRewards',
+            ];
+            const keysOfProj = [
+              'name',
+              'operatorCount',
+              'allocationAmount',
+              'boosterAmount',
+              'allocationRewards',
+              'allocationApy',
+              'queryRewards',
+              'totalRewards',
+            ];
+
+            if (statisticGroup === 'averageRewards') {
+              return keysOfAver.includes(i.dataIndex);
+            } else {
+              return keysOfProj.includes(i.dataIndex);
+            }
+          })}
           dataSource={renderData?.length ? renderData : previousRenderData}
           pagination={{
             total:

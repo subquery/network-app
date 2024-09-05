@@ -35,6 +35,7 @@ interface IProps {
   onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
   onChangeDateRange?: (dateType: DateRangeType) => void;
   title?: string;
+  customColors?: string[];
 }
 
 echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
@@ -71,6 +72,7 @@ const LineCharts: FC<IProps> = ({
   theme = 'light',
   onChangeDateRange,
   onTriggerTooltip,
+  customColors,
 }) => {
   const { currentEra } = useEra();
   const [filter, setFilter] = usePropsValue({
@@ -103,13 +105,13 @@ const LineCharts: FC<IProps> = ({
         type: 'line',
         stack: 'total',
         showSymbol: false,
-        color: colors[index],
+        color: (customColors || colors)[index],
         areaStyle: {
-          color: colors[index],
+          color: (customColors || colors)[index],
         },
       };
     });
-  }, [chartData, xAxisScalesInner]);
+  }, [chartData, xAxisScalesInner, customColors]);
 
   return (
     <div className={clsx(styles.lineCharts, theme === 'dark' ? styles.dark : '')} style={style}>
@@ -143,8 +145,18 @@ const LineCharts: FC<IProps> = ({
           {dataDimensionsName.map((name, index) => {
             return (
               <div className="flex" style={{ marginRight: 16 }} key={`${name}-${index}`}>
-                <div style={{ height: 10, width: 10, borderRadius: '50%', background: colors[index], flexShrink: 0 }} />
-                <Typography style={{ marginLeft: 8, color: 'var(--sq-gray600)' }}>{name}</Typography>
+                <div
+                  style={{
+                    height: 10,
+                    width: 10,
+                    borderRadius: '50%',
+                    background: (customColors || colors)[index],
+                    flexShrink: 0,
+                  }}
+                />
+                <Typography style={{ marginLeft: 8, color: theme === 'dark' ? '#fff' : 'var(--sq-gray600)' }}>
+                  {name}
+                </Typography>
               </div>
             );
           })}

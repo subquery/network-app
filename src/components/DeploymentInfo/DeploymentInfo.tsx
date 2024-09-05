@@ -24,9 +24,10 @@ type Props = {
   deploymentId?: string;
   deploymentVersion?: string;
   type?: ProjectType;
+  maxWidth?: string;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, maxWidth = '200px' }) => {
   const { t } = useTranslation();
 
   const deploymentMeta = useDeploymentMetadata(deploymentId);
@@ -46,7 +47,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
               <Typography
                 className="overflowEllipsis"
                 variant="large"
-                style={{ marginRight: 10, width: '100%', maxWidth: '200px' }}
+                style={{ marginRight: 10, width: '100%', maxWidth: maxWidth }}
               >
                 {project?.name}
               </Typography>
@@ -82,9 +83,10 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
 };
 
 // TODO: Merge DeploymentMeta with DeploymentInfo
-export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: string }> = ({
+export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: string; maxWidth?: string }> = ({
   deploymentId,
   projectMetadata,
+  maxWidth,
 }) => {
   const { getMetadataFromCid } = useProjectMetadata();
 
@@ -101,7 +103,7 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
         return <Typography>Project metadata not found</Typography>;
       }
 
-      return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} />;
+      return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} maxWidth={maxWidth} />;
     },
   });
 };
