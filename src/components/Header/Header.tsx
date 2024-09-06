@@ -159,6 +159,9 @@ export const ScannerHeader: React.FC = () => {
                 Dashboard
               </span>
             ),
+            active: () => {
+              return window.location.pathname.includes('dashboard');
+            },
           },
           {
             link: '/project-deployment-rewards',
@@ -169,6 +172,9 @@ export const ScannerHeader: React.FC = () => {
                 Project Deployment Rewards
               </span>
             ),
+            active: () => {
+              return window.location.pathname.includes('project-deployment-reward');
+            },
           },
           {
             link: '/node-operators',
@@ -179,6 +185,9 @@ export const ScannerHeader: React.FC = () => {
                 Node Operators
               </span>
             ),
+            active: () => {
+              return window.location.pathname.includes('node-operator');
+            },
           },
         ]}
         active={(to) => {
