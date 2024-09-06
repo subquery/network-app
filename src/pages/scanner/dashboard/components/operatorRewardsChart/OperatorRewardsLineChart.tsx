@@ -147,6 +147,7 @@ export const OperatorRewardsLineChart = (props: {
     {
       loading: () => (
         <Skeleton
+          className="darkSkeleton"
           active
           paragraph={{ rows: 8 }}
           style={{ height: skeletonHeight ? skeletonHeight : 'auto' }}

@@ -20,6 +20,7 @@ import IPFSImage from '../IPFSImage';
 import styles from './IndexerDetails.module.less';
 
 type Props = {
+  theme?: 'light' | 'dark';
   size?: 'tiny' | 'normal' | 'large';
   name?: string;
   image?: string;
@@ -42,6 +43,7 @@ export const IndexerName: React.FC<Props> = ({
   address,
   fullAddress,
   size = 'normal',
+  theme = 'light',
   onClick,
   onAddressClick,
 }) => {
@@ -117,7 +119,7 @@ export const IndexerName: React.FC<Props> = ({
               <Typography
                 variant={size === 'large' ? 'medium' : 'small'}
                 className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
-                style={{ cursor: 'copy' }}
+                style={{ cursor: 'copy', color: theme === 'dark' ? 'var(--sq-gray400)' : 'var(--sq-gray700)' }}
               >
                 {fullAddress ? address : truncateAddress(address)}
               </Typography>

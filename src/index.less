@@ -508,6 +508,7 @@ label,
   }
 }
 
+
 .ant-radio-group {
   background: var(--sq-gray200);
   border-radius: 28px;
@@ -564,7 +565,24 @@ label,
   }
 }
 
+.darkBreadcrumb.ant-breadcrumb {
+  .ant-breadcrumb-separator {
+    color: var(--dark-mode-border);
+  }
+}
 
+.darkSkeleton.ant-skeleton {
+  .ant-skeleton-title {
+    background: linear-gradient(90deg, rgba(27, 37, 69, 0.6) 25%, rgba(27, 37, 69, 0.15) 37%, rgba(27, 37, 69, 0.6) 63%);
+    background-size: 400% 100%;
+  }
+  .ant-skeleton-paragraph {
+    li {
+      background: linear-gradient(90deg, rgba(27, 37, 69, 0.6) 25%, rgba(27, 37, 69, 0.15) 37%, rgba(27, 37, 69, 0.6) 63%);
+      background-size: 400% 100%;
+    }
+  }
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

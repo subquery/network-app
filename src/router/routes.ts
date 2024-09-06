@@ -251,4 +251,8 @@ export const scannerRouters: BasicRouteType[] = [
     path: '/node-operators',
     component: React.lazy(() => import('../pages/scanner/nodeOperators/index')),
   },
+  {
+    path: '/node-operator/:id',
+    component: React.lazy(() => import('../pages/scanner/nodeOperatorDetail/index')),
+  },
 ];

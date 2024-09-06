@@ -4,12 +4,13 @@ import { useSearchParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
+import { useProjectMetadata } from '@containers';
 import { useAsyncMemo, useEra } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
-import { Button, Table } from 'antd';
+import { Breadcrumb, Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { parseEther } from 'ethers/lib/utils';
 
@@ -27,6 +28,13 @@ const ProjectDetail: FC<IProps> = (props) => {
   const { getProjects } = useConsumerHostServices({
     autoLogin: false,
   });
+  const { getMetadataFromCid } = useProjectMetadata();
+
+  const metadata = useAsyncMemo(async () => {
+    if (!query.get('projectMetadata')) return null;
+    return await getMetadataFromCid(query.get('projectMetadata') || '');
+  }, [query]);
+
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 30,
@@ -254,6 +262,30 @@ const ProjectDetail: FC<IProps> = (props) => {
 
   return (
     <div className={styles.dashboard}>
+      <Breadcrumb
+        className="darkBreadcrumb"
+        items={[
+          {
+            key: 'explorer',
+            title: (
+              <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
+                Project Deployment Rewards
+              </Typography>
+            ),
+            onClick: () => {
+              navigate(`/project-deployment-rewards`);
+            },
+          },
+          {
+            key: 'current',
+            title: (
+              <Typography variant="medium" className="overflowEllipsis" style={{ maxWidth: 300 }}>
+                {metadata.data?.name}
+              </Typography>
+            ),
+          },
+        ]}
+      ></Breadcrumb>
       <div className={styles.dashboardInner}>
         <div className="flex">
           <DeploymentMeta
@@ -348,13 +380,13 @@ const ProjectDetail: FC<IProps> = (props) => {
               render: (_: string, record: (typeof renderData)[number]) => {
                 return <IndexerName address={record.indexerId} />;
               },
-              // onCell: (record: (typeof renderData)[number]) => {
-              //   return {
-              //     onClick: () => {
-              //       navigate(`/project-deployment-rewards/${record.deploymentId}`);
-              //     },
-              //   };
-              // },
+              onCell: (record: (typeof renderData)[number]) => {
+                return {
+                  onClick: () => {
+                    navigate(`/node-operator/${record.indexerId}`);
+                  },
+                };
+              },
             },
             {
               title: 'Rewards',

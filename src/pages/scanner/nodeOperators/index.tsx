@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { IoSearch } from 'react-icons/io5';
+import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
@@ -18,6 +19,7 @@ interface IProps {}
 
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
+  const navigate = useNavigate();
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 30,
@@ -181,7 +183,15 @@ const ScannerDashboard: FC<IProps> = (props) => {
               dataIndex: 'name',
               key: 'name',
               render: (_, record) => {
-                return <IndexerName address={record.id} />;
+                return (
+                  <IndexerName
+                    theme="dark"
+                    address={record.id}
+                    onClick={() => {
+                      navigate(`/node-operator/${record.id}`);
+                    }}
+                  />
+                );
               },
             },
             {

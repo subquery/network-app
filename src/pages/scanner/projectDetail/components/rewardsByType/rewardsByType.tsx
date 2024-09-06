@@ -15,6 +15,7 @@ export const RewardsByType = (props: {
   chartsStyle?: CSSProperties;
   skeletonHeight?: number;
   deploymentId?: string;
+  indexerAddress?: string;
 }) => {
   const {
     title = 'Rewards by Type',
@@ -22,6 +23,7 @@ export const RewardsByType = (props: {
     chartsStyle,
     skeletonHeight,
     deploymentId,
+    indexerAddress,
   } = props;
   const { currentEra } = useEra();
   const [filter, setFilter] = useState<FilterType>({ date: 'lm' });
@@ -53,9 +55,22 @@ export const RewardsByType = (props: {
     eraDeploymentRewards: {
       groupedAggregates: { keys: string[]; sum: { allocationRewards: string; totalRewards: string } }[];
     };
+    indexerEraDeploymentRewards: {
+      groupedAggregates: { keys: string[]; sum: { allocationRewards: string; totalRewards: string } }[];
+    };
   }>(gql`
-    query fetchRewards($deploymentId: String!, $eraIds: [Int!]!) {
+    query fetchRewards($deploymentId: String! = "0", $eraIds: [Int!]!, $indexer: String! = "") {
       eraDeploymentRewards(filter: { deploymentId: { equalTo: $deploymentId }, eraIdx: { in: $eraIds } }) {
+        groupedAggregates(groupBy: ERA_IDX) {
+          keys
+          sum {
+            allocationRewards
+            totalRewards
+          }
+        }
+      }
+
+      indexerEraDeploymentRewards(filter: { indexerId: { equalTo: $indexer }, eraIdx: { in: $eraIds } }) {
         groupedAggregates(groupBy: ERA_IDX) {
           keys
           sum {
@@ -80,6 +95,7 @@ export const RewardsByType = (props: {
     const vars = {
       eraIds: includesEras,
       deploymentId: deploymentId,
+      indexer: indexerAddress,
     };
     const res = await apis({
       variables: vars,
@@ -92,8 +108,11 @@ export const RewardsByType = (props: {
     const removedLastEras = includesErasHex.slice(1, includesErasHex.length);
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, removedLastEras, maxPaddingLength);
+
+    const dataSource = indexerAddress ? res?.data?.indexerEraDeploymentRewards : res?.data?.eraDeploymentRewards;
+
     const allocationRewards = curry(
-      res?.data?.eraDeploymentRewards?.groupedAggregates?.map((i) => {
+      dataSource?.groupedAggregates?.map((i) => {
         return {
           keys: i.keys.map((i) => numToHex(+i)),
 
@@ -105,7 +124,7 @@ export const RewardsByType = (props: {
     );
 
     const queryRewards = curry(
-      res?.data?.eraDeploymentRewards?.groupedAggregates?.map((i) => {
+      dataSource?.groupedAggregates?.map((i) => {
         return {
           keys: i.keys.map((i) => numToHex(+i)),
 
@@ -117,7 +136,7 @@ export const RewardsByType = (props: {
     );
 
     const totalRewards = curry(
-      res?.data?.eraDeploymentRewards?.groupedAggregates?.map((i) => {
+      dataSource?.groupedAggregates?.map((i) => {
         return {
           keys: i.keys.map((i) => numToHex(+i)),
           sum: {
@@ -148,6 +167,7 @@ export const RewardsByType = (props: {
     {
       loading: () => (
         <Skeleton
+          className="darkSkeleton"
           active
           paragraph={{ rows: 8 }}
           style={{ height: skeletonHeight ? skeletonHeight : 'auto' }}
