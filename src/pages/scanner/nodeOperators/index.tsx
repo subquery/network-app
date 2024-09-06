@@ -2,7 +2,9 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { IoSearch } from 'react-icons/io5';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
+import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { useEra } from '@hooks';
+import { CurrentEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
@@ -21,23 +23,20 @@ const ScannerDashboard: FC<IProps> = (props) => {
     pageSize: 30,
     currentPage: 1,
   });
-  const allDeployments = useQuery<{
-    eraDeploymentRewards: {
-      nodes: { deploymentId: string; totalRewards: string }[];
+
+  const allIndexers = useQuery<{
+    indexers: {
+      nodes: { selfStake: CurrentEraValue; totalStake: CurrentEraValue; id: string }[];
       totalCount: number;
     };
   }>(
     gql`
-      query allDeployments($currentIdx: Int!, $first: Int! = 30, $offset: Int! = 0) {
-        eraDeploymentRewards(
-          orderBy: TOTAL_REWARDS_DESC
-          filter: { eraIdx: { equalTo: $currentIdx } }
-          first: $first
-          offset: $offset
-        ) {
+      query getAllIndexers($first: Int! = 30, $offset: Int! = 0) {
+        indexers(first: $first, offset: $offset, filter: { active: { equalTo: true } }) {
           nodes {
-            deploymentId
-            totalRewards
+            selfStake
+            totalStake
+            id
           }
           totalCount
         }
@@ -45,149 +44,94 @@ const ScannerDashboard: FC<IProps> = (props) => {
     `,
     {
       variables: {
-        currentIdx: selectEra,
         first: pageInfo.pageSize,
         offset: (pageInfo.currentPage - 1) * pageInfo.pageSize,
       },
     },
   );
 
-  const allDeploymentsInfomations = useQuery<{
-    deployments: {
+  const indexerRewardsInfos = useQuery<{
+    eraIndexerApies: {
       nodes: {
-        id: string;
-        metadata: string;
-        project: {
-          metadata: string;
-        };
-        indexers: {
-          totalCount: number;
-        };
+        indexerId: string;
+        indexerApy: string;
       }[];
     };
-    indexerAllocationSummaries: {
-      groupedAggregates: { keys: string[]; sum: { totalAmount: string } }[];
-    };
-    deploymentBoosterSummaries: {
-      groupedAggregates: { keys: string[]; sum: { totalAmount: string } }[];
-    };
-    eraDeploymentRewards: {
-      groupedAggregates: { keys: string[]; sum: { allocationRewards: string; totalRewards: string } }[];
+    indexerEraDeploymentRewards: {
+      groupedAggregates: {
+        sum: {
+          allocationRewards: string;
+          queryRewards: string;
+          totalRewards: string;
+        };
+        keys: string[];
+      }[];
     };
   }>(
     gql`
-      query allDeploymentsInfomations($deploymentIds: [String!], $currentIdx: Int!) {
-        deployments(filter: { id: { in: $deploymentIds } }) {
+      query getIndexerRewardsInfos($indexers: [String!], $era: Int!) {
+        eraIndexerApies(filter: { eraIdx: { equalTo: $era }, indexerId: { in: $indexers } }) {
           nodes {
-            id
-            metadata
-            project {
-              metadata
-            }
-            indexers(filter: { indexer: { active: { equalTo: true } }, status: { notEqualTo: TERMINATED } }) {
-              totalCount
-            }
+            indexerId
+            indexerApy
           }
         }
 
-        indexerAllocationSummaries(filter: { deploymentId: { in: $deploymentIds } }) {
-          groupedAggregates(groupBy: DEPLOYMENT_ID) {
-            keys
-            sum {
-              totalAmount
-            }
-          }
-        }
-
-        deploymentBoosterSummaries(filter: { deploymentId: { in: $deploymentIds } }) {
-          groupedAggregates(groupBy: DEPLOYMENT_ID) {
-            keys
-            sum {
-              totalAmount
-            }
-          }
-        }
-
-        eraDeploymentRewards(filter: { deploymentId: { in: $deploymentIds }, eraIdx: { equalTo: $currentIdx } }) {
-          groupedAggregates(groupBy: DEPLOYMENT_ID) {
-            keys
+        indexerEraDeploymentRewards(filter: { eraIdx: { equalTo: $era }, indexerId: { in: $indexers } }) {
+          groupedAggregates(groupBy: INDEXER_ID) {
             sum {
               allocationRewards
+              queryRewards
               totalRewards
             }
+            keys
           }
         }
       }
     `,
     {
       variables: {
-        deploymentIds: allDeployments.data?.eraDeploymentRewards.nodes.map((node: any) => node.deploymentId) || [],
-        currentIdx: selectEra,
+        era: selectEra,
+        indexers: allIndexers.data?.indexers.nodes.map((node) => node.id),
       },
     },
   );
 
   const renderData = useMemo(() => {
-    return allDeployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
-      const eraDeploymentRewardsItem = allDeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
-        (i) => i.keys[0] === node.deploymentId,
-      );
-      const allocationRewards = eraDeploymentRewardsItem?.sum.allocationRewards || '0';
-      const totalCount = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)
-        ?.indexers.totalCount;
+    if (!allIndexers.data?.indexers.nodes.length || !indexerRewardsInfos.data) {
+      return [];
+    }
 
-      const totalAllocation =
-        allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
-          (i) => i.keys[0] === node.deploymentId,
-        )?.sum.totalAmount || '0';
-      const totalQueryRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
-        .minus(allocationRewards)
-        .toFixed();
-      const deploymentInfo = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
-      const allocationApy = BigNumberJs(allocationRewards || 0)
-        .div(totalAllocation === '0' ? 1 : totalAllocation)
-        .multipliedBy(52)
-        .multipliedBy(100);
+    const indexerRewardsMap = indexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.reduce(
+      (acc, cur) => {
+        acc[cur.keys[0]] = cur.sum;
+        return acc;
+      },
+      {} as Record<string, { allocationRewards: string; queryRewards: string; totalRewards: string }>,
+    );
+
+    return allIndexers.data.indexers.nodes.map((indexer) => {
+      const indexerRewards = indexerRewardsMap[indexer.id];
+      const apy = indexerRewardsInfos.data?.eraIndexerApies.nodes.find(
+        (node) => node.indexerId === indexer.id,
+      )?.indexerApy;
+
+      const totalStake = parseRawEraValue(indexer.totalStake, selectEra).current.toString();
+      const selfStake = parseRawEraValue(indexer.selfStake, selectEra).current.toString();
+
       return {
-        deploymentId: node.deploymentId,
-        projectMetadata: deploymentInfo?.project.metadata,
-        operatorCount: totalCount,
-        allocationAmount: formatNumber(formatSQT(totalAllocation)),
-        boosterAmount: formatNumber(
-          formatSQT(
-            allDeploymentsInfomations.data?.deploymentBoosterSummaries.groupedAggregates.find(
-              (i) => i.keys[0] === node.deploymentId,
-            )?.sum.totalAmount || '0',
-          ),
-        ),
-        allocationRewards: formatNumber(formatSQT(allocationRewards)),
-        averageAllocationRewards: formatNumber(
-          formatSQT(
-            BigNumberJs(allocationRewards)
-              .div(totalCount || 1)
-              .toFixed(),
-          ),
-        ),
-        allocationApy: allocationApy.gt(1000) ? '1000+' : allocationApy.toFixed(2),
-        queryRewards: formatNumber(formatSQT(totalQueryRewards)),
-        averageQueryRewards: formatNumber(
-          formatSQT(
-            BigNumberJs(totalQueryRewards)
-              .div(totalCount || 1)
-              .toFixed(),
-          ),
-        ),
-        totalRewards: formatNumber(formatSQT(eraDeploymentRewardsItem?.sum.totalRewards || '0')),
-        averageRewards: formatNumber(
-          formatSQT(
-            BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
-              .div(totalCount || 1)
-              .toFixed(),
-          ),
-        ),
+        ...indexer,
+        totalStake: formatNumber(formatSQT(totalStake)),
+        selfStake: formatNumber(formatSQT(selfStake)),
+        delegationStake: formatNumber(formatSQT(BigNumberJs(totalStake).minus(selfStake).toString())),
+        allocationRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.allocationRewards || 0).toString())),
+        queryRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.queryRewards || 0).toString())),
+        apy: BigNumberJs(formatSQT(apy || '0'))
+          .multipliedBy(100)
+          .toFixed(2),
       };
     });
-  }, [allDeployments.data, allDeploymentsInfomations.data]);
+  }, [allIndexers.data, indexerRewardsInfos.data, selectEra]);
 
   const previousRenderData = usePrevious(renderData);
 
@@ -202,7 +146,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
       <div className={styles.dashboardInner}>
         <div className="flex" style={{ marginBottom: 24 }}>
           <Typography variant="large" weight={600}>
-            Project Deployment Rewards
+            Node Operators ({allIndexers.data?.indexers.totalCount || allIndexers.previousData?.indexers.totalCount})
           </Typography>
         </div>
 
@@ -223,32 +167,33 @@ const ScannerDashboard: FC<IProps> = (props) => {
           <Input
             className="darkInput"
             style={{ width: 342 }}
-            placeholder="Search by deployment id"
+            placeholder="Search by address"
             prefix={<IoSearch />}
           ></Input>
         </div>
 
         <Table
           className={'darkTable'}
-          loading={allDeploymentsInfomations.loading}
+          loading={allIndexers.loading || indexerRewardsInfos.loading}
           columns={[
             {
-              title: 'Project',
+              title: 'Node Operators',
               dataIndex: 'name',
               key: 'name',
               render: (_, record) => {
-                return <DeploymentMeta deploymentId={record.deploymentId} projectMetadata={record.projectMetadata} />;
+                return <IndexerName address={record.id} />;
               },
             },
             {
-              title: 'Node Operators',
-              dataIndex: 'operatorCount',
-              key: 'operatorCount',
+              title: 'apy',
+              dataIndex: 'apy',
+              key: 'apy',
+              render: (text: string) => <Typography>{text} %</Typography>,
             },
             {
               title: 'Stake',
-              dataIndex: 'allocationAmount',
-              key: 'allocationAmount',
+              dataIndex: 'totalStake',
+              key: 'totalStake',
               render: (text: string) => (
                 <Typography>
                   {text} {TOKEN}
@@ -256,9 +201,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Boost',
-              dataIndex: 'boosterAmount',
-              key: 'boosterAmount',
+              title: 'Self Stake',
+              dataIndex: 'selfStake',
+              key: 'selfStake',
               render: (text: string) => (
                 <Typography>
                   {text} {TOKEN}
@@ -266,7 +211,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Total Stake Rewards',
+              title: 'Stake Rewards',
               dataIndex: 'allocationRewards',
               key: 'allocationRewards',
               render: (text: string) => (
@@ -274,22 +219,6 @@ const ScannerDashboard: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
-            },
-            {
-              title: 'Average Stake Rewards',
-              dataIndex: 'averageAllocationRewards',
-              key: 'averageAllocationRewards',
-              render: (text: string) => (
-                <Typography>
-                  {text} {TOKEN}
-                </Typography>
-              ),
-            },
-            {
-              title: 'Stake Apy',
-              dataIndex: 'allocationApy',
-              key: 'allocationApy',
-              render: (text: string) => <Typography>{text} %</Typography>,
             },
             {
               title: 'Total Query Rewards',
@@ -302,29 +231,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Average Query Rewards',
-              dataIndex: 'averageQueryRewards',
-              key: 'averageQueryRewards',
-              render: (text: string) => (
-                <Typography>
-                  {text} {TOKEN}
-                </Typography>
-              ),
-            },
-            {
-              title: 'Total Rewards',
-              dataIndex: 'totalRewards',
-              key: 'totalRewards',
-              render: (text: string) => (
-                <Typography>
-                  {text} {TOKEN}
-                </Typography>
-              ),
-            },
-            {
-              title: 'Average Rewards',
-              dataIndex: 'averageRewards',
-              key: 'averageRewards',
+              title: 'Delegation',
+              dataIndex: 'delegationStake',
+              key: 'delegationStake',
               render: (text: string) => (
                 <Typography>
                   {text} {TOKEN}
@@ -334,9 +243,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
           ]}
           dataSource={renderData?.length ? renderData : previousRenderData}
           pagination={{
-            total:
-              allDeployments.data?.eraDeploymentRewards.totalCount ||
-              allDeployments.previousData?.eraDeploymentRewards.totalCount,
+            total: allIndexers.data?.indexers.totalCount || allIndexers.previousData?.indexers.totalCount,
             pageSize: pageInfo.pageSize,
             pageSizeOptions: ['10', '30', '50', '100'],
             current: pageInfo.currentPage,

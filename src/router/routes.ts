@@ -247,4 +247,8 @@ export const scannerRouters: BasicRouteType[] = [
     path: '/project-deployment-rewards/:id',
     component: React.lazy(() => import('../pages/scanner/projectDetail/index')),
   },
+  {
+    path: '/node-operators',
+    component: React.lazy(() => import('../pages/scanner/nodeOperators/index')),
+  },
 ];

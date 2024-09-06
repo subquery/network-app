@@ -346,7 +346,6 @@ const ProjectDetail: FC<IProps> = (props) => {
               dataIndex: 'indexerId',
               key: 'indexerId',
               render: (_: string, record: (typeof renderData)[number]) => {
-                // return <DeploymentMeta deploymentId={record.deploymentId} projectMetadata={record.projectMetadata} />;
                 return <IndexerName address={record.indexerId} />;
               },
               // onCell: (record: (typeof renderData)[number]) => {
