@@ -378,7 +378,7 @@ const ProjectDetail: FC<IProps> = (props) => {
               dataIndex: 'indexerId',
               key: 'indexerId',
               render: (_: string, record: (typeof renderData)[number]) => {
-                return <IndexerName address={record.indexerId} />;
+                return <IndexerName theme="dark" address={record.indexerId} />;
               },
               onCell: (record: (typeof renderData)[number]) => {
                 return {
@@ -455,7 +455,7 @@ const ProjectDetail: FC<IProps> = (props) => {
               ),
             },
             {
-              title: 'Projected Rewards',
+              title: 'Total Rewards',
               dataIndex: 'totalRewards',
               key: 'totalRewards',
               render: (text: string) => (

@@ -24,6 +24,7 @@ const AutoReduceAllocation: FC<IProps> = (props) => {
       const data: { autoReduceAllocation?: boolean } = await result.json();
 
       if (Object.hasOwn(data, 'autoReduceAllocation')) {
+        if (data.autoReduceAllocation === null) return 'Unknown';
         return data.autoReduceAllocation;
       }
 

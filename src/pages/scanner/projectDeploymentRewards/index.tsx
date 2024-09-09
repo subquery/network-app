@@ -10,6 +10,7 @@ import { usePrevious } from 'ahooks';
 import { Button, Input, Radio, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { parseEther } from 'ethers/lib/utils';
+import { debounce } from 'lodash-es';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
 import styles from './index.module.less';
@@ -27,6 +28,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
   const [calcInput, setCalcInput] = useState<number>(100000);
   const [rowSelected, setRowSelected] = useState<{ deploymentId: string }>();
   const [statisticGroup, setStatisticGroup] = useState<'averageRewards' | 'projectedRewards'>('averageRewards');
+  const [searchDeployment, setSearchDeployment] = useState<string>('');
+  const debounceSearch = useMemo(() => debounce(setSearchDeployment, 500), [setSearchDeployment]);
   const allDeployments = useQuery<{
     eraDeploymentRewards: {
       nodes: { deploymentId: string; totalRewards: string }[];
@@ -34,10 +37,10 @@ const ScannerDashboard: FC<IProps> = (props) => {
     };
   }>(
     gql`
-      query allDeployments($currentIdx: Int!, $first: Int! = 30, $offset: Int! = 0) {
+      query allDeployments($deploymentId: String = "", $currentIdx: Int!, $first: Int! = 30, $offset: Int! = 0) {
         eraDeploymentRewards(
           orderBy: TOTAL_REWARDS_DESC
-          filter: { eraIdx: { equalTo: $currentIdx } }
+          filter: { eraIdx: { equalTo: $currentIdx }, deploymentId: { includesInsensitive: $deploymentId } }
           first: $first
           offset: $offset
         ) {
@@ -54,6 +57,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         currentIdx: selectEra,
         first: pageInfo.pageSize,
         offset: (pageInfo.currentPage - 1) * pageInfo.pageSize,
+        deploymentId: searchDeployment,
       },
     },
   );
@@ -143,27 +147,31 @@ const ScannerDashboard: FC<IProps> = (props) => {
         (i) => i.keys[0] === node.deploymentId,
       );
 
-      const oneTokenRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.allocationRewards || '0').div(
+      const rawTotalStake = BigNumberJs(
         allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
           (i) => i.keys[0] === node.deploymentId,
-        )?.sum.totalAmount || '1',
+        )?.sum.totalAmount || '0',
+      );
+
+      const rawTotalRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.allocationRewards || '0');
+
+      const estimatedRewardsOfInputStake = rawTotalRewards.multipliedBy(
+        BigNumberJs(parseEther(inputStake.toString()).toString()).div(
+          rawTotalStake.plus(parseEther(inputStake.toString()).toString()),
+        ),
       );
 
       const totalCount =
         (allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId)?.indexers
           .totalCount || 0) + (statisticGroup === 'averageRewards' ? 0 : 1);
 
-      const totalAllocation = BigNumberJs(
-        allDeploymentsInfomations.data?.indexerAllocationSummaries.groupedAggregates.find(
-          (i) => i.keys[0] === node.deploymentId,
-        )?.sum.totalAmount || '0',
-      )
+      const totalAllocation = rawTotalStake
         .plus(statisticGroup === 'averageRewards' ? 0 : parseEther(inputStake.toString()).toString())
         .toString();
 
       const allocationRewards =
         statisticGroup === 'projectedRewards'
-          ? oneTokenRewards.multipliedBy(parseEther(inputStake.toString()).toString()).toString()
+          ? estimatedRewardsOfInputStake.toString()
           : eraDeploymentRewardsItem?.sum.allocationRewards || '0';
 
       const totalQueryRewards = BigNumberJs(eraDeploymentRewardsItem?.sum.totalRewards || '0')
@@ -171,7 +179,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         .toFixed();
       const deploymentInfo = allDeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
       const allocationApy = BigNumberJs(allocationRewards || 0)
-        .div(totalAllocation === '0' ? 1 : totalAllocation)
+        .div(statisticGroup === 'averageRewards' ? totalAllocation : parseEther(inputStake.toString()).toString())
         .multipliedBy(52)
         .multipliedBy(100);
 
@@ -198,7 +206,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               .toFixed(),
           ),
         ),
-        allocationApy: allocationApy.gt(1000) ? '1000+' : allocationApy.toFixed(2),
+        allocationApy: allocationApy.isNaN() ? '0.00' : allocationApy.gt(1000) ? '1000+' : allocationApy.toFixed(2),
         queryRewards: formatNumber(formatSQT(totalQueryRewards)),
         averageQueryRewards: formatNumber(
           formatSQT(
@@ -288,6 +296,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
             style={{ width: 342 }}
             placeholder="Search by deployment id"
             prefix={<IoSearch />}
+            onChange={(e) => {
+              debounceSearch(e.target.value);
+            }}
           ></Input>
         </div>
         {statisticGroup === 'projectedRewards' ? (
@@ -325,11 +336,13 @@ const ScannerDashboard: FC<IProps> = (props) => {
                     return;
                   }
 
+                  setCalcInput(Number(e.target.value));
+                }}
+                onBlur={(e) => {
                   if (Number(e.target.value) < 1) {
                     setCalcInput(1);
                     return;
                   }
-                  setCalcInput(Number(e.target.value));
                 }}
                 min="1"
                 max={100000000}
@@ -397,6 +410,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawAllocationRewards).comparedTo(b.rawAllocationRewards);
+              },
             },
             {
               title: 'Average Stake Rewards',
@@ -413,6 +429,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
               dataIndex: 'allocationApy',
               key: 'allocationApy',
               render: (text: string) => <Typography>{text} %</Typography>,
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.allocationApy).comparedTo(b.allocationApy);
+              },
             },
             {
               title: 'Projected Query Rewards',

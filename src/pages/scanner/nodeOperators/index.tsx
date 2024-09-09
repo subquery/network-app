@@ -11,6 +11,7 @@ import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
 import { Button, Input, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import { debounce } from 'lodash-es';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
 import styles from './index.module.less';
@@ -21,6 +22,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
   const navigate = useNavigate();
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
+  const [searchDeployment, setSearchDeployment] = useState<string>('');
+  const debounceSearch = useMemo(() => debounce(setSearchDeployment, 500), [setSearchDeployment]);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 30,
     currentPage: 1,
@@ -33,8 +36,12 @@ const ScannerDashboard: FC<IProps> = (props) => {
     };
   }>(
     gql`
-      query getAllIndexers($first: Int! = 30, $offset: Int! = 0) {
-        indexers(first: $first, offset: $offset, filter: { active: { equalTo: true } }) {
+      query getAllIndexers($first: Int! = 30, $offset: Int! = 0, $indexerId: String = "") {
+        indexers(
+          first: $first
+          offset: $offset
+          filter: { id: { includesInsensitive: $indexerId }, active: { equalTo: true } }
+        ) {
           nodes {
             selfStake
             totalStake
@@ -48,6 +55,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
       variables: {
         first: pageInfo.pageSize,
         offset: (pageInfo.currentPage - 1) * pageInfo.pageSize,
+        indexerId: searchDeployment,
       },
     },
   );
@@ -171,6 +179,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
             style={{ width: 342 }}
             placeholder="Search by address"
             prefix={<IoSearch />}
+            onChange={(e) => {
+              debounceSearch(e.target.value);
+            }}
           ></Input>
         </div>
 
