@@ -12,6 +12,8 @@ export type Era = {
   estEndTime: Date;
   index: number;
   period: number;
+  createdBlock: number;
+  eras?: { id: string; createdBlock: number }[];
 };
 
 export function canStartNewEra(era: Era): boolean {
@@ -34,7 +36,7 @@ export function useEra(): {
 } {
   const [fetchEraInfomation] = useLazyQuery<{
     eras: {
-      nodes: { eraPeriod: string; startTime: Date; id: string }[];
+      nodes: { eraPeriod: string; startTime: Date; id: string; createdBlock: number }[];
     };
   }>(gql`
     query {
@@ -43,6 +45,7 @@ export function useEra(): {
           eraPeriod
           startTime
           id
+          createdBlock
         }
       }
     }
@@ -54,7 +57,7 @@ export function useEra(): {
     const lastestEra = res?.data?.eras?.nodes?.[0];
 
     if (lastestEra) {
-      const { startTime, eraPeriod: period, id: index } = lastestEra;
+      const { startTime, eraPeriod: period, id: index, createdBlock } = lastestEra;
       const eraIndex = new URL(window.location.href).searchParams.get('customEra') || index;
 
       return {
@@ -62,6 +65,8 @@ export function useEra(): {
         estEndTime: dayjs.utc(startTime).add(Number(period), 'millisecond').toDate(),
         period: Math.floor(Number(period) / 1000),
         index: parseInt(eraIndex),
+        createdBlock: createdBlock,
+        eras: res.data?.eras.nodes || [],
       };
     }
 
@@ -70,6 +75,8 @@ export function useEra(): {
       estEndTime: new Date(),
       period: 0,
       index: 0,
+      createdBlock: 0,
+      eras: [],
     };
   }, [fetchEraInfomation]);
 

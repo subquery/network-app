@@ -30,6 +30,16 @@ const ScannerDashboard: FC<IProps> = (props) => {
   const [statisticGroup, setStatisticGroup] = useState<'averageRewards' | 'projectedRewards'>('averageRewards');
   const [searchDeployment, setSearchDeployment] = useState<string>('');
   const debounceSearch = useMemo(() => debounce(setSearchDeployment, 500), [setSearchDeployment]);
+  const blockHeightOfQuery = useMemo(() => {
+    if (!currentEra.data?.index) return '99999999999999999';
+
+    if (selectEra === currentEra.data.index - 1 || selectEra === currentEra.data.index) {
+      return '99999999999999999';
+    }
+
+    return currentEra.data.eras?.find((i) => parseInt(i.id, 16) === selectEra)?.createdBlock || '99999999999999999';
+  }, [selectEra, currentEra.data?.index]);
+
   const allDeployments = useQuery<{
     eraDeploymentRewards: {
       nodes: { deploymentId: string; totalRewards: string }[];
@@ -87,8 +97,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
     };
   }>(
     gql`
-      query allDeploymentsInfomations($deploymentIds: [String!], $currentIdx: Int!) {
-        deployments(filter: { id: { in: $deploymentIds } }) {
+      query allDeploymentsInfomations($blockHeight: String!, $deploymentIds: [String!], $currentIdx: Int!) {
+        deployments(blockHeight: $blockHeight, filter: { id: { in: $deploymentIds } }) {
           nodes {
             id
             metadata
@@ -102,7 +112,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
           }
         }
 
-        indexerAllocationSummaries(filter: { deploymentId: { in: $deploymentIds } }) {
+        indexerAllocationSummaries(blockHeight: $blockHeight, filter: { deploymentId: { in: $deploymentIds } }) {
           groupedAggregates(groupBy: DEPLOYMENT_ID) {
             keys
             sum {
@@ -111,7 +121,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
           }
         }
 
-        deploymentBoosterSummaries(filter: { deploymentId: { in: $deploymentIds } }) {
+        deploymentBoosterSummaries(blockHeight: $blockHeight, filter: { deploymentId: { in: $deploymentIds } }) {
           groupedAggregates(groupBy: DEPLOYMENT_ID) {
             keys
             sum {
@@ -135,6 +145,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
       variables: {
         deploymentIds: allDeployments.data?.eraDeploymentRewards.nodes.map((node: any) => node.deploymentId) || [],
         currentIdx: selectEra,
+        blockHeight: blockHeightOfQuery.toString(),
       },
     },
   );

@@ -29,6 +29,16 @@ const ScannerDashboard: FC<IProps> = (props) => {
     currentPage: 1,
   });
 
+  const blockHeightOfQuery = useMemo(() => {
+    if (!currentEra.data?.index) return '99999999999999999';
+
+    if (selectEra === currentEra.data.index - 1 || selectEra === currentEra.data.index) {
+      return '99999999999999999';
+    }
+
+    return currentEra.data.eras?.find((i) => parseInt(i.id, 16) === selectEra)?.createdBlock || '99999999999999999';
+  }, [selectEra, currentEra.data?.index]);
+
   const allIndexers = useQuery<{
     indexers: {
       nodes: { selfStake: CurrentEraValue; totalStake: CurrentEraValue; id: string }[];
@@ -36,8 +46,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
     };
   }>(
     gql`
-      query getAllIndexers($first: Int! = 30, $offset: Int! = 0, $indexerId: String = "") {
+      query getAllIndexers($first: Int! = 30, $offset: Int! = 0, $indexerId: String = "", $blockHeight: String!) {
         indexers(
+          blockHeight: $blockHeight
           first: $first
           offset: $offset
           filter: { id: { includesInsensitive: $indexerId }, active: { equalTo: true } }
@@ -56,6 +67,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         first: pageInfo.pageSize,
         offset: (pageInfo.currentPage - 1) * pageInfo.pageSize,
         indexerId: searchDeployment,
+        blockHeight: blockHeightOfQuery.toString(),
       },
     },
   );
@@ -102,7 +114,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
     {
       variables: {
         era: selectEra,
-        indexers: allIndexers.data?.indexers.nodes.map((node) => node.id),
+        indexers: allIndexers.data?.indexers.nodes.map((node) => node.id) || [],
       },
     },
   );
@@ -156,7 +168,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
       <div className={styles.dashboardInner}>
         <div className="flex" style={{ marginBottom: 24 }}>
           <Typography variant="large" weight={600}>
-            Node Operators ({allIndexers.data?.indexers.totalCount || allIndexers.previousData?.indexers.totalCount})
+            Node Operators ({allIndexers.data?.indexers.totalCount ?? allIndexers.previousData?.indexers.totalCount})
           </Typography>
         </div>
 
