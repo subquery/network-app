@@ -1,16 +1,12 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { IoSearch } from 'react-icons/io5';
+import React, { FC } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { DeploymentInfo, DeploymentMeta } from '@components';
+import { DeploymentInfo } from '@components';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
-import { CurrentEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
-import { usePrevious } from 'ahooks';
-import { Breadcrumb, Button, Input, Select, Table } from 'antd';
-import BigNumberJs from 'bignumber.js';
+import { Breadcrumb, Button, Table } from 'antd';
 import clsx from 'clsx';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
@@ -70,12 +66,6 @@ const ScannerDashboard: FC<IProps> = (props) => {
       },
     },
   );
-
-  // const renderData = useMemo(() => {
-  //   return [];
-  // }, [indexerRewardsInfos.data]);
-
-  // const previousRenderData = usePrevious(renderData);
 
   const indexerDeployments = useSortedIndexerDeployments(id || '');
 
@@ -189,6 +179,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         </div>
 
         <Table
+          rowKey={(record, index) => record.deploymentId || index || '0'}
           className={'darkTable'}
           loading={indexerDeployments.loading}
           columns={[
@@ -208,7 +199,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               key: 'allocatedAmount',
               render: (text: string) => (
                 <Typography>
-                  {formatNumber(formatSQT(text))} {TOKEN}
+                  {text ? formatNumber(formatSQT(text)) : 0} {TOKEN}
                 </Typography>
               ),
             },
@@ -218,7 +209,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               key: 'lastEraAllocatedRewards',
               render: (text: string) => (
                 <Typography>
-                  {formatNumber(formatSQT(text))} {TOKEN}
+                  {text ? formatNumber(formatSQT(text)) : 0} {TOKEN}
                 </Typography>
               ),
             },
@@ -228,7 +219,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               key: 'lastEraQueryRewards',
               render: (text: string) => (
                 <Typography>
-                  {formatNumber(formatSQT(text))} {TOKEN}
+                  {text ? formatNumber(formatSQT(text)) : 0} {TOKEN}
                 </Typography>
               ),
             },
@@ -238,25 +229,13 @@ const ScannerDashboard: FC<IProps> = (props) => {
               key: 'totalRewards',
               render: (text: string) => (
                 <Typography>
-                  {formatNumber(formatSQT(text))} {TOKEN}
+                  {text ? formatNumber(formatSQT(text)) : 0} {TOKEN}
                 </Typography>
               ),
             },
           ]}
           dataSource={indexerDeployments.data || []}
           pagination={false}
-          // pagination={{
-          //   total: allIndexers.data?.indexers.totalCount || allIndexers.previousData?.indexers.totalCount,
-          //   pageSize: pageInfo.pageSize,
-          //   pageSizeOptions: ['10', '30', '50', '100'],
-          //   current: pageInfo.currentPage,
-          //   onChange(page, pageSize) {
-          //     setPageInfo({
-          //       pageSize,
-          //       currentPage: page,
-          //     });
-          //   },
-          // }}
         ></Table>
       </div>
     </div>

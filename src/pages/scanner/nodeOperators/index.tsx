@@ -143,8 +143,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
 
       return {
         ...indexer,
-        totalStake: formatNumber(formatSQT(totalStake)),
-        selfStake: formatNumber(formatSQT(selfStake)),
+        totalStake: formatNumber(formatSQT(totalStake || '0')),
+        selfStake: formatNumber(formatSQT(selfStake || '0')),
         delegationStake: formatNumber(formatSQT(BigNumberJs(totalStake).minus(selfStake).toString())),
         allocationRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.allocationRewards || 0).toString())),
         queryRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.queryRewards || 0).toString())),
@@ -198,6 +198,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         </div>
 
         <Table
+          rowKey={(record) => record.id}
           className={'darkTable'}
           loading={allIndexers.loading || indexerRewardsInfos.loading}
           columns={[

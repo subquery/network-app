@@ -69,11 +69,38 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
     }
   `);
 
-  const [fetchIndexerLastEraRewardsInfo, indexerLastEraRewardsInfo] = useLazyQuery(gql`
-    query GetIndexerLastEraRewardsInfo($id: String!, $indexer: String!, $eraIdx: Int!) {
-      indexerReward(id: $id) {
-        amount
+  const [fetchIndexerLastEraRewardsInfo, indexerLastEraRewardsInfo] = useLazyQuery<{
+    indexerEraDeploymentRewards: {
+      aggregates: {
+        sum: {
+          allocationRewards: string;
+          queryRewards: string;
+          totalRewards: string;
+        };
+      };
+    };
+    indexerAllocationRewards: {
+      aggregates: {
+        sum: {
+          burnt: string;
+          reward: string;
+        };
+      };
+    };
+  }>(gql`
+    query GetIndexerLastEraRewardsInfo($indexer: String!, $eraIdx: Int!) {
+      indexerEraDeploymentRewards(filter: { indexerId: { equalTo: $indexer }, eraIdx: { equalTo: $eraIdx } }) {
+        aggregates {
+          sum {
+            allocationRewards
+            queryRewards
+            totalRewards
+          }
+        }
       }
+      # indexerReward(id: $id) {
+      #   amount
+      # }
 
       indexerAllocationRewards(filter: { indexerId: { equalTo: $indexer }, eraIdx: { equalTo: $eraIdx } }) {
         aggregates {
@@ -353,7 +380,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
       fetchIndexerLastEraRewardsInfo({
         variables: {
-          id: `${indexer}:${numToHex(currentEra.data?.index - 1)}`,
+          // id: `${indexer}:${numToHex(currentEra.data?.index - 1)}`,
           indexer: indexer,
           eraIdx: currentEra.data?.index - 1,
         },
@@ -402,9 +429,12 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
             };
 
             // last era rewards
-            const lastTotalRewards = BigNumberJs(indexerLastEraRewardsInfo.data?.indexerReward?.amount || 0);
+            // const lastTotalRewards = BigNumberJs(indexerLastEraRewardsInfo.data?.indexerReward?.amount || 0);
+            const lastTotalRewards = BigNumberJs(
+              indexerLastEraRewardsInfo.data?.indexerEraDeploymentRewards.aggregates.sum.totalRewards || 0,
+            );
             const lastAllocationRewards = BigNumberJs(
-              indexerLastEraRewardsInfo.data?.indexerAllocationRewards?.aggregates?.sum?.reward || 0,
+              indexerLastEraRewardsInfo.data?.indexerEraDeploymentRewards?.aggregates?.sum?.allocationRewards || 0,
             );
             const lastQueryRewards = lastTotalRewards.minus(lastAllocationRewards);
             const lastAllocationBurnt = BigNumberJs(
@@ -416,7 +446,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
               queryRewards: lastQueryRewards.div(totalRatio).multipliedBy(100).toFixed(2),
               burnt: lastAllocationBurnt.div(totalRatio).multipliedBy(100).toFixed(2),
             };
-
             return (
               <>
                 {sortedDesc && <div className={styles.desc}>{sortedDesc}</div>}
@@ -632,7 +661,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     title={'Last Era Project Rewards'}
                     tooltip="Rewards earned by all projects in the previous era, distributed between Delegators and the Node Operator"
                     titleExtra={BalanceLayout({
-                      mainBalance: formatNumber(formatSQT(lastTotalRewards.toString())),
+                      mainBalance: formatSQT(lastTotalRewards.toString()),
                     })}
                     style={{ boxShadow: 'none', marginBottom: 24, flex: 1 }}
                   >

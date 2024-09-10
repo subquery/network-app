@@ -39,7 +39,6 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
       },
     },
   );
-
   const currentEraFlexPlanRewards = useAsyncMemo(async () => {
     if (!contracts) return;
     const [rewards] = await contracts.rewardsPool.getReward(
