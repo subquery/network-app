@@ -48,7 +48,7 @@ export function truncateDeploymentId(deploymentId: string): string {
     return deploymentId;
   }
 
-  return `${deploymentId.slice(0, 15)}...${deploymentId.slice(deploymentId.length - 15)}`;
+  return `${deploymentId.slice(0, 6)}......${deploymentId.slice(deploymentId.length - 6)}`;
 }
 
 export const CIDv0 = new RegExp(/Qm[1-9A-HJ-NP-Za-km-z]{44}/i);

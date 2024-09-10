@@ -160,6 +160,10 @@ const ProjectInner: React.FC = () => {
                 <TabButtons tabs={sortedTabList} withUnderline />
               </div>
               <div className={styles.contentOverview}>
+                {/* I code some have effect code at this section. Need this component load always. TODO: enhance it*/}
+                <div style={{ display: location.pathname.includes(INDEXERS) ? 'block' : 'none' }}>
+                  <IndexerDetails deploymentId={deploymentId} project={project} manifest={manifest}></IndexerDetails>
+                </div>
                 {/* TODO: just render the components rather than routes. */}
                 <Routes>
                   <Route
@@ -173,16 +177,7 @@ const ProjectInner: React.FC = () => {
                       />
                     }
                   />
-                  <Route
-                    path={INDEXERS}
-                    element={
-                      <IndexerDetails
-                        deploymentId={deploymentId}
-                        project={project}
-                        manifest={manifest}
-                      ></IndexerDetails>
-                    }
-                  />
+                  <Route path={INDEXERS} element={<></>} />
                   <Route
                     path={SERVICE_AGREEMENTS}
                     element={
