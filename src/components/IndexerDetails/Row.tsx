@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
-import { LazyQueryResult } from '@apollo/client';
+import { QueryResult } from '@apollo/client';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
@@ -171,7 +171,7 @@ const ConnectedRow: React.FC<{
         }
 
         return plans.filter((p) => !p.deploymentId);
-      }, deploymentPlans) as LazyQueryResult<Plan[], any>,
+      }, deploymentPlans) as QueryResult<Plan[], any>,
     [deploymentPlans],
   );
 
