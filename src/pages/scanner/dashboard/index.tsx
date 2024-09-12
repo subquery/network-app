@@ -2,10 +2,13 @@ import React, { FC, useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { useEra } from '@hooks';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
+import { useAsyncMemo } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import { Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import dayjs from 'dayjs';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
 import { OperatorRewardsLineChart } from './components/operatorRewardsChart/OperatorRewardsLineChart';
@@ -15,6 +18,9 @@ interface IProps {}
 
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
+  const { getStatisticQueries } = useConsumerHostServices({
+    autoLogin: false,
+  });
   const top5Deployments = useQuery<{
     eraDeploymentRewards: {
       nodes: { deploymentId: string; totalRewards: string }[];
@@ -112,6 +118,22 @@ const ScannerDashboard: FC<IProps> = (props) => {
     },
   );
 
+  const queries = useAsyncMemo(async () => {
+    if (!currentEra.data) return [];
+    const deployments = top5Deployments.data?.eraDeploymentRewards.nodes.map((i) => i.deploymentId);
+    if (!deployments || !deployments?.length) return [];
+    try {
+      const res = await getStatisticQueries({
+        deployment: deployments,
+        start_date: dayjs(currentEra.data.eras?.at(1)?.startTime).format('YYYY-MM-DD'),
+      });
+
+      return res.data.list;
+    } catch (e) {
+      return [];
+    }
+  }, [top5Deployments.data, currentEra.data?.eras]);
+
   const renderData = useMemo(() => {
     return top5Deployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
       const eraDeploymentRewardsItem = top5DeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
@@ -129,6 +151,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
         .minus(allocationRewards)
         .toFixed();
       const deploymentInfo = top5DeploymentsInfomations.data?.deployments.nodes.find((i) => i.id === node.deploymentId);
+
+      const deploymentQueryCount = queries.data?.find((i) => i.deployment === node.deploymentId);
+
       return {
         deploymentId: node.deploymentId,
         projectMetadata: deploymentInfo?.project.metadata,
@@ -150,7 +175,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
           ),
         ),
         allocationApy: BigNumberJs(allocationRewards)
-          .div(totalAllocation)
+          .div(totalAllocation === '0' ? '1' : totalAllocation)
           .multipliedBy(52)
           .multipliedBy(100)
           .toFixed(2),
@@ -162,6 +187,13 @@ const ScannerDashboard: FC<IProps> = (props) => {
               .toFixed(),
           ),
         ),
+        queries: formatNumber(deploymentQueryCount?.queries || 0, 0),
+        averageQueries: formatNumber(
+          BigNumberJs(deploymentQueryCount?.queries || 0)
+            .div(totalCount || 1)
+            .toFixed(),
+          0,
+        ),
         totalRewards: formatNumber(formatSQT(eraDeploymentRewardsItem?.sum.totalRewards || '0')),
         averageRewards: formatNumber(
           formatSQT(
@@ -172,7 +204,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         ),
       };
     });
-  }, [top5Deployments.data, top5DeploymentsInfomations.data]);
+  }, [top5Deployments.data, top5DeploymentsInfomations.data, queries]);
 
   return (
     <div className={styles.dashboard}>
@@ -194,6 +226,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         </div>
 
         <Table
+          rowKey={(record) => record.deploymentId}
           className={'darkTable'}
           loading={top5Deployments.loading || top5DeploymentsInfomations.loading}
           columns={[
@@ -257,6 +290,18 @@ const ScannerDashboard: FC<IProps> = (props) => {
               render: (text: string) => <Typography>{text} %</Typography>,
             },
             {
+              title: 'Total Queries',
+              dataIndex: 'queries',
+              key: 'queries',
+              render: (text: string) => <Typography>{text}</Typography>,
+            },
+            {
+              title: 'Average Queries',
+              dataIndex: 'averageQueries',
+              key: 'averageQueries',
+              render: (text: string) => <Typography>{text}</Typography>,
+            },
+            {
               title: 'Total Query Rewards',
               dataIndex: 'queryRewards',
               key: 'queryRewards',
@@ -299,6 +344,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
           ]}
           dataSource={renderData}
           pagination={false}
+          scroll={{ x: 'max-content' }}
         ></Table>
       </div>
     </div>

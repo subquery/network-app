@@ -13,7 +13,7 @@ export type Era = {
   index: number;
   period: number;
   createdBlock: number;
-  eras?: { id: string; createdBlock: number }[];
+  eras?: { id: string; createdBlock: number; startTime: Date; endTime?: Date }[];
 };
 
 export function canStartNewEra(era: Era): boolean {
@@ -36,7 +36,7 @@ export function useEra(): {
 } {
   const [fetchEraInfomation] = useLazyQuery<{
     eras: {
-      nodes: { eraPeriod: string; startTime: Date; id: string; createdBlock: number }[];
+      nodes: { eraPeriod: string; startTime: Date; endTime: Date; id: string; createdBlock: number }[];
     };
   }>(gql`
     query {
@@ -44,6 +44,7 @@ export function useEra(): {
         nodes {
           eraPeriod
           startTime
+          endTime
           id
           createdBlock
         }

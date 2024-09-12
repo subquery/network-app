@@ -12,9 +12,11 @@ import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
 import { Breadcrumb, Button, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
-import { parseEther } from 'ethers/lib/utils';
+import clsx from 'clsx';
+import dayjs from 'dayjs';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
+import { PriceQueriesChart } from './components/priceQueries/priceQueries';
 import { RewardsByType } from './components/rewardsByType/rewardsByType';
 import styles from './index.module.less';
 
@@ -25,7 +27,7 @@ const ProjectDetail: FC<IProps> = (props) => {
   const navigate = useNavigate();
   const { id: deploymentId } = useParams();
   const [query] = useSearchParams();
-  const { getProjects } = useConsumerHostServices({
+  const { getProjects, getStatisticQueriesByPrice, getStatisticQueries } = useConsumerHostServices({
     autoLogin: false,
   });
   const { getMetadataFromCid } = useProjectMetadata();
@@ -191,6 +193,22 @@ const ProjectDetail: FC<IProps> = (props) => {
     return res.data.indexers;
   }, [deploymentId, deploymentInfomations.data?.deployment.projectId]);
 
+  const queries = useAsyncMemo(async () => {
+    if (!currentEra.data || !deploymentId) return [];
+    const deployments = [deploymentId];
+
+    try {
+      const res = await getStatisticQueries({
+        deployment: deployments,
+        start_date: dayjs(currentEra.data?.startTime).format('YYYY-MM-DD'),
+      });
+
+      return res.data.list;
+    } catch (e) {
+      return [];
+    }
+  }, [deploymentId, currentEra.data?.startTime]);
+
   const renderData = useMemo(() => {
     if (!deploymentInfomations.data?.deployment?.indexers?.nodes.length) {
       return [];
@@ -286,77 +304,92 @@ const ProjectDetail: FC<IProps> = (props) => {
           },
         ]}
       ></Breadcrumb>
-      <div className={styles.dashboardInner}>
-        <div className="flex">
-          <DeploymentMeta
-            deploymentId={deploymentId || ''}
-            projectMetadata={query.get('projectMetadata') || ''}
-            maxWidth="100%"
-          />
-          <span style={{ flex: 1 }}></span>
-          <Button type="primary" shape="round" size="large">
-            <a
-              href={`https://app.subquery.network/explorer/project/${query.get('projectId')}/overview?deploymentId=${deploymentId}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open On Explorer
-            </a>
-          </Button>
+
+      <div className={clsx('flex', 'gap32')} style={{ height: '400px' }}>
+        <div className={styles.dashboardInner}>
+          <div className="flex">
+            <DeploymentMeta
+              deploymentId={deploymentId || ''}
+              projectMetadata={query.get('projectMetadata') || ''}
+              maxWidth="100%"
+            />
+            <span style={{ flex: 1 }}></span>
+            <Button type="primary" shape="round" size="large">
+              <a
+                href={`https://app.subquery.network/explorer/project/${query.get('projectId')}/overview?deploymentId=${deploymentId}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open On Explorer
+              </a>
+            </Button>
+          </div>
+
+          <div className="col-flex" style={{ gap: 12 }}>
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Project Rewards
+              </Typography>
+
+              <Typography>
+                {formatNumber(
+                  formatSQT(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.totalRewards || '0'),
+                )}{' '}
+                {TOKEN}
+              </Typography>
+            </div>
+
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Node Operators
+              </Typography>
+
+              <Typography>{deploymentInfomations.data?.deployment.indexers.totalCount}</Typography>
+            </div>
+
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Stake Rewards
+              </Typography>
+
+              <Typography>
+                {formatNumber(
+                  formatSQT(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.allocationRewards || '0'),
+                )}{' '}
+                {TOKEN}
+              </Typography>
+            </div>
+
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Query Rewards
+              </Typography>
+
+              <Typography>
+                {formatNumber(
+                  formatSQT(
+                    BigNumberJs(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.totalRewards || '0')
+                      .minus(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.allocationRewards || '0')
+                      .toString(),
+                  ),
+                )}{' '}
+                {TOKEN}
+              </Typography>
+            </div>
+
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Queries
+              </Typography>
+
+              <Typography>
+                {formatNumber(queries.data?.find((i) => i.deployment === deploymentId)?.queries || 0)}
+              </Typography>
+            </div>
+          </div>
         </div>
 
-        <div className="col-flex" style={{ gap: 12 }}>
-          <div className="flex gap32">
-            <Typography type="secondary" style={{ width: 130 }}>
-              Project Rewards
-            </Typography>
-
-            <Typography>
-              {formatNumber(
-                formatSQT(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.totalRewards || '0'),
-              )}{' '}
-              {TOKEN}
-            </Typography>
-          </div>
-
-          <div className="flex gap32">
-            <Typography type="secondary" style={{ width: 130 }}>
-              Node Operators
-            </Typography>
-
-            <Typography>{deploymentInfomations.data?.deployment.indexers.totalCount}</Typography>
-          </div>
-
-          <div className="flex gap32">
-            <Typography type="secondary" style={{ width: 130 }}>
-              Stake Rewards
-            </Typography>
-
-            <Typography>
-              {formatNumber(
-                formatSQT(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.allocationRewards || '0'),
-              )}{' '}
-              {TOKEN}
-            </Typography>
-          </div>
-
-          <div className="flex gap32">
-            <Typography type="secondary" style={{ width: 130 }}>
-              Query Rewards
-            </Typography>
-
-            <Typography>
-              {formatNumber(
-                formatSQT(
-                  BigNumberJs(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.totalRewards || '0')
-                    .minus(deploymentInfomations.data?.eraDeploymentRewards.aggregates.sum.allocationRewards || '0')
-                    .toString(),
-                ),
-              )}{' '}
-              {TOKEN}
-            </Typography>
-          </div>
-        </div>
+        <PriceQueriesChart chartsStyle={{ flex: 1, height: '100%' }} deploymentId={deploymentId}></PriceQueriesChart>
       </div>
       <div className={styles.dashboardInner}>
         <div className="flex" style={{ marginBottom: 24 }}>

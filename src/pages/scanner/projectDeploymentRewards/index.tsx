@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { useEra } from '@hooks';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
+import { useAsyncMemo } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
 import { Button, Input, Radio, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import dayjs from 'dayjs';
 import { parseEther } from 'ethers/lib/utils';
 import { debounce } from 'lodash-es';
 
@@ -20,6 +23,9 @@ interface IProps {}
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
   const navigate = useNavigate();
+  const { getStatisticQueries } = useConsumerHostServices({
+    autoLogin: false,
+  });
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [pageInfo, setPageInfo] = useState({
     pageSize: 30,
@@ -150,6 +156,24 @@ const ScannerDashboard: FC<IProps> = (props) => {
     },
   );
 
+  const queries = useAsyncMemo(async () => {
+    if (!currentEra.data) return [];
+    const deployments = allDeployments.data?.eraDeploymentRewards.nodes.map((i) => i.deploymentId);
+    if (!deployments || !deployments?.length) return [];
+    const selectedEra = currentEra.data?.eras?.find((i) => parseInt(i.id, 16) === selectEra);
+    try {
+      const res = await getStatisticQueries({
+        deployment: deployments,
+        start_date: dayjs(selectedEra?.startTime).format('YYYY-MM-DD'),
+        end_date: selectedEra?.endTime ? dayjs(selectedEra?.endTime).format('YYYY-MM-DD') : undefined,
+      });
+
+      return res.data.list;
+    } catch (e) {
+      return [];
+    }
+  }, [allDeployments.data, selectEra]);
+
   const renderData = useMemo(() => {
     if (!allDeployments.data?.eraDeploymentRewards.nodes) return [];
     return allDeployments.data?.eraDeploymentRewards.nodes.map((node) => {
@@ -194,6 +218,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
         .multipliedBy(52)
         .multipliedBy(100);
 
+      const deploymentQueryCount = queries.data?.find((i) => i.deployment === node.deploymentId);
+
       return {
         deploymentId: node.deploymentId,
         projectMetadata: deploymentInfo?.project.metadata,
@@ -234,9 +260,15 @@ const ScannerDashboard: FC<IProps> = (props) => {
               .toFixed(),
           ),
         ),
+        averageQueriesCount: formatNumber(
+          BigNumberJs(deploymentQueryCount?.queries || '0')
+            .div(totalCount || 1)
+            .toString(),
+          0,
+        ),
       };
     });
-  }, [allDeployments.data, allDeploymentsInfomations.data, calcInput, statisticGroup]);
+  }, [allDeployments.data, allDeploymentsInfomations.data, calcInput, statisticGroup, queries.data]);
 
   const previousRenderData = usePrevious(renderData);
 
@@ -445,6 +477,15 @@ const ScannerDashboard: FC<IProps> = (props) => {
               },
             },
             {
+              title: 'Average Queries',
+              dataIndex: 'averageQueriesCount',
+              key: 'averageQueriesCount',
+              render: (text: string) => <Typography>{text}</Typography>,
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.averageQueriesCount).comparedTo(b.averageQueriesCount);
+              },
+            },
+            {
               title: 'Projected Query Rewards',
               dataIndex: 'queryRewards',
               key: 'queryRewards',
@@ -492,6 +533,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               'boosterAmount',
               'averageAllocationRewards',
               'allocationApy',
+              'averageQueriesCount',
               'averageQueryRewards',
             ];
             const keysOfProj = [
