@@ -130,18 +130,19 @@ const ScannerDashboard: FC<IProps> = (props) => {
     }
 
     const selectEraInfo = currentEra.data?.eras?.find((i) => parseInt(i.id, 16) === selectEra);
+
     const startDate = dayjs(selectEraInfo?.startTime || '0').format('YYYY-MM-DD');
 
     const endDate = selectEraInfo?.endTime ? dayjs(selectEraInfo?.endTime || '0').format('YYYY-MM-DD') : undefined;
 
     const queries = await getUserQueriesAggregation({
-      user_list: allIndexers.data?.indexers.nodes.map((node) => node.id) || [],
+      user_list: allIndexers.data?.indexers.nodes.map((node) => node.id.toLowerCase()) || [],
       start_date: startDate,
       end_date: endDate,
     });
 
     return queries.data;
-  }, [currentEra.data?.index, allIndexers.data]);
+  }, [currentEra.data?.index, allIndexers.data, selectEra]);
 
   const renderData = useMemo(() => {
     if (!allIndexers.data?.indexers.nodes.length || !indexerRewardsInfos.data) {
@@ -173,7 +174,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
         delegationStake: formatNumber(formatSQT(BigNumberJs(totalStake).minus(selfStake).toString())),
         allocationRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.allocationRewards || 0).toString())),
         queryRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.queryRewards || 0).toString())),
-        queries: queries?.info.total || 0,
+        queries: BigNumberJs(queries?.info.total || 0)
+          .div(10 ** 15)
+          .toFixed(0),
         apy: BigNumberJs(formatSQT(apy || '0'))
           .multipliedBy(100)
           .toFixed(2),
