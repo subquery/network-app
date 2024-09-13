@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useEra } from '@hooks';
+import { captureException } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';
 import { cidToBytes32, formatSQT, TOKEN } from '@utils';
@@ -39,16 +40,60 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
       },
     },
   );
-  const currentEraFlexPlanRewards = useAsyncMemo(async () => {
-    if (!contracts) return;
-    const [rewards] = await contracts.rewardsPool.getReward(
-      cidToBytes32(deploymentId),
-      currentEra.data?.index || 0,
-      indexerAddress,
-    );
+  const currentEraFlexPlanRewardsQuery = useQuery<{
+    indexerEraDeploymentRewards: {
+      aggregates: {
+        sum: {
+          queryRewards: string;
+        };
+      };
+      totalCount: number;
+    };
+  }>(
+    gql`
+      query GetCurrentEraRewards($currentEra: Int!, $indexer: String!, $deployment: String!) {
+        indexerEraDeploymentRewards(
+          filter: {
+            eraIdx: { equalTo: $currentEra }
+            deploymentId: { equalTo: $deployment }
+            indexerId: { equalTo: $indexer }
+          }
+        ) {
+          aggregates {
+            sum {
+              queryRewards
+            }
+          }
+          totalCount
+        }
+      }
+    `,
+    {
+      variables: {
+        currentEra: currentEra.data?.index || 0,
+        indexer: indexerAddress,
+        deployment: deploymentId,
+      },
+    },
+  );
 
-    return formatSQT(rewards.toString());
-  }, [contracts, deploymentId, currentEra.data?.index, indexerAddress]);
+  const currentEraFlexPlanRewards = useMemo(() => {
+    const totalCount = currentEraFlexPlanRewardsQuery.data?.indexerEraDeploymentRewards.totalCount || 0;
+
+    if (totalCount > 1) {
+      captureException('Subql Project may have error, one era got multiple rewards record', {
+        extra: {
+          indexerAddress,
+          deploymentId,
+          currentEra: currentEra.data?.index || 0,
+        },
+      });
+    }
+
+    return formatSQT(
+      currentEraFlexPlanRewardsQuery.data?.indexerEraDeploymentRewards.aggregates.sum.queryRewards || '0',
+    );
+  }, [currentEraFlexPlanRewardsQuery.data]);
 
   const currentEraUncollectedFlexPlanRewards = useAsyncMemo(async () => {
     const res = await fetch(
@@ -109,17 +154,16 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
         )}
       </div>
 
-      {/* hide for now */}
-      {/* <div className="flex" style={{ gap: 10 }}>
+      <div className="flex" style={{ gap: 10 }}>
         Current Era Query Rewards:{' '}
-        {currentEraFlexPlanRewards.loading || currentEraUncollectedFlexPlanRewards.loading ? (
+        {currentEraFlexPlanRewardsQuery.loading || currentEraUncollectedFlexPlanRewards.loading ? (
           <Spinner size={10}></Spinner>
         ) : (
           <Tooltip
             title={
               <div className="col-flex">
                 <Typography style={{ color: '#fff' }} variant="small">
-                  On chain: {currentEraFlexPlanRewards.data?.toString() || '0'} {TOKEN}
+                  On chain: {currentEraFlexPlanRewards || '0'} {TOKEN}
                 </Typography>
                 <Typography style={{ color: '#fff' }} variant="small">
                   Off chain: {currentEraUncollectedFlexPlanRewards.data?.toString() || '0'} {TOKEN}
@@ -129,19 +173,19 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
           >
             <div
               onClick={() => {
-                currentEraFlexPlanRewards.refetch();
+                currentEraFlexPlanRewardsQuery.refetch();
                 currentEraUncollectedFlexPlanRewards.refetch();
               }}
               style={{ cursor: 'pointer' }}
             >
               {BigNumberJs(currentEraUncollectedFlexPlanRewards.data?.toString() || '0')
-                .plus(currentEraFlexPlanRewards.data?.toString() || '0')
+                .plus(currentEraFlexPlanRewards?.toString() || '0')
                 .toFixed(6)}{' '}
               {TOKEN}
             </div>
           </Tooltip>
         )}
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -381,6 +381,17 @@ export const useConsumerHostServices = (
     [],
   );
 
+  const getUserQueriesAggregation = useCallback(
+    async (params: { start_date: string; end_date?: string; user_list: string[] }) => {
+      const res = await instance.post<IGetStatisticUserQueries>(`/multi_user_aggregation`, params, {
+        headers: authHeaders.current,
+      });
+
+      return res;
+    },
+    [],
+  );
+
   const requestTokenLayout = useCallback(
     (pageTitle: string) => {
       return (
@@ -436,6 +447,7 @@ export const useConsumerHostServices = (
     refreshUserInfo: loginResDecorator(refreshUserInfo),
     getStatisticQueries: alertResDecorator(getStatisticQueries),
     getStatisticQueriesByPrice: alertResDecorator(getStatisticQueriesByPrice),
+    getUserQueriesAggregation: alertResDecorator(getUserQueriesAggregation),
     getSpentInfo,
     getHostingPlanApi,
     getChannelLimit,
@@ -444,10 +456,19 @@ export const useConsumerHostServices = (
     loginConsumerHost,
     requestTokenLayout,
     getChannelSpent,
+
     hasLogin,
     loading,
   };
 };
+
+export type IGetStatisticUserQueries = {
+  info: {
+    today: string;
+    total: string;
+  };
+  user: string;
+}[];
 
 export type IGetStatisticQueriesByPrice = {
   count?: number;

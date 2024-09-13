@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentMeta } from '@components';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
-import { useEra } from '@hooks';
+import { useAsyncMemo, useEra } from '@hooks';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { CurrentEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { Typography } from '@subql/components';
 import { TOKEN } from '@utils';
 import { usePrevious } from 'ahooks';
 import { Button, Input, Select, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
+import dayjs from 'dayjs';
 import { debounce } from 'lodash-es';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
@@ -21,6 +23,9 @@ interface IProps {}
 const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
   const navigate = useNavigate();
+  const { getUserQueriesAggregation } = useConsumerHostServices({
+    autoLogin: false,
+  });
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [searchDeployment, setSearchDeployment] = useState<string>('');
   const debounceSearch = useMemo(() => debounce(setSearchDeployment, 500), [setSearchDeployment]);
@@ -119,6 +124,25 @@ const ScannerDashboard: FC<IProps> = (props) => {
     },
   );
 
+  const queriesOfAllIndexers = useAsyncMemo(async () => {
+    if (!allIndexers.data?.indexers.nodes.length || !currentEra.data?.index) {
+      return [];
+    }
+
+    const selectEraInfo = currentEra.data?.eras?.find((i) => parseInt(i.id, 16) === selectEra);
+    const startDate = dayjs(selectEraInfo?.startTime || '0').format('YYYY-MM-DD');
+
+    const endDate = selectEraInfo?.endTime ? dayjs(selectEraInfo?.endTime || '0').format('YYYY-MM-DD') : undefined;
+
+    const queries = await getUserQueriesAggregation({
+      user_list: allIndexers.data?.indexers.nodes.map((node) => node.id) || [],
+      start_date: startDate,
+      end_date: endDate,
+    });
+
+    return queries.data;
+  }, [currentEra.data?.index, allIndexers.data]);
+
   const renderData = useMemo(() => {
     if (!allIndexers.data?.indexers.nodes.length || !indexerRewardsInfos.data) {
       return [];
@@ -140,6 +164,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
 
       const totalStake = parseRawEraValue(indexer.totalStake, selectEra).current.toString();
       const selfStake = parseRawEraValue(indexer.selfStake, selectEra).current.toString();
+      const queries = queriesOfAllIndexers.data?.find((i) => i.user.toLowerCase() === indexer.id.toLowerCase());
 
       return {
         ...indexer,
@@ -148,12 +173,13 @@ const ScannerDashboard: FC<IProps> = (props) => {
         delegationStake: formatNumber(formatSQT(BigNumberJs(totalStake).minus(selfStake).toString())),
         allocationRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.allocationRewards || 0).toString())),
         queryRewards: formatNumber(formatSQT(BigNumberJs(indexerRewards?.queryRewards || 0).toString())),
+        queries: queries?.info.total || 0,
         apy: BigNumberJs(formatSQT(apy || '0'))
           .multipliedBy(100)
           .toFixed(2),
       };
     });
-  }, [allIndexers.data, indexerRewardsInfos.data, selectEra]);
+  }, [allIndexers.data, indexerRewardsInfos.data, selectEra, queriesOfAllIndexers]);
 
   const previousRenderData = usePrevious(renderData);
 
@@ -263,6 +289,12 @@ const ScannerDashboard: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+            },
+            {
+              title: 'Queries',
+              dataIndex: 'queries',
+              key: 'queries',
+              render: (text: string) => <Typography>{formatNumber(text, 0)}</Typography>,
             },
             {
               title: 'Delegation',
