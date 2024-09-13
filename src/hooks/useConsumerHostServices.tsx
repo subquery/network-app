@@ -360,7 +360,7 @@ export const useConsumerHostServices = (
   }, []);
 
   const getStatisticQueries = useCallback(
-    async (params: { deployment: string[]; start_date: string; end_date?: string }) => {
+    async (params: { deployment: string[]; indexer?: string[]; start_date: string; end_date?: string }) => {
       const res = await instance.post<IGetStatisticQueries>(`/statistic-queries`, params, {
         headers: authHeaders.current,
       });
@@ -478,8 +478,15 @@ export type IGetStatisticQueriesByPrice = {
 export interface IGetStatisticQueries {
   total: string;
   list: {
-    deployment: string;
-    queries: string;
+    indexer?: string;
+    list?: {
+      deployment: string;
+      queries: string;
+    }[];
+
+    // if no indexer at params
+    deployment?: string;
+    queries?: string;
   }[];
 }
 

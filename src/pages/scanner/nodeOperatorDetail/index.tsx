@@ -1,13 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
 import { DeploymentInfo } from '@components';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { useEra, useSortedIndexerDeployments } from '@hooks';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
+import { useAsyncMemo } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
 import { Breadcrumb, Button, Table } from 'antd';
+import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 
 import { formatNumber, formatSQT } from '../../../utils/numberFormatters';
 import { RewardsByType } from '../projectDetail/components/rewardsByType/rewardsByType';
@@ -19,6 +23,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
   const { currentEra } = useEra();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getUserQueriesAggregation, getStatisticQueries } = useConsumerHostServices({
+    autoLogin: false,
+  });
 
   const indexerRewardsInfos = useQuery<{
     eraIndexerApies: {
@@ -68,6 +75,60 @@ const ScannerDashboard: FC<IProps> = (props) => {
   );
 
   const indexerDeployments = useSortedIndexerDeployments(id || '');
+
+  const queriesOfIndexers = useAsyncMemo(async () => {
+    if (!id || !currentEra.data?.index) {
+      return {
+        info: { total: '0' },
+      };
+    }
+
+    const selectEraInfo = currentEra.data?.eras?.at(1);
+
+    const startDate = dayjs(selectEraInfo?.startTime || '0').format('YYYY-MM-DD');
+
+    const endDate = selectEraInfo?.endTime ? dayjs(selectEraInfo?.endTime || '0').format('YYYY-MM-DD') : undefined;
+
+    const queries = await getUserQueriesAggregation({
+      user_list: [id.toLowerCase()],
+      start_date: startDate,
+      end_date: endDate,
+    });
+
+    return queries?.data?.[0] || { info: { total: '0' } };
+  }, [currentEra.data?.index, id]);
+
+  const queriesOfDeployments = useAsyncMemo(async () => {
+    if (!id || !currentEra.data?.index || !indexerDeployments.data) {
+      return [];
+    }
+
+    const selectEraInfo = currentEra.data?.eras?.at(1);
+
+    const startDate = dayjs(selectEraInfo?.startTime || '0').format('YYYY-MM-DD');
+
+    const endDate = selectEraInfo?.endTime ? dayjs(selectEraInfo?.endTime || '0').format('YYYY-MM-DD') : undefined;
+
+    const queries = await getStatisticQueries({
+      deployment: indexerDeployments.data.map((item) => item.deploymentId || ''),
+      indexer: [id.toLowerCase()],
+      start_date: startDate,
+      end_date: endDate,
+    });
+
+    return queries?.data?.list?.[0].list || [];
+  }, [currentEra.data?.index, indexerDeployments.data, id]);
+
+  const getDeploymentQueries = useCallback(
+    (deployment: string) => {
+      if (Array.isArray(queriesOfDeployments.data)) {
+        return queriesOfDeployments.data?.find((i) => i.deployment === deployment)?.queries || 0;
+      }
+
+      return 0;
+    },
+    [queriesOfDeployments.data],
+  );
 
   return (
     <div className={styles.dashboard}>
@@ -164,6 +225,18 @@ const ScannerDashboard: FC<IProps> = (props) => {
                 {TOKEN}
               </Typography>
             </div>
+
+            <div className="flex gap32">
+              <Typography type="secondary" style={{ width: 130 }}>
+                Queries
+              </Typography>
+
+              <Typography>
+                {BigNumberJs(queriesOfIndexers.data?.info.total || '0')
+                  .div(10 ** 15)
+                  .toFixed(0)}
+              </Typography>
+            </div>
           </div>
         </div>
         <div style={{ flex: 8 }}>
@@ -222,6 +295,12 @@ const ScannerDashboard: FC<IProps> = (props) => {
                   {text ? formatNumber(formatSQT(text)) : 0} {TOKEN}
                 </Typography>
               ),
+            },
+            {
+              title: 'Last Era Queries',
+              dataIndex: 'deploymentId',
+              key: 'deploymentId',
+              render: (deploymentId: string) => <Typography>{getDeploymentQueries(deploymentId)}</Typography>,
             },
             {
               title: 'Total Rewards',
