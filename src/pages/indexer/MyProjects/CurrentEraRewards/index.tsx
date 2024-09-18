@@ -154,7 +154,7 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
         )}
       </div>
 
-      <div className="flex" style={{ gap: 10 }}>
+      {/* <div className="flex" style={{ gap: 10 }}>
         Current Era Query Rewards:{' '}
         {currentEraFlexPlanRewardsQuery.loading || currentEraUncollectedFlexPlanRewards.loading ? (
           <Spinner size={10}></Spinner>
@@ -185,7 +185,7 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
             </div>
           </Tooltip>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
