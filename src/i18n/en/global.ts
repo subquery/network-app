@@ -49,7 +49,7 @@ const translation = {
     cancelCommissionTips:
       'If you cancel the undelegation process, your SQT will be returned to delegation and you will continue to earn delegation rewards.',
     rpcUnavailable:
-      'Oops! Looks like the RPC service is temporarily unavaiable, please try again or change a RPC Endpoint.',
+      'There is an issue connecting to the RPC endpoint, please try again or set a different RPC in your connected wallet application.',
   },
   status: {
     success: 'Success!',
