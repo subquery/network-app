@@ -73,7 +73,7 @@ export const PriceQueriesChart = (props: {
         className="darkSkeleton"
         active
         paragraph={{ rows: 8 }}
-        style={{ height: skeletonHeight ? skeletonHeight : 'auto' }}
+        style={{ height: skeletonHeight ? skeletonHeight : 'auto', width: '50%', flexShrink: '0' }}
       ></Skeleton>
     ),
     error: (e) => <Typography>{parseError(e)}</Typography>,

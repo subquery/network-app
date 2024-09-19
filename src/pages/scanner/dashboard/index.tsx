@@ -126,6 +126,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
       const res = await getStatisticQueries({
         deployment: deployments,
         start_date: dayjs(currentEra.data.eras?.at(1)?.startTime).format('YYYY-MM-DD'),
+        end_date: dayjs(currentEra.data.eras?.at(1)?.endTime).format('YYYY-MM-DD'),
       });
 
       return res.data.list;
@@ -135,6 +136,8 @@ const ScannerDashboard: FC<IProps> = (props) => {
   }, [top5Deployments.data, currentEra.data?.eras]);
 
   const renderData = useMemo(() => {
+    if (top5Deployments.loading || top5DeploymentsInfomations.loading) return [];
+
     return top5Deployments.data?.eraDeploymentRewards.nodes.map((node, index) => {
       const eraDeploymentRewardsItem = top5DeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
         (i) => i.keys[0] === node.deploymentId,
@@ -204,7 +207,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         ),
       };
     });
-  }, [top5Deployments.data, top5DeploymentsInfomations.data, queries]);
+  }, [top5Deployments, top5DeploymentsInfomations, queries]);
 
   return (
     <div className={styles.dashboard}>

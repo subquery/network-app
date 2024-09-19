@@ -306,7 +306,10 @@ const ProjectDetail: FC<IProps> = (props) => {
       ></Breadcrumb>
 
       <div className={clsx('flex', 'gap32')} style={{ height: '400px' }}>
-        <div className={styles.dashboardInner}>
+        <div
+          className={styles.dashboardInner}
+          style={{ width: 'calc(50% - 32px)', flexShrink: 0, maxWidth: 'calc(50% - 32px)' }}
+        >
           <div className="flex">
             <DeploymentMeta
               deploymentId={deploymentId || ''}
@@ -394,10 +397,17 @@ const ProjectDetail: FC<IProps> = (props) => {
       <div className={styles.dashboardInner}>
         <div className="flex" style={{ marginBottom: 24 }}>
           <Typography variant="large" weight={600}>
-            Node Operators (
-            {deploymentInfomations.data?.deployment.indexers.totalCount ||
-              deploymentInfomations.previousData?.deployment.indexers.totalCount}
-            )
+            Node Operators
+            {deploymentInfomations.loading && !deploymentInfomations.previousData ? (
+              ''
+            ) : (
+              <>
+                (
+                {deploymentInfomations.data?.deployment.indexers.totalCount ||
+                  deploymentInfomations.previousData?.deployment.indexers.totalCount}
+                )
+              </>
+            )}
           </Typography>
         </div>
 

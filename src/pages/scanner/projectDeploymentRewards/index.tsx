@@ -175,7 +175,9 @@ const ScannerDashboard: FC<IProps> = (props) => {
   }, [allDeployments.data, selectEra]);
 
   const renderData = useMemo(() => {
-    if (!allDeployments.data?.eraDeploymentRewards.nodes) return [];
+    if (allDeployments.loading || allDeploymentsInfomations.loading) return [];
+    if (!allDeployments.data?.eraDeploymentRewards.nodes.length) return [];
+
     return allDeployments.data?.eraDeploymentRewards.nodes.map((node) => {
       const inputStake = BigNumberJs(calcInput).gt(100000000) ? '100000000' : calcInput;
       const eraDeploymentRewardsItem = allDeploymentsInfomations.data?.eraDeploymentRewards.groupedAggregates.find(
@@ -268,7 +270,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         ),
       };
     });
-  }, [allDeployments.data, allDeploymentsInfomations.data, calcInput, statisticGroup, queries.data]);
+  }, [allDeployments, allDeploymentsInfomations, calcInput, statisticGroup, queries.data]);
 
   const previousRenderData = usePrevious(renderData);
 
