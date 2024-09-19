@@ -45,7 +45,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
           <div style={{ display: 'flex', height: 22 }}>
             {project?.name && (
               <Typography
-                className="overflowEllipsis"
+                className={clsx('overflowEllipsis', styles.link)}
                 variant="large"
                 style={{ marginRight: 10, width: '100%', maxWidth: maxWidth }}
               >

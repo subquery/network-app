@@ -29,3 +29,11 @@
 .text {
   color: var(--gray500);
 }
+
+.link {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    color: var(--sq-blue600);
+  }
+}
