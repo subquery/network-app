@@ -7,6 +7,7 @@ import delegatorTranslations from './delegator';
 import explorerTranslations from './explorer';
 import globalTransaltions from './global';
 import indexerTranslations from './indexer';
+import scanner from './scanner';
 
 export const en = {
   translation: {
@@ -16,6 +17,7 @@ export const en = {
     ...globalTransaltions,
     ...explorerTranslations,
     ...dashboardTrans,
+    scanner,
   },
 } as const;
 

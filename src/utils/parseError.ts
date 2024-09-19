@@ -79,8 +79,7 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
     if (
       stringMsg.includes?.("non-200 status code: '429'") ||
       stringMsg?.includes?.('event=') ||
-      stringMsg?.includes?.('transaction reverted without a reason string') ||
-      stringMsg.includes?.('network error')
+      stringMsg?.includes?.('transaction reverted without a reason string')
     ) {
       return true;
     }
@@ -93,8 +92,7 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
     if (
       stringMsg?.includes?.("non-200 status code: '429'") ||
       stringMsg?.includes?.('event=') ||
-      stringMsg?.includes?.('transaction reverted without a reason string') ||
-      stringMsg.includes?.('network error')
+      stringMsg?.includes?.('transaction reverted without a reason string')
     ) {
       return true;
     }
@@ -108,9 +106,42 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
     if (
       stringMsg.includes("non-200 status code: '429'") ||
       stringMsg.includes?.('event=') ||
-      stringMsg.includes?.('transaction reverted without a reason string') ||
-      stringMsg.includes?.('network error')
+      stringMsg.includes?.('transaction reverted without a reason string')
     ) {
+      return true;
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return false;
+};
+
+export const isNetworkError = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+
+  if (isString(msg)) {
+    const stringMsg = msg.toLowerCase();
+    if (stringMsg.includes?.('network error')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message') || msg instanceof Error) {
+    const stringMsg = msg?.message.toLowerCase();
+    if (stringMsg.includes?.('network error')) {
+      return true;
+    }
+    return false;
+  }
+
+  try {
+    // @ts-ignore
+    const stringMsg = msg.toString().toLowerCase();
+
+    if (stringMsg.includes?.('network error')) {
       return true;
     }
   } catch (e) {
@@ -282,6 +313,17 @@ export function parseError(
     if (isRPCError(error) || isRPCError(rawErrorMsg)) return t('general.rpcUnavailable');
   };
 
+  const NetworkErrorMsg = () => {
+    if (isNetworkError(error) || isNetworkError(rawErrorMsg)) {
+      captureException(`Network error, need review: ${rawErrorMsg}`, {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
+      return "Network error, can't connect to the server.";
+    }
+  };
+
   const msg =
     mapContractError() ??
     mappingError() ??
@@ -289,6 +331,7 @@ export function parseError(
     exceedsBalance() ??
     insufficientAllowance() ??
     RpcUnavailableMsg() ??
+    NetworkErrorMsg() ??
     insufficientFunds() ??
     callRevert() ??
     needSignerMsg() ??

@@ -76,7 +76,10 @@ export const PriceQueriesChart = (props: {
         style={{ height: skeletonHeight ? skeletonHeight : 'auto', width: '50%', flexShrink: '0' }}
       ></Skeleton>
     ),
-    error: (e) => <Typography>{parseError(e)}</Typography>,
+    error: (e) => {
+      console.warn(e);
+      return <Typography>{parseError(e)}</Typography>;
+    },
     data: () => {
       return (
         <BarCharts
