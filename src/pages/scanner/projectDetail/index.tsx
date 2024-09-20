@@ -39,7 +39,7 @@ const ProjectDetail: FC<IProps> = (props) => {
 
   const [selectEra, setSelectEra] = useState<number>((currentEra.data?.index || 1) - 1 || 0);
   const [pageInfo, setPageInfo] = useState({
-    pageSize: 30,
+    pageSize: 100,
     currentPage: 1,
   });
   const deploymentInfomations = useQuery<{
@@ -214,60 +214,89 @@ const ProjectDetail: FC<IProps> = (props) => {
       return [];
     }
 
-    return deploymentInfomations.data?.deployment?.indexers?.nodes.map((node) => {
-      return {
-        indexerId: node.indexerId,
-        totalRewards: formatNumber(
-          formatSQT(
+    return deploymentInfomations.data?.deployment?.indexers?.nodes
+      .map((node) => {
+        return {
+          indexerId: node.indexerId,
+          totalRewards: formatNumber(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
+                (i) => i.keys[0] === node.indexerId,
+              )?.sum.totalRewards || '0',
+            ),
+          ),
+          rawTotalRewards: formatSQT(
             deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
               (i) => i.keys[0] === node.indexerId,
             )?.sum.totalRewards || '0',
           ),
-        ),
-        queryRewards: formatNumber(
-          formatSQT(
+          queryRewards: formatNumber(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
+                (i) => i.keys[0] === node.indexerId,
+              )?.sum.queryRewards || '0',
+            ),
+          ),
+          rawQueryRewards: formatSQT(
             deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
               (i) => i.keys[0] === node.indexerId,
             )?.sum.queryRewards || '0',
           ),
-        ),
-        allocationRewards: formatNumber(
-          formatSQT(
+          allocationRewards: formatNumber(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
+                (i) => i.keys[0] === node.indexerId,
+              )?.sum.allocationRewards || '0',
+            ),
+          ),
+          rawAllocationRewards: formatSQT(
             deploymentIndexerRewardsInfos.data?.indexerEraDeploymentRewards.groupedAggregates.find(
               (i) => i.keys[0] === node.indexerId,
             )?.sum.allocationRewards || '0',
           ),
-        ),
-        apy: BigNumberJs(
-          formatSQT(
-            deploymentIndexerRewardsInfos.data?.eraIndexerDeploymentApies.nodes.find(
-              (i) => i.indexerId === node.indexerId,
-            )?.apy || '0',
+          apy: BigNumberJs(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.eraIndexerDeploymentApies.nodes.find(
+                (i) => i.indexerId === node.indexerId,
+              )?.apy || '0',
+            ),
+          )
+            .multipliedBy(100)
+            .toFixed(2),
+          totalAmount: formatNumber(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.indexerAllocationSummaries.nodes.find(
+                (i) => i.indexerId === node.indexerId,
+              )?.totalAmount || '0',
+            ),
           ),
-        )
-          .multipliedBy(100)
-          .toFixed(2),
-        totalAmount: formatNumber(
-          formatSQT(
+          rawTotalAmount: formatSQT(
             deploymentIndexerRewardsInfos.data?.indexerAllocationSummaries.nodes.find(
               (i) => i.indexerId === node.indexerId,
             )?.totalAmount || '0',
           ),
-        ),
-        burnt: formatNumber(
-          formatSQT(
+          burnt: formatNumber(
+            formatSQT(
+              deploymentIndexerRewardsInfos.data?.indexerAllocationRewards.groupedAggregates.find(
+                (i) => i.keys[0] === node.indexerId,
+              )?.sum.burnt || '0',
+            ),
+          ),
+          rawBurnt: formatSQT(
             deploymentIndexerRewardsInfos.data?.indexerAllocationRewards.groupedAggregates.find(
               (i) => i.keys[0] === node.indexerId,
             )?.sum.burnt || '0',
           ),
-        ),
-        price: BigNumberJs(
-          formatSQT(priceOfIndexers.data?.find((i) => i.indexer === node.indexerId.toLowerCase())?.price || '0'),
-        )
-          .multipliedBy(1000)
-          .toFixed(2),
-      };
-    });
+          price: BigNumberJs(
+            formatSQT(priceOfIndexers.data?.find((i) => i.indexer === node.indexerId.toLowerCase())?.price || '0'),
+          )
+            .multipliedBy(1000)
+            .toFixed(2),
+        };
+      })
+      .sort((a, b) => {
+        return BigNumberJs(b.rawTotalRewards).comparedTo(a.rawTotalRewards);
+      });
   }, [deploymentInfomations.data, deploymentIndexerRewardsInfos.data, priceOfIndexers.data]);
 
   const previousRenderData = usePrevious(renderData);
@@ -432,16 +461,6 @@ const ProjectDetail: FC<IProps> = (props) => {
               },
             },
             {
-              title: 'Rewards',
-              dataIndex: 'totalRewards',
-              key: 'totalRewards',
-              render: (text: string) => (
-                <Typography>
-                  {text} {TOKEN}
-                </Typography>
-              ),
-            },
-            {
               title: 'Stake',
               dataIndex: 'totalAmount',
               key: 'totalAmount',
@@ -450,6 +469,9 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawTotalAmount).comparedTo(b.rawTotalAmount);
+              },
             },
             {
               title: 'Stake Rewards',
@@ -460,9 +482,12 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawAllocationRewards).comparedTo(b.rawAllocationRewards);
+              },
             },
             {
-              title: 'Queries rewards',
+              title: 'Query rewards',
               dataIndex: 'queryRewards',
               key: 'queryRewards',
               render: (text: string) => (
@@ -470,15 +495,21 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawQueryRewards).comparedTo(b.rawQueryRewards);
+              },
             },
             {
               title: 'Stake Apy',
               dataIndex: 'apy',
               key: 'apy',
               render: (text: string) => <Typography>{text} %</Typography>,
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.apy).comparedTo(b.apy);
+              },
             },
             {
-              title: 'Price Per 1,000 Requests',
+              title: 'Price Per 1,000 Queries',
               dataIndex: 'price',
               key: 'price',
               render: (text: string) => (
@@ -486,6 +517,9 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.price).comparedTo(b.price);
+              },
             },
             {
               title: 'Burned Rewards',
@@ -496,6 +530,9 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawBurnt).comparedTo(b.rawBurnt);
+              },
             },
             {
               title: 'Total Rewards',
@@ -506,6 +543,9 @@ const ProjectDetail: FC<IProps> = (props) => {
                   {text} {TOKEN}
                 </Typography>
               ),
+              sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
+                return BigNumberJs(a.rawTotalRewards).comparedTo(b.rawTotalRewards);
+              },
             },
           ]}
           dataSource={renderData?.length ? renderData : previousRenderData}

@@ -344,6 +344,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
             ),
           ),
           allocationApy: allocationApy.isNaN() ? '0.00' : allocationApy.gt(1000) ? '1000+' : allocationApy.toFixed(2),
+          rawAllocationApy: allocationApy.isNaN() ? '0.00' : allocationApy.toFixed(2),
           queryRewards: formatNumber(formatSQT(totalQueryRewards)),
           averageQueryRewards: formatNumber(
             formatSQT(
@@ -601,7 +602,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               key: 'allocationApy',
               render: (text: string) => <Typography>{text} %</Typography>,
               sorter: (a: (typeof renderData)[number], b: (typeof renderData)[number]) => {
-                return BigNumberJs(a.allocationApy).comparedTo(b.allocationApy);
+                return BigNumberJs(a.rawAllocationApy).comparedTo(b.rawAllocationApy);
               },
             },
             {
