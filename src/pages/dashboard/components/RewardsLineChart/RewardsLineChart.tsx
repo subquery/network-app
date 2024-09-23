@@ -79,7 +79,6 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
 
     // Graphql sort is incorrect, because it is a string.
     let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
-
     // but in dev env will less than one day.
     if (period < splitData) {
       const eraCountOneDay = splitData / period;

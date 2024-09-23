@@ -11,6 +11,8 @@ import { ServiceStatus } from '@subql/network-query';
 import { renderAsync, useGetDeploymentIndexersLazyQuery, useGetIndexerDeploymentLazyQuery } from '@subql/react-hooks';
 import { Pagination, Table, TableProps } from 'antd';
 
+import { useProjectStore } from 'src/stores/project';
+
 import { notEmpty, URLS } from '../../utils';
 import { SearchInput } from '../SearchInput';
 import styles from './IndexerDetails.module.less';
@@ -39,7 +41,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
   const { t } = useTranslation();
 
   const [loadIndexersLazy, asyncIndexers] = useGetDeploymentIndexersLazyQuery();
-
+  const { setProjectInfo } = useProjectStore();
   /**
    * SearchInput logic
    */
@@ -128,6 +130,13 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
       });
     }
   }, [deploymentId]);
+
+  React.useEffect(() => {
+    if (!deploymentId) return;
+    setProjectInfo(deploymentId, {
+      totalIndexers: totalCount,
+    });
+  }, [totalCount, deploymentId]);
 
   return renderAsync(asyncIndexers, {
     loading: () => <Spinner />,

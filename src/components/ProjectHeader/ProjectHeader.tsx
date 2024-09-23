@@ -10,12 +10,13 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { formatNumber, formatSQT } from '@utils';
-import { Button } from 'antd';
+import { bytesToGb, formatNumber, formatSQT } from '@utils';
+import { Button, Tooltip } from 'antd';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
+import { useProjectStore } from 'src/stores/project';
 
 import Detail from '../Detail';
 import { Dropdown } from '../Dropdown';
@@ -40,7 +41,7 @@ const ProjectHeader: React.FC<Props> = ({
   manifest,
 }) => {
   const { t } = useTranslation();
-
+  const { projectDbSize, projectInfo } = useProjectStore();
   const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).utc(true).fromNow(), [project]);
   const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).utc(true).fromNow(), [project]);
 
@@ -91,6 +92,38 @@ const ProjectHeader: React.FC<Props> = ({
 
     return polkadotName || ethName || chainId;
   }, [project.type, manifest]);
+
+  const dbSize = React.useMemo(() => {
+    if (!currentVersion)
+      return {
+        average: 'Unknown',
+        max: 'Unknown',
+      };
+    if (!projectInfo[currentVersion])
+      return {
+        average: 'Unknown',
+        max: 'Unknown',
+      };
+
+    if (projectInfo[currentVersion].totalIndexers < 6) {
+      return {
+        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
+        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+      };
+    }
+
+    if (projectInfo[currentVersion].totalIndexers >= 6 && projectDbSize[currentVersion || '']?.counts >= 6) {
+      return {
+        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
+        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+      };
+    }
+
+    return {
+      average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
+      max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+    };
+  }, [projectDbSize, currentVersion, projectInfo]);
 
   return (
     <div className={styles.container}>
@@ -155,6 +188,19 @@ const ProjectHeader: React.FC<Props> = ({
           )}
           <Detail label={t('projectOverview.updatedAt')} value={updatedAtStr} className={styles.column} />
           <Detail label={t('projectOverview.createdAt')} value={createdAtStr} className={styles.column} />
+          {project.type === ProjectType.SUBQUERY ? (
+            <Detail
+              label={'DbSize'}
+              value={
+                <Tooltip title={`Max: ${dbSize.max}, Average: ${dbSize.average}`}>
+                  <Typography>{dbSize.average}</Typography>
+                </Tooltip>
+              }
+              className={styles.column}
+            />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     </div>

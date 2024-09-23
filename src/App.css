@@ -4,6 +4,13 @@
   min-height: 100vh;
 }
 
+.scannerMain {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--dark-mode-background);
+}
+
 .Header {
   flex: 0 1 auto;
 }

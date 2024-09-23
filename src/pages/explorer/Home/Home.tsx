@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
         {t('explorer.home.header')}
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography className={styles.typographySecondary} type="secondary">
+        <Typography className={styles.typographySecondary} type="secondary" style={{ textAlign: 'center' }}>
           {t('explorer.home.headerDesc')}
         </Typography>
       </div>

@@ -9,7 +9,7 @@ import { formatNumber } from '@utils/numberFormatters';
 import { Radio } from 'antd';
 import { clsx } from 'clsx';
 import dayjs from 'dayjs';
-import { LineChart } from 'echarts/charts';
+import { BarChart } from 'echarts/charts';
 import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
@@ -23,42 +23,24 @@ export type FilterType = {
 };
 interface IProps {
   chartData: number[][];
-  dataDimensionsName?: string[];
   value?: FilterType;
   style?: CSSProperties;
   xAxisScales?: {
-    rawData: dayjs.Dayjs[];
+    rawData: any[];
     renderData: string[];
   };
   theme?: 'light' | 'dark';
   onChange?: (newFilter: FilterType) => void;
-  onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
-  onChangeDateRange?: (dateType: DateRangeType) => void;
+  onTriggerTooltip?: (index: number, data: any) => string;
   title?: string;
+  suffix?: string;
   customColors?: string[];
 }
 
-echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
+echarts.use([BarChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
-export const xAxisScalesFunc = (eraPeriod = 86400) => {
-  const currentDate = dayjs();
-  const intervalPeriod = eraPeriod < 86400 ? 86400 : eraPeriod;
-  const getAxisScales = (dateCount: number) => {
-    return new Array(Math.ceil((dateCount * 86400) / intervalPeriod))
-      .fill(0)
-      .map((_, index) => currentDate.subtract(index * (intervalPeriod / 86400), 'day'))
-      .reverse();
-  };
-
-  return {
-    lm: () => getAxisScales(31),
-    l3m: () => getAxisScales(90),
-    ly: () => getAxisScales(365),
-  };
-};
-
-const LineCharts: FC<IProps> = ({
+const BarCharts: FC<IProps> = ({
   value,
   onChange,
   xAxisScales = {
@@ -66,11 +48,10 @@ const LineCharts: FC<IProps> = ({
     rawData: [],
   },
   title,
+  suffix,
   style,
   chartData,
-  dataDimensionsName,
   theme = 'light',
-  onChangeDateRange,
   onTriggerTooltip,
   customColors,
 }) => {
@@ -83,35 +64,20 @@ const LineCharts: FC<IProps> = ({
     onChange,
   });
 
-  const xAxisScalesInner = useMemo(() => {
-    if (xAxisScales.renderData.length) return xAxisScales;
-    if (!currentEra.data?.period) return;
-
-    const getAxisScales = xAxisScalesFunc(currentEra.data.period);
-
-    const scales = getAxisScales[filter.date]();
-
-    return {
-      rawData: scales,
-      renderData: scales.map((i) => i.format('MMM D')),
-    };
-  }, [filter.date, currentEra.data?.period]);
-
   const renderedSeries = useMemo(() => {
     return chartData.map((source, index) => {
       return {
         smooth: true,
         data: source,
-        type: 'line',
-        stack: 'total',
-        showSymbol: false,
+        type: 'bar',
         color: (customColors || colors)[index],
+        barWidth: 24,
         areaStyle: {
           color: (customColors || colors)[index],
         },
       };
     });
-  }, [chartData, xAxisScalesInner, customColors]);
+  }, [chartData, customColors]);
 
   return (
     <div className={clsx(styles.lineCharts, theme === 'dark' ? styles.dark : '')} style={style}>
@@ -121,49 +87,7 @@ const LineCharts: FC<IProps> = ({
             {title}
           </Typography>
         )}
-        <span style={{ flex: 1 }}></span>
-        <Radio.Group
-          options={[
-            { label: 'Last Month', value: 'lm' },
-            { label: 'Last 3 Month', value: 'l3m' },
-            { label: 'Last Year', value: 'ly' },
-          ]}
-          onChange={(val) => {
-            setFilter({
-              ...filter,
-              date: val.target.value,
-            });
-            onChangeDateRange?.(val.target.value);
-          }}
-          value={filter.date}
-          optionType="button"
-          buttonStyle="solid"
-        />
       </div>
-      {dataDimensionsName ? (
-        <div className="flex">
-          {dataDimensionsName.map((name, index) => {
-            return (
-              <div className="flex" style={{ marginRight: 16 }} key={`${name}-${index}`}>
-                <div
-                  style={{
-                    height: 10,
-                    width: 10,
-                    borderRadius: '50%',
-                    background: (customColors || colors)[index],
-                    flexShrink: 0,
-                  }}
-                />
-                <Typography style={{ marginLeft: 8, color: theme === 'dark' ? '#fff' : 'var(--sq-gray600)' }}>
-                  {name}
-                </Typography>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        ''
-      )}
       {chartData.length ? (
         <ReactEChartsCore
           echarts={echarts}
@@ -175,7 +99,9 @@ const LineCharts: FC<IProps> = ({
             },
             xAxis: {
               axisLabel: {
-                align: 'right',
+                align: 'centrer',
+                width: 20,
+                margin: 10,
               },
               axisLine: {
                 show: false,
@@ -184,8 +110,7 @@ const LineCharts: FC<IProps> = ({
                 show: false,
               },
               type: 'category',
-              boundaryGap: false,
-              data: xAxisScalesInner?.renderData,
+              data: xAxisScales.renderData,
             },
             yAxis: {
               type: 'value',
@@ -207,10 +132,7 @@ const LineCharts: FC<IProps> = ({
               formatter: (params: [{ dataIndex: number }]) => {
                 const [x] = params;
                 try {
-                  const renderString = onTriggerTooltip?.(
-                    x.dataIndex,
-                    xAxisScalesInner?.rawData[x.dataIndex] as dayjs.Dayjs,
-                  );
+                  const renderString = onTriggerTooltip?.(x.dataIndex, xAxisScales?.rawData[x.dataIndex]);
                   return renderString;
                 } catch (e) {
                   return;
@@ -225,7 +147,14 @@ const LineCharts: FC<IProps> = ({
       ) : (
         <Spinner></Spinner>
       )}
+      {suffix && (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography type="secondary" style={{ color: 'var(--sq-gray500)' }} variant="small">
+            {suffix}
+          </Typography>
+        </div>
+      )}
     </div>
   );
 };
-export default LineCharts;
+export default BarCharts;
