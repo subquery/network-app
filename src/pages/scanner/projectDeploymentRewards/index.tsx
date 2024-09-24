@@ -8,7 +8,6 @@ import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
-import { usePrevious } from 'ahooks';
 import { Button, Input, Radio, Select, Table, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -244,8 +243,6 @@ const ScannerDashboard: FC<IProps> = (props) => {
     );
   }, [allDeployments.data]);
 
-  console.warn(allDeployments.data);
-
   const queries = useAsyncMemo(async () => {
     if (!currentEra.data) return [];
     const deployments = allDeployments.data?.nodes.map((i) => i.deploymentId);
@@ -265,7 +262,10 @@ const ScannerDashboard: FC<IProps> = (props) => {
   }, [allDeployments.data, selectEra]);
 
   const renderData = useMemo(() => {
-    if (allDeployments.loading || allDeploymentsInfomations.loading) return [];
+    if (selectEra === 0) return [];
+    if (allDeployments.loading) return [];
+
+    if (allDeployments.data?.totalCount && !allDeploymentsInfomations.data?.deployments?.nodes?.length) return [];
     if (!allDeployments.data?.nodes.length) return [];
 
     return allDeployments.data?.nodes
@@ -380,9 +380,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         };
       })
       .filter((i) => i.deploymentId.toLowerCase().includes(searchDeployment.toLowerCase()));
-  }, [allDeployments, allDeploymentsInfomations, calcInput, statisticGroup, queries.data, searchDeployment]);
-
-  const previousRenderData = usePrevious(renderData);
+  }, [allDeployments, allDeploymentsInfomations, calcInput, statisticGroup, queries.data, searchDeployment, selectEra]);
 
   const estimatedStakeRewards = useMemo(() => {
     const selectedRow = renderData?.find((i) => i.deploymentId === rowSelected?.deploymentId);
@@ -511,7 +509,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
         <Table
           rowKey={(record) => record.deploymentId}
           className={'darkTable'}
-          loading={allDeploymentsInfomations.loading}
+          loading={allDeployments.loading || allDeploymentsInfomations.loading}
           columns={[
             {
               title: 'Project',
@@ -689,7 +687,7 @@ const ScannerDashboard: FC<IProps> = (props) => {
               return keysOfProj.includes(i.dataIndex);
             }
           })}
-          dataSource={renderData?.length ? renderData : previousRenderData}
+          dataSource={renderData}
           pagination={{
             total: allDeployments.data?.nodes.length,
             pageSize: pageInfo.pageSize,

@@ -197,17 +197,20 @@ const ProjectDetail: FC<IProps> = (props) => {
     if (!currentEra.data || !deploymentId) return [];
     const deployments = [deploymentId];
 
+    const selectedEra = currentEra.data?.eras?.find((i) => parseInt(i.id, 16) === selectEra);
+
     try {
       const res = await getStatisticQueries({
         deployment: deployments,
-        start_date: dayjs(currentEra.data?.startTime).format('YYYY-MM-DD'),
+        start_date: dayjs(selectedEra?.startTime).format('YYYY-MM-DD'),
+        end_date: selectedEra?.endTime ? dayjs(selectedEra?.endTime).format('YYYY-MM-DD') : undefined,
       });
 
       return res.data.list;
     } catch (e) {
       return [];
     }
-  }, [deploymentId, currentEra.data?.startTime]);
+  }, [deploymentId, currentEra.data?.startTime, selectEra]);
 
   const renderData = useMemo(() => {
     if (!deploymentInfomations.data?.deployment?.indexers?.nodes.length) {
