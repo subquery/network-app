@@ -123,6 +123,7 @@ const LineCharts: FC<IProps> = ({
         )}
         <span style={{ flex: 1 }}></span>
         <Radio.Group
+          className="chartRadio"
           options={[
             { label: 'Last Month', value: 'lm' },
             { label: 'Last 3 Month', value: 'l3m' },
