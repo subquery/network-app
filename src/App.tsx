@@ -17,11 +17,9 @@ import {
   QueryApolloProvider,
   SQTokenProvider,
 } from './containers';
-import RouterComponent, { ScannerRouterComponent } from './router';
+import RouterComponent from './router';
 
 import './App.css';
-
-const isScanner = window.location.host.includes('scanner') || import.meta.env.VITE_USE_SCANNER;
 
 // TODO: Remove SQTProvider
 const Providers: React.FC<PropsWithChildren> = ({ children }) => {
@@ -33,7 +31,7 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <ProjectMetadataProvider>
               <ProjectRegistryProvider>
                 <SQTokenProvider>
-                  <SubqlProvider theme={isScanner ? 'dark' : 'light'}>{children}</SubqlProvider>
+                  <SubqlProvider theme={'light'}>{children}</SubqlProvider>
                 </SQTokenProvider>
               </ProjectRegistryProvider>
             </ProjectMetadataProvider>
@@ -79,32 +77,17 @@ const RenderRouter: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <>
-        {isScanner ? (
-          <div className="scannerMain">
-            <ScannerHeader></ScannerHeader>
-            <ScannerRouterComponent></ScannerRouterComponent>
-            <Footer simple></Footer>
-          </div>
-        ) : (
-          ''
-        )}
-        {!isScanner ? (
-          <div className="Main">
-            <div className="Header">
-              <Header />
-            </div>
+      <div className="Main">
+        <div className="Header">
+          <Header />
+        </div>
 
-            <div className="Content">
-              <ChainStatus>
-                <RouterComponent></RouterComponent>
-              </ChainStatus>
-            </div>
-          </div>
-        ) : (
-          ''
-        )}
-      </>
+        <div className="Content">
+          <ChainStatus>
+            <RouterComponent></RouterComponent>
+          </ChainStatus>
+        </div>
+      </div>
     </BrowserRouter>
   );
 };
