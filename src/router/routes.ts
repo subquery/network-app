@@ -235,24 +235,3 @@ export const routers: BasicRouteType[] = [
   { path: '/bridge/success/*', component: React.lazy(() => import('../pages/bridge/success/index')) },
   { path: '/bridge/*', component: React.lazy(() => import('../pages/bridge/index')) },
 ];
-
-export const scannerRouters: BasicRouteType[] = [
-  { path: '/', redirect: '/dashboard' },
-  { path: '/dashboard', component: React.lazy(() => import('../pages/scanner/dashboard/index')) },
-  {
-    path: '/project-deployment-rewards',
-    component: React.lazy(() => import('../pages/scanner/projectDeploymentRewards/index')),
-  },
-  {
-    path: '/project-deployment-rewards/:id',
-    component: React.lazy(() => import('../pages/scanner/projectDetail/index')),
-  },
-  {
-    path: '/node-operators',
-    component: React.lazy(() => import('../pages/scanner/nodeOperators/index')),
-  },
-  {
-    path: '/node-operator/:id',
-    component: React.lazy(() => import('../pages/scanner/nodeOperatorDetail/index')),
-  },
-];
