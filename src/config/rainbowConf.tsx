@@ -40,21 +40,13 @@ const supportedChains =
           ...mainnet,
           rpcUrls: {
             default: {
-              http: [
-                import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
-                'https://eth.llamarpc.com',
-                ...mainnet.rpcUrls.alchemy.http,
-              ],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, 'https://eth.llamarpc.com'],
             },
             public: {
-              http: [
-                import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
-                'https://eth.llamarpc.com',
-                ...mainnet.rpcUrls.alchemy.http,
-              ],
+              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, 'https://eth.llamarpc.com'],
             },
             fallback: {
-              http: mainnet.rpcUrls.alchemy.http,
+              http: 'https://eth.llamarpc.com',
             },
           },
         },
