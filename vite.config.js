@@ -50,7 +50,6 @@ export default defineConfig({
           echarts: ['echarts'],
           dayjs: ['dayjs'],
           '@subql/contract-sdk': ['@subql/contract-sdk'],
-          '@subql/apollo-links': ['@subql/apollo-links'],
           '@subql/components': ['@subql/components'],
           '@subql/network-clients': ['@subql/network-clients'],
           '@subql/network-config': ['@subql/network-config'],
