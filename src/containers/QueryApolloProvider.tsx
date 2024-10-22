@@ -12,7 +12,9 @@ const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
-const gatewayLink = getHttpLink('https://gateway.subquery.network/sq/subquery/subquery-mainnet');
+const gatewayLink = getHttpLink(
+  `${import.meta.env.VITE_PROXYGATEWAY}/query/${import.meta.env.VITE_NETWORK_DEPLOYMENT_ID}`,
+);
 const fallbackLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
 
 export const networkLink = new ApolloLink((operation) => {
