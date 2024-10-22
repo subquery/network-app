@@ -46,6 +46,7 @@ interface DoUndelegateProps {
   variant?: 'button' | 'textBtn';
   initialUndelegateWay?: 'myWallet' | 'anotherIndexer';
   onSuccess?: () => void;
+  indexerActive?: boolean;
 }
 
 /**
@@ -59,14 +60,19 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   onSuccess,
   variant = 'textBtn',
   showBtnIfDisabled = false,
+  indexerActive = true, // plan to optimise getIndexerLazy if provide
 }) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
+  const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const waitTransactionHandled = useWaitTransactionhandled();
   const lockPeriod = useLockPeriod();
-  const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
+  const filterParams = React.useMemo(
+    () => ({ id: `${connectedAccount ?? ''}:${indexerAddress}` }),
+    [connectedAccount, indexerAddress],
+  );
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
 
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
@@ -89,7 +95,6 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
       fetchPolicy: 'network-only',
     },
   );
-  const { currentEra } = useEra();
 
   const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>(initialUndelegateWay);
 
