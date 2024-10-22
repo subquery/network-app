@@ -284,6 +284,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
                         initialUndelegateWay="anotherIndexer"
                         indexerAddress={id}
                         onSuccess={onSuccess}
+                        indexerActive={record.indexerActive}
                       />
                     ),
                     key: 'Redelegate',
