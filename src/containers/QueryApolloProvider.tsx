@@ -6,7 +6,6 @@ import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } fro
 import { onError } from '@apollo/client/link/error';
 import { Observable, offsetLimitPagination } from '@apollo/client/utilities';
 import { captureException } from '@sentry/react';
-import { deploymentHttpLink } from '@subql/apollo-links';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
