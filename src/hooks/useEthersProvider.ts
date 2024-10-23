@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { captureException } from '@sentry/react';
+import { captureEvent } from '@sentry/react';
 import { providers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import { type HttpTransport } from 'viem';
@@ -85,7 +85,11 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
           }
         } catch (e) {
           if (e instanceof DOMException && e.name === 'AbortError') {
-            captureException(`${xpingId} timeout`);
+            captureEvent({
+              message: `${chain.id} RPC timeout ${xpingId} timeout`,
+              level: 'warning',
+              fingerprint: account.address ? [account.address] : undefined,
+            });
           }
 
           return transport.request(request, ...rest);
