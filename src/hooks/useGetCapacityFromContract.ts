@@ -2,29 +2,35 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
 import { IndexerFieldsFragment } from '@subql/network-query';
 import { useAsyncMemo, useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { BigNumber } from 'ethers';
-
-import { useWeb3Store } from 'src/stores';
 
 import { limitContract, makeCacheKey } from '../utils/limitation';
 import { useEra } from './useEra';
 import { parseRawEraValue } from './useEraValue';
 
 export const useGetCapacityFromContract = (account?: string, indexerInfo?: IndexerFieldsFragment | null) => {
-  const { contracts } = useWeb3Store();
+  // const { contracts } = useWeb3Store();
   const { currentEra } = useEra();
-
+  const [fetchIndexerLeverageLimit] = useLazyQuery<{ cach: { value: string } }>(gql`
+    query {
+      cach(id: "indexerLeverageLimit") {
+        value
+      }
+    }
+  `);
   const currentLeverageLimit = useAsyncMemo(async () => {
-    if (!contracts) return 12;
     const leverageLimit = await limitContract(
-      () => contracts.staking.indexerLeverageLimit(),
+      () => fetchIndexerLeverageLimit(),
       makeCacheKey('indexerLeverageLimit'),
       0,
     );
 
-    return leverageLimit;
+    if (!leverageLimit.data) return 12;
+
+    return leverageLimit.data?.cach.value;
   }, []);
 
   const [fetchIndexerData, indexerDataLazy] = useGetIndexerLazyQuery({
