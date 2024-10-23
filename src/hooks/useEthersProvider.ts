@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { captureEvent } from '@sentry/react';
 import { providers } from 'ethers';
+import { v4 as uuidv4 } from 'uuid';
 import { type HttpTransport } from 'viem';
 import { base, mainnet } from 'viem/chains';
-import { type PublicClient, usePublicClient } from 'wagmi';
-import { useWalletClient, type WalletClient } from 'wagmi';
+import { type PublicClient, usePublicClient, useWalletClient, type WalletClient } from 'wagmi';
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -44,21 +45,28 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
 
+  const fetchUrl = {
+    [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC,
+    [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
+  }[chain.id];
+
   const provider = new providers.Web3Provider(
     {
       ...transport,
       async request(request, ...rest) {
+        const xpingId = uuidv4();
+
         try {
-          const fetchUrl = {
-            [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC,
-            [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
-          }[chain.id];
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 4000);
+
           if (fetchUrl) {
             requestId += 1;
             const res = await fetch(fetchUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'x-ping': xpingId,
               },
               body: JSON.stringify({
                 jsonrpc: '2.0',
@@ -66,14 +74,24 @@ export function walletClientToSignerAndProvider(walletClient: WalletClient) {
                 id: requestId,
                 ...request,
               }),
+              signal: controller.signal,
             });
             const { result, error } = await res.json();
             if (!result) {
               throw new Error(error);
             }
+            clearTimeout(timeout);
             return result;
           }
         } catch (e) {
+          if (e instanceof DOMException && e.name === 'AbortError') {
+            captureEvent({
+              message: `${chain.id} RPC timeout ${xpingId} timeout`,
+              level: 'warning',
+              fingerprint: account.address ? [account.address] : undefined,
+            });
+          }
+
           return transport.request(request, ...rest);
         }
 
