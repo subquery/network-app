@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import GetEndpoint from '@components/GetEndpoint';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
+import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
+import { useAsyncMemo } from '@subql/react-hooks';
 import { bytesToGb, formatNumber, formatSQT } from '@utils';
 import { Button, Tooltip } from 'antd';
 import clsx from 'clsx';
@@ -42,6 +44,8 @@ const ProjectHeader: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { projectDbSize, projectInfo } = useProjectStore();
+  const { getStatisticQueries } = useConsumerHostServices({ autoLogin: false });
+
   const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).utc(true).fromNow(), [project]);
   const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).utc(true).fromNow(), [project]);
 
@@ -125,6 +129,19 @@ const ProjectHeader: React.FC<Props> = ({
     };
   }, [projectDbSize, currentVersion, projectInfo]);
 
+  const yesterdayQueriesCount = useAsyncMemo(async () => {
+    const today = dayjs();
+    const yesterday = today.subtract(1, 'day');
+
+    const res = await getStatisticQueries({
+      deployment: [currentVersion || ''],
+      start_date: yesterday.format('YYYY-MM-DD'),
+      end_date: today.format('YYYY-MM-DD'),
+    });
+
+    return formatNumber(res.data.total, 0);
+  }, [currentVersion]);
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -201,6 +218,7 @@ const ProjectHeader: React.FC<Props> = ({
           ) : (
             ''
           )}
+          <Detail label={'Queries (Past 1d)'} value={<Typography>{yesterdayQueriesCount.data}</Typography>}></Detail>
         </div>
       </div>
     </div>
