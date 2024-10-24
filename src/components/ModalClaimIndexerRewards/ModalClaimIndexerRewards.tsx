@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Button, Typography } from 'antd';
 import assert from 'assert';
 
@@ -36,6 +37,7 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>();
   const { contracts } = useWeb3Store();
+  const waitTransactionHandled = useWaitTransactionhandled();
 
   const onClaimIndexerRewards = async () => {
     try {
@@ -48,6 +50,7 @@ export const ModalClaimIndexerRewards: React.FC<IModalClaimIndexerRewards> = ({
       const approvalTxResult = await approvalTx.wait();
 
       if (approvalTxResult.status === 1) {
+        await waitTransactionHandled(approvalTxResult.blockNumber);
         onSuccess && (await onSuccess());
       } else {
         onFail && onFail();
