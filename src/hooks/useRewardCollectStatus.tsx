@@ -7,6 +7,8 @@ import { gql, useLazyQuery } from '@apollo/client';
 import BigNumberJs from 'bignumber.js';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 
+import { useWeb3Store } from 'src/stores';
+
 import { useEra } from './useEra';
 
 export function useRewardCollectStatus(
@@ -14,7 +16,7 @@ export function useRewardCollectStatus(
   lazy = false,
 ): {
   hasClaimedRewards: boolean;
-  checkIfHasClaimed: (lastClaimEra: string | number, lastSettledEra: string | number, curEra?: number) => boolean;
+  checkIfHasClaimed: (lastSettledEra: string | number, curEra?: number) => boolean;
   refetch: (_?: boolean) => Promise<boolean>;
   loading: boolean;
   // for compatibility
@@ -23,26 +25,24 @@ export function useRewardCollectStatus(
   };
 } {
   const { currentEra } = useEra();
-
+  const { contracts } = useWeb3Store();
   const [hasClaimedRewards, setHasClaimedRewards] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [fetchClaimedAndSettledEra] = useLazyQuery<{ indexer: { lastClaimEra: string; lastSettledEra: string } }>(gql`
     query getClaimedAndSettledEra($indexerAddress: String!) {
       indexer(id: $indexerAddress) {
-        lastClaimEra
         lastSettledEra
       }
     }
   `);
 
   const checkIfHasClaimed = useCallback(
-    (lastClaimEra: string | number, lastSettledEra: string | number, curEra = currentEra.data?.index || 0) => {
+    (lastSettledEra: string | number, curEra = currentEra.data?.index || 0) => {
       const eraNumber = BigNumberJs(curEra || 0);
-      const lastClaimEraBg = BigNumberJs(lastClaimEra);
       const lastSettledEraBg = BigNumberJs(lastSettledEra);
-      if (lastClaimEra && lastSettledEra && curEra) {
-        const rewardClaimStatus = eraNumber.eq(lastClaimEraBg.plus(1)) && lastSettledEraBg.lte(lastClaimEra);
+      if (lastSettledEra && curEra) {
+        const rewardClaimStatus = eraNumber.eq(lastSettledEraBg.plus(1));
 
         return rewardClaimStatus;
       }
@@ -63,8 +63,8 @@ export function useRewardCollectStatus(
         });
 
         if (res.data?.indexer) {
-          const { lastClaimEra, lastSettledEra } = res.data.indexer;
-          const rewardClaimStatus = checkIfHasClaimed(lastClaimEra, lastSettledEra, currentEra.data?.index);
+          const { lastSettledEra } = res.data.indexer;
+          const rewardClaimStatus = checkIfHasClaimed(lastSettledEra, currentEra.data?.index);
 
           setHasClaimedRewards(rewardClaimStatus);
           return rewardClaimStatus;
@@ -77,7 +77,7 @@ export function useRewardCollectStatus(
         setLoading(false);
       }
     },
-    [currentEra?.data?.index, indexer, fetchClaimedAndSettledEra, checkIfHasClaimed],
+    [contracts, currentEra?.data?.index, indexer, fetchClaimedAndSettledEra, checkIfHasClaimed],
   );
 
   useEffect(() => {
