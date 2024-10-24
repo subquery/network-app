@@ -746,7 +746,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               placeholder="Enter amount"
               addonAfter={
                 <div className="flex" style={{ gap: 8 }}>
-                  <img src="/static/sqtoken.png" alt=""></img>
+                  <img src="/static/sqtoken.png" alt="" width={32}></img>
                   {TOKEN}
                 </div>
               }
