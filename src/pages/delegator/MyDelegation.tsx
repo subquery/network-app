@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
+import { gql, useLazyQuery } from '@apollo/client';
 import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } from '@components';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
@@ -43,7 +44,6 @@ import { parseEther } from 'ethers/lib/utils';
 import { t, TFunction } from 'i18next';
 
 import { PER_MILL } from 'src/const/const';
-import { useWeb3Store } from 'src/stores';
 
 import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
@@ -449,17 +449,25 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const { getDisplayedCommission } = useMinCommissionRate();
-  const { contracts } = useWeb3Store();
   const { width } = useSize(document.querySelector('body')) || { width: 0 };
+  const [fetchIndexerLeverageLimit] = useLazyQuery<{ cach: { value: string } }>(gql`
+    query {
+      cach(id: "indexerLeverageLimit") {
+        value
+      }
+    }
+  `);
+
   const currentLeverageLimit = useAsyncMemo(async () => {
-    if (!contracts) return 12;
     const leverageLimit = await limitContract(
-      () => contracts.staking.indexerLeverageLimit(),
+      () => fetchIndexerLeverageLimit(),
       makeCacheKey('indexerLeverageLimit'),
       0,
     );
 
-    return leverageLimit;
+    if (!leverageLimit.data) return 12;
+
+    return leverageLimit.data?.cach.value;
   }, []);
 
   const delegations = useGetFilteredDelegationsQuery({
@@ -507,6 +515,7 @@ export const MyDelegation: React.FC = () => {
 
           const stakeTotal = parseRawEraValue(delegation.indexer?.totalStake, currentEra.data?.index);
           const stakeSelf = parseRawEraValue(delegation.indexer?.selfStake, currentEra.data?.index);
+
           const capacity = {
             current: stakeSelf.current.mul(leverageLimit ?? 12).sub(stakeTotal.current),
             after: stakeSelf.after?.mul(leverageLimit ?? 12).sub(stakeTotal?.after ?? '0'),
