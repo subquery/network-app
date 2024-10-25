@@ -6,6 +6,8 @@ import { isString } from 'lodash-es';
 
 const eventLimiter: { [index: string]: boolean } = {};
 
+const filterMsgKey = ['user rejected transaction'];
+
 Sentry.init({
   beforeSend: (event, hint) => {
     const rawError = hint?.originalException as Error;
@@ -13,6 +15,10 @@ Sentry.init({
     const msg = isString(rawError) ? rawError : rawError.message;
     // do not send event if already sent in last 1 minute
     if (msg && msg in eventLimiter) {
+      return null;
+    }
+
+    if (filterMsgKey.some((key) => msg.toLowerCase().includes(key))) {
       return null;
     }
 
