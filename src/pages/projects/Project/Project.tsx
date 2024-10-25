@@ -9,7 +9,6 @@ import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { Markdown, Modal, openNotification, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
@@ -173,7 +172,6 @@ const Project: React.FC = () => {
 
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       {renderAsync(asyncProject, {
         loading: () => <Spinner />,
         error: (error: Error) => {

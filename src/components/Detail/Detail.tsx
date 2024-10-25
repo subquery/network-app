@@ -34,9 +34,9 @@ const Detail: React.FC<Props> = ({
   const renderValue = () => {
     if (href) {
       return (
-        <a href={href} className={styles.value} target="_blank" rel="noreferrer">
+        <Typography.Link href={href} className={styles.value} target="_blank" rel="noreferrer">
           {value ?? '-'}
-        </a>
+        </Typography.Link>
       );
     }
 

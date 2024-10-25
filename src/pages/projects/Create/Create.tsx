@@ -7,7 +7,6 @@ import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
@@ -144,7 +143,6 @@ const Create: React.FC = () => {
 
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       <Formik
         initialValues={{
           name: query.get('name') ?? '',

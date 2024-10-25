@@ -157,7 +157,12 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
               key: 'bridge tokens',
               label: (
                 <div style={{ padding: '0 16px 8px 16px' }}>
-                  <a href={BRIDGE_URL} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                  <Typography.Link
+                    href={BRIDGE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
                     <Button
                       shape="round"
                       size="large"
@@ -174,7 +179,7 @@ export const AccountActions: React.FC<{ account: string }> = ({ account }) => {
                       Bridge Tokens
                       <BsBoxArrowInUpRight />
                     </Button>
-                  </a>
+                  </Typography.Link>
                 </div>
               ),
             },

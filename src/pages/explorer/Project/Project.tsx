@@ -8,7 +8,6 @@ import NormalError from '@components/NormalError';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { captureMessage } from '@sentry/react';
 import { Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
@@ -106,7 +105,6 @@ const ProjectInner: React.FC = () => {
 
   return (
     <>
-      <SubgraphAlert></SubgraphAlert>
       {renderAsync(asyncProject, {
         loading: () => <Spinner />,
         error: (e) => (

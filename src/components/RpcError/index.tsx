@@ -37,11 +37,11 @@ const RpcError: FC<IProps> = (props) => {
               try again
             </span>
             <span> or let us know in </span>
-            <a href="https://discord.com/invite/subquery">
+            <Typography.Link href="https://discord.com/invite/subquery">
               <span style={{ textDecoration: 'underline', cursor: 'pointer', color: 'var(--sq-gray600)' }}>
                 Discord.
               </span>
-            </a>
+            </Typography.Link>
           </>
         ) : (
           ''

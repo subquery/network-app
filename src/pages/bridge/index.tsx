@@ -268,9 +268,9 @@ const BridgeInner: FC = () => {
           <Typography variant="medium" type="secondary">
             OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do not
             want to wait for the required 7 days, please consider a{' '}
-            <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
+            <Typography.Link href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
               third party bridge
-            </a>
+            </Typography.Link>
             .
           </Typography>
         </div>
@@ -529,7 +529,7 @@ const BridgeInner: FC = () => {
               <BsLifePreserver />
               <div>
                 Need help? please message <span>#network-bridge-support on</span>
-                <a href="https://discord.com/invite/subquery"> Discord</a>
+                <Typography.Link href="https://discord.com/invite/subquery"> Discord</Typography.Link>
               </div>
             </Typography>
           </div>
@@ -599,9 +599,9 @@ const BridgeInner: FC = () => {
                 <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
                   OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do
                   not want to wait for the required 7 days, please consider a{' '}
-                  <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
+                  <Typography.Link href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
                     third party bridge
-                  </a>
+                  </Typography.Link>
                   .
                 </Typography>
                 {Date.now() < 1710291600000 ? (
@@ -633,7 +633,7 @@ const BridgeInner: FC = () => {
                 <BsLifePreserver />
                 <div>
                   Need help? please message #network-bridge-support on
-                  <a href="https://discord.com/invite/subquery"> Discord</a>
+                  <Typography.Link href="https://discord.com/invite/subquery"> Discord</Typography.Link>
                 </div>
               </Typography>
             </div>

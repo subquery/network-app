@@ -7,7 +7,6 @@ import { SettingFileIcon } from '@components/Icons/Icons';
 import { useRouteQuery } from '@hooks';
 import { useProjectList } from '@hooks/useProjectList';
 import { usePropsValue } from '@hooks/usePropsValue';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { Modal, SubqlCard, Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { Form, Input } from 'antd';
@@ -261,7 +260,6 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       <div className="content-width" style={{ padding: '80px', height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 40 }}>
           <Typography variant="h4">My Projects</Typography>
