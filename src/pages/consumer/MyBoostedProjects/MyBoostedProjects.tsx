@@ -143,11 +143,11 @@ const MyBoostedProjects: FC = () => {
             </div>
           }
         >
-          <a href="/explorer/home" target="_blank">
+          <Typography.Link href="/explorer/home" target="_blank">
             <Button type="primary" shape="round" size="large">
               Boost now
             </Button>
-          </a>
+          </Typography.Link>
         </EmptyList>
       );
 

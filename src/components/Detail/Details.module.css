@@ -14,10 +14,6 @@
   font-weight: normal;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
 .valueCont {
   display: flex;
   margin-top: 8px;

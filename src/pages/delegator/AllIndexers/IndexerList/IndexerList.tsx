@@ -55,7 +55,7 @@ export const IndexerList: React.FC = () => {
   const [closeBannerTips, setCloseBannerTips] = React.useState<boolean>(false);
   const { getDisplayedCommission } = useMinCommissionRate();
 
-  const delegations = useGetAllDelegationsQuery();
+  // const delegations = useGetAllDelegationsQuery();
 
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
 
@@ -277,11 +277,11 @@ export const IndexerList: React.FC = () => {
           const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => {
             return i?.indexerId === id;
           });
-          const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
+          // const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
             <div className={'flex-start'}>
-              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer?.indexer} delegation={delegation} />
+              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer?.indexer} />
             </div>
           );
         },

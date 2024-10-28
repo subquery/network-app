@@ -3,7 +3,6 @@
 
 import Banner from './Banner';
 import Copy from './Copy';
-import CreateInstructions from './CreateInstructions';
 import FTextInput from './FTextInput';
 import ImageInput from './ImageInput';
 import IndexerProgress from './IndexerProgress';
@@ -48,7 +47,6 @@ export * from './WalletRoute';
 export {
   Banner,
   Copy,
-  CreateInstructions,
   FTextInput,
   ImageInput,
   IndexerProgress,

@@ -22,7 +22,6 @@ import { EraCard } from './components/EraCard/EraCard';
 import { ForumCard } from './components/ForumCard/ForumCard';
 import { RewardsLineChart } from './components/RewardsLineChart/RewardsLineChart';
 import { StakeAndDelegationLineChart } from './components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
-import SubgraphAlert from './components/SubgraphAlert/SubgraphAlert';
 import styles from './index.module.less';
 
 export const BalanceLayout = ({
@@ -423,8 +422,6 @@ const Dashboard: FC = () => {
 
   return (
     <div className="col-flex" style={{ width: '100%' }}>
-      <SubgraphAlert center></SubgraphAlert>
-
       <div className={styles.dashboard}>
         <Typography variant="h4" weight={600}>
           👋 Welcome to SubQuery Network
