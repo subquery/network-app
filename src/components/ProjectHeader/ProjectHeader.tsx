@@ -218,7 +218,7 @@ const ProjectHeader: React.FC<Props> = ({
           ) : (
             ''
           )}
-          <Detail label={'Queries (Past 1d)'} value={<Typography>{yesterdayQueriesCount.data}</Typography>}></Detail>
+          <Detail label={'Queries (Yesterday)'} value={<Typography>{yesterdayQueriesCount.data}</Typography>}></Detail>
         </div>
       </div>
     </div>
