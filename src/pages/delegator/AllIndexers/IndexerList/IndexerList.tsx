@@ -19,7 +19,7 @@ import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
+import { useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
 import { formatEther, formatNumber, formatNumberWithLocale, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { useSize } from 'ahooks';

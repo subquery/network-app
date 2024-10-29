@@ -27,6 +27,7 @@ import { makeCacheKey } from '@utils/limitation';
 import { Modal as AntdModal, Table, TableProps, Tooltip, Typography } from 'antd';
 import assert from 'assert';
 import axios from 'axios';
+import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { t } from 'i18next';
 
@@ -81,7 +82,9 @@ export interface QueryLimit {
 }
 
 const ConnectedRow: React.FC<{
-  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]>;
+  indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]> & {
+    flexPlanPrice?: false | string;
+  };
   deploymentId?: string;
   type: ProjectType;
   rpcFamily?: Manifest['rpcFamily'];
@@ -255,7 +258,7 @@ const ConnectedRow: React.FC<{
             ),
           },
           {
-            width: '30%',
+            width: '25%',
             render: () => (
               <>
                 {renderAsync(
@@ -286,7 +289,7 @@ const ConnectedRow: React.FC<{
             ),
           },
           {
-            width: '13%',
+            width: '10%',
             render: () => {
               // TODO: offline status need to get from external api
               const sortedStatus = getDeploymentStatus(indexer.status, false);
@@ -307,7 +310,24 @@ const ConnectedRow: React.FC<{
             ),
           },
           {
-            width: '12%',
+            width: '20%',
+            render: () => {
+              if (!indexer.flexPlanPrice) {
+                return <Spinner></Spinner>;
+              }
+              if (indexer.flexPlanPrice === '0') {
+                return <Typography>Not Available</Typography>;
+              }
+              return (
+                <Typography className="flex" style={{ alignItems: 'flex-end' }}>
+                  {BigNumberJs(indexer.flexPlanPrice).multipliedBy(1000).toFixed()} SQT
+                  <Typography style={{ fontSize: 12 }}>&nbsp;/ 1000 requests</Typography>
+                </Typography>
+              );
+            },
+          },
+          {
+            width: '10%',
             render: () => {
               return (
                 <Typography
