@@ -13,12 +13,13 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
 import { DeploymentRewardsLine } from '@pages/explorer/Project/components/DeploymentRewardsChart';
-import { Markdown, Spinner, SubqlCard, Tag, Tooltip, Typography } from '@subql/components';
+import { Markdown, Spinner, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
 import { formatSQT, useAsyncMemo, useGetOfferCountByDeploymentIdLazyQuery } from '@subql/react-hooks';
 import { TOKEN } from '@utils';
+import { Tooltip } from 'antd';
 import BignumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
 

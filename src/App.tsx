@@ -1,15 +1,15 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren, useEffect, useMemo } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
-import { Footer, SubqlProvider } from '@subql/components';
+import { SubqlProvider } from '@subql/components';
 
 import { RainbowProvider } from './config/rainbowConf';
-import { ChainStatus, Header, ScannerHeader } from './components';
+import { ChainStatus, Header } from './components';
 import {
   IPFSProvider,
   ProjectMetadataProvider,
@@ -31,7 +31,9 @@ const Providers: React.FC<PropsWithChildren> = ({ children }) => {
             <ProjectMetadataProvider>
               <ProjectRegistryProvider>
                 <SQTokenProvider>
-                  <SubqlProvider theme={'light'}>{children}</SubqlProvider>
+                  <SubqlProvider theme={'light'} version="v2">
+                    {children}
+                  </SubqlProvider>
                 </SQTokenProvider>
               </ProjectRegistryProvider>
             </ProjectMetadataProvider>
