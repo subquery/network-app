@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
-import { SubqlProvider } from '@subql/components';
+import { ChatBox, SubqlProvider } from '@subql/components';
 
 import { RainbowProvider } from './config/rainbowConf';
 import { ChainStatus, Header } from './components';
@@ -99,6 +99,8 @@ export const App: React.FC = () => {
     <Providers>
       <div className="App">
         <RenderRouter />
+
+        <ChatBox chatUrl="https://ai.thechaindata.com/v1/chat/completions"></ChatBox>
       </div>
     </Providers>
   );
