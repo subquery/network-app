@@ -4453,10 +4453,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/components@3.0.1-1":
-  version "3.0.1-1"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-3.0.1-1.tgz#47e015ffa6512e71404921f15f3f5a1048998d42"
-  integrity sha512-kze7OBG0H9LMhG0NeG35I/hMK1CgcRlrTZ0xk5IuDU7YJ5EeGRv2ucTrAzzNVtvUGYX4u9ELSRdFYtQLwqo3Ag==
+"@subql/components@3.0.1-2":
+  version "3.0.1-2"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-3.0.1-2.tgz#ea94032644a69fbb527bfa810e9757d02434a024"
+  integrity sha512-WI1422PLhza0dvSAvsEu9GpM/anuLWDCAZK05F136L+EQV7NT6YUpXdp57bh3wVMxpuGeYUhRoDP3GJGG5MA0Q==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"
