@@ -100,7 +100,7 @@ export const App: React.FC = () => {
       <div className="App">
         <RenderRouter />
 
-        <ChatBox chatUrl="https://ai.thechaindata.com/v1/chat/completions"></ChatBox>
+        <ChatBox chatUrl="https://ai-network.thechaindata.com/v1/chat/completions"></ChatBox>
       </div>
     </Providers>
   );
