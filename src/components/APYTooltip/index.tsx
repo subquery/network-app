@@ -3,7 +3,8 @@
 
 import * as React from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { Tooltip, Typography } from '@subql/components';
+import { Typography } from '@subql/components';
+import { Tooltip } from 'antd';
 
 type Props = {
   currentEra: number | undefined;

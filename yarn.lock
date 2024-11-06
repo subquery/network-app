@@ -4453,10 +4453,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/components@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-2.0.2.tgz#3ecaab98c4e2849da6e2ac2c24692cbf548237c1"
-  integrity sha512-T01PIV7tUkyoNxbq+45ZCgIcPFBKKRz2YFz68wN8toulsDMNei0yKnNY/W1voAtsWCBe58EpuMyfmYCpzLSx7Q==
+"@subql/components@3.0.1-3":
+  version "3.0.1-3"
+  resolved "https://registry.yarnpkg.com/@subql/components/-/components-3.0.1-3.tgz#121ef9147a797f4c456c904eeae42a0b130762b5"
+  integrity sha512-WFHXqA6ESP6ZdhDfqzIbWXvrpFER+PFsStZUIRlk6dBxdFF0ieAsuBC6eBe3b7sn5U5usaREEYtZbl6uKbHeyQ==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"
@@ -4465,14 +4465,16 @@
     graphql "^16.7.0"
     graphql-ws "^5.13.1"
     jdenticon "^3.2.0"
+    localforage "^1.10.0"
     lodash-es "^4.17.21"
     ra-data-graphql "^4.11.3"
-    react-icons "^4.8.0"
+    react-icons "^5.2.1"
     react-jazzicon "^0.1.3"
     react-markdown "^9.0.0"
     react-router-dom "^6.4.2"
     string-width "4.2.3"
     use-screen "^1.1.3"
+    uuid "^10.0.0"
 
 "@subql/contract-sdk@1.3.1-1":
   version "1.3.1-1"
@@ -12399,11 +12401,6 @@ react-i18next@^12.1.1:
   dependencies:
     "@babel/runtime" "^7.20.6"
     html-parse-stringify "^3.0.1"
-
-react-icons@^4.8.0:
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
-  integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
 
 react-icons@^5.2.1:
   version "5.2.1"

@@ -8,9 +8,10 @@ import { useMakeNotification } from '@components/NotificationCentre/useMakeNotif
 import { useAccount } from '@containers/Web3';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { assert } from '@polkadot/util';
-import { openNotification, Tooltip, Typography } from '@subql/components';
+import { openNotification, Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';
 import { formatNumberWithLocale } from '@utils';
+import { Tooltip } from 'antd';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
