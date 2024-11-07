@@ -117,7 +117,7 @@ export function formatNumberWithLocale(num: number | string | BigNumberJs | BigN
 export function bytesToGb(bytes: number): string {
   const gb = BigNumberJs(bytes / 1024 / 1024 / 1024);
   if (gb.isNaN()) {
-    return 'Unknown';
+    return '...';
   }
   return gb.toFixed(0);
 }

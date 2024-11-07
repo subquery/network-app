@@ -96,36 +96,36 @@ const ProjectHeader: React.FC<Props> = ({
 
     return polkadotName || ethName || chainId;
   }, [project.type, manifest]);
-
+  console.warn(networkVal);
   const dbSize = React.useMemo(() => {
     if (!currentVersion)
       return {
-        average: 'Unknown',
-        max: 'Unknown',
+        average: '...',
+        max: '...',
       };
     if (!projectInfo[currentVersion])
       return {
-        average: 'Unknown',
-        max: 'Unknown',
+        average: '...',
+        max: '...',
       };
 
     if (projectInfo[currentVersion].totalIndexers < 6) {
       return {
-        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
-        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
+        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || '...',
       };
     }
 
     if (projectInfo[currentVersion].totalIndexers >= 6 && projectDbSize[currentVersion || '']?.counts >= 6) {
       return {
-        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
-        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
+        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || '...',
       };
     }
 
     return {
-      average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || 'Unknown',
-      max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || 'Unknown',
+      average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
+      max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || '...',
     };
   }, [projectDbSize, currentVersion, projectInfo]);
 
@@ -184,7 +184,7 @@ const ProjectHeader: React.FC<Props> = ({
         <div className={styles.lower}>
           <Detail
             label="Network"
-            value={networkVal.length > 30 ? `${networkVal.slice(0, 30)}...` : networkVal}
+            value={networkVal.length > 15 ? `${networkVal.slice(0, 15)}...` : networkVal}
             capitalize
           ></Detail>
           <Detail
