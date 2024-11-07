@@ -25,6 +25,11 @@ export const NETWORK_TYPE_DICTION: { [key in string]: string } = {
   '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f': 'Asset Hub',
   '0x9f28c6a68e0fc9646eff64935684f6eeeece527e37bbe1f213d22caa1d9d6bed': 'Bifrost',
   '0x3920bcb4960a1eef5580cd5367ff3f430eef052774f78468852f7b9cb39f8a3c': 'Polkadex',
+  '0x6811a339673c9daa897944dcdac99c6e2939cc88245ed21951a0a3c9a2be75bc': 'Picasso',
+  '0xf22b7850cdd5a7657bbfd90ac86441275bbc57ace3d2698a740c7b0ec4de5ec3': 'Bit Country',
+  '0xcd4d732201ebe5d6b014edda071c4203e16867305332301dc8d092044b28e554': 'Quartz',
+  '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755': 'Basilisk',
+  '0xaa3876c1dc8a1afcc2e9a685a49ff7704cfd36ad8c90bf2702b9d1b00cc40011': 'Altair',
 };
 
 export const ETH_TYPE_DICTION: { [key in string]: string } = {
