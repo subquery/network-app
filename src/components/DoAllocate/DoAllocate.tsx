@@ -374,7 +374,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
               </Typography>
               <span style={{ flex: 1 }}></span>
               <Tooltip title={currentAllocatedTokensOfThisDeployment}>
-                <Typography variant="medium">
+                <Typography variant="medium" style={{ flexShrink: 0 }}>
                   {formatNumber(currentAllocatedTokensOfThisDeployment)} {TOKEN}
                 </Typography>
               </Tooltip>

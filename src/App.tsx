@@ -3,6 +3,7 @@
 
 import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import AlertBanner from '@components/AlertBanner/AlertBanner';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
@@ -78,19 +79,26 @@ const RenderRouter: React.FC = () => {
   }, [address, connector, signer, provider]);
 
   return (
-    <BrowserRouter>
-      <div className="Main">
-        <div className="Header">
-          <Header />
+    <>
+      <BrowserRouter>
+        <div className="Main">
+          <div className="Header">
+            <Header />
+          </div>
+          <AlertBanner center></AlertBanner>
+          <div className="Content">
+            <ChainStatus>
+              <RouterComponent></RouterComponent>
+            </ChainStatus>
+          </div>
         </div>
+      </BrowserRouter>
 
-        <div className="Content">
-          <ChainStatus>
-            <RouterComponent></RouterComponent>
-          </ChainStatus>
-        </div>
-      </div>
-    </BrowserRouter>
+      <ChatBox
+        chatUrl="https://ai-network.thechaindata.com/v1/chat/completions"
+        prompt={address ? `My address is: ${address},use this for any further prompts.` : undefined}
+      ></ChatBox>
+    </>
   );
 };
 
@@ -99,8 +107,6 @@ export const App: React.FC = () => {
     <Providers>
       <div className="App">
         <RenderRouter />
-
-        <ChatBox chatUrl="https://ai-network.thechaindata.com/v1/chat/completions"></ChatBox>
       </div>
     </Providers>
   );
