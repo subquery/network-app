@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { IoIosCloseCircle } from 'react-icons/io';
 import { IoClose } from 'react-icons/io5';
-import { InfoCircleFilled } from '@ant-design/icons';
+import InfoCircleFilled from '@ant-design/icons/InfoCircleFilled';
 import { useIndexerMetadata } from '@hooks';
 import { Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';

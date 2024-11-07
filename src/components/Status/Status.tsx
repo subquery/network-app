@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { WarningOutlined } from '@ant-design/icons';
+import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { DeploymentStatus } from '@hooks';
 
 import styles from './Status.module.css';
