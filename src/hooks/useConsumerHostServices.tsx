@@ -351,7 +351,7 @@ export const useConsumerHostServices = (
   }, []);
 
   const getSpentInfo = useCallback(async (params: { account: string; start?: string; end?: string }) => {
-    const res = await instance.get<IGetSpentInfo>(`/aggregation/${params.account}`, {
+    const res = await instance.get<IGetSpentInfo>(`/user_aggregation/${params.account}`, {
       headers: authHeaders.current,
       params,
     });
@@ -382,7 +382,7 @@ export const useConsumerHostServices = (
   );
 
   const getUserQueriesAggregation = useCallback(
-    async (params: { start_date: string; end_date?: string; user_list: string[] }) => {
+    async (params: { start: string; end?: string; user_list: string[] }) => {
       const res = await instance.post<IGetStatisticUserQueries>(`/multi_user_aggregation`, params, {
         headers: authHeaders.current,
       });
@@ -466,6 +466,7 @@ export type IGetStatisticUserQueries = {
   info: {
     today: string;
     total: string;
+    list: string[];
   };
   user: string;
 }[];
@@ -491,7 +492,7 @@ export interface IGetStatisticQueries {
 }
 
 export interface IGetSpentInfo {
-  days?: string[];
+  list?: string[];
   today: string;
   total: string;
 }

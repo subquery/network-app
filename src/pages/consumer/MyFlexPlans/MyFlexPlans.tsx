@@ -46,7 +46,7 @@ const BalanceCards = () => {
   );
   const [billBalance] = useMemo(() => billingBalanceData ?? [], [billingBalanceData]);
 
-  const { getChannelSpent, getSpentInfo } = useConsumerHostServices({
+  const { getChannelSpent, getUserQueriesAggregation } = useConsumerHostServices({
     autoLogin: false,
   });
 
@@ -59,12 +59,13 @@ const BalanceCards = () => {
   }, [account]);
 
   const spentInfo = useAsyncMemo(async () => {
-    const res = await getSpentInfo({
-      account: account || '',
+    const res = await getUserQueriesAggregation({
+      user_list: [account?.toLowerCase() || ''],
       start: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: dayjs().format('YYYY-MM-DD'),
     });
 
-    return res.data;
+    return res.data?.[0];
   }, [account]);
 
   const minDeposit = useMemo(() => {
@@ -195,7 +196,7 @@ const BalanceCards = () => {
                 </div>
               ) : (
                 <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
-                  {formatNumberWithLocale(formatSQT(spentInfo.data?.total?.toString() || '0'))}
+                  {formatNumberWithLocale(formatSQT(spentInfo.data?.info?.total?.toString() || '0'))}
                 </Typography>
               )}
               {TOKEN}
@@ -204,7 +205,23 @@ const BalanceCards = () => {
           style={{
             width: 360,
           }}
-        ></SubqlCard>
+        >
+          <div className="col-flex">
+            <div className="flex-center">
+              <Typography variant="small" type="secondary">
+                Today
+              </Typography>
+              <span style={{ flex: 1 }}></span>
+              {spentInfo.loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <Typography variant="small" type="secondary">
+                  {formatNumberWithLocale(formatEther(spentInfo.data?.info.today, 4))} {TOKEN}
+                </Typography>
+              )}
+            </div>
+          </div>
+        </SubqlCard>
       </div>
     </div>
   );

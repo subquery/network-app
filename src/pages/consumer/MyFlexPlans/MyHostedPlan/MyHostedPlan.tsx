@@ -24,6 +24,7 @@ import { Modal, Tag, Typography } from '@subql/components';
 import { bytes32ToCid } from '@subql/network-clients';
 import { formatSQT } from '@subql/react-hooks';
 import { numToHex, parseError, TOKEN } from '@utils';
+import { formatNumberWithLocale } from '@utils';
 import { Button, Dropdown, Input, message, Table } from 'antd';
 import BigNumberJs from 'bignumber.js';
 
@@ -196,7 +197,7 @@ const MyHostedPlan: FC = () => {
             render: (val: string) => {
               return (
                 <Typography>
-                  {formatSQT(BigNumberJs(val).toString())} {TOKEN}
+                  {formatNumberWithLocale(formatSQT(BigNumberJs(val).toString()))} {TOKEN}
                 </Typography>
               );
             },
