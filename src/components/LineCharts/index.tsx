@@ -41,8 +41,9 @@ interface IProps {
 echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
-export const xAxisScalesFunc = (eraPeriod = 86400) => {
-  const currentDate = dayjs();
+export const xAxisScalesFunc = (eraPeriod = 86400, lastEraDate = new Date()) => {
+  const currentDate = dayjs(lastEraDate);
+
   const intervalPeriod = eraPeriod < 86400 ? 86400 : eraPeriod;
   const getAxisScales = (dateCount: number) => {
     return new Array(Math.ceil((dateCount * 86400) / intervalPeriod))
@@ -87,7 +88,7 @@ const LineCharts: FC<IProps> = ({
     if (xAxisScales.renderData.length) return xAxisScales;
     if (!currentEra.data?.period) return;
 
-    const getAxisScales = xAxisScalesFunc(currentEra.data.period);
+    const getAxisScales = xAxisScalesFunc(currentEra.data.period, currentEra.data.startTime);
 
     const scales = getAxisScales[filter.date]();
 

@@ -17,6 +17,8 @@ import dayjs from 'dayjs';
 
 export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   const period = currentEra.period;
+  const currentEraDate = currentEra.startTime;
+
   const splitData = 86400;
 
   const plusedEra = period > splitData ? 1 : Math.floor(splitData / period);
@@ -139,7 +141,7 @@ export const RewardsLineChart = (props: {
 
   const rewardsLineXScales = useMemo(() => {
     const getXScales = (period: number, filterVal: FilterType) => {
-      const getDefaultScales = xAxisScalesFunc(period);
+      const getDefaultScales = xAxisScalesFunc(period, currentEra.data?.estEndTime);
 
       const result = getDefaultScales[filterVal.date]();
       return result.slice(0, result.length - 1);
@@ -167,6 +169,7 @@ export const RewardsLineChart = (props: {
       l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
       ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
     }[filterVal.date]();
+
     const apis = props.account ? fetchRewardsByIndexer : fetchRewards;
     const vars = {
       eraIds: includesErasHex,
