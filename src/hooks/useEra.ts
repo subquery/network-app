@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import dayjs from 'dayjs';
@@ -9,13 +9,15 @@ import localforage from 'localforage';
 
 import { useAsyncMemo } from './useAsyncMemo';
 
+export type EraValue = { id: string; eraPeriod: string; createdBlock: number; startTime: Date; endTime?: Date };
+
 export type Era = {
   startTime: Date;
   estEndTime: Date;
   index: number;
   period: number;
   createdBlock: number;
-  eras?: { id: string; createdBlock: number; startTime: Date; endTime?: Date }[];
+  eras?: EraValue[];
 };
 
 export function canStartNewEra(era: Era): boolean {
@@ -37,7 +39,7 @@ export function useEra(): {
 } {
   const [fetchEraInfomation] = useLazyQuery<{
     eras: {
-      nodes: { eraPeriod: string; startTime: Date; endTime: Date; id: string; createdBlock: number }[];
+      nodes: EraValue[];
     };
   }>(gql`
     query {
