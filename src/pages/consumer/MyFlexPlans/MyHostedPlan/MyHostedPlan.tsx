@@ -232,7 +232,8 @@ const MyHostedPlan: FC = () => {
                           record.deployment.deployment,
                           numToHex(record.deployment.project_id),
                         );
-                        if (!url) return;
+
+                        if (!url.http && !url.ws) return;
                         setCurrentEditInfo(record);
 
                         setCurrentConnectUrl(url);
@@ -242,7 +243,7 @@ const MyHostedPlan: FC = () => {
                       }
                     }}
                   >
-                    <Typography.Link type="info" className="flex-center" style={{ gap: 4 }}>
+                    <Typography.Link type="info" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
                       <LuArrowRightFromLine />
                       Connect
                     </Typography.Link>
@@ -397,12 +398,12 @@ const MyHostedPlan: FC = () => {
             <Typography variant="medium">Example CURL request</Typography>
 
             <Input
-              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'`}
+              value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl.http}'`}
               size="large"
               disabled
               suffix={
                 <Copy
-                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl}'`}
+                  value={`curl -H 'content-type:application/json' -d '{"id": 1, "jsonrpc": "2.0", "method": "eth_blockNumber"}' '${currentConnectUrl.http}'`}
                   customIcon={<AiOutlineCopy style={{ color: 'var(--sq-blue400)', fontSize: 16, cursor: 'pointer' }} />}
                 ></Copy>
               }
