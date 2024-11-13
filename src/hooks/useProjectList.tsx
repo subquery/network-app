@@ -4,7 +4,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
-import { ProjectCard } from '@components';
+import ProjectCard from '@components/ProjectCard';
 import RpcError from '@components/RpcError';
 import { useProjectMetadata } from '@containers';
 import { PublishNewProjectModal } from '@pages/projects/Home/Home';

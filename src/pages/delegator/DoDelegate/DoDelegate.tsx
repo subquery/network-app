@@ -5,16 +5,12 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import {
-  claimIndexerRewardsModalText,
-  ModalApproveToken,
-  ModalClaimIndexerRewards,
-  tokenApprovalModalText,
-  WalletRoute,
-} from '@components';
+import { ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import TransactionModal from '@components/TransactionModal';
 import { idleText } from '@components/TransactionModal/TransactionModal';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra, useIndexerMetadata } from '@hooks';

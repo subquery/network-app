@@ -7,11 +7,11 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { useAccount } from '@containers/Web3';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
-import { assert } from '@polkadot/util';
 import { openNotification, Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';
 import { formatNumberWithLocale } from '@utils';
 import { Tooltip } from 'antd';
+import assert from 'assert';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';

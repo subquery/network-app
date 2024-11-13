@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
+import FTextInput from '@components/FTextInput';
+import ImageInput from '@components/ImageInput';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
@@ -13,7 +15,6 @@ import clsx from 'clsx';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { t } from 'i18next';
 
-import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema, ProjectType } from '../../../models';
 import { categoriesOptions, parseError, ROUTES } from '../../../utils';

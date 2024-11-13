@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { AppTypography } from '@components/Typography';
 
-import { AppTypography } from '..';
 import styles from './TableText.module.css';
 
 /**

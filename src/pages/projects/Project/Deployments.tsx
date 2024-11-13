@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { forwardRef, useImperativeHandle } from 'react';
+import ProjectDeployments from '@components/ProjectDeployments';
+import { Spinner } from '@subql/components';
 import { useGetProjectDeploymentsLazyQuery } from '@subql/react-hooks';
 import { uniqBy } from 'ramda';
 
-import { ProjectDeployments, Spinner } from '../../../components';
 import { useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
@@ -106,5 +107,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
     },
   });
 });
+
+DeploymentsTab.displayName = 'DeploymentsTab';
 
 export default DeploymentsTab;

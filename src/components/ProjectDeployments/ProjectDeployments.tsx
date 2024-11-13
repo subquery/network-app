@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import Copy from '@components/Copy';
 import Expand from '@components/Expand/Expand';
 import { useCreateDeployment } from '@hooks';
 import { Markdown, Modal, openNotification, TableTitle, Typography } from '@subql/components';
@@ -13,7 +14,6 @@ import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
 
 import { NewDeployment } from '../../models';
-import { Copy } from '..';
 import styles from './ProjectDeployments.module.less';
 
 type Deployment = NewDeployment & { createdAt?: Date };

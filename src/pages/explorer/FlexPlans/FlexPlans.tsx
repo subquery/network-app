@@ -5,15 +5,16 @@ import * as React from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import { EmptyList } from '@components/EmptyList';
+import { AppTypography } from '@components/Typography';
 import { IIndexerFlexPlan, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { useGetFlexPlanPrice } from '@hooks/useGetFlexPlanPrice';
-import { TableTitle } from '@subql/components';
+import { Spinner, TableText, TableTitle } from '@subql/components';
 import { renderAsync, useAsyncMemo } from '@subql/react-hooks';
 import { Space, Table, TableProps } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next, { t } from 'i18next';
 
-import { AppTypography, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useRouteQuery } from '../../../hooks';
 import { formatSecondsDuration, ROUTES } from '../../../utils';

@@ -5,6 +5,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
+import { APYTooltipContent } from '@components/APYTooltip';
+import { SummaryList } from '@components/SummaryList';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useFetchMetadata } from '@hooks/useFetchMetadata';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
@@ -33,7 +35,6 @@ import * as yup from 'yup';
 
 import { IndexerDetails } from 'src/models';
 
-import { APYTooltipContent, SummaryList } from '../../../components';
 import { Avatar, ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { NumberInput } from '../../../components/NumberInput';
 import { useSQToken, useWeb3 } from '../../../containers';

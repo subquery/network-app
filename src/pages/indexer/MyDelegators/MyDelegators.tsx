@@ -3,9 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, Spinner, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { EmptyList } from '@components/EmptyList';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
-import { Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import { renderAsync, useGetIndexerDelegatorsQuery } from '@subql/react-hooks';
 import { URLS } from '@utils';
 

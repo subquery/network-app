@@ -3,11 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SummaryList, TableText } from '@components';
+import { SummaryList } from '@components/SummaryList';
 import TransactionModal from '@components/TransactionModal';
 import { NETWORK_NAME } from '@containers/Web3';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Button, Tag, Typography } from '@subql/components';
+import { Button, TableText, Tag, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { PlansNodeFieldsFragment as Plan } from '@subql/network-query';
 import { PlanTemplateFieldsFragment as PlanTemplate } from '@subql/network-query';

@@ -3,9 +3,8 @@
 
 import * as React from 'react';
 import { Outlet } from 'react-router-dom';
+import { AppSidebar } from '@components/AppSidebar';
 import { DelegatorSidebar } from '@utils/links';
-
-import { AppSidebar } from '../../components';
 
 const Delegator: React.FC = () => {
   return (

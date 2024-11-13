@@ -3,8 +3,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
-import { APYTooltip, WalletRoute } from '@components';
+import { APYTooltip } from '@components/APYTooltip';
 import RpcError from '@components/RpcError';
+import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
 import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';

@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
+import { SummaryList } from '@components/SummaryList';
 import { Typography } from '@subql/components';
 import { Button } from 'antd';
 import assert from 'assert';
@@ -11,7 +12,6 @@ import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
-import { SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { convertStringToNumber, formatEther, getCapitalizedStr, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';

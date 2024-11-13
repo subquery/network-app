@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineWarning } from 'react-icons/ai';
+import { NumberInput } from '@components/NumberInput';
+import { AppTypography } from '@components/Typography';
 import { DatePicker, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
@@ -11,7 +13,6 @@ import { parseEther } from 'ethers/lib/utils';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { AppTypography, NumberInput } from '../../../../../components';
 import { useSQToken } from '../../../../../containers';
 import { COLORS, convertStringToNumber, formatEther, TOKEN } from '../../../../../utils';
 import { CreateOfferContext, StepButtons, StepType } from '../CreateOffer';

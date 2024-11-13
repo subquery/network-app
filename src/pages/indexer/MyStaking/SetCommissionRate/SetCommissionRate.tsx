@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OutlineDot } from '@components/Icons/Icons';
-import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
+import TransactionModal, { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, Typography } from '@subql/components';
@@ -14,8 +15,6 @@ import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
 
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
-import TransactionModal from '../../../../components/TransactionModal';
 import { useWeb3 } from '../../../../containers';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';

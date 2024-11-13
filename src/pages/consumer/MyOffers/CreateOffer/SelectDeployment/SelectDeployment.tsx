@@ -3,10 +3,12 @@
 
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { DeploymentInfo } from '@components/DeploymentInfo';
+import { SearchInput } from '@components/SearchInput';
+import { Spinner } from '@subql/components';
 import { useGetDeploymentQuery } from '@subql/react-hooks';
 import { Button, Typography } from 'antd';
 
-import { DeploymentInfo, SearchInput, Spinner } from '../../../../../components';
 import { useProject } from '../../../../../hooks';
 import { renderAsync, ROUTES } from '../../../../../utils';
 import { CreateOfferContext, StepButtons } from '../CreateOffer';
@@ -51,7 +53,7 @@ const Description = () => {
   return (
     <div className={styles.description}>
       <Typography.Text type="secondary">
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {}
         {/* @ts-ignore */}
         <Trans i18nKey="myOffers.step_0.description">
           You can copy & paste the deployment ID of your desired project by entering their project detail page from

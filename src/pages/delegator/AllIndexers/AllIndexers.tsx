@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyList } from '@components';
+import { EmptyList } from '@components/EmptyList';
 import RpcError from '@components/RpcError';
 import { useEra } from '@hooks';
 import { Spinner, Typography } from '@subql/components';

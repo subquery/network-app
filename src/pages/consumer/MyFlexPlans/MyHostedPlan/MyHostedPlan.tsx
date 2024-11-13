@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineCopy } from 'react-icons/ai';
 import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
-import { Copy } from '@components';
+import Copy from '@components/Copy';
 import {
   getHttpEndpointWithApiKey,
   getWsEndpointWithApiKey,

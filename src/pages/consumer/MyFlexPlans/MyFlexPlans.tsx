@@ -7,6 +7,9 @@ import { useTranslation } from 'react-i18next';
 import { BsInfoCircle } from 'react-icons/bs';
 import { IoWarning } from 'react-icons/io5';
 import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { TabButtons } from '@components/TabButton';
+import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
 import { useAsyncMemo, useRouteQuery } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
@@ -18,7 +21,6 @@ import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
-import { AppPageHeader, TabButtons, WalletRoute } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';

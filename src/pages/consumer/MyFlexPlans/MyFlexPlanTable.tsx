@@ -4,8 +4,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
+import { DeploymentMeta } from '@components/DeploymentInfo';
+import { EmptyList } from '@components/EmptyList';
+import { AntDTable } from '@components/Table';
 import { useRouteQuery } from '@hooks';
-import { TableTitle, Typography } from '@subql/components';
+import { Spinner, TableText, TableTitle, Typography } from '@subql/components';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { ChannelStatus } from '@subql/network-query';
 import { useGetConsumerFlexPlansByDeploymentIdLazyQuery } from '@subql/react-hooks';
@@ -14,7 +17,6 @@ import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 
-import { AntDTable, DeploymentMeta, EmptyList, Spinner, TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useWeb3 } from '../../../containers';
 import { formatDate, formatEther, getFlexPlanPrice, mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';

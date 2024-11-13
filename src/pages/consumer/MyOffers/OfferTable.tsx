@@ -4,8 +4,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
+import { DeploymentMeta } from '@components/DeploymentInfo';
+import { EmptyList } from '@components/EmptyList';
+import { SearchInput } from '@components/SearchInput';
+import { AntDTable } from '@components/Table';
+import { TokenAmount } from '@components/TokenAmount';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Spinner, TableTitle } from '@subql/components';
+import { Spinner, TableText, TableTitle } from '@subql/components';
 import { OfferFieldsFragment } from '@subql/network-query';
 import {
   useGetAcceptedOffersQuery,
@@ -23,8 +28,6 @@ import dayjs from 'dayjs';
 import { BigNumber, ContractReceipt } from 'ethers';
 import i18next from 'i18next';
 
-import { AntDTable, DeploymentMeta, EmptyList, SearchInput, TableText } from '../../../components';
-import { TokenAmount } from '../../../components/TokenAmount';
 import { useWeb3 } from '../../../containers';
 import {
   convertBigNumberToNumber,
