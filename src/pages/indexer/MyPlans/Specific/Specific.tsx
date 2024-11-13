@@ -3,7 +3,8 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeploymentMeta, EmptyList } from '@components';
+import { DeploymentMeta } from '@components/DeploymentInfo';
+import { EmptyList } from '@components/EmptyList';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { useGetSpecificPlansQuery } from '@subql/react-hooks';

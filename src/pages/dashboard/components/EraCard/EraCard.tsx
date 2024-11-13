@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useState } from 'react';
-import { getEraProgress, getEraTimeLeft } from '@components';
+import { getEraProgress, getEraTimeLeft } from '@components/CurEra';
 import { useEra } from '@hooks';
 import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';

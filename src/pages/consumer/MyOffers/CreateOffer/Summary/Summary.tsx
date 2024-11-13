@@ -5,17 +5,17 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
+import { SummaryList } from '@components/SummaryList';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { assert } from '@polkadot/util';
 import { EVENT_TYPE, EventBus } from '@utils/eventBus';
 import { Typography } from 'antd';
+import assert from 'assert';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
 
-import { SummaryList } from '../../../../../components';
 import {
   cidToBytes32,
   convertBigNumberToNumber,

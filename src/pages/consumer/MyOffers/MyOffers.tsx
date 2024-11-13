@@ -4,20 +4,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
-import {
-  AppPageHeader,
-  ApproveContract,
-  EmptyList,
-  ModalApproveToken,
-  Spinner,
-  TabButtons,
-  tokenApprovalModalText,
-  WalletRoute,
-} from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
 import { Button } from '@components/Button';
+import { EmptyList } from '@components/EmptyList';
+import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { TabButtons } from '@components/TabButton';
 import TransactionModal from '@components/TransactionModal';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken, useWeb3 } from '@containers';
-import { Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import {
   renderAsync,
   useGetOfferCountQuery,

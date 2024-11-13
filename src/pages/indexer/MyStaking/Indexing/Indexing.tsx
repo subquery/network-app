@@ -4,15 +4,15 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { BsArrowReturnRight } from 'react-icons/bs';
-import { EmptyList } from '@components';
+import { EmptyList } from '@components/EmptyList';
 import { UseSortedIndexerReturn } from '@hooks/useSortedIndexer';
-import { isUndefined } from '@polkadot/util';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue } from '@subql/network-clients';
 import { TOKEN, truncFormatEtherStr, URLS } from '@utils';
 import { Table, Typography } from 'antd';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
+import { isUndefined } from 'lodash-es';
 
 import styles from './Indexing.module.css';
 
@@ -99,7 +99,6 @@ export const Indexing: React.FC<Props> = ({ tableData, showDelegated = false }) 
         <Typography.Text className={styles.grayText}>{t('indexer.topRowData')}</Typography.Text>
         <Typography.Text className={styles.grayText}>
           <Trans
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             i18nKey={'indexer.secondRowData'}
             components={{ returnRightIcon: <BsArrowReturnRight className={styles.nextIcon} /> }}

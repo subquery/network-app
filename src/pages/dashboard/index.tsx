@@ -4,7 +4,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { APYTooltip, APYTooltipContent } from '@components';
+import { APYTooltip, APYTooltipContent } from '@components/APYTooltip';
 import { useEra } from '@hooks';
 import { Footer, SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';

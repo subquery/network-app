@@ -4,12 +4,13 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Expand from '@components/Expand/Expand';
+import IPFSImage from '@components/IPFSImage';
 import NormalError from '@components/NormalError';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import { Markdown, Modal, openNotification, SubqlCheckbox, Tag, Typography } from '@subql/components';
+import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
@@ -17,7 +18,6 @@ import clsx from 'clsx';
 
 import { ProjectDetails, ProjectType } from 'src/models';
 
-import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
 import { renderAsync } from '../../../utils';

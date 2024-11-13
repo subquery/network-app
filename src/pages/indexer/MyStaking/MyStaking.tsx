@@ -3,7 +3,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, Card, Description, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { Card } from '@components/Card';
+import { Description } from '@components/Description';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { useIsIndexer, useSortedIndexer } from '@hooks';
 import { Spinner, Typography } from '@subql/components';

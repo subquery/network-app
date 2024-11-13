@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { BsArrowDownSquareFill, BsLifePreserver } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { WalletRoute } from '@components';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken } from '@containers';
 import { l1Chain, l2Chain } from '@containers/Web3';
 import { type CrossChainMessenger } from '@eth-optimism/sdk/src/cross-chain-messenger';

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsExclamationCircle } from 'react-icons/bs';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { EmptyList } from '@components';
+import { EmptyList } from '@components/EmptyList';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import TransactionModal from '@components/TransactionModal';
