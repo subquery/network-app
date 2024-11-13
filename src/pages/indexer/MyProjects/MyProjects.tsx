@@ -3,7 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader, EmptyList, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { EmptyList } from '@components/EmptyList';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { URLS } from '@utils';
 

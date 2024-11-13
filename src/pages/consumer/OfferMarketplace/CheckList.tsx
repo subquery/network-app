@@ -4,13 +4,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
+import { Spinner } from '@subql/components';
 import { ServiceStatus } from '@subql/network-query';
 import { AsyncMemoReturn, renderAsync } from '@subql/react-hooks';
 import { Button, Typography } from 'antd';
 import clsx from 'clsx';
 
-import { Spinner, Status as AppStatus } from '../../../components';
-import { deploymentStatus } from '../../../components/Status/Status';
+import Status, { deploymentStatus } from '../../../components/Status/Status';
 import { COLORS, isUndefined, Metadata, parseError } from '../../../utils';
 import styles from './AcceptOffer.module.css';
 
@@ -31,14 +31,14 @@ interface IRequirementCheck {
   requiredValue: string | number | undefined;
   value: string | number | undefined;
   passCheck: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   formatFn?: (value: any) => string | number | React.ReactNode;
   errorMsg?: string;
 }
 
 interface ISortedValue {
   value: string | number | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   formatFn?: (value: any) => string | React.ReactNode;
 }
 
@@ -126,7 +126,7 @@ export const CheckList: React.FC<ICheckList> = ({
           requiredValue: REQUIRED_STATUS,
           value: status,
           passCheck: REQUIRED_STATUS === status,
-          formatFn: (status: string) => <AppStatus text={status} color={deploymentStatus[status]} />,
+          formatFn: (status: string) => <Status text={status} color={deploymentStatus[status]} />,
           errorMsg: t('offerMarket.acceptModal.projectStatusError'),
         },
         {

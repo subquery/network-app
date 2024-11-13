@@ -4,8 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { AppPageHeader, Description, EmptyList, Spinner } from '@components';
-import { Typography } from '@subql/components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { Description } from '@components/Description';
+import { EmptyList } from '@components/EmptyList';
+import { Spinner, Typography } from '@subql/components';
 import { renderAsync, useGetAllOpenOffersLazyQuery, useGetAllOpenOffersQuery } from '@subql/react-hooks';
 import { ROUTES, URLS } from '@utils';
 import dayjs from 'dayjs';

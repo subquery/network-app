@@ -23,7 +23,7 @@ type Combine<T extends string | number | symbol, P extends string> = T extends s
     : `${P}.${T}`
   : never;
 
-type ObjectKeyPaths<T extends object, P extends string = '', K extends keyof T = keyof T> = K extends string | number
+type ObjectKeyPaths<T extends object, P extends string = '', K extends keyof T = keyof T> = K extends string
   ? // just check T[K] is a Object type { xxx: 'yyy' }
     T[K] extends object
     ? ObjectKeyPaths<T[K], Combine<K, P>>
@@ -39,8 +39,8 @@ export type GetDictValue<
     ? GetDictValue<B, O[A]>
     : never
   : T extends keyof O
-  ? O[T]
-  : never;
+    ? O[T]
+    : never;
 
 export type TranslationKeys = ObjectKeyPaths<(typeof resources)['en']['translation']>;
 

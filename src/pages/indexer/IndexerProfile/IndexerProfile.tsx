@@ -4,9 +4,10 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
-import { CurEra, IPFSImage } from '@components';
+import { CurEra } from '@components/CurEra';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import IPFSImage from '@components/IPFSImage';
 import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useSortedIndexerDeployments } from '@hooks';

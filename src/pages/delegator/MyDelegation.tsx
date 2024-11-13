@@ -6,12 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
-import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { APYTooltip } from '@components/APYTooltip';
+import { Button } from '@components/Button';
+import { EmptyList } from '@components/EmptyList';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
@@ -20,7 +24,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Spinner, SubqlCard, TableTitle, Typography } from '@subql/components';
+import { Spinner, SubqlCard, TableText, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
   useAsyncMemo,

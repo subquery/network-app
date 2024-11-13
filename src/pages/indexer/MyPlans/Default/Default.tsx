@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyList } from '@components';
+import { EmptyList } from '@components/EmptyList';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import { useGetPlansQuery } from '@subql/react-hooks';

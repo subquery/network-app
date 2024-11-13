@@ -3,12 +3,13 @@
 
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AntDTable, APYTooltip, TableText } from '@components';
+import { APYTooltip } from '@components/APYTooltip';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { AntDTable } from '@components/Table';
 import { useWeb3 } from '@containers';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
-import { Spinner, Typography } from '@subql/components';
+import { Spinner, TableText, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetTopIndexersQuery } from '@subql/network-query';
 import { formatEther, useGetAllIndexerByApyQuery, useGetIndexersQuery } from '@subql/react-hooks';

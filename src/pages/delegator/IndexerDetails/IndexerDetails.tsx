@@ -4,8 +4,10 @@
 import { useTranslation } from 'react-i18next';
 import ReactJazzicon from 'react-jazzicon';
 import { useParams } from 'react-router-dom';
-import { Copy, CurEra, EmptyList } from '@components';
-import { BreadcrumbNav } from '@components';
+import { BreadcrumbNav } from '@components/BreadcrumbNav';
+import Copy from '@components/Copy';
+import { CurEra } from '@components/CurEra';
+import { EmptyList } from '@components/EmptyList';
 import { useWeb3 } from '@containers';
 import { useSortedIndexer } from '@hooks';
 import { OwnDelegator } from '@pages/indexer/MyDelegators/OwnDelegator';

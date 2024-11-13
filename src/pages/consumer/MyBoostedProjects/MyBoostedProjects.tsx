@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { AppPageHeader, DeploymentMeta } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { DeploymentMeta } from '@components/DeploymentInfo';
 import DoBooster from '@components/DoBooster';
 import { useAccount } from '@containers/Web3';
 import { BalanceLayout } from '@pages/dashboard';

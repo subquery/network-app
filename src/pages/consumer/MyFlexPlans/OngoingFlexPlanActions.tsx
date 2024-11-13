@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { SummaryList } from '@components/SummaryList';
+import { AppTypography } from '@components/Typography';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { Button } from 'antd';
@@ -11,7 +13,6 @@ import { BigNumber } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
-import { AppTypography, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { parseError, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';

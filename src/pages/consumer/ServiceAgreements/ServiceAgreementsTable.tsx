@@ -4,6 +4,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
+import { DeploymentMeta } from '@components/DeploymentInfo';
+import { EmptyList } from '@components/EmptyList';
 import { Spinner, Typography } from '@subql/components';
 import { TableText, TableTitle } from '@subql/components';
 import { ServiceAgreementFieldsFragment } from '@subql/network-query';
@@ -13,7 +15,6 @@ import { Button, Table, TableProps } from 'antd';
 import dayjs from 'dayjs';
 import { FixedType } from 'rc-table/lib/interface';
 
-import { DeploymentMeta, EmptyList } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useProjectMetadata, useWeb3 } from '../../../containers';
 import { mapAsync, notEmpty, renderAsyncArray, TOKEN } from '../../../utils';
@@ -94,7 +95,7 @@ export const ServiceAgreementsTable: React.FC<ServiceAgreementsTableProps> = ({ 
     {
       // TODO: check the type definition.
       // sorter can be a function, maybe update in new version, feature works good.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       // @ts-ignore
       sorter: (a, b) => {
         return +new Date(a.endTime) > +new Date(b.endTime);

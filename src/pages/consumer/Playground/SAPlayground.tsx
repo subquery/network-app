@@ -8,12 +8,12 @@ import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
 import { useIndexerMetadata } from '@hooks';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
+import { TableText } from '@subql/components';
 import { ProjectType, ServiceAgreementFieldsFragment as ServiceAgreement } from '@subql/network-query';
 import { TableProps } from 'antd';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
-import { TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useWeb3 } from '../../../containers';
 import {

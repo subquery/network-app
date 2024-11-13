@@ -4,13 +4,14 @@
 import React, { PropsWithChildren, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AlertBanner from '@components/AlertBanner/AlertBanner';
+import { ChainStatus } from '@components/ConnectWallet';
+import { Header } from '@components/Header';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
 import { ChatBox, SubqlProvider } from '@subql/components';
 
 import { RainbowProvider } from './config/rainbowConf';
-import { ChainStatus, Header } from './components';
 import {
   IPFSProvider,
   ProjectMetadataProvider,
