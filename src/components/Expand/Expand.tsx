@@ -9,9 +9,11 @@ import styles from './index.module.less';
 
 interface IProps {
   children: React.ReactNode;
+  height?: number;
 }
 
 const Expand: FC<IProps> = (props) => {
+  const { height = 400 } = props;
   const update = useUpdate();
 
   const [expanded, setExpanded] = useState(false);
@@ -29,9 +31,9 @@ const Expand: FC<IProps> = (props) => {
     //  we need use a macro task to get the rendered height.
     setTimeout(() => {
       const rect = childrenRef.current?.getBoundingClientRect();
-      setShowExpandIcon(!!(rect?.height && rect.height > 400));
+      setShowExpandIcon(!!(rect?.height && rect.height > height));
     });
-  }, [childrenRef.current, props.children]);
+  }, [childrenRef.current, props.children, height]);
 
   return (
     <div>
@@ -49,7 +51,7 @@ const Expand: FC<IProps> = (props) => {
       <div
         className={styles.expand}
         style={{
-          height: expanded ? 'auto' : showExpandIcon ? 400 : 'auto',
+          height: expanded ? 'auto' : showExpandIcon ? height : 'auto',
           overflow: 'hidden',
         }}
       >
