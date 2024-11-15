@@ -174,7 +174,7 @@ export const MyAccountInner: React.FC = () => {
       <AccountHeader profileAccount={account} />
       <div
         style={{
-          marginTop: 24,
+          margin: '24px 0',
           border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
           borderRadius: 8,
           padding: 24,
