@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
-import { CurEra } from '@components';
+import { CurEra } from '@components/CurEra';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useAccount } from '@containers/Web3';
 import { useIsMobile } from '@hooks/useIsMobile';

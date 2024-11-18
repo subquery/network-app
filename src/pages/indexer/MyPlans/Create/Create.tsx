@@ -3,14 +3,14 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SummaryList, TableText } from '@components';
 import { NumberInput } from '@components/NumberInput';
+import { SummaryList } from '@components/SummaryList';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
 import { NETWORK_NAME } from '@containers/Web3';
 import { parseEther } from '@ethersproject/units';
 import { useSortedIndexerDeployments } from '@hooks';
-import { Button, Spinner, Typography } from '@subql/components';
+import { Button, Spinner, TableText, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { STABLE_COIN_DECIMAL } from '@subql/network-config';
 import { PlanTemplateFieldsFragment as Template } from '@subql/network-query';

@@ -4,13 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { TableText } from '@components';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
 import { useIsMobile } from '@hooks/useIsMobile';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Spinner, Typography } from '@subql/components';
+import { Spinner, TableText, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';

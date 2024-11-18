@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import { Route, Routes } from 'react-router';
-import { WalletRoute } from '@components';
+import { WalletRoute } from '@components/WalletRoute';
 import { Footer } from '@subql/components';
 
 import Create from './Create';

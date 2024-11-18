@@ -3,9 +3,8 @@
 
 import * as React from 'react';
 import { Outlet } from 'react-router';
+import { AppSidebar } from '@components/AppSidebar';
 import { IndexerSidebar } from '@utils/links';
-
-import { AppSidebar } from '../../components';
 
 const Indexer: React.FC = () => {
   return (

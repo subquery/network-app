@@ -7,14 +7,13 @@ import { useNavigate, useParams } from 'react-router';
 import { NotificationType, openNotification } from '@components/Notification';
 import { FetcherParams } from '@graphiql/toolkit';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
-import { Spinner, TableTitle } from '@subql/components';
+import { Spinner, TableText, TableTitle } from '@subql/components';
 import { ProjectType, StateChannelFieldsFragment as ConsumerFlexPlan } from '@subql/network-query';
 import { renderAsync, useGetConsumerFlexPlanQuery } from '@subql/react-hooks';
 import { TableProps } from 'antd';
 import { BigNumber } from 'ethers';
 import i18next from 'i18next';
 
-import { TableText } from '../../../components';
 import { ConnectedIndexer } from '../../../components/IndexerDetails/IndexerName';
 import { useWeb3 } from '../../../containers';
 import {

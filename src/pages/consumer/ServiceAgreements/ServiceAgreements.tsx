@@ -4,7 +4,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, EmptyList, TabButtons, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { EmptyList } from '@components/EmptyList';
+import { TabButtons } from '@components/TabButton';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import {

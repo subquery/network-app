@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { IPFSImage } from '@components';
+import IPFSImage from '@components/IPFSImage';
 import { useProjectMetadata } from '@containers';
 import { SubqlCard, Typography } from '@subql/components';
 import { renderAsync } from '@subql/react-hooks';

@@ -3,13 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  claimIndexerRewardsModalText,
-  ModalApproveToken,
-  ModalClaimIndexerRewards,
-  tokenApprovalModalText,
-} from '@components';
 import { OutlineDot } from '@components/Icons/Icons';
+import { ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
 import TransactionModal from '@components/TransactionModal';
 import { TransactionModalAction, TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';

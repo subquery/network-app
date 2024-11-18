@@ -3,9 +3,9 @@
 
 import * as React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
+import { AppSidebar } from '@components/AppSidebar';
 import { ConsumerSidebar } from '@utils/links';
 
-import { AppSidebar } from '../../components';
 import { ROUTES } from '../../utils';
 import MyBoostedProjects from './MyBoostedProjects/MyBoostedProjects';
 import { FlexPlayground } from './Playground/FlexPlayground';

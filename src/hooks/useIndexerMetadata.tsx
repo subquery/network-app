@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { limitQueue } from '@utils/limitation';
+import { limitContract } from '@utils/limitation';
 import localforage from 'localforage';
 
 import { IndexerDetails, indexerMetadataSchema } from '../models';
@@ -38,12 +39,16 @@ export function useIndexerMetadata(
   const [getIndexerQuery] = useGetIndexerLazyQuery();
   const mounted = useRef(false);
   const fetchCid = async () => {
-    const res = await getIndexerQuery({
-      variables: {
-        address,
-      },
-      fetchPolicy: 'network-only',
-    });
+    const res = await limitContract(
+      () =>
+        getIndexerQuery({
+          variables: {
+            address,
+          },
+          fetchPolicy: 'network-only',
+        }),
+      `fetchIndexerMetadata-${address}`,
+    );
 
     const decodeCid = res.data?.indexer?.metadata || '';
 
@@ -106,6 +111,7 @@ export function useIndexerMetadata(
   return {
     indexerMetadata: {
       name: undefined,
+      description: undefined,
       url: undefined,
       image: undefined,
       ...metadata,

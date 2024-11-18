@@ -46,7 +46,7 @@ export const EmptyList: React.FC<IEmptyList> = ({
             {/* @ts-ignore */}
             <Trans i18nKey={infoI18nKey}>
               {infoLinkDesc}
-              <Typography.Link href={infoLink ?? '/'} target={'_blank'} rel="noreferrer">
+              <Typography.Link href={infoLink ?? '/'} target={'_blank'} rel="noreferrer" type="info">
                 here
               </Typography.Link>
             </Trans>

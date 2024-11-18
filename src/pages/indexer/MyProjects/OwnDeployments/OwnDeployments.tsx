@@ -6,7 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import WarningOutlined from '@ant-design/icons/WarningOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
+import { APYTooltip } from '@components/APYTooltip';
+import { DeploymentInfo } from '@components/DeploymentInfo';
+import { Description } from '@components/Description';
 import DoAllocate from '@components/DoAllocate/DoAllocate';
+import Status from '@components/Status';
+import { deploymentStatus } from '@components/Status/Status';
 import { BalanceLayout } from '@pages/dashboard';
 import { DoStake } from '@pages/indexer/MyStaking/DoStake';
 import { Spinner, SubqlCard, Typography } from '@subql/components';
@@ -19,9 +24,6 @@ import BigNumberJs from 'bignumber.js';
 
 import { useWeb3Store } from 'src/stores';
 
-import { APYTooltip, DeploymentInfo, Status } from '../../../../components';
-import { Description } from '../../../../components/Description/Description';
-import { deploymentStatus } from '../../../../components/Status/Status';
 import {
   DeploymentStatus,
   useEra,

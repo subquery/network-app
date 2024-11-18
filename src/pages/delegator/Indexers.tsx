@@ -4,8 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
-
-import { AppPageHeader } from '../../components';
+import { AppPageHeader } from '@components/AppPageHeader';
 
 export const Indexers: React.FC = () => {
   const { t } = useTranslation();

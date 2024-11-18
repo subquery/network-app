@@ -3,7 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { BreadcrumbNav } from '@components';
+import { BreadcrumbNav } from '@components/BreadcrumbNav';
+import { CurEra } from '@components/CurEra';
+import { DeploymentMeta } from '@components/DeploymentInfo';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Spinner } from '@subql/components';
@@ -11,7 +13,6 @@ import { ProjectType } from '@subql/network-query';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 
-import { CurEra, DeploymentMeta } from '../../../components';
 import { GraphQLQuery, GraphQLQueryProps } from './GraphQLQuery';
 import styles from './Playground.module.css';
 import { RequestToken, RequestTokenProps } from './RequestToken';
