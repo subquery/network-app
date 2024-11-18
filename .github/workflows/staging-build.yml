@@ -36,5 +36,5 @@ jobs:
           invalidation: /*
           dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_STAGING }}
           delete-removed: false
-          no-cache: true
+          no-cache: false
           private: true
