@@ -35,5 +35,4 @@ jobs:
           invalidation: /*
           dist-id: ESC023BBQRS3F
           delete-removed: false
-          no-cache: true
           private: true
