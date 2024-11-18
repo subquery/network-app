@@ -613,7 +613,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                     name="price"
                     rules={[{ required: true, message: 'Please enter the price' }]}
                   >
-                    <InputNumber placeholder="Enter price" min="1" addonAfter={TOKEN}></InputNumber>
+                    <InputNumber placeholder="Enter price" min="0.0000000000000001" addonAfter={TOKEN}></InputNumber>
                   </Form.Item>
                   <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
                     Per 1000 requests
