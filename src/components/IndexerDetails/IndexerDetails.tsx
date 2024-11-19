@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { EmptyList } from '@components/EmptyList';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
+import useIndexerGeoInformation from '@hooks/useIndexerGeoInformation';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Spinner, TableTitle, Typography } from '@subql/components';
 import { ServiceStatus } from '@subql/network-query';
@@ -48,12 +49,12 @@ const NoIndexers: React.FC = () => {
 
 const columns: TableProps<{ id: number }>['columns'] = [
   {
-    width: '20%',
+    width: '18%',
     title: <TableTitle title={t('indexers.head.indexers')} />,
     dataIndex: 'indexer',
   },
   {
-    width: '25%',
+    width: '15%',
     title: <TableTitle title={t('indexers.head.progress')} />,
     dataIndex: 'progress',
   },
@@ -63,14 +64,19 @@ const columns: TableProps<{ id: number }>['columns'] = [
     dataIndex: 'status',
   },
   {
-    width: '20%',
+    width: '12%',
     title: <TableTitle title={t('indexers.head.url')} />,
     dataIndex: 'status',
   },
   {
-    width: '20%',
+    width: '15%',
     title: <TableTitle title={'Flex Plan Price'} />,
     dataIndex: 'flexPlanPrice',
+  },
+  {
+    width: '15%',
+    title: <TableTitle title={'Location'} />,
+    dataIndex: 'location',
   },
   {
     width: '10%',
@@ -120,18 +126,30 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
     [asyncIndexers.data],
   );
 
+  const indexerIds = useMemo(() => indexers?.map((i) => i.indexerId), [indexers]);
+
+  const geoInfo = useIndexerGeoInformation(indexerIds || []);
+
   const indexerList = useMemo(() => {
     const list = searchedIndexer && searchedIndexer?.length > 0 ? searchedIndexer : indexers ?? [];
 
-    return list.filter(notEmpty).map((i) => ({
-      ...i,
-      flexPlanPrice: flexPlanPrice.loading
-        ? (false as const)
-        : formatSQT(
-            flexPlanPrice.data?.find((j) => j.indexer.toLowerCase() === i?.indexerId.toLowerCase())?.price || '0',
-          ),
-    }));
-  }, [searchedIndexer, indexers, flexPlanPrice.data]);
+    return list.filter(notEmpty).map((i) => {
+      const findGeo = geoInfo.data?.find((j) => j.indexer === i.indexerId);
+      return {
+        ...i,
+        flexPlanPrice: flexPlanPrice.loading
+          ? (false as const)
+          : formatSQT(
+              flexPlanPrice.data?.find((j) => j.indexer.toLowerCase() === i?.indexerId.toLowerCase())?.price || '0',
+            ),
+        location: geoInfo.loading
+          ? 'loading'
+          : findGeo?.country?.names?.en
+            ? [findGeo.country.names?.en, findGeo.city?.names?.en].filter((__) => __).join(', ')
+            : 'Unknown',
+      };
+    });
+  }, [searchedIndexer, indexers, flexPlanPrice.data, geoInfo]);
 
   const SearchAddress = () => (
     <SearchInput

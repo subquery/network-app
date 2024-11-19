@@ -86,7 +86,7 @@ const RenderRouter: React.FC = () => {
           <div className="Header">
             <Header />
           </div>
-          <AlertBanner center></AlertBanner>
+          <AlertBanner></AlertBanner>
           <div className="Content">
             <ChainStatus>
               <RouterComponent></RouterComponent>

@@ -160,7 +160,8 @@ const ProjectInner: React.FC = () => {
                 <TabButtons tabs={sortedTabList} withUnderline />
               </div>
               <div className={styles.contentOverview}>
-                {/* I code some have effect code at this section. Need this component load always. TODO: enhance it*/}
+                {/* Dbsize is fetch from this section, make it to the store then displaying at header. 
+                    side effects in this section.  */}
                 <div style={{ display: location.pathname.includes(INDEXERS) ? 'block' : 'none' }}>
                   <IndexerDetails deploymentId={deploymentId} project={project} manifest={manifest}></IndexerDetails>
                 </div>
