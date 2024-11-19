@@ -96,7 +96,7 @@ const ProjectHeader: React.FC<Props> = ({
 
     return polkadotName || ethName || chainId;
   }, [project.type, manifest]);
-  console.warn(networkVal);
+
   const dbSize = React.useMemo(() => {
     if (!currentVersion)
       return {

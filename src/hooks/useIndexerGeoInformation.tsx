@@ -4,7 +4,7 @@ import { useWhyDidYouUpdate } from 'ahooks';
 
 import { useAsyncMemo } from './useAsyncMemo';
 
-const useIndexerGeoInformation = (indexers: string[]) => {
+const useIndexerGeoInformation = (indexers?: string[]) => {
   const [fetchGeoInformation] = useLazyQuery<{
     geoips: {
       indexer: string;
@@ -26,6 +26,7 @@ const useIndexerGeoInformation = (indexers: string[]) => {
   }>(gql`
     query GetGeoInformation($indexers: [String!]!) {
       geoips(indexers: $indexers) {
+        error
         indexer
         country {
           names {
@@ -46,6 +47,9 @@ const useIndexerGeoInformation = (indexers: string[]) => {
   `);
 
   const geoInfo = useAsyncMemo(async () => {
+    if (!indexers || indexers?.length === 0) {
+      return [];
+    }
     const res = await fetchGeoInformation({
       context: {
         clientName: TOP_100_INDEXERS,

@@ -89,6 +89,13 @@ const columns: TableProps<{ id: number }>['columns'] = [
   },
 ];
 
+const ComposableMap = React.lazy(() =>
+  import('react-simple-maps').then((module) => ({ default: module.ComposableMap })),
+);
+const Geographies = React.lazy(() => import('react-simple-maps').then((module) => ({ default: module.Geographies })));
+const Geography = React.lazy(() => import('react-simple-maps').then((module) => ({ default: module.Geography })));
+const Marker = React.lazy(() => import('react-simple-maps').then((module) => ({ default: module.Marker })));
+
 const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) => {
   const [loadIndexersLazy, asyncIndexers] = useGetDeploymentIndexersLazyQuery();
   const { getProjects } = useConsumerHostServices({ autoLogin: false });
@@ -128,7 +135,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
 
   const indexerIds = useMemo(() => indexers?.map((i) => i.indexerId), [indexers]);
 
-  const geoInfo = useIndexerGeoInformation(indexerIds || []);
+  const geoInfo = useIndexerGeoInformation(indexerIds);
 
   const indexerList = useMemo(() => {
     const list = searchedIndexer && searchedIndexer?.length > 0 ? searchedIndexer : indexers ?? [];
@@ -149,7 +156,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
             : 'Unknown',
       };
     });
-  }, [searchedIndexer, indexers, flexPlanPrice.data, geoInfo]);
+  }, [searchedIndexer, indexers, flexPlanPrice.data, geoInfo.loading, geoInfo.data]);
 
   const SearchAddress = () => (
     <SearchInput
@@ -202,6 +209,59 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
       }
       return (
         <>
+          <div className="flex" style={{ gap: 24 }}>
+            <div
+              className="col-flex"
+              style={{
+                borderRadius: 8,
+                border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
+                padding: 24,
+                width: '50%',
+              }}
+            >
+              <Typography>Node Operator Locations</Typography>
+
+              <React.Suspense fallback={<Spinner></Spinner>}>
+                <ComposableMap
+                  style={{
+                    width: '100%',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <Geographies geography="/static/geo.json">
+                    {({ geographies }) =>
+                      geographies.map((geo) => (
+                        <Geography key={geo.rsmKey} geography={geo} fill="#DFE3E8" stroke="#9d8e8e" />
+                      ))
+                    }
+                  </Geographies>
+                  {geoInfo.data?.map((geo) => {
+                    return (
+                      <Marker
+                        key={geo.indexer}
+                        coordinates={[geo.location?.longitude || 0, geo.location?.latitude || 0]}
+                      >
+                        <g
+                          fill="none"
+                          stroke="#4388DD"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          transform="translate(-12, -24)"
+                        >
+                          <circle cx="12" cy="10" r="3" />
+                          <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
+                        </g>
+                        <text textAnchor="middle" y={15} style={{ fontFamily: 'system-ui', fill: '#5D5A6D' }}>
+                          {}
+                        </text>
+                      </Marker>
+                    );
+                  })}
+                </ComposableMap>
+              </React.Suspense>
+            </div>
+          </div>
           <div className={styles.indexerListHeader}>
             <Typography variant="h6" className={styles.title}>
               {t('indexer.amount', { count: totalCount || indexers?.length || 0 })}
