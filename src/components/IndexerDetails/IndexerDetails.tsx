@@ -27,7 +27,7 @@ import { useProjectStore } from 'src/stores/project';
 import { notEmpty, URLS } from '../../utils';
 import { SearchInput } from '../SearchInput';
 import styles from './IndexerDetails.module.less';
-import { PriceQueriesChart } from './priceQueries';
+import { PriceQueriesChart } from './PriceQueries';
 import Row from './Row';
 
 type Props = {
