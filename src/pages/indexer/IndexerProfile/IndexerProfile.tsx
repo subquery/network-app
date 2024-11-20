@@ -12,6 +12,7 @@ import IPFSImage from '@components/IPFSImage';
 import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
 import { useEra, useIndexerMetadata, useSortedIndexerDeployments } from '@hooks';
+import useIndexerGeoInformation from '@hooks/useIndexerGeoInformation';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
@@ -19,7 +20,7 @@ import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/R
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
-import { Markdown, SubqlCard, Typography } from '@subql/components';
+import { Markdown, Spinner, SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDelegationQuery, useGetIndexersQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
@@ -56,7 +57,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
         <ConnectedIndexer id={account} size="large"></ConnectedIndexer>
       </div>
       {canDelegate && (
-        <div className="flex" style={{ marginLeft: 16 }}>
+        <div className="flex" style={{ marginLeft: 16, gap: 16 }}>
           <DoDelegate
             indexerAddress={account}
             delegation={delegations.data?.delegation}
@@ -96,6 +97,10 @@ const AccountBaseInfo = (props: { account: string }) => {
     context: { clientName: TOP_100_INDEXERS },
   });
 
+  const geoAccounts = useMemo(() => [props.account], [props.account]);
+
+  const accountGeoInfos = useIndexerGeoInformation(geoAccounts);
+
   const accountInfos = useMemo(() => {
     if (!topIndexers.data?.indexerPrograms.length) return;
     return {
@@ -107,7 +112,16 @@ const AccountBaseInfo = (props: { account: string }) => {
   return (
     <div className={styles.accountBaseInfo}>
       {makeChunk({ title: 'Uptime', value: `${truncateToDecimalPlace(accountInfos?.infos?.uptime || 0, 2)}%` })}
-
+      {makeChunk({
+        title: 'Location',
+        value: accountGeoInfos.loading ? (
+          <Spinner size={12}></Spinner>
+        ) : (
+          [accountGeoInfos.data?.[0]?.country?.names?.en, accountGeoInfos.data?.[0]?.city?.names?.en]
+            .filter((i) => i)
+            .join(', ') || 'Unknown'
+        ),
+      })}
       {makeChunk({
         title: 'Era Reward Collection',
         value: t(accountInfos?.infos?.rewardCollection === 1 ? 'general.frequent' : 'general.infrequent'),

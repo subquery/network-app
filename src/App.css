@@ -43,3 +43,7 @@ p {
 .subql-chatbox {
   z-index: 999;
 }
+
+path:focus {
+  outline: none;
+}

@@ -2,13 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { CSSProperties, FC, useMemo } from 'react';
-import { useEra } from '@hooks';
-import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
 import { formatNumber } from '@utils/numberFormatters';
-import { Radio } from 'antd';
 import { clsx } from 'clsx';
-import dayjs from 'dayjs';
 import { BarChart } from 'echarts/charts';
 import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components';
 import * as echarts from 'echarts/core';
@@ -41,8 +37,6 @@ echarts.use([BarChart, GridComponent, TitleComponent, TooltipComponent, SVGRende
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
 const BarCharts: FC<IProps> = ({
-  value,
-  onChange,
   xAxisScales = {
     renderData: [],
     rawData: [],
@@ -55,15 +49,6 @@ const BarCharts: FC<IProps> = ({
   onTriggerTooltip,
   customColors,
 }) => {
-  const { currentEra } = useEra();
-  const [filter, setFilter] = usePropsValue({
-    value,
-    defaultValue: {
-      date: 'lm',
-    },
-    onChange,
-  });
-
   const renderedSeries = useMemo(() => {
     return chartData.map((source, index) => {
       return {
@@ -118,7 +103,7 @@ const BarCharts: FC<IProps> = ({
                 formatter: (val: number) => formatNumber(val),
               },
               splitLine: {
-                lineStyle: theme === 'light' ? { color: '#fff' } : { color: 'var(--dark-mode-border)' },
+                lineStyle: theme === 'light' ? { color: 'rgba(223,227,232,.6)' } : { color: 'var(--dark-mode-border)' },
               },
             },
             tooltip: {

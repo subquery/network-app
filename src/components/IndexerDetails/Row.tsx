@@ -84,6 +84,7 @@ export interface QueryLimit {
 const ConnectedRow: React.FC<{
   indexer: ExcludeNull<ExcludeNull<GetDeploymentIndexersQuery['indexerDeployments']>['nodes'][number]> & {
     flexPlanPrice?: false | string;
+    location: string;
   };
   deploymentId?: string;
   type: ProjectType;
@@ -245,7 +246,7 @@ const ConnectedRow: React.FC<{
       <Table
         columns={[
           {
-            width: '20%',
+            width: '18%',
             render: () => (
               <IndexerName
                 name={indexerMetadata?.name}
@@ -258,7 +259,7 @@ const ConnectedRow: React.FC<{
             ),
           },
           {
-            width: '25%',
+            width: '15%',
             render: () => (
               <>
                 {renderAsync(
@@ -297,7 +298,7 @@ const ConnectedRow: React.FC<{
             },
           },
           {
-            width: '20%',
+            width: '12%',
             ellipsis: true,
             render: () => (
               <>
@@ -310,7 +311,7 @@ const ConnectedRow: React.FC<{
             ),
           },
           {
-            width: '20%',
+            width: '15%',
             render: () => {
               if (!indexer.flexPlanPrice) {
                 return <Spinner></Spinner>;
@@ -322,6 +323,20 @@ const ConnectedRow: React.FC<{
                 <Typography className="flex" style={{ alignItems: 'flex-end' }}>
                   {BigNumberJs(indexer.flexPlanPrice).multipliedBy(1000).toFixed()} SQT
                   <Typography style={{ fontSize: 12 }}>&nbsp;/ 1000 requests</Typography>
+                </Typography>
+              );
+            },
+          },
+          {
+            width: '15%',
+            render: () => {
+              if (indexer.location === 'loading') {
+                return <Spinner size={12}></Spinner>;
+              }
+
+              return (
+                <Typography className="flex" style={{ alignItems: 'flex-end' }}>
+                  {indexer.location}
                 </Typography>
               );
             },
