@@ -18,14 +18,16 @@ import {
   useGetIndexerDeploymentLazyQuery,
 } from '@subql/react-hooks';
 import { formatSQT } from '@subql/react-hooks';
-import { Pagination, Table, TableProps, Tooltip } from 'antd';
+import { Pagination, Skeleton, Table, TableProps, Tooltip } from 'antd';
 import { t } from 'i18next';
+import { groupBy } from 'lodash-es';
 
 import { useProjectStore } from 'src/stores/project';
 
 import { notEmpty, URLS } from '../../utils';
 import { SearchInput } from '../SearchInput';
 import styles from './IndexerDetails.module.less';
+import { PriceQueriesChart } from './priceQueries';
 import Row from './Row';
 
 type Props = {
@@ -137,6 +139,14 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
 
   const geoInfo = useIndexerGeoInformation(indexerIds);
 
+  const groupGeoInfo = useMemo(() => {
+    if (geoInfo.data) {
+      return groupBy(geoInfo.data, (i) => [i.location?.longitude, i.location?.latitude]);
+    }
+
+    return {};
+  }, [geoInfo.data]);
+
   const indexerList = useMemo(() => {
     const list = searchedIndexer && searchedIndexer?.length > 0 ? searchedIndexer : indexers ?? [];
 
@@ -209,19 +219,28 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
       }
       return (
         <>
-          <div className="flex" style={{ gap: 24 }}>
-            <div
-              className="col-flex"
-              style={{
-                borderRadius: 8,
-                border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
-                padding: 24,
-                width: '50%',
-              }}
+          <div className="flex" style={{ gap: 24, alignItems: 'normal' }}>
+            <React.Suspense
+              fallback={
+                <Skeleton
+                  active
+                  paragraph={{ rows: 8 }}
+                  style={{ height: 'auto', width: '50%', flexShrink: '0' }}
+                ></Skeleton>
+              }
             >
-              <Typography>Node Operator Locations</Typography>
-
-              <React.Suspense fallback={<Spinner></Spinner>}>
+              <div
+                className="col-flex"
+                style={{
+                  borderRadius: 8,
+                  border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
+                  padding: 24,
+                  width: '50%',
+                }}
+              >
+                <Typography weight={600} variant="large">
+                  Node Operator Locations
+                </Typography>
                 <ComposableMap
                   style={{
                     width: '100%',
@@ -234,33 +253,47 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
                       ))
                     }
                   </Geographies>
-                  {geoInfo.data?.map((geo) => {
-                    return (
-                      <Tooltip key={geo.indexer} title={geo.indexer}>
-                        <Marker
-                          key={geo.indexer}
-                          coordinates={[geo.location?.longitude || 0, geo.location?.latitude || 0]}
-                        >
-                          <g
-                            fill="transparent"
-                            stroke="#4388DD"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            transform="translate(-12, -24)"
-                          >
-                            <circle cx="12" cy="10" r="3" />
-                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
-                          </g>
-                          <text textAnchor="middle" y={15} style={{ fontFamily: 'system-ui', fill: '#5D5A6D' }}>
-                            {}
-                          </text>
-                        </Marker>
-                      </Tooltip>
-                    );
-                  })}
+                  {Object.keys(groupGeoInfo)
+                    .filter((i) => i !== ',')
+                    .map((geo, index) => {
+                      const title = groupGeoInfo[geo].map((i) => i.name).join(', ');
+                      const item = groupGeoInfo[geo][0];
+                      return (
+                        <Tooltip key={index} title={title}>
+                          <Marker coordinates={[item.location?.longitude || 0, item.location?.latitude || 0]}>
+                            <g
+                              fill="transparent"
+                              stroke="#4388DD"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              transform="translate(-12, -24)"
+                            >
+                              <circle cx="12" cy="10" r="3" />
+                              <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z" />
+                            </g>
+                            <text
+                              textAnchor="middle"
+                              y={15}
+                              className="geoText"
+                              style={{ fontFamily: 'system-ui', fill: '#5D5A6D' }}
+                            >
+                              {[item?.country?.names?.en, item?.city?.names?.en].filter((i) => i).join(', ')}
+                            </text>
+                          </Marker>
+                        </Tooltip>
+                      );
+                    })}
                 </ComposableMap>
-              </React.Suspense>
+              </div>
+            </React.Suspense>
+
+            <div
+              style={{
+                width: '50%',
+              }}
+            >
+              <PriceQueriesChart deploymentId={deploymentId}></PriceQueriesChart>
             </div>
           </div>
           <div className={styles.indexerListHeader}>

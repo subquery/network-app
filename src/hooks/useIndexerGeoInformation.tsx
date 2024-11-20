@@ -8,6 +8,7 @@ const useIndexerGeoInformation = (indexers?: string[]) => {
   const [fetchGeoInformation] = useLazyQuery<{
     geoips: {
       indexer: string;
+      name: string;
       country?: {
         names?: {
           en?: string;
@@ -28,6 +29,7 @@ const useIndexerGeoInformation = (indexers?: string[]) => {
       geoips(indexers: $indexers) {
         error
         indexer
+        name
         country {
           names {
             en

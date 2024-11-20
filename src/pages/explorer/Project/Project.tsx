@@ -108,7 +108,13 @@ const ProjectInner: React.FC = () => {
   return (
     <>
       {renderAsync(asyncProject, {
-        loading: () => <Spinner />,
+        loading: () => (
+          <div
+            style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Spinner></Spinner>
+          </div>
+        ),
         error: (e) => (
           <NormalError withWrapper>
             This project looks like have wrong metadata, Please contact the project creator to fix it.
