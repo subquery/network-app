@@ -17,7 +17,7 @@ export const PriceQueriesChart = (props: {
   deploymentId?: string;
   indexerAddress?: string;
 }) => {
-  const { title = 'Queries by Price', chartsStyle, skeletonHeight, deploymentId } = props;
+  const { title = 'Query supply at each price point', chartsStyle, skeletonHeight, deploymentId } = props;
   const { currentEra } = useEra();
 
   const { getStatisticQueriesByPrice } = useConsumerHostServices({
@@ -93,7 +93,7 @@ export const PriceQueriesChart = (props: {
           onTriggerTooltip={(index) => {
             return `<div class="col-flex" style="width: 280px; font-size: 12px;">
                 <div class="flex-between" style="margin-top: 8px;">
-                  <span>Total</span>
+                  <span>Total query supply</span>
                   <span>${formatNumber(statisticPrice.data?.[index].queries || 0)}</span>
                 </div>
               </div>`;
