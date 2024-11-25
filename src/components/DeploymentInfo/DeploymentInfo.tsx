@@ -5,10 +5,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { Spinner, Typography } from '@subql/components';
+import { ChatBoxTooltip, Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
 import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
+
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
@@ -25,9 +27,10 @@ type Props = {
   deploymentVersion?: string;
   type?: ProjectType;
   maxWidth?: string;
+  onClick?: () => void;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, maxWidth = '200px' }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, maxWidth = '200px', onClick }) => {
   const { t } = useTranslation();
 
   const deploymentMeta = useDeploymentMetadata(deploymentId);
@@ -36,12 +39,31 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
     ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
     : t('projects.deploymentId');
 
-  return (
-    <div className={styles.projectInfo}>
-      <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
+  const chatBoxStore = useChatBoxStore();
 
-      <Tooltip title={deploymentId}>
-        <div className={styles.projectTextInfo}>
+  return (
+    <ChatBoxTooltip
+      options={[
+        {
+          label: 'What Flex Plan price should set?',
+          value: `What Flex Plan price should I set for ${deploymentId}?`,
+        },
+        {
+          label: 'Should I remove this deployment?',
+          value: `Should I remove deployment ${deploymentId}?`,
+        },
+      ]}
+      chatBoxInstance={chatBoxStore.chatBoxRef}
+    >
+      <div className={styles.projectInfo}>
+        <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
+
+        <div
+          className={styles.projectTextInfo}
+          onClick={() => {
+            onClick && onClick();
+          }}
+        >
           <div style={{ display: 'flex', height: 22 }}>
             {project?.name && (
               <Typography
@@ -77,8 +99,8 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
             </Copy>
           </div>
         </div>
-      </Tooltip>
-    </div>
+      </div>
+    </ChatBoxTooltip>
   );
 };
 

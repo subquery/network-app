@@ -12,7 +12,7 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { ChatBoxIcon, Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { formatSQT } from '../../utils/numberFormatters';
 import { formatNumber } from '../../utils/numberFormatters';
@@ -44,6 +45,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
   const [getAllocatedStake, allocatedStake] = useGetIndexerAllocationSummaryLazyQuery();
   const provider = useEthersProviderWithPublic();
+  const chatBoxStore = useChatBoxStore();
 
   const [form] = useForm();
   const formAllocateVal = useWatch('allocateVal', form);
@@ -334,6 +336,15 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
         <div>
           <Form layout="vertical" form={form}>
             <Typography>New allocation amount</Typography>
+            {/* <ChatBoxTooltip
+              options={[
+                {
+                  label: 'What amount should set?',
+                  value: `What Allocation amount should set for ${deploymentId}?`,
+                },
+              ]}
+              chatBoxInstance={chatBoxStore.chatBoxRef}
+            > */}
             <Form.Item
               style={{ marginBottom: 0 }}
               name="allocateVal"
@@ -348,6 +359,23 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
+              <Typography
+                variant="small"
+                type="warning"
+                style={{
+                  display: 'flex',
+                  gap: 6,
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  margin: '8px 0',
+                }}
+                onClick={() => {
+                  chatBoxStore.chatBoxRef?.makeNewMsg(`What Allocation amount should set for ${deploymentId}?`);
+                }}
+              >
+                <ChatBoxIcon width={14} height={14} fill={'#f87c4f'} />
+                What Allocation amount should set?
+              </Typography>
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}
@@ -363,6 +391,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 }}
               ></NumberInput>
             </Form.Item>
+            {/* </ChatBoxTooltip> */}
           </Form>
           <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
             <div className="flex">
