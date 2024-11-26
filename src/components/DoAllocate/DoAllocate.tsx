@@ -359,9 +359,9 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
-              <Typography
+              <Typography.Link
                 variant="small"
-                type="warning"
+                type="info"
                 style={{
                   display: 'flex',
                   gap: 6,
@@ -373,9 +373,9 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                   chatBoxStore.chatBoxRef?.makeNewMsg(`What Allocation amount should set for ${deploymentId}?`);
                 }}
               >
-                <ChatBoxIcon width={14} height={14} fill={'#f87c4f'} />
+                <ChatBoxIcon width={14} height={14} fill={'#4388dd'} />
                 What Allocation amount should set?
-              </Typography>
+              </Typography.Link>
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}
