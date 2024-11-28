@@ -37,6 +37,7 @@ import { ROUTES } from '../../../../utils';
 import { formatEther } from '../../../../utils/numberFormatters';
 import AutoReduceAllocation from '../AutoReduceOverAllocation';
 import CurrentEraRewards from '../CurrentEraRewards/index';
+import LastEraBurntReason from '../LastEraBurntReason';
 import styles from './OwnDeployments.module.css';
 
 const { PROJECT_NAV } = ROUTES;
@@ -766,10 +767,16 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
                     pagination={false}
                     expandable={{
                       expandedRowRender: (record) => (
-                        <CurrentEraRewards
-                          indexerAddress={indexer}
-                          deploymentId={record.deployment?.id || record.deploymentId || ''}
-                        ></CurrentEraRewards>
+                        <>
+                          <CurrentEraRewards
+                            indexerAddress={indexer}
+                            deploymentId={record.deployment?.id || record.deploymentId || ''}
+                          ></CurrentEraRewards>
+                          <LastEraBurntReason
+                            indexerAddress={indexer}
+                            deploymentId={record.deployment?.id || record.deploymentId || ''}
+                          ></LastEraBurntReason>
+                        </>
                       ),
                     }}
                     scroll={width <= 2260 ? { x: 2260 } : undefined}
