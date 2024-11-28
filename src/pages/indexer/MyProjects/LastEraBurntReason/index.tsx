@@ -51,6 +51,8 @@ const LastEraBurntReason: FC<IProps> = ({ indexerAddress, deploymentId }) => {
       .sort((a, b) => b.timestamp - a.timestamp);
   }, [burentReasons.data?.getIndexerServiceRequestHistoryV2]);
 
+  if (!renderData?.length) return null;
+
   return (
     <div>
       <Table
