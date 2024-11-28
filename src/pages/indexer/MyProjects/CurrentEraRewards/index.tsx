@@ -10,8 +10,6 @@ import BigNumberJs from 'bignumber.js';
 
 import { useWeb3Store } from 'src/stores';
 
-import styles from './index.module.less';
-
 interface IProps {
   deploymentId: string;
   indexerAddress: string;
