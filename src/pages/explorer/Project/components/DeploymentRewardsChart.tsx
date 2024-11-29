@@ -3,13 +3,12 @@
 
 import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import LineCharts, { FilterType, xAxisScalesFunc } from '@components/LineCharts';
-import { Era, useEra } from '@hooks';
+import { useEra } from '@hooks';
 import { getSplitDataByEra } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
 import { Typography } from '@subql/components';
 import { renderAsync, useGetEraDeploymentRewardsLazyQuery } from '@subql/react-hooks';
-import { formatSQT, numToHex, parseError, TOKEN, toPercentage } from '@utils';
+import { parseError, TOKEN } from '@utils';
 import { formatNumber } from '@utils/numberFormatters';
-import { sleep } from '@utils/waitForSomething';
 import { Skeleton } from 'antd';
 import dayjs from 'dayjs';
 
