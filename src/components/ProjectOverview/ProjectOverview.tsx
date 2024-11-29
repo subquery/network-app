@@ -189,7 +189,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
           but suggest add a reasonable value in case this rule change in the future
         */}
       <div className={styles.description}>
-        <div style={{ width: '100%' }}>
+        <div style={{ width: '100%', wordBreak: 'break-word' }}>
           <Expand>
             <Markdown.Preview>{metadata.description || 'No description provided for this project'}</Markdown.Preview>
           </Expand>
