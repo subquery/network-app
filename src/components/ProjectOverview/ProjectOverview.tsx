@@ -340,7 +340,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Boost Allocation Rewards
               </Typography>
               {loading ? (
-                <Spinner size={10}></Spinner>
+                <div style={{ lineHeight: '22px' }}>
+                  <Spinner size={10}></Spinner>
+                </div>
               ) : (
                 <Typography variant="small" className={styles.boosterRewards}>
                   <span>
@@ -360,7 +362,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Boost Query Rewards
               </Typography>
               {loading ? (
-                <Spinner size={10}></Spinner>
+                <div style={{ lineHeight: '22px' }}>
+                  <Spinner size={10}></Spinner>
+                </div>
               ) : (
                 <Typography variant="small" className={styles.boosterRewards}>
                   <span>
