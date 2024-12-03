@@ -59,13 +59,12 @@ const LineChartWithMarkLine: FC<IProps> = ({
           color: colors[0],
           width: 3,
         },
-        markLine: {
-          symbol: ['none', 'none'],
-          label: { show: false },
-          data: [...markLineData, { xAxis: 0, lineStyle: { color: 'red', width: 2 } }],
-        },
+        // markLine: {
+        //   symbol: ['none', 'none'],
+        //   label: { show: false },
+        //   data: [...markLineData, { xAxis: 0, lineStyle: { color: 'red', width: 2 } }],
+        // },
         data: seriesData,
-        areaStyle: {},
       },
     ];
   }, [seriesData, markLineData, customColors]);
@@ -105,19 +104,19 @@ const LineChartWithMarkLine: FC<IProps> = ({
                 }
               },
             },
-            visualMap: {
-              type: 'piecewise',
-              show: false,
-              dimension: 0,
-              seriesIndex: 0,
-              pieces: [
-                {
-                  gt: 4,
-                  lt: 8,
-                  color: '#919eab',
-                },
-              ],
-            },
+            // visualMap: {
+            //   type: 'piecewise',
+            //   show: false,
+            //   dimension: 0,
+            //   seriesIndex: 0,
+            //   pieces: [
+            //     {
+            //       gt: 4,
+            //       lt: 8,
+            //       color: '#919eab',
+            //     },
+            //   ],
+            // },
             series: renderedSeries,
           }}
           notMerge={true}
