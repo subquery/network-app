@@ -127,7 +127,7 @@ const BalanceCards = () => {
           titleExtra={
             <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
               {loadingBillingBalance ? (
-                <div style={{ marginRight: 8 }}>
+                <div style={{ marginRight: 8, lineHeight: '36px' }}>
                   <Spinner size={12}></Spinner>
                 </div>
               ) : (
@@ -193,7 +193,7 @@ const BalanceCards = () => {
           titleExtra={
             <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
               {spentInfo.loading ? (
-                <div style={{ marginRight: 8 }}>
+                <div style={{ marginRight: 8, lineHeight: '36px' }}>
                   <Spinner size={12}></Spinner>
                 </div>
               ) : (

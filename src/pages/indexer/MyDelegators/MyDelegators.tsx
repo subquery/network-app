@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppPageHeader } from '@components/AppPageHeader';
 import { EmptyList } from '@components/EmptyList';
@@ -36,29 +37,32 @@ export const MyDelegators: React.FC = () => {
   const filterParams = { id: account ?? '', offset: 0 };
   const delegators = useGetIndexerDelegatorsQuery({ variables: filterParams });
 
-  return renderAsync(delegators, {
-    loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
-    data: (offers) => {
-      const totalCount = offers.indexer?.delegations.totalCount || 0;
-      return (
-        <div className={styles.container}>
-          <AppPageHeader
-            title={t('indexer.myDelegators')}
-            desc={totalCount > 0 ? t('indexer.myDelegatorsDescription') : undefined}
-          />
-          <WalletRoute
-            componentMode
-            element={
-              <>
-                <OwnDelegator showEmpty={totalCount <= 0} indexer={account ?? ''} />
-              </>
-            }
-          ></WalletRoute>
-        </div>
-      );
-    },
-  });
+  const totalCount = useMemo(() => delegators.data?.indexer?.delegations.totalCount || 0, [delegators.data]);
+
+  return (
+    <div className={styles.container}>
+      <AppPageHeader
+        title={t('indexer.myDelegators')}
+        desc={totalCount > 0 ? t('indexer.myDelegatorsDescription') : undefined}
+      />
+      {renderAsync(delegators, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load delegators: ${e}`}</Typography>,
+        data: (offers) => {
+          return (
+            <WalletRoute
+              componentMode
+              element={
+                <>
+                  <OwnDelegator showEmpty={totalCount <= 0} indexer={account ?? ''} />
+                </>
+              }
+            ></WalletRoute>
+          );
+        },
+      })}
+    </div>
+  );
 };
 
 export default MyDelegators;
