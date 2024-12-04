@@ -41,29 +41,34 @@ export const Marketplace: React.FC = () => {
   const [now] = React.useState<Date>(dayjs().toDate());
   const offers = useGetAllOpenOffersQuery({ variables: { now: now, offset: 0 } });
 
-  return renderAsync(offers, {
-    loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
-    data: (offers) => {
-      const { totalCount } = offers.offers || { totalCount: 0 };
+  return (
+    <div>
+      <AppPageHeader title={t('offerMarket.header')} />
+      {renderAsync(
+        offers,
 
-      return (
-        <div>
-          <AppPageHeader title={t('offerMarket.header')} />
-          {totalCount > 0 ? (
-            <>
-              <Description desc={t('consumerOfferMarket.listDescription')} />
-              <div className={styles.offers}>
-                <OfferTable queryFn={useGetAllOpenOffersLazyQuery} />
-              </div>
-            </>
-          ) : (
-            <NoOffers />
-          )}
-        </div>
-      );
-    },
-  });
+        {
+          loading: () => <Spinner />,
+          error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
+          data: (offers) => {
+            const { totalCount } = offers.offers || { totalCount: 0 };
+            if (totalCount > 0) {
+              return (
+                <>
+                  <Description desc={t('consumerOfferMarket.listDescription')} />
+                  <div className={styles.offers}>
+                    <OfferTable queryFn={useGetAllOpenOffersLazyQuery} />
+                  </div>
+                </>
+              );
+            }
+
+            return <NoOffers />;
+          },
+        },
+      )}
+    </div>
+  );
 };
 
 export default Marketplace;

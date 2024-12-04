@@ -293,7 +293,7 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
                 width: '50%',
               }}
             >
-              <PriceQueriesChart deploymentId={deploymentId}></PriceQueriesChart>
+              <PriceQueriesChart flexPlanPrice={flexPlanPrice.data} deploymentId={deploymentId}></PriceQueriesChart>
             </div>
           </div>
           <div className={styles.indexerListHeader}>

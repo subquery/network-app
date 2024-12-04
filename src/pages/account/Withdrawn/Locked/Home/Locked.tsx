@@ -216,7 +216,6 @@ export const Locked: React.FC = () => {
     getWithdrawals();
   }, []);
 
-  // if (withdrawals.loading || lockPeriod.loading) return <Spinner />;
   return (
     <div className={styles.withdrawnContainer}>
       {renderAsyncArray(
@@ -232,8 +231,16 @@ export const Locked: React.FC = () => {
         ),
         {
           error: (e) => <Typography>{`Error: Fail to get Indexers ${e.message}`}</Typography>,
-          loading: () => <Spinner />,
-          empty: () => <EmptyList title={t('withdrawals.noWithdrawals')} />,
+          loading: () => (
+            <div style={{ height: 777, flexShrink: 0 }}>
+              <Spinner />
+            </div>
+          ),
+          empty: () => (
+            <div style={{ height: 777, flexShrink: 0 }}>
+              <EmptyList title={t('withdrawals.noWithdrawals')} />
+            </div>
+          ),
           data: (data) => {
             const sortedData = data.sort((a, b) => dayjs(b.endAt).unix() - dayjs(a.endAt).unix());
             const unlockedRewards = data.filter((withdrawal) => withdrawal.lockStatus === LOCK_STATUS.UNLOCK);
@@ -248,7 +255,9 @@ export const Locked: React.FC = () => {
             return (
               <div className={styles.container}>
                 <div className="flex">
-                  <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8, marginTop: 5 }} />
+                  <InfoCircleOutlined
+                    style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8, marginTop: 5, alignSelf: 'flex-start' }}
+                  />
                   <Typography type="secondary" style={{ maxWidth: 820 }}>
                     {t('withdrawals.info')}
                   </Typography>

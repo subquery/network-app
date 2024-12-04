@@ -290,7 +290,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex' }}>
                     {loading ? (
-                      <div style={{ paddingTop: 8 }}>
+                      <div style={{ lineHeight: '36px' }}>
                         <Spinner size={10}></Spinner>
                       </div>
                     ) : (
@@ -299,7 +299,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                           mainBalance: formatSQT(accTotalRewards.current.toString()),
                           hideSecondary: true,
                         })}
-                        <div style={{ paddingTop: 8, paddingLeft: 20 }}>
+                        <div style={{ paddingTop: 8, paddingLeft: 10 }}>
                           <Tag color="success">
                             + {formatNumber(formatSQT(estimatedPerEraRewards.estimatedTotalRewardsPerEra.toString()))}{' '}
                             Per era
@@ -340,7 +340,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Boost Allocation Rewards
               </Typography>
               {loading ? (
-                <Spinner size={10}></Spinner>
+                <div style={{ lineHeight: '22px' }}>
+                  <Spinner size={10}></Spinner>
+                </div>
               ) : (
                 <Typography variant="small" className={styles.boosterRewards}>
                   <span>
@@ -360,7 +362,9 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
                 Boost Query Rewards
               </Typography>
               {loading ? (
-                <Spinner size={10}></Spinner>
+                <div style={{ lineHeight: '22px' }}>
+                  <Spinner size={10}></Spinner>
+                </div>
               ) : (
                 <Typography variant="small" className={styles.boosterRewards}>
                   <span>

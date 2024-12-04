@@ -164,7 +164,7 @@ export const MyAccountInner: React.FC = () => {
         }
       }
     });
-  }, [window.location.pathname]);
+  }, [window.location.pathname]); // seems it should be from useLocation, but now no bug. so keep it for now.
 
   return (
     <div

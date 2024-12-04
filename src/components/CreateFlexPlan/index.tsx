@@ -4,6 +4,7 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { specialApiKeyName } from '@components/GetEndpoint';
+import { PriceQueriesChart } from '@components/IndexerDetails/PriceQueries';
 import { ApproveContract } from '@components/ModalApproveToken';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useSQToken } from '@containers';
@@ -646,9 +647,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                   >
                     <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
                   </Form.Item>
-                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
+                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)', margin: '8px 0' }}>
                     {matchedCount}
                   </Typography>
+
+                  <PriceQueriesChart
+                    deploymentId={deploymentId}
+                    projectId={`${parseInt(project.id)}`}
+                  ></PriceQueriesChart>
                 </Form>
               </>
             )}
