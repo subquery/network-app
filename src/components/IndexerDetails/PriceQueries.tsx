@@ -1,4 +1,5 @@
 import { CSSProperties, useMemo } from 'react';
+import { cloneDeep } from '@apollo/client/utilities';
 import LineChartWithMarkLine from '@components/LineChartWithMarkLine';
 import { IIndexerFlexPlan, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
@@ -59,7 +60,14 @@ export const PriceQueriesChart = (props: {
   );
 
   const seriesData = useMemo(() => {
-    return flexPlanGroupByPrice;
+    const copyData = cloneDeep(flexPlanGroupByPrice);
+    flexPlanGroupByPrice.forEach((_, index) => {
+      if (index > 0) {
+        copyData[index][1] += copyData[index - 1][1];
+      }
+    });
+
+    return copyData;
   }, [flexPlanGroupByPrice]);
 
   return renderAsync(flexPlanPricesInner, {
