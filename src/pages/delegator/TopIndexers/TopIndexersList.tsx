@@ -47,10 +47,10 @@ const getColumns = (
       >
         Estimated APY
         <APYTooltip
-          currentEra={undefined}
           calculationDescription={
-            'This is an estimated APY rewarded to Delegators from this Node Operator based on the last Era.'
+            'This is an estimated APY rewarded to Delegators from this Node Operator based on the previous 3 Eras.'
           }
+          isAverage
         />
       </Typography>
     ),
