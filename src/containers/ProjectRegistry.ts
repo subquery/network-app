@@ -89,8 +89,7 @@ function useProjectRegistryImpl(logger: Logger) {
 
       projectCache.current[BigNumber.from(id).toString()] = {
         ...projectCache.current[BigNumber.from(id).toString()],
-        deployment: deploymentId,
-        version,
+        ...(!!recommended ? { deployment: deploymentId, version } : {}),
       };
     });
 

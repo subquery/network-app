@@ -336,7 +336,13 @@ const Create: React.FC = () => {
             ></div>
           </div>
           {asyncProject.data && (
-            <ProjectDeploymentsDetail id={query.get('id') ?? ''} project={asyncProject.data}></ProjectDeploymentsDetail>
+            <ProjectDeploymentsDetail
+              id={query.get('id') ?? ''}
+              project={asyncProject.data}
+              onRefresh={async () => {
+                await asyncProject?.refetch?.();
+              }}
+            ></ProjectDeploymentsDetail>
           )}
         </>
       ) : (
