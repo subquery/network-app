@@ -159,7 +159,7 @@ export const IndexerList: React.FC = () => {
             Estimated APY
             <APYTooltip
               calculationDescription={
-                'This is an estimated APY rewarded to Delegators from this Node Operator based on the previous 3 Eras.'
+                'This is an estimated APY rewarded to Delegators from this Node Operator over the previous three Eras.'
               }
               isAverage
             />

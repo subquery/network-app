@@ -30,7 +30,7 @@ export const APYTooltipContent: React.FC<Props> = ({
         </Typography>
       )}
       <Typography variant="small" style={{ color: '#fff' }}>
-        As conditions change between Eras, this estimate is not a guarantee for future Eras.
+        As conditions change between Eras, this estimate is not a guarantee for future Eras
       </Typography>
       {calculationDescription ? (
         <Typography variant="small" style={{ color: '#fff' }}>
