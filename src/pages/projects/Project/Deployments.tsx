@@ -18,13 +18,14 @@ type Props = {
     deployment: string;
     version: string;
   };
+  onRefresh?: () => void;
 };
 
 export interface DeploymendRef {
   refresh: () => void;
 }
 
-const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment }, ref) => {
+const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment, onRefresh }, ref) => {
   const [getProjDeployments] = useGetProjectDeploymentsLazyQuery({
     variables: {
       projectId,
@@ -42,18 +43,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
     }
 
     if (currentDeployment && !projectDeployments.find((d) => d.id === currentDeployment.deployment)) {
-      projectDeployments = uniqBy(
-        (d) => d.id + d.metadata,
-        [
-          {
-            __typename: 'Deployment',
-            id: currentDeployment.deployment,
-            metadata: currentDeployment.version,
-            createdTimestamp: new Date(), // TODO come up with a timestamp
-          },
-          ...projectDeployments,
-        ],
-      );
+      projectDeployments = uniqBy((d) => d.id + d.metadata, projectDeployments);
     }
 
     return Promise.all(
@@ -78,11 +68,12 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
   }, [currentDeployment]);
 
   useImperativeHandle(ref, () => ({
-    refresh: () => {
-      return asyncDeployments.refetch();
+    refresh: async () => {
+      await asyncDeployments.refetch();
+      await onRefresh?.();
     },
   }));
-
+  console.warn(currentDeployment);
   return renderAsync(asyncDeployments, {
     loading: () => <Spinner />,
     error: (e) => <div>{`Error: ${e.message}`}</div>,
@@ -101,6 +92,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
           projectId={projectId}
           onRefresh={async () => {
             await asyncDeployments.refetch();
+            await onRefresh?.();
           }}
         />
       );

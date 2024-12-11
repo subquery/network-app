@@ -24,7 +24,11 @@ import { renderAsync } from '../../../utils';
 import DeploymentsTab, { DeploymendRef } from './Deployments';
 import styles from './Project.module.less';
 
-export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails }> = ({ id, project }) => {
+export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails; onRefresh?: () => void }> = ({
+  id,
+  project,
+  onRefresh,
+}) => {
   const [form] = useForm();
   const createDeployment = useCreateDeployment(id ?? '');
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
@@ -157,7 +161,12 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
             Deploy New Version
           </Typography.Link>
         </div>
-        <DeploymentsTab ref={deploymentsRef} projectId={id ?? ''} currentDeployment={currentDeployment} />
+        <DeploymentsTab
+          ref={deploymentsRef}
+          projectId={id ?? ''}
+          currentDeployment={currentDeployment}
+          onRefresh={onRefresh}
+        />
       </div>
     </div>
   );
@@ -291,7 +300,13 @@ const Project: React.FC = () => {
                 ></div>
               </div>
 
-              <ProjectDeploymentsDetail id={id} project={project}></ProjectDeploymentsDetail>
+              <ProjectDeploymentsDetail
+                id={id}
+                project={project}
+                onRefresh={async () => {
+                  await asyncProject?.refetch?.();
+                }}
+              ></ProjectDeploymentsDetail>
             </>
           );
         },
