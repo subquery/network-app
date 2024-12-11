@@ -239,7 +239,7 @@ export const MyAccountInner: React.FC = () => {
                       <APYTooltip
                         currentEra={currentEra?.data?.index}
                         calculationDescription={
-                          'This is estimated from your total rewards from last Era divided by your total stake and delegation'
+                          'This is estimated from your total rewards over the previous three Eras divided by your total stake and delegation'
                         }
                       />
                     </Typography>

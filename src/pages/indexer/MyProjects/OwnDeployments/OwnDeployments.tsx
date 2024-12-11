@@ -230,7 +230,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           <APYTooltip
             currentEra={currentEra?.data?.index}
             calculationDescription={
-              'This is the estimated APY you received as a Node Operator from this project from the last Era'
+              'This is the estimated APY you received as a Node Operator from this project over the previous three Eras'
             }
           />
         </Typography>
@@ -662,7 +662,7 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
 
                   <SubqlCard
                     title={'Last Era Project Rewards'}
-                    tooltip="Rewards earned by all projects in the previous era, distributed between Delegators and the Node Operator"
+                    tooltip="Rewards earned by all projects in the previous three Eras, distributed between Delegators and the Node Operator"
                     titleExtra={BalanceLayout({
                       mainBalance: formatSQT(lastTotalRewards.toString()),
                     })}

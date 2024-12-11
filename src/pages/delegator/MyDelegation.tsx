@@ -108,7 +108,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           <APYTooltip
             currentEra={undefined}
             calculationDescription={
-              'This is your estimated APY for this delegation to this Node Operator from the last Era'
+              'This is your estimated APY for this delegation to this Node Operator over the previous three Eras'
             }
           />
         </Typography>
@@ -403,7 +403,9 @@ const DelegatingCard = (props: {
               Current Estimated APY
               <APYTooltip
                 currentEra={currentEra?.data?.index}
-                calculationDescription={'This is estimated from your total rewards from delegation in the last Era'}
+                calculationDescription={
+                  'This is estimated from your total rewards from delegation in the previous three Eras'
+                }
               />
             </Typography>
             <span style={{ flex: 1 }}></span>

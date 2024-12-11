@@ -26,7 +26,7 @@ export const APYTooltipContent: React.FC<Props> = ({
       ) : (
         <Typography variant="small" style={{ color: '#fff' }}>
           We calculated estimated APY based on the statistics from the previous Era
-          {currentEra ? ` (Era ${currentEra - 1})` : null}
+          {currentEra ? ` (Era ${currentEra - 1})` : null}.
         </Typography>
       )}
       <Typography variant="small" style={{ color: '#fff' }}>
