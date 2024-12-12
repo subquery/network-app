@@ -113,7 +113,7 @@ const translation = {
   deployment: {
     create: {
       title: 'Create New Deployment',
-      version: 'Version',
+      version: 'Version Name',
       description: 'Description',
       deploymentId: 'Deployment ID',
       explainer: 'You can get a deployment id by running `subql publish` from the command line',
