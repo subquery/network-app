@@ -86,7 +86,12 @@ const Create: React.FC = () => {
           width: 801,
           icon: (
             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
-              <CloseOutlined onClick={() => {}} style={{ cursor: 'pointer' }} />
+              <CloseOutlined
+                onClick={() => {
+                  destroy();
+                }}
+                style={{ cursor: 'pointer' }}
+              />
             </div>
           ),
           content: (
