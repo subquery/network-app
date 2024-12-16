@@ -143,17 +143,14 @@ const Create: React.FC = () => {
                         </Typography.Link>
                       </Typography>
                     </div>
-                    <Button
-                      shape="round"
-                      type="primary"
-                      size="large"
-                      onClick={() => {
-                        navigate(`/explorer/project/${resultId}?action=${ProjectActionArgv.BOOST}`);
-                        destroy();
-                      }}
+                    <Typography.Link
+                      target="_href"
+                      href={`/explorer/project/${resultId}?action=${ProjectActionArgv.BOOST}`}
                     >
-                      Boost project
-                    </Button>
+                      <Button shape="round" type="primary" size="large">
+                        Boost project
+                      </Button>
+                    </Typography.Link>
                   </div>
 
                   <div className={styles.plainCard}>
@@ -172,17 +169,14 @@ const Create: React.FC = () => {
                         </Typography.Link>
                       </Typography>
                     </div>
-                    <Button
-                      shape="round"
-                      type="primary"
-                      size="large"
-                      onClick={() => {
-                        navigate(`/explorer/project/${resultId}?action=${ProjectActionArgv.CREATE_PLAN}`);
-                        destroy();
-                      }}
+                    <Typography.Link
+                      target="_href"
+                      href={`/explorer/project/${resultId}?action=${ProjectActionArgv.CREATE_PLAN}`}
                     >
-                      Create flex plan
-                    </Button>
+                      <Button shape="round" type="primary" size="large">
+                        Create flex plan
+                      </Button>
+                    </Typography.Link>
                   </div>
 
                   <div className={styles.plainCard}>
@@ -201,17 +195,11 @@ const Create: React.FC = () => {
                         </Typography.Link>
                       </Typography>
                     </div>
-                    <Button
-                      shape="round"
-                      type="primary"
-                      size="large"
-                      onClick={() => {
-                        navigate('/consumer/my-offers');
-                        destroy();
-                      }}
-                    >
-                      Create agreement
-                    </Button>
+                    <Typography.Link target="_href" href={`/consumer/my-offers`}>
+                      <Button shape="round" type="primary" size="large">
+                        Create agreement
+                      </Button>
+                    </Typography.Link>
                   </div>
                   <div className={styles.plainCard}>
                     <div className="col-flex" style={{ gap: 8 }}>
