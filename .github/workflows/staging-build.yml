@@ -24,7 +24,7 @@ jobs:
       - run: yarn
 
       - name: Build
-        # Disable CI flag so linter warnings aren't treaded as errors
+        # Disable CI flag so linter warnings aren't treated as errors
         run: CI=false yarn build:staging
 
       - name: Deploy Staging
