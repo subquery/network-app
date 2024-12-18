@@ -481,7 +481,7 @@ const ConnectedRow: React.FC<{
                 limit: `${trailLimitInfo && trailLimitInfo.daily_limit - trailLimitInfo.daily_used}`,
               })}
             </span>
-            {/* TODO: now can't get exactly expires time. Will update at next version. */}
+            {/* TODO: now can't get exact expiration time. Will update at next version. */}
             <span>
               {t('explorer.flexPlans.expireTime', {
                 time: '24h',
