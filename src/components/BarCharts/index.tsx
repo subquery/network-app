@@ -84,7 +84,7 @@ const BarCharts: FC<IProps> = ({
             },
             xAxis: {
               axisLabel: {
-                align: 'centrer',
+                align: 'center',
                 width: 20,
                 margin: 10,
               },
