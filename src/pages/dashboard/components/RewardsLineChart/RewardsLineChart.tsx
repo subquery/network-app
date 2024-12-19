@@ -25,7 +25,7 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   // TODO:
   //   There have some problems in here
   //   1. secondFromLastTimes / period is just a fuzzy result. also we can get the exactly result by Graphql.
-  //   2. based on 1. also need to calcuate the xAxisScale in props.
+  //   2. based on 1. also need to calculate the xAxisScale in props.
   //   3. based on 1. and 2. also need to do a lots of things for compatite dev env(1 era < 1 day).
   const getIncludesEras = (lastTimes: dayjs.Dayjs) => {
     const today = dayjs();

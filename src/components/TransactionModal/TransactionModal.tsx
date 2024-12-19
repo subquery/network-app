@@ -88,7 +88,7 @@ export interface TransactionModalRef {
   showModal: (key: string) => void;
 }
 
-// TODO: arrange this compoent
+// TODO: arrange this component
 //   No questions aspect: Feature good.
 //   Need some arrange: 1. onClick, actions, renderContent are coupling, those attributes are all having part logic to do same thing.
 //                      1.1 The problem is onClick actually means modal clicked callback and also actually wants to handle the different actions in onClick, but didn't have param to flag what action trigger that.
