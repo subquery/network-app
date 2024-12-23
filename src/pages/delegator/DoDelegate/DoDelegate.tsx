@@ -284,7 +284,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           }}
           variant={variant}
           width="540px"
-          onlyRenderInner={account ? false : true} // it's kind of weird & comfuse for maintaining, but worked= =.
+          onlyRenderInner={account ? false : true} // it's kind of weird & confuse for maintaining, but worked= =.
         />
       );
     },
