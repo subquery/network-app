@@ -308,6 +308,7 @@ const BridgeInner: FC = () => {
     const innerPendingActionStatus: { [key: string]: { status: MessageStatus; startTime?: number } } = {};
     for (const item of sortedWithdrawsRecord || []) {
       const status = await crossChainMessengerIns.getMessageStatus(item.txHash);
+
       innerPendingActionStatus[item.txHash] = { status };
       if (pendingActionStatus[item.txHash]?.startTime) {
         innerPendingActionStatus[item.txHash]['startTime'] = pendingActionStatus[item.txHash].startTime;

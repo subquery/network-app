@@ -2520,11 +2520,6 @@
   resolved "https://registry.yarnpkg.com/@eslint/object-schema/-/object-schema-2.1.4.tgz#9e69f8bb4031e11df79e03db09f9dbbae1740843"
   integrity sha512-BsWiH1yFGjXXS2yvrf5LyuoSIIbPrGUWob917o+BTKuZ7qJdxX8aJLRxs1fS9n6r7vESrq1OUqb68dANcFXuQQ==
 
-"@eth-optimism/contracts-bedrock@0.17.1":
-  version "0.17.1"
-  resolved "https://registry.npmjs.org/@eth-optimism/contracts-bedrock/-/contracts-bedrock-0.17.1.tgz#729b1dc53ec23d02ea9e68181f994955129f7415"
-  integrity sha512-Hc5peN5PM8kzl9dzqSD5jv6ED3QliO1DF0dXLRJxfrXR7/rmEeyuAYESUwUM0gdJZjkwRYiS5m230BI6bQmnlw==
-
 "@eth-optimism/contracts@0.6.0":
   version "0.6.0"
   resolved "https://registry.npmjs.org/@eth-optimism/contracts/-/contracts-0.6.0.tgz#15ae76222a9b4d958a550cafb1960923af613a31"
@@ -2556,10 +2551,10 @@
     bufio "^1.0.7"
     chai "^4.3.4"
 
-"@eth-optimism/core-utils@0.13.1":
-  version "0.13.1"
-  resolved "https://registry.npmjs.org/@eth-optimism/core-utils/-/core-utils-0.13.1.tgz#f15ec207a629c9bbf1a10425c1b4a4c0be544755"
-  integrity sha512-1FvzbUmCEy9zSKPG1QWg2VfA2Cy90xBA9Wkp11lXXrz91zUPCNCNSRTujXWYIC86ketNsZp7p4njSf6lTycHCw==
+"@eth-optimism/core-utils@^0.13.2":
+  version "0.13.2"
+  resolved "https://registry.npmjs.org/@eth-optimism/core-utils/-/core-utils-0.13.2.tgz#c0187c3abf6d86dad039edf04ff81299253214fe"
+  integrity sha512-u7TOKm1RxH1V5zw7dHmfy91bOuEAZU68LT/9vJPkuWEjaTl+BgvPDRDTurjzclHzN0GbWdcpOqPZg4ftjkJGaw==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-provider" "^5.7.0"
@@ -2572,22 +2567,21 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/rlp" "^5.7.0"
     "@ethersproject/web" "^5.7.1"
-    chai "^4.3.9"
+    chai "^4.3.10"
     ethers "^5.7.2"
     node-fetch "^2.6.7"
 
-"@eth-optimism/sdk@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.npmjs.org/@eth-optimism/sdk/-/sdk-3.2.0.tgz#2e2f209c33443b8700f5b96795e23f7ddd8fc14f"
-  integrity sha512-+ZEO/mDWz3WLzaPVHvgOAK4iN723HmI6sLLr2tmO1/RUoCHVfWMUDwuiikrA49cAsdsjMxCV9+0XNZ8btD2JUg==
+"@eth-optimism/sdk@^3.3.3":
+  version "3.3.3"
+  resolved "https://registry.npmjs.org/@eth-optimism/sdk/-/sdk-3.3.3.tgz#a8f61050b9beae99444562b864c0741dede07dc6"
+  integrity sha512-I8xjchsZL6L66N/0Q14QvGZpsIiVfpuXBu+OX4HB3HXGvF7NQxXSRfOXzrQKj3ikhoJUpASsR4gL/yQsH+Vh3Q==
   dependencies:
     "@eth-optimism/contracts" "0.6.0"
-    "@eth-optimism/contracts-bedrock" "0.17.1"
-    "@eth-optimism/core-utils" "0.13.1"
+    "@eth-optimism/core-utils" "^0.13.2"
     lodash "^4.17.21"
     merkletreejs "^0.3.11"
     rlp "^2.2.7"
-    semver "^7.5.4"
+    semver "^7.6.0"
 
 "@ethereumjs/common@^3.2.0":
   version "3.2.0"
@@ -6727,7 +6721,20 @@ cborg@^1.5.4:
   resolved "https://registry.yarnpkg.com/cborg/-/cborg-1.10.0.tgz#0fe157961dd47b537ccb84dc9ba681de8b699013"
   integrity sha512-/eM0JCaL99HDHxjySNQJLaolZFVdl6VA0/hEKIoiQPcQzE5LrG5QHdml0HaBt31brgB9dNe1zMr3f8IVrpotRQ==
 
-chai@^4.3.4, chai@^4.3.9:
+chai@^4.3.10:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/chai/-/chai-4.5.0.tgz#707e49923afdd9b13a8b0b47d33d732d13812fd8"
+  integrity sha512-RITGBfijLkBddZvnn8jdqoTypxvqbOLYQkGGxXzeFjVHvudaPw0HNFD9x928/eUwYWd2dPCugVqspGALTZZQKw==
+  dependencies:
+    assertion-error "^1.1.0"
+    check-error "^1.0.3"
+    deep-eql "^4.1.3"
+    get-func-name "^2.0.2"
+    loupe "^2.3.6"
+    pathval "^1.1.1"
+    type-detect "^4.1.0"
+
+chai@^4.3.4:
   version "4.4.1"
   resolved "https://registry.npmjs.org/chai/-/chai-4.4.1.tgz#3603fa6eba35425b0f2ac91a009fe924106e50d1"
   integrity sha512-13sOfMv2+DWduEU+/xbun3LScLoqN17nBeTLUsmDfKdoiC1fr0n9PU4guu4AhRcOVFk/sW8LyZWHuhWtQZiF+g==
@@ -14014,6 +14021,11 @@ type-detect@^4.0.0, type-detect@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
+
+type-detect@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/type-detect/-/type-detect-4.1.0.tgz#deb2453e8f08dcae7ae98c626b13dddb0155906c"
+  integrity sha512-Acylog8/luQ8L7il+geoSxhEkazvkslg7PSNKOX59mbB9cOveP5aq9h74Y7YU8yDpJwetzQQrfIwtf4Wp4LKcw==
 
 type-fest@^0.16.0:
   version "0.16.0"
