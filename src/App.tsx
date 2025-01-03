@@ -106,6 +106,21 @@ const RenderRouter: React.FC = () => {
             address: `x${address}`,
           });
         }}
+        onReaction={async (status, message, userQuestion) => {
+          await fetch('http://localhost/react/message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              status: status,
+              conversation_id: message.conversation_id,
+              id: message.id,
+              content: message.content as string,
+              user_question: userQuestion.content,
+            }),
+          });
+        }}
       ></ChatBox>
     </>
   );
