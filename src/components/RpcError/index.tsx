@@ -28,7 +28,7 @@ const RpcError: FC<IProps> = (props) => {
         Oops! RPC Service Unavailable
       </Typography>
       <Typography type="secondary" style={{ textAlign: 'center' }}>
-        It looks like the RPC service is temporarily unavaiable
+        It looks like the RPC service is temporarily unavailable
         {tryAgain ? (
           <>
             <span>, please</span>
