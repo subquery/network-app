@@ -160,7 +160,7 @@ export const useMakeNotification = () => {
       const exist = keys.every((key) => notificationStore.notificationList.find((item) => item.key === key));
 
       if (exist) {
-        const exipred = keys.some((key) => {
+        const expired = keys.some((key) => {
           const item = notificationStore.notificationList.find((item) => item.key === key);
           if (!item) return false;
           return item.dismissTo && item.dismissTo < Date.now();
@@ -168,7 +168,7 @@ export const useMakeNotification = () => {
 
         return {
           exist: true,
-          expired: exipred,
+          expired: expired,
         };
       }
 
@@ -351,7 +351,7 @@ export const useMakeNotification = () => {
           notificationStore.addNotification({
             key: NotificationKey.OutdatedAllocationV2,
             level: 'critical',
-            message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
+            message: `You have allocated to an outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
             title: 'Outdated Project Allocation',
             createdAt: Date.now(),
             canBeDismissed: true,
