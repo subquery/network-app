@@ -107,7 +107,7 @@ const RenderRouter: React.FC = () => {
           });
         }}
         onReaction={async (status, message, userQuestion) => {
-          await fetch('http://localhost/react/message', {
+          await fetch(`${import.meta.env.VITE_AI_REACTION_URL}/react/message`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
