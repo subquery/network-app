@@ -72,8 +72,8 @@ const translation = {
       failureFetchPlans: 'Failed to get plans for Node Operator',
       notReadyToBePurchased: `This plan cannot be purchased until the Node Operator status is 'Ready'`,
     },
-    inactiveTemplate: 'This template has mark as inactive.',
-    inactiveTemplateTip: 'This template has mark as inactive, please delete it.',
+    inactiveTemplate: 'This template has been marked as inactive.',
+    inactiveTemplateTip: 'This template has been marked as inactive, please delete it.',
   },
   flexPlans: {
     project: 'project',
@@ -322,7 +322,7 @@ const translation = {
     accept: 'Accept',
     searchByDeploymentId: 'Search by deployment Id',
     alreadyAcceptedOffer: 'You have already accepted this offer',
-    offerInactive: 'This offer has mark as inactive',
+    offerInactive: 'This offer has been marked as inactive',
     acceptModal: {
       nonCriteriaData: 'There is no criteria data available',
       moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',
