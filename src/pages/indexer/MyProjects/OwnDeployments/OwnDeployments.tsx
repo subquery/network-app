@@ -101,9 +101,6 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
           }
         }
       }
-      # indexerReward(id: $id) {
-      #   amount
-      # }
 
       indexerAllocationRewards(filter: { indexerId: { equalTo: $indexer }, eraIdx: { equalTo: $eraIdx } }) {
         aggregates {
@@ -163,17 +160,16 @@ export const OwnDeployments: React.FC<Props> = ({ indexer, emptyList, desc }) =>
       title: 'Project',
       dataIndex: 'deploymentId',
       render: (deploymentId: string, deployment) => (
-        <DeploymentInfo deploymentId={deploymentId} project={deployment.projectMeta} />
-      ),
-      onCell: (record) => {
-        return {
-          onClick: (_) => {
-            if (record.projectId) {
-              navigate(`${PROJECT_NAV}/${record.projectId}/overview`);
+        <DeploymentInfo
+          deploymentId={deploymentId}
+          project={deployment.projectMeta}
+          onClick={() => {
+            if (deployment.projectId) {
+              navigate(`${PROJECT_NAV}/${deployment.projectId}/overview?deploymentId=${deploymentId}`);
             }
-          },
-        };
-      },
+          }}
+        />
+      ),
     },
     {
       width: 150,
