@@ -4429,10 +4429,10 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@subql/components@3.0.1-6":
-  version "3.0.1-6"
-  resolved "https://registry.yarnpkg.com/@subql/components/-/components-3.0.1-6.tgz#90cf3968487dc3c3686026ae8774331714d57124"
-  integrity sha512-MEckZbv99i/TdG5Mzx7AlJbaPZX5thh1XS6gHhLZjy24wN8AkZr72VM6hsdsf9xoNdkpN039x/m03Z1jcHyAKA==
+"@subql/components@3.0.1-7":
+  version "3.0.1-7"
+  resolved "https://registry.npmjs.org/@subql/components/-/components-3.0.1-7.tgz#d4f09057c71189680ed57f8f2b3897e58e557752"
+  integrity sha512-+ckcb08oAxpZz4pZV8krZLeLHChv6Rr891Y3yM1SEW+FO4ZtYYjQC5NDUowk/3CkPHdsY+moGpHM2u8tppNpZA==
   dependencies:
     "@graphiql/plugin-explorer" "^0.3.4"
     "@graphiql/toolkit" "^0.9.1"

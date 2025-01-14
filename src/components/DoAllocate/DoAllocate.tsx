@@ -12,7 +12,7 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { ChatBoxIcon, Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -336,15 +336,6 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
         <div>
           <Form layout="vertical" form={form}>
             <Typography>New allocation amount</Typography>
-            {/* <ChatBoxTooltip
-              options={[
-                {
-                  label: 'What amount should set?',
-                  value: `What Allocation amount should set for ${deploymentId}?`,
-                },
-              ]}
-              chatBoxInstance={chatBoxStore.chatBoxRef}
-            > */}
             <Form.Item
               style={{ marginBottom: 0 }}
               name="allocateVal"
@@ -359,23 +350,14 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
-              <Typography.Link
-                variant="small"
-                type="info"
-                style={{
-                  display: 'flex',
-                  gap: 6,
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  margin: '8px 0',
-                }}
-                onClick={() => {
-                  chatBoxStore.chatBoxRef?.makeNewMsg(`What Allocation amount should set for ${deploymentId}?`);
-                }}
+              {/* <ChatBoxPlanTextTrigger
+                triggerMsg={`
+                What Allocation amount should set for ${deploymentId}?
+              `}
+                chatBoxInstance={chatBoxStore.chatBoxRef}
               >
-                <ChatBoxIcon width={14} height={14} fill={'#4388dd'} />
                 What Allocation amount should set?
-              </Typography.Link>
+              </ChatBoxPlanTextTrigger> */}
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}
@@ -391,7 +373,6 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 }}
               ></NumberInput>
             </Form.Item>
-            {/* </ChatBoxTooltip> */}
           </Form>
           <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
             <div className="flex">
