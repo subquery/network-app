@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { PropsWithChildren, useEffect } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AlertBanner from '@components/AlertBanner/AlertBanner';
 import { ChainStatus } from '@components/ConnectWallet';
@@ -9,9 +9,10 @@ import { Header } from '@components/Header';
 import { AppInitProvider } from '@containers/AppInitialProvider';
 import { useAccount } from '@containers/Web3';
 import { useEthersProviderWithPublic, useEthersSigner } from '@hooks/useEthersProvider';
-import { ChatBox, SubqlProvider } from '@subql/components';
+import { ChatBox, ChatBoxRef, SubqlProvider } from '@subql/components';
 
 import { RainbowProvider } from './config/rainbowConf';
+import { useChatBoxStore } from './stores/chatbox';
 import {
   IPFSProvider,
   ProjectMetadataProvider,
@@ -54,6 +55,10 @@ const RenderRouter: React.FC = () => {
   const { address, connector, isConnected } = useAccount();
   const { signer } = useEthersSigner();
   const provider = useEthersProviderWithPublic();
+  const chatboxStore = useChatBoxStore();
+  const setChatBoxRef = useCallback((ref: ChatBoxRef) => {
+    chatboxStore.setChatBoxRef(ref as ChatBoxRef);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -96,6 +101,7 @@ const RenderRouter: React.FC = () => {
       </BrowserRouter>
 
       <ChatBox
+        ref={setChatBoxRef}
         chatUrl={import.meta.env.VITE_AI_URL}
         prompt={address ? `My address is: ${address},use this for any further prompts.` : undefined}
         onChatboxOpen={() => {
@@ -104,6 +110,21 @@ const RenderRouter: React.FC = () => {
         onSendMessage={() => {
           window.gtag('event', 'send_message_ai-asisstant', {
             address: `x${address}`,
+          });
+        }}
+        onReaction={async (status, message, userQuestion) => {
+          await fetch(`${import.meta.env.VITE_AI_REACTION_URL}/react/message`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              status: status,
+              conversation_id: message.conversation_id,
+              id: message.id,
+              content: message.content as string,
+              user_question: userQuestion.content,
+            }),
           });
         }}
       ></ChatBox>

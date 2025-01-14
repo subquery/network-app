@@ -12,7 +12,7 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { formatSQT } from '../../utils/numberFormatters';
 import { formatNumber } from '../../utils/numberFormatters';
@@ -44,6 +45,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
   const [getAllocatedStake, allocatedStake] = useGetIndexerAllocationSummaryLazyQuery();
   const provider = useEthersProviderWithPublic();
+  const chatBoxStore = useChatBoxStore();
 
   const [form] = useForm();
   const formAllocateVal = useWatch('allocateVal', form);
@@ -348,6 +350,14 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
+              {/* <ChatBoxPlanTextTrigger
+                triggerMsg={`
+                What Allocation amount should set for ${deploymentId}?
+              `}
+                chatBoxInstance={chatBoxStore.chatBoxRef}
+              >
+                What Allocation amount should set?
+              </ChatBoxPlanTextTrigger> */}
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}

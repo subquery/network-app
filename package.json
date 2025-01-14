@@ -20,7 +20,7 @@
     "@eth-optimism/sdk": "^3.3.3",
     "@rainbow-me/rainbowkit": "^1.3.7",
     "@sentry/react": "^7.57.0",
-    "@subql/components": "3.0.1-4",
+    "@subql/components": "3.0.1-7",
     "@subql/contract-sdk": "1.3.1-1",
     "@subql/network-clients": "1.1.1-4",
     "@subql/network-config": "1.1.1",
