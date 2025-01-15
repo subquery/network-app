@@ -194,7 +194,7 @@ const translation = {
     nonIndexerAgreementsDescription_0:
       'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here.',
     nonIndexerAgreementsDescription_1:
-      'You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace',
+      'You can create and view your plans under My Plans, or browse the offers made by consumers under Offer Marketplace',
     nonIndexerAgreementsInfoLink: 'Learn more <1>here</1>',
     faliedToFetchServiceAgreement: 'Failed to request token for service agreement.',
   },
