@@ -45,8 +45,8 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
     <ChatBoxTooltip
       options={[
         {
-          label: 'What Flex Plan price should set?',
-          value: `What Flex Plan price should I set for ${deploymentId}?`,
+          label: 'What flex plan price should I set?',
+          value: `What flex plan price should I set for project deployment ${deploymentId}?`,
         },
       ]}
       chatBoxInstance={chatBoxStore.chatBoxRef}

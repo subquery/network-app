@@ -352,11 +352,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
             >
               {/* <ChatBoxPlanTextTrigger
                 triggerMsg={`
-                What Allocation amount should set for ${deploymentId}?
+                How much SQT should I allocated to deployment ${deploymentId}?
               `}
                 chatBoxInstance={chatBoxStore.chatBoxRef}
               >
-                What Allocation amount should set?
+                How should I allocate my SQT to this project deployment?
               </ChatBoxPlanTextTrigger> */}
               <NumberInput
                 description=""

@@ -43,10 +43,10 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
           <div className="col-flex">
             {t('indexer.newRateValidNext2Era')}
             <ChatBoxPlanTextTrigger
-              triggerMsg="What Commission rate should I set?"
+              triggerMsg="What commission rate should I set?"
               chatBoxInstance={chatBoxStore.chatBoxRef}
             >
-              What Commission rate should I set?
+              What commission rate should I set?
             </ChatBoxPlanTextTrigger>
           </div>
         ),

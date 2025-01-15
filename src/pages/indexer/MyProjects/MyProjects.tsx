@@ -44,10 +44,10 @@ export const MyProjects: React.FC = () => {
             <Typography variant="h5">{t('myProjects.title')}</Typography>
 
             <ChatBoxPlanTextTrigger
-              triggerMsg="Which projects should I running?"
+              triggerMsg="Which projects should I run as an Node Operator?"
               chatBoxInstance={chatboxStore.chatBoxRef}
             >
-              Give me advice on which projects to running
+              Give me advice on which projects to run
             </ChatBoxPlanTextTrigger>
           </div>
         }
