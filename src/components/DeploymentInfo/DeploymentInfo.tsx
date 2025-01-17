@@ -48,6 +48,10 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
           label: 'What flex plan price should I set?',
           value: `What flex plan price should I set for project deployment ${deploymentId}?`,
         },
+        {
+          label: 'How should I allocate my SQT to this deployment?',
+          value: `How much SQT should I allocated to deployment ${deploymentId}?`,
+        },
       ]}
       chatBoxInstance={chatBoxStore.chatBoxRef}
     >

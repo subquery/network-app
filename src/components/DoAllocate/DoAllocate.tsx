@@ -350,14 +350,12 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
-              {/* <ChatBoxPlanTextTrigger
-                triggerMsg={`
-                How much SQT should I allocated to deployment ${deploymentId}?
-              `}
+              <ChatBoxPlanTextTrigger
+                triggerMsg={`How much SQT should I allocated to deployment ${deploymentId}?`}
                 chatBoxInstance={chatBoxStore.chatBoxRef}
               >
                 How should I allocate my SQT to this project deployment?
-              </ChatBoxPlanTextTrigger> */}
+              </ChatBoxPlanTextTrigger>
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}
