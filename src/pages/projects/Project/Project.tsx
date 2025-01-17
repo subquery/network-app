@@ -182,7 +182,19 @@ const Project: React.FC = () => {
   return (
     <div>
       {renderAsync(asyncProject, {
-        loading: () => <Spinner />,
+        loading: () => (
+          <div
+            style={{
+              width: '100vw',
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Spinner />
+          </div>
+        ),
         error: (error: Error) => {
           return (
             <NormalError withWrapper>
@@ -296,7 +308,13 @@ const Project: React.FC = () => {
                 <ExternalLink icon="github" link={project.metadata.codeUrl} />
 
                 <div
-                  style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginTop: 8, marginBottom: 24 }}
+                  style={{
+                    height: 1,
+                    width: '100%',
+                    background: 'var(--sq-gray300)',
+                    marginTop: 8,
+                    marginBottom: 24,
+                  }}
                 ></div>
               </div>
 

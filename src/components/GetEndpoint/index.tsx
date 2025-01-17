@@ -25,6 +25,7 @@ import styles from './index.module.less';
 interface IProps {
   deploymentId: string;
   project: Pick<ProjectDetailsQuery, 'id' | 'metadata'>;
+  initialOpen?: boolean;
 }
 
 export const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
@@ -72,9 +73,9 @@ export const getWsEndpointWithApiKey = (projectId: string, apiKey: string) =>
       }-archive/ws?apikey=${apiKey}`
     : '';
 
-const GetEndpoint: FC<IProps> = ({ deploymentId, project }) => {
+const GetEndpoint: FC<IProps> = ({ deploymentId, project, initialOpen = false }) => {
   const { address: account } = useAccount();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(initialOpen);
   const beforeStep = React.useRef<'select' | 'createFlexPlan' | 'checkFree' | 'checkEndpointWithApiKey'>('select');
   const [currentStep, setCurrentStep] = React.useState<
     'select' | 'createFlexPlan' | 'checkFree' | 'checkEndpointWithApiKey'

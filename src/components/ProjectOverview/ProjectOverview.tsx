@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import { BsGithub, BsGlobe, BsInfoCircle } from 'react-icons/bs';
+import { useSearchParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import DoBooster from '@components/DoBooster';
 import Expand from '@components/Expand/Expand';
@@ -13,6 +14,7 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { BalanceLayout } from '@pages/dashboard';
 import { DeploymentRewardsLine } from '@pages/explorer/Project/components/DeploymentRewardsChart';
+import { ProjectActionArgv } from '@pages/explorer/Project/type';
 import { Markdown, Spinner, SubqlCard, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
@@ -56,7 +58,13 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
   const query = useRouteQuery();
   const { contracts } = useWeb3Store();
   const provider = useEthersProviderWithPublic();
-
+  const [searchParams] = useSearchParams();
+  const initialOpenModal = React.useMemo(() => {
+    if (searchParams.get('action') === ProjectActionArgv.BOOST) {
+      return true;
+    }
+    return false;
+  }, [searchParams]);
   const deploymentId = React.useMemo(() => {
     return query.get('deploymentId') || project.deploymentId;
   }, [project, query]);
@@ -312,7 +320,7 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </div>
               <span style={{ flex: 1 }}></span>
 
-              <DoBooster projectId={project.id} deploymentId={deploymentId}></DoBooster>
+              <DoBooster projectId={project.id} deploymentId={deploymentId} initialOpen={initialOpenModal}></DoBooster>
             </div>
           }
         >

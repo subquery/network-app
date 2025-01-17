@@ -73,7 +73,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
       await onRefresh?.();
     },
   }));
-  console.warn(currentDeployment);
+
   return renderAsync(asyncDeployments, {
     loading: () => <Spinner />,
     error: (e) => <div>{`Error: ${e.message}`}</div>,

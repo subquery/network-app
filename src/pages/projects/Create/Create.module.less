@@ -54,7 +54,46 @@
     .ant-modal-confirm-paragraph.ant-modal-confirm-paragraph {
       max-width: 100%;
     }
+
+    .ant-result {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      .anticon-check-circle {
+        font-size: 50px;
+      }
+
+      &-icon {
+        margin-bottom: 0;
+      }
+      
+      &-title {
+        margin: 0;
+        font-size: 20px;
+        line-height: 30px;
+        font-family: var(--sq-font-family);
+      }
+
+      &-subtitle {
+        font-size: 16px;
+      }
+
+      &-extra {
+        margin-top: 0;
+      }
+    }
   }
+}
+
+.plainCard {
+  border-radius: 8px;
+  border: 1px solid rgba(223, 227, 232, .6);
+  padding: 24px;
+  text-align: left;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .markdownWrapper {

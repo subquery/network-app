@@ -3,12 +3,15 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
 import GetEndpoint from '@components/GetEndpoint';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
+import { ProjectActionArgv } from '@pages/explorer/Project/type';
 import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { useAsyncMemo } from '@subql/react-hooks';
@@ -45,7 +48,13 @@ const ProjectHeader: React.FC<Props> = ({
   const { t } = useTranslation();
   const { projectDbSize, projectInfo } = useProjectStore();
   const { getStatisticQueries } = useConsumerHostServices({ autoLogin: false });
-
+  const [searchParams] = useSearchParams();
+  const initialOpenModal = React.useMemo(() => {
+    if (searchParams.get('action') === ProjectActionArgv.CREATE_PLAN) {
+      return true;
+    }
+    return false;
+  }, [searchParams]);
   const createdAtStr = React.useMemo(() => dayjs(project.createdTimestamp).utc(true).fromNow(), [project]);
   const updatedAtStr = React.useMemo(() => dayjs(project.updatedTimestamp).utc(true).fromNow(), [project]);
 
@@ -162,7 +171,11 @@ const ProjectHeader: React.FC<Props> = ({
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
             <div className={`flex ${styles.groupButton}`}>
-              <GetEndpoint deploymentId={currentVersion || ''} project={project}></GetEndpoint>
+              <GetEndpoint
+                deploymentId={currentVersion || ''}
+                project={project}
+                initialOpen={initialOpenModal}
+              ></GetEndpoint>
             </div>
           </div>
           <IndexerName address={project.owner} size="tiny"></IndexerName>

@@ -33,9 +33,17 @@ interface IProps {
   actionBtn?: React.ReactNode;
   onSuccess?: () => void;
   initAddOrRemove?: 'add' | 'remove';
+  initialOpen?: boolean;
 }
 
-const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRemove = 'add', onSuccess }) => {
+const DoBooster: FC<IProps> = ({
+  projectId,
+  deploymentId,
+  actionBtn,
+  initialOpen = false,
+  initAddOrRemove = 'add',
+  onSuccess,
+}) => {
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
@@ -55,7 +63,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
     fetchPolicy: 'network-only',
   });
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [loading, setLoading] = useState(false);
   const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
 
