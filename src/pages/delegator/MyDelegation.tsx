@@ -24,7 +24,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Spinner, SubqlCard, TableText, TableTitle, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Spinner, SubqlCard, TableText, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
   useAsyncMemo,
@@ -48,6 +48,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { t, TFunction } from 'i18next';
 
 import { PER_MILL } from 'src/const/const';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
@@ -455,6 +456,7 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const { getDisplayedCommission } = useMinCommissionRate();
+  const { chatBoxRef } = useChatBoxStore();
   const { width } = useSize(document.querySelector('body')) || { width: 0 };
   const [fetchIndexerLeverageLimit] = useLazyQuery<{ cach: { value: string } }>(gql`
     query {
@@ -562,7 +564,17 @@ export const MyDelegation: React.FC = () => {
 
   return (
     <>
-      <AppPageHeader title={'My Delegation'} desc={t('delegate.delegationDesc')} />
+      <AppPageHeader
+        title={
+          <div className="col-flex" style={{ gap: '8px' }}>
+            <Typography variant="h5">My Delegation</Typography>
+            <ChatBoxPlanTextTrigger triggerMsg="Give me advise on delegate" chatBoxInstance={chatBoxRef}>
+              Give me advise on delegate.
+            </ChatBoxPlanTextTrigger>
+          </div>
+        }
+        desc={t('delegate.delegationDesc')}
+      />
       <WalletRoute
         componentMode
         element={renderAsync(delegationList, {
