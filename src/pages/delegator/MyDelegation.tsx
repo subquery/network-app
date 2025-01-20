@@ -568,8 +568,11 @@ export const MyDelegation: React.FC = () => {
         title={
           <div className="col-flex" style={{ gap: '8px' }}>
             <Typography variant="h5">My Delegation</Typography>
-            <ChatBoxPlanTextTrigger triggerMsg="Give me advise on delegate" chatBoxInstance={chatBoxRef}>
-              Give me advise on delegate.
+            <ChatBoxPlanTextTrigger
+              triggerMsg="Advise me on how best I can delegate my SQT."
+              chatBoxInstance={chatBoxRef}
+            >
+              Advise me on how best I can delegate my SQT.
             </ChatBoxPlanTextTrigger>
           </div>
         }
