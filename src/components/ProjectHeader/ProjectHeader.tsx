@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import GetEndpoint from '@components/GetEndpoint';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
@@ -17,6 +16,7 @@ import { ProjectType } from '@subql/network-query';
 import { useAsyncMemo } from '@subql/react-hooks';
 import { bytesToGb, formatNumber, formatSQT } from '@utils';
 import { Button, Tooltip } from 'antd';
+import { BigNumber } from 'bignumber.js';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
@@ -99,7 +99,7 @@ const ProjectHeader: React.FC<Props> = ({
     const chainId =
       project.type === ProjectType.SUBQUERY ? manifest?.network?.chainId : manifest?.dataSources?.[0]?.network;
     if (!chainId) return '-';
-
+    console.warn(chainId);
     const polkadotName = NETWORK_TYPE_DICTION[chainId];
     const ethName = ETH_TYPE_DICTION[chainId];
 
@@ -147,6 +147,10 @@ const ProjectHeader: React.FC<Props> = ({
       start_date: yesterday.format('YYYY-MM-DD'),
       end_date: today.format('YYYY-MM-DD'),
     });
+
+    if (BigNumber(res.data.total).isEqualTo(0)) {
+      return '< 1,000';
+    }
 
     return formatNumber(res.data.total, 0);
   }, [currentVersion]);
