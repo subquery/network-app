@@ -30,6 +30,7 @@ export const NETWORK_TYPE_DICTION: { [key in string]: string } = {
   '0xcd4d732201ebe5d6b014edda071c4203e16867305332301dc8d092044b28e554': 'Quartz',
   '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755': 'Basilisk',
   '0xaa3876c1dc8a1afcc2e9a685a49ff7704cfd36ad8c90bf2702b9d1b00cc40011': 'Altair',
+  '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736': 'Phala',
 };
 
 export const ETH_TYPE_DICTION: { [key in string]: string } = {
