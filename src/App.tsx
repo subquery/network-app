@@ -105,10 +105,10 @@ const RenderRouter: React.FC = () => {
         chatUrl={import.meta.env.VITE_AI_URL}
         prompt={address ? `My address is: ${address},use this for any further prompts.` : undefined}
         onChatboxOpen={() => {
-          window.gtag('event', 'open_ai-asisstant');
+          window.gtag('event', 'open_ai-assistant');
         }}
         onSendMessage={() => {
-          window.gtag('event', 'send_message_ai-asisstant', {
+          window.gtag('event', 'send_message_ai-assistant', {
             address: `x${address}`,
           });
         }}
