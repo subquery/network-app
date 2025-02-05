@@ -124,8 +124,8 @@ export const IndexerList: React.FC = () => {
       return {
         ...i,
         commission: {
-          current: getDisplayedCommission(i.commission.current * 100),
-          after: getDisplayedCommission(i.commission.after * 100),
+          current: getDisplayedCommission(BigNumberJs(i.commission.current).multipliedBy(100).toNumber()),
+          after: getDisplayedCommission(BigNumberJs(i.commission.after).multipliedBy(100).toNumber()),
         } as CurrentEraValue<number>,
       };
     });
