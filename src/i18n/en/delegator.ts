@@ -49,7 +49,7 @@ const translation = {
     existingDelegationTooltip: 'The amount of tokens that you have already delegated to this Node Operator',
     existingDelegation: 'Your Existing Delegation',
     selectTooltip:
-      'Select the source of the funds that you would like to delegate. This can be directly from your wallet, or by re-delegating tokens from an exisiting delegation.',
+      'Select the source of the funds that you would like to delegate. This can be directly from your wallet, or by re-delegating tokens from an existing delegation.',
     delegateFromYourselfInfo: 'Once confirmed, your funds will be delegated to {{indexerName}} from the next era.',
     redelegateInfo:
       'Once confirmed, your funds will be re-delegated from operator {{reIndexerName}} to {{indexerName}} from the next era.',
