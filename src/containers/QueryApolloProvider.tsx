@@ -18,32 +18,34 @@ const gatewayLink = getHttpLink(
 );
 const fallbackLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
 
-export const networkLink = new ApolloLink((operation) => {
-  return new Observable((observer) => {
-    operation.setContext({
-      headers: {
-        'X-Ping': uuidv4(),
-      },
-    });
-    gatewayLink.request(operation)?.subscribe({
-      next(value) {
-        observer.next(value);
-        observer.complete();
-      },
-      error: () => {
-        fallbackLink.request(operation)?.subscribe({
+export const networkLink = import.meta.env.VITE_USE_FALLBACKURL
+  ? fallbackLink
+  : new ApolloLink((operation) => {
+      return new Observable((observer) => {
+        operation.setContext({
+          headers: {
+            'X-Ping': uuidv4(),
+          },
+        });
+        gatewayLink.request(operation)?.subscribe({
           next(value) {
             observer.next(value);
             observer.complete();
           },
-          error: (error) => {
-            observer.error(error);
+          error: () => {
+            fallbackLink.request(operation)?.subscribe({
+              next(value) {
+                observer.next(value);
+                observer.complete();
+              },
+              error: (error) => {
+                observer.error(error);
+              },
+            });
           },
         });
-      },
+      });
     });
-  });
-});
 
 const links = ApolloLink.from([
   onError(({ graphQLErrors, operation, networkError }) => {
