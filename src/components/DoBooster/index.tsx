@@ -14,9 +14,9 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Modal, openNotification, Spinner, Steps, Tag, Typography } from '@subql/components';
-import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
+import { useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
-import { formatNumber } from '@utils/numberFormatters';
+import { formatNumber, formatSQT } from '@utils/numberFormatters';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
@@ -331,7 +331,9 @@ const DoBooster: FC<IProps> = ({
                     {balance.result.loading ? (
                       <Spinner size={10}></Spinner>
                     ) : (
-                      formatSQT(balance.result.data?.toString() || '0')
+                      <Tooltip title={formatSQT(balance.result.data?.toString() || '0', { fixedNum: 18 })}>
+                        {formatSQT(balance.result.data?.toString() || '0', { fixedNum: 2 })}
+                      </Tooltip>
                     )}{' '}
                     {TOKEN}
                   </Typography>

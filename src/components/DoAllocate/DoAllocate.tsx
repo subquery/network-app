@@ -395,9 +395,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 </Typography>
               </div>
               <span style={{ flex: 1 }}></span>
-              <Typography variant="medium" style={{ overflowWrap: 'anywhere' }}>
-                {avaibleStakeAmount} {TOKEN}
-              </Typography>
+              <Tooltip title={BigNumber(avaibleStakeAmount).toFixed(18)}>
+                <Typography variant="medium" style={{ overflowWrap: 'anywhere' }}>
+                  {BigNumber(avaibleStakeAmount).toFixed(2)} {TOKEN}
+                </Typography>
+              </Tooltip>
             </div>
             <div className="flex">
               <Typography variant="medium" type="secondary">
