@@ -5672,13 +5672,14 @@
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
 
-"@web3-name-sdk/core@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.npmjs.org/@web3-name-sdk/core/-/core-0.3.2.tgz#06a0976cbc1d23f8b64675ca648e161b8882a967"
-  integrity sha512-nkLlL64+2JyWyAJZnomu/g1iwQ04lWs6a5DMBqui6iEA5kWP+acuUN5o/3K/NR/FcTewjwMSLM9RX31HTuODEg==
+"@web3-name-sdk/core@^0.1.5":
+  version "0.1.18"
+  resolved "https://registry.npmjs.org/@web3-name-sdk/core/-/core-0.1.18.tgz#7155786e5ed2ec4e9f2f220b976bf20d3c6a77b0"
+  integrity sha512-AmhRf+q9LJI838wClJ6pHAfMYVi4O9FMFvpZubF0bBUE1uMSy5w+p+k2rGTgfVoUbnT5y1d6Negw/omMYiO0lg==
   dependencies:
     "@adraffy/ens-normalize" "^1.10.0"
     "@ensdomains/ens-validation" "^0.1.0"
+    viem "^1.20"
 
 "@wry/caches@^1.0.0":
   version "1.0.1"
@@ -14511,7 +14512,7 @@ viem@^1.0.0:
     isows "1.0.3"
     ws "8.13.0"
 
-viem@^1.21.4, viem@^1.6.0:
+viem@^1.19.0, viem@^1.20, viem@^1.6.0:
   version "1.21.4"
   resolved "https://registry.npmjs.org/viem/-/viem-1.21.4.tgz#883760e9222540a5a7e0339809202b45fe6a842d"
   integrity sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==
