@@ -25,7 +25,7 @@ import dayjs from 'dayjs';
 import { ethers } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import localforage from 'localforage';
-import { useAccount, useNetwork, usePublicClient, useSwitchNetwork } from 'wagmi';
+import { useAccount, usePublicClient, useSwitchChain } from 'wagmi';
 
 import styles from './index.module.less';
 
@@ -77,11 +77,9 @@ const descMsgs = {
 const BridgeInner: FC = () => {
   const { ethSqtBalance, balance } = useSQToken();
   const { signer } = useEthersSigner();
-  const { chain } = useNetwork();
-  const { address: account } = useAccount();
-
+  const { address: account, chain } = useAccount();
   const publicClientL1 = usePublicClient({ chainId: l1Chain.id });
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChainAsync } = useSwitchChain();
   const navigate = useNavigate();
   const withdrawsRecord = useQuery<WithdrawsRecord>(
     gql`
@@ -145,7 +143,7 @@ const BridgeInner: FC = () => {
   const initCrossChainMessenger = async () => {
     if (!signer) return;
     const { CrossChainMessenger } = await import('@eth-optimism/sdk/src/cross-chain-messenger');
-    const l2Provider = new ethers.providers.JsonRpcProvider(l2Chain.rpcUrls.public.http[0]);
+    const l2Provider = new ethers.providers.JsonRpcProvider(l2Chain.rpcUrls.default.http[0]);
     const newCrossChainMessenger = new CrossChainMessenger({
       l1ChainId: l1Chain.id,
       l2ChainId: l2Chain.id,
@@ -516,7 +514,9 @@ const BridgeInner: FC = () => {
               onClick={
                 chain?.id !== l1Chain.id
                   ? () => {
-                      switchNetwork?.(l1Chain.id);
+                      switchChainAsync?.({
+                        chainId: l1Chain.id,
+                      });
                     }
                   : depositToken
               }
@@ -620,7 +620,9 @@ const BridgeInner: FC = () => {
                 onClick={
                   chain?.id !== l2Chain.id
                     ? () => {
-                        switchNetwork?.(l2Chain.id);
+                        switchChainAsync?.({
+                          chainId: l2Chain.id,
+                        });
                       }
                     : withdrawStart
                 }
@@ -695,7 +697,9 @@ const BridgeInner: FC = () => {
                           disabled={disable}
                           onClick={() => {
                             if (chain?.id !== l1Chain.id) {
-                              switchNetwork?.(l1Chain.id);
+                              switchChainAsync?.({
+                                chainId: l1Chain.id,
+                              });
                               return;
                             }
                             withdrawApproveOrFinalize(item.txHash);

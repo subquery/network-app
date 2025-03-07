@@ -322,7 +322,13 @@ export const DelegateForm: React.FC<FormProps> = ({
       const allMetadata = await Promise.all(indexerMetadata);
       setDelegationOptions([
         {
-          label: <AddressName curAccount={account} address={account} metadata={{ name: '', url: '', image: '' }} />,
+          label: (
+            <AddressName
+              curAccount={account}
+              address={account}
+              metadata={{ name: '', url: '', image: '', description: '' }}
+            />
+          ),
           value: account,
           name: '',
         },
@@ -386,7 +392,9 @@ export const DelegateForm: React.FC<FormProps> = ({
           return {
             ...indexer,
             metadataInfo:
-              metadataInfo.status === 'fulfilled' ? metadataInfo.value : { name: indexer.id, url: '', image: '' },
+              metadataInfo.status === 'fulfilled'
+                ? metadataInfo.value
+                : { name: indexer.id, url: '', image: '', description: '' },
           };
         })
         .filter((i) => {
@@ -408,7 +416,7 @@ export const DelegateForm: React.FC<FormProps> = ({
             <AddressName
               curAccount={account || ''}
               address={item.id}
-              metadata={item.metadataInfo || { name: item.id, url: '', image: '' }}
+              metadata={item.metadataInfo || { name: item.id, url: '', image: '', description: '' }}
             />
           ),
           value: item.id,

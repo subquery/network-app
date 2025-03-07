@@ -7,7 +7,6 @@ import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ChatBoxTooltip, Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
-import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
 
 import { useChatBoxStore } from 'src/stores/chatbox';

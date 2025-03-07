@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import {
   coinbaseWallet,
   metaMaskWallet,
@@ -11,81 +11,56 @@ import {
   talismanWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig, mainnet, sepolia, WagmiConfig } from 'wagmi';
-import { base, baseSepolia } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { http, WagmiProvider } from 'wagmi';
+import { base, baseSepolia, mainnet, sepolia } from 'wagmi/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
-
-// goerli and mainnet just for get data actually not supported
-const supportedChains =
-  import.meta.env.VITE_NETWORK === 'testnet'
-    ? [baseSepolia, sepolia]
-    : [
-        {
-          ...base,
-          rpcUrls: {
-            default: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC, ...base.rpcUrls.default.http],
-            },
-            public: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC, ...base.rpcUrls.public.http],
-            },
-            fallback: {
-              http: base.rpcUrls.default.http,
-            },
-          },
-        },
-        {
-          ...mainnet,
-          rpcUrls: {
-            default: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, 'https://eth.llamarpc.com'],
-            },
-            public: {
-              http: [import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC, 'https://eth.llamarpc.com'],
-            },
-            fallback: {
-              http: 'https://eth.llamarpc.com',
-            },
-          },
-        },
-      ];
 
 export const tipsChainIds: number[] = import.meta.env.VITE_NETWORK === 'testnet' ? [baseSepolia.id] : [base.id];
 export const tipsL1ChainIds: number[] =
   import.meta.env.VITE_NETWORK === 'testnet' ? [sepolia.id, baseSepolia.id] : [mainnet.id, base.id];
-// This should ok. It seems is a bug of Ts.
 
-// @ts-ignore
-const { chains, publicClient } = configureChains(supportedChains, [publicProvider()]);
+// coinbaseWallet.preference = 'smartWalletOnly';
 
-const connectors = connectorsForWallets([
-  {
-    groupName: 'Recommended',
-    wallets: [
-      safeWallet({ chains }),
-      metaMaskWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
-      coinbaseWallet({ appName: 'SQN Explorer', chains }),
-      walletConnectWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
-      talismanWallet({ chains }),
-      rainbowWallet({ projectId: 'c7ea561f79adc119587d163a68860570', chains }),
-    ],
+export const config = getDefaultConfig({
+  appName: 'SubQuery Network App',
+  projectId: 'c7ea561f79adc119587d163a68860570',
+  chains: [base],
+  transports: {
+    [base.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC),
+    [mainnet.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC),
   },
-]);
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: [...connectors()],
-  publicClient,
+  wallets: [
+    {
+      groupName: 'Recommended Wallets',
+      wallets: [
+        metaMaskWallet,
+        () =>
+          coinbaseWallet({
+            appName: 'SubQuery Network App',
+            appIcon: 'https://subquery.network/favicon.ico',
+          }),
+        () => {
+          const safeClient = safeWallet();
+          return safeClient;
+        },
+        walletConnectWallet,
+        talismanWallet,
+        rainbowWallet,
+      ],
+    },
+  ],
 });
+
+const queryClient = new QueryClient();
 
 export const RainbowProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} locale="en" coolMode>
-        {children}
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider locale="en">{children}</RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
