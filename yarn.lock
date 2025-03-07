@@ -5673,13 +5673,13 @@
     tslib "1.14.1"
 
 "@web3-name-sdk/core@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@web3-name-sdk/core/-/core-0.1.5.tgz#658d2bc6bd43167f553e4f8dcc8427e43f9fc8b6"
-  integrity sha512-mHcpvmXNa7V51YDcQ9uz4Ryz0if7O+LweOyAw5kcofM8kTSF6MbqmotgBiwqwQ1JRdJPNyTj7GqAHQD7+09SaQ==
+  version "0.1.18"
+  resolved "https://registry.npmjs.org/@web3-name-sdk/core/-/core-0.1.18.tgz#7155786e5ed2ec4e9f2f220b976bf20d3c6a77b0"
+  integrity sha512-AmhRf+q9LJI838wClJ6pHAfMYVi4O9FMFvpZubF0bBUE1uMSy5w+p+k2rGTgfVoUbnT5y1d6Negw/omMYiO0lg==
   dependencies:
     "@adraffy/ens-normalize" "^1.10.0"
     "@ensdomains/ens-validation" "^0.1.0"
-    viem "^1.10.9"
+    viem "^1.20"
 
 "@wry/caches@^1.0.0":
   version "1.0.1"
@@ -14498,7 +14498,7 @@ vfile@^6.0.0:
     unist-util-stringify-position "^4.0.0"
     vfile-message "^4.0.0"
 
-viem@^1.0.0, viem@^1.19.0:
+viem@^1.0.0:
   version "1.19.0"
   resolved "https://registry.npmjs.org/viem/-/viem-1.19.0.tgz#e9f2b5084795d217c4adeb4b1c46d2afa949967c"
   integrity sha512-Q4gU7D5KMZDK2rarQqjeqW7KmZRdfbDyP+bDlsu0Ia+IWR4Aali+dMbis1s3rC12OWdNfSR5MNmPCHoqoQa5ew==
@@ -14512,21 +14512,7 @@ viem@^1.0.0, viem@^1.19.0:
     isows "1.0.3"
     ws "8.13.0"
 
-viem@^1.10.9:
-  version "1.19.9"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-1.19.9.tgz#a11f3ad4a3323994ebd2010dbc659d1a2b12e583"
-  integrity sha512-Sf9U2x4jU0S/FALqYypcspWOGene0NZyD470oUripNhE0Ta6uOE/OgE4toTDVfRxov8qw0JFinr/wPGxYE3+HQ==
-  dependencies:
-    "@adraffy/ens-normalize" "1.10.0"
-    "@noble/curves" "1.2.0"
-    "@noble/hashes" "1.3.2"
-    "@scure/bip32" "1.3.2"
-    "@scure/bip39" "1.2.1"
-    abitype "0.9.8"
-    isows "1.0.3"
-    ws "8.13.0"
-
-viem@^1.6.0:
+viem@^1.19.0, viem@^1.20, viem@^1.6.0:
   version "1.21.4"
   resolved "https://registry.npmjs.org/viem/-/viem-1.21.4.tgz#883760e9222540a5a7e0339809202b45fe6a842d"
   integrity sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==
