@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { forwardRef, useImperativeHandle } from 'react';
+import ProjectDeployments from '@components/ProjectDeployments';
+import { Spinner } from '@subql/components';
 import { useGetProjectDeploymentsLazyQuery } from '@subql/react-hooks';
 import { uniqBy } from 'ramda';
 
-import { ProjectDeployments, Spinner } from '../../../components';
 import { useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
@@ -17,13 +18,14 @@ type Props = {
     deployment: string;
     version: string;
   };
+  onRefresh?: () => void;
 };
 
 export interface DeploymendRef {
   refresh: () => void;
 }
 
-const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment }, ref) => {
+const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment, onRefresh }, ref) => {
   const [getProjDeployments] = useGetProjectDeploymentsLazyQuery({
     variables: {
       projectId,
@@ -41,18 +43,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
     }
 
     if (currentDeployment && !projectDeployments.find((d) => d.id === currentDeployment.deployment)) {
-      projectDeployments = uniqBy(
-        (d) => d.id + d.metadata,
-        [
-          {
-            __typename: 'Deployment',
-            id: currentDeployment.deployment,
-            metadata: currentDeployment.version,
-            createdTimestamp: new Date(), // TODO come up with a timestamp
-          },
-          ...projectDeployments,
-        ],
-      );
+      projectDeployments = uniqBy((d) => d.id + d.metadata, projectDeployments);
     }
 
     return Promise.all(
@@ -77,8 +68,9 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
   }, [currentDeployment]);
 
   useImperativeHandle(ref, () => ({
-    refresh: () => {
-      return asyncDeployments.refetch();
+    refresh: async () => {
+      await asyncDeployments.refetch();
+      await onRefresh?.();
     },
   }));
 
@@ -100,11 +92,14 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
           projectId={projectId}
           onRefresh={async () => {
             await asyncDeployments.refetch();
+            await onRefresh?.();
           }}
         />
       );
     },
   });
 });
+
+DeploymentsTab.displayName = 'DeploymentsTab';
 
 export default DeploymentsTab;

@@ -4,20 +4,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
-import {
-  AppPageHeader,
-  ApproveContract,
-  EmptyList,
-  ModalApproveToken,
-  Spinner,
-  TabButtons,
-  tokenApprovalModalText,
-  WalletRoute,
-} from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
 import { Button } from '@components/Button';
+import { EmptyList } from '@components/EmptyList';
+import { ApproveContract, ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { TabButtons } from '@components/TabButton';
 import TransactionModal from '@components/TransactionModal';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken, useWeb3 } from '@containers';
-import { Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import {
   renderAsync,
   useGetOfferCountQuery,
@@ -169,57 +164,63 @@ export const MyOffers: React.FC = () => {
     };
   }, []);
 
-  return renderAsync(offers, {
-    loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
-    data: (offers) => {
-      const { totalCount } = offers.offers || { totalCount: 0 };
-      return (
-        <>
-          <AppPageHeader title={title} />
-          <WalletRoute
-            componentMode
-            element={
-              <Routes>
-                <Route
-                  path={OPEN_OFFERS}
-                  element={<MyOffer key="openOffers" queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />}
-                />
-                <Route
-                  path={CLOSE_OFFERS}
-                  element={
-                    <MyOffer
-                      key="closedOffers"
-                      queryFn={useGetOwnFinishedOffersLazyQuery}
-                      description={t('myOffers.closedDescription')}
-                      totalCount={totalCount}
-                      queryParams={{
-                        expiredDate: dayjs('1970-1-2').toDate(),
-                      }}
+  return (
+    <div>
+      <AppPageHeader title={title} />
+      {renderAsync(offers, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load offers: ${e}`}</Typography>,
+        data: (offers) => {
+          const { totalCount } = offers.offers || { totalCount: 0 };
+          return (
+            <>
+              <WalletRoute
+                componentMode
+                element={
+                  <Routes>
+                    <Route
+                      path={OPEN_OFFERS}
+                      element={
+                        <MyOffer key="openOffers" queryFn={useGetOwnOpenOffersLazyQuery} totalCount={totalCount} />
+                      }
                     />
-                  }
-                />
-                <Route
-                  path={EXPIRED_OFFERS}
-                  element={
-                    <MyOffer
-                      key="expiredOffers"
-                      queryFn={useGetOwnExpiredOffersLazyQuery}
-                      description={t('myOffers.expiredDescription')}
-                      totalCount={totalCount}
+                    <Route
+                      path={CLOSE_OFFERS}
+                      element={
+                        <MyOffer
+                          key="closedOffers"
+                          queryFn={useGetOwnFinishedOffersLazyQuery}
+                          description={t('myOffers.closedDescription')}
+                          totalCount={totalCount}
+                          queryParams={{
+                            expiredDate: dayjs('1970-1-2').toDate(),
+                          }}
+                        />
+                      }
                     />
-                  }
-                />
-                <Route
-                  path={CREATE_OFFER}
-                  element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
-                />
-                <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
-              </Routes>
-            }
-          ></WalletRoute>
-        </>
-      );
-    },
-  });
+                    <Route
+                      path={EXPIRED_OFFERS}
+                      element={
+                        <MyOffer
+                          key="expiredOffers"
+                          queryFn={useGetOwnExpiredOffersLazyQuery}
+                          description={t('myOffers.expiredDescription')}
+                          totalCount={totalCount}
+                        />
+                      }
+                    />
+                    <Route
+                      path={CREATE_OFFER}
+                      element={!requiresTokenApproval ? <CreateOffer /> : <Navigate replace to={CONSUMER_OFFERS_NAV} />}
+                    />
+                    <Route path={'/'} element={totalCount <= 0 ? <NoOffers /> : <Navigate to={OPEN_OFFERS} />} />
+                  </Routes>
+                }
+              ></WalletRoute>
+            </>
+          );
+        },
+      })}
+    </div>
+  );
 };

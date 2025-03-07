@@ -37,7 +37,7 @@ const translation = {
       action: 'Action',
       deploymentId: 'Deployment Id',
       toUSDC: 'To USDC Price',
-      paymentAmount: 'Paymeny Amount',
+      paymentAmount: 'Payment Amount',
       paymentTips: 'This rate may vary at the time of payment',
     },
     create: {
@@ -72,8 +72,8 @@ const translation = {
       failureFetchPlans: 'Failed to get plans for Node Operator',
       notReadyToBePurchased: `This plan cannot be purchased until the Node Operator status is 'Ready'`,
     },
-    inactiveTemplate: 'This template has mark as inactive.',
-    inactiveTemplateTip: 'This template has mark as inactive, please delete it.',
+    inactiveTemplate: 'This template has been marked as inactive.',
+    inactiveTemplateTip: 'This template has been marked as inactive, please delete it.',
   },
   flexPlans: {
     project: 'project',
@@ -108,7 +108,7 @@ const translation = {
     own: 'Created by you',
     flexPlan: 'Flex Plan',
     flexPlanDesc:
-      'For provide a better experience, Subquery will pick the optimal Node Operator for your Flex Plan based on a combination of price and historical performance.',
+      'For provide a better experience, SubQuery will pick the optimal Node Operator for your Flex Plan based on a combination of price and historical performance.',
     deposit: 'Deposit',
     createFlexPlan: 'Create Flex Plan',
   },
@@ -194,7 +194,7 @@ const translation = {
     nonIndexerAgreementsDescription_0:
       'Once a Consumer purchases your advertised plan OR you accept a Consumer’s offer, it will generate a service agreement which you can track here.',
     nonIndexerAgreementsDescription_1:
-      'You can create and view your plans under My Plans, or browse the offers made by consumers under ‘Offer Marketplace',
+      'You can create and view your plans under My Plans, or browse the offers made by consumers under Offer Marketplace',
     nonIndexerAgreementsInfoLink: 'Learn more <1>here</1>',
     faliedToFetchServiceAgreement: 'Failed to request token for service agreement.',
   },
@@ -313,7 +313,7 @@ const translation = {
     listDescription: 'A list of all offers published by Consumers that are available to be accepted by Node Operators',
     noOffersTitle: 'There are no offers here yet',
     indexerNoOffers:
-      'As a Node Operator, once there are offers avaliable you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Node Operator <1>here</1>',
+      'As a Node Operator, once there are offers available you will be able to accept them here. After this you can start indexing the project. Learn more about the role of an Node Operator <1>here</1>',
     consumerNoOffers:
       'As a Consumer, you can go to My Offers to create your own offer which will be published on the Offer Marketplace. Node Operators will accept your offer to create a service agreement and begin indexing the data for you.',
     viewAsIndexer: 'If you are a Node Operator, here is where you can explore and accept offers. ',
@@ -322,7 +322,7 @@ const translation = {
     accept: 'Accept',
     searchByDeploymentId: 'Search by deployment Id',
     alreadyAcceptedOffer: 'You have already accepted this offer',
-    offerInactive: 'This offer has mark as inactive',
+    offerInactive: 'This offer has been marked as inactive',
     acceptModal: {
       nonCriteriaData: 'There is no criteria data available',
       moveFromSummary: 'Move to the next step to check you meet the criteria for this offer.',

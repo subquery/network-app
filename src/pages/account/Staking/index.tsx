@@ -46,7 +46,11 @@ const Staking: FC = () => {
   }, [delegateToOthersByEra]);
 
   return renderAsyncArray(mergeAsync({ data: [], loading: false }, delegateToOthersByEra), {
-    loading: () => <Spinner></Spinner>,
+    loading: () => (
+      <div style={{ height: 777, flexShrink: 0 }}>
+        <Spinner></Spinner>
+      </div>
+    ),
     error: (e) => <Typography>{parseError(e)}</Typography>,
     empty: () => <></>,
     data: () => {

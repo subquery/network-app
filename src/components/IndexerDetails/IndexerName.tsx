@@ -5,10 +5,12 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Typography } from '@subql/components';
-import { idleCallback } from '@utils/idleCallback';
-import { limitContract } from '@utils/limitation';
+import { IndexerMetadata } from '@subql/network-clients';
+import { limitContract, limitQueue } from '@utils/limitation';
 import { message } from 'antd';
 import { toSvg } from 'jdenticon';
+
+import { IndexerDetails } from 'src/models';
 
 import { useIndexerMetadata } from '../../hooks';
 import { useWeb3Name } from '../../hooks/useSpaceId';
@@ -18,6 +20,7 @@ import IPFSImage from '../IPFSImage';
 import styles from './IndexerDetails.module.less';
 
 type Props = {
+  theme?: 'light' | 'dark';
   size?: 'tiny' | 'normal' | 'large';
   name?: string;
   image?: string;
@@ -40,6 +43,7 @@ export const IndexerName: React.FC<Props> = ({
   address,
   fullAddress,
   size = 'normal',
+  theme = 'light',
   onClick,
   onAddressClick,
 }) => {
@@ -64,7 +68,7 @@ export const IndexerName: React.FC<Props> = ({
       return;
     }
 
-    idleCallback(fetchWeb3);
+    limitQueue.add(() => fetchWeb3());
   }, [fetchWeb3NameFromCache]);
 
   useEffect(() => {
@@ -115,7 +119,7 @@ export const IndexerName: React.FC<Props> = ({
               <Typography
                 variant={size === 'large' ? 'medium' : 'small'}
                 className={`${styles.address} ${onAddressClick && styles.onHoverAddress}`}
-                style={{ cursor: 'copy' }}
+                style={{ cursor: 'copy', color: theme === 'dark' ? 'var(--sq-gray400)' : 'var(--sq-gray700)' }}
               >
                 {fullAddress ? address : truncateAddress(address)}
               </Typography>
@@ -136,15 +140,26 @@ export const ConnectedIndexer: React.FC<{
   onAddressClick?: (id: string) => void;
   onClick?: (address: string) => void;
   clickToProfile?: boolean;
-}> = ({ id, account, size = 'normal', clickToProfile, onAddressClick, onClick }) => {
-  const { indexerMetadata, loading } = useIndexerMetadata(id);
+  metadata?: IndexerMetadata | IndexerDetails;
+}> = ({ id, account, size = 'normal', clickToProfile, onAddressClick, onClick, metadata }) => {
+  const { indexerMetadata, loading } = useIndexerMetadata(id, {
+    immediate: metadata ? false : true,
+  });
   const navigate = useNavigate();
+
+  const name = useMemo(() => {
+    return indexerMetadata?.name || metadata?.name;
+  }, [indexerMetadata, metadata]);
+
+  const image = useMemo(() => {
+    return indexerMetadata?.image || metadata?.image;
+  }, [indexerMetadata, metadata]);
 
   return (
     <IndexerName
       size={size}
-      name={loading ? undefined : id === account ? 'You' : indexerMetadata?.name}
-      image={indexerMetadata?.image}
+      name={loading ? undefined : id === account ? 'You' : name}
+      image={image}
       address={id}
       onAddressClick={onAddressClick}
       onClick={

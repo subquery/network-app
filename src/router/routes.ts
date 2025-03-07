@@ -126,11 +126,11 @@ export const ROUTES = {
 };
 
 export const URLS = {
-  HOW_TO_INDEX_PROJECTS: 'https://academy.subquery.network/subquery_network/kepler/indexers/index-project.html',
-  INDEXER: 'https://academy.subquery.network/subquery_network/kepler/indexers/become-an-indexer.html',
-  PLANS_OFFERS: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#plans-offers',
+  HOW_TO_INDEX_PROJECTS: 'https://academy.subquery.network/subquery_network/node_operators/indexers/index-project.html',
+  INDEXER: 'https://academy.subquery.network/subquery_network/node_operators/setup/becoming-a-node-operator.html',
+  PLANS_OFFERS: 'https://academy.subquery.network/subquery_network/node_operators/plans.html',
   DELEGATOR: 'https://academy.subquery.network/subquery_network/delegators/introduction.html',
-  OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/kepler/welcome.html#offer-marketplace',
+  OFFER_MARKETPLACE: 'https://academy.subquery.network/subquery_network/node_operators/plans.html',
 };
 
 export type BasicRouteType = {

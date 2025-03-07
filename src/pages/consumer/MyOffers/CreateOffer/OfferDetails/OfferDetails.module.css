@@ -31,7 +31,7 @@
 }
 
 .cancelWarning {
-  background: var(--gray200);
+  background: var(--sq-gray200);
   border-radius: 6px;
   padding: 1.6rem;
   margin: 1rem 0;

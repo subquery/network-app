@@ -7,6 +7,9 @@ import { useTranslation } from 'react-i18next';
 import { BsInfoCircle } from 'react-icons/bs';
 import { IoWarning } from 'react-icons/io5';
 import { Navigate, Route, Routes, useMatch, useNavigate } from 'react-router';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { TabButtons } from '@components/TabButton';
+import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
 import { useAsyncMemo, useRouteQuery } from '@hooks';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
@@ -18,7 +21,6 @@ import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
-import { AppPageHeader, TabButtons, WalletRoute } from '../../../components';
 import { useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
@@ -46,7 +48,7 @@ const BalanceCards = () => {
   );
   const [billBalance] = useMemo(() => billingBalanceData ?? [], [billingBalanceData]);
 
-  const { getChannelSpent, getSpentInfo } = useConsumerHostServices({
+  const { getChannelSpent, getUserQueriesAggregation } = useConsumerHostServices({
     autoLogin: false,
   });
 
@@ -59,12 +61,13 @@ const BalanceCards = () => {
   }, [account]);
 
   const spentInfo = useAsyncMemo(async () => {
-    const res = await getSpentInfo({
-      account: account || '',
+    const res = await getUserQueriesAggregation({
+      user_list: [account?.toLowerCase() || ''],
       start: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: dayjs().format('YYYY-MM-DD'),
     });
 
-    return res.data;
+    return res.data?.[0];
   }, [account]);
 
   const minDeposit = useMemo(() => {
@@ -124,7 +127,7 @@ const BalanceCards = () => {
           titleExtra={
             <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
               {loadingBillingBalance ? (
-                <div style={{ marginRight: 8 }}>
+                <div style={{ marginRight: 8, lineHeight: '36px' }}>
                   <Spinner size={12}></Spinner>
                 </div>
               ) : (
@@ -190,12 +193,12 @@ const BalanceCards = () => {
           titleExtra={
             <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 16 }}>
               {spentInfo.loading ? (
-                <div style={{ marginRight: 8 }}>
+                <div style={{ marginRight: 8, lineHeight: '36px' }}>
                   <Spinner size={12}></Spinner>
                 </div>
               ) : (
                 <Typography variant="h5" weight={500} style={{ color: 'var(--sq-blue600)', marginRight: 8 }}>
-                  {formatNumberWithLocale(formatSQT(spentInfo.data?.total?.toString() || '0'))}
+                  {formatNumberWithLocale(formatSQT(spentInfo.data?.info?.total?.toString() || '0'))}
                 </Typography>
               )}
               {TOKEN}
@@ -204,7 +207,23 @@ const BalanceCards = () => {
           style={{
             width: 360,
           }}
-        ></SubqlCard>
+        >
+          <div className="col-flex">
+            <div className="flex-center">
+              <Typography variant="small" type="secondary">
+                Today
+              </Typography>
+              <span style={{ flex: 1 }}></span>
+              {spentInfo.loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <Typography variant="small" type="secondary">
+                  {formatNumberWithLocale(formatEther(spentInfo.data?.info.today, 4))} {TOKEN}
+                </Typography>
+              )}
+            </div>
+          </div>
+        </SubqlCard>
       </div>
     </div>
   );

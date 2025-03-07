@@ -14,9 +14,9 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Modal, openNotification, Spinner, Steps, Tag, Typography } from '@subql/components';
-import { formatSQT, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
+import { useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
-import { formatNumber } from '@utils/numberFormatters';
+import { formatNumber, formatSQT } from '@utils/numberFormatters';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
@@ -33,9 +33,17 @@ interface IProps {
   actionBtn?: React.ReactNode;
   onSuccess?: () => void;
   initAddOrRemove?: 'add' | 'remove';
+  initialOpen?: boolean;
 }
 
-const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRemove = 'add', onSuccess }) => {
+const DoBooster: FC<IProps> = ({
+  projectId,
+  deploymentId,
+  actionBtn,
+  initialOpen = false,
+  initAddOrRemove = 'add',
+  onSuccess,
+}) => {
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
@@ -55,7 +63,7 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
     fetchPolicy: 'network-only',
   });
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [loading, setLoading] = useState(false);
   const [addOrRemove, setAddOrRemove] = useState<'add' | 'remove'>(initAddOrRemove);
 
@@ -100,11 +108,26 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
       openNotification({
         type: 'success',
         title: 'Boost completed successfully',
-        description: `Boost amount: ${formatSQT(
-          BigNumberJs(existingBoostByConsumer)
-            .plus(addOrRemove === 'add' ? BigNumberJs(submitVal) : BigNumberJs(submitVal).negated())
-            .toString(),
-        )} SQT`,
+        // @ts-ignore
+        description: (
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography>
+              {`Boost amount: ${formatSQT(
+                BigNumberJs(existingBoostByConsumer)
+                  .plus(addOrRemove === 'add' ? BigNumberJs(submitVal) : BigNumberJs(submitVal).negated())
+                  .toString(),
+              )} SQT`}
+            </Typography>
+
+            <Typography>
+              You can view your detailed boosts in{' '}
+              <Typography.Link type="info" href="/consumer/boosted-projects">
+                My Boosts
+              </Typography.Link>{' '}
+              under Consumer
+            </Typography>
+          </div>
+        ),
         duration: 5,
       });
       onSuccess?.();
@@ -174,7 +197,23 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                 },
               ]}
             ></Steps>
-
+            <div
+              style={{
+                marginTop: 24,
+              }}
+            >
+              <Typography variant="medium">
+                Boosting generates Query Rewards allowing you to make free queries to this project. Boosting also
+                encourages more Node Operators to join by directing a higher ratio of Allocation Rewards to this
+                project, enhancing performance and resilience.
+              </Typography>
+              <br></br>
+              <br></br>
+              <Typography variant="medium">
+                Boosting differs from Delegating in that it promotes the overall health of the project, while Delegating
+                supports individual Node Operators
+              </Typography>
+            </div>
             <div className="flex" style={{ marginTop: 24 }}>
               <IPFSImage
                 src={project.data?.metadata.image || '/static/default.project.png'}
@@ -292,7 +331,9 @@ const DoBooster: FC<IProps> = ({ projectId, deploymentId, actionBtn, initAddOrRe
                     {balance.result.loading ? (
                       <Spinner size={10}></Spinner>
                     ) : (
-                      formatSQT(balance.result.data?.toString() || '0')
+                      <Tooltip title={formatSQT(balance.result.data?.toString() || '0', { fixedNum: 18 })}>
+                        {formatSQT(balance.result.data?.toString() || '0', { fixedNum: 2 })}
+                      </Tooltip>
                     )}{' '}
                     {TOKEN}
                   </Typography>

@@ -3,6 +3,8 @@
   border: 1px solid;
   padding: 2px 8px;
   display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .container-blue {

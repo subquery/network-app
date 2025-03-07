@@ -7,6 +7,7 @@ import { usePropsValue } from '@hooks/usePropsValue';
 import { Spinner, Typography } from '@subql/components';
 import { formatNumber } from '@utils/numberFormatters';
 import { Radio } from 'antd';
+import { clsx } from 'clsx';
 import dayjs from 'dayjs';
 import { LineChart } from 'echarts/charts';
 import { GridComponent, TitleComponent, TooltipComponent } from 'echarts/components';
@@ -29,17 +30,20 @@ interface IProps {
     rawData: dayjs.Dayjs[];
     renderData: string[];
   };
+  theme?: 'light' | 'dark';
   onChange?: (newFilter: FilterType) => void;
   onTriggerTooltip?: (index: number, date: dayjs.Dayjs) => string;
   onChangeDateRange?: (dateType: DateRangeType) => void;
   title?: string;
+  customColors?: string[];
 }
 
 echarts.use([LineChart, GridComponent, TitleComponent, TooltipComponent, SVGRenderer]);
 const colors = ['rgba(67, 136, 221, 0.70)', 'rgba(67, 136, 221, 0.30)'];
 
-export const xAxisScalesFunc = (eraPeriod = 86400) => {
-  const currentDate = dayjs();
+export const xAxisScalesFunc = (eraPeriod = 86400, lastEraDate = new Date()) => {
+  const currentDate = dayjs(lastEraDate);
+
   const intervalPeriod = eraPeriod < 86400 ? 86400 : eraPeriod;
   const getAxisScales = (dateCount: number) => {
     return new Array(Math.ceil((dateCount * 86400) / intervalPeriod))
@@ -66,8 +70,10 @@ const LineCharts: FC<IProps> = ({
   style,
   chartData,
   dataDimensionsName,
+  theme = 'light',
   onChangeDateRange,
   onTriggerTooltip,
+  customColors,
 }) => {
   const { currentEra } = useEra();
   const [filter, setFilter] = usePropsValue({
@@ -82,7 +88,7 @@ const LineCharts: FC<IProps> = ({
     if (xAxisScales.renderData.length) return xAxisScales;
     if (!currentEra.data?.period) return;
 
-    const getAxisScales = xAxisScalesFunc(currentEra.data.period);
+    const getAxisScales = xAxisScalesFunc(currentEra.data.period, currentEra.data.startTime);
 
     const scales = getAxisScales[filter.date]();
 
@@ -100,16 +106,16 @@ const LineCharts: FC<IProps> = ({
         type: 'line',
         stack: 'total',
         showSymbol: false,
-        color: colors[index],
+        color: (customColors || colors)[index],
         areaStyle: {
-          color: colors[index],
+          color: (customColors || colors)[index],
         },
       };
     });
-  }, [chartData, xAxisScalesInner]);
+  }, [chartData, xAxisScalesInner, customColors]);
 
   return (
-    <div className={styles.lineCharts} style={style}>
+    <div className={clsx(styles.lineCharts, theme === 'dark' ? styles.dark : '')} style={style}>
       <div className={styles.headers}>
         {title && (
           <Typography variant="large" weight={600}>
@@ -118,6 +124,7 @@ const LineCharts: FC<IProps> = ({
         )}
         <span style={{ flex: 1 }}></span>
         <Radio.Group
+          className="chartRadio"
           options={[
             { label: 'Last Month', value: 'lm' },
             { label: 'Last 3 Month', value: 'l3m' },
@@ -140,8 +147,18 @@ const LineCharts: FC<IProps> = ({
           {dataDimensionsName.map((name, index) => {
             return (
               <div className="flex" style={{ marginRight: 16 }} key={`${name}-${index}`}>
-                <div style={{ height: 10, width: 10, borderRadius: '50%', background: colors[index], flexShrink: 0 }} />
-                <Typography style={{ marginLeft: 8, color: 'var(--sq-gray600)' }}>{name}</Typography>
+                <div
+                  style={{
+                    height: 10,
+                    width: 10,
+                    borderRadius: '50%',
+                    background: (customColors || colors)[index],
+                    flexShrink: 0,
+                  }}
+                />
+                <Typography style={{ marginLeft: 8, color: theme === 'dark' ? '#fff' : 'var(--sq-gray600)' }}>
+                  {name}
+                </Typography>
               </div>
             );
           })}
@@ -176,6 +193,9 @@ const LineCharts: FC<IProps> = ({
               type: 'value',
               axisLabel: {
                 formatter: (val: number) => formatNumber(val),
+              },
+              splitLine: {
+                lineStyle: theme === 'light' ? { color: '#fff' } : { color: 'var(--dark-mode-border)' },
               },
             },
             tooltip: {

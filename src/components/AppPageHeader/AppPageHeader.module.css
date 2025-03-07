@@ -1,5 +1,6 @@
 .text {
   color: var(--gray900);
+  line-height: 68px;
 }
 
 .header {
@@ -16,7 +17,7 @@
 .desc {
   display: flex;
   flex-direction: row;
-  gap: 1em;
+  gap: 8px;
 }
 
 .icon {

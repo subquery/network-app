@@ -14,6 +14,7 @@ interface GetDeploymentProgress {
 
 export type Metadata = {
   chain: string;
+  dbSize: number;
   genesisHash: string;
   indexerHealthy: boolean;
   indexerNodeVersion: string; // Semver

@@ -14,38 +14,6 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
   const { getQuery } = useProjectRegistry();
   const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
-  const { contracts } = useWeb3Store();
-
-  // Used to rerun async memo
-  const [cacheBreak, setCacheBreak] = useState<number>(0);
-
-  const sub = useCallback(async () => {
-    if (!contracts || !id) {
-      return () => undefined;
-    }
-
-    const listener = (owner: string, queryId: unknown) => {
-      setCacheBreak((val) => val + 1);
-    };
-    const deploymentFilter = contracts?.projectRegistry.filters.ProjectDeploymentUpdated(null, id);
-    const metadataFilter = contracts?.projectRegistry.filters.ProjectMetadataUpdated(null, id);
-
-    contracts.projectRegistry.on(deploymentFilter, listener);
-    contracts.projectRegistry.on(metadataFilter, listener);
-
-    return () => {
-      contracts.projectRegistry.off(deploymentFilter, listener);
-      contracts.projectRegistry.off(metadataFilter, listener);
-    };
-  }, [contracts, id]);
-
-  useEffect(() => {
-    const pendingUnsub = sub();
-
-    return () => {
-      pendingUnsub.then((unsub) => unsub());
-    };
-  }, [sub]);
 
   return useAsyncMemo(async () => {
     if (!id) {
@@ -53,6 +21,7 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     }
 
     const query = await getQuery(id);
+    console.warn(query);
     if (!query) {
       return undefined;
     }
@@ -66,5 +35,5 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
       deploymentId: query.deployment,
       type: query.type,
     };
-  }, [id, catSingle, getMetadataFromCid, getQuery, cacheBreak]);
+  }, [id, catSingle, getMetadataFromCid, getQuery]);
 }

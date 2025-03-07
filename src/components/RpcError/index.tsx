@@ -28,7 +28,7 @@ const RpcError: FC<IProps> = (props) => {
         Oops! RPC Service Unavailable
       </Typography>
       <Typography type="secondary" style={{ textAlign: 'center' }}>
-        It looks like the RPC service is temporarily unavaiable
+        It looks like the RPC service is temporarily unavailable
         {tryAgain ? (
           <>
             <span>, please</span>
@@ -37,11 +37,11 @@ const RpcError: FC<IProps> = (props) => {
               try again
             </span>
             <span> or let us know in </span>
-            <a href="https://discord.com/invite/subquery">
+            <Typography.Link href="https://discord.com/invite/subquery">
               <span style={{ textDecoration: 'underline', cursor: 'pointer', color: 'var(--sq-gray600)' }}>
                 Discord.
               </span>
-            </a>
+            </Typography.Link>
           </>
         ) : (
           ''

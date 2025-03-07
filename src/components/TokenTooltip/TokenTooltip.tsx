@@ -42,7 +42,7 @@ const TokenTooltip: FC<IProps> = (props) => {
             Base, you’ll need to bridge them across.
           </Typography>
 
-          <a
+          <Typography.Link
             href={BRIDGE_URL}
             target="_blank"
             rel="noreferrer"
@@ -56,7 +56,7 @@ const TokenTooltip: FC<IProps> = (props) => {
               Bridge Tokens
               <BsBoxArrowInUpRight />
             </Button>
-          </a>
+          </Typography.Link>
         </div>
       }
     >

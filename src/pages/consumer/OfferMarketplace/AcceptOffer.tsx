@@ -3,7 +3,10 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { DeploymentInfo } from '@components/DeploymentInfo';
+import { ApproveContract } from '@components/ModalApproveToken';
 import { StepButtons } from '@components/StepButton';
+import { SummaryList } from '@components/SummaryList';
 import { useIndexerMetadata, useProject } from '@hooks';
 import { openNotification, Spinner } from '@subql/components';
 import { IndexerDeploymentFieldsFragment, OfferFieldsFragment } from '@subql/network-query';
@@ -15,7 +18,6 @@ import { ContractReceipt } from 'ethers';
 
 import { useWeb3Store } from 'src/stores';
 
-import { ApproveContract, DeploymentInfo, SummaryList } from '../../../components';
 import TransactionModal from '../../../components/TransactionModal';
 import { useWeb3 } from '../../../containers';
 import {

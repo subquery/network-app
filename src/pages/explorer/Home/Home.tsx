@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteQuery } from '@hooks';
 import { useProjectList } from '@hooks/useProjectList';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 
@@ -21,7 +20,7 @@ export const Header: React.FC = () => {
         {t('explorer.home.header')}
       </Typography>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography className={styles.typographySecondary} type="secondary">
+        <Typography className={styles.typographySecondary} type="secondary" style={{ textAlign: 'center' }}>
           {t('explorer.home.headerDesc')}
         </Typography>
       </div>
@@ -39,7 +38,6 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       <div className={styles.explorer}>
         <Header />
         {listsWithSearch}

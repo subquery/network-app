@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import WarningOutlined from '@ant-design/icons/WarningOutlined';
+import { DeploymentStatus } from '@hooks';
 
 import styles from './Status.module.css';
 
@@ -18,6 +20,7 @@ export const deploymentStatus: { [key: string]: StatusColor } = {
   READY: StatusColor.green,
   NOTINDEXING: StatusColor.gray,
   TERMINATED: StatusColor.red,
+  [DeploymentStatus.Unhealthy]: StatusColor.red,
 };
 
 type Props = {
@@ -28,6 +31,7 @@ type Props = {
 const Status: React.FC<Props> = ({ text, color = 'gray' }) => {
   return (
     <div className={[styles.container, styles[`container-${color}`]].join(' ')}>
+      {text === DeploymentStatus.Unhealthy ? <WarningOutlined style={{ color: color }} /> : null}
       <p className={[styles.text, styles[`text-${color}`]].join(' ')}>{text}</p>
     </div>
   );

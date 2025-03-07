@@ -4,13 +4,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { TableText } from '@components';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
 import { useIsMobile } from '@hooks/useIsMobile';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Spinner, Typography } from '@subql/components';
+import { Spinner, TableText, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
 import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
@@ -25,13 +24,13 @@ import styles from './Rewards.module.css';
 
 export const Rewards: React.FC = () => {
   const { address: account } = useAccount();
-
   const update = useUpdate();
   const filterParams = { address: account || '' };
   const isMobile = useIsMobile();
   // if more than 100 delegations, need claim twice.
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [mounted, setMounted] = React.useState(false);
   const queryParams = React.useRef({
     offset: 0,
     pageSize: 10,
@@ -111,15 +110,20 @@ export const Rewards: React.FC = () => {
   ];
 
   const fetchIndexerEraRewards = async () => {
-    const res = await fetchIndexerEraRewardsApi({
-      variables: queryParams.current,
-      fetchPolicy: 'network-only',
-    });
-    queryParams.current = {
-      ...queryParams.current,
-      totalCount: res.data?.eraRewards?.totalCount || 0,
-    };
-    update();
+    try {
+      setLoading(true);
+      const res = await fetchIndexerEraRewardsApi({
+        variables: queryParams.current,
+        fetchPolicy: 'network-only',
+      });
+      queryParams.current = {
+        ...queryParams.current,
+        totalCount: res.data?.eraRewards?.totalCount || 0,
+      };
+      update();
+    } finally {
+      setLoading(false);
+    }
   };
 
   React.useEffect(() => {
@@ -131,10 +135,9 @@ export const Rewards: React.FC = () => {
 
   useMount(async () => {
     try {
-      setLoading(true);
-      fetchIndexerEraRewards();
+      await fetchIndexerEraRewards();
     } finally {
-      setLoading(false);
+      setMounted(true);
     }
   });
 
@@ -144,20 +147,34 @@ export const Rewards: React.FC = () => {
         {renderAsync(
           {
             ...indexerEraRewards,
-            loading,
+            loading: !mounted ? loading : false,
+            data: indexerEraRewards.data || indexerEraRewards.previousData,
           },
           {
             error: (error) => <Typography>{`Failed to get pending rewards: ${error.message}`}</Typography>,
-            loading: () => <Spinner />,
+
+            loading: () => (
+              <div style={{ height: 777, flexShrink: 0 }}>
+                <Spinner />
+              </div>
+            ),
             data: (data) => {
               const filterEmptyData = data.eraRewards?.nodes.filter(notEmpty);
 
               return (
-                <>
+                <div
+                  className="col-flex"
+                  style={{
+                    minHeight: 777,
+                    gap: 8,
+                  }}
+                >
                   <div className={isMobile ? 'col-flex' : 'flex'} style={{ gap: 24 }}>
                     <div className="flex" style={{ alignItems: 'flex-start' }}>
-                      <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8 }} />
-                      <Typography type="secondary">{t('rewards.info')}</Typography>
+                      <InfoCircleOutlined style={{ fontSize: 14, color: '#3AA0FF', marginRight: 8, marginTop: 10 }} />
+                      <Typography type="secondary" style={{ lineHeight: '36px' }}>
+                        {t('rewards.info')}
+                      </Typography>
                     </div>
                     <span style={{ flex: 1 }}></span>
                     {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers ? (
@@ -205,7 +222,7 @@ export const Rewards: React.FC = () => {
                       },
                     }}
                   />
-                </>
+                </div>
               );
             },
           },

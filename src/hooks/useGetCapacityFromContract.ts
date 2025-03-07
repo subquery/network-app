@@ -1,46 +1,57 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useMemo } from 'react';
-import { useAsyncMemo, useGetIndexerQuery } from '@subql/react-hooks';
+import { useEffect, useMemo } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
+import { IndexerFieldsFragment } from '@subql/network-query';
+import { useAsyncMemo, useGetIndexerLazyQuery } from '@subql/react-hooks';
 import { BigNumber } from 'ethers';
-
-import { useWeb3Store } from 'src/stores';
 
 import { limitContract, makeCacheKey } from '../utils/limitation';
 import { useEra } from './useEra';
 import { parseRawEraValue } from './useEraValue';
 
-export const useGetCapacityFromContract = (account?: string) => {
-  const { contracts } = useWeb3Store();
+export const useGetCapacityFromContract = (account?: string, indexerInfo?: IndexerFieldsFragment | null) => {
+  // const { contracts } = useWeb3Store();
   const { currentEra } = useEra();
-
+  const [fetchIndexerLeverageLimit] = useLazyQuery<{ cach: { value: string } }>(gql`
+    query {
+      cach(id: "indexerLeverageLimit") {
+        value
+      }
+    }
+  `);
   const currentLeverageLimit = useAsyncMemo(async () => {
-    if (!contracts) return 12;
     const leverageLimit = await limitContract(
-      () => contracts.staking.indexerLeverageLimit(),
+      () => fetchIndexerLeverageLimit(),
       makeCacheKey('indexerLeverageLimit'),
       0,
     );
 
-    return leverageLimit;
+    if (!leverageLimit.data) return 12;
+
+    return leverageLimit.data?.cach.value;
   }, []);
 
-  const indexerData = useGetIndexerQuery({
+  const [fetchIndexerData, indexerDataLazy] = useGetIndexerLazyQuery({
     variables: {
       address: account || '',
     },
   });
 
-  const sortedTotalStake = useMemo(() => {
-    if (!indexerData.data?.indexer?.totalStake) return { current: BigNumber.from(0), after: BigNumber.from(0) };
-    return parseRawEraValue(indexerData.data?.indexer?.totalStake, currentEra.data?.index);
-  }, [indexerData.data?.indexer?.totalStake, currentEra]);
-  const sortedOwnStake = useMemo(() => {
-    if (!indexerData.data?.indexer?.selfStake) return { current: BigNumber.from(0), after: BigNumber.from(0) };
+  const indexerData = useMemo(() => {
+    return indexerInfo || indexerDataLazy.data?.indexer;
+  }, [indexerDataLazy, indexerInfo]);
 
-    return parseRawEraValue(indexerData.data?.indexer?.selfStake, currentEra.data?.index);
-  }, [indexerData.data?.indexer?.selfStake, currentEra]);
+  const sortedTotalStake = useMemo(() => {
+    if (!indexerData?.totalStake) return { current: BigNumber.from(0), after: BigNumber.from(0) };
+    return parseRawEraValue(indexerData?.totalStake, currentEra.data?.index);
+  }, [indexerData?.totalStake, currentEra]);
+  const sortedOwnStake = useMemo(() => {
+    if (!indexerData?.selfStake) return { current: BigNumber.from(0), after: BigNumber.from(0) };
+
+    return parseRawEraValue(indexerData?.selfStake, currentEra.data?.index);
+  }, [indexerData?.selfStake, currentEra]);
 
   const capacity = useMemo(() => {
     return {
@@ -54,9 +65,15 @@ export const useGetCapacityFromContract = (account?: string) => {
     };
   }, [sortedOwnStake, sortedTotalStake, currentLeverageLimit]);
 
+  useEffect(() => {
+    if (!indexerInfo) {
+      fetchIndexerData();
+    }
+  }, [indexerInfo]);
+
   return {
-    loading: currentLeverageLimit.loading || indexerData.loading,
+    loading: currentLeverageLimit.loading || indexerDataLazy.loading,
     data: capacity,
-    error: currentLeverageLimit.error || indexerData.error,
+    error: currentLeverageLimit.error || indexerDataLazy.error,
   };
 };

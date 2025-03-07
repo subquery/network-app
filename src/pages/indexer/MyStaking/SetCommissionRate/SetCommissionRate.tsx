@@ -4,36 +4,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { OutlineDot } from '@components/Icons/Icons';
-import { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
+import TransactionModal, { TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Spinner, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Spinner, Typography } from '@subql/components';
 import { Button, Dropdown } from 'antd';
 import assert from 'assert';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '../../../../components';
-import TransactionModal from '../../../../components/TransactionModal';
 import { useWeb3 } from '../../../../containers';
 import { COMMISSION_DIV_UNIT, useCommissionRate } from '../../../../hooks/useCommissionRate';
 import { useRewardCollectStatus } from '../../../../hooks/useRewardCollectStatus';
 import { mergeAsync, renderAsyncArray } from '../../../../utils';
-
-const getModalText = (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
-  if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
-
-  return {
-    title: t('indexer.updateCommissionRate'),
-    steps: [t('indexer.setNewCommissionRate'), t('indexer.confirmOnMetamask')],
-    description: t('indexer.newRateValidNext2Era'),
-    inputTitle: t('indexer.enterCommissionRate'),
-    inputBottomText: `${t('indexer.currentRate')}: ${commissionRate ?? 0}%`,
-    submitText: t('indexer.confirmRate'),
-    failureText: `Sorry, the commission update operation has failed.`,
-  };
-};
 
 export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const { contracts } = useWeb3Store();
@@ -42,9 +28,36 @@ export const SetCommissionRate: React.FC<{ onSuccess: () => void }> = ({ onSucce
   const modalRef = React.useRef<TransactionModalRef>(null);
   const { minCommission } = useMinCommissionRate();
   const waitTransactionHandled = useWaitTransactionhandled();
+  const chatBoxStore = useChatBoxStore();
 
   const rewardClaimStatus = useRewardCollectStatus(account || '');
   const commissionRate = useCommissionRate(account);
+
+  const getModalText = React.useCallback(
+    (requireClaimIndexerRewards = false, commissionRate: string | undefined, t: TFunction) => {
+      if (requireClaimIndexerRewards) return claimIndexerRewardsModalText;
+      return {
+        title: t('indexer.updateCommissionRate'),
+        steps: [t('indexer.setNewCommissionRate'), t('indexer.confirmOnMetamask')],
+        description: (
+          <div className="col-flex">
+            {t('indexer.newRateValidNext2Era')}
+            <ChatBoxPlanTextTrigger
+              triggerMsg="What commission rate should I set?"
+              chatBoxInstance={chatBoxStore.chatBoxRef}
+            >
+              What commission rate should I set?
+            </ChatBoxPlanTextTrigger>
+          </div>
+        ),
+        inputTitle: t('indexer.enterCommissionRate'),
+        inputBottomText: `${t('indexer.currentRate')}: ${commissionRate ?? 0}%`,
+        submitText: t('indexer.confirmRate'),
+        failureText: `Sorry, the commission update operation has failed.`,
+      };
+    },
+    [chatBoxStore],
+  );
 
   const handleClick = async (amount: string) => {
     assert(contracts, 'Contracts not available');

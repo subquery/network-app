@@ -62,8 +62,11 @@ export const StakeAndDelegationLineChart = (props: {
 
   const stakeLineXScales = useMemo(() => {
     const getLatestXScales = (period: number, filterVal: FilterType) => {
-      const defaultXScalesFunc = xAxisScalesFunc(period)[filterVal.date];
-      const futureEraEndTime = (period || 0) < 86400 ? dayjs().add(1, 'day') : dayjs().add(period || 0, 'seconds');
+      const defaultXScalesFunc = xAxisScalesFunc(period, currentEra.data?.estEndTime)[filterVal.date];
+      const futureEraEndTime =
+        (period || 0) < 86400
+          ? dayjs(currentEra.data?.estEndTime).add(1, 'day')
+          : dayjs(currentEra.data?.estEndTime).add(period || 0, 'seconds');
       return [...defaultXScalesFunc(), futureEraEndTime];
     };
 
@@ -240,7 +243,7 @@ export const StakeAndDelegationLineChart = (props: {
           }
         : { ...stakeAndDelegation, loading: stakeAndDelegation.previousData ? false : stakeAndDelegation.loading },
       // it doesn't matter, don't use the data.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @typescript-eslint/ban-ts-comment
       // @ts-ignore
       showDelegatedToOthers
         ? { ...delegateToOthers, loading: delegateToOthers.previousData ? false : delegateToOthers.loading }
@@ -280,16 +283,16 @@ export const StakeAndDelegationLineChart = (props: {
           <div class="flex-between" style="margin: 8px 0;">
             <span style="font-size:12px;">${dataDimensionsName[0]}</span>
             <span style="font-size:12px;">${formatNumber(rawFetchedData.one[index])} ${TOKEN} (${toPercentage(
-                rawFetchedData.one[index],
-                rawFetchedData.total[index],
-              )})</span>
+              rawFetchedData.one[index],
+              rawFetchedData.total[index],
+            )})</span>
           </div>
           <div class="flex-between">
           <span style="font-size:12px;">${dataDimensionsName[1]}</span>
           <span style="font-size:12px;">${formatNumber(rawFetchedData.two[index])} ${TOKEN} (${toPercentage(
-                rawFetchedData.two[index],
-                rawFetchedData.total[index],
-              )})</span>
+            rawFetchedData.two[index],
+            rawFetchedData.total[index],
+          )})</span>
         </div>
         </div>`;
             }}

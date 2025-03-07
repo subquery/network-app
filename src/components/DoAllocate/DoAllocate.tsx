@@ -12,7 +12,7 @@ import { useDeploymentMetadata, useProjectFromQuery } from '@hooks';
 import { useAsyncMemoWithLazy } from '@hooks/useAsyncMemo';
 import { useEthersProviderWithPublic } from '@hooks/useEthersProvider';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
-import { Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Modal, openNotification, Steps, Tag, Typography } from '@subql/components';
 import { cidToBytes32 } from '@subql/network-clients';
 import { SQNetworks } from '@subql/network-config';
 import { ProjectType } from '@subql/network-query';
@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { formatSQT } from '../../utils/numberFormatters';
 import { formatNumber } from '../../utils/numberFormatters';
@@ -44,6 +45,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
   const { data: deploymentMetadata } = useDeploymentMetadata(deploymentId);
   const [getAllocatedStake, allocatedStake] = useGetIndexerAllocationSummaryLazyQuery();
   const provider = useEthersProviderWithPublic();
+  const chatBoxStore = useChatBoxStore();
 
   const [form] = useForm();
   const formAllocateVal = useWatch('allocateVal', form);
@@ -348,6 +350,12 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 },
               ]}
             >
+              <ChatBoxPlanTextTrigger
+                triggerMsg={`How much SQT should I allocated to deployment ${deploymentId}?`}
+                chatBoxInstance={chatBoxStore.chatBoxRef}
+              >
+                How should I allocate my SQT to this project deployment?
+              </ChatBoxPlanTextTrigger>
               <NumberInput
                 description=""
                 maxAmount={addOrRemove === 'Add' ? avaibleStakeAmount : currentAllocatedTokensOfThisDeployment}
@@ -374,7 +382,7 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
               </Typography>
               <span style={{ flex: 1 }}></span>
               <Tooltip title={currentAllocatedTokensOfThisDeployment}>
-                <Typography variant="medium">
+                <Typography variant="medium" style={{ flexShrink: 0 }}>
                   {formatNumber(currentAllocatedTokensOfThisDeployment)} {TOKEN}
                 </Typography>
               </Tooltip>
@@ -387,9 +395,11 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
                 </Typography>
               </div>
               <span style={{ flex: 1 }}></span>
-              <Typography variant="medium" style={{ overflowWrap: 'anywhere' }}>
-                {avaibleStakeAmount} {TOKEN}
-              </Typography>
+              <Tooltip title={BigNumber(avaibleStakeAmount).toFixed(18)}>
+                <Typography variant="medium" style={{ overflowWrap: 'anywhere' }}>
+                  {BigNumber(avaibleStakeAmount).toFixed(2)} {TOKEN}
+                </Typography>
+              </Tooltip>
             </div>
             <div className="flex">
               <Typography variant="medium" type="secondary">

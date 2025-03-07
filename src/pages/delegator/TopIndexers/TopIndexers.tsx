@@ -3,12 +3,12 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppPageHeader } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
 import { TOP_100_INDEXERS } from '@containers';
+import { Spinner } from '@subql/components';
 import { useGetTopIndexersQuery } from '@subql/react-hooks';
 import { Typography } from 'antd';
 
-import Spinner from '../../../components/Spinner/Spinner';
 import { renderAsync } from '../../../utils';
 import { TopIndexerList } from './TopIndexersList';
 

@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { BsArrowDownSquareFill, BsLifePreserver } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { WalletRoute } from '@components';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken } from '@containers';
 import { l1Chain, l2Chain } from '@containers/Web3';
 import { type CrossChainMessenger } from '@eth-optimism/sdk/src/cross-chain-messenger';
@@ -266,9 +266,9 @@ const BridgeInner: FC = () => {
           <Typography variant="medium" type="secondary">
             OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do not
             want to wait for the required 7 days, please consider a{' '}
-            <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
+            <Typography.Link href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
               third party bridge
-            </a>
+            </Typography.Link>
             .
           </Typography>
         </div>
@@ -306,6 +306,7 @@ const BridgeInner: FC = () => {
     const innerPendingActionStatus: { [key: string]: { status: MessageStatus; startTime?: number } } = {};
     for (const item of sortedWithdrawsRecord || []) {
       const status = await crossChainMessengerIns.getMessageStatus(item.txHash);
+
       innerPendingActionStatus[item.txHash] = { status };
       if (pendingActionStatus[item.txHash]?.startTime) {
         innerPendingActionStatus[item.txHash]['startTime'] = pendingActionStatus[item.txHash].startTime;
@@ -529,7 +530,7 @@ const BridgeInner: FC = () => {
               <BsLifePreserver />
               <div>
                 Need help? please message <span>#network-bridge-support on</span>
-                <a href="https://discord.com/invite/subquery"> Discord</a>
+                <Typography.Link href="https://discord.com/invite/subquery"> Discord</Typography.Link>
               </div>
             </Typography>
           </div>
@@ -599,9 +600,9 @@ const BridgeInner: FC = () => {
                 <Typography variant="medium" type="secondary" style={{ textAlign: 'center' }}>
                   OP stack and Base requires that any bridging to Ethereum requires a 7 day withdraw period. If you do
                   not want to wait for the required 7 days, please consider a{' '}
-                  <a href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
+                  <Typography.Link href="https://www.base.org/ecosystem?tag=bridge" target="_blank" rel="noreferrer">
                     third party bridge
-                  </a>
+                  </Typography.Link>
                   .
                 </Typography>
                 {Date.now() < 1710291600000 ? (
@@ -635,7 +636,7 @@ const BridgeInner: FC = () => {
                 <BsLifePreserver />
                 <div>
                   Need help? please message #network-bridge-support on
-                  <a href="https://discord.com/invite/subquery"> Discord</a>
+                  <Typography.Link href="https://discord.com/invite/subquery"> Discord</Typography.Link>
                 </div>
               </Typography>
             </div>

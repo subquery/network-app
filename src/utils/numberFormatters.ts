@@ -91,7 +91,11 @@ export function formatNumber(num: number | string, precision = 2) {
   }
 
   if (+num < 1) {
-    return (+num).toFixed(precision);
+    const result = (+num).toFixed(precision);
+    if (+result === 0 && +num !== 0) {
+      return `~${result}`;
+    }
+    return result;
   }
 
   return num;
@@ -108,4 +112,12 @@ export function formatNumberWithLocale(num: number | string | BigNumberJs | BigN
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
+}
+
+export function bytesToGb(bytes: number): string {
+  const gb = BigNumberJs(bytes / 1024 / 1024 / 1024);
+  if (gb.isNaN()) {
+    return '...';
+  }
+  return gb.toFixed(0);
 }

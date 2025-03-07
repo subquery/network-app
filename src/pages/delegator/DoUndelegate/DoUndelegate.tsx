@@ -7,7 +7,8 @@ import { BsExclamationCircle } from 'react-icons/bs';
 import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import { gql, useLazyQuery } from '@apollo/client';
-import { claimIndexerRewardsModalText, ModalClaimIndexerRewards, ModalInput } from '@components';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
+import { ModalInput } from '@components/ModalInput';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import TransactionModal from '@components/TransactionModal';
 import { useWeb3 } from '@containers';
@@ -46,6 +47,7 @@ interface DoUndelegateProps {
   variant?: 'button' | 'textBtn';
   initialUndelegateWay?: 'myWallet' | 'anotherIndexer';
   onSuccess?: () => void;
+  indexerActive?: boolean;
 }
 
 /**
@@ -59,14 +61,19 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
   onSuccess,
   variant = 'textBtn',
   showBtnIfDisabled = false,
+  indexerActive = true, // plan to optimise getIndexerLazy if provide
 }) => {
   const { account: connectedAccount } = useWeb3();
   const { t } = useTranslation();
+  const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress);
   const waitTransactionHandled = useWaitTransactionhandled();
   const lockPeriod = useLockPeriod();
-  const filterParams = { id: `${connectedAccount ?? ''}:${indexerAddress}` };
+  const filterParams = React.useMemo(
+    () => ({ id: `${connectedAccount ?? ''}:${indexerAddress}` }),
+    [connectedAccount, indexerAddress],
+  );
   const delegation = useGetDelegationQuery({ variables: filterParams, pollInterval: 10000 });
 
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
@@ -89,7 +96,6 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
       fetchPolicy: 'network-only',
     },
   );
-  const { currentEra } = useEra();
 
   const [undelegateWay, setUndelegateWay] = React.useState<'myWallet' | 'anotherIndexer'>(initialUndelegateWay);
 

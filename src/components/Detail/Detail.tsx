@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Typography } from '@subql/components';
 import { truncateDeploymentId } from '@utils';
+import { Tooltip } from 'antd';
 import { isString } from 'lodash-es';
 
 import Copy from '../Copy';
@@ -33,9 +34,9 @@ const Detail: React.FC<Props> = ({
   const renderValue = () => {
     if (href) {
       return (
-        <a href={href} className={styles.value} target="_blank" rel="noreferrer">
+        <Typography.Link href={href} className={styles.value} target="_blank" rel="noreferrer">
           {value ?? '-'}
-        </a>
+        </Typography.Link>
       );
     }
 
@@ -45,9 +46,11 @@ const Detail: React.FC<Props> = ({
 
     if (value) {
       return (
-        <Typography className={styles.value} variant="medium">
-          {isTruncate ? truncateDeploymentId(value) : value}
-        </Typography>
+        <Tooltip title={isTruncate ? value : ''}>
+          <Typography className={styles.value} variant="medium">
+            {isTruncate ? truncateDeploymentId(value) : value}
+          </Typography>
+        </Tooltip>
       );
     }
 

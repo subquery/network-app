@@ -1,18 +1,18 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
 import { getAuthReqHeader, parseError, POST } from '@utils';
-import { ConsumerHostMessageType, domain, EIP712Domain, withChainIdRequestBody } from '@utils/eip712';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
 import { Button } from 'antd';
 import axios, { AxiosResponse } from 'axios';
 import { BigNumberish } from 'ethers';
 import { isObject } from 'lodash-es';
-import { useSignTypedData } from 'wagmi';
+import { generateNonce, SiweMessage } from 'siwe';
+import { useChainId, useSignMessage } from 'wagmi';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_CONSUMER_HOST_ENDPOINT,
@@ -40,7 +40,9 @@ export const useConsumerHostServices = (
   { alert = false, autoLogin = true }: ConsumerHostServicesProps = { alert: false, autoLogin: true },
 ) => {
   const { address: account } = useAccount();
-  const { signTypedDataAsync } = useSignTypedData();
+  const chainId = useChainId();
+  const { signMessageAsync } = useSignMessage();
+
   const authHeaders = useRef<{ Authorization: string }>(
     getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || ''),
   );
@@ -50,31 +52,29 @@ export const useConsumerHostServices = (
   const requestConsumerHostToken = async (account: string) => {
     try {
       const tokenRequestUrl = `${import.meta.env.VITE_CONSUMER_HOST_ENDPOINT}/login`;
-      const timestamp = new Date().getTime();
 
-      const signMsg = {
-        consumer: account,
-        timestamp,
-      };
-
-      const eip721Signature = await signTypedDataAsync({
-        types: {
-          EIP712Domain,
-          messageType: ConsumerHostMessageType,
-        },
-        primaryType: 'messageType',
-        // TODO: FIX, it seems is wagmi bug.
-
-        // @ts-ignore
-        domain,
-        message: signMsg,
+      const newMsg = new SiweMessage({
+        domain: window.location.host,
+        address: account,
+        statement: `Login to SubQuery Network`,
+        uri: window.location.origin,
+        version: '1',
+        chainId,
+        nonce: generateNonce(),
       });
 
-      if (!eip721Signature) throw new Error();
+      const signature = await signMessageAsync({
+        message: newMsg.prepareMessage(),
+      });
+
+      if (!signature) throw new Error();
 
       const { response, error } = await POST({
         endpoint: tokenRequestUrl,
-        requestBody: withChainIdRequestBody(signMsg, eip721Signature),
+        requestBody: {
+          message: newMsg.prepareMessage(),
+          signature: signature,
+        },
       });
 
       const sortedResponse = response && (await response.json());
@@ -96,6 +96,24 @@ export const useConsumerHostServices = (
         }),
       };
     }
+  };
+
+  const alertResDecorator = <T extends (...args: any) => any>(
+    func: T,
+  ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
+    return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
+      const res = await func(...args);
+
+      if (alert && isConsumerHostError(res.data)) {
+        openNotification({
+          type: 'error',
+          description: res.data.error,
+          duration: 5000,
+        });
+      }
+
+      return res;
+    };
   };
 
   const loginConsumerHost = async (refresh = false) => {
@@ -212,24 +230,6 @@ export const useConsumerHostServices = (
     }
   };
 
-  const alertResDecorator = <T extends (...args: any) => any>(
-    func: T,
-  ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
-    return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
-      const res = await func(...args);
-
-      if (alert && isConsumerHostError(res.data)) {
-        openNotification({
-          type: 'error',
-          description: res.data.error,
-          duration: 5000,
-        });
-      }
-
-      return res;
-    };
-  };
-
   const loginResDecorator = <T extends (...args: any) => any>(
     func: T,
   ): ((...args: Parameters<T>) => Promise<ReturnType<T>>) => {
@@ -244,25 +244,26 @@ export const useConsumerHostServices = (
   };
 
   // the apis can use useCallback to speed up for re-render. if necessary
-  const getUserApiKeysApi = async (): Promise<AxiosResponse<GetUserApiKeys[] | ConsumerHostError>> => {
+  const getUserApiKeysApi = useCallback(async (): Promise<AxiosResponse<GetUserApiKeys[] | ConsumerHostError>> => {
     const res = await instance.get<GetUserApiKeys[] | ConsumerHostError>('/users/apikeys', {
       headers: authHeaders.current,
     });
 
     return res;
-  };
+  }, []);
 
-  const createNewApiKey = async (params: {
-    name: string;
-  }): Promise<AxiosResponse<GetUserApiKeys | ConsumerHostError, { name: string }>> => {
-    const res = await instance.post<GetUserApiKeys>('/users/apikeys/new', params, {
-      headers: authHeaders.current,
-    });
+  const createNewApiKey = useCallback(
+    async (params: { name: string }): Promise<AxiosResponse<GetUserApiKeys | ConsumerHostError, { name: string }>> => {
+      const res = await instance.post<GetUserApiKeys>('/users/apikeys/new', params, {
+        headers: authHeaders.current,
+      });
 
-    return res;
-  };
+      return res;
+    },
+    [],
+  );
 
-  const deleteNewApiKey = async (apikeyId: number) => {
+  const deleteNewApiKey = useCallback(async (apikeyId: number) => {
     const res = await instance.post<GetUserApiKeys>(
       `/users/apikeys/${apikeyId}/delete`,
       {},
@@ -272,118 +273,161 @@ export const useConsumerHostServices = (
     );
 
     return res;
-  };
+  }, []);
 
-  const createHostingPlanApi = async (params: IPostHostingPlansParams): Promise<AxiosResponse<IGetHostingPlans>> => {
-    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans`, params, {
-      headers: authHeaders.current,
-    });
+  const createHostingPlanApi = useCallback(
+    async (params: IPostHostingPlansParams): Promise<AxiosResponse<IGetHostingPlans>> => {
+      const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans`, params, {
+        headers: authHeaders.current,
+      });
 
-    return res;
-  };
+      return res;
+    },
+    [],
+  );
 
-  const updateHostingPlanApi = async (
-    params: IPostHostingPlansParams & { id: string | number },
-  ): Promise<AxiosResponse<IGetHostingPlans>> => {
-    const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans/${params.id}`, params, {
-      headers: authHeaders.current,
-    });
+  const updateHostingPlanApi = useCallback(
+    async (params: IPostHostingPlansParams & { id: string | number }): Promise<AxiosResponse<IGetHostingPlans>> => {
+      const res = await instance.post<IGetHostingPlans>(`/users/hosting-plans/${params.id}`, params, {
+        headers: authHeaders.current,
+      });
 
-    return res;
-  };
+      return res;
+    },
+    [],
+  );
 
-  const getHostingPlanApi = async (params: { account?: string }): Promise<AxiosResponse<IGetHostingPlans[]>> => {
-    const res = await instance.get<IGetHostingPlans[]>(`/hosting-plans/${params.account}`, {
-      headers: authHeaders.current,
-    });
+  const getHostingPlanApi = useCallback(
+    async (params: { account?: string }): Promise<AxiosResponse<IGetHostingPlans[]>> => {
+      const res = await instance.get<IGetHostingPlans[]>(`/hosting-plans/${params.account}`, {
+        headers: authHeaders.current,
+      });
 
-    return res;
-  };
+      return res;
+    },
+    [],
+  );
 
-  const getProjects = async (params: { projectId: string; deployment?: string }) => {
+  const getProjects = useCallback(async (params: { projectId: string; deployment?: string }) => {
     const res = await instance.get<{ indexers: IIndexerFlexPlan[] }>(`/projects/${params.projectId}`, {
       headers: authHeaders.current,
       params,
     });
 
     return res;
-  };
+  }, []);
 
-  const getUserChannelState = async (channelId: string): Promise<AxiosResponse<IGetUserChannelState>> => {
+  const getUserChannelState = useCallback(async (channelId: string): Promise<AxiosResponse<IGetUserChannelState>> => {
     const res = await instance.get<IGetUserChannelState>(`/users/channels/${channelId}/state`, {
       headers: authHeaders.current,
     });
 
     return res;
-  };
+  }, []);
 
-  const getChannelLimit = async () => {
+  const getChannelLimit = useCallback(async () => {
     const res = await instance.get<IGetChannelLimit>('/channel-limit', {
       headers: authHeaders.current,
     });
 
     return res;
-  };
+  }, []);
 
-  const getChannelSpent = async (params: { consumer: string; channel?: string }) => {
+  const getChannelSpent = useCallback(async (params: { consumer: string; channel?: string }) => {
     const res = await instance.get<IGetChannelSpent>('/channel-spent', {
       headers: authHeaders.current,
       params,
     });
 
     return res;
-  };
+  }, []);
 
-  const refreshUserInfo = async () => {
+  const refreshUserInfo = useCallback(async () => {
     const res = await instance.get('/users/refresh', {
       headers: authHeaders.current,
     });
 
     return res;
-  };
+  }, []);
 
-  const getSpentInfo = async (params: { account: string; start?: string; end?: string }) => {
-    const res = await instance.get<IGetSpentInfo>(`/aggregation/${params.account}`, {
+  const getSpentInfo = useCallback(async (params: { account: string; start?: string; end?: string }) => {
+    const res = await instance.get<IGetSpentInfo>(`/stats/user_aggregation/${params.account}`, {
       headers: authHeaders.current,
       params,
     });
 
     return res;
-  };
+  }, []);
 
-  const requestTokenLayout = (pageTitle: string) => {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h5" weight={500}>
-          Session Token
-        </Typography>
+  const getStatisticQueries = useCallback(
+    async (params: { deployment: string[]; indexer?: string[]; start_date: string; end_date?: string }) => {
+      const res = await instance.post<IGetStatisticQueries>(`/stats/statistic-queries`, params, {
+        headers: authHeaders.current,
+      });
 
-        <Typography
-          style={{ color: 'var(--sq-gray700)', marginTop: 16, marginBottom: 40, width: 344, textAlign: 'center' }}
-        >
-          To access {pageTitle}, you need to request a session token.
-        </Typography>
+      return res;
+    },
+    [],
+  );
 
-        <Button
-          shape="round"
-          type="primary"
-          style={{ background: 'var(--sq-blue600)', borderColor: 'var(--sq-blue600)' }}
-          onClick={async () => {
-            const res = await loginConsumerHost(true);
-            if (!res.status) {
-              openNotification({
-                type: 'error',
-                title: 'Login failed',
-                description: res.msg,
-              });
-            }
-          }}
-        >
-          Request Session token
-        </Button>
-      </div>
-    );
-  };
+  const getStatisticQueriesByPrice = useCallback(
+    async (params: { start_date: string; end_date?: string; deployment: string[] }) => {
+      const res = await instance.post<IGetStatisticQueriesByPrice>(`/stats/deployment-price-count`, params, {
+        headers: authHeaders.current,
+      });
+
+      return res;
+    },
+    [],
+  );
+
+  const getUserQueriesAggregation = useCallback(
+    async (params: { start: string; end?: string; user_list: string[] }) => {
+      const res = await instance.post<IGetStatisticUserQueries>(`/stats/multi_user_aggregation`, params, {
+        headers: authHeaders.current,
+      });
+
+      return res;
+    },
+    [],
+  );
+
+  const requestTokenLayout = useCallback(
+    (pageTitle: string) => {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography variant="h5" weight={500}>
+            Session Token
+          </Typography>
+
+          <Typography
+            style={{ color: 'var(--sq-gray700)', marginTop: 16, marginBottom: 40, width: 344, textAlign: 'center' }}
+          >
+            To access {pageTitle}, you need to request a session token.
+          </Typography>
+
+          <Button
+            shape="round"
+            type="primary"
+            style={{ background: 'var(--sq-blue600)', borderColor: 'var(--sq-blue600)' }}
+            onClick={async () => {
+              const res = await loginConsumerHost(true);
+              if (!res.status) {
+                openNotification({
+                  type: 'error',
+                  title: 'Login failed',
+                  description: res.msg,
+                });
+              }
+            }}
+          >
+            Request Session token
+          </Button>
+        </div>
+      );
+    },
+    [loginConsumerHost],
+  );
 
   useEffect(() => {
     checkIfHasLogin();
@@ -401,6 +445,9 @@ export const useConsumerHostServices = (
     getUserChannelState: alertResDecorator(loginResDecorator(getUserChannelState)),
     getProjects: alertResDecorator(getProjects),
     refreshUserInfo: loginResDecorator(refreshUserInfo),
+    getStatisticQueries: alertResDecorator(getStatisticQueries),
+    getStatisticQueriesByPrice: alertResDecorator(getStatisticQueriesByPrice),
+    getUserQueriesAggregation: alertResDecorator(getUserQueriesAggregation),
     getSpentInfo,
     getHostingPlanApi,
     getChannelLimit,
@@ -409,13 +456,43 @@ export const useConsumerHostServices = (
     loginConsumerHost,
     requestTokenLayout,
     getChannelSpent,
+
     hasLogin,
     loading,
   };
 };
 
+export type IGetStatisticUserQueries = {
+  info: {
+    today: string;
+    total: string;
+    list: string[];
+  };
+  user: string;
+}[];
+
+export type IGetStatisticQueriesByPrice = {
+  count?: number;
+  price?: string; // per request price
+}[];
+
+export interface IGetStatisticQueries {
+  total: string;
+  list: {
+    indexer?: string;
+    list?: {
+      deployment: string;
+      queries: string;
+    }[];
+
+    // if no indexer at params
+    deployment?: string;
+    queries?: string;
+  }[];
+}
+
 export interface IGetSpentInfo {
-  days?: string[];
+  list?: string[];
   today: string;
   total: string;
 }

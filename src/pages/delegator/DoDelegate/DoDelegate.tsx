@@ -5,20 +5,16 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import {
-  claimIndexerRewardsModalText,
-  ModalApproveToken,
-  ModalClaimIndexerRewards,
-  tokenApprovalModalText,
-  WalletRoute,
-} from '@components';
+import { ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import TransactionModal from '@components/TransactionModal';
 import { idleText } from '@components/TransactionModal/TransactionModal';
+import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra, useIndexerMetadata } from '@hooks';
-import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { CurrentEraValue, mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';
@@ -30,7 +26,7 @@ import { mergeAsync, useAsyncMemo, useGetDelegationLazyQuery } from '@subql/reac
 import { convertStringToNumber, renderAsync } from '@utils';
 import { Tooltip } from 'antd/lib';
 import assert from 'assert';
-import { BigNumber } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { TFunction } from 'i18next';
 
 import { useWeb3Store } from 'src/stores';
@@ -76,8 +72,10 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
   const { account } = useWeb3();
   const { contracts } = useWeb3Store();
   const rewardClaimStatus = useRewardCollectStatus(indexerAddress, true);
-  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress);
-  const { indexerMetadata: indexerMetadataIpfs } = useIndexerMetadata(indexerAddress);
+  const { indexerMetadata: indexerMetadataIpfs, refresh } = useIndexerMetadata(indexerAddress, {
+    immediate: false,
+  });
+  const indexerCapacityFromContract = useGetCapacityFromContract(indexerAddress, indexer);
   const { fetchWeb3NameFromCache } = useWeb3Name();
   const { refreshAndMakeInactiveOperatorNotification, refreshAndMakeInOrDecreaseCommissionNotification } =
     useMakeNotification();
@@ -118,7 +116,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       afterDelegatedAmount = delegate.after ?? 0;
     }
     return afterDelegatedAmount;
-  }, [currentEra, delegation, delegationDataLazy.data?.delegation?.amount]);
+  }, [currentEra.data?.index, delegation, delegationDataLazy.data?.delegation?.amount]);
 
   const indexerCapacity = useMemo(() => {
     let indexerCapacity = BigNumber.from(0);
@@ -133,7 +131,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
     if (indexerCapacity.lt(0)) return BigNumber.from(0);
 
     return indexerCapacity;
-  }, [indexer, indexerCapacityFromContract, currentEra]);
+  }, [indexer, indexerCapacityFromContract, currentEra.data?.index]);
 
   const handleClick = async ({ input, delegator }: { input: number; delegator?: string }) => {
     assert(contracts, 'Contracts not available');
@@ -152,6 +150,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
       if (!isLogin) return;
       setShouldFetchStatus(false);
       setFetchCheckStatusLoading(true);
+      await refresh();
       const approval = await stakingAllowance.refetch();
       setRequireTokenApproval(approval?.data?.isZero() || false);
       if (!delegation) {
@@ -285,7 +284,7 @@ export const DoDelegate: React.FC<DoDelegateProps> = ({
           }}
           variant={variant}
           width="540px"
-          onlyRenderInner={account ? false : true} // it's kind of weird & comfuse for maintaining, but worked= =.
+          onlyRenderInner={account ? false : true} // it's kind of weird & confuse for maintaining, but worked= =.
         />
       );
     },

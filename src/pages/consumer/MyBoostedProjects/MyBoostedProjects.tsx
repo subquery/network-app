@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { AppPageHeader, DeploymentMeta } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { DeploymentMeta } from '@components/DeploymentInfo';
 import DoBooster from '@components/DoBooster';
 import { useAccount } from '@containers/Web3';
 import { BalanceLayout } from '@pages/dashboard';
@@ -116,16 +117,38 @@ const MyBoostedProjects: FC = () => {
       return (
         <EmptyList
           title={'You haven’t boosted any projects yet'}
-          description="Follow our documentation to help you get boost to a project then head over to the Explorer to find the first project you would like to boost. Learn how to boost a project here"
-          infoI18nKey={'emptyList.boostProject'}
-          infoLinkDesc={'Learn how to boost a project '}
-          infoLink={''} // TODO: fill the link
+          description={
+            <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 32 }}>
+              <Typography type="secondary">
+                Boosting provides Query Rewards allowing you to make free queries to the boosted project. By boosting
+                you encourage more Node Operators to join, enhancing performance and resilience of the project.
+              </Typography>
+
+              <Typography type="secondary">
+                Boosting differs from Delegating in that it promotes the overall health of the project, while Delegating
+                directs support to individual Node Operators.
+              </Typography>
+
+              <Typography type="secondary">
+                Follow our{' '}
+                <Typography.Link
+                  href="https://academy.subquery.network/subquery_network/consumers/boosting.html#how-to-boost-an-project"
+                  type="info"
+                  style={{ textDecoration: 'underline' }}
+                >
+                  Documentation
+                </Typography.Link>{' '}
+                to learn how to boost a project, then navigate to the Explorer to select the first project you’d like to
+                boost
+              </Typography>
+            </div>
+          }
         >
-          <a href="/explorer/home" target="_blank">
+          <Typography.Link href="/explorer/home" target="_blank">
             <Button type="primary" shape="round" size="large">
               Boost now
             </Button>
-          </a>
+          </Typography.Link>
         </EmptyList>
       );
 

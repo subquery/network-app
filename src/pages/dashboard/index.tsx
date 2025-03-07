@@ -4,13 +4,13 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from '@apollo/client';
-import { APYTooltip, APYTooltipContent } from '@components';
+import { APYTooltip, APYTooltipContent } from '@components/APYTooltip';
 import { useEra } from '@hooks';
-import { Footer, SubqlCard, Tooltip, Typography } from '@subql/components';
+import { Footer, SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
 import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
-import { Skeleton } from 'antd';
+import { Skeleton, Tooltip } from 'antd';
 import Link from 'antd/es/typography/Link';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
@@ -22,7 +22,6 @@ import { EraCard } from './components/EraCard/EraCard';
 import { ForumCard } from './components/ForumCard/ForumCard';
 import { RewardsLineChart } from './components/RewardsLineChart/RewardsLineChart';
 import { StakeAndDelegationLineChart } from './components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
-import SubgraphAlert from './components/SubgraphAlert/SubgraphAlert';
 import styles from './index.module.less';
 
 export const BalanceLayout = ({
@@ -423,8 +422,6 @@ const Dashboard: FC = () => {
 
   return (
     <div className="col-flex" style={{ width: '100%' }}>
-      <SubgraphAlert center></SubgraphAlert>
-
       <div className={styles.dashboard}>
         <Typography variant="h4" weight={600}>
           👋 Welcome to SubQuery Network

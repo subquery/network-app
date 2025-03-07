@@ -4,6 +4,13 @@
   min-height: 100vh;
 }
 
+.scannerMain {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--dark-mode-background);
+}
+
 .Header {
   flex: 0 1 auto;
 }
@@ -31,4 +38,12 @@
 
 p {
   margin-bottom: 0;
+}
+
+.subql-chatbox {
+  z-index: 999;
+}
+
+path:focus {
+  outline: none;
 }

@@ -35,7 +35,7 @@ export const AppPageHeader: React.FC<Props> = ({ title, desc }) => {
       {desc && (
         <div className={styles.desc}>
           <div className={styles.icon}>
-            <AiOutlineInfoCircle color={COLORS.primary} />
+            <AiOutlineInfoCircle color={'var(--sq-blue600)'} />
           </div>
           <div>
             {sortedDescriptions.map((description) => (

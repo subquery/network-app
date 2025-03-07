@@ -5,12 +5,17 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useNavigate } from 'react-router-dom';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
-import { AppPageHeader, APYTooltip, Button, EmptyList, TableText, WalletRoute } from '@components';
+import { gql, useLazyQuery } from '@apollo/client';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { APYTooltip } from '@components/APYTooltip';
+import { Button } from '@components/Button';
+import { EmptyList } from '@components/EmptyList';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { OutlineDot } from '@components/Icons/Icons';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import RpcError from '@components/RpcError';
 import { TokenAmount } from '@components/TokenAmount';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
@@ -19,7 +24,7 @@ import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Spinner, SubqlCard, TableTitle, Typography } from '@subql/components';
+import { ChatBoxPlanTextTrigger, Spinner, SubqlCard, TableText, TableTitle, Typography } from '@subql/components';
 import {
   truncFormatEtherStr,
   useAsyncMemo,
@@ -43,7 +48,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { t, TFunction } from 'i18next';
 
 import { PER_MILL } from 'src/const/const';
-import { useWeb3Store } from 'src/stores';
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { formatNumberWithLocale, formatSQT } from '../../utils/numberFormatters';
 import { DoDelegate } from './DoDelegate';
@@ -104,7 +109,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
           <APYTooltip
             currentEra={undefined}
             calculationDescription={
-              'This is your estimated APY for this delegation to this Node Operator from the last Era'
+              'This is your estimated APY for this delegation to this Node Operator over the previous three Eras'
             }
           />
         </Typography>
@@ -284,6 +289,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
                         initialUndelegateWay="anotherIndexer"
                         indexerAddress={id}
                         onSuccess={onSuccess}
+                        indexerActive={record.indexerActive}
                       />
                     ),
                     key: 'Redelegate',
@@ -398,7 +404,9 @@ const DelegatingCard = (props: {
               Current Estimated APY
               <APYTooltip
                 currentEra={currentEra?.data?.index}
-                calculationDescription={'This is estimated from your total rewards from delegation in the last Era'}
+                calculationDescription={
+                  'This is estimated from your total rewards from delegation in the previous three Eras'
+                }
               />
             </Typography>
             <span style={{ flex: 1 }}></span>
@@ -448,17 +456,26 @@ export const MyDelegation: React.FC = () => {
   const { account } = useWeb3();
   const filterParams = { delegator: account ?? '', filterIndexer: account ?? '', offset: 0 };
   const { getDisplayedCommission } = useMinCommissionRate();
-  const { contracts } = useWeb3Store();
+  const { chatBoxRef } = useChatBoxStore();
   const { width } = useSize(document.querySelector('body')) || { width: 0 };
+  const [fetchIndexerLeverageLimit] = useLazyQuery<{ cach: { value: string } }>(gql`
+    query {
+      cach(id: "indexerLeverageLimit") {
+        value
+      }
+    }
+  `);
+
   const currentLeverageLimit = useAsyncMemo(async () => {
-    if (!contracts) return 12;
     const leverageLimit = await limitContract(
-      () => contracts.staking.indexerLeverageLimit(),
+      () => fetchIndexerLeverageLimit(),
       makeCacheKey('indexerLeverageLimit'),
       0,
     );
 
-    return leverageLimit;
+    if (!leverageLimit.data) return 12;
+
+    return leverageLimit.data?.cach.value;
   }, []);
 
   const delegations = useGetFilteredDelegationsQuery({
@@ -506,6 +523,7 @@ export const MyDelegation: React.FC = () => {
 
           const stakeTotal = parseRawEraValue(delegation.indexer?.totalStake, currentEra.data?.index);
           const stakeSelf = parseRawEraValue(delegation.indexer?.selfStake, currentEra.data?.index);
+
           const capacity = {
             current: stakeSelf.current.mul(leverageLimit ?? 12).sub(stakeTotal.current),
             after: stakeSelf.after?.mul(leverageLimit ?? 12).sub(stakeTotal?.after ?? '0'),
@@ -546,7 +564,20 @@ export const MyDelegation: React.FC = () => {
 
   return (
     <>
-      <AppPageHeader title={'My Delegation'} desc={t('delegate.delegationDesc')} />
+      <AppPageHeader
+        title={
+          <div className="col-flex" style={{ gap: '8px' }}>
+            <Typography variant="h5">My Delegation</Typography>
+            <ChatBoxPlanTextTrigger
+              triggerMsg="Advise me on how best I can delegate my SQT."
+              chatBoxInstance={chatBoxRef}
+            >
+              Advise me on how best I can delegate my SQT.
+            </ChatBoxPlanTextTrigger>
+          </div>
+        }
+        desc={t('delegate.delegationDesc')}
+      />
       <WalletRoute
         componentMode
         element={renderAsync(delegationList, {

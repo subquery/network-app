@@ -202,6 +202,20 @@
   }
 }
 
+:global {
+  .geoText {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .ant-tooltip-open {
+    .geoText {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .indexerListHeader {
     display: block;

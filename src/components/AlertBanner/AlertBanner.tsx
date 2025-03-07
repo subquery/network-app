@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC } from 'react';
+import { useIsMobile } from '@hooks/useIsMobile';
 import { Typography } from '@subql/components';
 import { Alert, Button } from 'antd';
 
-const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
+const AlertBanner: FC<{ center?: boolean }> = ({ center = false }) => {
+  const isMobile = useIsMobile();
+
   return (
     <div style={{ position: 'relative' }}>
       <Alert
@@ -13,14 +16,14 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
           borderRadius: 0,
           background: 'var(--sq-blue600)',
           border: 'none',
-          padding: '14px 80px',
+          padding: isMobile ? '14px' : '14px 80px',
           margin: center ? '0 auto' : '',
-          width: center ? '1440px' : '100%',
+          width: isMobile ? '100%' : center ? '1440px' : '100%',
           position: 'relative',
           zIndex: 1,
         }}
         message={
-          <div className="flex">
+          <div className={isMobile ? 'col-flex' : 'flex'} style={{ gap: 10 }}>
             <div className="col-flex" style={{ gap: 8 }}>
               <Typography variant="large" style={{ color: '#fff', display: 'flex', gap: 8 }} weight={600}>
                 <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,17 +64,18 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
                     fill="white"
                   />
                 </svg>
-                Join the Summer Delegation Frenzy today to earn extra rewards!
+                SubQuery AI Apps are here
               </Typography>
               <Typography variant="medium" style={{ color: '#fff' }}>
-                Delegate in the network and then register today. The more points you earn, the more rewards you'll
-                receive from the SQT prize pool!
+                SubQuery AI Apps framework makes building decentralised AI Applications fast and easy. AI apps are self
+                contained and easily scalable AI agents that you can use to power your intelligent applications.
+                <br></br>Try it out by clicking the chatbot icon on the bottom right of your screen!
               </Typography>
             </div>
             <span style={{ flex: 1 }}></span>
             <Button shape="round" size="large">
-              <Typography.Link href="https://frenzy.subquery.foundation" type="info" target="_blank">
-                Register Now
+              <Typography.Link href="https://academy.subquery.network/ai/welcome.html" type="info" target="_blank">
+                Start building AI Apps
               </Typography.Link>
             </Button>
           </div>
@@ -91,4 +95,4 @@ const SubgraphAlert: FC<{ center?: boolean }> = ({ center = false }) => {
     </div>
   );
 };
-export default SubgraphAlert;
+export default AlertBanner;

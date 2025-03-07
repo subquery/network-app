@@ -4,17 +4,18 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
+import FTextInput from '@components/FTextInput/FTextInput';
+import ImageInput from '@components/ImageInput';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
+import { ProjectActionArgv } from '@pages/explorer/Project/type';
 import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { Button, Radio, Result } from 'antd';
 import clsx from 'clsx';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import { t } from 'i18next';
 
-import { FTextInput, ImageInput } from '../../../components';
 import { useCreateProject, useProject, useRouteQuery, useUpdateProjectMetadata } from '../../../hooks';
 import { FormCreateProjectMetadata, newDeploymentSchema, projectMetadataSchema, ProjectType } from '../../../models';
 import { categoriesOptions, parseError, ROUTES } from '../../../utils';
@@ -82,7 +83,7 @@ const Create: React.FC = () => {
 
         const { destroy } = Modal.success({
           className: styles.successModal,
-          width: 572,
+          width: 801,
           icon: (
             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
               <CloseOutlined
@@ -96,15 +97,126 @@ const Create: React.FC = () => {
           content: (
             <Result
               status="success"
-              title="Successfully published project to Network"
-              subTitle={`Your ${
-                {
-                  0: 'SubQuery',
-                  1: 'RPC',
-                  2: 'Dictionary',
-                  3: 'Subgraph',
-                }[project.type]
-              } project has been successfully published, you are able to view it in the Subquery explorer, and indexers will be able to index it.`}
+              title={
+                <div className="col-flex" style={{ gap: 24 }}>
+                  <div className="col-flex" style={{ gap: 8 }}>
+                    <Typography variant="h6" weight={500}>
+                      Successfully published project to Network
+                    </Typography>
+                    <Typography type="secondary">
+                      Your
+                      {
+                        {
+                          0: 'SubQuery',
+                          1: 'RPC',
+                          2: 'Dictionary',
+                          3: 'Subgraph',
+                        }[project.type]
+                      }{' '}
+                      project has been successfully published, you are able to view it in the SubQuery explorer, and
+                      indexers will be able to index it.
+                    </Typography>
+                  </div>
+
+                  <div className="col-flex" style={{ gap: 8 }}>
+                    <Typography variant="h6" weight={500}>
+                      Now what&apos;s next?
+                    </Typography>
+                    <Typography type="secondary">
+                      Your next challenge is to get Node Operators to run your project, here are some options that you
+                      have.
+                    </Typography>
+                  </div>
+
+                  <div className={styles.plainCard}>
+                    <div className="col-flex" style={{ gap: 8 }}>
+                      <Typography>Boost your Project to attract Node Operators</Typography>
+                      <Typography variant="medium" type="secondary">
+                        You can boost your project by locking SQT to increase the rewards that Node Operators can
+                        receive from your project, this might help attract more Node Operators.{' '}
+                        <Typography.Link
+                          active
+                          href="https://academy.subquery.network/subquery_network/consumers/boosting.html#consumer-boosting"
+                          target="_blank"
+                        >
+                          Read the docs.
+                        </Typography.Link>
+                      </Typography>
+                    </div>
+                    <Typography.Link
+                      target="_href"
+                      href={`/explorer/project/${resultId}?action=${ProjectActionArgv.BOOST}`}
+                    >
+                      <Button shape="round" type="primary" size="large">
+                        Boost project
+                      </Button>
+                    </Typography.Link>
+                  </div>
+
+                  <div className={styles.plainCard}>
+                    <div className="col-flex" style={{ gap: 8 }}>
+                      <Typography>Setup Flex Plan</Typography>
+                      <Typography variant="medium" type="secondary">
+                        Flex plans are a great way to indicate to Node Operators what price you are willing to pay for
+                        access to this project, you can create a flex plan today before any Node Operators complete
+                        indexing.{' '}
+                        <Typography.Link
+                          active
+                          href="https://academy.subquery.network/subquery_network/consumers/plan.html"
+                          target="_blank"
+                        >
+                          Read the docs.
+                        </Typography.Link>
+                      </Typography>
+                    </div>
+                    <Typography.Link
+                      target="_href"
+                      href={`/explorer/project/${resultId}?action=${ProjectActionArgv.CREATE_PLAN}`}
+                    >
+                      <Button shape="round" type="primary" size="large">
+                        Create flex plan
+                      </Button>
+                    </Typography.Link>
+                  </div>
+
+                  <div className={styles.plainCard}>
+                    <div className="col-flex" style={{ gap: 8 }}>
+                      <Typography>Create a closed price agreement</Typography>
+                      <Typography variant="medium" type="secondary">
+                        Creating a closed price agreement is good when only you will use the data in this project, as it
+                        creates a commitment between you and a node operator to access data for a predetermined amount
+                        of SQT.{' '}
+                        <Typography.Link
+                          active
+                          href="https://academy.subquery.network/subquery_network/consumers/plan.html"
+                          target="_blank"
+                        >
+                          Read the docs.
+                        </Typography.Link>
+                      </Typography>
+                    </div>
+                    <Typography.Link target="_href" href={`/consumer/my-offers`}>
+                      <Button shape="round" type="primary" size="large">
+                        Create agreement
+                      </Button>
+                    </Typography.Link>
+                  </div>
+                  <div className={styles.plainCard}>
+                    <div className="col-flex" style={{ gap: 8 }}>
+                      <Typography>Notify Node Operators on the Forum and in Discord</Typography>
+                      <Typography variant="medium" type="secondary">
+                        We recommend posting your project in the SubQuery Network forum and even mentioning it in the
+                        Discord community.
+                      </Typography>
+                    </div>
+                    <Typography.Link href="https://forum.subquery.network/" target="_blank">
+                      <Button shape="round" type="primary" size="large">
+                        Go to forum
+                      </Button>
+                    </Typography.Link>
+                  </div>
+                </div>
+              }
               extra={[
                 <Button
                   key="view-project"
@@ -141,10 +253,8 @@ const Create: React.FC = () => {
         <Spinner></Spinner>
       </div>
     );
-
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       <Formik
         initialValues={{
           name: query.get('name') ?? '',
@@ -214,7 +324,10 @@ const Create: React.FC = () => {
                     Project Details
                   </Typography>
                   <Typography>{t('studio.create.description')}</Typography>
-
+                  <Typography variant="medium" type="secondary">
+                    Provide a detailed description of your project including what data it indexes and what it’s used
+                    for. You might want to include how to get in contact you as the project author.
+                  </Typography>
                   <Field name="description">
                     {({
                       field,
@@ -285,8 +398,8 @@ const Create: React.FC = () => {
                       }}
                     </Field>
                   </div>
-                  <FTextInput label={t('studio.create.websiteUrl')} id="websiteUrl" />
-                  <FTextInput label={t('studio.create.codeUrl')} id="codeUrl" />
+                  <FTextInput label={`${t('studio.create.websiteUrl')} (optional)`} id="websiteUrl" />
+                  <FTextInput label={`${t('studio.create.codeUrl')} (optional)`} id="codeUrl" />
                   {isEdit ? (
                     ''
                   ) : (
@@ -295,6 +408,11 @@ const Create: React.FC = () => {
                       <FTextInput label={t('deployment.create.version')} id="version" />
                       <FTextInput label={t('deployment.create.deploymentId')} id="deploymentId" />
                       <Typography>{t('studio.create.versionDesc')}</Typography>
+                      <Typography variant="medium" type="secondary">
+                        Provide a detailed description for Node Operators running your project, including how to run it,
+                        breaking changes, any system requirements (e.g. database size), and even rough indexing time.
+                        The more helpful information you provide, the higher chance that Node Operators will index it.
+                      </Typography>
                       <Field name="versionDescription">
                         {({
                           field,
@@ -337,7 +455,13 @@ const Create: React.FC = () => {
             ></div>
           </div>
           {asyncProject.data && (
-            <ProjectDeploymentsDetail id={query.get('id') ?? ''} project={asyncProject.data}></ProjectDeploymentsDetail>
+            <ProjectDeploymentsDetail
+              id={query.get('id') ?? ''}
+              project={asyncProject.data}
+              onRefresh={async () => {
+                await asyncProject?.refetch?.();
+              }}
+            ></ProjectDeploymentsDetail>
           )}
         </>
       ) : (

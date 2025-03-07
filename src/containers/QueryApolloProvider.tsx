@@ -4,37 +4,48 @@
 import React, { PropsWithChildren } from 'react';
 import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { offsetLimitPagination } from '@apollo/client/utilities';
+import { Observable, offsetLimitPagination } from '@apollo/client/utilities';
 import { captureException } from '@sentry/react';
-import { deploymentHttpLink } from '@subql/apollo-links';
+import { v4 as uuidv4 } from 'uuid';
 
 const getHttpLink = (uri: string | undefined) => new HttpLink({ uri });
 
 export const TOP_100_INDEXERS = 'top100Indexers';
 const top100IndexersLink = getHttpLink(import.meta.env.VITE_TOP_100_INDEXERS);
 
-const getDecentraliseLink = (deploymentId: string, fallbackServiceUrl?: string) => {
-  const httpOptions = { fetchOptions: { timeout: 10_000 } };
-
-  // this is just a test env varible set in your local env file.
-  if (import.meta.env.VITE_USE_FALLBACKURL) {
-    return getHttpLink(fallbackServiceUrl);
-  }
-
-  return deploymentHttpLink({
-    deploymentId,
-    httpOptions,
-    authUrl: import.meta.env.VITE_AUTH_URL,
-    fallbackServiceUrl,
-    useImmediateFallbackOnError: true,
-    timeout: 10_000,
-  }).link;
-};
-
-export const networkLink = getDecentraliseLink(
-  import.meta.env.VITE_NETWORK_DEPLOYMENT_ID,
-  import.meta.env.VITE_QUERY_REGISTRY_PROJECT,
+const gatewayLink = getHttpLink(
+  `${import.meta.env.VITE_PROXYGATEWAY}/query/${import.meta.env.VITE_NETWORK_DEPLOYMENT_ID}`,
 );
+const fallbackLink = getHttpLink(import.meta.env.VITE_QUERY_REGISTRY_PROJECT);
+
+export const networkLink = import.meta.env.VITE_USE_FALLBACKURL
+  ? fallbackLink
+  : new ApolloLink((operation) => {
+      return new Observable((observer) => {
+        operation.setContext({
+          headers: {
+            'X-Ping': uuidv4(),
+          },
+        });
+        gatewayLink.request(operation)?.subscribe({
+          next(value) {
+            observer.next(value);
+            observer.complete();
+          },
+          error: () => {
+            fallbackLink.request(operation)?.subscribe({
+              next(value) {
+                observer.next(value);
+                observer.complete();
+              },
+              error: (error) => {
+                observer.error(error);
+              },
+            });
+          },
+        });
+      });
+    });
 
 const links = ApolloLink.from([
   onError(({ graphQLErrors, operation, networkError }) => {

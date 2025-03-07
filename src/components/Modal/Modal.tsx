@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Modal as SubqlModal, Typography } from '@subql/components';
 import { Steps as AntDSteps } from 'antd';
+import { isString } from 'antd/es/button';
 import clsx from 'clsx';
 
 import Spinner from '../Spinner';
@@ -20,7 +21,7 @@ interface ModalProps {
   steps?: string[];
   currentStep?: number;
   header?: string;
-  description?: string;
+  description?: React.ReactNode;
   content?: React.ReactNode;
   visible: boolean;
   onCancel: () => void;
@@ -47,11 +48,15 @@ export const Modal: React.FC<ModalProps> = ({
 
   const Description = () => {
     if (!description) return <div />;
-    return (
-      <Typography className={styles.description} type="secondary">
-        {description}
-      </Typography>
-    );
+    if (isString(description)) {
+      return (
+        <Typography className={styles.description} type="secondary">
+          {description}
+        </Typography>
+      );
+    }
+
+    return description;
   };
 
   return (

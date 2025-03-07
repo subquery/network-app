@@ -1,30 +1,34 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { bnToDate } from '@utils';
+import { useCallback, useMemo } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
 import { limitContract, makeCacheKey } from '@utils/limitation';
-
-import { useWeb3Store } from 'src/stores';
+import dayjs from 'dayjs';
+import localforage from 'localforage';
 
 import { useAsyncMemo } from './useAsyncMemo';
+
+export type EraValue = { id: string; eraPeriod: string; createdBlock: number; startTime: Date; endTime?: Date };
 
 export type Era = {
   startTime: Date;
   estEndTime: Date;
   index: number;
   period: number;
+  createdBlock: number;
+  eras?: EraValue[];
 };
 
 export function canStartNewEra(era: Era): boolean {
   return era.startTime.getTime() + era.period * 1000 < new Date().getTime();
 }
 
-/**
- * There is a room to improve this hook.
- * Option 1: We can use a subscription to listen to the event
- * Option 2: We can use a setInterval but require <CurEra> to be updated
- *
- */
+const fetchEraCache = makeCacheKey('fetchEraInfo');
+const eraResult = makeCacheKey('eraResult');
+
+// The era info should be share with other files. it's better to be a store, but it's hard to migrate.
+// Only do cache for it now.
 export function useEra(): {
   currentEra: {
     data?: Era | undefined;
@@ -33,42 +37,70 @@ export function useEra(): {
   };
   refetch: () => void;
 } {
-  const { contracts } = useWeb3Store();
+  const [fetchEraInfomation] = useLazyQuery<{
+    eras: {
+      nodes: EraValue[];
+    };
+  }>(gql`
+    query {
+      eras(orderBy: CREATED_BLOCK_DESC) {
+        nodes {
+          eraPeriod
+          startTime
+          endTime
+          id
+          createdBlock
+        }
+      }
+    }
+  `);
 
-  // TODO: refactor this variable.
-  const { refetch, ...currentEra } = useAsyncMemo(async () => {
-    if (!contracts) {
-      console.error('contracts not available');
-      return;
+  const { refetch, data, loading, error } = useAsyncMemo(async () => {
+    const cachedResult = await localforage.getItem<Era>(eraResult);
+    if (cachedResult) {
+      const estEndTime = cachedResult?.estEndTime;
+      if (!dayjs().utc().isAfter(estEndTime)) {
+        return cachedResult;
+      }
+    }
+    const res = await limitContract(fetchEraInfomation, fetchEraCache);
+
+    const lastestEra = res?.data?.eras?.nodes?.[0];
+
+    if (lastestEra) {
+      const { startTime, eraPeriod: period, id: index, createdBlock } = lastestEra;
+      const eraIndex = new URL(window.location.href).searchParams.get('customEra') || index;
+      const result = {
+        startTime: dayjs.utc(startTime).local().toDate(),
+        estEndTime: dayjs.utc(startTime).add(Number(period), 'millisecond').local().toDate(),
+        period: Math.floor(Number(period) / 1000),
+        index: parseInt(eraIndex),
+        createdBlock: createdBlock,
+        eras: res.data?.eras.nodes || [],
+      };
+      await localforage.setItem(eraResult, result);
+      return result;
     }
 
-    const { eraManager } = contracts;
+    return {
+      startTime: new Date(),
+      estEndTime: new Date(),
+      period: 0,
+      index: 0,
+      createdBlock: 0,
+      eras: [],
+    };
+  }, [fetchEraInfomation]);
 
-    const [period, index, startTime] = await Promise.all([
-      limitContract(() => eraManager.eraPeriod(), makeCacheKey('eraPeriod'), 0),
-      limitContract(() => eraManager.eraNumber(), makeCacheKey('eraNumber'), 0),
-      limitContract(() => eraManager.eraStartTime(), makeCacheKey('eraStartTime'), 0),
-    ]);
-
-    let era: Era;
-    if (startTime && period && index) {
-      era = {
-        startTime: bnToDate(startTime),
-        estEndTime: bnToDate(startTime.add(period)),
-        period: period.toNumber(),
-        index: index.toNumber(),
-      };
-    } else {
-      era = {
-        startTime: new Date(),
-        estEndTime: new Date(),
-        period: 0,
-        index: 0,
-      };
-    }
-
-    return era;
-  }, [contracts]);
+  // use memo to avoid re-render
+  // these are a historical reason, see the history of this file if want to know.
+  const currentEra = useMemo(() => {
+    return {
+      data,
+      loading,
+      error,
+    };
+  }, [data?.estEndTime, data?.index, data?.period, data?.startTime, loading, error]);
 
   return {
     currentEra,

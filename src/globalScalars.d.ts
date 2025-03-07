@@ -7,3 +7,10 @@ type GraphQL_DateTime = Date;
 type GraphQL_BigFloat = bigint | string;
 type GraphQL_JSON = unknown;
 type GraphQL_Date = Date;
+
+declare interface Window {
+  config: {
+    apiUrl: string;
+  };
+  gtag: (event: string, type: string, options?: object) => void;
+}

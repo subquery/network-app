@@ -1,16 +1,22 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useState } from 'react';
-import { limitContract, makeCacheKey } from '@utils/limitation';
+import { useEffect, useMemo, useState } from 'react';
+import { useCallback } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
+import BigNumberJs from 'bignumber.js';
+import { toChecksumAddress } from 'ethereum-checksum-address';
 
 import { useWeb3Store } from 'src/stores';
+
+import { useEra } from './useEra';
 
 export function useRewardCollectStatus(
   indexer: string,
   lazy = false,
 ): {
   hasClaimedRewards: boolean;
+  checkIfHasClaimed: (lastSettledEra: string | number, curEra?: number) => boolean;
   refetch: (_?: boolean) => Promise<boolean>;
   loading: boolean;
   // for compatibility
@@ -18,52 +24,71 @@ export function useRewardCollectStatus(
     hasClaimedRewards: boolean;
   };
 } {
+  const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
-  const lastClaimedKey = makeCacheKey(indexer, { suffix: 'lastClaimed' });
-  const lastSettledKey = makeCacheKey(indexer, { suffix: 'lastSettledEra' });
-
   const [hasClaimedRewards, setHasClaimedRewards] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const fetchStatus = async (_?: boolean) => {
-    if (!contracts) return false;
-    try {
-      setLoading(true);
-      const lastClaimedEra = await limitContract(
-        () => contracts.rewardsDistributor.getRewardInfo(indexer),
-        lastClaimedKey,
-      );
-      const lastSettledEra = await limitContract(
-        () => contracts.rewardsStaking.getLastSettledEra(indexer),
-        lastSettledKey,
-      );
+  const [fetchClaimedAndSettledEra] = useLazyQuery<{ indexer: { lastClaimEra: string; lastSettledEra: string } }>(gql`
+    query getClaimedAndSettledEra($indexerAddress: String!) {
+      indexer(id: $indexerAddress) {
+        lastSettledEra
+      }
+    }
+  `);
 
-      const currentEra = await limitContract(() => contracts.eraManager.eraNumber(), makeCacheKey('eraNumber'));
+  const checkIfHasClaimed = useCallback(
+    (lastSettledEra: string | number, curEra = currentEra.data?.index || 0) => {
+      const eraNumber = BigNumberJs(curEra || 0);
+      const lastSettledEraBg = BigNumberJs(lastSettledEra);
+      if (lastSettledEra && curEra) {
+        const rewardClaimStatus = eraNumber.eq(lastSettledEraBg.plus(1));
 
-      if (lastClaimedEra && lastSettledEra && currentEra) {
-        const rewardClaimStatus =
-          currentEra.eq(lastClaimedEra.lastClaimEra.add(1)) && lastSettledEra.lte(lastClaimedEra.lastClaimEra);
-
-        setHasClaimedRewards(rewardClaimStatus);
         return rewardClaimStatus;
       }
 
       return false;
-    } catch (e) {
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [currentEra.data?.index],
+  );
+
+  const fetchStatus = useCallback(
+    async (_?: boolean) => {
+      try {
+        setLoading(true);
+        const res = await fetchClaimedAndSettledEra({
+          variables: {
+            indexerAddress: toChecksumAddress(indexer),
+          },
+        });
+
+        if (res.data?.indexer) {
+          const { lastSettledEra } = res.data.indexer;
+          const rewardClaimStatus = checkIfHasClaimed(lastSettledEra, currentEra.data?.index);
+
+          setHasClaimedRewards(rewardClaimStatus);
+          return rewardClaimStatus;
+        }
+
+        return false;
+      } catch (e) {
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [contracts, currentEra?.data?.index, indexer, fetchClaimedAndSettledEra, checkIfHasClaimed],
+  );
 
   useEffect(() => {
-    if (!lazy) {
+    if (!lazy && currentEra.data?.index) {
       fetchStatus();
     }
-  }, [lazy, indexer, contracts]);
+  }, [lazy, indexer, fetchClaimedAndSettledEra, currentEra?.data?.index, checkIfHasClaimed]);
 
   return {
     hasClaimedRewards,
+    checkIfHasClaimed,
     data: {
       hasClaimedRewards,
     },

@@ -13,6 +13,7 @@
   height: 68px;
   border-radius: 8px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .projectTextInfo {
@@ -27,4 +28,12 @@
 
 .text {
   color: var(--gray500);
+}
+
+.link {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    color: var(--sq-blue600);
+  }
 }

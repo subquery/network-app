@@ -20,6 +20,12 @@ export const externalAppLinks = [
     description: t('header.managedService.description'),
     link: 'https://managedservice.subquery.network/',
   },
+  {
+    label: 'Professional Services',
+    description:
+      'SubQuery has a team of talented engineers and data-scientists that can provide results driven data solutions for entrepreneurs, startups, and enterprises. We’ll build and operate custom data processing pipelines for you.',
+    link: 'https://subquery.network/professional',
+  },
 ];
 
 const {

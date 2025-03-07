@@ -24,7 +24,7 @@ jobs:
       - run: yarn
 
       - name: Build
-        # Disable CI flag so linter warnings aren't treaded as errors
+        # Disable CI flag so linter warnings aren't treated as errors
         run: CI=false yarn build:dev
 
       - name: Deploy Dev
@@ -36,5 +36,4 @@ jobs:
           invalidation: /*
           dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
           delete-removed: false
-          no-cache: true
           private: true

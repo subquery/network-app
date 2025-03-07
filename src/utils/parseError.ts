@@ -4,7 +4,8 @@
 import { captureException } from '@sentry/react';
 import { openNotification } from '@subql/components';
 import contractErrorCodes from '@subql/contract-sdk/publish/revertcode.json';
-import { isObject } from 'lodash-es';
+import { t } from 'i18next';
+import { isObject, isString } from 'lodash-es';
 
 export const walletConnectionErrors = [
   {
@@ -73,15 +74,78 @@ function logError(msg: Error | string | Record<string, unknown>): void {
 export const isRPCError = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
 
-  if (msg instanceof Error) {
-    if (msg?.message.includes?.('event=') || msg?.message?.includes?.('Transaction reverted without a reason string')) {
+  if (isString(msg)) {
+    const stringMsg = msg.toLowerCase();
+    if (
+      stringMsg.includes?.("non-200 status code: '429'") ||
+      stringMsg?.includes?.('event=') ||
+      stringMsg?.includes?.('transaction reverted without a reason string')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message') || msg instanceof Error) {
+    const stringMsg = msg?.message.toLowerCase();
+    if (
+      stringMsg?.includes?.("non-200 status code: '429'") ||
+      stringMsg?.includes?.('event=') ||
+      stringMsg?.includes?.('transaction reverted without a reason string')
+    ) {
       return true;
     }
     return false;
   }
 
-  if (msg?.includes?.('event=') || msg?.includes?.('Transaction reverted without a reason string')) {
-    return true;
+  try {
+    // @ts-ignore
+    const stringMsg = msg.toString().toLowerCase();
+
+    if (
+      stringMsg.includes("non-200 status code: '429'") ||
+      stringMsg.includes?.('event=') ||
+      stringMsg.includes?.('transaction reverted without a reason string')
+    ) {
+      return true;
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return false;
+};
+
+export const isNetworkError = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+
+  if (isString(msg)) {
+    const stringMsg = msg.toLowerCase();
+    if (stringMsg.includes?.('network error')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message') || msg instanceof Error) {
+    const stringMsg = msg?.message.toLowerCase();
+    if (stringMsg.includes?.('network error')) {
+      return true;
+    }
+    return false;
+  }
+
+  try {
+    // @ts-ignore
+    const stringMsg = msg.toString().toLowerCase();
+
+    if (stringMsg.includes?.('network error')) {
+      return true;
+    }
+  } catch (e) {
+    // ignore
   }
 
   return false;
@@ -90,14 +154,18 @@ export const isRPCError = (msg: Error | string | undefined): boolean => {
 export const isInsufficientAllowance = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
 
-  if (msg instanceof Error) {
-    if (msg?.message?.includes?.('insufficient allowance')) {
+  if (isString(msg)) {
+    if (msg?.includes?.('insufficient allowance')) {
       return true;
     }
     return false;
   }
-  if (msg?.includes?.('insufficient allowance')) {
-    return true;
+
+  if (Object.hasOwn(msg, 'message')) {
+    if (msg?.message?.includes?.('insufficient allowance')) {
+      return true;
+    }
+    return false;
   }
 
   return false;
@@ -105,14 +173,44 @@ export const isInsufficientAllowance = (msg: Error | string | undefined): boolea
 
 export const amountExceedsBalance = (msg: Error | string | undefined): boolean => {
   if (!msg) return false;
-  if (msg instanceof Error) {
+
+  if (isString(msg)) {
+    if (msg?.includes?.('transfer amount exceeds balance')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message')) {
     if (msg?.message?.includes?.('transfer amount exceeds balance')) {
       return true;
     }
     return false;
   }
 
-  if (msg?.includes?.('transfer amount exceeds balance')) {
+  return false;
+};
+
+export const isNeedSignerToDoTransaction = (msg: Error | string | undefined): boolean => {
+  if (!msg) return false;
+
+  if (isString(msg)) {
+    if (msg?.includes?.('sending a transaction requires a signer')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  if (Object.hasOwn(msg, 'message')) {
+    if (msg?.message?.includes?.('sending a transaction requires a signer')) {
+      return true;
+    }
+    return false;
+  }
+
+  if (msg.toString().includes('sending a transaction requires a signer')) {
     return true;
   }
 
@@ -186,6 +284,17 @@ export function parseError(
     }
   };
 
+  const needSignerMsg = () => {
+    if (isNeedSignerToDoTransaction(rawErrorMsg)) {
+      captureException(`Detected need signer error: ${rawErrorMsg}`, {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
+      return "Can't detect the signer, please reconnect the wallet or clear the cache try again.";
+    }
+  };
+
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
@@ -201,7 +310,18 @@ export function parseError(
   };
 
   const RpcUnavailableMsg = () => {
-    if (isRPCError(error)) return 'Unfortunately, RPC Service Unavailable';
+    if (isRPCError(error) || isRPCError(rawErrorMsg)) return t('general.rpcUnavailable');
+  };
+
+  const NetworkErrorMsg = () => {
+    if (isNetworkError(error) || isNetworkError(rawErrorMsg)) {
+      captureException(`Network error, need review: ${rawErrorMsg}`, {
+        extra: {
+          error: rawErrorMsg,
+        },
+      });
+      return "Network error, can't connect to the server.";
+    }
   };
 
   const msg =
@@ -211,8 +331,10 @@ export function parseError(
     exceedsBalance() ??
     insufficientAllowance() ??
     RpcUnavailableMsg() ??
+    NetworkErrorMsg() ??
     insufficientFunds() ??
     callRevert() ??
+    needSignerMsg() ??
     options.defaultGeneralMsg ??
     generalErrorMsg();
 

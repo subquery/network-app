@@ -169,6 +169,10 @@ export const useLocalProjects = () => {
           return i.type === ProjectType.SUBGRAPH;
         }
 
+        if (params.projectType === ProjectType.RPC) {
+          return params.categories?.some((ii) => i.name.includes(ii));
+        }
+
         if (!i.categories) return false;
         return i.categories?.filter((ii) => setCategories.has(ii)).length;
       });

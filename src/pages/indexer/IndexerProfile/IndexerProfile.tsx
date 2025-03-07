@@ -4,12 +4,15 @@
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
-import { CurEra, IPFSImage } from '@components';
+import { CurEra } from '@components/CurEra';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
+import Expand from '@components/Expand/Expand';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import IPFSImage from '@components/IPFSImage';
 import RpcError from '@components/RpcError';
 import { TOP_100_INDEXERS, useWeb3 } from '@containers';
-import { useEra, useSortedIndexerDeployments } from '@hooks';
+import { useEra, useIndexerMetadata, useSortedIndexerDeployments } from '@hooks';
+import useIndexerGeoInformation from '@hooks/useIndexerGeoInformation';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { getCommission, useSortedIndexer } from '@hooks/useSortedIndexer';
 import { BalanceLayout } from '@pages/dashboard';
@@ -17,7 +20,7 @@ import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/R
 import { StakeAndDelegationLineChart } from '@pages/dashboard/components/StakeAndDelegationLineChart/StakeAndDelegationLineChart';
 import { DoDelegate } from '@pages/delegator/DoDelegate';
 import { DoUndelegate } from '@pages/delegator/DoUndelegate';
-import { SubqlCard, Typography } from '@subql/components';
+import { Markdown, Spinner, SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDelegationQuery, useGetIndexersQuery, useGetTopIndexersQuery } from '@subql/react-hooks';
 import { notEmpty, parseError } from '@utils';
 import { isRPCError } from '@utils';
@@ -54,7 +57,7 @@ const AccountHeader: React.FC<{ account: string }> = ({ account }) => {
         <ConnectedIndexer id={account} size="large"></ConnectedIndexer>
       </div>
       {canDelegate && (
-        <div className="flex" style={{ marginLeft: 16 }}>
+        <div className="flex" style={{ marginLeft: 16, gap: 16 }}>
           <DoDelegate
             indexerAddress={account}
             delegation={delegations.data?.delegation}
@@ -94,6 +97,10 @@ const AccountBaseInfo = (props: { account: string }) => {
     context: { clientName: TOP_100_INDEXERS },
   });
 
+  const geoAccounts = useMemo(() => [props.account], [props.account]);
+
+  const accountGeoInfos = useIndexerGeoInformation(geoAccounts);
+
   const accountInfos = useMemo(() => {
     if (!topIndexers.data?.indexerPrograms.length) return;
     return {
@@ -105,7 +112,16 @@ const AccountBaseInfo = (props: { account: string }) => {
   return (
     <div className={styles.accountBaseInfo}>
       {makeChunk({ title: 'Uptime', value: `${truncateToDecimalPlace(accountInfos?.infos?.uptime || 0, 2)}%` })}
-
+      {makeChunk({
+        title: 'Location',
+        value: accountGeoInfos.loading ? (
+          <Spinner size={12}></Spinner>
+        ) : (
+          [accountGeoInfos.data?.[0]?.country?.names?.en, accountGeoInfos.data?.[0]?.city?.names?.en]
+            .filter((i) => i)
+            .join(', ') || 'Unknown'
+        ),
+      })}
       {makeChunk({
         title: 'Era Reward Collection',
         value: t(accountInfos?.infos?.rewardCollection === 1 ? 'general.frequent' : 'general.infrequent'),
@@ -191,6 +207,7 @@ const IndexerProfile: FC = () => {
   const { currentEra } = useEra();
   const sortedIndexer = useSortedIndexer(checksumAddress);
   const { getDisplayedCommission } = useMinCommissionRate();
+  const { indexerMetadata } = useIndexerMetadata(checksumAddress || '');
 
   const delegatorCounts = useQuery(
     gql`
@@ -261,7 +278,25 @@ const IndexerProfile: FC = () => {
           <AccountHeader account={checksumAddress ?? ''} />
 
           <AccountBaseInfo account={checksumAddress ?? ''}></AccountBaseInfo>
+          <div
+            style={{
+              marginTop: 24,
+              border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
+              borderRadius: 8,
+              padding: 24,
+            }}
+          >
+            <Expand height={254}>
+              <Typography variant="large" weight={600}>
+                About the {indexerMetadata?.name || checksumAddress}
+              </Typography>
 
+              <Markdown.Preview>
+                {indexerMetadata?.description ||
+                  `${indexerMetadata?.name || checksumAddress} has not provided any information about themselves`}
+              </Markdown.Preview>
+            </Expand>
+          </div>
           <div className={styles.cardInfos}>
             {renderAsync(result, {
               loading: () => <Skeleton active style={{ width: 302 }}></Skeleton>,

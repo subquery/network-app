@@ -3,14 +3,16 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { matchPath, Outlet, useNavigate, useParams } from 'react-router';
-import { APYTooltip, WalletRoute } from '@components';
+import { APYTooltip } from '@components/APYTooltip';
+import Expand from '@components/Expand/Expand';
 import RpcError from '@components/RpcError';
+import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
-import { useAsyncMemo, useEra, useIsIndexer, useSortedIndexer } from '@hooks';
+import { useAsyncMemo, useEra, useIndexerMetadata, useIsIndexer, useSortedIndexer } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
 import { BalanceLayout } from '@pages/dashboard';
 import { RewardsLineChart } from '@pages/dashboard/components/RewardsLineChart/RewardsLineChart';
-import { Footer, SubqlCard, Typography } from '@subql/components';
+import { Footer, Markdown, SubqlCard, Typography } from '@subql/components';
 import { WithdrawalStatus } from '@subql/network-query';
 import {
   formatSQT,
@@ -88,6 +90,7 @@ export const MyAccountInner: React.FC = () => {
   const account = useMemo(() => toChecksumAddress(profileAccount || address || ''), [address, profileAccount]);
 
   const isIndexer = useIsIndexer(account);
+  const { indexerMetadata } = useIndexerMetadata(account || '');
   const sortedIndexer = useSortedIndexer(account || '');
   const delegating = useDelegating(account ?? '');
   const rewards = useGetTotalRewardsAndUnclaimRewardsQuery({
@@ -161,7 +164,7 @@ export const MyAccountInner: React.FC = () => {
         }
       }
     });
-  }, [window.location.pathname]);
+  }, [window.location.pathname]); // seems it should be from useLocation, but now no bug. so keep it for now.
 
   return (
     <div
@@ -169,7 +172,25 @@ export const MyAccountInner: React.FC = () => {
       style={{ maxWidth: 1280, margin: '0 auto', padding: 24, width: '100%', height: 'calc(100vh - 90px)' }}
     >
       <AccountHeader profileAccount={account} />
+      <div
+        style={{
+          margin: '24px 0',
+          border: '1px solid var(--card-boder, rgba(223, 227, 232, 0.6))',
+          borderRadius: 8,
+          padding: 24,
+        }}
+      >
+        <Expand height={254}>
+          <Typography variant="large" weight={600}>
+            About the {indexerMetadata?.name || account}
+          </Typography>
 
+          <Markdown.Preview>
+            {indexerMetadata?.description ||
+              `${indexerMetadata?.name || account} has not provided any information about themselves`}
+          </Markdown.Preview>
+        </Expand>
+      </div>
       <div className={`flex ${styles.dashboard}`}>
         {renderAsync(mergeAsync(delegating, sortedIndexer, rewards, withdrawals), {
           loading: () => (
@@ -218,7 +239,7 @@ export const MyAccountInner: React.FC = () => {
                       <APYTooltip
                         currentEra={currentEra?.data?.index}
                         calculationDescription={
-                          'This is estimated from your total rewards from last Era divided by your total stake and delegation'
+                          'This is estimated from your total rewards over the previous three Eras divided by your total stake and delegation'
                         }
                       />
                     </Typography>

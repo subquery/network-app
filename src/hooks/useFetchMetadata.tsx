@@ -13,6 +13,7 @@ export const useFetchMetadata = () => {
     if (!indexerCid)
       return {
         name: '',
+        description: '',
         url: '',
         image: '',
       };
@@ -24,6 +25,7 @@ export const useFetchMetadata = () => {
       parseError(e);
       return {
         name: '',
+        description: '',
         url: '',
         image: '',
       };

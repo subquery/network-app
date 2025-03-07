@@ -17,14 +17,16 @@ import dayjs from 'dayjs';
 
 export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
   const period = currentEra.period;
+  const currentEraDate = currentEra.startTime;
+
   const splitData = 86400;
 
   const plusedEra = period > splitData ? 1 : Math.floor(splitData / period);
   // TODO:
   //   There have some problems in here
   //   1. secondFromLastTimes / period is just a fuzzy result. also we can get the exactly result by Graphql.
-  //   2. based on 1. also need to calcuate the xAxisScale in props.
-  //   3. based on 1. and 2. also need to do a lots of things for compatite dev env(1 era < 1 day).
+  //   2. based on 1. also need to calculate the xAxisScale in props.
+  //   3. based on 1. and 2. also need to do a lots of things for compatible dev env(1 era < 1 day).
   const getIncludesEras = (lastTimes: dayjs.Dayjs) => {
     const today = dayjs();
     const secondsFromLastTimes = (+today - +lastTimes) / 1000;
@@ -79,7 +81,6 @@ export const getSplitDataByEra = (currentEra: Era, includeNextEra = false) => {
 
     // Graphql sort is incorrect, because it is a string.
     let renderAmounts = amounts.sort((a, b) => parseInt(a.key, 16) - parseInt(b.key, 16)).map((i) => i.amount);
-
     // but in dev env will less than one day.
     if (period < splitData) {
       const eraCountOneDay = splitData / period;
@@ -140,7 +141,7 @@ export const RewardsLineChart = (props: {
 
   const rewardsLineXScales = useMemo(() => {
     const getXScales = (period: number, filterVal: FilterType) => {
-      const getDefaultScales = xAxisScalesFunc(period);
+      const getDefaultScales = xAxisScalesFunc(period, currentEra.data?.estEndTime);
 
       const result = getDefaultScales[filterVal.date]();
       return result.slice(0, result.length - 1);
@@ -168,6 +169,7 @@ export const RewardsLineChart = (props: {
       l3m: () => getIncludesEras(dayjs().subtract(90, 'day')),
       ly: () => getIncludesEras(dayjs().subtract(365, 'day')),
     }[filterVal.date]();
+
     const apis = props.account ? fetchRewardsByIndexer : fetchRewards;
     const vars = {
       eraIds: includesErasHex,

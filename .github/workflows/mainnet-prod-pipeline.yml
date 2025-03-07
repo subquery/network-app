@@ -23,7 +23,7 @@ jobs:
       - run: yarn
 
       - name: Build
-        # Disable CI flag so linter warnings aren't treaded as errors
+        # Disable CI flag so linter warnings aren't treated as errors
         run: CI=false yarn build
 
       - name: Deploy Prod
@@ -35,5 +35,4 @@ jobs:
           invalidation: /*
           dist-id: ESC023BBQRS3F
           delete-removed: false
-          no-cache: true
           private: true

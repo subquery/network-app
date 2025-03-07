@@ -4,7 +4,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppPageHeader, TabButtons, WalletRoute } from '@components';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { TabButtons } from '@components/TabButton';
+import { WalletRoute } from '@components/WalletRoute';
 import { ROUTES } from '@utils';
 
 import { Create } from './Create';

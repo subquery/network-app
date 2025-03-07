@@ -111,7 +111,10 @@ export const useMakeNotification = () => {
   const [fetchUnhealthyAllocation] = useLazyQuery<{ getIndexerServicesStatuses: { endpointSuccess: boolean }[] }>(
     gql`
       query GetIndexerServicesStatuses($indexer: String!) {
-        getIndexerServicesStatuses(indexer: $indexer) {
+        getIndexerServicesStatuses(
+          indexer: $indexer
+          filter: { allocationAmount: { greaterThan: "0" }, endpointSuccess: { equalTo: false } }
+        ) {
           endpointSuccess
         }
       }
@@ -157,7 +160,7 @@ export const useMakeNotification = () => {
       const exist = keys.every((key) => notificationStore.notificationList.find((item) => item.key === key));
 
       if (exist) {
-        const exipred = keys.some((key) => {
+        const expired = keys.some((key) => {
           const item = notificationStore.notificationList.find((item) => item.key === key);
           if (!item) return false;
           return item.dismissTo && item.dismissTo < Date.now();
@@ -165,7 +168,7 @@ export const useMakeNotification = () => {
 
         return {
           exist: true,
-          expired: exipred,
+          expired: expired,
         };
       }
 
@@ -348,8 +351,8 @@ export const useMakeNotification = () => {
           notificationStore.addNotification({
             key: NotificationKey.OutdatedAllocationV2,
             level: 'critical',
-            message: `You have allocated to a outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
-            title: 'Outdated Allocation Projects',
+            message: `You have allocated to an outdated deployment. Please adjust your allocation to the latest version.\nOutdated deployment id: ${outdatedDeployment.map((i) => i[0]).join('\n')}`,
+            title: 'Outdated Project Allocation',
             createdAt: Date.now(),
             canBeDismissed: true,
             dismissTime: defaultDismissTime,
@@ -614,7 +617,7 @@ export const useMakeNotification = () => {
           title: 'Project Unhealthy',
           createdAt: Date.now(),
           canBeDismissed: true,
-          dismissTime: defaultDismissTime,
+          dismissTime: 60 * 1000 * 30, // 30 min
           dismissTo: undefined,
           type: '',
           buttonProps: {
@@ -769,7 +772,7 @@ export const useMakeNotification = () => {
         //
         () => makeOverAllocateAndUnStakeAllocationNotification(),
         () => makeLowControllerBalanceNotification(),
-        // () => makeUnhealthyAllocationNotification(),
+        () => makeUnhealthyAllocationNotification(),
         () => makeInactiveOperatorNotification(),
         () => makeLowBillingBalanceNotification(),
         () => makeUnlockWithdrawalNotification(),

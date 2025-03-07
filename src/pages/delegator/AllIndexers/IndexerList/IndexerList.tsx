@@ -7,18 +7,20 @@ import { useTranslation } from 'react-i18next';
 import { BsCollectionPlayFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
-import { APYTooltip, SearchInput } from '@components';
+import { APYTooltip } from '@components/APYTooltip';
 import { EstimatedNextEraLayout } from '@components/EstimatedNextEraLayout';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
+import { SearchInput } from '@components/SearchInput';
 import { TokenAmount } from '@components/TokenAmount';
-import { useWeb3 } from '@containers';
+import { useIPFS, useWeb3 } from '@containers';
 import { useEra, useNetworkClient } from '@hooks';
+import { getIndexerMetadata } from '@hooks/useIndexerMetadata';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { CurrentEraValue, Indexer } from '@subql/network-clients';
 import { IndexerApySummariesOrderBy, IndexerApySummaryFilter } from '@subql/network-query';
-import { useGetAllDelegationsQuery, useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
+import { useGetAllIndexerByApyLazyQuery } from '@subql/react-hooks';
 import { formatEther, formatNumber, formatNumberWithLocale, getOrderedAccounts, notEmpty, TOKEN } from '@utils';
 import { ROUTES } from '@utils';
 import { useSize } from 'ahooks';
@@ -26,7 +28,6 @@ import { Button, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import BigNumberJs from 'bignumber.js';
 import { BigNumber } from 'ethers';
-import { FixedType } from 'rc-table/lib/interface';
 
 import { DoDelegate } from '../../DoDelegate';
 import styles from './IndexerList.module.css';
@@ -38,6 +39,7 @@ type IndexerWithApy = Indexer & { indexerApy: string; delegatorApy: string; apyE
 export const IndexerList: React.FC = () => {
   const { t } = useTranslation();
   const networkClient = useNetworkClient();
+  const ipfs = useIPFS();
   const { account } = useWeb3();
   const { currentEra } = useEra();
 
@@ -48,16 +50,17 @@ export const IndexerList: React.FC = () => {
   };
   const [requestIndexers, fetchedIndexers] = useGetAllIndexerByApyLazyQuery();
   const [pageStartIndex, setPageStartIndex] = React.useState(1);
+  const [currentPageSize, setCurrentPageSize] = React.useState<number>(50);
   const [loadingList, setLoadingList] = React.useState<boolean>(false);
   const [indexerList, setIndexerList] = React.useState<IndexerWithApy[]>([]);
   const [closeBannerTips, setCloseBannerTips] = React.useState<boolean>(false);
   const { getDisplayedCommission } = useMinCommissionRate();
 
-  const delegations = useGetAllDelegationsQuery();
+  // const delegations = useGetAllDelegationsQuery();
 
   const [searchIndexer, setSearchIndexer] = React.useState<string | undefined>();
 
-  const onLoadMore = async (offset: number, filter?: IndexerApySummaryFilter) => {
+  const onLoadMore = async (offset: number, filter?: IndexerApySummaryFilter, pageSize = 50) => {
     try {
       setLoadingList(true);
       setIndexerList([]);
@@ -66,7 +69,7 @@ export const IndexerList: React.FC = () => {
       const res = await requestIndexers({
         variables: {
           offset,
-          first: 10,
+          first: pageSize,
           orderBy: [IndexerApySummariesOrderBy.DELEGATOR_APY_DESC],
           filter: {
             ...filter,
@@ -88,6 +91,7 @@ export const IndexerList: React.FC = () => {
               indexer?.indexerId || '',
               BigNumber.from(currentEra.data?.index || 0) || undefined,
               indexer?.indexer || undefined,
+              (cid: string) => getIndexerMetadata(ipfs.catSingle, cid),
             );
           }),
         );
@@ -103,6 +107,7 @@ export const IndexerList: React.FC = () => {
             };
           }),
         );
+
         return sortedIndexers;
       }
     } finally {
@@ -119,8 +124,8 @@ export const IndexerList: React.FC = () => {
       return {
         ...i,
         commission: {
-          current: getDisplayedCommission(i.commission.current * 100),
-          after: getDisplayedCommission(i.commission.after * 100),
+          current: getDisplayedCommission(BigNumberJs(i.commission.current).multipliedBy(100).toNumber()),
+          after: getDisplayedCommission(BigNumberJs(i.commission.after).multipliedBy(100).toNumber()),
         } as CurrentEraValue<number>,
       };
     });
@@ -134,8 +139,13 @@ export const IndexerList: React.FC = () => {
         dataIndex: 'address',
         key: 'address',
         width: 100,
-        render: (val: string) =>
-          val ? <ConnectedIndexer id={val} account={account} onClick={viewIndexerDetail} /> : <></>,
+        render: (val: string, record) => {
+          return val ? (
+            <ConnectedIndexer metadata={record.metadata} id={val} account={account} onClick={viewIndexerDetail} />
+          ) : (
+            <></>
+          );
+        },
       },
       {
         title: (
@@ -148,10 +158,10 @@ export const IndexerList: React.FC = () => {
           >
             Estimated APY
             <APYTooltip
-              currentEra={undefined}
               calculationDescription={
-                'This is an estimated APY rewarded to Delegators from this Node Operator based on the last Era.'
+                'This is an estimated APY rewarded to Delegators from this Node Operator over the previous three Eras.'
               }
+              isAverage
             />
           </Typography>
         ),
@@ -213,6 +223,9 @@ export const IndexerList: React.FC = () => {
             </div>
           );
         },
+        sorter: (a, b) => {
+          return BigNumberJs(a?.capacity?.after.toString() || 0).comparedTo(b?.capacity?.after.toString() || 0);
+        },
       },
       {
         title: <TableTitle title={t('indexer.ownStake')} />,
@@ -262,25 +275,27 @@ export const IndexerList: React.FC = () => {
         width: 150,
         render: (id: string) => {
           if (id === account) return <Typography> - </Typography>;
-          const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => i?.indexerId === id);
-          const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
+          const curIndexer = fetchedIndexers.data?.indexerApySummaries?.nodes?.find((i) => {
+            return i?.indexerId === id;
+          });
+          // const delegation = delegations.data?.delegations?.nodes.find((i) => `${account}:${id}` === i?.id);
 
           return (
             <div className={'flex-start'}>
-              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer?.indexer} delegation={delegation} />
+              <DoDelegate indexerAddress={id} variant="textBtn" indexer={curIndexer?.indexer} />
             </div>
           );
         },
       },
     ];
     return getColumns();
-  }, [account, pageStartIndex]);
+  }, [account, pageStartIndex, fetchedIndexers.data, orderedIndexerList]);
 
   React.useEffect(() => {
-    if (networkClient) {
+    if (networkClient && currentEra.data?.index) {
       onLoadMore(0);
     }
-  }, [networkClient]);
+  }, [networkClient, currentEra.data?.index]);
 
   return (
     <div className={styles.container}>
@@ -351,6 +366,7 @@ export const IndexerList: React.FC = () => {
                       },
                     }
                   : undefined,
+                currentPageSize,
               );
             }}
             defaultValue={searchIndexer}
@@ -370,10 +386,13 @@ export const IndexerList: React.FC = () => {
           total: totalCounts,
           onChange: (page, pageSize) => {
             const i = (page - 1) * pageSize;
+            setCurrentPageSize(pageSize);
             setPageStartIndex(page);
-            onLoadMore?.(i);
+            onLoadMore?.(i, {}, pageSize);
           },
           current: pageStartIndex,
+          pageSize: currentPageSize,
+          pageSizeOptions: [10, 50, 100],
         }}
         scroll={width <= 768 ? { x: 1600 } : undefined}
       ></Table>

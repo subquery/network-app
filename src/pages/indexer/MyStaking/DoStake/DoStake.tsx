@@ -3,13 +3,9 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  claimIndexerRewardsModalText,
-  ModalApproveToken,
-  ModalClaimIndexerRewards,
-  tokenApprovalModalText,
-} from '@components';
 import { OutlineDot } from '@components/Icons/Icons';
+import { ModalApproveToken, tokenApprovalModalText } from '@components/ModalApproveToken';
+import { claimIndexerRewardsModalText, ModalClaimIndexerRewards } from '@components/ModalClaimIndexerRewards';
 import TransactionModal from '@components/TransactionModal';
 import { TransactionModalAction, TransactionModalRef } from '@components/TransactionModal/TransactionModal';
 import { useSQToken, useWeb3 } from '@containers';
@@ -146,50 +142,40 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       const actions = [stakeButton, unstakeButton];
 
       return (
-        <>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  label: (
-                    <Button type="text" style={{ padding: 0, background: 'transparent' }} size="small">
-                      Stake more
-                    </Button>
-                  ),
-                  key: 1,
-                  onClick: () => {
-                    if (modalRef.current) {
-                      modalRef.current.showModal(stakeButton.key);
-                    }
-                    stakeButton.onClick?.();
-                  },
-                },
-                {
-                  label: (
-                    <Tooltip title={isMaxUnstakeZero ? t('indexer.unStakeTooltip') : undefined}>
-                      <Button
-                        size="small"
-                        type="text"
-                        disabled={isMaxUnstakeZero}
-                        style={{ padding: 0, background: 'transparent' }}
-                        onClick={() => {
-                          if (modalRef.current) {
-                            modalRef.current.showModal(unstakeButton.key);
-                          }
-                          unstakeButton.onClick?.();
-                        }}
-                      >
-                        Unstake
-                      </Button>
-                    </Tooltip>
-                  ),
-                  key: 2,
-                },
-              ],
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <Button
+            type="primary"
+            onClick={() => {
+              if (modalRef.current) {
+                modalRef.current.showModal(stakeButton.key);
+              }
+              stakeButton.onClick?.();
             }}
+            shape="round"
+            size="large"
+            style={{ flex: 1 }}
           >
-            <OutlineDot></OutlineDot>
-          </Dropdown>
+            Stake More
+          </Button>
+          <Button
+            ghost
+            type="primary"
+            onClick={() => {
+              if (modalRef.current) {
+                modalRef.current.showModal(unstakeButton.key);
+              }
+              unstakeButton.onClick?.();
+            }}
+            shape="round"
+            size="large"
+            style={{ flex: 1, marginLeft: 16 }}
+          >
+            Unstake
+          </Button>
           <TransactionModal
             ref={modalRef}
             text={modalText}
@@ -217,7 +203,7 @@ export const DoStake: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
               }
             }}
           />
-        </>
+        </div>
       );
     },
   });

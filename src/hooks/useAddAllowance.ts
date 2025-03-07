@@ -1,7 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApproveContract } from '@components';
+import { ApproveContract } from '@components/ModalApproveToken';
 import { openNotification } from '@subql/components';
 
 import { useWeb3Store } from 'src/stores';

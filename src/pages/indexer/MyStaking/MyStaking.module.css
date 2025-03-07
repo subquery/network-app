@@ -4,7 +4,7 @@
 
 .container {
   display: flex;
-  background-color: var(--gray200);
+  background-color: var(--sq-gray200);
   width: 100%;
   min-height: 100%;
 }

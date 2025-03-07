@@ -4,6 +4,7 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { specialApiKeyName } from '@components/GetEndpoint';
+import { PriceQueriesChart } from '@components/IndexerDetails/PriceQueries';
 import { ApproveContract } from '@components/ModalApproveToken';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useSQToken } from '@containers';
@@ -369,15 +370,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       }
 
       // TODO: make a enum
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setDisplayTransactions(newDisplayTransactions);
 
       setTransactionNumbers(
-        newDisplayTransactions.reduce((acc, cur, index) => {
-          acc[cur] = index + 1;
-          return acc;
-        }, {} as { [key in string]: number }),
+        newDisplayTransactions.reduce(
+          (acc, cur, index) => {
+            acc[cur] = index + 1;
+            return acc;
+          },
+          {} as { [key in string]: number },
+        ),
       );
       setCurrentStep(2);
     }
@@ -453,10 +456,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         // if already created the plan, just update it.
         const minExpiration = estimatedChannelLimit?.data?.channelMinExpiration || 3600 * 24 * 14;
         const expiration = flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 0;
+        const maximumValue =
+          (estimatedChannelLimit.data?.channelMaxNum || 0) < Math.ceil(maximum)
+            ? estimatedChannelLimit.data?.channelMaxNum
+            : Math.ceil(maximum);
         const res = await createOrUpdate({
           deploymentId: deploymentId,
           price: parseEther(`${price}`).div(1000).toString(),
-          maximum: Math.ceil(maximum),
+          maximum: maximumValue || 2,
           expiration: expiration < minExpiration ? minExpiration : expiration,
           id: prevHostingPlan?.id || '0',
         });
@@ -607,7 +614,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                     name="price"
                     rules={[{ required: true, message: 'Please enter the price' }]}
                   >
-                    <InputNumber placeholder="Enter price" min="1" addonAfter={TOKEN}></InputNumber>
+                    <InputNumber placeholder="Enter price" min="0.0000000000000001" addonAfter={TOKEN}></InputNumber>
                   </Form.Item>
                   <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
                     Per 1000 requests
@@ -631,13 +638,23 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                         required: true,
                         message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
                       },
+                      {
+                        max: estimatedChannelLimit.data?.channelMaxNum,
+                        type: 'number',
+                        message: `The maximum number of Node Operators can not be more than ${estimatedChannelLimit.data?.channelMaxNum}`,
+                      },
                     ]}
                   >
                     <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
                   </Form.Item>
-                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
+                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)', margin: '8px 0' }}>
                     {matchedCount}
                   </Typography>
+
+                  <PriceQueriesChart
+                    deploymentId={deploymentId}
+                    projectId={`${parseInt(project.id)}`}
+                  ></PriceQueriesChart>
                 </Form>
               </>
             )}
@@ -735,7 +752,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               placeholder="Enter amount"
               addonAfter={
                 <div className="flex" style={{ gap: 8 }}>
-                  <img src="/static/sqtoken.png" alt=""></img>
+                  <img src="/static/sqtoken.png" alt="" width={32}></img>
                   {TOKEN}
                 </div>
               }

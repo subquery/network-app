@@ -5,18 +5,19 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router';
 import NormalError from '@components/NormalError';
+import ProjectHeader from '@components/ProjectHeader';
+import ProjectOverview from '@components/ProjectOverview';
+import { TabButtons } from '@components/TabButton';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
 import { captureMessage } from '@sentry/react';
-import { Typography } from '@subql/components';
+import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Breadcrumb } from 'antd';
 
-import { ProjectHeader, ProjectOverview, Spinner, TabButtons } from '../../../components';
 import IndexerDetails from '../../../components/IndexerDetails';
 import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
@@ -106,9 +107,14 @@ const ProjectInner: React.FC = () => {
 
   return (
     <>
-      <SubgraphAlert></SubgraphAlert>
       {renderAsync(asyncProject, {
-        loading: () => <Spinner />,
+        loading: () => (
+          <div
+            style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Spinner></Spinner>
+          </div>
+        ),
         error: (e) => (
           <NormalError withWrapper>
             This project looks like have wrong metadata, Please contact the project creator to fix it.
@@ -132,7 +138,9 @@ const ProjectInner: React.FC = () => {
                         </Typography>
                       ),
                       onClick: () => {
-                        navigate('/explorer/home');
+                        navigate(
+                          `/explorer/home?category=${asyncProject.data?.type === ProjectType.RPC ? 'rpc' : 'subquery'}`,
+                        );
                       },
                     },
                     {
@@ -158,6 +166,11 @@ const ProjectInner: React.FC = () => {
                 <TabButtons tabs={sortedTabList} withUnderline />
               </div>
               <div className={styles.contentOverview}>
+                {/* Dbsize is fetch from this section, make it to the store then displaying at header. 
+                    side effects in this section.  */}
+                <div style={{ display: location.pathname.includes(INDEXERS) ? 'block' : 'none' }}>
+                  <IndexerDetails deploymentId={deploymentId} project={project} manifest={manifest}></IndexerDetails>
+                </div>
                 {/* TODO: just render the components rather than routes. */}
                 <Routes>
                   <Route
@@ -171,16 +184,7 @@ const ProjectInner: React.FC = () => {
                       />
                     }
                   />
-                  <Route
-                    path={INDEXERS}
-                    element={
-                      <IndexerDetails
-                        deploymentId={deploymentId}
-                        project={project}
-                        manifest={manifest}
-                      ></IndexerDetails>
-                    }
-                  />
+                  <Route path={INDEXERS} element={<></>} />
                   <Route
                     path={SERVICE_AGREEMENTS}
                     element={

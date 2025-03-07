@@ -4,13 +4,13 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Expand from '@components/Expand/Expand';
+import IPFSImage from '@components/IPFSImage';
 import NormalError from '@components/NormalError';
 import { ExternalLink } from '@components/ProjectOverview/ProjectOverview';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { useVerifyDeployment } from '@hooks/useVerifyDeployment';
-import SubgraphAlert from '@pages/dashboard/components/SubgraphAlert/SubgraphAlert';
-import { Markdown, Modal, openNotification, SubqlCheckbox, Tag, Typography } from '@subql/components';
+import { Markdown, Modal, openNotification, Spinner, SubqlCheckbox, Tag, Typography } from '@subql/components';
 import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
@@ -18,14 +18,17 @@ import clsx from 'clsx';
 
 import { ProjectDetails, ProjectType } from 'src/models';
 
-import { IPFSImage, Spinner } from '../../../components';
 import { useWeb3 } from '../../../containers';
 import { useCreateDeployment, useProject } from '../../../hooks';
 import { renderAsync } from '../../../utils';
 import DeploymentsTab, { DeploymendRef } from './Deployments';
 import styles from './Project.module.less';
 
-export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails }> = ({ id, project }) => {
+export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectDetails; onRefresh?: () => void }> = ({
+  id,
+  project,
+  onRefresh,
+}) => {
   const [form] = useForm();
   const createDeployment = useCreateDeployment(id ?? '');
   const { getIfUnsafeAndWarn } = useGetIfUnsafeDeployment();
@@ -158,7 +161,12 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
             Deploy New Version
           </Typography.Link>
         </div>
-        <DeploymentsTab ref={deploymentsRef} projectId={id ?? ''} currentDeployment={currentDeployment} />
+        <DeploymentsTab
+          ref={deploymentsRef}
+          projectId={id ?? ''}
+          currentDeployment={currentDeployment}
+          onRefresh={onRefresh}
+        />
       </div>
     </div>
   );
@@ -173,9 +181,20 @@ const Project: React.FC = () => {
 
   return (
     <div>
-      <SubgraphAlert></SubgraphAlert>
       {renderAsync(asyncProject, {
-        loading: () => <Spinner />,
+        loading: () => (
+          <div
+            style={{
+              width: '100vw',
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Spinner />
+          </div>
+        ),
         error: (error: Error) => {
           return (
             <NormalError withWrapper>
@@ -209,7 +228,9 @@ const Project: React.FC = () => {
                         </Typography>
                       ),
                       onClick: () => {
-                        navigate('/projects');
+                        navigate(
+                          `/projects?category=${asyncProject.data?.type === ProjectType.RPC ? 'rpc' : 'subquery'}`,
+                        );
                       },
                     },
                     {
@@ -287,11 +308,23 @@ const Project: React.FC = () => {
                 <ExternalLink icon="github" link={project.metadata.codeUrl} />
 
                 <div
-                  style={{ height: 1, width: '100%', background: 'var(--sq-gray300)', marginTop: 8, marginBottom: 24 }}
+                  style={{
+                    height: 1,
+                    width: '100%',
+                    background: 'var(--sq-gray300)',
+                    marginTop: 8,
+                    marginBottom: 24,
+                  }}
                 ></div>
               </div>
 
-              <ProjectDeploymentsDetail id={id} project={project}></ProjectDeploymentsDetail>
+              <ProjectDeploymentsDetail
+                id={id}
+                project={project}
+                onRefresh={async () => {
+                  await asyncProject?.refetch?.();
+                }}
+              ></ProjectDeploymentsDetail>
             </>
           );
         },

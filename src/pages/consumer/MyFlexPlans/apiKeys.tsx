@@ -21,7 +21,7 @@ const EmptyApiKeys: FC<{ children: React.ReactNode }> = ({ children }) => {
       <Typography type="secondary">This key can be used for request queries. Learn more here.</Typography>
       <Typography type="secondary" style={{ marginTop: '24px' }}>
         {/* TODO: finish it when missing document done. */}
-        Learn more <a href="https://academy.subquery.network/">here</a>
+        Learn more <Typography.Link href="https://academy.subquery.network/">here</Typography.Link>
       </Typography>
       {children}
     </>

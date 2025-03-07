@@ -2,9 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, Route, Routes } from 'react-router';
-import { AppPageHeader, EmptyList, TabButtons, WalletRoute } from '@components';
+import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { AppPageHeader } from '@components/AppPageHeader';
+import { EmptyList } from '@components/EmptyList';
+import { TabButtons } from '@components/TabButton';
+import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { Spinner, Typography } from '@subql/components';
 import {
@@ -16,7 +20,7 @@ import {
   useGetIndexerOngoingServiceAgreementsQuery,
   useGetIndexerServiceAgreementsCountQuery,
 } from '@subql/react-hooks';
-import { ROUTES, URLS } from '@utils';
+import { parseError, ROUTES, URLS } from '@utils';
 import { t } from 'i18next';
 
 import { SAPlayground } from '../Playground';
@@ -75,22 +79,6 @@ const buttonLinks = (BASE_ROUTE: string) => {
   ];
 };
 
-export const NoAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
-  const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[USER_ROLE].intl;
-
-  return (
-    <>
-      <AppPageHeader title={t('plans.category.serviceAgreement')} />
-      <EmptyList
-        title={t('serviceAgreements.noAgreementsTitle')}
-        description={noAgreementsDescription}
-        infoI18nKey={noAgreementsInfoLink}
-        infoLink={noAgreementsLink}
-      />
-    </>
-  );
-};
-
 const Agreements: React.FC<{
   queryFn: SA_QUERY_FN;
   BASE_ROUTE: string;
@@ -98,14 +86,11 @@ const Agreements: React.FC<{
   userRole: USER_ROLE;
 }> = ({ queryFn, BASE_ROUTE, totalCount, userRole }) => {
   const { account } = useWeb3();
-
   const { t } = useTranslation();
   const { noAgreementsDescription, noAgreementsInfoLink, noAgreementsLink } = roleMapping[userRole].intl;
 
   return (
     <>
-      <AppPageHeader title={t('plans.category.serviceAgreement')} desc={t('serviceAgreements.agreementsDescription')} />
-
       <WalletRoute
         componentMode
         element={
@@ -139,51 +124,61 @@ const Agreements: React.FC<{
 
 export const ServiceAgreements: React.FC<{ USER_ROLE: USER_ROLE }> = ({ USER_ROLE }) => {
   const { account } = useWeb3();
-
-  const { BASE_ROUTE } = roleMapping[USER_ROLE];
-  const { useTotalCount, useOngoingAgreements, useExpiredAgreements } = roleMapping[USER_ROLE].hooks;
+  const location = useLocation();
+  const {
+    BASE_ROUTE,
+    hooks: { useTotalCount, useOngoingAgreements, useExpiredAgreements },
+  } = useMemo(() => roleMapping[USER_ROLE], [USER_ROLE]);
   const serviceAgreements = useTotalCount({ variables: { address: account ?? '' } });
 
-  function parseErrors(e: Error) {
-    throw new Error('Function not implemented.');
-  }
+  return (
+    <div>
+      {location.pathname.includes(PLAYGROUND) ? (
+        ''
+      ) : (
+        <AppPageHeader
+          title={t('plans.category.serviceAgreement')}
+          desc={t('serviceAgreements.agreementsDescription')}
+        />
+      )}
+      {renderAsync(serviceAgreements, {
+        loading: () => <Spinner />,
+        error: (e) => <Typography>{`Failed to load agreements: ${parseError(e)}`}</Typography>,
+        data: (data) => {
+          const totalCount = data?.serviceAgreements?.totalCount ?? 0;
 
-  return renderAsync(serviceAgreements, {
-    loading: () => <Spinner />,
-    error: (e) => <Typography>{`Failed to load agreements: ${parseErrors(e)}`}</Typography>,
-    data: (data) => {
-      const totalCount = data?.serviceAgreements?.totalCount ?? 0;
-
-      return (
-        <Routes>
-          <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
-          <Route
-            path={ONGOING_PLANS}
-            element={
-              <Agreements
-                queryFn={useOngoingAgreements}
-                BASE_ROUTE={BASE_ROUTE}
-                totalCount={totalCount}
-                userRole={USER_ROLE}
+          return (
+            <Routes>
+              <Route path={`${PLAYGROUND}/:saId`} element={<SAPlayground />} />
+              <Route
+                path={ONGOING_PLANS}
+                element={
+                  <Agreements
+                    queryFn={useOngoingAgreements}
+                    BASE_ROUTE={BASE_ROUTE}
+                    totalCount={totalCount}
+                    userRole={USER_ROLE}
+                  />
+                }
               />
-            }
-          />
-          <Route
-            path={EXPIRED_PLANS}
-            element={
-              <Agreements
-                queryFn={useExpiredAgreements}
-                BASE_ROUTE={BASE_ROUTE}
-                totalCount={totalCount}
-                userRole={USER_ROLE}
+              <Route
+                path={EXPIRED_PLANS}
+                element={
+                  <Agreements
+                    queryFn={useExpiredAgreements}
+                    BASE_ROUTE={BASE_ROUTE}
+                    totalCount={totalCount}
+                    userRole={USER_ROLE}
+                  />
+                }
               />
-            }
-          />
-          <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
-        </Routes>
-      );
-    },
-  });
+              <Route path={'/'} element={<Navigate replace to={ONGOING_PLANS} />} />
+            </Routes>
+          );
+        },
+      })}
+    </div>
+  );
 };
 
 // TODO: arrange this if necessary

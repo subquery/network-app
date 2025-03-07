@@ -5,11 +5,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import UnsafeWarn from '@components/UnsafeWarn';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { Spinner, Typography } from '@subql/components';
+import { ChatBoxTooltip, Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
-import { ProjectType as ProjectTypeFromSubql } from '@subql/network-query';
-import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
+
+import { useChatBoxStore } from 'src/stores/chatbox';
 
 import { useProjectMetadata } from '../../containers';
 import { useAsyncMemo } from '../../hooks';
@@ -24,10 +24,12 @@ type Props = {
   project?: ProjectMetadata;
   deploymentId?: string;
   deploymentVersion?: string;
-  type?: ProjectType | ProjectTypeFromSubql;
+  type?: ProjectType;
+  maxWidth?: string;
+  onClick?: () => void;
 };
 
-export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type }) => {
+export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, maxWidth = '200px', onClick }) => {
   const { t } = useTranslation();
 
   const deploymentMeta = useDeploymentMetadata(deploymentId);
@@ -36,25 +38,37 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
     ? `${deploymentMeta.data?.version} - ${t('projects.deploymentId')}:`
     : t('projects.deploymentId');
 
-  const deploymentType = React.useMemo(() => {
-    if (type === ProjectType.RPC || type === ProjectTypeFromSubql.RPC) return ProjectType.RPC;
-    if (type === ProjectType.SQ_DICT || type === ProjectTypeFromSubql.SQ_DICT) return ProjectType.SQ_DICT;
-    if (type === ProjectType.SUBGRAPH || type === ProjectTypeFromSubql.SUBGRAPH) return ProjectType.SUBGRAPH;
-    if (type === ProjectType.SUBQUERY || type === ProjectTypeFromSubql.SUBQUERY) return ProjectType.SUBQUERY;
-  }, [type]);
+  const chatBoxStore = useChatBoxStore();
 
   return (
-    <div className={styles.projectInfo}>
-      <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
+    <ChatBoxTooltip
+      options={[
+        {
+          label: 'What flex plan price should I set?',
+          value: `What flex plan price should I set for project deployment ${deploymentId}?`,
+        },
+        {
+          label: 'How should I allocate my SQT to this deployment?',
+          value: `How much SQT should I allocated to deployment ${deploymentId}?`,
+        },
+      ]}
+      chatBoxInstance={chatBoxStore.chatBoxRef}
+    >
+      <div className={styles.projectInfo}>
+        <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
 
-      <Tooltip title={deploymentId}>
-        <div className={styles.projectTextInfo}>
+        <div
+          className={styles.projectTextInfo}
+          onClick={() => {
+            onClick && onClick();
+          }}
+        >
           <div style={{ display: 'flex', height: 22 }}>
             {project?.name && (
               <Typography
-                className="overflowEllipsis"
+                className={clsx('overflowEllipsis', styles.link)}
                 variant="large"
-                style={{ marginRight: 10, width: '100%', maxWidth: '200px' }}
+                style={{ marginRight: 10, width: '100%', maxWidth: maxWidth }}
               >
                 {project?.name}
               </Typography>
@@ -66,7 +80,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
           ) : (
             <div>
               <Typography variant="small" className={styles.text}>
-                Type: {deploymentType === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}
+                Type: {type === ProjectType.RPC ? 'RPC Endpoint' : 'Indexed Dataset'}
               </Typography>
             </div>
           )}
@@ -84,15 +98,16 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type })
             </Copy>
           </div>
         </div>
-      </Tooltip>
-    </div>
+      </div>
+    </ChatBoxTooltip>
   );
 };
 
 // TODO: Merge DeploymentMeta with DeploymentInfo
-export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: string }> = ({
+export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: string; maxWidth?: string }> = ({
   deploymentId,
   projectMetadata,
+  maxWidth,
 }) => {
   const { getMetadataFromCid } = useProjectMetadata();
 
@@ -109,7 +124,7 @@ export const DeploymentMeta: React.FC<{ deploymentId: string; projectMetadata?: 
         return <Typography>Project metadata not found</Typography>;
       }
 
-      return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} />;
+      return <DeploymentInfo deploymentId={deploymentId} project={projectMeta} maxWidth={maxWidth} />;
     },
   });
 };
