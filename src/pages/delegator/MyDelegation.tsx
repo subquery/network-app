@@ -143,7 +143,7 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       },
     },
     {
-      title: <TableTitle title="Remaining capacity" />,
+      title: <TableTitle title="Remaining capacity (next Era)" />,
       key: 'capacityKey',
       dataIndex: 'capacity',
       width: 200,
