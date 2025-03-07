@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react';
+import { BsInfoCircle } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
 import { useEra } from '@hooks';
 import { captureException } from '@sentry/react';
@@ -153,35 +154,40 @@ const CurrentEraRewards: FC<IProps> = ({ indexerAddress, deploymentId }) => {
       </div>
 
       <div className="flex" style={{ gap: 10 }}>
-        Current Era Query Rewards:{' '}
+        Estimated Current Era Query Rewards:{' '}
         {currentEraFlexPlanRewardsQuery.loading || currentEraUncollectedFlexPlanRewards.loading ? (
           <Spinner size={10}></Spinner>
         ) : (
-          <Tooltip
-            title={
-              <div className="col-flex">
-                <Typography style={{ color: '#fff' }} variant="small">
-                  On chain: {currentEraFlexPlanRewards || '0'} {TOKEN}
-                </Typography>
-                <Typography style={{ color: '#fff' }} variant="small">
-                  Off chain: {currentEraUncollectedFlexPlanRewards.data?.toString() || '0'} {TOKEN}
-                </Typography>
-              </div>
-            }
-          >
-            <div
-              onClick={() => {
-                currentEraFlexPlanRewardsQuery.refetch();
-                currentEraUncollectedFlexPlanRewards.refetch();
-              }}
-              style={{ cursor: 'pointer' }}
+          <>
+            <Tooltip
+              title={
+                <div className="col-flex">
+                  <Typography style={{ color: '#fff' }} variant="small">
+                    On chain: {currentEraFlexPlanRewards || '0'} {TOKEN}
+                  </Typography>
+                  <Typography style={{ color: '#fff' }} variant="small">
+                    Off chain: {currentEraUncollectedFlexPlanRewards.data?.toString() || '0'} {TOKEN}
+                  </Typography>
+                </div>
+              }
             >
-              {BigNumberJs(currentEraUncollectedFlexPlanRewards.data?.toString() || '0')
-                .plus(currentEraFlexPlanRewards?.toString() || '0')
-                .toFixed(6)}{' '}
-              {TOKEN}
-            </div>
-          </Tooltip>
+              <div
+                onClick={() => {
+                  currentEraFlexPlanRewardsQuery.refetch();
+                  currentEraUncollectedFlexPlanRewards.refetch();
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                {BigNumberJs(currentEraUncollectedFlexPlanRewards.data?.toString() || '0')
+                  .plus(currentEraFlexPlanRewards?.toString() || '0')
+                  .toFixed(6)}{' '}
+                {TOKEN}
+              </div>
+            </Tooltip>
+            <Tooltip title="Query rewards will be adjusted based on the total stake.">
+              <BsInfoCircle style={{ color: 'var(--sq-gray500)', fontSize: 14 }}></BsInfoCircle>
+            </Tooltip>
+          </>
         )}
       </div>
     </div>
