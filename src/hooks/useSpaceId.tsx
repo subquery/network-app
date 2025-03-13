@@ -25,7 +25,6 @@ const rpcMainnet = [
 
 const rpcBNB = [
   'https://binance.llamarpc.com',
-  'https://bsc.blockpi.network/v1/rpc/public',
   'https://bsc.publicnode.com',
   'https://bsc.drpc.org',
   'https://1rpc.io/bnb',
