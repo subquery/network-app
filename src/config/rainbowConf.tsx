@@ -26,7 +26,7 @@ export const tipsL1ChainIds: number[] =
 export const config = getDefaultConfig({
   appName: 'SubQuery Network App',
   projectId: 'c7ea561f79adc119587d163a68860570',
-  chains: [base],
+  chains: [base, baseSepolia, mainnet, sepolia],
   transports: {
     [base.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC),
     [mainnet.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC),

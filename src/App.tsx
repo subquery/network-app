@@ -66,18 +66,19 @@ const RenderRouter: React.FC = () => {
         walletName: connector?.name,
         signerAddress: 'not collected',
         signerChainId: 'not collected',
-        providerNetwork: provider._network.name,
+        providerNetwork: provider.network?.name,
         isConnected: isConnected,
       });
-
       const signerAddress = await signer?.getAddress();
       const signerChainId = await signer?.getChainId();
+      const providerNetwork = await provider.getNetwork();
+
       makeDebugInfo({
         address,
         walletName: connector?.name,
         signerAddress,
         signerChainId,
-        providerNetwork: provider._network.name,
+        providerNetwork,
         isConnected: isConnected,
       });
     })();
