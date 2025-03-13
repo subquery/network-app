@@ -291,7 +291,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const initDelegations = async () => {
     if (!account) return;
     const { data, error } = await loadDelegations();
-    console.warn(account, data, error);
+
     if (!error && data?.delegations?.nodes) {
       const sortedDelegations = data.delegations.nodes
         .map((delegation) => ({
