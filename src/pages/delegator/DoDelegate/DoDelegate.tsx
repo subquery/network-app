@@ -14,7 +14,7 @@ import { WalletRoute } from '@components/WalletRoute';
 import { useSQToken, useWeb3 } from '@containers';
 import { formatEther, parseEther } from '@ethersproject/units';
 import { useEra, useIndexerMetadata } from '@hooks';
-import { CurrentEraValue, mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
+import { mapEraValue, parseRawEraValue } from '@hooks/useEraValue';
 import { useGetCapacityFromContract } from '@hooks/useGetCapacityFromContract';
 import { useIsLogin } from '@hooks/useIsLogin';
 import { useRewardCollectStatus } from '@hooks/useRewardCollectStatus';

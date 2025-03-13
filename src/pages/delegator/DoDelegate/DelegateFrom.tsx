@@ -291,6 +291,7 @@ export const DelegateForm: React.FC<FormProps> = ({
   const initDelegations = async () => {
     if (!account) return;
     const { data, error } = await loadDelegations();
+
     if (!error && data?.delegations?.nodes) {
       const sortedDelegations = data.delegations.nodes
         .map((delegation) => ({
@@ -305,6 +306,28 @@ export const DelegateForm: React.FC<FormProps> = ({
             delegation.indexerId !== account &&
             delegation?.indexerId !== indexerAddress,
         );
+
+      setDelegationOptions([
+        {
+          label: (
+            <AddressName
+              curAccount={account}
+              address={account}
+              metadata={{ name: '', url: '', image: '', description: '' }}
+            />
+          ),
+          value: account,
+          name: '',
+        },
+        ...sortedDelegations.map((delegation, index) => {
+          return {
+            label: <AddressName curAccount={account} address={delegation.indexerId} metadata={undefined}></AddressName>,
+            value: delegation.indexerId || '',
+            name: '',
+          };
+        }),
+      ]);
+      setDelegateFrom(account);
 
       const indexerMetadata = sortedDelegations.map((i) => {
         const cid = i?.indexer?.metadata;
