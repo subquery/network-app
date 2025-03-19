@@ -15,6 +15,7 @@ type ReturnType = {
 type Web3ReturnFuncType = (address?: string) => Promise<ReturnType | null | undefined>;
 
 const rpcMainnet = [
+  'https://ethereum.rpc.subquery.network/public',
   'https://eth.llamarpc.com',
   'https://ethereum.blockpi.network/v1/rpc/public',
   'https://rpc.payload.de',
@@ -43,7 +44,14 @@ export function useWeb3Name(address?: string): {
   fetchWeb3NameOnce: Web3ReturnFuncType;
   fetchWeb3NameFromCache: Web3ReturnFuncType;
 } {
-  const web3Name = useMemo(() => createWeb3Name(), []);
+  const web3Name = useMemo(
+    () =>
+      // it seems if this url is invalid, then the URL passed by getDomainName will not be used.
+      createWeb3Name({
+        rpcUrl: 'https://ethereum.rpc.subquery.network/public',
+      }),
+    [],
+  );
 
   const fetchWeb3Name = useCallback(
     async (customAddress?: string) => {
