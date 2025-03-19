@@ -69,6 +69,8 @@ export function bytes32ToCid(bytes: string): string {
   return utils.base58.encode(hashBytes);
 }
 
+console.warn(cidToBytes32('QmNa36oZ4zRS1i2wQhiFznU5DjEuNP3wopV6U3VcUWMUKu'));
+
 export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
   if (value === null || value === undefined) return false;
 

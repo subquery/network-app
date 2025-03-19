@@ -4,11 +4,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { indexingProgress } from '@subql/network-clients';
 import { IndexerDeploymentNodeFieldsFragment as DeploymentIndexer, ServiceStatus } from '@subql/network-query';
-import {
-  useGetAllocationRewardsByDeploymentIdAndIndexerIdQuery,
-  useGetDeploymentIndexersByIndexerQuery,
-  useGetIndexerAllocationProjectsQuery,
-} from '@subql/react-hooks';
+import { useGetDeploymentIndexersByIndexerLazyQuery, useGetIndexerAllocationProjectsQuery } from '@subql/react-hooks';
 
 import { TOP_100_INDEXERS, useProjectMetadata } from '../containers';
 import { ProjectMetadata } from '../models';
@@ -44,10 +40,29 @@ export interface UseSortedIndexerDeploymentsReturn extends Pick<DeploymentIndexe
 export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<UseSortedIndexerDeploymentsReturn>> {
   const { getMetadataFromCid } = useProjectMetadata();
   const { currentEra } = useEra();
-  const indexerDeployments = useGetDeploymentIndexersByIndexerQuery({
+  const [getIndexerDeployments] = useGetDeploymentIndexersByIndexerLazyQuery({
     variables: { indexerAddress: indexer },
     fetchPolicy: 'network-only',
   });
+
+  const indexerDeployments = useAsyncMemo(async () => {
+    let page = 1;
+    const pageSize = 100;
+    const deployments = [];
+    while (true) {
+      const result = await getIndexerDeployments({
+        variables: { indexerAddress: indexer, first: pageSize, offset: (page - 1) * pageSize },
+      });
+
+      deployments.push(...(result.data?.indexerDeployments?.nodes || []));
+
+      if (deployments.length >= (result.data?.indexerDeployments?.totalCount || 0)) {
+        break;
+      }
+      page++;
+    }
+    return deployments;
+  }, [getIndexerDeployments]);
 
   const allocatedProjects = useGetIndexerAllocationProjectsQuery({
     variables: {
@@ -141,7 +156,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
       variables: {
         indexerId: indexer || '',
         eraIdx: (currentEra.data?.index || 0) - 1,
-        deploymentId: indexerDeployments.data?.indexerDeployments?.nodes.map((i) => i?.deploymentId),
+        deploymentId: indexerDeployments.data?.map((i) => i?.deploymentId),
       },
     },
   );
@@ -164,7 +179,7 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
     {
       variables: {
         indexer,
-        deploymentIds: indexerDeployments.data?.indexerDeployments?.nodes.map((i) => i?.deploymentId),
+        deploymentIds: indexerDeployments.data?.map((i) => i?.deploymentId),
       },
       context: {
         clientName: TOP_100_INDEXERS,
@@ -176,9 +191,9 @@ export function useSortedIndexerDeployments(indexer: string): AsyncData<Array<Us
   const proxyEndpoint = indexerMetadata?.url;
 
   const sortedIndexerDeployments = useAsyncMemo(async () => {
-    if (!indexerDeployments?.data?.indexerDeployments?.nodes) return [];
+    if (!indexerDeployments?.data) return [];
 
-    const filteredDeployments = indexerDeployments?.data?.indexerDeployments?.nodes?.filter(
+    const filteredDeployments = indexerDeployments?.data?.filter(
       (deployment) => deployment?.status !== ServiceStatus.TERMINATED,
     );
 
