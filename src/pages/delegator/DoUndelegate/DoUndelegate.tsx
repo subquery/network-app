@@ -139,7 +139,11 @@ export const DoUndelegate: React.FC<DoUndelegateProps> = ({
       const disabled = !hasBalanceForNextEra;
       const tooltip = !hasBalanceForNextEra ? t('delegate.nonToUndelegate') : '';
 
-      const modalText = getModalText(requireClaimIndexerRewards, lock, t);
+      const modalText = getModalText(
+        requireClaimIndexerRewards && indexerDataLazy.data?.indexer?.active === true,
+        lock,
+        t,
+      );
       const actions =
         !disabled || showBtnIfDisabled
           ? [
