@@ -6,12 +6,7 @@ import { AiOutlineCopy } from 'react-icons/ai';
 import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
 import Copy from '@components/Copy';
-import {
-  getHttpEndpointWithApiKey,
-  getWsEndpointWithApiKey,
-  proxyGateway,
-  specialApiKeyName,
-} from '@components/GetEndpoint';
+import { getHttpEndpointWithApiKey, getWsEndpointWithApiKey, specialApiKeyName } from '@components/GetEndpoint';
 import { OutlineDot } from '@components/Icons/Icons';
 import { useProjectMetadata } from '@containers';
 import { useAccount } from '@containers/Web3';

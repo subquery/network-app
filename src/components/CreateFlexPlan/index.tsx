@@ -20,9 +20,11 @@ import {
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
+import { ProjectType as contractProjectType } from '@subql/contract-sdk';
+import { ProjectType } from '@subql/network-query';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
-import { Button, Checkbox, Divider, Form, InputNumber, Radio, Tooltip } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, Popover, Radio, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -33,7 +35,7 @@ import { useWeb3Store } from 'src/stores';
 import styles from './index.module.less';
 
 interface IProps {
-  project: Pick<ProjectDetailsQuery, 'id'>;
+  project: Pick<ProjectDetailsQuery, 'id' | 'type'>;
   deploymentId: string;
   prevApiKey?: GetUserApiKeys;
   prevHostingPlan?: IGetHostingPlans;
@@ -43,6 +45,14 @@ interface IProps {
 
 const converFlexPlanPrice = (price: string) => {
   return BigNumberJs(formatUnits(price, tokenDecimals[SQT_TOKEN_ADDRESS])).multipliedBy(1000);
+};
+
+const subqlProjectTypeToContractType = {
+  [ProjectType.LLM]: 0, // no for now
+  [ProjectType.RPC]: contractProjectType.RPC,
+  [ProjectType.SUBQUERY]: contractProjectType.SUBQUERY,
+  [ProjectType.SQ_DICT]: contractProjectType.SQ_DICT,
+  [ProjectType.SUBGRAPH]: contractProjectType.SUBGRAPH,
 };
 
 // TODO: split the component to smaller components
@@ -59,9 +69,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const sqtPrice = useSqtPrice();
 
   const mounted = useRef(false);
-
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('economy');
+  const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('custom');
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
   const [displayTransactions, setDisplayTransactions] = useState<('allowance' | 'deposit' | 'createApiKey')[]>([]);
   const [transacitonNumbers, setTransactionNumbers] = useState<{ [key in string]: number }>({
@@ -83,6 +92,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     getUserApiKeysApi,
     refreshUserInfo,
     getChannelLimit,
+    getDominantPrice,
   } = useConsumerHostServices({
     alert: true,
     autoLogin: false,
@@ -328,6 +338,18 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
     });
   }, [displayTransactions, transactionStep, needCreateApiKey, needAddAllowance, needDepositMore, depositForm]);
 
+  const suggestHostingPlanPrice = useAsyncMemo(async () => {
+    try {
+      const price = await getDominantPrice({
+        ptype: subqlProjectTypeToContractType[project.type],
+      });
+
+      return formatSQT(BigNumberJs(price.data.avg_price).multipliedBy(1000).toString());
+    } catch {
+      return '';
+    }
+  }, [project.type]);
+
   const handleNextStep = async (options?: { skipDeposit?: boolean }) => {
     if (currentStep === 0) {
       if (!selectedPlan) return;
@@ -525,63 +547,6 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           </Typography>
 
           <div
-            className={clsx(styles.radioCard, selectedPlan === 'economy' ? styles.radioCardSelected : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-            onClick={() => {
-              setSelectedPlan('economy');
-            }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Radio value={'free'} checked={selectedPlan === 'economy'}>
-                <Typography weight={500}>Economy</Typography>
-              </Radio>
-              <Typography variant="medium" style={{ color: 'var(--sq-gray700)', maxWidth: 450 }}>
-                We will set a lower cost limit which means less Node Operators will provide data to you, which may
-                result in lower reliability and lower global performance. Best for use cases where cost is more
-                important than reliability/performance.
-              </Typography>
-            </div>
-
-            <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-              <Typography weight={600} variant="large" style={{ color: 'var(--sq-blue400)' }}>
-                {estimatedPriceInfo.economy?.toFixed(2)} {TOKEN}
-              </Typography>
-              <Typography variant="medium">Per 1000 reqs</Typography>
-              {sqtPrice !== '0' && (
-                <Typography>(~US${estimatedUs(estimatedPriceInfo.economy?.toString() || '0')})</Typography>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={clsx(styles.radioCard, selectedPlan === 'performance' ? styles.radioCardSelected : '')}
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-            onClick={() => {
-              setSelectedPlan('performance');
-            }}
-          >
-            <div className="col-flex" style={{ gap: 8 }}>
-              <Radio value={'free'} checked={selectedPlan === 'performance'}>
-                <Typography weight={500}>Performance</Typography>
-              </Radio>
-              <Typography variant="medium" style={{ color: 'var(--sq-gray700)', maxWidth: 450 }}>
-                We will set a higher cost limit which means more Node Operators will provide data to you, which
-                generally results in higher reliability and higher global performance. Best for production use cases
-                where reliability/performance is more important than cost.
-              </Typography>
-            </div>
-            <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-              <Typography weight={600} variant="large" style={{ color: 'var(--sq-blue400)' }}>
-                {estimatedPriceInfo.performance?.toFixed(2)} {TOKEN}
-              </Typography>
-              <Typography variant="medium">Per 1000 reqs</Typography>
-              {sqtPrice !== '0' && (
-                <Typography>(~US${estimatedUs(estimatedPriceInfo.performance?.toString() || '0')})</Typography>
-              )}
-            </div>
-          </div>
-
-          <div
             className={clsx(styles.radioCard, selectedPlan === 'custom' ? styles.radioCardSelected : '')}
             onClick={() => {
               setSelectedPlan('custom');
@@ -590,9 +555,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
               }
             }}
           >
-            <Radio value={'free'} checked={selectedPlan === 'custom'}>
-              <Typography weight={500}>Or enter a custom price (advanced users only)</Typography>
-            </Radio>
+            <Typography weight={500}>Enter a custom price</Typography>
             {selectedPlan === 'custom' && (
               <>
                 <Typography variant="medium" style={{ color: 'var(--sq-gray700)', maxWidth: 450 }}>
@@ -600,53 +563,53 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 </Typography>
 
                 <Form layout="vertical" className={styles.createFlexPlanModal} form={form}>
-                  <Form.Item
-                    label={
-                      <Typography style={{ marginTop: 24 }}>
-                        Maximum Price
-                        <Tooltip title="The maximum price of per 1000 requests that you are looking for ">
-                          <AiOutlineInfoCircle
-                            style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                          ></AiOutlineInfoCircle>
-                        </Tooltip>
-                      </Typography>
+                  <Typography>
+                    Maximum Price
+                    <Tooltip title="The maximum price of per 1000 requests that you are looking for ">
+                      <AiOutlineInfoCircle
+                        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                      ></AiOutlineInfoCircle>
+                    </Tooltip>
+                  </Typography>
+                  <Popover
+                    trigger={'click'}
+                    content={
+                      suggestHostingPlanPrice.data ? (
+                        <div>
+                          <Typography variant="small">
+                            The average price of per 1000 requests is {suggestHostingPlanPrice.data} {TOKEN}.
+                            <Typography.Link
+                              variant="small"
+                              type="info"
+                              onClick={() => {
+                                form.setFieldsValue({
+                                  price: suggestHostingPlanPrice.data,
+                                });
+                              }}
+                            >
+                              Set it
+                            </Typography.Link>
+                          </Typography>
+                        </div>
+                      ) : (
+                        ''
+                      )
                     }
-                    name="price"
-                    rules={[{ required: true, message: 'Please enter the price' }]}
+                    placement="topLeft"
                   >
-                    <InputNumber placeholder="Enter price" min="0.0000000000000001" addonAfter={TOKEN}></InputNumber>
-                  </Form.Item>
+                    <Form.Item name="price" rules={[{ required: true, message: 'Please enter the price' }]}>
+                      <InputNumber
+                        placeholder={'Enter price'}
+                        min="0.0000000000000001"
+                        addonAfter={TOKEN}
+                      ></InputNumber>
+                    </Form.Item>
+                  </Popover>
+
                   <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
                     Per 1000 requests
                   </Typography>
-                  <Form.Item
-                    label={
-                      <Typography style={{ marginTop: 24 }}>
-                        Maximum Allocated Node Operators
-                        <Tooltip title="The maximum number of Node Operators that will be allocated to this Flex Plan. More Node Operators mean more stability. Even if there are no available matching Node Operators, you can still create your flex plan. We will allocate the qualified Node Operators for you at a later time to ensure seamless experience. ">
-                          <AiOutlineInfoCircle
-                            style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                          ></AiOutlineInfoCircle>
-                        </Tooltip>
-                      </Typography>
-                    }
-                    name="maximum"
-                    rules={[
-                      {
-                        min: 2,
-                        type: 'number',
-                        required: true,
-                        message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
-                      },
-                      {
-                        max: estimatedChannelLimit.data?.channelMaxNum,
-                        type: 'number',
-                        message: `The maximum number of Node Operators can not be more than ${estimatedChannelLimit.data?.channelMaxNum}`,
-                      },
-                    ]}
-                  >
-                    <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
-                  </Form.Item>
+                  <br></br>
                   <Typography variant="medium" style={{ color: 'var(--sq-gray700)', margin: '8px 0' }}>
                     {matchedCount}
                   </Typography>

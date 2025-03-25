@@ -24,7 +24,7 @@ import styles from './index.module.less';
 
 interface IProps {
   deploymentId: string;
-  project: Pick<ProjectDetailsQuery, 'id' | 'metadata'>;
+  project: Pick<ProjectDetailsQuery, 'id' | 'metadata' | 'type'>;
   initialOpen?: boolean;
 }
 

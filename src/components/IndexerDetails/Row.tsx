@@ -322,7 +322,7 @@ const ConnectedRow: React.FC<{
               return (
                 <Typography className="flex" style={{ alignItems: 'flex-end' }}>
                   {BigNumberJs(indexer.flexPlanPrice).multipliedBy(1000).toFixed()} SQT
-                  <Typography style={{ fontSize: 12 }}>&nbsp;/ 1000 requests</Typography>
+                  <Typography style={{ fontSize: 12 }}>&nbsp;/ 1,000 requests</Typography>
                 </Typography>
               );
             },

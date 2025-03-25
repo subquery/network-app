@@ -149,6 +149,7 @@ const CreateHostingFlexPlan = forwardRef<
 
     const res = await api({
       ...form.getFieldsValue(),
+      maximum: 2, // will be ignore by chs
       expiration: expiration < minExpiration ? minExpiration : expiration,
       price: parseEther(`${form.getFieldValue('price')}`)
         .div(1000)
@@ -313,14 +314,7 @@ const CreateHostingFlexPlan = forwardRef<
 
           <Form layout="vertical" className={styles.createFlexPlanModal} form={form}>
             <Form.Item
-              label={
-                <Typography style={{ marginTop: 24 }}>
-                  Maximum Price
-                  <AiOutlineInfoCircle
-                    style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                  ></AiOutlineInfoCircle>
-                </Typography>
-              }
+              label={<Typography style={{ marginTop: 24 }}>Maximum Price</Typography>}
               name="price"
               rules={[{ required: true }]}
             >
@@ -329,32 +323,7 @@ const CreateHostingFlexPlan = forwardRef<
             <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
               Per 1000 requests
             </Typography>
-            <Form.Item
-              label={
-                <Typography style={{ marginTop: 24 }}>
-                  Maximum Allocated Node Operators
-                  <AiOutlineInfoCircle
-                    style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                  ></AiOutlineInfoCircle>
-                </Typography>
-              }
-              name="maximum"
-              rules={[
-                {
-                  min: 2,
-                  type: 'number',
-                  required: true,
-                  message: 'Please enter the maximum allocated Node Operators, minimal number is 2',
-                },
-                {
-                  max: estimatedChannelLimit.data?.channelMaxNum,
-                  type: 'number',
-                  message: `The maximum number of Node Operators can not be more than ${estimatedChannelLimit.data?.channelMaxNum}`,
-                },
-              ]}
-            >
-              <InputNumber placeholder="Enter maximum allocated Node Operators" min="2"></InputNumber>
-            </Form.Item>
+            <br></br>
             <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
               {matchedCount}
             </Typography>

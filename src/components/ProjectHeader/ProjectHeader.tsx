@@ -14,7 +14,7 @@ import { ProjectActionArgv } from '@pages/explorer/Project/type';
 import { Tag, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
 import { useAsyncMemo } from '@subql/react-hooks';
-import { bytesToGb, formatNumber, formatSQT } from '@utils';
+import { bytesToGb, formatNumber, formatSQT, TOKEN } from '@utils';
 import { Button, Tooltip } from 'antd';
 import { BigNumber } from 'bignumber.js';
 import clsx from 'clsx';
@@ -47,7 +47,7 @@ const ProjectHeader: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { projectDbSize, projectInfo } = useProjectStore();
-  const { getStatisticQueries } = useConsumerHostServices({ autoLogin: false });
+  const { getStatisticQueries, getDominantPriceByDeployment } = useConsumerHostServices({ autoLogin: false });
   const [searchParams] = useSearchParams();
   const initialOpenModal = React.useMemo(() => {
     if (searchParams.get('action') === ProjectActionArgv.CREATE_PLAN) {
@@ -99,7 +99,7 @@ const ProjectHeader: React.FC<Props> = ({
     const chainId =
       project.type === ProjectType.SUBQUERY ? manifest?.network?.chainId : manifest?.dataSources?.[0]?.network;
     if (!chainId) return '-';
-    console.warn(chainId);
+
     const polkadotName = NETWORK_TYPE_DICTION[chainId];
     const ethName = ETH_TYPE_DICTION[chainId];
 
@@ -117,20 +117,6 @@ const ProjectHeader: React.FC<Props> = ({
         average: '...',
         max: '...',
       };
-
-    if (projectInfo[currentVersion].totalIndexers < 6) {
-      return {
-        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
-        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || '...',
-      };
-    }
-
-    if (projectInfo[currentVersion].totalIndexers >= 6 && projectDbSize[currentVersion || '']?.counts >= 6) {
-      return {
-        average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
-        max: `${bytesToGb(projectDbSize[currentVersion || '']?.max)} Gb` || '...',
-      };
-    }
 
     return {
       average: `${bytesToGb(projectDbSize[currentVersion || '']?.average)} Gb` || '...',
@@ -154,6 +140,18 @@ const ProjectHeader: React.FC<Props> = ({
 
     return formatNumber(res.data.total, 0);
   }, [currentVersion]);
+
+  const dominantPrice = useAsyncMemo(async () => {
+    try {
+      const res = await getDominantPriceByDeployment({
+        deployment_list: [project.deploymentId],
+      });
+
+      return `${formatSQT(BigNumber(res.data[0].price).multipliedBy(1000).toString())} ${TOKEN} / 1,000 requests`;
+    } catch {
+      return '...';
+    }
+  }, [project.type]);
 
   return (
     <div className={styles.container}>
@@ -201,13 +199,14 @@ const ProjectHeader: React.FC<Props> = ({
         <div className={styles.lower}>
           <Detail
             label="Network"
-            value={networkVal.length > 15 ? `${networkVal.slice(0, 15)}...` : networkVal}
+            value={networkVal.length > 10 ? `${networkVal.slice(0, 10)}...` : networkVal}
             capitalize
           ></Detail>
           <Detail
             label="Type"
             value={
               {
+                [ProjectType.LLM]: 'LLM',
                 [ProjectType.RPC]: 'RPC Endpoint',
                 [ProjectType.SUBQUERY]: 'Indexed Dataset',
                 [ProjectType.SQ_DICT]: 'Dictionary',
@@ -236,6 +235,7 @@ const ProjectHeader: React.FC<Props> = ({
             ''
           )}
           <Detail label={'Queries (Yesterday)'} value={<Typography>{yesterdayQueriesCount.data}</Typography>}></Detail>
+          <Detail label={'Dominant Price'} value={<Typography>{dominantPrice.data}</Typography>}></Detail>
         </div>
       </div>
     </div>

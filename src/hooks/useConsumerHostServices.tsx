@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useAccount } from '@containers/Web3';
 import { Modal, openNotification, Typography } from '@subql/components';
+import { ProjectType } from '@subql/contract-sdk';
 import { getAuthReqHeader, parseError, POST } from '@utils';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import { waitForSomething } from '@utils/waitForSomething';
@@ -429,6 +430,25 @@ export const useConsumerHostServices = (
     [loginConsumerHost],
   );
 
+  const getDominantPrice = useCallback(async (params: { ptype: ProjectType }) => {
+    const res = await instance.get<{ avg_price: string; ptype: ProjectType }>(
+      `price/get_ptype_dominant_price?ptype=${params.ptype}`,
+      {
+        headers: authHeaders.current,
+      },
+    );
+
+    return res;
+  }, []);
+
+  const getDominantPriceByDeployment = useCallback(async (params: { deployment_list: string[] }) => {
+    const res = await instance.post<{ deployment: string; price: string }[]>(`price/get_dominant_price`, params, {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  }, []);
+
   useEffect(() => {
     checkIfHasLogin();
     if (autoLogin) {
@@ -456,7 +476,8 @@ export const useConsumerHostServices = (
     loginConsumerHost,
     requestTokenLayout,
     getChannelSpent,
-
+    getDominantPrice,
+    getDominantPriceByDeployment,
     hasLogin,
     loading,
   };
