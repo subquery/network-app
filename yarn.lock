@@ -4586,15 +4586,15 @@
     ethers "^5.6.8"
     graphql "^16.5.0"
 
-"@subql/network-config@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmmirror.com/@subql/network-config/-/network-config-1.1.1.tgz#9ca44ea87b6d49804f8e09817115337e229021e0"
-  integrity sha512-T9M/b2WV4ztigrvpzVbSe62JbRzrQ6sT+xn7mowdypL3/XoBvyN1BhtnRwL7n45yj1nw6eL4KewbMu8jOwTYGw==
-
 "@subql/network-config@1.1.2-0":
   version "1.1.2-0"
   resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.2-0.tgz#ff1738d751b12562f18d3b79c128686d3abcfa4e"
   integrity sha512-Dp2KngyjmZAOebeK+IrfgmWMsWv21gAJO7CUgZZRkcQ3OQhL1PfZflK33tzgGJjM/o2b2h5eq6b3nj0bg+co7g==
+
+"@subql/network-config@1.1.2-3":
+  version "1.1.2-3"
+  resolved "https://registry.npmjs.org/@subql/network-config/-/network-config-1.1.2-3.tgz#6b3e227b8c06e93f39dca6d070e0df302a08b998"
+  integrity sha512-1m78P5bMh8cLUfPK+WA9Xh2HsM3cWyr0nklx0rgOOWdLEW+9Eq5ossXPH+WpdiBIzBPYIYzeEHTwT2ntNN7jgg==
 
 "@subql/network-query@1.1.2-12":
   version "1.1.2-12"
@@ -4610,17 +4610,17 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@1.1.2-16":
+"@subql/network-query@1.1.2-15":
   version "1.1.2-15"
   resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.2-15.tgz#76728072227b159842aefe1e25cda19d1df30636"
   integrity sha512-g7hTGJE9LUAB3R2QF/k6hbCECv+AReEfgWqTnIFabMwjSjf9QrSSlfUbLcrFRdUmtOfmwSpkOnKankLPXjZmPg==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@1.1.2-16":
-  version "1.1.2-16"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-16.tgz#57503d421a16d3a7ad959f0b89d65144c1eea972"
-  integrity sha512-si9dd3EACp4FRWmDU9OXAw2wqk2fZ+4nMhFvxHWiez0l3CwjukE2fPRoIxJdtaeWXJsyMEoOlfsW53OFuWNhGw==
+"@subql/react-hooks@1.1.2-18":
+  version "1.1.2-18"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-18.tgz#6e32654dfc8ffa7a8bb515c954a90c9bc4fdbdd4"
+  integrity sha512-kOIl2oGA42O+fJqSHnKibQG4/hw8pnzvu+yPAJHDO0L+r1KbJCEA4iX5GmVq0ARxNWM0tWR8UMrWJ5xA9ArKoA==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
