@@ -4617,10 +4617,10 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@1.1.2-18":
-  version "1.1.2-18"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-18.tgz#6e32654dfc8ffa7a8bb515c954a90c9bc4fdbdd4"
-  integrity sha512-kOIl2oGA42O+fJqSHnKibQG4/hw8pnzvu+yPAJHDO0L+r1KbJCEA4iX5GmVq0ARxNWM0tWR8UMrWJ5xA9ArKoA==
+"@subql/react-hooks@1.1.2-19":
+  version "1.1.2-19"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-19.tgz#c8b04ffc4e60dbced7a29d6cc497a351e569d599"
+  integrity sha512-zdSm5L+lwCQzxNeCdwS1XphM5I2kMJJdaRa+RX/MztATx+TMHEsTzLHp6OS68bMq4QSYtHIZBwSbuMSHOfUJjQ==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"

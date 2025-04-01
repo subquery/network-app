@@ -25,7 +25,7 @@
     "@subql/network-clients": "1.1.1-4",
     "@subql/network-config": "1.1.2-3",
     "@subql/network-query": "1.1.2-15",
-    "@subql/react-hooks": "1.1.2-18",
+    "@subql/react-hooks": "1.1.2-19",
     "@tanstack/react-query": "^5.50.1",
     "@web3-name-sdk/core": "^0.3.2",
     "ahooks": "^3.7.8",
