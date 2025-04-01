@@ -1,16 +1,11 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { ProjectType } from '@subql/contract-sdk';
 import * as yup from 'yup';
+export { ProjectType } from '@subql/contract-sdk';
 
 import { CIDv0 } from './utils';
-
-export enum ProjectType {
-  SUBQUERY,
-  RPC,
-  SQ_DICT,
-  SUBGRAPH,
-}
 
 export const projectMetadataSchema = yup.object({
   name: yup.string().defined(),
