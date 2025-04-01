@@ -147,7 +147,11 @@ const ProjectHeader: React.FC<Props> = ({
         deployment_list: [project.deploymentId],
       });
 
-      return `${formatSQT(BigNumber(res.data[0].price).multipliedBy(1000).toString())} ${TOKEN} / 1,000 requests`;
+      return `${formatSQT(
+        BigNumber(res.data[0].price || 0)
+          .multipliedBy(1000)
+          .toString(),
+      )} ${TOKEN} / 1,000 requests`;
     } catch {
       return '...';
     }
