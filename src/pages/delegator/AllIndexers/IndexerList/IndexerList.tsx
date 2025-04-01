@@ -258,7 +258,10 @@ export const IndexerList: React.FC = () => {
           return (
             <div className="col-flex">
               <Typography>{value.current}%</Typography>
-              <EstimatedNextEraLayout value={`${value.after}%`}></EstimatedNextEraLayout>
+              <EstimatedNextEraLayout
+                value={`${value.after}%`}
+                tooltip="Commission rate changes will take effect in two eras."
+              ></EstimatedNextEraLayout>
             </div>
           );
         },

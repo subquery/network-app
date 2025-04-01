@@ -137,7 +137,10 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
         return (
           <div className="col-flex">
             <Typography>{value.current}%</Typography>
-            <EstimatedNextEraLayout value={`${value.after.toString()}%`}></EstimatedNextEraLayout>
+            <EstimatedNextEraLayout
+              value={`${value.after.toString()}%`}
+              tooltip={'Commission rate changes will take effect in two eras.'}
+            ></EstimatedNextEraLayout>
           </div>
         );
       },
