@@ -4567,10 +4567,10 @@
     use-screen "^1.1.3"
     uuid "^10.0.0"
 
-"@subql/contract-sdk@1.3.1-1":
-  version "1.3.1-1"
-  resolved "https://registry.yarnpkg.com/@subql/contract-sdk/-/contract-sdk-1.3.1-1.tgz#df8dcea3888d8d6832fb14b9969282296e8b3862"
-  integrity sha512-isJEEEiZrfK17o8Hr0EAiobUjmk+PuI0WVmq6OjgwzykCVYQictiD/f/VoiANNJnpE1zvuDo0l4a3TMtJVxjPg==
+"@subql/contract-sdk@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.7.0.tgz#ace35031db2177949df33f08087998297337b16b"
+  integrity sha512-x4fqwCbi0TPjp4X3E/bjnTf3wi9H6A5aiA7jYfwT6DIh36Sl4WS6kTiAEbXrHZdFna0v0IfhcwmQA7ElzS8jgA==
 
 "@subql/network-clients@1.1.1-4":
   version "1.1.1-4"
@@ -4610,17 +4610,17 @@
   dependencies:
     graphql "^16.5.0"
 
-"@subql/network-query@1.1.2-16":
+"@subql/network-query@1.1.2-15":
   version "1.1.2-15"
   resolved "https://registry.npmjs.org/@subql/network-query/-/network-query-1.1.2-15.tgz#76728072227b159842aefe1e25cda19d1df30636"
   integrity sha512-g7hTGJE9LUAB3R2QF/k6hbCECv+AReEfgWqTnIFabMwjSjf9QrSSlfUbLcrFRdUmtOfmwSpkOnKankLPXjZmPg==
   dependencies:
     graphql "^16.5.0"
 
-"@subql/react-hooks@1.1.2-16":
-  version "1.1.2-16"
-  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-16.tgz#57503d421a16d3a7ad959f0b89d65144c1eea972"
-  integrity sha512-si9dd3EACp4FRWmDU9OXAw2wqk2fZ+4nMhFvxHWiez0l3CwjukE2fPRoIxJdtaeWXJsyMEoOlfsW53OFuWNhGw==
+"@subql/react-hooks@1.1.2-19":
+  version "1.1.2-19"
+  resolved "https://registry.npmjs.org/@subql/react-hooks/-/react-hooks-1.1.2-19.tgz#c8b04ffc4e60dbced7a29d6cc497a351e569d599"
+  integrity sha512-zdSm5L+lwCQzxNeCdwS1XphM5I2kMJJdaRa+RX/MztATx+TMHEsTzLHp6OS68bMq4QSYtHIZBwSbuMSHOfUJjQ==
   dependencies:
     "@graphql-tools/code-file-loader" "^7.3.6"
     "@graphql-tools/graphql-tag-pluck" "^7.3.6"
