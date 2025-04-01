@@ -138,7 +138,7 @@ const translation = {
     socialCredibility: 'social credibility',
     tooltip: {
       rank: 'The ranking of the Node Operator compared to all other Node Operators based of a variety of factors. A ranking of 1 means that they have historically operated as the best Node Operator, however this does not indicate future performance.',
-      uptime: 'Based on the avaliability of an Node Operator’s proxy service endpoint overtime',
+      uptime: 'Based on the availability of an Node Operator’s proxy service endpoint overtime',
       ownStake: `The percentage of all staked ${TOKEN} that is the Node Operator’s own SQT. Higher score is better.`,
       delegated:
         'The percentage of the Node Operator’s total delegation that is the Node Operator’s own SQT. Higher score is better.',
