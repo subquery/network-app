@@ -365,7 +365,7 @@ export const Create: React.FC = () => {
     const sortedAmount =
       selectedTemplateInfo?.priceToken === contracts.sqToken.address
         ? parseEther(amount)
-        : parseUnits(amount, STABLE_COIN_DECIMAL);
+        : parseUnits(amount, STABLE_COIN_DECIMAL[NETWORK_NAME]);
 
     return contracts.planManager.createPlan(
       sortedAmount,
