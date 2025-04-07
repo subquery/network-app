@@ -83,7 +83,7 @@ const translation = {
     unDelegation: 'Delegation Withdrawal',
     commission: 'Commission',
     merge: 'Merge',
-    info: 'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position.',
+    info: 'View and withdraw your tokens which have been undelegated or unstaked. The tokens are locked for a short period before they become available for withdrawal. During the locked period you can choose to cancel the withdrawal so the tokens return to their staking/delegating position. Every widthdraw will cost a fix rate fees(0.01%), and these fees will be transferred to treasury.',
   },
 
   projects: {
