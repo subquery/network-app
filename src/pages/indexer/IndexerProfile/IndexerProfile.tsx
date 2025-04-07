@@ -334,7 +334,13 @@ const IndexerProfile: FC = () => {
                           getCommission(fetchedResult?.indexer?.commission || 0, (currentEra.data?.index || 1) - 1)
                             .after || 0,
                         )} %`}
-                        tooltip="Commission rate changes will take effect in two eras."
+                        tooltip={
+                          (fetchedResult?.indexer?.commission.era || 0) + 2 === (currentEra.data?.index || 0) + 1
+                            ? 'This commission will be applied in the next Era'
+                            : (fetchedResult?.indexer?.commission.era || 0) + 2 === (currentEra.data?.index || 0) + 2
+                              ? 'This commission will be applied in the next two Era'
+                              : undefined
+                        }
                       ></EstimatedNextEraLayout>
                     </div>
 

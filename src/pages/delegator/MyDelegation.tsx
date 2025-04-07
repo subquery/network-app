@@ -19,7 +19,7 @@ import { WalletRoute } from '@components/WalletRoute';
 import { useWeb3 } from '@containers';
 import { useEra, useLockPeriod } from '@hooks';
 import { useDelegating } from '@hooks/useDelegating';
-import { CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
+import { convertRawEraValue, CurrentEraValue, mapEraValue, parseRawEraValue, RawEraValue } from '@hooks/useEraValue';
 import { useMinCommissionRate } from '@hooks/useMinCommissionRate';
 import { FormatCardLine } from '@pages/account';
 import { BalanceLayout } from '@pages/dashboard';
@@ -133,13 +133,19 @@ const useGetColumn = ({ onSuccess }: { onSuccess?: () => void }) => {
       key: 'commissionKey',
       dataIndex: 'commission',
       width: 50,
-      render: (value: { current: string; after: string }) => {
+      render: (value: { current: string; after: string; applyAtNextEra: boolean; applyAtNextTwoEra: boolean }) => {
         return (
           <div className="col-flex">
             <Typography>{value.current}%</Typography>
             <EstimatedNextEraLayout
               value={`${value.after.toString()}%`}
-              tooltip={'Commission rate changes will take effect in two eras.'}
+              tooltip={
+                value.applyAtNextTwoEra
+                  ? 'This commission will be applied in the next two Eras'
+                  : value.applyAtNextEra
+                    ? 'This commission will be applied in the next Era'
+                    : undefined
+              }
             ></EstimatedNextEraLayout>
           </div>
         );
@@ -523,7 +529,7 @@ export const MyDelegation: React.FC = () => {
           );
 
           const commssion = parseRawEraValue(delegation?.indexer?.commission, currentEra.data?.index);
-
+          const commssionEditEra = convertRawEraValue(delegation.indexer?.commission);
           const stakeTotal = parseRawEraValue(delegation.indexer?.totalStake, currentEra.data?.index);
           const stakeSelf = parseRawEraValue(delegation.indexer?.selfStake, currentEra.data?.index);
 
@@ -547,6 +553,8 @@ export const MyDelegation: React.FC = () => {
                   .multipliedBy(100)
                   .toString(),
               ),
+              applyAtNextEra: commssionEditEra.era + 2 === (currentEra.data?.index || 0) + 1,
+              applyAtNextTwoEra: commssionEditEra.era + 2 === (currentEra.data?.index || 0) + 2,
             },
             capacity: capacity,
             indexerActive: delegation?.indexer?.active,

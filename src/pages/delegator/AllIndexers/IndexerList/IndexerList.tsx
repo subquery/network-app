@@ -34,7 +34,12 @@ import styles from './IndexerList.module.css';
 
 const { INDEXER } = ROUTES;
 
-type IndexerWithApy = Indexer & { indexerApy: string; delegatorApy: string; apyEra: number };
+type IndexerWithApy = Indexer & {
+  indexerApy: string;
+  delegatorApy: string;
+  apyEra: number;
+  commissionChangedEra: number;
+};
 
 export const IndexerList: React.FC = () => {
   const { t } = useTranslation();
@@ -99,11 +104,13 @@ export const IndexerList: React.FC = () => {
         setIndexerList(
           sortedIndexers.filter(notEmpty).map((i) => {
             const findIndexerInfo = rawIndexerList.find((indexer) => indexer?.indexerId === i?.address);
+            console.warn(findIndexerInfo);
             return {
               ...i,
               indexerApy: findIndexerInfo?.indexerApy.toString() || '0',
               delegatorApy: findIndexerInfo?.delegatorApy.toString() || '0',
               apyEra: findIndexerInfo?.eraIdx || 0,
+              commissionChangedEra: findIndexerInfo?.indexer?.commission.era || 0,
             };
           }),
         );
@@ -126,11 +133,13 @@ export const IndexerList: React.FC = () => {
         commission: {
           current: getDisplayedCommission(BigNumberJs(i.commission.current).multipliedBy(100).toNumber()),
           after: getDisplayedCommission(BigNumberJs(i.commission.after).multipliedBy(100).toNumber()),
+          applyAtNextEra: i.commissionChangedEra + 2 === (currentEra.data?.index || 0) + 1,
+          applyAtNextTwoEra: i.commissionChangedEra + 2 === (currentEra.data?.index || 0) + 2,
         } as CurrentEraValue<number>,
       };
     });
     return fillMinCommissionIndexerList ? getOrderedAccounts(fillMinCommissionIndexerList, 'address', account) : [];
-  }, [account, indexerList]);
+  }, [account, indexerList, currentEra.data?.index]);
 
   const columns = useMemo(() => {
     const getColumns = (): ColumnsType<IndexerWithApy> => [
@@ -254,13 +263,19 @@ export const IndexerList: React.FC = () => {
         key: 'commissionKey',
         dataIndex: 'commission',
         width: 50,
-        render: (value: { current: number; after: number }) => {
+        render: (value: { current: number; after: number; applyAtNextEra: boolean; applyAtNextTwoEra: boolean }) => {
           return (
             <div className="col-flex">
               <Typography>{value.current}%</Typography>
               <EstimatedNextEraLayout
                 value={`${value.after}%`}
-                tooltip="Commission rate changes will take effect in two eras."
+                tooltip={
+                  value.applyAtNextTwoEra
+                    ? 'This commission will be applied in the next two Eras'
+                    : value.applyAtNextEra
+                      ? 'This commission will be applied in the next Era'
+                      : undefined
+                }
               ></EstimatedNextEraLayout>
             </div>
           );
