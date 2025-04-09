@@ -30,6 +30,8 @@ export const config = getDefaultConfig({
   transports: {
     [base.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC),
     [mainnet.id]: http(import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC),
+    [baseSepolia.id]: http('https://sepolia.base.org'),
+    [sepolia.id]: http('https://ethereum-sepolia.rpc.subquery.network/public'),
   },
   wallets: [
     {
