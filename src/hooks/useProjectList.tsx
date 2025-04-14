@@ -13,7 +13,7 @@ import { ProjectFieldsFragment, ProjectsOrderBy, ProjectType } from '@subql/netw
 import { useAsyncMemo, useGetProjectLazyQuery, useGetProjectsLazyQuery } from '@subql/react-hooks';
 import { categoriesOptions, notEmpty, rpcCategoriesOptions } from '@utils';
 import { useInfiniteScroll } from 'ahooks';
-import { Button, Input, Radio, Skeleton, Typography } from 'antd';
+import { Button, Input, Radio, Select, Skeleton, Typography } from 'antd';
 
 import { useGetDeploymentManifest } from './useGetDeploymentManifest';
 import { useLocalProjects } from './useLocalProjects';
@@ -50,6 +50,8 @@ export interface UseProjectListProps {
   makeRedirectHref?: (projectId: string) => string;
 }
 
+const pageSize = 10;
+
 export const useProjectList = (props: UseProjectListProps = {}) => {
   const {
     account,
@@ -78,11 +80,11 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   // would give a flush for user.
   const [loading, setLoading] = React.useState(false);
   const loadingStatusForDebounce = useRef(false);
-  // assum there at lease have 11 projects
-  const [total, setTotal] = React.useState(10);
+  // assum there at lease have pageSize+1 projects
+  const [total, setTotal] = React.useState(pageSize);
   const [inSearchMode, setInSearchMode] = React.useState(false);
   const [showPublishModal, setShowPublishModal] = React.useState(false);
-
+  const [orderBy, setOrderBy] = React.useState(ProjectsOrderBy.TOTAL_REWARD_DESC);
   const { getProjectBySearch } = useLocalProjects();
 
   // const loadTopProject = async () => {
@@ -100,7 +102,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
 
   const loadMore = async (options?: {
     refresh?: boolean;
-    searchParams?: { categories?: string[]; keywords?: string; projectType?: ProjectType };
+    searchParams?: { orderBy?: string[]; categories?: string[]; keywords?: string; projectType?: ProjectType };
   }) => {
     if (loading || loadingStatusForDebounce.current) {
       return {
@@ -115,6 +117,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       const searchParams = {
         keywords: searchKeywords,
         categories: filterCategories,
+        orderBy: options?.searchParams?.orderBy ? options.searchParams.orderBy : [orderBy],
         // TODO: Need refactor.
         projectType:
           filterProjectType === ProjectType.SUBQUERY ? [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] : filterProjectType,
@@ -136,7 +139,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         : {
             variables: {
               offset: options?.refresh ? 0 : fetchedProejcts.current.length,
-              orderBy: [ProjectsOrderBy.TOTAL_REWARD_DESC, ProjectsOrderBy.UPDATED_TIMESTAMP_DESC],
+              orderBy: searchParams.orderBy,
               ids: showTopProject ? ['0x06'] : [],
               type: searchParams.projectType,
             },
@@ -197,7 +200,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
 
   const projectListItems = useMemo(() => {
     const loadingItems = new Array(
-      projects.length + 10 <= total ? 10 : total - projects.length < 0 ? 0 : total - projects.length,
+      projects.length + pageSize <= total ? pageSize : total - projects.length < 0 ? 0 : total - projects.length,
     )
       .fill(0)
       .map((_, i) => {
@@ -265,7 +268,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
               setFilterProjectType(val.target.value);
               setFilterCategories([]);
               setProjects([]);
-              setTotal(10);
+              setTotal(pageSize);
               const res = await loadMore({
                 refresh: true,
                 searchParams: {
@@ -321,7 +324,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
                 if (loading) return;
                 setFilterCategories(val as string[]);
                 setProjects([]);
-                setTotal(10);
+                setTotal(pageSize);
 
                 const res = await loadMore({
                   refresh: true,
@@ -335,6 +338,47 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
             ></SubqlCheckbox.Group>
           </div>
           <span style={{ flex: 1 }}></span>
+          <Select
+            value={orderBy}
+            options={[
+              {
+                label: 'Total Reward',
+                value: ProjectsOrderBy.TOTAL_REWARD_DESC,
+              },
+              // {
+              //   label: 'Most Booster',
+              //   value: ProjectsOrderBy.DEPLOYMENT_BOOSTER_SUMMARIES_MAX_TOTAL_AMOUNT_ASC,
+              // },
+              {
+                label: 'Recently Updated',
+                value: ProjectsOrderBy.UPDATED_TIMESTAMP_DESC,
+              },
+              {
+                label: 'Recently Created',
+                value: ProjectsOrderBy.CREATED_TIMESTAMP_DESC,
+              },
+            ]}
+            onChange={async (val) => {
+              if (loading) return;
+              setOrderBy(val);
+              setProjects([]);
+              setTotal(pageSize);
+
+              const res = await loadMore({
+                refresh: true,
+                searchParams: {
+                  orderBy: [val],
+                },
+              });
+              mutate(res);
+            }}
+            disabled={loading}
+            style={{
+              minWidth: 160,
+              height: 48,
+              margin: '0 20px',
+            }}
+          ></Select>
           <Input
             className={styles.search}
             prefix={<SearchOutlined style={{ color: 'var(--sq-gray500)' }} />}
@@ -373,6 +417,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     searchKeywords,
     loading,
     projects,
+    orderBy,
     onProjectClick,
   ]);
 
