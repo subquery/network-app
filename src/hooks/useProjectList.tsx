@@ -339,6 +339,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
           </div>
           <span style={{ flex: 1 }}></span>
           <Select
+            className={styles.orderBy}
             value={orderBy}
             options={[
               {
@@ -373,11 +374,6 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
               mutate(res);
             }}
             disabled={loading}
-            style={{
-              minWidth: 160,
-              height: 48,
-              margin: '0 20px',
-            }}
           ></Select>
           <Input
             className={styles.search}
