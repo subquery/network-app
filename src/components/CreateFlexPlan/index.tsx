@@ -24,7 +24,7 @@ import { ProjectType as contractProjectType } from '@subql/contract-sdk';
 import { ProjectType } from '@subql/network-query';
 import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
-import { Button, Checkbox, Divider, Form, InputNumber, Popover, Radio, Tooltip } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, Popover, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { BigNumber } from 'ethers';
@@ -773,7 +773,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           Back
         </Button>
         <span style={{ flex: 1 }}></span>
-        {currentStep === 1 && depositBalance?.gt(0) && (
+        {currentStep === 1 && (
           <Button
             shape="round"
             size="large"
