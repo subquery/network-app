@@ -9,8 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID_DEV }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+      AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID_V2 }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_V2 }}
       VITE_SENTRY_DSN: ${{ vars.DEV_SENTRY_DSN }}
       NODE_OPTIONS: --max-old-space-size=32768
     steps:
@@ -31,9 +31,9 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: dist
-          bucket: dev.thechaindata.com
-          bucket-region: ap-southeast-2
+          bucket: network-app-dev
+          bucket-region: ap-northeast-1
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_DEV }}
+          dist-id: E2SDTBUYCUX9DJ
           delete-removed: false
           private: true
