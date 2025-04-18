@@ -31,9 +31,9 @@ jobs:
         uses: reggionick/s3-deploy@v3
         with:
           folder: dist
-          bucket: network-app-dev
+          bucket: ${{ vars.S3_BUCKET_DEV }}
           bucket-region: ap-northeast-1
           invalidation: /*
-          dist-id: E2SDTBUYCUX9DJ
+          dist-id: ${{ vars.CLOUDFRONT_ID_DEV }}
           delete-removed: false
           private: true
