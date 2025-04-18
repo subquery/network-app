@@ -22,10 +22,59 @@
   }
 }
 
-.explorerButton {
+.explorerButton,.explorerRewardButton {
   position: absolute;
   right: 0px;
   top: 0px;
+}
+
+.explorerRewardButton {
+  background: #FF4581;
+}
+
+.activeCarousel {
+  :global {
+    .slick-dots-bottom {
+      height: 5px;
+      li {
+        background: rgba(67, 136, 221, 0.3);
+      }
+
+      .slick-active {
+        background: var(--sq-blue600);
+
+        &::after {
+          background: transparent;
+        }
+      }
+    }
+  }
+}
+
+.projectsCard {
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 11px;
+    height: 100%;
+    background: var(--sq-blue600);
+  }
+}
+
+.consumerRewardsCard {
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 11px;
+    height: 100%;
+    background: #FF4581;
+  }
 }
 
 @media (max-width: 768px) {

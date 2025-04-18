@@ -10,7 +10,7 @@ import { Footer, SubqlCard, Typography } from '@subql/components';
 import { renderAsync, useGetDashboardApyLazyQuery, useGetDashboardQuery } from '@subql/react-hooks';
 import { numToHex, TOKEN } from '@utils';
 import { formatNumber, formatSQT, toPercentage } from '@utils/numberFormatters';
-import { Skeleton, Tooltip } from 'antd';
+import { Carousel, Skeleton, Tooltip } from 'antd';
 import Link from 'antd/es/typography/Link';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
@@ -421,7 +421,7 @@ const Dashboard: FC = () => {
   }, []);
 
   return (
-    <div className="col-flex" style={{ width: '100%' }}>
+    <div className="col-flex" style={{ width: '100%', alignItems: 'center' }}>
       <div className={styles.dashboard}>
         <Typography variant="h4" weight={600}>
           👋 Welcome to SubQuery Network
