@@ -261,8 +261,8 @@ const Create: React.FC = () => {
           // may be need check this, if need.
           type: +(query.get('type') ?? ProjectType.SUBQUERY),
           description: '',
-          websiteUrl: undefined,
-          codeUrl: undefined,
+          websiteUrl: '',
+          codeUrl: '',
           image: undefined,
           version: '1.0.0',
           versionDescription: '',
@@ -337,13 +337,18 @@ const Create: React.FC = () => {
                       form: { setFieldValue: (field: string, val: any) => void };
                     }) => {
                       return (
-                        <div className={styles.markdownWrapper}>
+                        <div className={clsx(styles.markdownWrapper, errors.description ? styles.error : '')}>
                           <Markdown
                             value={field.value}
                             onChange={(e) => {
                               form.setFieldValue(field.name, e);
                             }}
                           />
+                          {errors.description && (
+                            <Typography type="danger" style={{ marginTop: 8 }}>
+                              {errors.description}
+                            </Typography>
+                          )}
                         </div>
                       );
                     }}
@@ -398,8 +403,8 @@ const Create: React.FC = () => {
                       }}
                     </Field>
                   </div>
-                  <FTextInput label={`${t('studio.create.websiteUrl')} (optional)`} id="websiteUrl" />
-                  <FTextInput label={`${t('studio.create.codeUrl')} (optional)`} id="codeUrl" />
+                  <FTextInput label={`${t('studio.create.websiteUrl')}`} id="websiteUrl" required />
+                  <FTextInput label={`${t('studio.create.codeUrl')}`} id="codeUrl" required />
                   {isEdit ? (
                     ''
                   ) : (
