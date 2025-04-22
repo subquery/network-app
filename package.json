@@ -21,7 +21,7 @@
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@sentry/react": "^7.57.0",
     "@subql/components": "3.0.1-8",
-    "@subql/contract-sdk": "^1.7.0",
+    "@subql/contract-sdk": "1.9.0-2",
     "@subql/network-clients": "1.1.1-4",
     "@subql/network-config": "1.1.2-3",
     "@subql/network-query": "1.1.2-15",
