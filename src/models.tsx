@@ -40,8 +40,10 @@ export type ProjectDetails = {
 
 export const newDeploymentSchema = yup.object({
   version: yup.string().defined(), // TODO lock to semver
-  description: yup.string().optional(),
+  description: yup.string().required('Please input description'),
   deploymentId: yup.string().matches(CIDv0, `Doesn't match deployment id format`).defined(),
+  websiteUrl: yup.string().required('Please input website url'),
+  codeUrl: yup.string().required('Please input code url'),
 });
 
 export type NewDeployment = yup.Asserts<typeof newDeploymentSchema>;
