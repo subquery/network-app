@@ -25,3 +25,30 @@ export const getTimeLeft = (mNow: dayjs.Dayjs, mTo: dayjs.Dayjs): string => {
 export const getProgress = (now: Date, from: Date, to: Date): number => {
   return parseInt(((Math.abs(now.getTime() - from.getTime()) / (to.getTime() - from.getTime())) * 100).toFixed(0));
 };
+
+export function getMonthProgress(timestamp: number): {
+  endsIn: string; // Ends in XX days XX hours
+  percentageUsed: number; // 47.2%
+} {
+  const now = dayjs(timestamp);
+  const startOfMonth = now.startOf('month');
+  const endOfMonth = now.endOf('month');
+
+  const totalMs = endOfMonth.diff(startOfMonth);
+  const usedMs = now.diff(startOfMonth);
+  const remainingMs = endOfMonth.diff(now);
+
+  const usedPercent = (usedMs / totalMs) * 100;
+
+  const diffDuration = dayjs.duration(remainingMs);
+  const days = Math.floor(diffDuration.asDays());
+  const hours = diffDuration.hours();
+  const minutes = diffDuration.minutes();
+
+  return {
+    endsIn: `Ends in ${days.toString().padStart(2, '0')} d ${hours
+      .toString()
+      .padStart(2, '0')} h ${minutes.toString().padStart(2, '0')} m`,
+    percentageUsed: +usedPercent.toFixed(2),
+  };
+}
