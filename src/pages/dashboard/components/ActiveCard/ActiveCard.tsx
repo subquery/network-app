@@ -11,12 +11,15 @@ import { renderAsync } from '@subql/react-hooks';
 import { filterSuccessPromoiseSettledResult, getMonthProgress, notEmpty } from '@utils';
 import { useInterval } from 'ahooks';
 import { Button, Carousel, Progress, Skeleton } from 'antd';
+import dayjs from 'dayjs';
 
 import { ProjectMetadata } from 'src/models';
 
 import styles from './ActiveCard.module.less';
 
-const baseUrl = 'http://192.168.1.34:3000';
+const baseUrl = 'https://cc-api.wk.zohu.vip:8008';
+
+const notStart = +dayjs() < +dayjs('2025-05-01T00:00:00Z');
 
 export const ActiveCard = () => {
   const navigate = useNavigate();
@@ -115,6 +118,7 @@ export const ActiveCard = () => {
                 marginBottom: 40,
               }}
               className={styles.activeCarousel}
+              autoplay
             >
               <SubqlCard
                 title={
@@ -175,7 +179,7 @@ export const ActiveCard = () => {
                         <img src="/consumer-rewards/rewards-period.svg"></img>
                         <span style={{ flex: 1 }}></span>
                         <Typography variant="small" style={{ lineHeight: 1, color: 'var(--sq-blue600)' }} weight={600}>
-                          {getMonthProgress(serverNow).endsIn}
+                          {notStart ? 'Not Started' : getMonthProgress(serverNow).endsIn}
                         </Typography>
                       </div>
 
@@ -185,7 +189,7 @@ export const ActiveCard = () => {
                           to: '#FF4581',
                         }}
                         trailColor="#dfe3e8"
-                        percent={getMonthProgress(serverNow).percentageUsed}
+                        percent={notStart ? 0 : getMonthProgress(serverNow).percentageUsed}
                       ></Progress>
                     </div>
 
