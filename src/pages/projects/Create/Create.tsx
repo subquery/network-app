@@ -132,8 +132,9 @@ const Create: React.FC = () => {
                     <div className="col-flex" style={{ gap: 8 }}>
                       <Typography>Boost your Project to attract Node Operators</Typography>
                       <Typography variant="medium" type="secondary">
-                        You can boost your project by locking SQT to increase the rewards that Node Operators can
-                        receive from your project, this might help attract more Node Operators.{' '}
+                        You should boost your project by locking SQT to increase the rewards that Node Operators can
+                        receive from your project. This is the best way to attract more Node Operators and ensure your
+                        project is indexed.{' '}
                         <Typography.Link
                           active
                           href="https://academy.subquery.network/subquery_network/consumers/boosting.html#consumer-boosting"
