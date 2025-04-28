@@ -166,7 +166,7 @@ export const ActiveCard = () => {
                 title={
                   <div className="col-flex" style={{ position: 'relative', width: '100%', gap: 16 }}>
                     <Typography variant="h5" weight={500} style={{ whiteSpace: 'pre-wrap' }}>
-                      Current Reward Period
+                      Consumer Rewards Programme
                     </Typography>
                     <Typography type="secondary" style={{ whiteSpace: 'pre-wrap' }}>
                       Earn up to 900% of your query spending in SQT rewards, with dedicated reward pools for both
