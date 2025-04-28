@@ -13,6 +13,7 @@ const ButtonProps = t.type({
 });
 
 export enum NotificationKey {
+  UnhealthyConsumerRewards = 'unhealthyConsumerRewards',
   OverAllocate = 'overAllocate',
   UnstakeAllocation = 'unstakeAllocation',
   OverAllocateNextEra = 'overAllocateNextEra',

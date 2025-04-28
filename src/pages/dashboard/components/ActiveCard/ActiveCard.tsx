@@ -17,7 +17,7 @@ import { ProjectMetadata } from 'src/models';
 
 import styles from './ActiveCard.module.less';
 
-const baseUrl = 'https://consumer-campaign-api.subquery.network';
+const baseUrl = import.meta.env.VITE_CONSUMER_CAMPAIGN_URL;
 
 const notStart = +dayjs() < +dayjs('2025-05-01T00:00:00Z');
 
