@@ -22,6 +22,7 @@ import { idleCallback, idleQueue } from '@utils/idleCallback';
 import { limitContract, makeCacheKey } from '@utils/limitation';
 import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
+import { uniqBy } from 'lodash-es';
 
 import { useWeb3Store } from 'src/stores';
 import { NotificationKey, useNotification } from 'src/stores/notification';
@@ -179,6 +180,43 @@ export const useMakeNotification = () => {
     },
     [notificationStore.notificationList],
   );
+
+  const makeUnhealthyConsumerRewardsProjectNotification = useCallback(async () => {
+    const res = await fetch(`${import.meta.env.VITE_CONSUMER_CAMPAIGN_URL}/compaign/unhealth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        owners: [account],
+      }),
+    });
+
+    const json: { code: 0; data: { reason: string; projectId: string; metadataName: string }[] } = await res.json();
+
+    if (json.code === 0) {
+      const unhealthyProjects = uniqBy(json.data, 'projectId');
+      if (unhealthyProjects.length) {
+        notificationStore.addNotification({
+          key: NotificationKey.UnhealthyConsumerRewards,
+          level: 'critical',
+          message: `Your project ${unhealthyProjects.map((i) => i.metadataName || i.projectId).join(',')} is not currently eligible for the Consumer Rewards Programme and must first be verified.\n\nReach out to us at hello@subquery.network to become verified.`,
+          title: 'Verify your project to join Consumer Rewards Programme',
+          createdAt: Date.now(),
+          canBeDismissed: true,
+          dismissTime: defaultDismissTime,
+          dismissTo: undefined,
+          type: '',
+          buttonProps: {
+            label: 'View Project',
+            navigateHref: `/projects/project/${unhealthyProjects[0].projectId}`,
+          },
+        });
+      } else {
+        notificationStore.removeNotification(NotificationKey.UnhealthyConsumerRewards);
+      }
+    }
+  }, [account]);
 
   const makeOverAllocateAndUnStakeAllocationNotification = useCallback(
     async (mode?: 'reload') => {
@@ -770,6 +808,7 @@ export const useMakeNotification = () => {
       idleQueue([
         // use this sort to make sure the most important notification show first
         //
+        () => makeUnhealthyConsumerRewardsProjectNotification(),
         () => makeOverAllocateAndUnStakeAllocationNotification(),
         () => makeLowControllerBalanceNotification(),
         () => makeUnhealthyAllocationNotification(),
@@ -793,6 +832,7 @@ export const useMakeNotification = () => {
     makeUnhealthyAllocationNotification,
     makeInOrDecreaseCommissionNotification,
     makeNewOperatorNotification,
+    makeUnhealthyConsumerRewardsProjectNotification,
   ]);
 
   return {
