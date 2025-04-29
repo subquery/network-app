@@ -19,7 +19,7 @@ export const useVerifyDeployment = () => {
     async (deploymentId: string) => {
       try {
         const deployment = await getDployment(deploymentId);
-        return deployment.includes('@subql');
+        return deployment.includes('@subql') && deployment.includes('dataSources');
       } catch {
         return false;
       }
