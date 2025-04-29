@@ -28,7 +28,7 @@ export const ActiveCard = () => {
   const projectsQuery = useQuery<{ projects: { totalCount: number; nodes: { id: string; metadata: string }[] } }>(gql`
     query GetProjects(
       $offset: Int
-      $type: [ProjectType!] = [SUBQUERY, RPC]
+      $type: [ProjectType!] = [SUBQUERY, SUBGRAPH, RPC]
       $orderBy: [ProjectsOrderBy!] = [TOTAL_REWARD_DESC, UPDATED_TIMESTAMP_DESC]
     ) {
       projects(first: 30, offset: $offset, orderBy: $orderBy, filter: { type: { in: $type } }) {
