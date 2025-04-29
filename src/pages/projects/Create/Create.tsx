@@ -70,7 +70,8 @@ const Create: React.FC = () => {
             if (!isSubQuery) {
               openNotification({
                 type: 'error',
-                description: 'The deployment is not a SubQuery, please check the deployment ID or the project type',
+                description:
+                  'The deployment is not a SubQuery or a Multichain project, please check the deployment ID or the project type',
               });
               return;
             }
