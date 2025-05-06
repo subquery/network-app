@@ -3,29 +3,40 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
+import { gql, useLazyQuery } from '@apollo/client';
+import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { useMakeNotification } from '@components/NotificationCentre/useMakeNotification';
 import { TokenAmount } from '@components/TokenAmount';
 import { useAccount } from '@containers/Web3';
+import { useEra } from '@hooks';
 import { useIsMobile } from '@hooks/useIsMobile';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Spinner, TableText, Typography } from '@subql/components';
 import { TableTitle } from '@subql/components';
 import { GetEraRewardsByIndexerAndPageQuery } from '@subql/network-query';
-import { renderAsync, useGetEraRewardsByIndexerAndPageLazyQuery, useGetRewardsQuery } from '@subql/react-hooks';
+import {
+  renderAsync,
+  useAsyncMemo,
+  useGetEraRewardsByIndexerAndPageLazyQuery,
+  useGetRewardsQuery,
+} from '@subql/react-hooks';
 import { ExcludeNull, formatEther, notEmpty } from '@utils';
 import { useMount, useUpdate } from 'ahooks';
 import { Table, TableProps, Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 
-import { ClaimRewards } from './ClaimRewards';
+import { ClaimRewards, ClaimRewardsForStake } from './ClaimRewards';
 import styles from './Rewards.module.css';
 
 export const Rewards: React.FC = () => {
   const { address: account } = useAccount();
   const update = useUpdate();
+  const navigate = useNavigate();
   const filterParams = { address: account || '' };
+  const { currentEra } = useEra();
   const isMobile = useIsMobile();
   // if more than 100 delegations, need claim twice.
   const rewards = useGetRewardsQuery({ variables: filterParams, fetchPolicy: 'network-only' });
@@ -38,6 +49,21 @@ export const Rewards: React.FC = () => {
     totalCount: 0,
   });
   const [fetchIndexerEraRewardsApi, indexerEraRewards] = useGetEraRewardsByIndexerAndPageLazyQuery();
+  const [fetchUnhealthyRewards] = useLazyQuery<{
+    indexers: {
+      nodes: { active: boolean; lastClaimEra: string; id: string }[];
+    };
+  }>(gql`
+    query GetUnhealthyRewards($indexerAddress: [String!]!) {
+      indexers(filter: { id: { in: $indexerAddress } }) {
+        nodes {
+          active
+          lastClaimEra
+          id
+        }
+      }
+    }
+  `);
   const waitTransactionHandled = useWaitTransactionhandled();
   const { refreshAndMakeUnClaimedNotification } = useMakeNotification();
   const { t } = useTranslation();
@@ -64,6 +90,35 @@ export const Rewards: React.FC = () => {
     );
   }, [rewards]);
 
+  const unhealthyIndexers = useAsyncMemo(async () => {
+    const unhealthyIndexers = await fetchUnhealthyRewards({
+      variables: {
+        currentEra: `${currentEra.data?.index}`,
+        indexerAddress: unclaimedRewards?.indexers,
+      },
+    });
+
+    const unregisteredIndexers = unhealthyIndexers.data?.indexers.nodes.filter((item) => !item.active) || [];
+    const unclaimedIndexers =
+      unhealthyIndexers.data?.indexers.nodes.filter(
+        (item) => item.lastClaimEra !== `${(currentEra.data?.index || 1) - 1}`,
+      ) || [];
+    return { unregisteredIndexers, unclaimedIndexers };
+  }, [unclaimedRewards, currentEra.data?.index]);
+
+  const canClaimForStakeIndexers = React.useMemo(() => {
+    if (unhealthyIndexers.loading) return [];
+
+    const canClaimIndexers = unclaimedRewards?.indexers.filter((item) => {
+      return (
+        !unhealthyIndexers.data?.unclaimedIndexers.some((unclaimedItem) => unclaimedItem.id === item) &&
+        !unhealthyIndexers.data?.unregisteredIndexers.some((unclaimedItem) => unclaimedItem.id === item)
+      );
+    });
+
+    return canClaimIndexers;
+  }, [unhealthyIndexers.data, unhealthyIndexers.loading, unclaimedRewards?.indexers]);
+
   const columns: TableProps<
     ExcludeNull<ExcludeNull<GetEraRewardsByIndexerAndPageQuery['eraRewards']>['nodes'][number]>
   >['columns'] = [
@@ -71,7 +126,14 @@ export const Rewards: React.FC = () => {
       title: <TableTitle title={t('rewards.indexer')} />,
       dataIndex: 'indexerId',
       key: 'indexer',
-      render: (text: string) => <TableText content={text} />,
+      render: (text: string) => (
+        <IndexerName
+          address={text}
+          onClick={() => {
+            navigate(`/indexer/${text}`);
+          }}
+        ></IndexerName>
+      ),
     },
     {
       title: <TableTitle title={t('rewards.amount')} />,
@@ -140,7 +202,7 @@ export const Rewards: React.FC = () => {
       setMounted(true);
     }
   });
-
+  console.warn(canClaimForStakeIndexers);
   return (
     <div className={styles.rewardsContainer}>
       <div className={styles.rewardsList}>
@@ -177,6 +239,25 @@ export const Rewards: React.FC = () => {
                       </Typography>
                     </div>
                     <span style={{ flex: 1 }}></span>
+                    {totalUnclaimedRewards > 0 && canClaimForStakeIndexers?.length ? (
+                      <ClaimRewardsForStake
+                        indexers={canClaimForStakeIndexers as string[]}
+                        unhealthyIndexers={unhealthyIndexers.data}
+                        account={account ?? ''}
+                        totalUnclaimed={formatEther(unclaimedRewards?.totalAmount)}
+                        onClaimed={async (tx) => {
+                          await waitTransactionHandled(tx?.blockNumber);
+
+                          fetchIndexerEraRewards();
+                          rewards.refetch();
+                          refreshAndMakeUnClaimedNotification();
+                        }}
+                        unCliamedCountByIndexer={unclaimedRewardsCountByIndexer}
+                      />
+                    ) : (
+                      ''
+                    )}
+
                     {totalUnclaimedRewards > 0 && unclaimedRewards?.indexers ? (
                       <ClaimRewards
                         indexers={unclaimedRewards?.indexers as string[]}

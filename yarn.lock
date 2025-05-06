@@ -4480,10 +4480,10 @@
     use-screen "^1.1.3"
     uuid "^10.0.0"
 
-"@subql/contract-sdk@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.7.0.tgz#ace35031db2177949df33f08087998297337b16b"
-  integrity sha512-x4fqwCbi0TPjp4X3E/bjnTf3wi9H6A5aiA7jYfwT6DIh36Sl4WS6kTiAEbXrHZdFna0v0IfhcwmQA7ElzS8jgA==
+"@subql/contract-sdk@1.9.0-2":
+  version "1.9.0-2"
+  resolved "https://registry.npmjs.org/@subql/contract-sdk/-/contract-sdk-1.9.0-2.tgz#ddd68f6ae9ab10ef2e6717eb8d792df409461fb5"
+  integrity sha512-TreKjb8qQX5DzYZjJuy0ppf+9fqqRAOFkLprazIRHIctp8z+84mI7BIE+xGYVHFEWgE2ypWLPisCu6G/8i/4AQ==
 
 "@subql/network-clients@1.1.1-4":
   version "1.1.1-4"
