@@ -103,14 +103,6 @@ const RenderRouter: React.FC = () => {
         ref={setChatBoxRef}
         chatUrl={import.meta.env.VITE_AI_URL}
         prompt={address ? `My address is: ${address},use this for any further prompts.` : undefined}
-        onChatboxOpen={() => {
-          window.gtag('event', 'open_ai-asisstant');
-        }}
-        onSendMessage={() => {
-          window.gtag('event', 'send_message_ai-asisstant', {
-            address: `x${address}`,
-          });
-        }}
         onReaction={async (status, message, userQuestion) => {
           await fetch(`${import.meta.env.VITE_AI_REACTION_URL}/react/message`, {
             method: 'POST',
