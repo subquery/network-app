@@ -8,7 +8,7 @@ import { Spinner } from '@subql/components';
 /**
  *
  * This is the App Initial State
- * The App will initial ContractSDK, and store at global state
+ * The App will initial ContractSDK, and store it at the global state
  */
 export const AppInitProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { loading: loadingContract } = useInitContracts();
