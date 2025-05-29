@@ -253,7 +253,7 @@ const DoBooster: FC<IProps> = ({
 
             <div>
               <Form layout="vertical" form={form}>
-                <Typography>Boost amount</Typography>
+                <Typography>Boost amount </Typography>
                 <Form.Item
                   style={{ marginBottom: 0 }}
                   name="boostVal"
@@ -291,6 +291,18 @@ const DoBooster: FC<IProps> = ({
                     }}
                   ></NumberInput>
                 </Form.Item>
+                {balance.result.data?.eq(0) ? (
+                  <Typography.Link
+                    href="https://subquery.network/doc/subquery_network/token/token.html#where-is-sqt-traded"
+                    type="info"
+                    variant="small"
+                    style={{ transform: 'translateY(-10px)' }}
+                  >
+                    Get SQT
+                  </Typography.Link>
+                ) : (
+                  ''
+                )}
               </Form>
               <div className="col-flex" style={{ gap: 8, marginBottom: 24 }}>
                 <div className="flex">

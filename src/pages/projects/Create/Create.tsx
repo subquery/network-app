@@ -124,8 +124,7 @@ const Create: React.FC = () => {
                       Now what&apos;s next?
                     </Typography>
                     <Typography type="secondary">
-                      Your next challenge is to get Node Operators to run your project, here are some options that you
-                      have.
+                      Explore ways to encourage Node Operators to run your project
                     </Typography>
                   </div>
 
@@ -133,9 +132,9 @@ const Create: React.FC = () => {
                     <div className="col-flex" style={{ gap: 8 }}>
                       <Typography>Boost your Project to attract Node Operators</Typography>
                       <Typography variant="medium" type="secondary">
-                        You should boost your project by locking SQT to increase the rewards that Node Operators can
-                        receive from your project. This is the best way to attract more Node Operators and ensure your
-                        project is indexed.{' '}
+                        Boost your project by locking SQT to increase the rewards that Node Operators can receive from
+                        your project. This is the best way to attract more Node Operators and ensure your project is
+                        indexed.{' '}
                         <Typography.Link
                           active
                           href="https://academy.subquery.network/subquery_network/consumers/boosting.html#consumer-boosting"
@@ -157,11 +156,10 @@ const Create: React.FC = () => {
 
                   <div className={styles.plainCard}>
                     <div className="col-flex" style={{ gap: 8 }}>
-                      <Typography>Setup Flex Plan</Typography>
+                      <Typography>Set up Flex Plan</Typography>
                       <Typography variant="medium" type="secondary">
-                        Flex plans are a great way to indicate to Node Operators what price you are willing to pay for
-                        access to this project, you can create a flex plan today before any Node Operators complete
-                        indexing.{' '}
+                        Flex Plans are required so Node Operators know what price you are willing to pay for access to
+                        this project, you can create a flex plan today before any Node Operators complete indexing.{' '}
                         <Typography.Link
                           active
                           href="https://academy.subquery.network/subquery_network/consumers/plan.html"
@@ -180,43 +178,6 @@ const Create: React.FC = () => {
                       </Button>
                     </Typography.Link>
                   </div>
-
-                  <div className={styles.plainCard}>
-                    <div className="col-flex" style={{ gap: 8 }}>
-                      <Typography>Create a closed price agreement</Typography>
-                      <Typography variant="medium" type="secondary">
-                        Creating a closed price agreement is good when only you will use the data in this project, as it
-                        creates a commitment between you and a node operator to access data for a predetermined amount
-                        of SQT.{' '}
-                        <Typography.Link
-                          active
-                          href="https://academy.subquery.network/subquery_network/consumers/plan.html"
-                          target="_blank"
-                        >
-                          Read the docs.
-                        </Typography.Link>
-                      </Typography>
-                    </div>
-                    <Typography.Link target="_href" href={`/consumer/my-offers`}>
-                      <Button shape="round" type="primary" size="large">
-                        Create agreement
-                      </Button>
-                    </Typography.Link>
-                  </div>
-                  <div className={styles.plainCard}>
-                    <div className="col-flex" style={{ gap: 8 }}>
-                      <Typography>Notify Node Operators on the Forum and in Discord</Typography>
-                      <Typography variant="medium" type="secondary">
-                        We recommend posting your project in the SubQuery Network forum and even mentioning it in the
-                        Discord community.
-                      </Typography>
-                    </div>
-                    <Typography.Link href="https://forum.subquery.network/" target="_blank">
-                      <Button shape="round" type="primary" size="large">
-                        Go to forum
-                      </Button>
-                    </Typography.Link>
-                  </div>
                 </div>
               }
               extra={[
@@ -232,6 +193,20 @@ const Create: React.FC = () => {
                 >
                   View project
                 </Button>,
+                <a href="https://discord.com/invite/subquery" target="_blank" rel="noreferrer" key="join-discord">
+                  <Button
+                    key="view-project"
+                    type="primary"
+                    shape="round"
+                    size="large"
+                    onClick={() => {
+                      navigate(`${STUDIO_PROJECT_NAV}/${resultId}`);
+                      destroy();
+                    }}
+                  >
+                    Join Discord
+                  </Button>
+                </a>,
               ]}
             ></Result>
           ),
@@ -255,6 +230,7 @@ const Create: React.FC = () => {
         <Spinner></Spinner>
       </div>
     );
+
   return (
     <div>
       <Formik
