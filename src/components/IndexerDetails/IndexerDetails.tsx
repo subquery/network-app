@@ -39,13 +39,16 @@ type Props = {
 const NoIndexers: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <EmptyList
-      title={t('noIndexers.title')}
-      description={t('noIndexers.description')}
-      infoLinkDesc={t('noIndexers.subtitle')}
-      infoI18nKey={t('noIndexers.subtitle')}
-      infoLink={URLS.INDEXER}
-    />
+    <EmptyList>
+      <div>
+        <Typography>{t('noIndexers.description')}</Typography> <br></br>
+        Or{' '}
+        <Typography.Link href="https://discord.com/invite/subquery" type="info">
+          Join Discord
+        </Typography.Link>{' '}
+        to communicate with Node Operators directly
+      </div>
+    </EmptyList>
   );
 };
 
