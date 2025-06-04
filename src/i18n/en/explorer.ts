@@ -121,9 +121,10 @@ const translation = {
     },
   },
   noIndexers: {
-    description: 'no Node Operators available',
-    title: 'Start indexing this project',
-    subtitle: 'Learn how to index a SubQuery project ',
+    description: 'Boost more SQT to attract Node Operators',
+    title: '',
+    subtitle:
+      'Or Join Discord [PROVIDE LINK:https://discord.com/invite/subquery] to communicate with Node Operators directly',
   },
   indexers: {
     head: {

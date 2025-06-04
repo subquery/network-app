@@ -213,7 +213,6 @@ const MyBoostedProjects: FC = () => {
                     onSuccess={() => boostedProjects.refetch()}
                   ></DoBooster>
                   <DoBooster
-                    deploymentId={deploymentId}
                     projectId={record.projectId}
                     actionBtn={<Typography.Link type="danger">Remove Boost</Typography.Link>}
                     onSuccess={() => boostedProjects.refetch()}
