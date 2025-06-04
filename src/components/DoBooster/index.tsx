@@ -1,8 +1,9 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import IPFSImage from '@components/IPFSImage';
 import { ApproveContract } from '@components/ModalApproveToken';
 import { NumberInput } from '@components/NumberInput';
@@ -15,6 +16,7 @@ import { useAddAllowance } from '@hooks/useAddAllowance';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Modal, openNotification, Spinner, Steps, Tag, Typography } from '@subql/components';
 import { useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
+import { ProjectType } from '@subql/react-hooks/dist/graphql';
 import { cidToBytes32, parseError, TOKEN } from '@utils';
 import { formatNumber, formatSQT } from '@utils/numberFormatters';
 import { Button, Form, Radio, Tooltip } from 'antd';
@@ -28,6 +30,7 @@ import { useWeb3Store } from 'src/stores';
 import styles from './index.module.less';
 
 interface IProps {
+  projectType?: ProjectType;
   projectId?: string;
   deploymentId?: string;
   actionBtn?: React.ReactNode;
@@ -37,6 +40,7 @@ interface IProps {
 }
 
 const DoBooster: FC<IProps> = ({
+  projectType,
   projectId,
   deploymentId,
   actionBtn,
@@ -62,6 +66,26 @@ const DoBooster: FC<IProps> = ({
     },
     fetchPolicy: 'network-only',
   });
+
+  const [getAverageBooster, averageBooster] = useLazyQuery<{
+    deploymentBoosterSummaries: {
+      aggregates: {
+        average: {
+          totalAmount: string;
+        };
+      };
+    };
+  }>(gql`
+    {
+      deploymentBoosterSummaries(filter: { project: { type: { equalTo: ${project.data?.type} } } }) {
+        aggregates {
+          average {
+            totalAmount
+          }
+        }
+      }
+    }
+  `);
 
   const [open, setOpen] = useState(initialOpen);
   const [loading, setLoading] = useState(false);
@@ -140,6 +164,14 @@ const DoBooster: FC<IProps> = ({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (open && project.data) {
+      getAverageBooster();
+    }
+  }, [open, project.data]);
+
+  console.warn(averageBooster.data);
 
   return (
     <div className={styles.doBooster}>
@@ -345,6 +377,36 @@ const DoBooster: FC<IProps> = ({
                     ) : (
                       <Tooltip title={formatSQT(balance.result.data?.toString() || '0', { fixedNum: 18 })}>
                         {formatSQT(balance.result.data?.toString() || '0', { fixedNum: 2 })}
+                      </Tooltip>
+                    )}{' '}
+                    {TOKEN}
+                  </Typography>
+                </div>
+
+                <div className="flex">
+                  <Typography variant="medium" type="secondary" style={{ display: 'flex', alignItems: 'center' }}>
+                    Average Booster
+                    <Tooltip title="The total amount that you can freely boost to new projects.">
+                      <AiOutlineInfoCircle
+                        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
+                      ></AiOutlineInfoCircle>
+                    </Tooltip>
+                  </Typography>
+                  <span style={{ flex: 1 }}></span>
+                  <Typography variant="medium">
+                    {averageBooster.loading ? (
+                      <Spinner size={10}></Spinner>
+                    ) : (
+                      <Tooltip
+                        title={formatSQT(
+                          averageBooster.data?.deploymentBoosterSummaries.aggregates.average.totalAmount || '0',
+                          { fixedNum: 18 },
+                        )}
+                      >
+                        {formatSQT(
+                          averageBooster.data?.deploymentBoosterSummaries.aggregates.average.totalAmount || '0',
+                          { fixedNum: 2 },
+                        )}
                       </Tooltip>
                     )}{' '}
                     {TOKEN}

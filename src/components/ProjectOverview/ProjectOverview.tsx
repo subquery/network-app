@@ -320,7 +320,12 @@ const ProjectOverview: React.FC<Props> = ({ project, metadata, deploymentDescrip
               </div>
               <span style={{ flex: 1 }}></span>
 
-              <DoBooster projectId={project.id} deploymentId={deploymentId} initialOpen={initialOpenModal}></DoBooster>
+              <DoBooster
+                projectType={project.type}
+                projectId={project.id}
+                deploymentId={deploymentId}
+                initialOpen={initialOpenModal}
+              ></DoBooster>
             </div>
           }
         >
