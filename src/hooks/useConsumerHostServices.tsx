@@ -175,6 +175,7 @@ export const useConsumerHostServices = (
       }
 
       const res = await requestConsumerHostToken(account);
+      console.warn(res);
 
       if (res.error) {
         return {

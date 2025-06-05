@@ -8,6 +8,7 @@ import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { ChatBoxTooltip, Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/contract-sdk/types';
 import { clsx } from 'clsx';
+import { toSvg } from 'jdenticon';
 
 import { useChatBoxStore } from 'src/stores/chatbox';
 
@@ -55,7 +56,10 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
       chatBoxInstance={chatBoxStore.chatBoxRef}
     >
       <div className={styles.projectInfo}>
-        <IPFSImage src={project?.image || '/static/default.project.png'} className={styles.ipfsImage} />
+        <IPFSImage
+          src={project?.image || `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project?.name, 500))}`}
+          className={styles.ipfsImage}
+        />
 
         <div
           className={styles.projectTextInfo}

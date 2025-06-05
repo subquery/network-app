@@ -10,6 +10,7 @@ import { formatSQT } from '@subql/react-hooks';
 import { formatNumber, ROUTES, TOKEN } from '@utils';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
+import { toSvg } from 'jdenticon';
 
 import { ProjectMetadata } from 'src/models';
 
@@ -32,7 +33,8 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
       return '';
     }
 
-    if (!project.metadata.image) return '/static/default.project.png';
+    if (!project.metadata.image)
+      return `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project.metadata.name, 500))}`;
 
     return project.metadata.image;
   }, [project.metadata]);

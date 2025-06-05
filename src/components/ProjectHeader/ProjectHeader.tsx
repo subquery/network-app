@@ -19,6 +19,7 @@ import { Button, Tooltip } from 'antd';
 import { BigNumber } from 'bignumber.js';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+import { toSvg } from 'jdenticon';
 
 import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
 import { useProjectStore } from 'src/stores/project';
@@ -160,7 +161,13 @@ const ProjectHeader: React.FC<Props> = ({
   return (
     <div className={styles.container}>
       <div className={styles.left}>
-        <IPFSImage src={project.metadata.image || '/static/default.project.png'} className={styles.image} />
+        <IPFSImage
+          src={
+            project.metadata.image ||
+            `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project?.metadata.name, 500))}`
+          }
+          className={styles.image}
+        />
       </div>
       <div className={styles.inner}>
         <div className={styles.upper}>

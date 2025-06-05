@@ -24,6 +24,7 @@ import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { ContractReceipt } from 'ethers';
+import { toSvg } from 'jdenticon';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -248,7 +249,10 @@ const DoBooster: FC<IProps> = ({
             </div>
             <div className="flex" style={{ marginTop: 24 }}>
               <IPFSImage
-                src={project.data?.metadata.image || '/static/default.project.png'}
+                src={
+                  project.data?.metadata.image ||
+                  `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project.data?.metadata.name, 500))}`
+                }
                 style={{ width: 60, height: 60, borderRadius: 8 }}
               ></IPFSImage>
 
@@ -329,6 +333,7 @@ const DoBooster: FC<IProps> = ({
                     type="info"
                     variant="small"
                     style={{ transform: 'translateY(-10px)' }}
+                    target="_blank"
                   >
                     Get SQT
                   </Typography.Link>
