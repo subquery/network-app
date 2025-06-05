@@ -86,7 +86,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, initialOpen = false })
   const [userHostingPlan, setUserHostingPlan] = useState<IGetHostingPlans[]>([]);
   const [userApiKeys, setUserApiKeys] = useState<GetUserApiKeys[]>([]);
 
-  const { getHostingPlanApi, checkIfHasLogin, getUserApiKeysApi } = useConsumerHostServices({
+  const { getHostingPlanApi, checkIfHasLogin, getUserApiKeysApi, createNewApiKey } = useConsumerHostServices({
     alert: false,
     autoLogin: false,
   });
@@ -316,9 +316,18 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, initialOpen = false })
       setNextBtnLoading(true);
       const hostingPlan = await fetchHostingPlan();
 
-      const apiKeys = await getUserApiKeysApi();
+      let apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
         setUserApiKeys(apiKeys.data);
+        if (!apiKeys.data.find((i) => i.name === specialApiKeyName)) {
+          await createNewApiKey({
+            name: specialApiKeyName,
+          });
+          apiKeys = await getUserApiKeysApi();
+          if (!isConsumerHostError(apiKeys.data)) {
+            setUserApiKeys(apiKeys.data);
+          }
+        }
       }
       return {
         hostingPlan,

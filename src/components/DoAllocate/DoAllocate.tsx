@@ -21,6 +21,7 @@ import { parseError, TOKEN } from '@utils';
 import { Button, Form, Radio, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/es/form/Form';
 import BigNumber from 'bignumber.js';
+import { toSvg } from 'jdenticon';
 
 import { PER_MILL } from 'src/const/const';
 import { useWeb3Store } from 'src/stores';
@@ -294,7 +295,10 @@ const DoAllocate: FC<IProps> = ({ projectId, deploymentId, actionBtn, onSuccess,
 
         <div className="flex" style={{ marginTop: 24 }}>
           <IPFSImage
-            src={project.data?.metadata.image || '/static/default.project.png'}
+            src={
+              project.data?.metadata.image ||
+              `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project.data?.metadata.name, 500))}`
+            }
             style={{ width: 60, height: 60, borderRadius: 8 }}
           ></IPFSImage>
 

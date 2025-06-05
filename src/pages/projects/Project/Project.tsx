@@ -15,6 +15,7 @@ import { useUpdate } from 'ahooks';
 import { Breadcrumb, Button, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import clsx from 'clsx';
+import { toSvg } from 'jdenticon';
 
 import { ProjectDetails, ProjectType } from 'src/models';
 
@@ -246,7 +247,10 @@ const Project: React.FC = () => {
 
                 <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
                   <IPFSImage
-                    src={project.metadata.image || '/static/default.project.png'}
+                    src={
+                      project.metadata.image ||
+                      `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project.metadata.name, 500))}`
+                    }
                     style={{ width: 160, height: 160 }}
                   />{' '}
                   <div className="col-flex" style={{ flex: 1 }}>

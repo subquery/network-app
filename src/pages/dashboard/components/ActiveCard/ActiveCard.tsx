@@ -12,6 +12,7 @@ import { filterSuccessPromoiseSettledResult, getMonthProgress, notEmpty } from '
 import { useInterval } from 'ahooks';
 import { Button, Carousel, Progress, Skeleton } from 'antd';
 import dayjs from 'dayjs';
+import { toSvg } from 'jdenticon';
 
 import { ProjectMetadata } from 'src/models';
 
@@ -134,7 +135,10 @@ export const ActiveCard = () => {
                       {projects.projects?.nodes.filter(notEmpty).map((project, index) => (
                         <IPFSImage
                           key={project.id}
-                          src={projectsMetadata[index]?.image || '/static/default.project.png'}
+                          src={
+                            projectsMetadata[index]?.image ||
+                            `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(projectsMetadata[index]?.name, 500))}`
+                          }
                           className={styles.image}
                           onClick={() => {
                             navigate(`/explorer/project/${project.id}`);

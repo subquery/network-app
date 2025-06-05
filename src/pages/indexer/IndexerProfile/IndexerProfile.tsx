@@ -31,6 +31,7 @@ import clsx from 'clsx';
 import { toChecksumAddress } from 'ethereum-checksum-address';
 import { constants } from 'ethers';
 import { t } from 'i18next';
+import { toSvg } from 'jdenticon';
 import { isString } from 'lodash-es';
 
 import { OwnDelegator } from '../MyDelegators/OwnDelegator';
@@ -185,7 +186,10 @@ const ActiveCard = (props: { account: string }) => {
               .map((project) => (
                 <IPFSImage
                   key={project.projectId}
-                  src={project.projectMeta.image || '/static/default.project.png'}
+                  src={
+                    project.projectMeta.image ||
+                    `data:image/svg+xml;utf8,${encodeURIComponent(toSvg(project.projectMeta.name, 500))}`
+                  }
                   className={styles.image}
                   onClick={() => {
                     navigate(`/explorer/project/${project.projectId}`);
