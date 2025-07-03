@@ -217,7 +217,7 @@ export const useConsumerHostServices = (
   };
 
   const checkIfHasLogin = async () => {
-    // this api do not need arguements. so use it to check if need login.
+    // this api do not need arguments. so use it to check if need login.
     try {
       setLoading(true);
       authHeaders.current = getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || '');
@@ -555,7 +555,7 @@ export interface IGetHostingPlans {
     // cid
     deployment: string;
     id: number;
-    is_actived: boolean;
+    is_activated: boolean;
     project_id: number;
     updated_at: Date;
     version: string;
@@ -570,7 +570,7 @@ export interface IGetHostingPlans {
   price: BigNumberish;
   spent: string;
   expired_at: string;
-  is_actived: true;
+  is_activated: true;
   created_at: string;
   updated_at: string;
 }
