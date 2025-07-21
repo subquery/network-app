@@ -151,6 +151,7 @@ export const useLocalProjects = () => {
 
   const getProjectBySearch = async (params: {
     offset: number;
+    account?: string;
     keywords: string;
     categories?: string[];
     projectType: ProjectType;
@@ -158,9 +159,11 @@ export const useLocalProjects = () => {
     await waitForSomething({
       func: () => !loading.current,
     });
-    let total = projects.current.filter((i) =>
-      `${i.name}-${i.versionDescription}-${i.description}`.toLowerCase().includes(params.keywords.toLowerCase()),
-    );
+    let total = projects.current
+      .filter((i) =>
+        `${i.name}-${i.versionDescription}-${i.description}`.toLowerCase().includes(params.keywords.toLowerCase()),
+      )
+      .filter((i) => (params.account ? i.owner.toLocaleLowerCase() == params.account.toLocaleLowerCase() : true));
 
     if (params.categories && params.categories.length) {
       const setCategories = new Set(params.categories);
