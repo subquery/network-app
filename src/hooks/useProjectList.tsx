@@ -1,9 +1,10 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
+import { gql, useLazyQuery } from '@apollo/client';
 import ProjectCard from '@components/ProjectCard';
 import RpcError from '@components/RpcError';
 import { useProjectMetadata } from '@containers';
@@ -50,7 +51,7 @@ export interface UseProjectListProps {
   makeRedirectHref?: (projectId: string) => string;
 }
 
-const pageSize = 10;
+const pageSize = 30;
 
 export const useProjectList = (props: UseProjectListProps = {}) => {
   const {
@@ -61,9 +62,81 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     onProjectClick,
   } = props;
   const [, setSearchParams] = useSearchParams();
-  const [getProjects, { error }] = useGetProjectsLazyQuery({
-    variables: { offset: 0, type: [ProjectType.SUBQUERY, ProjectType.SUBGRAPH] },
-  });
+  const [getProjects, { error }] = useLazyQuery(
+    gql`
+      query GetProjects(
+        $offset: Int
+        $type: [ProjectType!] = [SUBQUERY, RPC]
+        $orderBy: [ProjectsOrderBy!] = ID_ASC
+        $ids: [String!] = [""]
+        ${account ? '$account: String' : ''}
+        $now: Datetime = "1970-01-01T00:00:00"
+      ) {
+        projects(first: ${pageSize}, offset: $offset, orderBy: $orderBy, filter: { ${
+          account ? `owner: { equalTo: $account },` : ''
+        } id: { notIn: $ids }, type: { in: $type } }) {
+          totalCount
+          nodes {
+            id
+            owner
+            metadata
+            deploymentMetadata
+            deploymentId
+            updatedTimestamp
+            createdTimestamp
+            type
+            deployments {
+              nodes {
+                id
+                serviceAgreements {
+                  aggregates {
+                    sum {
+                      lockedAmount
+                    }
+                  }
+                  totalCount
+                }
+                serviceAgreementsActive: serviceAgreements(
+                  filter: { endTime: { greaterThanOrEqualTo: $now } }
+                ) {
+                  totalCount
+                }
+                indexers(
+                  filter: { indexer: { active: { equalTo: true } }, status: { notEqualTo: TERMINATED } }
+                ) {
+                  totalCount
+                }
+                deploymentBoosterSummaries {
+                  groupedAggregates(groupBy: PROJECT_ID) {
+                    sum {
+                      totalAmount
+                    }
+                  }
+                }
+
+                deploymentBoosterSummariesByDeploymentId: deploymentBoosterSummaries {
+                  groupedAggregates(groupBy: DEPLOYMENT_ID) {
+                    sum {
+                      totalAmount
+                    }
+                    keys
+                  }
+                }
+              }
+            }
+            totalReward
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        offset: 0,
+        type: [ProjectType.SUBQUERY, ProjectType.SUBGRAPH],
+        account: account || undefined,
+      },
+    },
+  );
 
   const [getProject, { error: topError, loading: topLoading }] = useGetProjectLazyQuery();
 
@@ -86,19 +159,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
   const [showPublishModal, setShowPublishModal] = React.useState(false);
   const [orderBy, setOrderBy] = React.useState(ProjectsOrderBy.TOTAL_REWARD_DESC);
   const { getProjectBySearch } = useLocalProjects();
-
-  // const loadTopProject = async () => {
-  //   // this is a hard code, for kepler-network project.
-  //   // we want to top it.
-  //   const res = await getProject({
-  //     variables: {
-  //       id: '0x06',
-  //     },
-  //   });
-  //   if (res.data?.project) {
-  //     setTopProject(res.data?.project);
-  //   }
-  // };
+  const [previouseAccount, setPreviouseAccount] = useState(account);
 
   const loadMore = async (options?: {
     refresh?: boolean;
@@ -134,6 +195,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
       const params = isSearch
         ? {
             offset: options?.refresh ? 0 : fetchedProejcts.current.length,
+            account: account || undefined,
             ...searchParams,
           }
         : {
@@ -157,7 +219,6 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         // filter once or twice is the same.
         const nonEmptyProjects = res.data.projects?.nodes.filter(notEmpty).filter(notEmpty);
         const mergered = options?.refresh ? [...nonEmptyProjects] : [...fetchedProejcts.current, ...nonEmptyProjects];
-        // TODO: filter by backend.
         setProjects(mergered.filter((proj) => (account ? account.toLowerCase() === proj.owner.toLowerCase() : true)));
         fetchedProejcts.current = mergered;
         updatedLength = mergered.length;
@@ -414,8 +475,21 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
     loading,
     projects,
     orderBy,
+    account,
     onProjectClick,
   ]);
+
+  useEffect(() => {
+    if (account && account !== previouseAccount) {
+      setProjects([]);
+      loadMore({
+        refresh: true,
+      }).then((res) => {
+        mutate(res);
+      });
+      setPreviouseAccount(account);
+    }
+  }, [account]);
 
   return {
     listsWithSearch,
