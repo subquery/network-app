@@ -69,7 +69,7 @@ export const useProjectList = (props: UseProjectListProps = {}) => {
         $type: [ProjectType!] = [SUBQUERY, RPC]
         $orderBy: [ProjectsOrderBy!] = ID_ASC
         $ids: [String!] = [""]
-        $account: String
+        ${account ? '$account: String' : ''}
         $now: Datetime = "1970-01-01T00:00:00"
       ) {
         projects(first: ${pageSize}, offset: $offset, orderBy: $orderBy, filter: { ${
