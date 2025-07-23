@@ -555,7 +555,7 @@ export interface IGetHostingPlans {
     // cid
     deployment: string;
     id: number;
-    is_activated: boolean;
+    is_actived: boolean;
     project_id: number;
     updated_at: Date;
     version: string;
@@ -570,7 +570,7 @@ export interface IGetHostingPlans {
   price: BigNumberish;
   spent: string;
   expired_at: string;
-  is_activated: true;
+  is_actived: true;
   created_at: string;
   updated_at: string;
 }
