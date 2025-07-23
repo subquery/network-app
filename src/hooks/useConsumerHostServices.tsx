@@ -217,7 +217,7 @@ export const useConsumerHostServices = (
   };
 
   const checkIfHasLogin = async () => {
-    // this api do not need arguements. so use it to check if need login.
+    // this api do not need arguments. so use it to check if need login.
     try {
       setLoading(true);
       authHeaders.current = getAuthReqHeader(localStorage.getItem(`consumer-host-services-token-${account}`) || '');
