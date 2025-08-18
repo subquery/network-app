@@ -256,7 +256,7 @@ const MyHostedPlan: FC = () => {
                           key: 1,
                           onClick: () => {
                             navigate(
-                              `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}`,
+                              `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}&projectMetadata=${record.project.metadata}`,
                             );
                           },
                         },

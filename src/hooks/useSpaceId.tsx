@@ -15,7 +15,6 @@ type ReturnType = {
 type Web3ReturnFuncType = (address?: string) => Promise<ReturnType | null | undefined>;
 
 const rpcMainnet = [
-  'https://ethereum.rpc.subquery.network/public',
   'https://eth.llamarpc.com',
   'https://ethereum.blockpi.network/v1/rpc/public',
   'https://rpc.payload.de',

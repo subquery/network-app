@@ -21,7 +21,7 @@ import BigNumberJs from 'bignumber.js';
 import dayjs from 'dayjs';
 import i18next from 'i18next';
 
-import { useSQToken } from '../../../containers';
+import { useProjectMetadata, useSQToken } from '../../../containers';
 import { formatEther, TOKEN } from '../../../utils';
 import { ROUTES } from '../../../utils';
 import MyHostedPlan from './MyHostedPlan/MyHostedPlan';
@@ -235,6 +235,17 @@ const Header = () => {
   const match = useMatch(`/consumer/flex-plans/${ONGOING_PLANS}/details/:id/*`);
   const navigate = useNavigate();
   const query = useRouteQuery();
+  const { getMetadataFromCid } = useProjectMetadata();
+  const projectMetadata = useMemo(() => {
+    return query.get('projectMetadata');
+  }, [query]);
+
+  const { data: metadata } = useAsyncMemo(async () => {
+    if (projectMetadata) {
+      return await getMetadataFromCid(projectMetadata);
+    }
+    return null;
+  }, [projectMetadata, getMetadataFromCid]);
 
   return (
     <>
@@ -268,7 +279,7 @@ const Header = () => {
               },
               {
                 key: 'current',
-                title: query.get('projectName'),
+                title: metadata?.name,
               },
             ]}
           ></Breadcrumb>
