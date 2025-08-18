@@ -66,7 +66,7 @@ type ErrorMsgProps = {
 
 const ErrorMsg = ({ msg }: { msg: ErrorMsgProps }) => (
   <>
-    <Tooltip title={`${t('indexers.tooltip.connection')}${msg.metadata?.url}/metadata/${msg.deploymentId}`}>
+    <Tooltip title={`${t('indexers.tooltip.connection')} ${msg.metadata?.url}/metadata/${msg.deploymentId}`}>
       <Typography.Text type="danger">Error: </Typography.Text>
       <Typography.Text type="secondary">{t('indexers.tooltip.error')}</Typography.Text>
     </Tooltip>
