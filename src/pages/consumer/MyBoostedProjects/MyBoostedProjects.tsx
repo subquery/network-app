@@ -80,7 +80,7 @@ const MyBoostedProjects: FC = () => {
     if (!contracts) return '0';
     const rewards = await Promise.allSettled(
       boostedProjects.data?.deploymentBoosterSummaries?.nodes?.map((i) => {
-        return contracts.rewardsBooster.getQueryRewards(cidToBytes32(i?.deploymentId || ''), account || '');
+        return contracts.rewardsBooster.getAccQueryRewardsByType(cidToBytes32(i?.deploymentId || ''), account || '');
       }) || [],
     );
 
