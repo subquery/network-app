@@ -17,7 +17,7 @@ export function useCreateDeployment(
     const versionCid = await uploadVersionMetadata({
       version: deploymentDetails.version,
       description: deploymentDetails.description,
-    });
+    } as NewDeployment & { recommended: boolean });
 
     const tx = await projectRegistry.updateDeployment(
       projectId,

@@ -134,6 +134,9 @@ function useProjectRegistryImpl(logger: Logger) {
     getQuery,
     updateQueryMetadata,
     updateDeployment,
+    clearCache: () => {
+      projectCache.current = {};
+    },
   };
 }
 

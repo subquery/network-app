@@ -88,11 +88,12 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
       return (
         <ProjectDeployments
           currentDeploymentCid={currentDeployment?.deployment}
+          // @ts-ignore
           deployments={sortedDeployments}
           projectId={projectId}
           onRefresh={async () => {
-            await asyncDeployments.refetch();
             await onRefresh?.();
+            await asyncDeployments.refetch();
           }}
         />
       );
