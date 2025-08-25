@@ -11,7 +11,7 @@ import { AsyncData } from '../utils';
 import { useAsyncMemo } from '.';
 
 export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
-  const { getQuery } = useProjectRegistry();
+  const { getQuery, clearCache } = useProjectRegistry();
   const { catSingle } = useIPFS();
   const { getMetadataFromCid } = useProjectMetadata();
 
@@ -19,14 +19,15 @@ export function useProject(id: string): AsyncData<ProjectDetails | undefined> {
     if (!id) {
       return undefined;
     }
+    clearCache();
 
     const query = await getQuery(id);
-    console.warn(query);
     if (!query) {
       return undefined;
     }
 
     const metadata = await getMetadataFromCid(query.metadata);
+
     return {
       id,
       owner: query.owner,

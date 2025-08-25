@@ -5,13 +5,17 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Copy from '@components/Copy';
 import Expand from '@components/Expand/Expand';
+import { useWeb3 } from '@containers';
 import { useCreateDeployment } from '@hooks';
-import { Markdown, Modal, openNotification, TableTitle, Typography } from '@subql/components';
-import { parseError } from '@utils';
+import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
+import { Markdown, Modal, openNotification, Spinner, TableTitle, Typography } from '@subql/components';
+import { cidToBytes32, parseError } from '@utils';
 import { useUpdate } from 'ahooks';
-import { Form, Radio, Table } from 'antd';
+import { Checkbox, Form, Radio, Table } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import dayjs from 'dayjs';
+
+import { useWeb3Store } from 'src/stores';
 
 import { NewDeployment } from '../../models';
 import styles from './ProjectDeployments.module.less';
@@ -27,7 +31,10 @@ type Props = {
 
 const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDeploymentCid, onRefresh }) => {
   const { t } = useTranslation();
+  const { contracts } = useWeb3Store();
   const updateDeployment = useCreateDeployment(projectId);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const waitTransactionHandled = useWaitTransactionhandled();
   const [deploymentModal, setDeploymentModal] = React.useState<boolean>(false);
   const [form] = useForm();
   const [currentDeployment, setCurrentDeployment] = React.useState<Deployment>();
@@ -80,7 +87,6 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
               rules={[{ required: true }]}
               required
               help={ruleTips}
-              validateStatus="error"
             >
               <div className={styles.markdownWrapper}>
                 <Markdown
@@ -116,11 +122,36 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             dataIndex: 'deploymentId',
             key: 'deploymentId',
             title: <TableTitle>RECOMMENDED</TableTitle>,
-            render: (val) => (
-              <p className={styles.value}>
-                {currentDeploymentCid === val ? <Radio checked={currentDeploymentCid === val}>RECOMMENDED</Radio> : ''}
-              </p>
-            ),
+            render: (val) =>
+              loading ? (
+                <Spinner size={10}></Spinner>
+              ) : (
+                <p className={styles.value}>
+                  <Radio
+                    checked={currentDeploymentCid === val}
+                    onClick={async () => {
+                      if (currentDeploymentCid !== val) {
+                        try {
+                          const res = await contracts?.projectRegistry.setProjectLatestDeployment(
+                            projectId,
+                            cidToBytes32(val),
+                          );
+                          setLoading(true);
+
+                          const receipt = await res?.wait(10);
+                          await waitTransactionHandled(receipt?.blockNumber);
+
+                          await onRefresh();
+                        } finally {
+                          setLoading(false);
+                        }
+                      }
+                    }}
+                  >
+                    RECOMMENDED
+                  </Radio>
+                </p>
+              ),
           },
           {
             dataIndex: 'deploymentId',
@@ -162,6 +193,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
                   setCurrentDeployment(record);
                   setDeploymentModal(true);
                   form.setFieldValue('description', record.description);
+                  form.setFieldValue('recommended', currentDeploymentCid === record.deploymentId);
                 }}
               >
                 Edit

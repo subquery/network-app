@@ -34,13 +34,14 @@ function useProjectMetadataImpl() {
     return result.cid.toV0().toString();
   };
 
-  const uploadVersionMetadata = async (version: Omit<NewDeployment, 'deploymentId'>): Promise<string> => {
+  const uploadVersionMetadata = async (version: NewDeployment & { recommended: boolean }): Promise<string> => {
     const result = await ipfs.add(JSON.stringify(version), { pin: true });
 
     return result.cid.toV0().toString();
   };
 
-  const getVersionMetadata = (cid: string) => fetchIpfsMetadata<Omit<NewDeployment, 'deploymentId'>>(catSingle, cid);
+  const getVersionMetadata = (cid: string) =>
+    fetchIpfsMetadata<NewDeployment & { recommended: boolean }>(catSingle, cid);
 
   return {
     getMetadataForProject,
