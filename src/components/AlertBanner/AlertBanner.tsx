@@ -64,18 +64,17 @@ const AlertBanner: FC<{ center?: boolean }> = ({ center = false }) => {
                     fill="white"
                   />
                 </svg>
-                SubQuery AI Apps are here
+                SubQuery’s 100 Million $SQT Consumer Rewards Programme is Here!
               </Typography>
               <Typography variant="medium" style={{ color: '#fff' }}>
-                SubQuery AI Apps framework makes building decentralised AI Applications fast and easy. AI apps are self
-                contained and easily scalable AI agents that you can use to power your intelligent applications.
-                <br></br>Try it out by clicking the chatbot icon on the bottom right of your screen!
+                Host your indexer or use RPCs on the SubQuery Network and earn up to 900% of your query spending in
+                rewards. The sooner you deploy on the network, the more you stand to gain.
               </Typography>
             </div>
             <span style={{ flex: 1 }}></span>
             <Button shape="round" size="large">
-              <Typography.Link href="https://academy.subquery.network/ai/welcome.html" type="info" target="_blank">
-                Start building AI Apps
+              <Typography.Link href="https://subquery.foundation/consumer-rewards" type="info" target="_blank">
+                Learn More
               </Typography.Link>
             </Button>
           </div>
