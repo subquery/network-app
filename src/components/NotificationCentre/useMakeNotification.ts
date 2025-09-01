@@ -803,11 +803,33 @@ export const useMakeNotification = () => {
     }
   }, [currentEra.data?.index, notificationStore.notificationList]);
 
+  const makeConsumerRewardsProgrameNotification = useCallback(async () => {
+    notificationStore.addNotification(
+      {
+        key: NotificationKey.ConsumerRewards,
+        level: 'info',
+        message: `We’ve allocated 1 Million $SQT rewards pool for consumers who host their indexers or use dRPCs on the SubQuery Network. Earn up to 900% of your query spending.`,
+        title: 'Consumer Rewards Pool Increase',
+        createdAt: Date.now(),
+        canBeDismissed: true,
+        dismissTime: defaultDismissTime,
+        dismissTo: undefined,
+        type: '',
+        buttonProps: {
+          label: 'Learn More',
+          navigateHref: 'https://subquery.foundation/consumer-rewards',
+        },
+      },
+      true,
+    );
+  }, [notificationStore.notificationList]);
+
   const initAllNotification = useCallback(() => {
     idleCallback(() =>
       idleQueue([
         // use this sort to make sure the most important notification show first
         //
+        () => makeConsumerRewardsProgrameNotification(),
         () => makeUnhealthyConsumerRewardsProjectNotification(),
         () => makeOverAllocateAndUnStakeAllocationNotification(),
         () => makeLowControllerBalanceNotification(),
@@ -833,6 +855,7 @@ export const useMakeNotification = () => {
     makeInOrDecreaseCommissionNotification,
     makeNewOperatorNotification,
     makeUnhealthyConsumerRewardsProjectNotification,
+    makeConsumerRewardsProgrameNotification,
   ]);
 
   return {

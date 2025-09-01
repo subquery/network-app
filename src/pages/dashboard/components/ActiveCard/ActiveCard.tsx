@@ -173,8 +173,8 @@ export const ActiveCard = () => {
                       Consumer Rewards Programme
                     </Typography>
                     <Typography type="secondary" style={{ whiteSpace: 'pre-wrap' }}>
-                      Earn up to 900% of your query spending in SQT rewards, with dedicated reward pools for both
-                      Subgraphs and SubQuery Projects.
+                      We’ve allocated 1 Million $SQT rewards pool for consumers who host their indexers or use dRPCs on
+                      the SubQuery Network. Earn up to 900% of your query spending.
                     </Typography>
 
                     <div>

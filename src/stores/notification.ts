@@ -30,6 +30,7 @@ export enum NotificationKey {
   DecreaseCommissionRate = 'decreaseCommissionRate',
   IncreaseCommissionRate = 'increaseCommissionRate',
   NewOperator = 'newOperator',
+  ConsumerRewards = 'ConsumerRewards',
 }
 
 const NotificationItemFromIo = t.type({

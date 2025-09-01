@@ -3,6 +3,7 @@
 
 import React, { PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import AlertBanner from '@components/AlertBanner/AlertBanner';
 import { ChainStatus } from '@components/ConnectWallet';
 import { Header } from '@components/Header';
 import { AppInitProvider } from '@containers/AppInitialProvider';
@@ -91,6 +92,7 @@ const RenderRouter: React.FC = () => {
           <div className="Header">
             <Header />
           </div>
+          <AlertBanner center></AlertBanner>
           <div className="Content">
             <ChainStatus>
               <RouterComponent></RouterComponent>
