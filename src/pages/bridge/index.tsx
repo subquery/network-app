@@ -143,7 +143,9 @@ const BridgeInner: FC = () => {
   const initCrossChainMessenger = async () => {
     if (!signer) return;
     const { CrossChainMessenger } = await import('@eth-optimism/sdk/src/cross-chain-messenger');
-    const l2Provider = new ethers.providers.JsonRpcProvider(l2Chain.rpcUrls.default.http[0]);
+    const l2Provider = new ethers.providers.JsonRpcProvider(
+      import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC || l2Chain.rpcUrls.default.http[0],
+    );
     const newCrossChainMessenger = new CrossChainMessenger({
       l1ChainId: l1Chain.id,
       l2ChainId: l2Chain.id,
@@ -407,7 +409,7 @@ const BridgeInner: FC = () => {
   useInterval(async () => {
     await withdrawsRecord.refetch();
     fetchPendingActionStatus();
-  }, 10000);
+  }, 30000);
 
   return (
     <div className={styles.bridgeOutter}>
