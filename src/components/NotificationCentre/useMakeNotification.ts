@@ -147,6 +147,9 @@ export const useMakeNotification = () => {
       }
     }
   `);
+
+  // const [fetchNoBoosterDeployment] =
+
   const { consumerHostBalance } = useSQToken();
   const { getHostingPlanApi } = useConsumerHostServices({
     autoLogin: false,

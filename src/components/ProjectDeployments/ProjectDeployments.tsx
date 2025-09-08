@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Copy from '@components/Copy';
+import DoBooster from '@components/DoBooster';
 import Expand from '@components/Expand/Expand';
 import { useWeb3 } from '@containers';
 import { useCreateDeployment } from '@hooks';
@@ -187,17 +188,29 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             key: 'version',
             title: <TableTitle>{t('general.action')}</TableTitle>,
             render: (_, record) => (
-              <Typography.Link
-                type="info"
-                onClick={() => {
-                  setCurrentDeployment(record);
-                  setDeploymentModal(true);
-                  form.setFieldValue('description', record.description);
-                  form.setFieldValue('recommended', currentDeploymentCid === record.deploymentId);
-                }}
-              >
-                Edit
-              </Typography.Link>
+              <div className="flex">
+                <Typography.Link
+                  type="info"
+                  onClick={() => {
+                    setCurrentDeployment(record);
+                    setDeploymentModal(true);
+                    form.setFieldValue('description', record.description);
+                    form.setFieldValue('recommended', currentDeploymentCid === record.deploymentId);
+                  }}
+                >
+                  Edit
+                </Typography.Link>
+
+                <DoBooster
+                  deploymentId={record.deploymentId}
+                  projectId={projectId}
+                  actionBtn={
+                    <Typography.Link type="info" style={{ marginLeft: 16 }}>
+                      Booster
+                    </Typography.Link>
+                  }
+                ></DoBooster>
+              </div>
             ),
             fixed: 'right',
           },

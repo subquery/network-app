@@ -43,7 +43,6 @@ const RenderCustomComponents: FC<{ componentKey: CanRenderOnNotification; compon
 }) => {
   const components = useMemo(() => {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       ConnectedIndexer: () => <ConnectedIndexer {...componentProps}></ConnectedIndexer>,
     };

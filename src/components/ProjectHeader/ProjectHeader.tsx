@@ -3,10 +3,11 @@
 
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import GetEndpoint from '@components/GetEndpoint';
 import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import UnsafeWarn from '@components/UnsafeWarn';
+import { useAccount } from '@containers/Web3';
 import { useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -47,6 +48,8 @@ const ProjectHeader: React.FC<Props> = ({
   manifest,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { account } = useAccount();
   const { projectDbSize, projectInfo } = useProjectStore();
   const { getStatisticQueries, getDominantPriceByDeployment } = useConsumerHostServices({ autoLogin: false });
   const [searchParams] = useSearchParams();
@@ -106,6 +109,8 @@ const ProjectHeader: React.FC<Props> = ({
 
     return polkadotName || ethName || chainId;
   }, [project.type, manifest]);
+
+  const isOnwer = React.useMemo(() => account === project.owner, [project.owner, account]);
 
   const dbSize = React.useMemo(() => {
     if (!currentVersion)
@@ -184,6 +189,20 @@ const ProjectHeader: React.FC<Props> = ({
             <VersionDropdown />
             <span style={{ flex: 1 }}></span>
             <div className={`flex ${styles.groupButton}`}>
+              {isOnwer ? (
+                <Button
+                  type="primary"
+                  shape="round"
+                  size="large"
+                  onClick={() => {
+                    navigate(`/projects/create?id=${project.id}`);
+                  }}
+                >
+                  Edit
+                </Button>
+              ) : (
+                ''
+              )}
               <GetEndpoint
                 deploymentId={currentVersion || ''}
                 project={project}
