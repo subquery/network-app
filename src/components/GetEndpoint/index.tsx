@@ -14,7 +14,7 @@ import {
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
-import { Modal, Typography } from '@subql/components';
+import { Modal, Spinner, Typography } from '@subql/components';
 import { parseError } from '@utils';
 import { Button, Input, message, Radio } from 'antd';
 import { clsx } from 'clsx';
@@ -26,6 +26,7 @@ interface IProps {
   deploymentId: string;
   project: Pick<ProjectDetailsQuery, 'id' | 'metadata' | 'type'>;
   initialOpen?: boolean;
+  actionBtn?: React.ReactNode;
 }
 
 export const proxyGateway = import.meta.env.VITE_PROXYGATEWAY;
@@ -73,7 +74,7 @@ export const getWsEndpointWithApiKey = (projectId: string, apiKey: string) =>
       }-archive/ws?apikey=${apiKey}`
     : '';
 
-const GetEndpoint: FC<IProps> = ({ deploymentId, project, initialOpen = false }) => {
+const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen = false }) => {
   const { address: account } = useAccount();
   const [open, setOpen] = React.useState(initialOpen);
   const beforeStep = React.useRef<'select' | 'createFlexPlan' | 'checkFree' | 'checkEndpointWithApiKey'>('select');
@@ -404,22 +405,38 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, initialOpen = false })
 
   return (
     <div className={styles.getEndpoint}>
-      <Button
-        type="primary"
-        shape="round"
-        size="large"
-        loading={nextBtnLoading}
-        onClick={async () => {
-          if (!sponsoredProjects[project.id]) {
-            setFreeOrFlexPlan('flexPlan');
-            await handleNextStep();
-          }
-          await fetchHostingPlan();
-          setOpen(true);
-        }}
-      >
-        Get Endpoint
-      </Button>
+      {actionBtn ? (
+        <div
+          style={{ display: 'inline' }}
+          onClick={async () => {
+            if (!sponsoredProjects[project.id]) {
+              setFreeOrFlexPlan('flexPlan');
+              await handleNextStep();
+            }
+            await fetchHostingPlan();
+            setOpen(true);
+          }}
+        >
+          {nextBtnLoading ? <Spinner size={10}></Spinner> : actionBtn}
+        </div>
+      ) : (
+        <Button
+          type="primary"
+          shape="round"
+          size="large"
+          loading={nextBtnLoading}
+          onClick={async () => {
+            if (!sponsoredProjects[project.id]) {
+              setFreeOrFlexPlan('flexPlan');
+              await handleNextStep();
+            }
+            await fetchHostingPlan();
+            setOpen(true);
+          }}
+        >
+          Get Endpoint
+        </Button>
+      )}
 
       <Modal
         title="Get Endpoint"
