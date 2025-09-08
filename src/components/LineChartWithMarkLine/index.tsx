@@ -27,7 +27,28 @@ interface IProps {
   title?: string;
   suffix?: string;
   customColors?: string[];
+  emptyDesc?: string;
 }
+
+const EmptyState: FC<{ message?: string }> = ({ message = 'No data available' }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <rect x="8" y="16" width="48" height="32" rx="2" stroke="var(--sq-gray300)" strokeWidth="2" fill="none" />
+      <path
+        d="M16 40L24 32L32 36L48 24"
+        stroke="var(--sq-gray300)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="20" cy="28" r="2" fill="var(--sq-gray300)" />
+      <circle cx="44" cy="20" r="2" fill="var(--sq-gray300)" />
+    </svg>
+    <Typography variant="medium" type="secondary" style={{ color: 'var(--sq-gray400)', marginTop: 12 }}>
+      {message}
+    </Typography>
+  </div>
+);
 
 echarts.use([
   LineChart,
@@ -48,6 +69,7 @@ const LineChartWithMarkLine: FC<IProps> = ({
   markLineData,
   onTriggerTooltip,
   customColors,
+  emptyDesc,
 }) => {
   const renderedSeries = useMemo(() => {
     return [
@@ -59,11 +81,6 @@ const LineChartWithMarkLine: FC<IProps> = ({
           color: colors[0],
           width: 3,
         },
-        // markLine: {
-        //   symbol: ['none', 'none'],
-        //   label: { show: false },
-        //   data: [...markLineData, { xAxis: 0, lineStyle: { color: 'red', width: 2 } }],
-        // },
         data: seriesData,
       },
     ];
@@ -104,33 +121,24 @@ const LineChartWithMarkLine: FC<IProps> = ({
                 }
               },
             },
-            // visualMap: {
-            //   type: 'piecewise',
-            //   show: false,
-            //   dimension: 0,
-            //   seriesIndex: 0,
-            //   pieces: [
-            //     {
-            //       gt: 4,
-            //       lt: 8,
-            //       color: '#919eab',
-            //     },
-            //   ],
-            // },
             series: renderedSeries,
           }}
           notMerge={true}
           lazyUpdate={true}
         />
       ) : (
-        <Spinner></Spinner>
+        <div className="flex" style={{ justifyContent: 'center', height: '100%' }}>
+          <EmptyState message={emptyDesc || 'No chart data to display'} />
+        </div>
       )}
-      {suffix && (
+      {seriesData.length && suffix ? (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Typography type="secondary" style={{ color: 'var(--sq-gray500)' }} variant="small">
             {suffix}
           </Typography>
         </div>
+      ) : (
+        ''
       )}
     </div>
   );
