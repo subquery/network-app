@@ -34,7 +34,7 @@ jobs:
           bucket: ${{ vars.S3_BUCKET_STAGING }}
           bucket-region: ap-northeast-1
           invalidation: /*
-          dist-id: ${{ secrets.CLOUDFRONT_ID_STAGING }}
+          dist-id: ${{ secrets.CLOUDFRONT_ID_KEPLER_STAGING }}
           delete-removed: false
           no-cache: false
           private: true
