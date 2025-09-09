@@ -4,11 +4,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Copy from '@components/Copy';
+import DoBooster from '@components/DoBooster';
 import Expand from '@components/Expand/Expand';
+import GetEndpoint from '@components/GetEndpoint';
 import { useWeb3 } from '@containers';
 import { useCreateDeployment } from '@hooks';
+import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { useWaitTransactionhandled } from '@hooks/useWaitTransactionHandled';
 import { Markdown, Modal, openNotification, Spinner, TableTitle, Typography } from '@subql/components';
+import { Project } from '@subql/react-hooks/dist/graphql';
 import { cidToBytes32, parseError } from '@utils';
 import { useUpdate } from 'ahooks';
 import { Checkbox, Form, Radio, Table } from 'antd';
@@ -17,7 +21,7 @@ import dayjs from 'dayjs';
 
 import { useWeb3Store } from 'src/stores';
 
-import { NewDeployment } from '../../models';
+import { NewDeployment, ProjectDetails } from '../../models';
 import styles from './ProjectDeployments.module.less';
 
 type Deployment = NewDeployment & { createdAt?: Date };
@@ -25,11 +29,12 @@ type Deployment = NewDeployment & { createdAt?: Date };
 type Props = {
   deployments: Deployment[];
   projectId: string;
+  project: ProjectDetails;
   onRefresh: () => Promise<void>;
   currentDeploymentCid?: string;
 };
 
-const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDeploymentCid, onRefresh }) => {
+const ProjectDeployments: React.FC<Props> = ({ deployments, project, projectId, currentDeploymentCid, onRefresh }) => {
   const { t } = useTranslation();
   const { contracts } = useWeb3Store();
   const updateDeployment = useCreateDeployment(projectId);
@@ -179,6 +184,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
           {
             dataIndex: 'createdAt',
             key: 'createdAt',
+            width: 180,
             title: <TableTitle>{t('deployments.header4')}</TableTitle>,
             render: (val) => <p className={styles.value}>{val ? dayjs(val).utc(true).fromNow() : 'N/A'}</p>,
           },
@@ -187,17 +193,31 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, projectId, currentDe
             key: 'version',
             title: <TableTitle>{t('general.action')}</TableTitle>,
             render: (_, record) => (
-              <Typography.Link
-                type="info"
-                onClick={() => {
-                  setCurrentDeployment(record);
-                  setDeploymentModal(true);
-                  form.setFieldValue('description', record.description);
-                  form.setFieldValue('recommended', currentDeploymentCid === record.deploymentId);
-                }}
-              >
-                Edit
-              </Typography.Link>
+              <div className="flex" style={{ gap: 10 }}>
+                <Typography.Link
+                  type="info"
+                  onClick={() => {
+                    setCurrentDeployment(record);
+                    setDeploymentModal(true);
+                    form.setFieldValue('description', record.description);
+                    form.setFieldValue('recommended', currentDeploymentCid === record.deploymentId);
+                  }}
+                >
+                  Edit
+                </Typography.Link>
+
+                <DoBooster
+                  deploymentId={record.deploymentId}
+                  projectId={projectId}
+                  actionBtn={<Typography.Link type="info">Booster</Typography.Link>}
+                ></DoBooster>
+
+                <GetEndpoint
+                  project={project as any}
+                  deploymentId={record.deploymentId}
+                  actionBtn={<Typography.Link type="info">Get Endpoint</Typography.Link>}
+                ></GetEndpoint>
+              </div>
             ),
             fixed: 'right',
           },

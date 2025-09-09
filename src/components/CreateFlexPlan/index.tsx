@@ -22,7 +22,7 @@ import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
 import { ProjectType as contractProjectType } from '@subql/contract-sdk';
 import { ProjectType } from '@subql/network-query';
-import { formatSQT, useAsyncMemo } from '@subql/react-hooks';
+import { formatSQT, useAsyncMemo, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
 import { Button, Checkbox, Divider, Form, InputNumber, Popover, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
@@ -81,6 +81,14 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   const [transactionStep, setTransactionStep] = useState<'allowance' | 'deposit' | 'createApiKey' | undefined>(
     'allowance',
   );
+
+  const deploymentBooster = useGetDeploymentBoosterTotalAmountByDeploymentIdQuery({
+    variables: {
+      deploymentId: deploymentId || '',
+      consumer: account || '',
+    },
+    fetchPolicy: 'network-only',
+  });
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
@@ -601,15 +609,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                       <InputNumber
                         placeholder={'Enter price'}
                         min="0.0000000000000001"
-                        addonAfter={TOKEN}
+                        addonAfter={`${TOKEN} / Per 1000 requests`}
                       ></InputNumber>
                     </Form.Item>
                   </Popover>
-
-                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)' }}>
-                    Per 1000 requests
-                  </Typography>
-                  <br></br>
                   <Typography variant="medium" style={{ color: 'var(--sq-gray700)', margin: '8px 0' }}>
                     {matchedCount}
                   </Typography>
@@ -773,7 +776,10 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           Back
         </Button>
         <span style={{ flex: 1 }}></span>
-        {currentStep === 1 && (
+        {currentStep === 1 &&
+        !BigNumberJs(
+          deploymentBooster.data?.deploymentBoosterSummariesByConsumer?.aggregates?.sum?.totalAmount.toString() || '0',
+        ).isZero() ? (
           <Button
             shape="round"
             size="large"
@@ -786,6 +792,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           >
             Skip without depositing more {TOKEN}
           </Button>
+        ) : (
+          ''
         )}
         <Button
           shape="round"

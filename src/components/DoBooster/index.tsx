@@ -35,20 +35,22 @@ interface IProps {
   projectId?: string;
   deploymentId?: string;
   actionBtn?: React.ReactNode;
+  actionBtnStyle?: React.CSSProperties;
   onSuccess?: () => void;
   initAddOrRemove?: 'add' | 'remove';
   initialOpen?: boolean;
 }
 
 const DoBooster: FC<IProps> = ({
-  projectType,
   projectId,
   deploymentId,
   actionBtn,
+  actionBtnStyle,
   initialOpen = false,
   initAddOrRemove = 'add',
   onSuccess,
 }) => {
+  console.warn(projectId, deploymentId);
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
@@ -181,6 +183,7 @@ const DoBooster: FC<IProps> = ({
           onClick={async () => {
             setOpen(true);
           }}
+          style={actionBtnStyle}
         >
           {actionBtn}
         </div>

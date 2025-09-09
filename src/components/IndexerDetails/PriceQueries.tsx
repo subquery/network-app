@@ -1,11 +1,13 @@
 import { CSSProperties, useMemo } from 'react';
+import { DiscordOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { cloneDeep } from '@apollo/client/utilities';
+import DoBooster from '@components/DoBooster';
 import LineChartWithMarkLine from '@components/LineChartWithMarkLine';
 import { IIndexerFlexPlan, useConsumerHostServices } from '@hooks/useConsumerHostServices';
 import { Typography } from '@subql/components';
 import { useAsyncMemo } from '@subql/react-hooks';
-import { formatSQT, parseError, renderAsync } from '@utils';
-import { Skeleton } from 'antd';
+import { formatSQT, numToHex, parseError, renderAsync } from '@utils';
+import { Alert, Button, Skeleton } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import { groupBy } from 'lodash-es';
 
@@ -70,6 +72,52 @@ export const PriceQueriesChart = (props: {
     return copyData;
   }, [flexPlanGroupByPrice]);
 
+  const BoosterWarning = useMemo(() => {
+    return (
+      <Alert
+        message={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <InfoCircleOutlined style={{ color: 'var(--sq-warning)' }} />
+              <Typography variant="large" weight={500}>
+                No operator available
+              </Typography>
+            </div>
+          </div>
+        }
+        description={
+          <div style={{ marginTop: 8 }}>
+            <Typography type="secondary">
+              To attract more operators, consider increasing your{' '}
+              <DoBooster
+                projectId={numToHex(+(projectId || 0))}
+                deploymentId={deploymentId}
+                actionBtnStyle={{ display: 'inline' }}
+                actionBtn={<Typography.Link type="info">Booster</Typography.Link>}
+              ></DoBooster>{' '}
+              or reach out to operators directly on{' '}
+              <Typography.Link
+                type="info"
+                href="https://discord.com/channels/796198414798028831/1209780719489130526"
+                target="_blank"
+              >
+                Discord
+              </Typography.Link>
+              .
+            </Typography>
+          </div>
+        }
+        type="warning"
+        showIcon={false}
+        style={{
+          marginBottom: 16,
+          border: '1px solid var(--sq-warning)',
+          backgroundColor: 'rgba(255, 193, 7, 0.1)',
+        }}
+      />
+    );
+  }, [deploymentId, projectId]);
+
   return renderAsync(flexPlanPricesInner, {
     loading: () => (
       <Skeleton
@@ -83,6 +131,9 @@ export const PriceQueriesChart = (props: {
       return <Typography>{parseError(e)}</Typography>;
     },
     data: () => {
+      if (!seriesData.length) {
+        return BoosterWarning;
+      }
       return (
         <LineChartWithMarkLine
           seriesData={seriesData}
@@ -99,6 +150,7 @@ export const PriceQueriesChart = (props: {
               </div>`;
           }}
           customColors={['#4388DD', '#65CD45']}
+          emptyDesc="No Operator supply data to display"
         ></LineChartWithMarkLine>
       );
     },

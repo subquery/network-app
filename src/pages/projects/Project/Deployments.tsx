@@ -7,6 +7,8 @@ import { Spinner } from '@subql/components';
 import { useGetProjectDeploymentsLazyQuery } from '@subql/react-hooks';
 import { uniqBy } from 'ramda';
 
+import { ProjectDetails } from 'src/models';
+
 import { useIPFS } from '../../../containers';
 import { useAsyncMemo } from '../../../hooks';
 import { getDeploymentMetadata } from '../../../hooks/useDeploymentMetadata';
@@ -14,6 +16,7 @@ import { notEmpty, renderAsync } from '../../../utils';
 
 type Props = {
   projectId: string;
+  project: ProjectDetails;
   currentDeployment?: {
     deployment: string;
     version: string;
@@ -25,7 +28,7 @@ export interface DeploymendRef {
   refresh: () => void;
 }
 
-const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDeployment, onRefresh }, ref) => {
+const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, project, currentDeployment, onRefresh }, ref) => {
   const [getProjDeployments] = useGetProjectDeploymentsLazyQuery({
     variables: {
       projectId,
@@ -91,6 +94,7 @@ const DeploymentsTab = forwardRef<DeploymendRef, Props>(({ projectId, currentDep
           // @ts-ignore
           deployments={sortedDeployments}
           projectId={projectId}
+          project={project}
           onRefresh={async () => {
             await onRefresh?.();
             await asyncDeployments.refetch();

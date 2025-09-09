@@ -165,6 +165,7 @@ export const ProjectDeploymentsDetail: React.FC<{ id?: string; project: ProjectD
         <DeploymentsTab
           ref={deploymentsRef}
           projectId={id ?? ''}
+          project={project}
           currentDeployment={currentDeployment}
           onRefresh={onRefresh}
         />
@@ -225,7 +226,7 @@ const Project: React.FC = () => {
                       key: 'explorer',
                       title: (
                         <Typography variant="medium" type="secondary" style={{ cursor: 'pointer' }}>
-                          SubQuery Projects
+                          My Projects
                         </Typography>
                       ),
                       onClick: () => {

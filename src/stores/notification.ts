@@ -31,6 +31,7 @@ export enum NotificationKey {
   IncreaseCommissionRate = 'increaseCommissionRate',
   NewOperator = 'newOperator',
   ConsumerRewards = 'ConsumerRewards',
+  NoBoosterOnDeployment = 'noBoosterOnDeployment',
 }
 
 const NotificationItemFromIo = t.type({
