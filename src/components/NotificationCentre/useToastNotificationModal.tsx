@@ -59,7 +59,7 @@ export const useToastNotificationModal = () => {
                 <Typography
                   style={{ textAlign: 'center', wordBreak: 'break-word' }}
                   dangerouslySetInnerHTML={{
-                    __html: noti.message.replaceAll('\n', '<br />'),
+                    __html: noti.message.replaceAll('\n', '<br />').replace(/\{\{.*?\}\}/g, ''),
                   }}
                 ></Typography>
               ) : (

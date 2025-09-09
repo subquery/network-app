@@ -5,6 +5,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { GoBell } from 'react-icons/go';
 import { IoIosAlert, IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router';
+import { DeploymentMeta } from '@components/DeploymentInfo';
 import { ConnectedIndexer } from '@components/IndexerDetails/IndexerName';
 import { useAccount } from '@containers/Web3';
 import { useEra } from '@hooks';
@@ -35,6 +36,7 @@ const EmptyNotification = () => {
 
 export enum CanRenderOnNotification {
   ConnectedIndexer = 'ConnectedIndexer',
+  DeploymentInfo = 'DeploymentInfo',
 }
 
 const RenderCustomComponents: FC<{ componentKey: CanRenderOnNotification; componentProps: Record<any, any> }> = ({
@@ -45,6 +47,8 @@ const RenderCustomComponents: FC<{ componentKey: CanRenderOnNotification; compon
     return {
       // @ts-ignore
       ConnectedIndexer: () => <ConnectedIndexer {...componentProps}></ConnectedIndexer>,
+      // @ts-ignore
+      DeploymentInfo: () => <DeploymentMeta {...componentProps}></DeploymentMeta>,
     };
   }, [componentProps]);
 
