@@ -22,8 +22,6 @@ import { categoriesOptions, parseError, ROUTES } from '../../../utils';
 import { ProjectDeploymentsDetail } from '../Project/Project';
 import styles from './Create.module.less';
 
-const { STUDIO_PROJECT_NAV } = ROUTES;
-
 const Create: React.FC = () => {
   const query = useRouteQuery();
   const asyncProject = useProject(query.get('id') ?? '');
@@ -187,23 +185,14 @@ const Create: React.FC = () => {
                   shape="round"
                   size="large"
                   onClick={() => {
-                    navigate(`${STUDIO_PROJECT_NAV}/${resultId}`);
+                    navigate(`/explorer/project/${resultId}`);
                     destroy();
                   }}
                 >
                   View project
                 </Button>,
                 <a href="https://discord.com/invite/subquery" target="_blank" rel="noreferrer" key="join-discord">
-                  <Button
-                    key="view-project"
-                    type="primary"
-                    shape="round"
-                    size="large"
-                    onClick={() => {
-                      navigate(`${STUDIO_PROJECT_NAV}/${resultId}`);
-                      destroy();
-                    }}
-                  >
+                  <Button key="view-project" type="primary" shape="round" size="large">
                     Join Discord
                   </Button>
                 </a>,

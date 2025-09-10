@@ -209,7 +209,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, project, projectId, 
                 <DoBooster
                   deploymentId={record.deploymentId}
                   projectId={projectId}
-                  actionBtn={<Typography.Link type="info">Booster</Typography.Link>}
+                  actionBtn={<Typography.Link type="info">Boost</Typography.Link>}
                 ></DoBooster>
 
                 <GetEndpoint

@@ -19,7 +19,7 @@ import { useWeb3 } from '../../../containers';
 import { ROUTES } from '../../../utils';
 import styles from './Home.module.less';
 
-const { STUDIO_CREATE_NAV, STUDIO_PROJECT_NAV } = ROUTES;
+const { STUDIO_CREATE_NAV } = ROUTES;
 
 export const PublishNewProjectModal: React.FC<{ value: boolean; onChange: (val: boolean) => void }> = ({
   value,
@@ -253,7 +253,7 @@ const Home: React.FC = () => {
   const { listsWithSearch } = useProjectList({
     account,
     makeRedirectHref: (projectId) => {
-      return `${STUDIO_PROJECT_NAV}/${projectId}`;
+      return `/explorer/project/${projectId}`;
     },
     defaultFilterProjectType: query.get('category') === 'rpc' ? ProjectType.RPC : ProjectType.SUBQUERY,
   });
