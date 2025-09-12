@@ -153,10 +153,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [estimatedChannelLimit]);
 
   const minDeposit = useMemo(() => {
-    const sortedMinial = BigNumberJs(depositRequireFromConsumerHost).minus(
-      formatSQT(depositBalance?.toString() || '0'),
-    );
-    return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
+    // const sortedMinial = BigNumberJs(depositRequireFromConsumerHost).minus(
+    //   formatSQT(depositBalance?.toString() || '0'),
+    // );
+    // return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
+    return 10000;
   }, [depositRequireFromConsumerHost, depositBalance]);
 
   const estimatedPriceInfo = useMemo(() => {

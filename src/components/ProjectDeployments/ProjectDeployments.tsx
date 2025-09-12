@@ -125,41 +125,6 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, project, projectId, 
           },
           {
             dataIndex: 'deploymentId',
-            key: 'deploymentId',
-            title: <TableTitle>RECOMMENDED</TableTitle>,
-            render: (val) =>
-              loading ? (
-                <Spinner size={10}></Spinner>
-              ) : (
-                <p className={styles.value}>
-                  <Radio
-                    checked={currentDeploymentCid === val}
-                    onClick={async () => {
-                      if (currentDeploymentCid !== val) {
-                        try {
-                          const res = await contracts?.projectRegistry.setProjectLatestDeployment(
-                            projectId,
-                            cidToBytes32(val),
-                          );
-                          setLoading(true);
-
-                          const receipt = await res?.wait(10);
-                          await waitTransactionHandled(receipt?.blockNumber);
-
-                          await onRefresh();
-                        } finally {
-                          setLoading(false);
-                        }
-                      }
-                    }}
-                  >
-                    RECOMMENDED
-                  </Radio>
-                </p>
-              ),
-          },
-          {
-            dataIndex: 'deploymentId',
             key: 'deploymentIdText',
             title: <TableTitle>{t('deployments.header2')}</TableTitle>,
             render: (val) => (
@@ -209,7 +174,7 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, project, projectId, 
                 <DoBooster
                   deploymentId={record.deploymentId}
                   projectId={projectId}
-                  actionBtn={<Typography.Link type="info">Booster</Typography.Link>}
+                  actionBtn={<Typography.Link type="info">Boost</Typography.Link>}
                 ></DoBooster>
 
                 <GetEndpoint
@@ -217,6 +182,31 @@ const ProjectDeployments: React.FC<Props> = ({ deployments, project, projectId, 
                   deploymentId={record.deploymentId}
                   actionBtn={<Typography.Link type="info">Get Endpoint</Typography.Link>}
                 ></GetEndpoint>
+
+                <Typography.Link
+                  type={'info'}
+                  disabled={currentDeploymentCid === record.deploymentId}
+                  onClick={async () => {
+                    if (currentDeploymentCid !== record.deploymentId) {
+                      try {
+                        const res = await contracts?.projectRegistry.setProjectLatestDeployment(
+                          projectId,
+                          cidToBytes32(record.deploymentId),
+                        );
+                        setLoading(true);
+
+                        const receipt = await res?.wait(10);
+                        await waitTransactionHandled(receipt?.blockNumber);
+
+                        await onRefresh();
+                      } finally {
+                        setLoading(false);
+                      }
+                    }
+                  }}
+                >
+                  Set as recommended
+                </Typography.Link>
               </div>
             ),
             fixed: 'right',
