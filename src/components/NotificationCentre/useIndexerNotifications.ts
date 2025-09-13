@@ -19,6 +19,7 @@ export const useIndexerNotifications = () => {
   const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
   const { account } = useAccount();
+  const provider = useEthersProviderWithPublic({ chainId: l2Chain.id });
   const [fetchIndexerData] = useGetIndexerLazyQuery();
   const [fetchIndexerController] = useLazyQuery<{ indexer?: { controller?: string } }>(gql`
     query Indexer($address: String!) {
@@ -151,7 +152,6 @@ export const useIndexerNotifications = () => {
 
       if (res.data?.indexer?.controller) {
         const controller = res.data.indexer.controller;
-        const provider = useEthersProviderWithPublic({ chainId: l2Chain.id });
         const controllerBalance = await provider?.getBalance(controller);
 
         if (BigNumberJs(formatEther(controllerBalance)).lt(0.001)) {
@@ -172,7 +172,7 @@ export const useIndexerNotifications = () => {
         }
       }
     },
-    [account, defaultDismissTime, fetchIndexerController, notificationStore],
+    [account, defaultDismissTime, fetchIndexerController, notificationStore, provider],
   );
 
   return {
