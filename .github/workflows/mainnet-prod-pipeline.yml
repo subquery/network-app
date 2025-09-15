@@ -11,6 +11,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID_V2 }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_V2 }}
       VITE_SENTRY_DSN: ${{ vars.DEV_SENTRY_DSN }}
+      VITE_SUBQUERY_OFFICIAL_BASE_RPC: ${{ vars.VITE_SUBQUERY_OFFICIAL_BASE_RPC }}
+      VITE_SUBQUERY_OFFICIAL_ETH_RPC: ${{ vars.VITE_SUBQUERY_OFFICIAL_ETH_RPC }}
       NODE_OPTIONS: --max-old-space-size=32768      
     steps:
       - uses: actions/checkout@v2
