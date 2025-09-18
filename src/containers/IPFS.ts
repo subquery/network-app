@@ -77,5 +77,6 @@ function useIPFSImpl(
 export const { useContainer: useIPFS, Provider: IPFSProvider } = createContainer(useIPFSImpl, { displayName: 'IPFS' });
 
 export const decodeIpfsRaw = <T>(raw: Uint8Array): T => {
-  return JSON.parse(Buffer.from(raw).toString('utf8'));
+  const text = new TextDecoder('utf-8').decode(raw);
+  return JSON.parse(text) as T;
 };
