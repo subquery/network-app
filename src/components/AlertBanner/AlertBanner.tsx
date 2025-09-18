@@ -17,7 +17,7 @@ const AlertBanner: FC<{ center?: boolean }> = ({ center = false }) => {
           background: 'var(--sq-blue600)',
           border: 'none',
           padding: isMobile ? '14px' : '14px 80px',
-          margin: center ? '0 auto' : '',
+          margin: center ? '0 auto' : undefined,
           width: isMobile ? '100%' : center ? '1440px' : '100%',
           position: 'relative',
           zIndex: 1,
