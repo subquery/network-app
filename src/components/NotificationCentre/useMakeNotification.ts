@@ -72,7 +72,18 @@ export const useMakeNotification = () => {
     refreshAndMakeLowBillingBalanceNotification: () => {
       idleCallback(() => consumerNotifications.makeLowBillingBalanceNotification('reload'));
     },
-    // ... 其他刷新方法
+    refreshAndMakeInactiveOperatorNotification: () => {
+      idleCallback(() => delegatorNotifications.makeInactiveOperatorNotification('reload'));
+    },
+    refreshAndMakeInOrDecreaseCommissionNotification: () => {
+      idleCallback(() => delegatorNotifications.makeInOrDecreaseCommissionNotification('reload'));
+    },
+    refreshAndMakeUnlockWithdrawalNotification: () => {
+      idleCallback(() => delegatorNotifications.makeUnlockWithdrawalNotification('reload'));
+    },
+    refreshAndMakeOutdateAllocationProjects: () => {
+      idleCallback(() => allocationNotifications.makeOutdateAllocationProjects('reload'));
+    },
 
     initNewNotification: () => idleCallback(initAllNotification),
   };
