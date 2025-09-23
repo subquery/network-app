@@ -10,7 +10,6 @@ import ProjectOverview from '@components/ProjectOverview';
 import { TabButtons } from '@components/TabButton';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
@@ -50,7 +49,6 @@ const ProjectInner: React.FC = () => {
         link: `${INDEXERS}${location.search}`,
         label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Providers' : t('explorer.project.tab2'),
       },
-      { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
     ];
 
     return [...tabList];
@@ -185,15 +183,6 @@ const ProjectInner: React.FC = () => {
                     }
                   />
                   <Route path={INDEXERS} element={<></>} />
-                  <Route
-                    path={SERVICE_AGREEMENTS}
-                    element={
-                      <ServiceAgreementsTable
-                        queryFn={useGetProjectOngoingServiceAgreementsQuery}
-                        queryParams={{ deploymentId }}
-                      />
-                    }
-                  />
                   <Route path={FLEX_PLANS} element={<FlexPlans />} />
 
                   <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />

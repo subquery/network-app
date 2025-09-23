@@ -53,6 +53,7 @@
     "localforage": "^1.10.0",
     "lodash-es": "^4.17.21",
     "lru-cache": "^6.0.0",
+    "lucide-react": "^0.544.0",
     "p-limit": "^4.0.0",
     "p-queue": "^7.3.4",
     "postcss-import": "^15.1.0",
