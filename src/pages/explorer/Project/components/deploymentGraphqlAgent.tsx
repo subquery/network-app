@@ -92,7 +92,7 @@ const DeploymentGraphqlAgent: React.FC<Props> = ({ deploymentId, project }) => {
     [asyncIndexers.data],
   );
 
-  const requestPlayground = async (url: string, indexerId: string) => {
+  const requestPlayground = async (url: string, indexerId: string, endpoint?: string) => {
     if (account && deploymentId) {
       const res = await requestServiceAgreementToken(
         account,
@@ -118,7 +118,7 @@ const DeploymentGraphqlAgent: React.FC<Props> = ({ deploymentId, project }) => {
         );
         await registerProject.mutateAsync({
           cid: deploymentId,
-          endpoint: queryUrl || '',
+          endpoint: endpoint || queryUrl || '',
           authorization: `Bearer ${res.data}`,
         });
       }
@@ -189,7 +189,7 @@ const DeploymentGraphqlAgent: React.FC<Props> = ({ deploymentId, project }) => {
                             return;
                           }
 
-                          await requestPlayground(proxyUrl, i.indexerId);
+                          await requestPlayground(proxyUrl, i.indexerId, url);
                         } finally {
                           setLoading(false);
                         }
