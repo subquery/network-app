@@ -7,13 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { BsChevronDown, BsChevronUp, BsInfoSquare } from 'react-icons/bs';
 import { useNavigate } from 'react-router';
 import { QueryResult } from '@apollo/client';
-import { ChatInterface } from '@components/GraphqlAgent/graphqlAgent';
 import RpcPlayground from '@components/RpcPlayground/RpcPlayground';
 import { WalletRoute } from '@components/WalletRoute';
 import { useAccount } from '@containers/Web3';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { useIsLogin } from '@hooks/useIsLogin';
-import { useRegisterProject } from '@hooks/useProjects';
 import { useRequestServiceAgreementToken } from '@hooks/useRequestServiceAgreementToken';
 import { Modal, Spinner } from '@subql/components';
 import { GraphiQL } from '@subql/components/dist/common/GraphiQL';
@@ -36,7 +34,6 @@ import { t } from 'i18next';
 import RpcPlaygroundIcon from 'src/images/rpcPlayground';
 import { useWeb3Store } from 'src/stores';
 import { useProjectStore } from 'src/stores/project';
-import { ChatMessage } from 'src/types';
 
 import { useSQToken } from '../../containers';
 import { useAsyncMemo, useIndexerMetadata } from '../../hooks';
@@ -96,7 +93,6 @@ const ConnectedRow: React.FC<{
   const { t } = useTranslation();
   const { address: account } = useAccount();
   const navigate = useNavigate();
-  const registerProject = useRegisterProject();
   const { projectMaxTargetHeightInfoRef, setProjectMaxTargetHeightInfo, projectMaxTargetHeightInfo, setProjectDbSize } =
     useProjectStore();
   const isLogin = useIsLogin();
@@ -116,10 +112,8 @@ const ConnectedRow: React.FC<{
   const [showReqTokenConfirmModal, setShowReqTokenConfirmModal] = React.useState(false);
   const isAgentRequest = React.useRef(false);
   const [showPlayground, setShowPlayground] = React.useState(false);
-  const [showGraphqlAgent, setShowGraphqlAgent] = React.useState(false);
   const [trailToken, setTrailToken] = React.useState('');
   const [trailLimitInfo, setTrailLimitInfo] = React.useState<QueryLimit>();
-  const [projectChatMessages, setProjectChatMessages] = React.useState<ChatMessage[]>([]);
 
   const queryUrl = React.useMemo(() => {
     return wrapProxyEndpoint(`${indexerMetadata.url}/query/${deploymentId}`, indexer.indexerId);
@@ -232,14 +226,6 @@ const ConnectedRow: React.FC<{
             expire: Date.now() + 24 * 60 * 60 * 1000,
           }),
         );
-        if (isAgentRequest.current) {
-          await registerProject.mutateAsync({
-            cid: deploymentId,
-            endpoint: queryUrl || '',
-            authorization: `Bearer ${res.data}`,
-          });
-          setShowGraphqlAgent(true);
-        }
 
         if (!isAgentRequest.current) {
           await updateQueryLimit(indexerMetadata.url, res.data);
@@ -250,23 +236,6 @@ const ConnectedRow: React.FC<{
       }
     }
   };
-
-  const updateProjectMessages = React.useCallback(
-    (messagesOrUpdater: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => {
-      setProjectChatMessages((prev) => {
-        const currentMessages = prev || [];
-        const newMessages =
-          typeof messagesOrUpdater === 'function' ? messagesOrUpdater(currentMessages) : messagesOrUpdater;
-
-        return newMessages;
-      });
-    },
-    [],
-  );
-
-  const clearProjectMessages = React.useCallback(() => {
-    setProjectChatMessages([]);
-  }, []);
 
   React.useEffect(() => {
     if (operatorMetadata.data) {
@@ -377,65 +346,6 @@ const ConnectedRow: React.FC<{
               );
             },
           },
-          type === ProjectType.SUBQUERY
-            ? {
-                width: '10%',
-                render: () => {
-                  return (
-                    <Typography
-                      style={{
-                        margin: '0 auto',
-                      }}
-                      className={styles.playgroundButton}
-                      onClick={async () => {
-                        const trailKey = makeCacheKey(type, {
-                          prefix: deploymentId,
-                          suffix: indexer.indexerId,
-                        });
-                        const existToken = localStorage.getItem(trailKey);
-                        if (existToken) {
-                          try {
-                            const token = JSON.parse(existToken) as { data: string; expire: number };
-                            if (token.expire < Date.now()) {
-                              localStorage.removeItem(trailKey);
-                              setShowReqTokenConfirmModal(true);
-                              return;
-                            }
-                            await registerProject.mutateAsync({
-                              cid: deploymentId || '',
-                              endpoint: queryUrl || '',
-                              authorization: `Bearer ${token.data}`,
-                            });
-                            setTrailToken(token.data);
-                            setShowGraphqlAgent(true);
-                            return;
-                          } catch (e) {}
-                        }
-                        isAgentRequest.current = true;
-                        setShowReqTokenConfirmModal(true);
-                      }}
-                    >
-                      {type === ProjectType.SUBQUERY ? (
-                        <PlaygroundIcon
-                          color="var(--sq-blue600)"
-                          width={14}
-                          height={14}
-                          style={{ marginRight: '5px' }}
-                        />
-                      ) : (
-                        <RpcPlaygroundIcon
-                          color="var(--sq-blue600)"
-                          width={14}
-                          height={14}
-                          style={{ marginRight: '5px', marginTop: 3 }}
-                        ></RpcPlaygroundIcon>
-                      )}
-                      Agent
-                    </Typography>
-                  );
-                },
-              }
-            : null,
           {
             width: '150px',
             render: () => {
@@ -590,22 +500,6 @@ const ConnectedRow: React.FC<{
         {type === ProjectType.RPC && (
           <RpcPlayground url={queryUrl} trailToken={trailToken} rpcFamily={rpcFamily}></RpcPlayground>
         )}
-      </AntdModal>
-
-      <AntdModal
-        open={showGraphqlAgent}
-        onCancel={() => setShowGraphqlAgent(false)}
-        className={clsx(styles.playgroundModal, styles.agentModal)}
-        width={1200}
-      >
-        <ChatInterface
-          projectCid={deploymentId as string}
-          messages={projectChatMessages || []}
-          onMessagesChange={(messagesOrUpdater) => updateProjectMessages(messagesOrUpdater)}
-          onClearMessages={() => clearProjectMessages()}
-          endpoint={queryUrl || ''}
-          token={`Bearer ${trailToken}`}
-        ></ChatInterface>
       </AntdModal>
     </>
   );

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useChat } from '@hooks/useChat';
 import { useProject } from '@hooks/useProjects';
+import { Spinner } from '@subql/components';
+import { Tooltip } from 'antd';
 import { Loader2, MessageCircle, Send, Trash2 } from 'lucide-react';
 
 import { gtmEvents } from '../../lib/gtm';
@@ -15,6 +17,8 @@ interface ChatInterfaceProps {
   onClearMessages: () => void;
   endpoint: string;
   token: string;
+  headerExtraWidget?: React.ReactNode;
+  loading?: boolean;
 }
 
 // 新增：可折叠的think块组件
@@ -178,6 +182,8 @@ export function ChatInterface({
   onClearMessages,
   endpoint,
   token,
+  headerExtraWidget,
+  loading,
 }: ChatInterfaceProps) {
   const { data: project } = useProject(projectCid);
   const { isStreaming, isLoading, sendStreamingMessage } = useChat(projectCid, messages, onMessagesChange);
@@ -251,6 +257,8 @@ export function ChatInterface({
             </h3>
             <p>Ask questions about the indexed data in this project</p>
           </div>
+          <span style={{ flex: 1 }}></span>
+          {headerExtraWidget}
           <div className={styles.headerActions}>
             <button
               onClick={() => {
@@ -268,65 +276,85 @@ export function ChatInterface({
       </div>
 
       {/* Messages Area */}
-      <div className={styles.messagesArea}>
-        {messages.length === 0 ? (
-          <div className={styles.emptyState}>
-            <MessageCircle className={styles.emptyIcon} />
-            <h4>Start a conversation</h4>
-            <p>Ask questions about the data indexed by this SubQuery project</p>
+      {endpoint && !loading && (
+        <div className={styles.messagesArea}>
+          {messages.length === 0 ? (
+            <div className={styles.emptyState}>
+              <MessageCircle className={styles.emptyIcon} />
+              <h4>Start a conversation</h4>
+              <p>Ask questions about the data indexed by this SubQuery project</p>
 
-            <div className={styles.suggestionsContainer}>
-              <p className={styles.suggestionsTitle}>Try asking:</p>
-              {suggestedQuestions.map((question: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setInput(question);
-                    gtmEvents.suggestedQuestionClicked(projectCid, question);
-                  }}
-                  className={styles.suggestionButton}
-                >
-                  &quot;{question}&quot;
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`${styles.messageWrapper} ${message.role === 'user' ? styles.userMessage : styles.assistantMessage}`}
-            >
-              <div
-                className={`${styles.messageBubble} ${
-                  message.role === 'user' ? styles.userBubble : styles.assistantBubble
-                }`}
-              >
-                <div className={styles.messageContent}>
-                  {message.role === 'assistant' ? renderWithThinkBlocks(message.content) : message.content}
-                </div>
-                <div
-                  className={`${styles.messageTimestamp} ${message.role === 'user' ? styles.userTimestamp : styles.assistantTimestamp}`}
-                >
-                  {formatTimestamp(message.timestamp)}
-                </div>
+              <div className={styles.suggestionsContainer}>
+                <p className={styles.suggestionsTitle}>Try asking:</p>
+                {suggestedQuestions.map((question: string, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setInput(question);
+                      gtmEvents.suggestedQuestionClicked(projectCid, question);
+                    }}
+                    className={styles.suggestionButton}
+                  >
+                    &quot;{question}&quot;
+                  </button>
+                ))}
               </div>
             </div>
-          ))
-        )}
+          ) : (
+            messages.map((message, index) => (
+              <div
+                key={index}
+                className={`${styles.messageWrapper} ${message.role === 'user' ? styles.userMessage : styles.assistantMessage}`}
+              >
+                <div
+                  className={`${styles.messageBubble} ${
+                    message.role === 'user' ? styles.userBubble : styles.assistantBubble
+                  }`}
+                >
+                  <div className={styles.messageContent}>
+                    {message.role === 'assistant' ? renderWithThinkBlocks(message.content) : message.content}
+                  </div>
+                  <div
+                    className={`${styles.messageTimestamp} ${message.role === 'user' ? styles.userTimestamp : styles.assistantTimestamp}`}
+                  >
+                    {formatTimestamp(message.timestamp)}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
 
-        {/* Streaming indicator */}
-        {isStreaming && (
-          <div className={styles.streamingIndicator}>
-            <div className={styles.streamingBubble}>
-              <Loader2 className={styles.streamingIcon} />
-              <span>Thinking...</span>
+          {isStreaming && (
+            <div className={styles.streamingIndicator}>
+              <div className={styles.streamingBubble}>
+                <Loader2 className={styles.streamingIcon} />
+                <span>Thinking...</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div ref={messagesEndRef} />
-      </div>
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+      {!endpoint && (
+        <div
+          className={styles.messagesArea}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <MessageCircle className={styles.emptyIcon} />
+          <h4>Select an operator to start a conversation</h4>
+        </div>
+      )}
+
+      {loading && (
+        <div
+          className={styles.messagesArea}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <MessageCircle className={styles.emptyIcon} />
+          <Spinner></Spinner>
+        </div>
+      )}
 
       {/* Input Area */}
       <div className={styles.inputArea}>
@@ -343,9 +371,15 @@ export function ChatInterface({
                 disabled={isLoading || isStreaming}
                 rows={2}
               />
-              <button type="submit" disabled={!input.trim() || isLoading || isStreaming} className={styles.sendButton}>
-                {isLoading || isStreaming ? <Loader2 className={styles.icon} /> : <Send className={styles.icon} />}
-              </button>
+              <Tooltip title={!endpoint ? 'Please select operator first' : ''} placement="top">
+                <button
+                  type="submit"
+                  disabled={!input.trim() || isLoading || isStreaming || !endpoint || loading}
+                  className={styles.sendButton}
+                >
+                  {isLoading || isStreaming ? <Loader2 className={styles.icon} /> : <Send className={styles.icon} />}
+                </button>
+              </Tooltip>
             </div>
           </div>
 

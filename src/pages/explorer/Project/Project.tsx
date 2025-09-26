@@ -13,7 +13,7 @@ import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { useGetProjectDeploymentsQuery } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Breadcrumb } from 'antd';
 
@@ -21,10 +21,10 @@ import IndexerDetails from '../../../components/IndexerDetails';
 import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { renderAsync, ROUTES } from '../../../utils';
-import { FlexPlans } from '../FlexPlans';
+import DeploymentGraphqlAgent from './components/deploymentGraphqlAgent';
 import styles from './Project.module.less';
 
-const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
+const { OVERVIEW, INDEXERS } = ROUTES;
 
 const ProjectInner: React.FC = () => {
   const { id } = useParams();
@@ -48,6 +48,10 @@ const ProjectInner: React.FC = () => {
       {
         link: `${INDEXERS}${location.search}`,
         label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Providers' : t('explorer.project.tab2'),
+      },
+      {
+        link: `graphql-agent${location.search}`,
+        label: 'GraphQL Agents',
       },
     ];
 
@@ -183,7 +187,12 @@ const ProjectInner: React.FC = () => {
                     }
                   />
                   <Route path={INDEXERS} element={<></>} />
-                  <Route path={FLEX_PLANS} element={<FlexPlans />} />
+                  <Route
+                    path="graphql-agent"
+                    element={
+                      <DeploymentGraphqlAgent project={project} deploymentId={deploymentId}></DeploymentGraphqlAgent>
+                    }
+                  ></Route>
 
                   <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
                 </Routes>

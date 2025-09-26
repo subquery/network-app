@@ -162,12 +162,6 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
           title: <TableTitle title={'Location'} />,
           dataIndex: 'location',
         },
-        project.type === ProjectType.SUBQUERY
-          ? {
-              width: '10%',
-              title: <TableTitle title={t('indexers.head.playground')} />,
-            }
-          : null,
         {
           width: '150px',
           title: <TableTitle title={t('indexers.head.playground')} />,
