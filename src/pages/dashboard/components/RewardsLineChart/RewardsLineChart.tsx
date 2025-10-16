@@ -181,7 +181,7 @@ export const RewardsLineChart = (props: {
     });
 
     const maxPaddingLength = rewardsLineXScales.getXScales(currentEra.data.period, filterVal).length;
-    // rewards don't want to show lastest era data
+    // rewards don't want to show latest era data
     const removedLastEras = includesErasHex.slice(1, includesErasHex.length);
     const curry = <T extends Parameters<typeof fillData>['0']>(data: T) =>
       fillData(data, removedLastEras, maxPaddingLength);
