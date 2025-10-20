@@ -13,14 +13,14 @@ jobs:
       VITE_SENTRY_DSN: ${{ vars.DEV_SENTRY_DSN }}
       VITE_SUBQUERY_OFFICIAL_BASE_RPC: ${{ vars.VITE_SUBQUERY_OFFICIAL_BASE_RPC }}
       VITE_SUBQUERY_OFFICIAL_ETH_RPC: ${{ vars.VITE_SUBQUERY_OFFICIAL_ETH_RPC }}
-      NODE_OPTIONS: --max-old-space-size=32768      
+      NODE_OPTIONS: --max-old-space-size=32768
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2.4.1
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 2
 
       - run: yarn
 
