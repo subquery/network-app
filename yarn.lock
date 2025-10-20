@@ -6573,7 +6573,6 @@ __metadata:
     react-router: ^6.7.0
     react-router-dom: ^6.7.0
     react-simple-maps: ^3.0.0
-    reflect-metadata: ^0.1.13
     rollup-plugin-node-polyfills: ^0.2.1
     rollup-plugin-visualizer: ^5.9.2
     siwe: ^2.3.2
@@ -17989,13 +17988,6 @@ __metadata:
   dependencies:
     redis-errors: ^1.0.0
   checksum: 89290ae530332f2ae37577647fa18208d10308a1a6ba750b9d9a093e7398f5e5253f19855b64c98757f7129cccce958e4af2573fdc33bad41405f87f1943459a
-  languageName: node
-  linkType: hard
-
-"reflect-metadata@npm:^0.1.13":
-  version: 0.1.13
-  resolution: "reflect-metadata@npm:0.1.13"
-  checksum: 798d379a7b6f6455501145419505c97dd11cbc23857a386add2b9ef15963ccf15a48d9d15507afe01d4cd74116df8a213247200bac00320bd7c11ddeaa5e8fb4
   languageName: node
   linkType: hard
 
