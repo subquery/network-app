@@ -157,5 +157,6 @@
   "resolutions": {
     "ipfs-http-client": "53.0.1",
     "graphql": "16.7.1"
-  }
+  },
+  "packageManager": "yarn@4.10.3"
 }
