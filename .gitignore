@@ -26,6 +26,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
 # Generated graphql types
 __generated__
 src/globalTypes.ts
