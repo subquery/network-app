@@ -298,7 +298,7 @@ export function parseError(
   const generalErrorMsg = () => {
     try {
       if (!rawErrorMsg.includes('Failed to fetch')) {
-        captureException(`Unknow error, need review: ${rawErrorMsg}`, {
+        captureException(`Unknown error, need review: ${rawErrorMsg}`, {
           extra: {
             error: rawErrorMsg,
           },

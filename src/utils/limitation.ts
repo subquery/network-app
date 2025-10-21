@@ -20,7 +20,7 @@ export const makeCacheKey = (
   options: {
     prefix?: string;
     suffix?: string;
-    type?: string; // maybe need to make a const varible. general/sqt/flexplan such as.
+    type?: string; // maybe need to make a const variable. general/sqt/flexplan such as.
   } = {},
 ) => {
   const { prefix = import.meta.env.MODE, type = 'general', suffix = '' } = options;
