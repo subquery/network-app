@@ -12,7 +12,6 @@ import '@subql/components/dist/subquery-components.css';
 import './config/polyfill';
 import './config/sentryConf';
 import './config/dayjsConf';
-import 'reflect-metadata';
 import './index.less';
 
 import { App } from './App';
