@@ -10,7 +10,7 @@ import { Manifest } from '@hooks/useGetDeploymentManifest';
 import useIndexerGeoInformation from '@hooks/useIndexerGeoInformation';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { Spinner, TableTitle, Typography } from '@subql/components';
-import { ProjectType, ServiceStatus } from '@subql/network-query';
+import { ServiceStatus } from '@subql/network-query';
 import {
   renderAsync,
   useAsyncMemo,
