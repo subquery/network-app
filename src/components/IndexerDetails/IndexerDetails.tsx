@@ -52,48 +52,6 @@ const NoIndexers: React.FC = () => {
   );
 };
 
-const columns: TableProps<{ id: number }>['columns'] = [
-  {
-    width: '18%',
-    title: <TableTitle title={t('indexers.head.indexers')} />,
-    dataIndex: 'indexer',
-  },
-  {
-    width: '15%',
-    title: <TableTitle title={t('indexers.head.progress')} />,
-    dataIndex: 'progress',
-  },
-  {
-    width: '10%',
-    title: <TableTitle title={t('indexers.head.status')} tooltip={t('indexers.tooltip.status')} />,
-    dataIndex: 'status',
-  },
-  {
-    width: '12%',
-    title: <TableTitle title={t('indexers.head.url')} />,
-    dataIndex: 'status',
-  },
-  {
-    width: '15%',
-    title: <TableTitle title={'Flex Plan Price'} />,
-    dataIndex: 'flexPlanPrice',
-  },
-  {
-    width: '15%',
-    title: <TableTitle title={'Location'} />,
-    dataIndex: 'location',
-  },
-  {
-    width: '10%',
-    title: <TableTitle title={t('indexers.head.playground')} />,
-  },
-  {
-    width: '5%',
-    title: <TableTitle title={t('indexers.head.plans')} />,
-    dataIndex: 'plans',
-  },
-];
-
 const ComposableMap = React.lazy(() =>
   import('react-simple-maps').then((module) => ({ default: module.ComposableMap })),
 );
@@ -170,6 +128,52 @@ const IndexerDetails: React.FC<Props> = ({ deploymentId, project, manifest }) =>
       };
     });
   }, [searchedIndexer, indexers, flexPlanPrice.data, geoInfo.loading, geoInfo.data]);
+
+  const columns: TableProps<{ id: number }>['columns'] = useMemo(
+    () =>
+      [
+        {
+          width: '18%',
+          title: <TableTitle title={t('indexers.head.indexers')} />,
+          dataIndex: 'indexer',
+        },
+        {
+          width: '15%',
+          title: <TableTitle title={t('indexers.head.progress')} />,
+          dataIndex: 'progress',
+        },
+        {
+          width: '10%',
+          title: <TableTitle title={t('indexers.head.status')} tooltip={t('indexers.tooltip.status')} />,
+          dataIndex: 'status',
+        },
+        {
+          width: '12%',
+          title: <TableTitle title={t('indexers.head.url')} />,
+          dataIndex: 'status',
+        },
+        {
+          width: '15%',
+          title: <TableTitle title={'Flex Plan Price'} />,
+          dataIndex: 'flexPlanPrice',
+        },
+        {
+          width: '15%',
+          title: <TableTitle title={'Location'} />,
+          dataIndex: 'location',
+        },
+        {
+          width: '150px',
+          title: <TableTitle title={t('indexers.head.playground')} />,
+        },
+        {
+          width: '5%',
+          title: <TableTitle title={t('indexers.head.plans')} />,
+          dataIndex: 'plans',
+        },
+      ].filter(notEmpty),
+    [project],
+  );
 
   const SearchAddress = () => (
     <SearchInput

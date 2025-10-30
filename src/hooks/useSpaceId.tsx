@@ -16,11 +16,11 @@ type Web3ReturnFuncType = (address?: string) => Promise<ReturnType | null | unde
 
 const rpcMainnet = [
   'https://eth.llamarpc.com',
-  'https://ethereum.blockpi.network/v1/rpc/public',
   'https://rpc.payload.de',
   'https://ethereum.publicnode.com',
   'https://eth.merkle.io',
   'https://eth.drpc.org',
+  import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
 ];
 
 const rpcBNB = [
@@ -35,7 +35,6 @@ const rpcARB = [
   'https://arbitrum.blockpi.network/v1/rpc/public',
   'https://arbitrum-one.publicnode.com',
   'https://arbitrum.drpc.org',
-  'https://1rpc.io/arb',
 ];
 
 export function useWeb3Name(address?: string): {
@@ -47,7 +46,7 @@ export function useWeb3Name(address?: string): {
     () =>
       // it seems if this url is invalid, then the URL passed by getDomainName will not be used.
       createWeb3Name({
-        rpcUrl: 'https://ethereum.rpc.subquery.network/public',
+        rpcUrl: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC,
       }),
     [],
   );

@@ -10,11 +10,10 @@ import ProjectOverview from '@components/ProjectOverview';
 import { TabButtons } from '@components/TabButton';
 import { useGetDeploymentManifest } from '@hooks/useGetDeploymentManifest';
 import { useGetIfUnsafeDeployment } from '@hooks/useGetIfUnsafeDeployment';
-import { ServiceAgreementsTable } from '@pages/consumer/ServiceAgreements/ServiceAgreementsTable';
 import { captureMessage } from '@sentry/react';
 import { Spinner, Typography } from '@subql/components';
 import { ProjectType } from '@subql/network-query';
-import { useGetProjectDeploymentsQuery, useGetProjectOngoingServiceAgreementsQuery } from '@subql/react-hooks';
+import { useGetProjectDeploymentsQuery } from '@subql/react-hooks';
 import { parseError } from '@utils';
 import { Breadcrumb } from 'antd';
 
@@ -22,10 +21,10 @@ import IndexerDetails from '../../../components/IndexerDetails';
 import { useProjectMetadata } from '../../../containers';
 import { useDeploymentMetadata, useProjectFromQuery, useRouteQuery } from '../../../hooks';
 import { renderAsync, ROUTES } from '../../../utils';
-import { FlexPlans } from '../FlexPlans';
+import DeploymentGraphqlAgent from './components/deploymentGraphqlAgent';
 import styles from './Project.module.less';
 
-const { OVERVIEW, INDEXERS, SERVICE_AGREEMENTS, FLEX_PLANS } = ROUTES;
+const { OVERVIEW, INDEXERS } = ROUTES;
 
 const ProjectInner: React.FC = () => {
   const { id } = useParams();
@@ -50,7 +49,10 @@ const ProjectInner: React.FC = () => {
         link: `${INDEXERS}${location.search}`,
         label: asyncProject.data?.type === ProjectType.RPC ? 'RPC Providers' : t('explorer.project.tab2'),
       },
-      { link: `${SERVICE_AGREEMENTS}${location.search}`, label: t('explorer.project.tab3') },
+      {
+        link: `graphql-agent${location.search}`,
+        label: 'GraphQL Agents',
+      },
     ];
 
     return [...tabList];
@@ -186,15 +188,11 @@ const ProjectInner: React.FC = () => {
                   />
                   <Route path={INDEXERS} element={<></>} />
                   <Route
-                    path={SERVICE_AGREEMENTS}
+                    path="graphql-agent"
                     element={
-                      <ServiceAgreementsTable
-                        queryFn={useGetProjectOngoingServiceAgreementsQuery}
-                        queryParams={{ deploymentId }}
-                      />
+                      <DeploymentGraphqlAgent project={project} deploymentId={deploymentId}></DeploymentGraphqlAgent>
                     }
-                  />
-                  <Route path={FLEX_PLANS} element={<FlexPlans />} />
+                  ></Route>
 
                   <Route path={'/'} element={<Navigate replace to={`${OVERVIEW}${location.search}`} />} />
                 </Routes>

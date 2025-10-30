@@ -110,6 +110,7 @@ const ConnectedRow: React.FC<{
 
   const [showPlans, setShowPlans] = React.useState<boolean>(false);
   const [showReqTokenConfirmModal, setShowReqTokenConfirmModal] = React.useState(false);
+  const isAgentRequest = React.useRef(false);
   const [showPlayground, setShowPlayground] = React.useState(false);
   const [trailToken, setTrailToken] = React.useState('');
   const [trailLimitInfo, setTrailLimitInfo] = React.useState<QueryLimit>();
@@ -213,8 +214,6 @@ const ConnectedRow: React.FC<{
       );
 
       if (res?.data) {
-        await updateQueryLimit(indexerMetadata.url, res.data);
-        setShowReqTokenConfirmModal(false);
         setTrailToken(res.data);
         const trailKey = makeCacheKey(type, {
           prefix: deploymentId,
@@ -227,7 +226,13 @@ const ConnectedRow: React.FC<{
             expire: Date.now() + 24 * 60 * 60 * 1000,
           }),
         );
-        setShowPlayground(true);
+
+        if (!isAgentRequest.current) {
+          await updateQueryLimit(indexerMetadata.url, res.data);
+          setShowPlayground(true);
+        }
+
+        setShowReqTokenConfirmModal(false);
       }
     }
   };
@@ -342,12 +347,11 @@ const ConnectedRow: React.FC<{
             },
           },
           {
-            width: '10%',
+            width: '150px',
             render: () => {
               return (
                 <Typography
                   style={{
-                    width: '115px',
                     margin: '0 auto',
                   }}
                   className={styles.playgroundButton}
@@ -371,6 +375,7 @@ const ConnectedRow: React.FC<{
                         return;
                       } catch (e) {}
                     }
+                    isAgentRequest.current = false;
                     setShowReqTokenConfirmModal(true);
                   }}
                 >
@@ -414,7 +419,7 @@ const ConnectedRow: React.FC<{
               return <></>;
             },
           },
-        ]}
+        ].filter(notEmpty)}
         dataSource={rowData}
         showHeader={false}
         pagination={false}
