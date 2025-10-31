@@ -2,33 +2,27 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { specialApiKeyName } from '@components/GetEndpoint';
-import { PriceQueriesChart } from '@components/IndexerDetails/PriceQueries';
 import { ApproveContract } from '@components/ModalApproveToken';
 import TokenTooltip from '@components/TokenTooltip/TokenTooltip';
 import { useSQToken } from '@containers';
-import { SQT_TOKEN_ADDRESS, useAccount } from '@containers/Web3';
+import { useAccount } from '@containers/Web3';
 import { useAddAllowance } from '@hooks/useAddAllowance';
 import {
   GetUserApiKeys,
-  IGetHostingPlans,
-  IPostHostingPlansParams,
+  IGetUserSubscription,
   isConsumerHostError,
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
 import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
-import { ProjectType as contractProjectType } from '@subql/contract-sdk';
-import { ProjectType } from '@subql/network-query';
 import { formatSQT, useAsyncMemo, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
-import { Button, Checkbox, Divider, Form, InputNumber, Popover, Tooltip } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, Tooltip } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseEther } from 'ethers/lib/utils';
+import { parseEther } from 'ethers/lib/utils';
 
 import { useWeb3Store } from 'src/stores';
 
@@ -38,49 +32,36 @@ interface IProps {
   project: Pick<ProjectDetailsQuery, 'id' | 'type'>;
   deploymentId: string;
   prevApiKey?: GetUserApiKeys;
-  prevHostingPlan?: IGetHostingPlans;
+  prevSubscription?: IGetUserSubscription;
   onSuccess?: () => void;
   onBack?: () => void;
 }
 
-const converFlexPlanPrice = (price: string) => {
-  return BigNumberJs(formatUnits(price, tokenDecimals[SQT_TOKEN_ADDRESS])).multipliedBy(1000);
-};
-
-const subqlProjectTypeToContractType = {
-  [ProjectType.LLM]: 0, // no for now
-  [ProjectType.RPC]: contractProjectType.RPC,
-  [ProjectType.SUBQUERY]: contractProjectType.SUBQUERY,
-  [ProjectType.SQ_DICT]: contractProjectType.SQ_DICT,
-  [ProjectType.SUBGRAPH]: contractProjectType.SUBGRAPH,
-};
-
 // TODO: split the component to smaller components
-const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, prevApiKey, onSuccess, onBack }) => {
+const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevSubscription, prevApiKey, onSuccess, onBack }) => {
   const { address: account } = useAccount();
   const { contracts } = useWeb3Store();
-  const [form] = Form.useForm<IPostHostingPlansParams>();
   const [depositForm] = Form.useForm<{ amount: string }>();
   const depositAmount = Form.useWatch<number>('amount', depositForm);
-  const priceValue = Form.useWatch<number>('price', form);
-  const maximumValue = Form.useWatch<number>('maximum', form);
   const { consumerHostAllowance, consumerHostBalance, balance } = useSQToken();
   const { addAllowance } = useAddAllowance();
   const sqtPrice = useSqtPrice();
 
   const mounted = useRef(false);
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [selectedPlan, setSelectedPlan] = useState<'economy' | 'performance' | 'custom'>('custom');
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
-  const [displayTransactions, setDisplayTransactions] = useState<('allowance' | 'deposit' | 'createApiKey')[]>([]);
+  const [displayTransactions, setDisplayTransactions] = useState<
+    ('allowance' | 'deposit' | 'createApiKey' | 'subscribe')[]
+  >([]);
   const [transacitonNumbers, setTransactionNumbers] = useState<{ [key in string]: number }>({
     allowance: 1,
     deposit: 2,
     createApiKey: 3,
+    subscribe: 4,
   });
-  const [transactionStep, setTransactionStep] = useState<'allowance' | 'deposit' | 'createApiKey' | undefined>(
-    'allowance',
-  );
+  const [transactionStep, setTransactionStep] = useState<
+    'allowance' | 'deposit' | 'createApiKey' | 'subscribe' | undefined
+  >('allowance');
 
   const deploymentBooster = useGetDeploymentBoosterTotalAmountByDeploymentIdQuery({
     variables: {
@@ -92,34 +73,11 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const [depositBalance] = useMemo(() => consumerHostBalance.result.data ?? [], [consumerHostBalance.result.data]);
 
-  const {
-    getProjects,
-    createNewApiKey,
-    createHostingPlanApi,
-    updateHostingPlanApi,
-    getUserApiKeysApi,
-    refreshUserInfo,
-    getChannelLimit,
-    getDominantPrice,
-  } = useConsumerHostServices({
-    alert: true,
-    autoLogin: false,
-  });
-
-  const flexPlans = useAsyncMemo(async () => {
-    try {
-      const res = await getProjects({
-        projectId: BigNumber.from(project.id).toString(),
-        deployment: deploymentId,
-      });
-
-      if (res.data?.indexers?.length) {
-        return res.data.indexers;
-      }
-    } catch (e) {
-      return [];
-    }
-  }, [project.id, deploymentId]);
+  const { createNewApiKey, createSubscription, getUserApiKeysApi, refreshUserInfo, getChannelLimit } =
+    useConsumerHostServices({
+      alert: true,
+      autoLogin: false,
+    });
 
   const estimatedChannelLimit = useAsyncMemo(async () => {
     try {
@@ -153,69 +111,8 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
   }, [estimatedChannelLimit]);
 
   const minDeposit = useMemo(() => {
-    // const sortedMinial = BigNumberJs(depositRequireFromConsumerHost).minus(
-    //   formatSQT(depositBalance?.toString() || '0'),
-    // );
-    // return sortedMinial.lte(0) ? 0 : sortedMinial.toNumber();
     return 10000;
   }, [depositRequireFromConsumerHost, depositBalance]);
-
-  const estimatedPriceInfo = useMemo(() => {
-    if (!flexPlans.data || flexPlans.data.length === 0) {
-      return {
-        economy: BigNumberJs(0),
-        performance: BigNumberJs(0),
-      };
-    }
-
-    // ASC
-    const sortedFlexPlans = flexPlans.data.map((i) => converFlexPlanPrice(i.price)).sort((a, b) => (a.lt(b) ? -1 : 1));
-    const maxPrice = sortedFlexPlans.at(-1);
-
-    // if less than 3, both economy and performance should be the highest price
-    if (flexPlans.data?.length <= 3) {
-      return {
-        economy: maxPrice,
-        performance: maxPrice,
-      };
-    }
-
-    if (flexPlans.data?.length <= 5) {
-      return {
-        economy: sortedFlexPlans[2],
-        performance: maxPrice,
-      };
-    }
-
-    const economyIndex = Math.ceil(flexPlans.data.length * 0.4) < 2 ? 2 : Math.ceil(flexPlans.data.length * 0.4);
-    const performanceIndex = Math.ceil(flexPlans.data.length * 0.8) < 4 ? 4 : Math.ceil(flexPlans.data.length * 0.8);
-
-    return {
-      economy: sortedFlexPlans[economyIndex],
-      performance: sortedFlexPlans[performanceIndex],
-    };
-  }, [flexPlans]);
-
-  const matchedCount = React.useMemo(() => {
-    if (!priceValue || !flexPlans.data?.length) return `Matched Node Operators: 0`;
-    const count = flexPlans.data.filter((i) => {
-      const prices1000 = converFlexPlanPrice(i.price);
-      return prices1000.lte(priceValue);
-    }).length;
-    return `Matched Node Operators: ${count}`;
-  }, [priceValue, flexPlans]);
-
-  const enoughReq = useMemo(() => {
-    const priceVal = priceValue || (form.getFieldsValue(true)['price'] as string);
-    if (!priceVal || depositBalance?.eq(0) || !depositBalance) return 0;
-
-    return BigNumberJs(formatSQT(depositBalance.toString()))
-      .div(BigNumberJs(priceVal.toString()))
-      .multipliedBy(1000)
-      .decimalPlaces(0)
-      ?.toNumber()
-      ?.toLocaleString();
-  }, [depositBalance, priceValue, form, currentStep]);
 
   const needAddAllowance = useMemo(() => {
     const allowance = consumerHostAllowance.result.data;
@@ -230,35 +127,30 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
 
   const needCreateApiKey = useMemo(() => !prevApiKey, [prevApiKey]);
 
+  const needSubscribe = useMemo(() => !prevSubscription, [prevSubscription]);
+
   const nextBtnText = useMemo(() => {
     if (currentStep === 0) return 'Next';
 
-    if (currentStep === 1) return 'Deposit SQT';
-
-    if (currentStep === 2) {
-      if (!displayTransactions.length) return 'Create Flex Plan';
+    if (currentStep === 1) {
+      if (!displayTransactions.length) return 'Subscribe to Project';
 
       if (transactionStep) {
         const currentStepNumber = transacitonNumbers[transactionStep];
 
         return `Approve Transaction ${currentStepNumber}${
-          currentStepNumber === displayTransactions.length ? ' and Create Flex Plan' : ''
+          currentStepNumber === displayTransactions.length ? ' and Subscribe' : ''
         }`;
       }
 
-      return 'Create Flex Plan';
+      return 'Subscribe to Project';
     }
     return 'Next';
   }, [currentStep, displayTransactions, transacitonNumbers, transactionStep]);
 
   const suggestDeposit = useMemo(() => {
-    const inputEstimated = BigNumberJs(priceValue || '0')
-      .multipliedBy(20)
-      .multipliedBy(maximumValue || 2);
-
-    if (inputEstimated.lt(depositRequireFromConsumerHost)) return depositRequireFromConsumerHost.toLocaleString();
-    return inputEstimated.toNumber().toLocaleString();
-  }, [depositRequireFromConsumerHost, priceValue, maximumValue]);
+    return depositRequireFromConsumerHost.toLocaleString();
+  }, [depositRequireFromConsumerHost]);
 
   const renderTransactionDisplay = useMemo(() => {
     const allowanceDom = (index: number) => {
@@ -279,7 +171,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             </Typography>
             <Typography variant="medium" type="secondary">
               This grants permission for SubQuery to manage your Billing Account automatically to pay node operators for
-              charges incurred in this new Flex Plan
+              charges incurred in this Flex Plan
             </Typography>
           </div>
         </div>
@@ -329,7 +221,31 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             </Typography>
             <Typography variant="medium" type="secondary">
               This is a transaction to open a state channel and generate a personal API key for your account to secure
-              your new Flex Plan endpoint
+              your Flex Plan endpoint
+            </Typography>
+          </div>
+        </div>
+      );
+    };
+
+    const subscribeDom = (index: number) => {
+      return (
+        <div
+          key={'subscribe'}
+          className={clsx(
+            styles.radioCard,
+            transactionStep === 'subscribe' ? styles.radioCardSelected : '',
+            !needSubscribe ? styles.radioCardSelectedWithBackgroud : '',
+          )}
+          style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+        >
+          <div className="col-flex" style={{ gap: 8 }}>
+            <Typography className="flex-center" weight={500}>
+              {!needSubscribe && <Checkbox checked></Checkbox>}
+              {index}. Subscribe to Project
+            </Typography>
+            <Typography variant="medium" type="secondary">
+              Subscribe to this project to get access to the Flex Plan endpoint
             </Typography>
           </div>
         </div>
@@ -340,40 +256,24 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       allowance: allowanceDom,
       deposit: depositDom,
       createApiKey: createApiKeysDom,
+      subscribe: subscribeDom,
     };
 
     return displayTransactions.map((i, index) => {
       return dicts[i](index + 1);
     });
-  }, [displayTransactions, transactionStep, needCreateApiKey, needAddAllowance, needDepositMore, depositForm]);
-
-  const suggestHostingPlanPrice = useAsyncMemo(async () => {
-    try {
-      const price = await getDominantPrice({
-        ptype: subqlProjectTypeToContractType[project.type],
-      });
-
-      return formatSQT(BigNumberJs(price.data.avg_price).multipliedBy(1000).toString());
-    } catch {
-      return '';
-    }
-  }, [project.type]);
+  }, [
+    displayTransactions,
+    transactionStep,
+    needCreateApiKey,
+    needAddAllowance,
+    needDepositMore,
+    needSubscribe,
+    depositForm,
+  ]);
 
   const handleNextStep = async (options?: { skipDeposit?: boolean }) => {
     if (currentStep === 0) {
-      if (!selectedPlan) return;
-      if (selectedPlan !== 'custom') {
-        form.setFieldValue('price', estimatedPriceInfo[selectedPlan]?.toString());
-        form.setFieldValue('maximum', selectedPlan === 'economy' ? 8 : 15);
-      } else {
-        await form.validateFields();
-        form.setFieldValue('maximum', form.getFieldValue('maximum') || 2);
-      }
-
-      setCurrentStep(1);
-    }
-
-    if (currentStep === 1) {
       const { skipDeposit = false } = options || {};
       if (!skipDeposit) {
         await depositForm.validateFields();
@@ -392,15 +292,19 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
       if (needCreateApiKey) {
         newDisplayTransactions.push('createApiKey');
       }
+      if (needSubscribe) {
+        newDisplayTransactions.push('subscribe');
+      }
       if (newDisplayTransactions.includes('allowance')) {
         setTransactionStep('allowance');
       } else if (newDisplayTransactions.includes('deposit')) {
         setTransactionStep('deposit');
-      } else {
+      } else if (newDisplayTransactions.includes('createApiKey')) {
         setTransactionStep('createApiKey');
+      } else {
+        setTransactionStep('subscribe');
       }
 
-      // TODO: make a enum
       // @ts-ignore
       setDisplayTransactions(newDisplayTransactions);
 
@@ -413,14 +317,15 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           {} as { [key in string]: number },
         ),
       );
-      setCurrentStep(2);
+      setCurrentStep(1);
     }
 
-    if (currentStep === 2) {
+    if (currentStep === 1) {
       setNextBtnLoading(true);
-      const getNextStepAndSet = (transactionName: 'allowance' | 'deposit' | 'createApiKeys') => {
+      const getNextStepAndSet = (transactionName: 'allowance' | 'deposit' | 'createApiKey' | 'subscribe') => {
         const index = displayTransactions.findIndex((i) => i === transactionName) + 1;
         if (index < displayTransactions.length) {
+          // @ts-ignore
           setTransactionStep(displayTransactions[index]);
         } else {
           setTransactionStep(undefined);
@@ -471,36 +376,34 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
             }
           }
 
-          getNextStepAndSet('createApiKeys');
+          getNextStepAndSet('createApiKey');
+
+          const currentStepNumber = transacitonNumbers['createApiKey'];
+
+          if (currentStepNumber !== displayTransactions.length) {
+            return;
+          }
+        }
+
+        if (needSubscribe) {
+          setTransactionStep('subscribe');
+
+          const projectIdNumber = parseInt(project.id.replace('0x', ''), 16);
+          const subscriptionRes = await createSubscription({
+            project_id: projectIdNumber,
+          });
+
+          if (isConsumerHostError(subscriptionRes.data)) {
+            throw new Error(subscriptionRes.data.error);
+          }
+
+          getNextStepAndSet('subscribe');
         }
 
         try {
           await refreshUserInfo();
         } catch (e) {
           // don't care of this
-        }
-
-        const price = form.getFieldsValue(true)['price'];
-        const maximum = form.getFieldsValue(true)['maximum'];
-
-        const createOrUpdate = prevHostingPlan ? updateHostingPlanApi : createHostingPlanApi;
-        // if already created the plan, just update it.
-        const minExpiration = estimatedChannelLimit?.data?.channelMinExpiration || 3600 * 24 * 14;
-        const expiration = flexPlans?.data?.sort((a, b) => b.max_time - a.max_time)[0].max_time || 0;
-        const maximumValue =
-          (estimatedChannelLimit.data?.channelMaxNum || 0) < Math.ceil(maximum)
-            ? estimatedChannelLimit.data?.channelMaxNum
-            : Math.ceil(maximum);
-        const res = await createOrUpdate({
-          deploymentId: deploymentId,
-          price: parseEther(`${price}`).div(1000).toString(),
-          maximum: maximumValue || 2,
-          expiration: expiration < minExpiration ? minExpiration : expiration,
-          id: prevHostingPlan?.id || '0',
-        });
-
-        if (isConsumerHostError(res.data)) {
-          throw new Error(res.data.error);
         }
 
         await onSuccess?.();
@@ -537,9 +440,6 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         current={currentStep}
         steps={[
           {
-            title: 'Create Flex Plan',
-          },
-          {
             title: 'Deposit to Billing Account',
           },
           {
@@ -548,89 +448,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         ]}
       ></Steps>
 
-      {currentStep === 0 && (
-        <>
-          <Typography>
-            SubQuery will automatically allocate qualified Node Operators to your endpoint based on price and
-            performance. Please select the type of plan you would like (you can change this later).
-          </Typography>
-
-          <div
-            className={clsx(styles.radioCard, selectedPlan === 'custom' ? styles.radioCardSelected : '')}
-            onClick={() => {
-              setSelectedPlan('custom');
-              if (selectedPlan !== 'custom') {
-                form.resetFields();
-              }
-            }}
-          >
-            <Typography weight={500}>Enter a custom price</Typography>
-            {selectedPlan === 'custom' && (
-              <>
-                <Typography variant="medium" style={{ color: 'var(--sq-gray700)', maxWidth: 450 }}>
-                  Please enter a custom price, and an optional limit
-                </Typography>
-
-                <Form layout="vertical" className={styles.createFlexPlanModal} form={form}>
-                  <Typography>
-                    Maximum Price
-                    <Tooltip title="The maximum price of per 1000 requests that you are looking for ">
-                      <AiOutlineInfoCircle
-                        style={{ fontSize: 14, marginLeft: 6, color: 'var(--sq-gray500)' }}
-                      ></AiOutlineInfoCircle>
-                    </Tooltip>
-                  </Typography>
-                  <Popover
-                    trigger={'click'}
-                    content={
-                      suggestHostingPlanPrice.data ? (
-                        <div>
-                          <Typography variant="small">
-                            The average price of per 1000 requests is {suggestHostingPlanPrice.data} {TOKEN}.
-                            <Typography.Link
-                              variant="small"
-                              type="info"
-                              onClick={() => {
-                                form.setFieldsValue({
-                                  price: suggestHostingPlanPrice.data,
-                                });
-                              }}
-                            >
-                              Set it
-                            </Typography.Link>
-                          </Typography>
-                        </div>
-                      ) : (
-                        ''
-                      )
-                    }
-                    placement="topLeft"
-                  >
-                    <Form.Item name="price" rules={[{ required: true, message: 'Please enter the price' }]}>
-                      <InputNumber
-                        placeholder={'Enter price'}
-                        min="0.0000000000000001"
-                        addonAfter={`${TOKEN} / Per 1000 requests`}
-                      ></InputNumber>
-                    </Form.Item>
-                  </Popover>
-                  <Typography variant="medium" style={{ color: 'var(--sq-gray700)', margin: '8px 0' }}>
-                    {matchedCount}
-                  </Typography>
-
-                  <PriceQueriesChart
-                    deploymentId={deploymentId}
-                    projectId={`${parseInt(project.id)}`}
-                  ></PriceQueriesChart>
-                </Form>
-              </>
-            )}
-          </div>
-        </>
-      )}
-
-      {/* need the Form element render, so can trace the state */}
-      <div className="col-flex" style={{ gap: 24, display: currentStep === 1 ? 'flex' : 'none' }}>
+      <div className="col-flex" style={{ gap: 24, display: currentStep === 0 ? 'flex' : 'none' }}>
         <Typography>
           Every wallet has a Billing Account where you must deposit SQT that you authorise SubQuery to deduct for Flex
           Plan payments. If this Billing Account runs out of SQT, your Flex plan will automatically be cancelled and
@@ -640,36 +458,17 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           You can easily withdraw unused SQT from this Billing Account at any time without any unlocking period.
         </Typography>
         <Typography>
-          We recommend ensuring that there is sufficient SQT in your billing account so that you don’t run out
+          We recommend ensuring that there is sufficient SQT in your billing account so that you don&apos;t run out
           unexpectedly.
         </Typography>
 
-        <div
-          className={clsx(styles.radioCard, styles.radioCardSelected)}
-          style={{ flexDirection: 'row', justifyContent: 'space-between', background: '#4388DD14' }}
-        >
-          <div className="col-flex">
-            <Typography>Your selected plan:</Typography>
-
-            <Typography style={{ textTransform: 'capitalize' }} weight={500}>
-              {selectedPlan}
-            </Typography>
-          </div>
-          <div className="col-flex" style={{ alignItems: 'flex-end' }}>
-            <Typography weight={600} variant="large" style={{ color: 'var(--sq-blue400)' }}>
-              {form.getFieldValue('price')} {TOKEN}
-            </Typography>
-            <Typography variant="medium">Per 1000 reqs</Typography>
-            {sqtPrice !== '0' && <Typography>(~US${estimatedUs(form.getFieldValue('price'))})</Typography>}
-          </div>
-        </div>
         <Divider style={{ margin: 0 }}></Divider>
         <div className="col-flex" style={{ gap: 8 }}>
           {depositBalance?.eq(0) || !depositBalance ? (
             <>
               <Typography>You must deposit SQT to open this billing account</Typography>
               <Typography variant="medium" type="secondary">
-                You must deposit SQT to create this flex plan, we suggest {suggestDeposit} {TOKEN}
+                You must deposit SQT to subscribe to this project, we suggest {suggestDeposit} {TOKEN}
               </Typography>
             </>
           ) : (
@@ -682,7 +481,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
                 {TOKEN}
               </Typography>
               <Typography variant="medium" type="secondary">
-                This is enough to pay for {enoughReq} requests, we suggest {suggestDeposit} {TOKEN}
+                We suggest depositing at least {suggestDeposit} {TOKEN}
               </Typography>
             </>
           )}
@@ -742,13 +541,13 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         </div>
       </div>
 
-      {currentStep === 2 && (
+      {currentStep === 1 && (
         <>
           {displayTransactions.length ? (
             <Typography>
               You must now approve {displayTransactions.length > 1 ? 'a few transactions' : 'a transaction'} using your
-              connected wallet to initiate this Flex Plan. You must approve all transactions if in order to create a
-              Flex Plan
+              connected wallet to subscribe to this project. You must approve all transactions in order to complete the
+              subscription.
             </Typography>
           ) : (
             ''
@@ -777,7 +576,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
           Back
         </Button>
         <span style={{ flex: 1 }}></span>
-        {currentStep === 1 &&
+        {currentStep === 0 &&
         !BigNumberJs(
           deploymentBooster.data?.deploymentBoosterSummariesByConsumer?.aggregates?.sum?.totalAmount.toString() || '0',
         ).isZero() ? (
@@ -796,13 +595,7 @@ const CreateFlexPlan: FC<IProps> = ({ deploymentId, project, prevHostingPlan, pr
         ) : (
           ''
         )}
-        <Button
-          shape="round"
-          size="large"
-          type="primary"
-          onClick={() => handleNextStep()}
-          loading={flexPlans.loading || nextBtnLoading}
-        >
+        <Button shape="round" size="large" type="primary" onClick={() => handleNextStep()} loading={nextBtnLoading}>
           {nextBtnText}
         </Button>
       </div>

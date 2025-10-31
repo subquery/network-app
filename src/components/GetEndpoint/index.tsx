@@ -10,7 +10,9 @@ import { useAccount } from '@containers/Web3';
 import {
   GetUserApiKeys,
   IGetHostingPlans,
+  IGetUserSubscription,
   isConsumerHostError,
+  isNotSubscribed,
   useConsumerHostServices,
 } from '@hooks/useConsumerHostServices';
 import { ProjectDetailsQuery } from '@hooks/useProjectFromQuery';
@@ -84,17 +86,18 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
   const [freeOrFlexPlan, setFreeOrFlexPlan] = React.useState<'free' | 'flexPlan'>('flexPlan');
 
   const [nextBtnLoading, setNextBtnLoading] = useState(false);
-  const [userHostingPlan, setUserHostingPlan] = useState<IGetHostingPlans[]>([]);
+  const [currentSubscription, setCurrentSubscription] = useState<IGetUserSubscription | null>(null);
   const [userApiKeys, setUserApiKeys] = useState<GetUserApiKeys[]>([]);
 
-  const { getHostingPlanApi, checkIfHasLogin, getUserApiKeysApi, createNewApiKey } = useConsumerHostServices({
-    alert: false,
-    autoLogin: false,
-  });
+  const { getUserSubscriptionByProject, createSubscription, checkIfHasLogin, getUserApiKeysApi, createNewApiKey } =
+    useConsumerHostServices({
+      alert: false,
+      autoLogin: false,
+    });
 
-  const createdHostingPlan = useMemo(() => {
-    return userHostingPlan.find((plan) => plan.deployment.deployment === deploymentId && plan.is_actived);
-  }, [userHostingPlan]);
+  const hasActiveSubscription = useMemo(() => {
+    return currentSubscription?.is_active || false;
+  }, [currentSubscription]);
 
   const createdApiKey = useMemo(() => {
     return userApiKeys.find((key) => key.name === specialApiKeyName);
@@ -104,16 +107,16 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
     if (currentStep === 'select') {
       if (freeOrFlexPlan === 'free') return 'View Free Public Endpoint';
       if (freeOrFlexPlan === 'flexPlan') {
-        if (createdHostingPlan) {
+        if (hasActiveSubscription) {
           return 'View Flex Plan Endpoint';
         }
-        return 'Create Flex Plan';
+        return 'Subscribe to Project';
       }
     }
 
     if (currentStep === 'checkFree' || currentStep === 'checkEndpointWithApiKey') return 'Copy endpoint and Close';
-    return 'Create Flex Plan';
-  }, [freeOrFlexPlan, currentStep, createdHostingPlan]);
+    return 'Subscribe to Project';
+  }, [freeOrFlexPlan, currentStep, hasActiveSubscription]);
 
   const httpEndpointWithApiKey = useMemo(() => {
     return getHttpEndpointWithApiKey(deploymentId, createdApiKey?.value || '');
@@ -263,13 +266,12 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
       checkFree: makeEndpointResult(sponsoredProjects[project.id], true),
       createFlexPlan: (
         <CreateFlexPlan
-          prevHostingPlan={createdHostingPlan}
           prevApiKey={createdApiKey}
           deploymentId={deploymentId}
           project={project}
           onSuccess={async () => {
             await checkIfHasLogin();
-            await fetchHostingPlanAndApiKeys();
+            await fetchSubscriptionAndApiKeys();
             setCurrentStep('checkEndpointWithApiKey');
           }}
           onBack={() => {
@@ -285,37 +287,46 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
     }[currentStep];
   }, [freeOrFlexPlan, project, currentStep, deploymentId, account, httpEndpointWithApiKey, wsEndpointWithApiKey]);
 
-  const fetchHostingPlan = async () => {
+  const fetchSubscription = async () => {
     try {
       setNextBtnLoading(true);
-      const hostingPlan = await getHostingPlanApi({
-        account,
-      });
+      const projectIdNumber = parseInt(project.id.replace('0x', ''), 16);
+      const subscriptionRes = await getUserSubscriptionByProject(projectIdNumber);
 
-      if (!isConsumerHostError(hostingPlan.data)) {
-        setUserHostingPlan(hostingPlan.data);
+      if (!isConsumerHostError(subscriptionRes.data)) {
+        if (isNotSubscribed(subscriptionRes.data)) {
+          // 没有订阅,创建新订阅
+          const newSubscription = await createSubscription({ project_id: projectIdNumber });
 
-        // no hosting plan then skip fetch api key,
-        if (!hostingPlan.data.find((i) => i.deployment.deployment === deploymentId && i.is_actived))
-          return {
-            data: [],
-          };
+          if (!isConsumerHostError(newSubscription.data)) {
+            setCurrentSubscription(newSubscription.data);
+            return { data: newSubscription.data };
+          } else {
+            setCurrentSubscription(null);
+            return { data: null };
+          }
+        } else {
+          // 已有订阅
+          setCurrentSubscription(subscriptionRes.data);
+          return { data: subscriptionRes.data };
+        }
       } else {
-        return {
-          data: [],
-        };
+        setCurrentSubscription(null);
+        return { data: null };
       }
-
-      return hostingPlan;
+    } catch (e) {
+      parseError(e, { alert: true });
+      setCurrentSubscription(null);
+      return { data: null };
     } finally {
       setNextBtnLoading(false);
     }
   };
 
-  const fetchHostingPlanAndApiKeys = async () => {
+  const fetchSubscriptionAndApiKeys = async () => {
     try {
       setNextBtnLoading(true);
-      const hostingPlan = await fetchHostingPlan();
+      const subscription = await fetchSubscription();
 
       let apiKeys = await getUserApiKeysApi();
       if (!isConsumerHostError(apiKeys.data)) {
@@ -331,7 +342,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
         }
       }
       return {
-        hostingPlan,
+        subscription,
         apiKeys,
       };
     } catch (e) {
@@ -351,13 +362,13 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
       if (freeOrFlexPlan === 'free') {
         setCurrentStep('checkFree');
       } else {
-        const fetched = await fetchHostingPlanAndApiKeys();
+        const fetched = await fetchSubscriptionAndApiKeys();
 
         if (fetched) {
-          if (!isConsumerHostError(fetched.hostingPlan.data) && !isConsumerHostError(fetched.apiKeys.data)) {
+          if (fetched.subscription.data && !isConsumerHostError(fetched.apiKeys.data)) {
             if (
               fetched.apiKeys?.data.find((key) => key.name === specialApiKeyName) &&
-              fetched.hostingPlan?.data.find((plan) => plan.deployment.deployment === deploymentId && plan.is_actived)
+              fetched.subscription.data.is_active
             ) {
               setCurrentStep('checkEndpointWithApiKey');
             } else {
@@ -390,7 +401,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
   const resetAllField = () => {
     setCurrentStep('select');
     setFreeOrFlexPlan('flexPlan');
-    setUserHostingPlan([]);
+    setCurrentSubscription(null);
     setUserApiKeys([]);
     beforeStep.current = 'select';
   };
@@ -399,7 +410,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
   useEffect(() => {
     if (account && open) {
       resetAllField();
-      fetchHostingPlanAndApiKeys();
+      fetchSubscriptionAndApiKeys();
     }
   }, [account]);
 
@@ -413,7 +424,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
               setFreeOrFlexPlan('flexPlan');
               await handleNextStep();
             }
-            await fetchHostingPlan();
+            await fetchSubscription();
             setOpen(true);
           }}
         >
@@ -430,7 +441,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
               setFreeOrFlexPlan('flexPlan');
               await handleNextStep();
             }
-            await fetchHostingPlan();
+            await fetchSubscription();
             setOpen(true);
           }}
         >
@@ -447,7 +458,6 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
         }}
         className={account ? '' : 'hideModalWrapper'}
         footer={
-          // it's kind of chaos, but I don't want to handle the action out of the component.
           currentStep !== 'createFlexPlan' ? (
             <div className="flex">
               {currentStep !== 'select' && (
