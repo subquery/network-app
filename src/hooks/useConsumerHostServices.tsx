@@ -472,7 +472,7 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 取消订阅
+  // New: Unsubscribe from a project
   const unsubscribeProject = useCallback(
     async (projectId: number): Promise<AxiosResponse<{ success: boolean; message: string } | ConsumerHostError>> => {
       const res = await instance.post<{ success: boolean; message: string } | ConsumerHostError>(
