@@ -450,6 +450,76 @@ export const useConsumerHostServices = (
     return res;
   }, []);
 
+  const getUserSubscriptions = useCallback(async (): Promise<
+    AxiosResponse<IGetUserSubscription[] | ConsumerHostError>
+  > => {
+    const res = await instance.get<IGetUserSubscription[] | ConsumerHostError>('/users/subscriptions', {
+      headers: authHeaders.current,
+    });
+
+    return res;
+  }, []);
+
+  // 新增: 创建订阅
+  const createSubscription = useCallback(
+    async (params: { project_id: number }): Promise<AxiosResponse<IGetUserSubscription | ConsumerHostError>> => {
+      const res = await instance.post<IGetUserSubscription | ConsumerHostError>('/users/subscriptions', params, {
+        headers: authHeaders.current,
+      });
+
+      return res;
+    },
+    [],
+  );
+
+  // New: Unsubscribe from a project
+  const unsubscribeProject = useCallback(
+    async (projectId: number): Promise<AxiosResponse<{ success: boolean; message: string } | ConsumerHostError>> => {
+      const res = await instance.post<{ success: boolean; message: string } | ConsumerHostError>(
+        `/users/subscriptions/${projectId}/unsubscribe`,
+        {},
+        {
+          headers: authHeaders.current,
+        },
+      );
+
+      return res;
+    },
+    [],
+  );
+
+  // Get user subscription for a specific project
+  const getUserSubscriptionByProject = useCallback(
+    async (
+      projectId: number,
+    ): Promise<AxiosResponse<IGetUserSubscription | IGetUserSubscriptionNotFound | ConsumerHostError>> => {
+      const res = await instance.get<IGetUserSubscription | IGetUserSubscriptionNotFound | ConsumerHostError>(
+        `/users/subscriptions/${projectId}`,
+        {
+          headers: authHeaders.current,
+        },
+      );
+
+      return res;
+    },
+    [],
+  );
+
+  // Get user hosting plans for a specific project
+  const getUserHostingPlansByProject = useCallback(
+    async (projectId: number): Promise<AxiosResponse<IGetHostingPlans[] | ConsumerHostError>> => {
+      const res = await instance.get<IGetHostingPlans[] | ConsumerHostError>(
+        `/users/hosting-plans/project/${projectId}`,
+        {
+          headers: authHeaders.current,
+        },
+      );
+
+      return res;
+    },
+    [],
+  );
+
   useEffect(() => {
     checkIfHasLogin();
     if (autoLogin) {
@@ -469,6 +539,11 @@ export const useConsumerHostServices = (
     getStatisticQueries: alertResDecorator(getStatisticQueries),
     getStatisticQueriesByPrice: alertResDecorator(getStatisticQueriesByPrice),
     getUserQueriesAggregation: alertResDecorator(getUserQueriesAggregation),
+    getUserSubscriptions: alertResDecorator(loginResDecorator(getUserSubscriptions)),
+    createSubscription: alertResDecorator(loginResDecorator(createSubscription)),
+    unsubscribeProject: alertResDecorator(loginResDecorator(unsubscribeProject)),
+    getUserSubscriptionByProject: alertResDecorator(loginResDecorator(getUserSubscriptionByProject)),
+    getUserHostingPlansByProject: alertResDecorator(loginResDecorator(getUserHostingPlansByProject)),
     getSpentInfo,
     getHostingPlanApi,
     getChannelLimit,
@@ -603,6 +678,36 @@ export interface IIndexerFlexPlan {
   online: boolean;
   price_token: string;
 }
+
+export interface IGetUserSubscription {
+  id: number;
+  user_id: number;
+  project_id: number;
+  auto_latest?: boolean;
+  max_versions?: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  project?: {
+    id: number;
+    metadata: string;
+  };
+}
+
+// Return type when subscription is not found
+export interface IGetUserSubscriptionNotFound {
+  subscribed: false;
+  project_id: number;
+  user_id: number;
+  message: string;
+}
+
+// Type guard: checks if the user is not subscribed
+export const isNotSubscribed = (
+  res: IGetUserSubscription | IGetUserSubscriptionNotFound | ConsumerHostError,
+): res is IGetUserSubscriptionNotFound => {
+  return 'subscribed' in res && res.subscribed === false;
+};
 
 export type ConsumerHostError =
   | {

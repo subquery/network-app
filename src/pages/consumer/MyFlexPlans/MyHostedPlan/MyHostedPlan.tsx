@@ -6,11 +6,17 @@ import { AiOutlineCopy } from 'react-icons/ai';
 import { LuArrowRightFromLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router';
 import Copy from '@components/Copy';
+import { DeploymentMeta } from '@components/DeploymentInfo';
 import { getHttpEndpointWithApiKey, getWsEndpointWithApiKey, specialApiKeyName } from '@components/GetEndpoint';
 import { OutlineDot } from '@components/Icons/Icons';
 import { useProjectMetadata } from '@containers';
 import { useAccount } from '@containers/Web3';
-import { GetUserApiKeys, IGetHostingPlans, useConsumerHostServices } from '@hooks/useConsumerHostServices';
+import {
+  GetUserApiKeys,
+  IGetHostingPlans,
+  IGetUserSubscription,
+  useConsumerHostServices,
+} from '@hooks/useConsumerHostServices';
 import { isConsumerHostError } from '@hooks/useConsumerHostServices';
 import CreateHostingFlexPlan, {
   CreateHostingFlexPlanRef,
@@ -95,7 +101,9 @@ const MyHostedPlan: FC = () => {
   const navigate = useNavigate();
   const {
     updateHostingPlanApi,
-    getHostingPlanApi,
+    getUserSubscriptions,
+    unsubscribeProject,
+    getUserHostingPlansByProject,
     loading: consumerHostLoading,
   } = useConsumerHostServices({
     alert: true,
@@ -111,64 +119,103 @@ const MyHostedPlan: FC = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchConnectLoading, setFetchConnectLoading] = useState(false);
-  const [createdHostingPlan, setCreatedHostingPlan] = useState<(IGetHostingPlans & { projectName: string | number })[]>(
-    [],
-  );
+  const [expandLoading, setExpandLoading] = useState(false);
+  const [subscriptions, setSubscriptions] = useState<IGetUserSubscription[]>([]);
+  const [hostingPlansMap, setHostingPlansMap] = useState<
+    Map<number, (IGetHostingPlans & { projectName: string | number })[]>
+  >(new Map());
+  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
   const [currentEditInfo, setCurrentEditInfo] = useState<IGetHostingPlans & { projectName: string | number }>();
   const { getMetadataFromCid } = useProjectMetadata();
   const ref = useRef<CreateHostingFlexPlanRef>(null);
-  const init = async () => {
+
+  const initSubscriptions = async () => {
     try {
       setLoading(true);
+      const res = await getUserSubscriptions();
+      if (!isConsumerHostError(res.data)) {
+        setSubscriptions(res.data);
+      } else {
+        setSubscriptions([]);
+      }
+    } catch (e) {
+      setSubscriptions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const res = await getHostingPlanApi({
-        account,
-      });
-      const allMetadata = await Promise.allSettled(
-        res.data.map((i) => {
-          const cid = i.project.metadata.startsWith('Qm')
-            ? i.project.metadata
-            : bytes32ToCid(`0x${i.project.metadata}`);
-          return getMetadataFromCid(cid);
-        }),
-      );
-      setCreatedHostingPlan(
-        res.data.map((raw, index) => {
+  const fetchHostingPlans = async (projectId: number) => {
+    try {
+      setExpandLoading(true);
+      const res = await getUserHostingPlansByProject(projectId);
+      if (!isConsumerHostError(res.data)) {
+        const allMetadata = await Promise.allSettled(
+          res.data.map((i) => {
+            const cid = i.project.metadata.startsWith('Qm')
+              ? i.project.metadata
+              : bytes32ToCid(`0x${i.project.metadata}`);
+            return getMetadataFromCid(cid);
+          }),
+        );
+
+        const plansWithNames = res.data.map((raw, index) => {
           const result = allMetadata[index];
           const name = result.status === 'fulfilled' ? result.value.name : raw.id;
           return {
             ...raw,
             projectName: name,
           };
-        }),
-      );
+        });
+
+        setHostingPlansMap((prev) => new Map(prev).set(projectId, plansWithNames));
+      }
     } catch (e) {
-      setCreatedHostingPlan([]);
+      parseError(e, { alert: true });
+    } finally {
+      setExpandLoading(false);
+    }
+  };
+
+  const handleExpand = async (expanded: boolean, record: IGetUserSubscription) => {
+    if (expanded) {
+      setExpandedRowKeys((prev) => [...prev, record.project_id]);
+      if (!hostingPlansMap.has(record.project_id)) {
+        await fetchHostingPlans(record.project_id);
+      }
+    } else {
+      setExpandedRowKeys((prev) => prev.filter((key) => key !== record.project_id));
+    }
+  };
+
+  const handleUnsubscribe = async (projectId: number) => {
+    try {
+      setLoading(true);
+      const res = await unsubscribeProject(projectId);
+      if (!isConsumerHostError(res.data)) {
+        message.success('Unsubscribed successfully');
+        await initSubscriptions();
+        setHostingPlansMap((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(projectId);
+          return newMap;
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (account) {
-      init();
-    }
-  }, [account]);
+  const expandedRowRender = (record: IGetUserSubscription) => {
+    const plans = hostingPlansMap.get(record.project_id) || [];
 
-  return (
-    <div className={styles.myHostedPlan}>
+    return (
       <Table
         rowKey={(record) => record.id}
-        style={{ marginTop: 40 }}
-        loading={loading || consumerHostLoading}
-        dataSource={createdHostingPlan}
+        dataSource={plans}
+        pagination={false}
         columns={[
           {
-            title: 'Project',
-            dataIndex: 'projectName',
-          },
-          {
-            width: 150,
             title: 'Plan',
             dataIndex: 'price',
             render: (val: string) => {
@@ -209,7 +256,7 @@ const MyHostedPlan: FC = () => {
             fixed: 'right',
             dataIndex: 'spent',
             width: 50,
-            render: (_, record) => {
+            render: (_, planRecord) => {
               return (
                 <div className="flex">
                   <Button
@@ -224,13 +271,12 @@ const MyHostedPlan: FC = () => {
                       try {
                         setFetchConnectLoading(true);
                         const url = await getConnectUrl(
-                          record.deployment.deployment,
-                          numToHex(record.deployment.project_id),
+                          planRecord.deployment.deployment,
+                          numToHex(planRecord.deployment.project_id),
                         );
 
                         if (!url.http && !url.ws) return;
-                        setCurrentEditInfo(record);
-
+                        setCurrentEditInfo(planRecord);
                         setCurrentConnectUrl(url);
                         setOpen(true);
                       } finally {
@@ -256,49 +302,8 @@ const MyHostedPlan: FC = () => {
                           key: 1,
                           onClick: () => {
                             navigate(
-                              `/consumer/flex-plans/ongoing/details/${record.id}?id=${record.id}&projectName=${record.projectName}&deploymentId=${record.deployment.deployment}&projectMetadata=${record.project.metadata}`,
+                              `/consumer/flex-plans/ongoing/details/${planRecord.id}?id=${planRecord.id}&projectName=${planRecord.projectName}&deploymentId=${planRecord.deployment.deployment}&projectMetadata=${planRecord.project.metadata}`,
                             );
-                          },
-                        },
-                        {
-                          label: (
-                            <Typography.Link type="info" style={{ padding: '6px 10px' }}>
-                              {record.price === '0' ? 'Restart' : 'Update'}
-                            </Typography.Link>
-                          ),
-                          key: 2,
-                          onClick: () => {
-                            setCurrentEditInfo(record);
-                            ref.current?.showModal();
-                          },
-                        },
-                        {
-                          label: (
-                            <Typography.Link
-                              type={record.price === '0' ? 'default' : 'danger'}
-                              style={{
-                                padding: '6px 10px',
-                              }}
-                            >
-                              Stop
-                            </Typography.Link>
-                          ),
-                          key: 3,
-                          onClick: async () => {
-                            if (record.price === '0') return;
-                            try {
-                              setLoading(true);
-                              await updateHostingPlanApi({
-                                id: record.id,
-                                deploymentId: record.deployment.deployment,
-                                price: '0',
-                                maximum: 2,
-                                expiration: 0,
-                              });
-                              init();
-                            } finally {
-                              setLoading(false);
-                            }
                           },
                         },
                       ],
@@ -311,7 +316,64 @@ const MyHostedPlan: FC = () => {
             },
           },
         ]}
-      ></Table>
+      />
+    );
+  };
+
+  useEffect(() => {
+    if (account) {
+      initSubscriptions();
+    }
+  }, [account]);
+
+  return (
+    <div className={styles.myHostedPlan}>
+      <Table
+        rowKey={(record) => record.project_id}
+        style={{ marginTop: 40 }}
+        loading={loading || consumerHostLoading || expandLoading}
+        dataSource={subscriptions}
+        expandable={{
+          expandedRowRender,
+          expandedRowKeys,
+          onExpand: handleExpand,
+        }}
+        columns={[
+          {
+            title: 'Project',
+            dataIndex: ['project', 'name'],
+            render: (name: string, record) => {
+              return <DeploymentMeta deploymentId={''} projectMetadata={record?.project?.metadata || ''} />;
+            },
+          },
+          {
+            title: 'Auto Latest',
+            dataIndex: 'auto_latest',
+            render: (val?: boolean) => {
+              return <Tag color={val ? 'success' : 'default'}>{val ? 'Yes' : 'No'}</Tag>;
+            },
+          },
+          {
+            title: 'Status',
+            dataIndex: 'is_active',
+            render: (val: boolean) => {
+              return <Tag color={val ? 'success' : 'error'}>{val ? 'Active' : 'Inactive'}</Tag>;
+            },
+          },
+          {
+            title: 'Action',
+            fixed: 'right',
+            width: 120,
+            render: (_, record) => {
+              return (
+                <Button type="link" danger onClick={() => handleUnsubscribe(record.project_id)}>
+                  Unsubscribe
+                </Button>
+              );
+            },
+          },
+        ]}
+      />
 
       <CreateHostingFlexPlan
         hideBoard
@@ -320,8 +382,12 @@ const MyHostedPlan: FC = () => {
         id={`${currentEditInfo?.deployment.project_id || ''}`}
         deploymentId={`${currentEditInfo?.deployment.deployment || ''}`}
         editInformation={currentEditInfo}
-        onSubmit={() => init()}
-      ></CreateHostingFlexPlan>
+        onSubmit={async () => {
+          if (currentEditInfo) {
+            await fetchHostingPlans(currentEditInfo.deployment.project_id);
+          }
+        }}
+      />
 
       <Modal
         title="Get Endpoint"

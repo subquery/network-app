@@ -66,6 +66,11 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
           onClick={() => {
             onClick && onClick();
           }}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
         >
           <div style={{ display: 'flex', height: 22 }}>
             {project?.name && (
@@ -88,19 +93,19 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
               </Typography>
             </div>
           )}
-          <div className={project?.name ? '' : styles.deployment}>
-            <Typography variant="small" className={clsx(styles.text, 'overflowEllipsis')} style={{ maxWidth: 200 }}>
-              {versionHeader}
-            </Typography>
-
-            <Copy value={deploymentId} position="flex-start">
-              <Typography variant="small" className={styles.text}>
-                {deploymentId
-                  ? `${deploymentId.slice(0, 5)}...${deploymentId.slice(deploymentId.length - 5, deploymentId.length)}`
-                  : '-'}
+          {deploymentId && (
+            <div className={project?.name ? '' : styles.deployment}>
+              <Typography variant="small" className={clsx(styles.text, 'overflowEllipsis')} style={{ maxWidth: 200 }}>
+                {versionHeader}
               </Typography>
-            </Copy>
-          </div>
+
+              <Copy value={deploymentId} position="flex-start">
+                <Typography variant="small" className={styles.text}>
+                  {`${deploymentId.slice(0, 5)}...${deploymentId.slice(deploymentId.length - 5, deploymentId.length)}`}
+                </Typography>
+              </Copy>
+            </div>
+          )}
         </div>
       </div>
     </ChatBoxTooltip>
