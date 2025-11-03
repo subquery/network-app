@@ -488,7 +488,7 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 获取当前用户指定项目订阅信息
+  // Get user subscription for a specific project
   const getUserSubscriptionByProject = useCallback(
     async (
       projectId: number,
