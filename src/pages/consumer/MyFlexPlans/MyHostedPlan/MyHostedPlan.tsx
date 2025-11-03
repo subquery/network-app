@@ -119,6 +119,7 @@ const MyHostedPlan: FC = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchConnectLoading, setFetchConnectLoading] = useState(false);
+  const [expandLoading, setExpandLoading] = useState(false);
   const [subscriptions, setSubscriptions] = useState<IGetUserSubscription[]>([]);
   const [hostingPlansMap, setHostingPlansMap] = useState<
     Map<number, (IGetHostingPlans & { projectName: string | number })[]>
@@ -146,6 +147,7 @@ const MyHostedPlan: FC = () => {
 
   const fetchHostingPlans = async (projectId: number) => {
     try {
+      setExpandLoading(true);
       const res = await getUserHostingPlansByProject(projectId);
       if (!isConsumerHostError(res.data)) {
         const allMetadata = await Promise.allSettled(
@@ -170,6 +172,8 @@ const MyHostedPlan: FC = () => {
       }
     } catch (e) {
       parseError(e, { alert: true });
+    } finally {
+      setExpandLoading(false);
     }
   };
 
@@ -302,47 +306,6 @@ const MyHostedPlan: FC = () => {
                             );
                           },
                         },
-                        // {
-                        //   label: (
-                        //     <Typography.Link type="info" style={{ padding: '6px 10px' }}>
-                        //       {planRecord.price === '0' ? 'Restart' : 'Update'}
-                        //     </Typography.Link>
-                        //   ),
-                        //   key: 2,
-                        //   onClick: () => {
-                        //     setCurrentEditInfo(planRecord);
-                        //     ref.current?.showModal();
-                        //   },
-                        // },
-                        // {
-                        //   label: (
-                        //     <Typography.Link
-                        //       type={planRecord.price === '0' ? 'default' : 'danger'}
-                        //       style={{
-                        //         padding: '6px 10px',
-                        //       }}
-                        //     >
-                        //       Stop
-                        //     </Typography.Link>
-                        //   ),
-                        //   key: 3,
-                        //   onClick: async () => {
-                        //     if (planRecord.price === '0') return;
-                        //     try {
-                        //       setLoading(true);
-                        //       await updateHostingPlanApi({
-                        //         id: planRecord.id,
-                        //         deploymentId: planRecord.deployment.deployment,
-                        //         price: '0',
-                        //         maximum: 2,
-                        //         expiration: 0,
-                        //       });
-                        //       await fetchHostingPlans(record.project_id);
-                        //     } finally {
-                        //       setLoading(false);
-                        //     }
-                        //   },
-                        // },
                       ],
                     }}
                   >
@@ -368,7 +331,7 @@ const MyHostedPlan: FC = () => {
       <Table
         rowKey={(record) => record.project_id}
         style={{ marginTop: 40 }}
-        loading={loading || consumerHostLoading}
+        loading={loading || consumerHostLoading || expandLoading}
         dataSource={subscriptions}
         expandable={{
           expandedRowRender,
