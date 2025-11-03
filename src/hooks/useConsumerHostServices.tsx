@@ -702,7 +702,7 @@ export interface IGetUserSubscriptionNotFound {
   message: string;
 }
 
-// 新增: 用于类型守卫,判断是否未订阅
+// Type guard: checks if the user is not subscribed
 export const isNotSubscribed = (
   res: IGetUserSubscription | IGetUserSubscriptionNotFound | ConsumerHostError,
 ): res is IGetUserSubscriptionNotFound => {
