@@ -505,7 +505,7 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 获取当前用户指定项目的托管计划
+  // Get user hosting plans for a specific project
   const getUserHostingPlansByProject = useCallback(
     async (projectId: number): Promise<AxiosResponse<IGetHostingPlans[] | ConsumerHostError>> => {
       const res = await instance.get<IGetHostingPlans[] | ConsumerHostError>(
