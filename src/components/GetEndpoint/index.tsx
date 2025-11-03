@@ -306,7 +306,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
             return { data: null };
           }
         } else {
-          // 已有订阅
+          // Subscription already exists
           setCurrentSubscription(subscriptionRes.data);
           return { data: subscriptionRes.data };
         }
