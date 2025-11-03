@@ -101,9 +101,7 @@ export const DeploymentInfo: React.FC<Props> = ({ project, deploymentId, type, m
 
               <Copy value={deploymentId} position="flex-start">
                 <Typography variant="small" className={styles.text}>
-                  {deploymentId
-                    ? `${deploymentId.slice(0, 5)}...${deploymentId.slice(deploymentId.length - 5, deploymentId.length)}`
-                    : '-'}
+                  {`${deploymentId.slice(0, 5)}...${deploymentId.slice(deploymentId.length - 5, deploymentId.length)}`}
                 </Typography>
               </Copy>
             </div>
