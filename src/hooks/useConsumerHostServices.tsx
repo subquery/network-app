@@ -694,7 +694,7 @@ export interface IGetUserSubscription {
   };
 }
 
-// 新增: 未订阅时的返回类型
+// Return type when subscription is not found
 export interface IGetUserSubscriptionNotFound {
   subscribed: false;
   project_id: number;
