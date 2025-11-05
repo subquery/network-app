@@ -295,7 +295,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
 
       if (!isConsumerHostError(subscriptionRes.data)) {
         if (isNotSubscribed(subscriptionRes.data)) {
-          // 没有订阅,创建新订阅
+          // No subscription found, create new subscription
           const newSubscription = await createSubscription({ project_id: projectIdNumber });
 
           if (!isConsumerHostError(newSubscription.data)) {
@@ -306,7 +306,7 @@ const GetEndpoint: FC<IProps> = ({ deploymentId, project, actionBtn, initialOpen
             return { data: null };
           }
         } else {
-          // 已有订阅
+          // Subscription already exists
           setCurrentSubscription(subscriptionRes.data);
           return { data: subscriptionRes.data };
         }

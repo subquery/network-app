@@ -473,7 +473,7 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 取消订阅
+  // New: Unsubscribe from a project
   const unsubscribeProject = useCallback(
     async (projectId: number): Promise<AxiosResponse<{ success: boolean; message: string } | ConsumerHostError>> => {
       const res = await instance.post<{ success: boolean; message: string } | ConsumerHostError>(
@@ -489,6 +489,7 @@ export const useConsumerHostServices = (
     [],
   );
 
+  // Get user subscription for a specific project
   const getUserSubscriptionByProject = useCallback(
     async (
       projectId: number,
@@ -505,6 +506,7 @@ export const useConsumerHostServices = (
     [],
   );
 
+  // Get user hosting plans for a specific project
   const getUserHostingPlansByProject = useCallback(
     async (projectId: number, wallet: string): Promise<AxiosResponse<IGetHostingPlans[] | ConsumerHostError>> => {
       const res = await instance.get<IGetHostingPlans[] | ConsumerHostError>(`/hosting-plans/project/${projectId}`, {
@@ -693,7 +695,7 @@ export interface IGetUserSubscription {
   };
 }
 
-// 新增: 未订阅时的返回类型
+// Return type when subscription is not found
 export interface IGetUserSubscriptionNotFound {
   subscribed: false;
   project_id: number;
@@ -701,7 +703,7 @@ export interface IGetUserSubscriptionNotFound {
   message: string;
 }
 
-// 新增: 用于类型守卫,判断是否未订阅
+// Type guard: checks if the user is not subscribed
 export const isNotSubscribed = (
   res: IGetUserSubscription | IGetUserSubscriptionNotFound | ConsumerHostError,
 ): res is IGetUserSubscriptionNotFound => {

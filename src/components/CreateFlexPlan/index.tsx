@@ -19,7 +19,7 @@ import { useSqtPrice } from '@hooks/useSqtPrice';
 import { Steps, Typography } from '@subql/components';
 import { formatSQT, useAsyncMemo, useGetDeploymentBoosterTotalAmountByDeploymentIdQuery } from '@subql/react-hooks';
 import { parseError, TOKEN, tokenDecimals } from '@utils';
-import { Button, Checkbox, Divider, Form, InputNumber, Tooltip } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber } from 'antd';
 import BigNumberJs from 'bignumber.js';
 import clsx from 'clsx';
 import { parseEther } from 'ethers/lib/utils';
