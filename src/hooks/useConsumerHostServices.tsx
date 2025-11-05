@@ -450,15 +450,16 @@ export const useConsumerHostServices = (
     return res;
   }, []);
 
-  const getUserSubscriptions = useCallback(async (): Promise<
-    AxiosResponse<IGetUserSubscription[] | ConsumerHostError>
-  > => {
-    const res = await instance.get<IGetUserSubscription[] | ConsumerHostError>('/users/subscriptions', {
-      headers: authHeaders.current,
-    });
+  const getUserSubscriptions = useCallback(
+    async (address: string): Promise<AxiosResponse<IGetUserSubscription[] | ConsumerHostError>> => {
+      const res = await instance.get<IGetUserSubscription[] | ConsumerHostError>(`/subscriptions/wallet/${address}`, {
+        headers: authHeaders.current,
+      });
 
-    return res;
-  }, []);
+      return res;
+    },
+    [],
+  );
 
   // 新增: 创建订阅
   const createSubscription = useCallback(
@@ -488,7 +489,6 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 获取当前用户指定项目订阅信息
   const getUserSubscriptionByProject = useCallback(
     async (
       projectId: number,
@@ -505,15 +505,14 @@ export const useConsumerHostServices = (
     [],
   );
 
-  // 新增: 获取当前用户指定项目的托管计划
   const getUserHostingPlansByProject = useCallback(
-    async (projectId: number): Promise<AxiosResponse<IGetHostingPlans[] | ConsumerHostError>> => {
-      const res = await instance.get<IGetHostingPlans[] | ConsumerHostError>(
-        `/users/hosting-plans/project/${projectId}`,
-        {
-          headers: authHeaders.current,
+    async (projectId: number, wallet: string): Promise<AxiosResponse<IGetHostingPlans[] | ConsumerHostError>> => {
+      const res = await instance.get<IGetHostingPlans[] | ConsumerHostError>(`/hosting-plans/project/${projectId}`, {
+        headers: authHeaders.current,
+        params: {
+          wallet,
         },
-      );
+      });
 
       return res;
     },

@@ -100,7 +100,6 @@ const useGetConnectUrl = () => {
 const MyHostedPlan: FC = () => {
   const navigate = useNavigate();
   const {
-    updateHostingPlanApi,
     getUserSubscriptions,
     unsubscribeProject,
     getUserHostingPlansByProject,
@@ -130,10 +129,12 @@ const MyHostedPlan: FC = () => {
   const ref = useRef<CreateHostingFlexPlanRef>(null);
 
   const initSubscriptions = async () => {
+    if (!account) return;
     try {
       setLoading(true);
-      const res = await getUserSubscriptions();
+      const res = await getUserSubscriptions(account || '');
       if (!isConsumerHostError(res.data)) {
+        console.warn(res.data);
         setSubscriptions(res.data);
       } else {
         setSubscriptions([]);
@@ -148,7 +149,7 @@ const MyHostedPlan: FC = () => {
   const fetchHostingPlans = async (projectId: number) => {
     try {
       setExpandLoading(true);
-      const res = await getUserHostingPlansByProject(projectId);
+      const res = await getUserHostingPlansByProject(projectId, account || '');
       if (!isConsumerHostError(res.data)) {
         const allMetadata = await Promise.allSettled(
           res.data.map((i) => {
