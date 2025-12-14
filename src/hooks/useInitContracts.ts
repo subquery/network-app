@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { l1Chain, l2Chain, NETWORK_NAME } from '@containers/Web3';
+import { DelegationPool__factory } from '@pages/delegator/Pool/contracts/delegationPool__factory';
 import { RootContractSDK } from '@subql/contract-sdk/rootSdk';
 import { ContractSDK } from '@subql/contract-sdk/sdk';
 import { ContractClient } from '@subql/network-clients';
@@ -29,12 +30,17 @@ export function useInitContracts(): { loading: boolean } {
     function initContract() {
       if (signer || provider) {
         try {
-          const contractInstance = ContractSDK.create(
-            signer?.provider.network.chainId === l2Chain.id ? signer : baseProvider,
-            { network: NETWORK_NAME },
+          const signerOrProvider = signer?.provider.network.chainId === l2Chain.id ? signer : baseProvider;
+          const contractInstance = ContractSDK.create(signerOrProvider, { network: NETWORK_NAME });
+
+          const delegationPool = DelegationPool__factory.connect(
+            import.meta.env.VITE_DELEGATION_POOL_ADDRESS,
+            signerOrProvider,
           );
 
-          setContracts(contractInstance);
+          const contractSdkWithDelegationPool = Object.assign(contractInstance, { delegationPool });
+
+          setContracts(contractSdkWithDelegationPool);
 
           const sortedContractClient = ContractClient.create(contractInstance);
           setContractClient(sortedContractClient);

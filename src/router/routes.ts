@@ -41,6 +41,7 @@ const DELEGATOR = {
   DELEGATOR: 'delegator',
   DELEGATING: 'my-delegation',
   DELEGATOR_INDEXERS: 'node-operators',
+  DELEGATOR_POOL: 'pool',
   ALL_INDEXERS: 'all',
   TOP_INDEXERS: 'top',
 } as const;
@@ -226,6 +227,10 @@ export const routers: BasicRouteType[] = [
         component: React.lazy(() => import('../pages/delegator/Indexers')),
         redirect: '/delegator/node-operators/all',
         children: [{ path: 'all', component: React.lazy(() => import('../pages/delegator/AllIndexers/AllIndexers')) }],
+      },
+      {
+        path: DELEGATOR.DELEGATOR_POOL,
+        component: React.lazy(() => import('../pages/delegator/Pool/Pool')),
       },
     ],
   },

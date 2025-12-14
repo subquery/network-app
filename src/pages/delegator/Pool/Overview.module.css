@@ -1,0 +1,21 @@
+.cardInfos {
+  display: flex;
+  justify-content: space-between;
+  margin: 24px 0px;
+}
+
+.cardContentLine + .cardContentLine {
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .cardInfos {
+    flex-direction: column;
+    margin: 24px 0px 0px 0px;
+  }
+  .cardDetails {
+    flex-direction: column;
+    margin-bottom: 24px;
+    width: 100% !important;
+  }
+}

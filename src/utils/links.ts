@@ -38,6 +38,7 @@ const {
   MY_OFFERS,
   DELEGATOR_INDEXERS,
   DELEGATING,
+  DELEGATOR_POOL,
 } = ROUTES;
 
 export const IndexerSidebar = [
@@ -98,6 +99,10 @@ export const DelegatorSidebar = [
   {
     label: 'Node Operators',
     link: `/${ROUTES.DELEGATOR}/${DELEGATOR_INDEXERS}`,
+  },
+  {
+    label: 'Pool Delegation',
+    link: `/${ROUTES.DELEGATOR}/${DELEGATOR_POOL}`,
   },
 ];
 

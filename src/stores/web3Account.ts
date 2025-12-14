@@ -1,6 +1,7 @@
 // Copyright 2020-2022 SubQuery Pte Ltd authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { DelegationPool } from '@pages/delegator/Pool/contracts/delegationPool';
 import { RootContractSDK } from '@subql/contract-sdk/rootSdk';
 import { ContractSDK } from '@subql/contract-sdk/sdk';
 import { ContractClient } from '@subql/network-clients';
@@ -13,6 +14,8 @@ import { create } from 'zustand';
  *
  */
 
+type ContractSDKWithDelegationPool = ContractSDK & { delegationPool: DelegationPool };
+
 interface Web3Store {
   error?: any;
   setError: (error: any) => void;
@@ -20,8 +23,8 @@ interface Web3Store {
   isInitialAccount?: boolean;
   setIsInitialAccount: (isInitialAccount: boolean) => void;
 
-  contracts?: ContractSDK;
-  setContracts: (contracts: ContractSDK) => void;
+  contracts?: ContractSDKWithDelegationPool;
+  setContracts: (contracts: ContractSDKWithDelegationPool) => void;
 
   rootContracts?: RootContractSDK;
   setRootContracts: (rootContracts: RootContractSDK) => void;
@@ -40,7 +43,7 @@ export const useWeb3Store = create<Web3Store>()((set) => ({
 
   setError: (error: Error) => set((state) => ({ ...state, error })),
 
-  setContracts: (contracts: ContractSDK | undefined) => set((state) => ({ ...state, contracts })),
+  setContracts: (contracts: ContractSDKWithDelegationPool | undefined) => set((state) => ({ ...state, contracts })),
 
   setContractClient: (contractClient: ContractClient | undefined) => set((state) => ({ ...state, contractClient })),
 }));
