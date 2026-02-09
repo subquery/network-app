@@ -26,7 +26,7 @@ const ProjectItem: React.FC<{
   onClick?: () => void;
 }> = ({ project, makeRedirectHref, onClick }) => {
   const { getMetadataFromCid } = useProjectMetadata();
-  const { manifest } = useGetDeploymentManifest(project.type === ProjectType.RPC ? project.deploymentId : '');
+  const { manifest } = useGetDeploymentManifest(project.deploymentId);
 
   const { data: metadata } = useAsyncMemo(() => getMetadataFromCid(project.metadata), [project]);
 

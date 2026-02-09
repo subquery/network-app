@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
@@ -12,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { toSvg } from 'jdenticon';
 
+import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
 import { ProjectMetadata } from 'src/models';
 
 import IPFSImage from '../IPFSImage';
@@ -49,6 +49,21 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
     );
   }, [project?.deployments?.nodes]);
 
+  const networkVal = React.useMemo(() => {
+    if (project.type === ProjectType.RPC && project.manifest?.rpcFamily) {
+      return project.manifest.rpcFamily[0];
+    }
+
+    const chainId =
+      project.type === ProjectType.SUBQUERY ? project.manifest?.network?.chainId : project.manifest?.dataSources?.[0]?.network;
+    if (!chainId) return '-';
+
+    const polkadotName = NETWORK_TYPE_DICTION[chainId];
+    const ethName = ETH_TYPE_DICTION[chainId];
+
+    return polkadotName || ethName || chainId;
+  }, [project.type, project.manifest]);
+
   return (
     <a
       href={href ? href : `${PROJECT_NAV}/${project.id}`}
@@ -76,7 +91,9 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
       </div>
 
       {project.type === ProjectType.SUBQUERY || project.type === ProjectType.SUBGRAPH ? (
-        <IndexerName address={project.owner} size="tiny" />
+        <Typography variant="small" style={{ textTransform: 'uppercase' }}>
+          {networkVal}
+        </Typography>
       ) : (
         <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}
