@@ -26,6 +26,8 @@ type Props = {
 };
 
 const { PROJECT_NAV } = ROUTES;
+const MAX_NETWORK_NAME_LENGTH = 28;
+const MAX_CHAIN_ID_LENGTH = 18;
 
 const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
   const ipfsImage = React.useMemo(() => {
@@ -55,14 +57,31 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
     }
 
     const chainId =
-      project.type === ProjectType.SUBQUERY ? project.manifest?.network?.chainId : project.manifest?.dataSources?.[0]?.network;
+      project.type === ProjectType.SUBQUERY
+        ? project.manifest?.network?.chainId
+        : project.manifest?.dataSources?.[0]?.network;
     if (!chainId) return '-';
 
     const polkadotName = NETWORK_TYPE_DICTION[chainId];
     const ethName = ETH_TYPE_DICTION[chainId];
 
-    return polkadotName || ethName || chainId;
+    return polkadotName || ethName || `Chain ID ${chainId}`;
   }, [project.type, project.manifest]);
+
+  const isChainIdFallback = React.useMemo(() => {
+    return `${networkVal || '-'}`.startsWith('Chain ID ');
+  }, [networkVal]);
+
+  const chainIdDisplayVal = React.useMemo(() => {
+    if (!isChainIdFallback) return '';
+    const val = `${networkVal || '-'}`.replace('Chain ID ', '');
+    return val.length > MAX_CHAIN_ID_LENGTH ? `${val.slice(0, MAX_CHAIN_ID_LENGTH)}...` : val;
+  }, [isChainIdFallback, networkVal]);
+
+  const networkDisplayVal = React.useMemo(() => {
+    const val = `${networkVal || '-'}`;
+    return val.length > MAX_NETWORK_NAME_LENGTH ? `${val.slice(0, MAX_NETWORK_NAME_LENGTH)}...` : val;
+  }, [networkVal]);
 
   return (
     <a
@@ -91,9 +110,20 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
       </div>
 
       {project.type === ProjectType.SUBQUERY || project.type === ProjectType.SUBGRAPH ? (
-        <Typography variant="small" style={{ textTransform: 'uppercase' }}>
-          {networkVal}
-        </Typography>
+        <div className="flex">
+          {isChainIdFallback ? (
+            <>
+              <Typography variant="small" type="secondary">
+                Chain ID
+              </Typography>
+              <Typography variant="small" style={{ marginLeft: 6 }}>
+                {chainIdDisplayVal}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="small">{networkDisplayVal}</Typography>
+          )}
+        </div>
       ) : (
         <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}
