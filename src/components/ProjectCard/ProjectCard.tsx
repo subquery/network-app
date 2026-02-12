@@ -11,7 +11,7 @@ import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { toSvg } from 'jdenticon';
 
-import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
+import { getNetworkNameByChainId } from 'src/const/const';
 import { ProjectMetadata } from 'src/models';
 
 import IPFSImage from '../IPFSImage';
@@ -62,11 +62,14 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
         : project.manifest?.dataSources?.[0]?.network;
     if (!chainId) return '-';
 
-    const polkadotName = NETWORK_TYPE_DICTION[chainId];
-    const ethName = ETH_TYPE_DICTION[chainId];
-
-    return polkadotName || ethName || `Chain ID ${chainId}`;
-  }, [project.type, project.manifest]);
+    return (
+      getNetworkNameByChainId(chainId, {
+        projectName: project.metadata?.name,
+        projectId: project.id,
+        source: 'ProjectCard',
+      }) || `Chain ID ${chainId}`
+    );
+  }, [project.type, project.manifest, project.id, project.metadata?.name]);
 
   const isChainIdFallback = React.useMemo(() => {
     return `${networkVal || '-'}`.startsWith('Chain ID ');
