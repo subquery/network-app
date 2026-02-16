@@ -33,3 +33,6 @@ src/globalTypes.ts
 dist
 
 stats.html
+
+.yarn
+.data

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import * as React from 'react';
-import { IndexerName } from '@components/IndexerDetails/IndexerName';
 import { Manifest } from '@hooks/useGetDeploymentManifest';
 import { Address, Typography } from '@subql/components';
 import { ProjectFieldsFragment, ProjectType } from '@subql/network-query';
@@ -12,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { toSvg } from 'jdenticon';
 
+import { getNetworkNameByChainId } from 'src/const/const';
 import { ProjectMetadata } from 'src/models';
 
 import IPFSImage from '../IPFSImage';
@@ -26,6 +26,8 @@ type Props = {
 };
 
 const { PROJECT_NAV } = ROUTES;
+const MAX_NETWORK_NAME_LENGTH = 28;
+const MAX_CHAIN_ID_LENGTH = 18;
 
 const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
   const ipfsImage = React.useMemo(() => {
@@ -48,6 +50,41 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
       BigNumber(0),
     );
   }, [project?.deployments?.nodes]);
+
+  const networkVal = React.useMemo(() => {
+    if (project.type === ProjectType.RPC && project.manifest?.rpcFamily) {
+      return project.manifest.rpcFamily[0];
+    }
+
+    const chainId =
+      project.type === ProjectType.SUBQUERY
+        ? project.manifest?.network?.chainId
+        : project.manifest?.dataSources?.[0]?.network;
+    if (!chainId) return '-';
+
+    return (
+      getNetworkNameByChainId(chainId, {
+        projectName: project.metadata?.name,
+        projectId: project.id,
+        source: 'ProjectCard',
+      }) || `Chain ID ${chainId}`
+    );
+  }, [project.type, project.manifest, project.id, project.metadata?.name]);
+
+  const isChainIdFallback = React.useMemo(() => {
+    return `${networkVal || '-'}`.startsWith('Chain ID ');
+  }, [networkVal]);
+
+  const chainIdDisplayVal = React.useMemo(() => {
+    if (!isChainIdFallback) return '';
+    const val = `${networkVal || '-'}`.replace('Chain ID ', '');
+    return val.length > MAX_CHAIN_ID_LENGTH ? `${val.slice(0, MAX_CHAIN_ID_LENGTH)}...` : val;
+  }, [isChainIdFallback, networkVal]);
+
+  const networkDisplayVal = React.useMemo(() => {
+    const val = `${networkVal || '-'}`;
+    return val.length > MAX_NETWORK_NAME_LENGTH ? `${val.slice(0, MAX_NETWORK_NAME_LENGTH)}...` : val;
+  }, [networkVal]);
 
   return (
     <a
@@ -76,7 +113,20 @@ const ProjectCard: React.FC<Props> = ({ project, href, onClick }) => {
       </div>
 
       {project.type === ProjectType.SUBQUERY || project.type === ProjectType.SUBGRAPH ? (
-        <IndexerName address={project.owner} size="tiny" />
+        <div className="flex">
+          {isChainIdFallback ? (
+            <>
+              <Typography variant="small" type="secondary">
+                Chain ID
+              </Typography>
+              <Typography variant="small" style={{ marginLeft: 6 }}>
+                {chainIdDisplayVal}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="small">{networkDisplayVal}</Typography>
+          )}
+        </div>
       ) : (
         <Typography variant="small" style={{ textTransform: 'uppercase' }}>
           {project.manifest?.rpcFamily?.[0]}

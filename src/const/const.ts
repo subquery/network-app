@@ -31,6 +31,22 @@ export const NETWORK_TYPE_DICTION: { [key in string]: string } = {
   '0xa85cfb9b9fd4d622a5b28289a02347af987d8f73fa3108450e2b4a11c1ce5755': 'Basilisk',
   '0xaa3876c1dc8a1afcc2e9a685a49ff7704cfd36ad8c90bf2702b9d1b00cc40011': 'Altair',
   '0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736': 'Phala',
+  '0x4a12be580bb959937a1c7a61d5cf24428ed67fa571974b4007645d1886e7c89f': 'Subsocial',
+  '4221332d34e1694168c2a0c0b3fd0f273809612cb13d000d5c2e00e85f50f796': 'Concordium Testnet',
+  '9dd9ca4d19e9393877d2c44b70f89acbfc0883c2243e5eeaecc0d1cd0503f478': 'Concordium Mainnet',
+  '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d': 'Solana Mainnet',
+  EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG: 'Solana Devnet',
+  '4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY': 'Solana Testnet',
+  'fetchhub-4': 'Fetch.ai Mainnet',
+  'juno-1': 'Juno Mainnet',
+  'near-testnet': 'NEAR Testnet',
+  mainnet: 'NEAR Mainnet',
+  'axelar-dojo-1': 'Axelar Dojo',
+  'telos-testnet': 'Telos Testnet',
+  'coti-mainnet': 'COTI Mainnet',
+  flare: 'Flare',
+  'Public Global Stellar Network ; September 2015': 'Stellar Mainnet',
+  'Test SDF Network ; September 2015': 'Stellar Testnet',
 };
 
 export const ETH_TYPE_DICTION: { [key in string]: string } = {
@@ -971,4 +987,57 @@ export const ETH_TYPE_DICTION: { [key in string]: string } = {
   '666301171999': 'PDC Mainnet',
   '6022140761023': 'Molereum Network',
   '2716446429837000': 'DCHAIN',
+  '97': 'BNB Smart Chain Testnet',
+  '232': 'Lens',
+  '999': 'HyperEVM',
+  '2741': 'Abstract',
+  '4158': 'CrossFi Mainnet',
+  '6900': 'Nibiru cataclysm-1',
+  '48900': 'Zircuit Mainnet',
+  '102031': 'Creditcoin Testnet',
+  '421614': 'Arbitrum Sepolia',
+  '84532': 'Base Sepolia',
+  '11155111': 'Ethereum Sepolia',
+  '65000000': 'Autonity Mainnet',
+  '10200': 'Gnosis Chiado Testnet',
+  gnosis: 'Gnosis',
+};
+
+const missingNetworkChainIdSet = new Set<string>();
+const missingNetworkChainIdWithProjectSet = new Set<string>();
+
+type NetworkNameContext = {
+  projectName?: string;
+  projectId?: string;
+  source?: string;
+};
+
+export const getNetworkNameByChainId = (chainId?: string, context?: NetworkNameContext): string | undefined => {
+  if (!chainId) return undefined;
+
+  const networkName = NETWORK_TYPE_DICTION[chainId] || ETH_TYPE_DICTION[chainId];
+
+  // Temporary debug: collect unmapped chain IDs while browsing pages locally.
+  if (!networkName && import.meta.env.DEV) {
+    const projectName = context?.projectName || 'unknown';
+    const projectId = context?.projectId || 'unknown';
+    const source = context?.source || 'unknown';
+    const missingKey = `${chainId}::${projectId}::${source}`;
+
+    if (missingNetworkChainIdWithProjectSet.has(missingKey)) {
+      return networkName;
+    }
+
+    missingNetworkChainIdWithProjectSet.add(missingKey);
+    missingNetworkChainIdSet.add(chainId);
+
+    (globalThis as { __missingNetworkChainIds?: string[] }).__missingNetworkChainIds =
+      Array.from(missingNetworkChainIdSet);
+
+    console.warn(
+      `[NetworkMap] Missing chain id mapping: ${chainId} | project: ${projectName} (${projectId}) | source: ${source}`,
+    );
+  }
+
+  return networkName;
 };

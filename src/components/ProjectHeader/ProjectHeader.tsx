@@ -22,7 +22,7 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { toSvg } from 'jdenticon';
 
-import { ETH_TYPE_DICTION, NETWORK_TYPE_DICTION } from 'src/const/const';
+import { getNetworkNameByChainId } from 'src/const/const';
 import { useProjectStore } from 'src/stores/project';
 
 import Detail from '../Detail';
@@ -104,11 +104,14 @@ const ProjectHeader: React.FC<Props> = ({
       project.type === ProjectType.SUBQUERY ? manifest?.network?.chainId : manifest?.dataSources?.[0]?.network;
     if (!chainId) return '-';
 
-    const polkadotName = NETWORK_TYPE_DICTION[chainId];
-    const ethName = ETH_TYPE_DICTION[chainId];
-
-    return polkadotName || ethName || chainId;
-  }, [project.type, manifest]);
+    return (
+      getNetworkNameByChainId(chainId, {
+        projectName: project.metadata?.name,
+        projectId: project.id,
+        source: 'ProjectHeader',
+      }) || chainId
+    );
+  }, [project.type, manifest, project.id, project.metadata?.name]);
 
   const isOnwer = React.useMemo(() => account === project.owner, [project.owner, account]);
 
