@@ -160,5 +160,9 @@
     "ipfs-http-client": "53.0.1",
     "@polkadot/x-global": "7.9.2",
     "graphql": "16.7.1"
+  },
+  "volta": {
+    "node": "18.20.8",
+    "yarn": "1.22.22"
   }
 }
