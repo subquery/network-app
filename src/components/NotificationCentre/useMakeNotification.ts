@@ -20,7 +20,6 @@ export const useMakeNotification = () => {
       idleQueue([
         () => consumerNotifications.makeNoBoosterNotification(),
         () => generalNotifications.makeConsumerRewardsProgrameNotification(),
-        () => consumerNotifications.makeUnhealthyConsumerRewardsProjectNotification(),
         () => indexerNotifications.makeOverAllocateAndUnStakeAllocationNotification(),
         () => indexerNotifications.makeLowControllerBalanceNotification(),
         () => generalNotifications.makeUnhealthyAllocationNotification(),
