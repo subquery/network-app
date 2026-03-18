@@ -166,7 +166,7 @@ export const ActiveCard = () => {
                 className={styles.projectsCard}
               ></SubqlCard>
 
-              <SubqlCard
+              {/* <SubqlCard
                 title={
                   <div className="col-flex" style={{ position: 'relative', width: '100%', gap: 16 }}>
                     <Typography variant="h5" weight={500} style={{ whiteSpace: 'pre-wrap' }}>
@@ -214,7 +214,7 @@ export const ActiveCard = () => {
                 }
                 style={{ width: '100%' }}
                 className={styles.consumerRewardsCard}
-              ></SubqlCard>
+              ></SubqlCard> */}
             </Carousel>
           );
         },
