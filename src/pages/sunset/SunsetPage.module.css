@@ -644,6 +644,7 @@
 .infoBanner {
   display: flex;
   gap: 12px;
+  margin-top: 12px;
   padding: 16px;
   border-radius: 16px;
 }
@@ -730,10 +731,9 @@
 }
 
 .rewardGrid {
-  grid-template-columns: minmax(220px, 2fr) minmax(140px, 1.2fr) minmax(70px, 0.6fr) minmax(140px, 1.2fr) minmax(
-      100px,
-      0.8fr
-    ) minmax(90px, 0.7fr);
+  grid-template-columns:
+    minmax(220px, 2fr) minmax(140px, 1.2fr) minmax(70px, 0.6fr) minmax(140px, 1.2fr) minmax(100px, 0.8fr)
+    minmax(90px, 0.7fr);
 }
 
 .allocationGrid {
@@ -744,10 +744,9 @@
 }
 
 .delegationGrid {
-  grid-template-columns: minmax(220px, 2fr) minmax(80px, 0.7fr) minmax(100px, 1fr) minmax(130px, 1.1fr) minmax(
-      100px,
-      1fr
-    ) minmax(100px, 0.9fr) minmax(100px, 0.8fr);
+  grid-template-columns:
+    minmax(220px, 2fr) minmax(80px, 0.7fr) minmax(100px, 1fr) minmax(130px, 1.1fr) minmax(100px, 1fr)
+    minmax(100px, 0.9fr) minmax(100px, 0.8fr);
 }
 
 .boostGrid {
