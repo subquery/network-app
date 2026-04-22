@@ -50,7 +50,6 @@ const DoBooster: FC<IProps> = ({
   initAddOrRemove = 'add',
   onSuccess,
 }) => {
-  console.warn(projectId, deploymentId);
   const { address: account } = useAccount();
   const [form] = useForm();
   const formBoostVal = useWatch('boostVal', form);
@@ -105,6 +104,10 @@ const DoBooster: FC<IProps> = ({
       deploymentBooster.data?.deploymentBoosterSummariesByConsumer?.aggregates?.sum?.totalAmount.toString() || '0',
     ).toString();
   }, [deploymentBooster.data]);
+
+  const hasBoostByConsumer = useMemo(() => {
+    return !BigNumberJs(existingBoostByConsumer || '0').isZero();
+  }, [existingBoostByConsumer]);
 
   const updateBoost = async () => {
     try {
@@ -173,8 +176,6 @@ const DoBooster: FC<IProps> = ({
       getAverageBooster();
     }
   }, [open, project.data]);
-
-  console.warn(averageBooster.data);
 
   return (
     <div className={styles.doBooster}>
@@ -283,7 +284,7 @@ const DoBooster: FC<IProps> = ({
               style={{ display: 'flex', flexDirection: 'column', gap: 16, margin: '24px 0 0 0' }}
             >
               <Radio value="add">Add SQT to Boost</Radio>
-              <Radio value="remove" disabled={existingBoostByConsumer === '0' || loading}>
+              <Radio value="remove" disabled={!hasBoostByConsumer || loading}>
                 Remove SQT from Boost
               </Radio>
             </Radio.Group>

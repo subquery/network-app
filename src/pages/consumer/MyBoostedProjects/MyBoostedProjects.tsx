@@ -76,12 +76,20 @@ const MyBoostedProjects: FC = () => {
 
   const showLoading = useMemo(() => !mounted && boostedProjects.loading, [boostedProjects.loading, mounted]);
 
+  const boostedRows = useMemo(() => {
+    return (
+      boostedProjects.data?.deploymentBoosterSummaries?.nodes.filter(
+        (item) => notEmpty(item) && !BigNumberJs(item.totalAmount?.toString() || '0').isZero(),
+      ) || []
+    );
+  }, [boostedProjects.data]);
+
   const fetchRewards = async () => {
     if (!contracts) return '0';
     const rewards = await Promise.allSettled(
-      boostedProjects.data?.deploymentBoosterSummaries?.nodes?.map((i) => {
+      boostedRows.map((i) => {
         return contracts.rewardsBooster.getAccQueryRewardsByType(cidToBytes32(i?.deploymentId || ''), account || '');
-      }) || [],
+      }),
     );
 
     const total = rewards.reduce((acc, cur) => {
@@ -96,7 +104,7 @@ const MyBoostedProjects: FC = () => {
     setRewards(
       rewards.map((i, index) => {
         return {
-          deploymentId: boostedProjects.data?.deploymentBoosterSummaries?.nodes?.[index]?.deploymentId || '',
+          deploymentId: boostedRows[index]?.deploymentId || '',
           rewards: i.status === 'fulfilled' ? i.value.toString() : '0',
         };
       }),
@@ -105,7 +113,7 @@ const MyBoostedProjects: FC = () => {
 
   useEffect(() => {
     fetchRewards();
-  }, [boostedProjects.data]);
+  }, [boostedRows, account, contracts]);
 
   useEffect(() => {
     setMounted(false);
@@ -173,7 +181,7 @@ const MyBoostedProjects: FC = () => {
         </SubqlCard>
 
         <Table
-          dataSource={boostedProjects.data?.deploymentBoosterSummaries?.nodes.filter(notEmpty) || []}
+          dataSource={boostedRows}
           columns={[
             {
               title: 'Project',
@@ -213,6 +221,7 @@ const MyBoostedProjects: FC = () => {
                     onSuccess={() => boostedProjects.refetch()}
                   ></DoBooster>
                   <DoBooster
+                    deploymentId={deploymentId}
                     projectId={record.projectId}
                     actionBtn={<Typography.Link type="danger">Remove Boost</Typography.Link>}
                     onSuccess={() => boostedProjects.refetch()}
@@ -226,7 +235,7 @@ const MyBoostedProjects: FC = () => {
           rowKey={(record) => record.deploymentId}
           pagination={{
             current: pages.current,
-            total: boostedProjects.data?.deploymentBoosterSummaries?.totalCount || 0,
+            total: boostedRows.length,
             pageSize: pages.first,
             onChange(page, pageSize) {
               setPages({
