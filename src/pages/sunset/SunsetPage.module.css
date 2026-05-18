@@ -452,6 +452,9 @@
 
 .section {
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .sectionHeader {
@@ -644,7 +647,6 @@
 .infoBanner {
   display: flex;
   gap: 12px;
-  margin-top: 12px;
   padding: 16px;
   border-radius: 16px;
 }
@@ -698,6 +700,10 @@
   overflow: hidden;
 }
 
+.delegationTableCard {
+  overflow-x: auto;
+}
+
 .tableHeader,
 .tableRow {
   display: grid;
@@ -749,6 +755,11 @@
     minmax(100px, 0.9fr) minmax(100px, 0.8fr);
 }
 
+.delegationTableCard .tableHeader,
+.delegationTableCard .tableRow {
+  min-width: 1120px;
+}
+
 .boostGrid {
   grid-template-columns: minmax(280px, 2.6fr) minmax(140px, 1.2fr) minmax(140px, 1.2fr) minmax(90px, 0.7fr);
 }
@@ -777,6 +788,20 @@
   height: 40px;
   border-radius: 12px;
   flex-shrink: 0;
+}
+
+.addressAvatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.addressAvatar img {
+  display: block;
+  width: 40px;
+  height: 40px;
 }
 
 .pinkAccent {

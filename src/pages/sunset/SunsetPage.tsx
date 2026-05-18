@@ -27,13 +27,21 @@ import { BillingExchangeModal } from '../../components/BillingTransferModal';
 import { DeploymentMeta } from '../../components/DeploymentInfo';
 import DoAllocate from '../../components/DoAllocate/DoAllocate';
 import DoBooster from '../../components/DoBooster';
+import { Avatar } from '../../components/IndexerDetails/IndexerName';
 import TransactionModal from '../../components/TransactionModal';
 import { useSQToken } from '../../containers';
 import { useAccount } from '../../containers/Web3';
-import { useAsyncMemo, useEra, useIsIndexer, useLockPeriod, useSortedIndexerDeployments } from '../../hooks';
+import {
+  useAsyncMemo,
+  useEra,
+  useIsIndexer,
+  useLockPeriod,
+  useSortedIndexer,
+  useSortedIndexerDeployments,
+} from '../../hooks';
 import { useConsumerHostServices } from '../../hooks/useConsumerHostServices';
 import { mapEraValue, parseRawEraValue } from '../../hooks/useEraValue';
-import { ClaimRewards, ClaimRewardsForStake } from '../account/Rewards/ClaimRewards';
+import { ClaimRewards } from '../account/Rewards/ClaimRewards';
 import { DoWithdraw } from '../account/Withdrawn/Locked/DoWithdraw/DoWithdraw';
 import { DoUndelegate } from '../delegator/DoUndelegate/DoUndelegate';
 import styles from './SunsetPage.module.css';
@@ -213,6 +221,7 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
   const { currentEra } = useEra();
   const { contracts } = useWeb3Store();
   const isIndexer = useIsIndexer(account);
+  const sortedIndexer = useSortedIndexer(account);
   const rewards = useGetRewardsQuery({ variables: { address: account }, fetchPolicy: 'network-only' });
   const totalRewardsSummary = useGetTotalRewardsAndUnclaimRewardsQuery({
     variables: { account },
@@ -332,15 +341,6 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
     };
   }, [fetchUnhealthyRewards, unclaimedIndexers.join(','), currentEra.data?.index]);
 
-  const canClaimForStakeIndexers = React.useMemo(() => {
-    return unclaimedIndexers.filter((item) => {
-      return (
-        !unhealthyIndexers.data?.unclaimedIndexers.some((bad) => bad.id === item) &&
-        !unhealthyIndexers.data?.unregisteredIndexers.some((bad) => bad.id === item)
-      );
-    });
-  }, [unclaimedIndexers, unhealthyIndexers.data]);
-
   const unclaimedTotal = React.useMemo(() => {
     const total = (rewards.data?.unclaimedRewards?.nodes ?? []).reduce((sum, reward) => {
       return sum.add(BigNumber.from(reward?.amount ?? '0'));
@@ -434,6 +434,10 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
   const totalBoosted = React.useMemo(() => {
     return boostedProjects.data?.totalBoostedAmount?.aggregates?.sum?.totalAmount?.toString() || '0';
   }, [boostedProjects.data]);
+
+  const hasSelfStake = React.useMemo(() => {
+    return BigNumberJs(sortedIndexer.data?.ownStake.current || 0).gt(0);
+  }, [sortedIndexer.data?.ownStake.current]);
 
   const billingUnlocked = consumerHostBalance.result.data?.balance;
   const billingLocked = channelSpent.data?.remain;
@@ -598,23 +602,6 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
             </div>
             <div className={styles.sectionAction}>
               <div className={styles.buttonRow}>
-                {canClaimForStakeIndexers.length > 0 ? (
-                  <ClaimRewardsForStake
-                    indexers={canClaimForStakeIndexers}
-                    unhealthyIndexers={unhealthyIndexers.data}
-                    account={account}
-                    totalUnclaimed={unclaimedTotal}
-                    unCliamedCountByIndexer={rewards.data?.unclaimedRewards?.totalCount || 0}
-                    onClaimed={() => {
-                      rewards.refetch();
-                      totalRewardsSummary.refetch();
-                      fetchEraRewards({
-                        variables: { offset: 0, pageSize: 100, delegatorId: account, totalCount: 0 },
-                        fetchPolicy: 'network-only',
-                      });
-                    }}
-                  />
-                ) : null}
                 {(rewards.data?.unclaimedRewards?.totalCount || 0) > 0 ? (
                   <ClaimRewards
                     indexers={unclaimedIndexers}
@@ -654,7 +641,9 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
                   className={`${styles.tableRow} ${styles.rewardGrid} ${index !== rewardRows.length - 1 ? styles.tableRowBorder : ''}`}
                 >
                   <div className={styles.entityCell}>
-                    <div className={`${styles.avatar} ${styles.pinkAccent}`} />
+                    <div className={styles.addressAvatar}>
+                      <Avatar address={reward.indexerAddress} />
+                    </div>
                     <div className={styles.entityMeta}>
                       <div className={styles.entityName}>{shortenAddress(reward.indexerAddress)}</div>
                       <div className={styles.entitySubtle}>{reward.indexerAddress}</div>
@@ -695,6 +684,17 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
           <div className={styles.warningBanner}>
             <Info size={16} strokeWidth={2} className={styles.warningIcon} />
             <div className={styles.warningText}>
+              {hasSelfStake ? (
+                <>
+                  You still have self stake as an indexer. To fully retire and recover your remaining operator funds,
+                  please unregister in the{' '}
+                  <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer">
+                    Indexer Admin Portal
+                    <ExternalLink size={11} strokeWidth={2.5} />
+                  </a>
+                  .{' '}
+                </>
+              ) : null}
               Unstaking below your minimum requires unregistering in the{' '}
               <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer">
                 Indexer Admin Portal
@@ -774,11 +774,12 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
           <div className={styles.infoBanner}>
             <Info size={16} strokeWidth={2} className={styles.infoIcon} />
             <div className={styles.infoText}>
-              Undelegated tokens remain with the operator until the end of the current era, then enter a lock-up before
-              they become claimable from the Withdrawals section.
+              Undelegated tokens remain with the operator until the end of the current era, then enter a{' '}
+              <strong className={styles.inlineStrong}>336-hour lock-up</strong> before they become claimable from the
+              Withdrawals section.
             </div>
           </div>
-          <div className={styles.tableCard}>
+          <div className={`${styles.tableCard} ${styles.delegationTableCard}`}>
             <div className={`${styles.tableHeader} ${styles.delegationGrid}`}>
               <div>Operator</div>
               <div>Est. APY</div>
@@ -801,7 +802,9 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
                     className={`${styles.tableRow} ${styles.delegationGrid} ${index !== delegationRows.length - 1 ? styles.tableRowBorder : ''}`}
                   >
                     <div className={styles.entityCell}>
-                      <div className={`${styles.avatar} ${styles.purpleAccent}`} />
+                      <div className={styles.addressAvatar}>
+                        <Avatar address={row.indexer} />
+                      </div>
                       <div className={styles.entityMeta}>
                         <div className={styles.entityName}>{shortenAddress(row.indexer)}</div>
                         <div className={styles.entitySubtle}>{row.indexer}</div>
@@ -959,7 +962,6 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
                 <span className={styles.inlineStrong}>{shortenAddress(account)}</span>.
               </div>
               <div className={styles.buttonRow}>
-                <BillingExchangeModal action="Transfer" />
                 <BillingExchangeModal action="Withdraw" />
               </div>
             </div>
