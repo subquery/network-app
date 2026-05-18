@@ -79,6 +79,7 @@ type DelegationRow = {
   lastEraRewards: string;
   indexerActive?: boolean;
   lastDelegationEra: number;
+  isSelfStake?: boolean;
 };
 
 type WithdrawalRow = {
@@ -93,7 +94,7 @@ type WithdrawalRow = {
 
 const DOCS_URL = 'https://academy.subquery.network/subquery_network/kepler/welcome.html';
 const INDEXER_ADMIN_URL =
-  'https://academy.subquery.network/subquery_network/node_operators/setup/becoming-a-node-operator.html';
+  'https://subquery.network/doc/subquery_network/node_operators/setup/becoming-a-node-operator.html#_3-register-in-the-node-operator-admin-app';
 const CONTRIBUTE_URL = 'https://github.com/subquery/network-explorer';
 
 const formatCompact = (value: string | number, digits = 2) => {
@@ -439,6 +440,29 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
     return BigNumberJs(sortedIndexer.data?.ownStake.current || 0).gt(0);
   }, [sortedIndexer.data?.ownStake.current]);
 
+  const selfStakeRow = React.useMemo<DelegationRow | null>(() => {
+    if (!hasSelfStake || !sortedIndexer.data) return null;
+
+    return {
+      indexer: account,
+      value: {
+        current: `${sortedIndexer.data.ownStake.current || 0}`,
+        after: `${sortedIndexer.data.ownStake.after ?? sortedIndexer.data.ownStake.current ?? 0}`,
+      },
+      apy: '0',
+      commission: `${sortedIndexer.data.commission.current || 0}`,
+      totalRewards: '0',
+      lastEraRewards: '0',
+      indexerActive: true,
+      lastDelegationEra: 0,
+      isSelfStake: true,
+    };
+  }, [account, hasSelfStake, sortedIndexer.data]);
+
+  const delegationTableRows = React.useMemo(() => {
+    return selfStakeRow ? [selfStakeRow, ...delegationRows] : delegationRows;
+  }, [selfStakeRow, delegationRows]);
+
   const billingUnlocked = consumerHostBalance.result.data?.balance;
   const billingLocked = channelSpent.data?.remain;
   const walletBalance = balance.result.data;
@@ -453,7 +477,7 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
       '0',
     ),
   );
-  const delegationTotalValue = delegationRows.reduce(
+  const delegationTotalValue = delegationTableRows.reduce(
     (sum, row) =>
       BigNumberJs(sum)
         .plus(row.value.after || row.value.current || '0')
@@ -510,7 +534,7 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
     {
       label: 'Delegations',
       amount: formatCompact(delegationTotalValue),
-      subtitle: `${delegationRows.length} operators`,
+      subtitle: `${delegationTableRows.length} operators`,
       anchorId: 'section-delegations',
     },
     {
@@ -681,28 +705,6 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
               </p>
             </div>
           </div>
-          <div className={styles.warningBanner}>
-            <Info size={16} strokeWidth={2} className={styles.warningIcon} />
-            <div className={styles.warningText}>
-              {hasSelfStake ? (
-                <>
-                  You still have self stake as an indexer. To fully retire and recover your remaining operator funds,
-                  please unregister in the{' '}
-                  <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer">
-                    Indexer Admin Portal
-                    <ExternalLink size={11} strokeWidth={2.5} />
-                  </a>
-                  .{' '}
-                </>
-              ) : null}
-              Unstaking below your minimum requires unregistering in the{' '}
-              <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer">
-                Indexer Admin Portal
-                <ExternalLink size={11} strokeWidth={2.5} />
-              </a>
-              . This page only removes per-project allocations.
-            </div>
-          </div>
           <div className={styles.tableCard}>
             <div className={`${styles.tableHeader} ${styles.allocationGrid}`}>
               <div>Project</div>
@@ -767,16 +769,26 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
                 <strong className={styles.inlineStrong}>
                   {formatPlain(delegationTotalValue)} {TOKEN}
                 </strong>{' '}
-                across <strong className={styles.inlineStrong}>{delegationRows.length}</strong> operators.
+                across <strong className={styles.inlineStrong}>{delegationTableRows.length}</strong> operators.
               </p>
+            </div>
+          </div>
+          <div className={styles.warningBanner}>
+            <Info size={16} strokeWidth={2} className={styles.warningIcon} />
+            <div className={styles.warningText}>
+              Unstaking below your minimum requires unregistering in the{' '}
+              <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer">
+                Indexer Admin Portal
+                <ExternalLink size={11} strokeWidth={2.5} />
+              </a>
+              .
             </div>
           </div>
           <div className={styles.infoBanner}>
             <Info size={16} strokeWidth={2} className={styles.infoIcon} />
             <div className={styles.infoText}>
-              Undelegated tokens remain with the operator until the end of the current era, then enter a{' '}
-              <strong className={styles.inlineStrong}>336-hour lock-up</strong> before they become claimable from the
-              Withdrawals section.
+              Undelegated tokens remain with the operator until the end of the current era, and then become claimable
+              from the Withdrawals section.
             </div>
           </div>
           <div className={`${styles.tableCard} ${styles.delegationTableCard}`}>
@@ -789,9 +801,10 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
               <div>Status</div>
               <div className={styles.alignRight}>Action</div>
             </div>
-            {delegationRows.length ? (
-              delegationRows.map((row, index) => {
+            {delegationTableRows.length ? (
+              delegationTableRows.map((row, index) => {
                 const isPending =
+                  !row.isSelfStake &&
                   BigNumberJs(row.value.current).isZero() &&
                   !BigNumberJs(row.value.after || '0').isZero() &&
                   (currentEra.data?.index || 0) < row.lastDelegationEra + 2;
@@ -806,30 +819,50 @@ const ConnectedSunsetContent: React.FC<{ account: string }> = ({ account }) => {
                         <Avatar address={row.indexer} />
                       </div>
                       <div className={styles.entityMeta}>
-                        <div className={styles.entityName}>{shortenAddress(row.indexer)}</div>
-                        <div className={styles.entitySubtle}>{row.indexer}</div>
+                        <div className={styles.entityName}>{row.isSelfStake ? 'You' : shortenAddress(row.indexer)}</div>
+                        <div className={styles.entitySubtle}>
+                          {row.isSelfStake ? `Self stake · ${row.indexer}` : row.indexer}
+                        </div>
                       </div>
                     </div>
                     <div>
-                      {BigNumberJs(formatEther(row.apy || '0'))
-                        .multipliedBy(100)
-                        .toFixed(2)}
-                      %
+                      {row.isSelfStake
+                        ? '—'
+                        : `${BigNumberJs(formatEther(row.apy || '0'))
+                            .multipliedBy(100)
+                            .toFixed(2)}%`}
                     </div>
                     <div>{row.commission}%</div>
                     <div className={styles.cellStrong}>
                       {formatPlain(row.value.after || row.value.current)} {TOKEN}
                     </div>
                     <div className={styles.mutedCell}>
-                      {formatPlain(formatSQT(row.lastEraRewards || '0'))} {TOKEN}
+                      {row.isSelfStake ? '—' : `${formatPlain(formatSQT(row.lastEraRewards || '0'))} ${TOKEN}`}
                     </div>
                     <div>
-                      <StatusPill variant={isPending ? 'pending' : row.indexerActive ? 'success' : 'neutral'}>
-                        {isPending ? 'Pending' : row.indexerActive ? 'Active' : 'Inactive'}
+                      <StatusPill
+                        variant={
+                          row.isSelfStake ? 'info' : isPending ? 'pending' : row.indexerActive ? 'success' : 'neutral'
+                        }
+                      >
+                        {row.isSelfStake
+                          ? 'Self Stake'
+                          : isPending
+                            ? 'Pending'
+                            : row.indexerActive
+                              ? 'Active'
+                              : 'Inactive'}
                       </StatusPill>
                     </div>
                     <div className={styles.alignRight}>
-                      <DoUndelegate indexerAddress={row.indexer} onSuccess={() => delegations.refetch()} />
+                      {row.isSelfStake ? (
+                        <a href={INDEXER_ADMIN_URL} target="_blank" rel="noreferrer" className={styles.linkAction}>
+                          Indexer Admin Portal
+                          <ExternalLink size={13} strokeWidth={2} />
+                        </a>
+                      ) : (
+                        <DoUndelegate indexerAddress={row.indexer} onSuccess={() => delegations.refetch()} />
+                      )}
                     </div>
                   </div>
                 );
