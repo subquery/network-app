@@ -53,54 +53,6 @@ export function walletClientToSignerAndProvider(walletClient: GetWalletClientDat
   const provider = new providers.Web3Provider(
     {
       ...transport,
-      async request(request, ...rest) {
-        const xpingId = uuidv4();
-
-        try {
-          const fetchUrl = {
-            [base.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_BASE_RPC as string,
-            [mainnet.id]: import.meta.env.VITE_SUBQUERY_OFFICIAL_ETH_RPC as string,
-          }[chain.id as number];
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 4000);
-
-          if (fetchUrl) {
-            requestId += 1;
-            const res = await fetch(fetchUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'x-ping': xpingId,
-              },
-              body: JSON.stringify({
-                jsonrpc: '2.0',
-                // seems the id in JSONRPC is used for sort
-                id: requestId,
-                ...request,
-              }),
-              signal: controller.signal,
-            });
-            const { result, error } = await res.json();
-            if (!result) {
-              throw new Error(error);
-            }
-            clearTimeout(timeout);
-            return result;
-          }
-        } catch (e) {
-          if (e instanceof DOMException && e.name === 'AbortError') {
-            captureEvent({
-              message: `${chain.id} RPC timeout ${xpingId} timeout`,
-              level: 'warning',
-              fingerprint: account.address ? [account.address] : undefined,
-            });
-          }
-
-          return transport.request(request, ...rest);
-        }
-
-        return transport.request(request, ...rest);
-      },
     },
     network,
   );
